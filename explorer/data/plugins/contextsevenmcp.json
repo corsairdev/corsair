@@ -1,0 +1,116 @@
+{
+  "id": "contextsevenmcp",
+  "displayName": "Context7",
+  "description": "Documentation context MCP server for injecting up-to-date library docs into AI coding agents.",
+  "npmPackageName": "@corsair-dev/contextsevenmcp",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "contextsevenmcp.api.context.get",
+      "shortPath": "context.get",
+      "description": "Get documentation context for a library",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "libraryId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "json | txt"
+          },
+          {
+            "key": "fast",
+            "optional": true,
+            "type": "true | false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "codeSnippets",
+            "optional": false,
+            "type": "{ codeTitle: string, codeDescription: string, codeLanguage: string, codeTokens: number, codeId: string, pageTitle: string, codeList: { language: string, code: string }[], isDynamic?: boolean, sourceFile?: string }[]"
+          },
+          {
+            "key": "infoSnippets",
+            "optional": false,
+            "type": "{ pageId?: string, breadcrumb?: string, content: string, contentTokens: number }[]"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{ global?: string[], libraryOwn?: string[], libraryTeam?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "contextsevenmcp.api.library.search",
+      "shortPath": "library.search",
+      "description": "Search Context7 libraries by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "libraryName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fast",
+            "optional": true,
+            "type": "true | false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, title?: string, description?: string, branch?: string, lastUpdateDate?: string, state?: string, totalTokens?: number, totalSnippets?: number, stars?: number, trustScore?: number, benchmarkScore?: number, versions?: string[] }[]"
+          },
+          {
+            "key": "searchFilterApplied",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

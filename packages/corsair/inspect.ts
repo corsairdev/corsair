@@ -1,11 +1,12 @@
+import type { CorsairInternalConfig } from './core';
+import { CORSAIR_INTERNAL } from './core';
+// Import these directly from their source modules (not the ./core barrel) so
+// inspect.ts and core/index.ts don't form a circular chunk dependency.
 import type {
 	CorsairClient,
-	CorsairInternalConfig,
-	CorsairPlugin,
 	CorsairSingleTenantClient,
 	CorsairTenantWrapper,
-} from './core';
-import { CORSAIR_INTERNAL } from './core';
+} from './core/client';
 import type { FormFieldSchema, ListOperationsOptions } from './core/inspect';
 import {
 	formatDocSchemaShape,
@@ -13,6 +14,7 @@ import {
 	getStructuredSchema as getStructuredSchemaCore,
 	listOperations as listOperationsCore,
 } from './core/inspect';
+import type { CorsairPlugin } from './core/plugins';
 
 export type { ListOperationsOptions, FormFieldSchema };
 export { formatDocSchemaShape };

@@ -9,15 +9,15 @@
     "rules": [
       {
         "scope": ["packages/**"],
-        "rule": "A plugin PR must only modify files inside a single packages/<plugin>/ directory, plus packages/corsair/core/constants.ts and pnpm-lock.yaml. Flag any other modified file as a critical (P0) issue."
+        "rule": "A plugin PR must only modify files inside a single packages/<plugin>/ directory, plus packages/corsair/core/constants.ts, pnpm-lock.yaml, docs/plugins/<plugin>/** for that same plugin, and docs/docs.json. Flag any other modified file as a critical (P0) issue. PRs that only touch packages/<plugin>/plugin-docs.yaml, docs/plugins/<plugin>/**, and/or docs/docs.json are documentation PRs, not plugin-code PRs; do not apply plugin demo/test/scope rules to them."
       },
       {
         "scope": ["packages/**"],
-        "rule": "Plugin packages must include at least one *.test.ts file with real assertions against the plugin's endpoints. Flag missing, empty, or assertion-free tests as P1."
+        "rule": "Plugin packages must include at least one *.test.ts file with real assertions against the plugin's endpoints. Flag missing, empty, or assertion-free tests as P1. Skip this rule on documentation-only PRs (only packages/<plugin>/plugin-docs.yaml, docs/plugins/<that plugin>/**, and optional docs/docs.json)."
       },
       {
         "scope": ["packages/**"],
-        "rule": "Flag boilerplate residue from the plugin generator as P1: placeholder base URLs, commented-out Authorization headers, leftover endpoints/example.ts files, and TODO stubs."
+        "rule": "Flag boilerplate residue from the plugin generator as P1: placeholder base URLs, commented-out Authorization headers, leftover endpoints/example.ts files, and TODO stubs. Skip this rule on documentation-only PRs (only packages/<plugin>/plugin-docs.yaml, docs/plugins/<that plugin>/**, and optional docs/docs.json)."
       },
       {
         "scope": ["**"],
@@ -25,15 +25,15 @@
       },
       {
         "scope": ["packages/**"],
-        "rule": "Every endpoint must validate inputs and outputs with zod schemas, route errors through the plugin's error-handlers.ts including rate-limit (429) handling, and support pagination on list endpoints when the provider API offers it. Flag violations as P1."
+        "rule": "Every endpoint must validate inputs and outputs with zod schemas, route errors through the plugin's error-handlers.ts including rate-limit (429) handling, and support pagination on list endpoints when the provider API offers it. Flag violations as P1. Skip this rule on documentation-only PRs (only packages/<plugin>/plugin-docs.yaml, docs/plugins/<that plugin>/**, and optional docs/docs.json)."
       },
       {
         "scope": ["packages/**"],
-        "rule": "Verify the implementation matches the PR description: every endpoint the description claims must exist and work as described. Flag mismatches as P1."
+        "rule": "Verify the implementation matches the PR description: every endpoint the description claims must exist and work as described. Flag mismatches as P1. Skip this rule on documentation-only PRs (only packages/<plugin>/plugin-docs.yaml, docs/plugins/<that plugin>/**, and optional docs/docs.json)."
       },
       {
         "scope": ["packages/**"],
-        "rule": "Flag `any` types on exported or public surfaces as P2, and every implemented endpoint lacking a corresponding test as P1."
+        "rule": "Flag `any` types on exported or public surfaces as P2, and every implemented endpoint lacking a corresponding test as P1. Skip this rule on documentation-only PRs (only packages/<plugin>/plugin-docs.yaml, docs/plugins/<that plugin>/**, and optional docs/docs.json)."
       }
     ],
     "files": [

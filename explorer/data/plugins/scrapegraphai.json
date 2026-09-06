@@ -1,0 +1,1830 @@
+{
+  "id": "scrapegraphai",
+  "displayName": "ScrapeGraphAI",
+  "description": "AI-powered web scraping API that extracts structured data using natural language prompts.",
+  "npmPackageName": "@corsair-dev/scrapegraphai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 27,
+    "webhooks": 0,
+    "db": 8
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "scrapegraphai.api.account.credits",
+      "shortPath": "account.credits",
+      "description": "Get remaining and used credit balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "remaining_credits",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_credits_used",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.account.usageTimeline",
+      "shortPath": "account.usageTimeline",
+      "description": "Get a timeline of past request usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "days",
+            "optional": true,
+            "type": "7 | 14 | 30 | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timeline",
+            "optional": false,
+            "type": "{ service: string, timestamp: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.account.validateApiKey",
+      "shortPath": "account.validateApiKey",
+      "description": "Validate that the configured API key is active",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "scrapegraphai.api.agenticScraper.getLiveSessionUrl",
+      "shortPath": "agenticScraper.getLiveSessionUrl",
+      "description": "Open a live, remotely-controllable browser session for a URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.agenticScraper.history",
+      "shortPath": "agenticScraper.history",
+      "description": "List past agentic (browser-driven) scraper requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ request_id: string, user_id: string, webpage_id: string, website_url: string, user_prompt?: string | null, output_schema?: {} | null, requested_at: string, finished_at?: string | null, status: queued | processing | processinghtml | processedhtml | completed | failed, metadata?: any | null, result?: any | null, total_cost?: number | null, usage_id?: string | null, error?: string | null }[]"
+          },
+          {
+            "key": "next_key",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.endpoint.getSuggestions",
+      "shortPath": "endpoint.getSuggestions",
+      "description": "Analyze a webpage and suggest reusable scraping endpoint configs (spends credits)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "website_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ endpoint: string, method?: string, description: string, target_url: string, parameters: { name: string, type: string, location: string, required: boolean, description: string, is_url?: boolean }[], pydantic_schema: {}, extraction_prompt: string, interaction_steps?: string[] | null }[]"
+          },
+          {
+            "key": "html_with_markdowns",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.endpoint.save",
+      "shortPath": "endpoint.save",
+      "description": "Save custom scraping endpoint configurations",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ endpoint: string, method?: string, description: string, target_url: string, parameters: { name: string, type: string, location: string, required: boolean, description: string, is_url?: boolean }[], pydantic_schema: {}, extraction_prompt: string, interaction_steps?: string[] | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "scrapegraphai.api.feedback.submit",
+      "shortPath": "feedback.submit",
+      "description": "Submit a rating/feedback for a completed request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rating",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "feedback_text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "feedback_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "feedback_timestamp",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.feedback.submitProduct",
+      "shortPath": "feedback.submitProduct",
+      "description": "Submit general product feedback",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "feedback_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "how_discovered",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usage_frequency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "use_cases",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "liked_most",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "disliked",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requested_features",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "setup_easy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "issues",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recommend_score",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "improvement_suggestions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "can_contact",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "contact_method",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.markdownify.history",
+      "shortPath": "markdownify.history",
+      "description": "List past Markdownify requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ request_id?: string, user_id?: string | null, webpage_id?: string | null, requested_at?: string, status?: queued | processing | completed | failed, error?: string | null, website_url: string, finished_at?: string | null, metadata?: {} | null, usage_id?: string | null, request_params?: {} | null }[]"
+          },
+          {
+            "key": "next_key",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.markdownify.start",
+      "shortPath": "markdownify.start",
+      "description": "Start converting a webpage to clean Markdown (async, spends credits)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "website_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "render_heavy_js",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "mock",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stealth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "branding",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "wait_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | processing | completed | failed"
+          },
+          {
+            "key": "website_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.markdownify.status",
+      "shortPath": "markdownify.status",
+      "description": "Get status and results for a Markdownify job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "queued | processing | completed | failed"
+          },
+          {
+            "key": "website_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.scheduledJobs.list",
+      "shortPath": "scheduledJobs.list",
+      "description": "List scheduled recurring scraping jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "service_type",
+            "optional": true,
+            "type": "smartscraper | searchscraper | markdownify | smartcrawler | agenticscrapper | site_monitor"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "jobs",
+            "optional": false,
+            "type": "{ id: string, user_id: string, job_name: string, service_type: smartscraper | searchscraper | markdownify | smartcrawler | agenticscrapper | site_monitor, cron_expression: string, job_config: {}, is_active: boolean, created_at: string, updated_at: string, last_run_at?: string | null, next_run_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.schema.generate",
+      "shortPath": "schema.generate",
+      "description": "Generate or refine a JSON schema from a natural-language prompt (spends credits)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "existing_schema",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "refined_prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "generated_schema",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.scrape.history",
+      "shortPath": "scrape.history",
+      "description": "List past single-page Scrape requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ request_id: string, user_id?: string | null, website_url: string, render_heavy_js?: boolean, result?: string | null, status?: queued | processing | completed | failed, metadata?: {}, error?: string | null, finished_at?: string | null, requested_at?: string, cost?: number, request_params?: {} | null }[]"
+          },
+          {
+            "key": "next_key",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.searchScraper.history",
+      "shortPath": "searchScraper.history",
+      "description": "List past SearchScraper requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ request_id: string, user_id?: string | null, user_prompt: string, search_query?: string | null, extraction_query?: string | null, references_urls?: string[] | null, output_schema?: {} | null, result?: any | null, status?: queued | processing | completed | failed, metadata?: {}, error?: string | null, requested_at?: string, finished_at?: string | null }[]"
+          },
+          {
+            "key": "next_key",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.searchScraper.start",
+      "shortPath": "searchScraper.start",
+      "description": "Start an AI-powered web search job (async, spends credits)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "num_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "output_schema",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "extraction_mode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "markdown_mode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stealth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "mock",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_geo_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_range",
+            "optional": true,
+            "type": "past_hour | past_24_hours | past_week | past_month | past_year"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | processing | completed | failed"
+          },
+          {
+            "key": "user_prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "num_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "reference_urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "markdown_content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.searchScraper.status",
+      "shortPath": "searchScraper.status",
+      "description": "Get status and results for a SearchScraper job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "queued | processing | completed | failed"
+          },
+          {
+            "key": "user_prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "num_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "reference_urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "markdown_content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.sitemap.history",
+      "shortPath": "sitemap.history",
+      "description": "List past sitemap generation requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ request_id: string, website_url: string, api_key_id: string, user_id: string, requested_at: string, status: string, urls_count: number, error_message?: string | null, metadata?: {} | null }[]"
+          },
+          {
+            "key": "next_key",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.smartCrawler.history",
+      "shortPath": "smartCrawler.history",
+      "description": "List past SmartCrawler requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ request_id: string, user_id: string, url: string, prompt?: string | null, max_pages: number, status: queued | processing | completed | failed, error?: string | null, metadata?: {} | null, requested_at: string, finished_at?: string | null, total_cost?: number | null, credits_used?: number | null, pages_processed?: number | null, crawled_urls?: string[] | null, task_id?: string | null, result?: {} | null, result_url?: string | null, request_params?: {} | null }[]"
+          },
+          {
+            "key": "next_key",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.smartCrawler.start",
+      "shortPath": "smartCrawler.start",
+      "description": "Start a multi-page crawl of a site with optional AI extraction (async, spends credits)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "breadth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{ exclude?: string[] | null, include_paths?: string[] | null, exclude_paths?: string[] | null, same_domain?: boolean | null }"
+          },
+          {
+            "key": "sitemap",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "render_heavy_js",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "extraction_mode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stealth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "mock",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reader_mode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "wait_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "requested_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "finished_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "credits_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pages_processed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "crawled_urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "result_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.smartCrawler.status",
+      "shortPath": "smartCrawler.status",
+      "description": "Get status and results for a SmartCrawler job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "requested_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "finished_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "credits_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pages_processed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "crawled_urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "result_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.smartCrawler.webhookLogs",
+      "shortPath": "smartCrawler.webhookLogs",
+      "description": "Get webhook delivery logs for a SmartCrawler job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "crawler_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.smartScraper.history",
+      "shortPath": "smartScraper.history",
+      "description": "List past SmartScraper requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ request_id: string, user_id?: string | null, webpage_id?: string | null, website_url?: string | null, user_prompt: string, output_schema?: {} | null, result?: {} | string | null, status?: queued | processing | completed | failed, requested_at: string, finished_at?: string | null, error?: string | null, metadata?: {} | null, request_params?: {} | null }[]"
+          },
+          {
+            "key": "next_key",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.smartScraper.start",
+      "shortPath": "smartScraper.start",
+      "description": "Start an AI-powered structured extraction job for a webpage (async, spends credits)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "website_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website_html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website_markdown",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "render_heavy_js",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "mock",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stealth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "branding",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "wait_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "output_schema",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "number_of_scrolls",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "plain_text",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_multipage_child",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | processing | completed | failed"
+          },
+          {
+            "key": "website_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{} | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.smartScraper.status",
+      "shortPath": "smartScraper.status",
+      "description": "Get status and results for a SmartScraper job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "queued | processing | completed | failed"
+          },
+          {
+            "key": "website_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{} | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapegraphai.api.utilities.toonify",
+      "shortPath": "utilities.toonify",
+      "description": "Convert JSON to TOON (Token-Oriented Object Notation) to reduce LLM token usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | {}"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "scrapegraphai.db.crawls.search",
+      "entityName": "crawls",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "task_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "request_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "error",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "scrapegraphai.db.credits.search",
+      "entityName": "credits",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "remaining_credits",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "total_credits_used",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "scrapegraphai.db.generatedSchemas.search",
+      "entityName": "generatedSchemas",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "request_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_prompt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "refined_prompt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "error",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "scrapegraphai.db.jobs.search",
+      "entityName": "jobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "websiteUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "scrapegraphai.db.markdownifies.search",
+      "entityName": "markdownifies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "request_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "website_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "result",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "error",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "scrapegraphai.db.scheduledJobs.search",
+      "entityName": "scheduledJobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "service_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cron_expression",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_run_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "next_run_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "scrapegraphai.db.searchScrapers.search",
+      "entityName": "searchScrapers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "request_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_prompt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "num_results",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "markdown_content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "error",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "scrapegraphai.db.smartScrapers.search",
+      "entityName": "smartScrapers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "request_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "website_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_prompt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "error",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

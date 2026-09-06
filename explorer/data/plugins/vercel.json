@@ -1,0 +1,1181 @@
+{
+  "id": "vercel",
+  "displayName": "Vercel",
+  "description": "Frontend cloud platform for deploying sites, serverless functions, and edge web applications.",
+  "npmPackageName": "@corsair-dev/vercel",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 14,
+    "webhooks": 4,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "team_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "vercel.api.aliases.assignAlias",
+      "shortPath": "aliases.assignAlias",
+      "description": "Assign an alias",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "redirect",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "oldDeploymentId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.aliases.getAliases",
+      "shortPath": "aliases.getAliases",
+      "description": "Get all aliases",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "aliases",
+            "optional": false,
+            "type": "{ uid: string, alias: string, created: string, createdAt: number, deploymentId?: string | null, projectId?: string | null, redirect?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count: number, next?: number | null, prev?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.deployments.createDeployment",
+      "shortPath": "deployments.createDeployment",
+      "description": "Create a deployment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "production | staging"
+          },
+          {
+            "key": "gitSource",
+            "optional": true,
+            "type": "{ type: github | gitlab | bitbucket, ref?: string, repoId?: string | number, sha?: string }"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "env",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "readyState",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "LAMBDAS | PREBUILT | STATIC | string"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ uid: string, email: string, username: string }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "production | staging | string"
+          },
+          {
+            "key": "aliasError",
+            "optional": true,
+            "type": "{ code: string, message: string }"
+          },
+          {
+            "key": "aliasAssigned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "inspectorUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.deployments.getDeployment",
+      "shortPath": "deployments.getDeployment",
+      "description": "Get deployment details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idOrUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "readyState",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "LAMBDAS | PREBUILT | STATIC | string"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ uid: string, email: string, username: string }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "production | staging | string"
+          },
+          {
+            "key": "aliasError",
+            "optional": true,
+            "type": "{ code: string, message: string }"
+          },
+          {
+            "key": "aliasAssigned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "inspectorUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.deployments.getDeployments",
+      "shortPath": "deployments.getDeployments",
+      "description": "Get all deployments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deployments",
+            "optional": false,
+            "type": "{ uid: string, name: string, url: string, created: number, readyState: string, type: LAMBDAS | PREBUILT | STATIC | string, creator?: { uid: string, email: string, username: string } | null, meta?: {} | null, target?: production | staging | string | null, aliasError?: { code: string, message: string } | null, aliasAssigned?: number | null, inspectorUrl?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count: number, next?: number | null, prev?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.domains.getDomains",
+      "shortPath": "domains.getDomains",
+      "description": "Get all domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "{ id: string, name: string, createdAt: number, boughtAt?: number | null, expiresAt?: number | null, transferredAt?: number | null, verified: boolean, nameservers: string[], intendedNameservers: string[] }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count: number, next?: number | null, prev?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.domains.getProjectDomains",
+      "shortPath": "domains.getProjectDomains",
+      "description": "Get project domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "{ name: string, apexName: string, projectId: string, redirect?: string | null, redirectStatusCode?: number | null, gitBranch?: string | null, updatedAt: number, createdAt: number, verified: boolean }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count: number, next?: number | null, prev?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.envs.createEnvVariable",
+      "shortPath": "envs.createEnvVariable",
+      "description": "Create an environment variable for a project (supports plain, secret, encrypted, and sensitive types)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "plain | secret | encrypted | sensitive"
+          },
+          {
+            "key": "target",
+            "optional": false,
+            "type": "production | preview | development[]"
+          },
+          {
+            "key": "gitBranch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "plain | secret | encrypted | sensitive"
+          },
+          {
+            "key": "target",
+            "optional": false,
+            "type": "production | preview | development[]"
+          },
+          {
+            "key": "gitBranch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "configurationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.envs.getEnvVariables",
+      "shortPath": "envs.getEnvVariables",
+      "description": "Get environment variables for a project (may include secret/sensitive values)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "envs",
+            "optional": true,
+            "type": "{ id: string, key: string, value: string, type: plain | secret | encrypted | sensitive, target: production | preview | development[], gitBranch?: string | null, configurationId?: string | null, createdAt: number, updatedAt: number, createdBy?: string | null, updatedBy?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.projects.getProject",
+      "shortPath": "projects.getProject",
+      "description": "Get project details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idOrName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "framework",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "{ type: string, repo: string, repoId?: number, org?: string | null, gitCredentialId?: string | null, productionBranch?: string | null, createdAt?: number | null, updatedAt?: number | null, deployHooks?: any[] | null }"
+          },
+          {
+            "key": "latestDeployments",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "targets",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.projects.getProjects",
+      "shortPath": "projects.getProjects",
+      "description": "Get all projects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id: string, name: string, accountId: string, createdAt: number, updatedAt: number, framework?: string | null, link?: { type: string, repo: string, repoId?: number, org?: string | null, gitCredentialId?: string | null, productionBranch?: string | null, createdAt?: number | null, updatedAt?: number | null, deployHooks?: any[] | null } | null, latestDeployments?: any[] | null, targets?: {} | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count: number, next?: number | null, prev?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.teams.getTeams",
+      "shortPath": "teams.getTeams",
+      "description": "Get all teams",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teams",
+            "optional": false,
+            "type": "{ id: string, slug: string, name: string, createdAt: number, updatedAt?: number | null, avatar?: string | null, membership: { uid: string, role: OWNER | MEMBER | DEVELOPER | BILLING | VIEWER | string, createdAt: number } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ count: number, next?: number | null, prev?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.webhooks.createWebhook",
+      "shortPath": "webhooks.createWebhook",
+      "description": "Create a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "(deployment.created | deployment.succeeded | deployment.ready | deployment.error | deployment.canceled | deployment.promoted | project.created | project.removed | domain.created | integration-configuration.scope-change-confirmed | integration-configuration.removed | integration-configuration.permission-upgraded | string)[]"
+          },
+          {
+            "key": "projectIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "(deployment.created | deployment.succeeded | deployment.ready | deployment.error | deployment.canceled | deployment.promoted | project.created | project.removed | domain.created | integration-configuration.scope-change-confirmed | integration-configuration.removed | integration-configuration.permission-upgraded | string)[]"
+          },
+          {
+            "key": "ownerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "vercel.api.webhooks.getWebhooks",
+      "shortPath": "webhooks.getWebhooks",
+      "description": "Get all webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, url: string, events: (deployment.created | deployment.succeeded | deployment.ready | deployment.error | deployment.canceled | deployment.promoted | project.created | project.removed | domain.created | integration-configuration.scope-change-confirmed | integration-configuration.removed | integration-configuration.permission-upgraded | string)[], ownerId: string, projectIds?: string[], createdAt: number, updatedAt: number }[]"
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "vercel.webhooks.deploymentCreated",
+      "shortPath": "deploymentCreated",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "vercel({\n    webhookHooks: {\n        deploymentCreated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "vercel.webhooks.deploymentError",
+      "shortPath": "deploymentError",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "vercel({\n    webhookHooks: {\n        deploymentError: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "vercel.webhooks.deploymentSucceeded",
+      "shortPath": "deploymentSucceeded",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "vercel({\n    webhookHooks: {\n        deploymentSucceeded: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "vercel.webhooks.projectCreated",
+      "shortPath": "projectCreated",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "vercel({\n    webhookHooks: {\n        projectCreated: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "vercel.db.aliases.search",
+      "entityName": "aliases",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alias",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deploymentId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "redirect",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "teamId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "vercel.db.deployments.search",
+      "entityName": "deployments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "readyState",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "target",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "teamId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "vercel.db.domains.search",
+      "entityName": "domains",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "boughtAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "expiresAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "transferredAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "verified",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "projectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "teamId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "vercel.db.envs.search",
+      "entityName": "envs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "value",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "teamId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "vercel.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "accountId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "framework",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "teamId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "vercel.db.teams.search",
+      "entityName": "teams",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "avatar",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

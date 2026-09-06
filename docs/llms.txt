@@ -5,88 +5,119 @@
 ## Get started
 
 - [Introduction](https://docs.corsair.dev/introduction.md): What Corsair is, how the SDK works, and when to use it.
-- [Quick start](https://docs.corsair.dev/quick-start.md): Get a local Corsair instance running with Hub.
-- [Set up with your agent](https://docs.corsair.dev/getting-started/set-up-with-your-agent.md): One prompt that wires Corsair Hub into your app end to end.
+- [Quick start](https://docs.corsair.dev/quick-start.md): A working integration in five steps, powered by Hub.
+- [Set up with your agent](https://docs.corsair.dev/getting-started/set-up-with-your-agent.md): One prompt that takes your app from empty to a working, connected integration.
 
-## Adapters
+## Use cases
 
-- [Handlers](https://docs.corsair.dev/adapters/handlers.md): Mount the /api/corsair route — Next.js, Express, Hono, or any Web-standard runtime (SvelteKit, Remix, Astro, Nuxt, Workers, Bun, Deno).
+- [Overview](https://docs.corsair.dev/use-cases/overview.md): The four shapes an app built on Corsair takes, and how to pick between them.
+- [Dashboard](https://docs.corsair.dev/use-cases/dashboards.md): Render synced integration data from your own database, and act on it with live API calls.
+- [Agent](https://docs.corsair.dev/use-cases/agents.md): Expose every integration as tools over MCP so an LLM can pick the operation from a plain-English instruction.
+- [Knowledge base](https://docs.corsair.dev/use-cases/knowledge-base.md): Treat everything you've synced as one searchable corpus and answer questions from it.
+- [Workflow](https://docs.corsair.dev/use-cases/workflows.md): An event in one service triggers actions in another, chained in TypeScript.
+
+## Frameworks
+
+- [Next.js](https://docs.corsair.dev/frameworks/next.md): Mount Corsair as one catch-all route, read synced data in Server Components, and mutate with Server Actions.
+- [Nuxt](https://docs.corsair.dev/frameworks/nuxt.md): Mount as a Nitro server route, read synced data with useFetch, and connect tenants with the vanilla client.
+- [SvelteKit](https://docs.corsair.dev/frameworks/sveltekit.md): Read synced data in a load function, render it in +page.svelte, and mutate through form actions.
+- [Remix](https://docs.corsair.dev/frameworks/remix.md): Loaders read from .db, actions write through .api — Corsair's read/write split on Remix's data model.
+- [Astro](https://docs.corsair.dev/frameworks/astro.md): Mount as an Astro API route, then read synced data straight from .astro frontmatter, server-rendered per request.
+- [TanStack Start](https://docs.corsair.dev/frameworks/tanstack.md): Mount as a server route, read synced data in a server function or loader, and connect tenants with React hooks.
+- [Node.js](https://docs.corsair.dev/frameworks/node.md): Mount on a bare node:http server with toNodeHandler — you own the plumbing, the adapter handles the body.
+- [Express](https://docs.corsair.dev/frameworks/express.md): Drop Corsair into the Express API you already run — one line of middleware, then your own routes.
+- [Fastify](https://docs.corsair.dev/frameworks/fastify.md): Mount as a wildcard route in a Fastify plugin, then read synced data from your database.
+- [Hono](https://docs.corsair.dev/frameworks/hono.md): One wildcard route mounts Corsair in Hono, and it runs unchanged on Workers, Bun, Deno, and Node.
+- [Nest.js](https://docs.corsair.dev/frameworks/nestjs.md): Mount on Nest's Express instance, then provide it and inject it into your controllers.
+
+## SDK adapters
+
+- [Handlers](https://docs.corsair.dev/adapters/handlers.md): Mount the /api/corsair route — Next.js, Express, Hono, or any Web-standard runtime.
 - [Vanilla client](https://docs.corsair.dev/adapters/client.md): createCorsairClient — typed fetch wrapper for the management API, any JS runtime.
-- [React hooks](https://docs.corsair.dev/adapters/react.md): createCorsairReactClient — typed useTenants, useConnectionStatus, and friends.
+- [React hooks & Corsair Connect](https://docs.corsair.dev/adapters/react.md): createCorsairReactClient hooks (useTenants, useConnectionStatus, …) plus `<CorsairProvider>` / `<CorsairBoundary>` / useConnect, which open a connect dialog and resume the failed work when a tenant isn't connected.
 
 ## Core concepts
 
 - [Integrations](https://docs.corsair.dev/concepts/integrations.md): Instances, plugins, permissions, and root credentials.
-- [Auth](https://docs.corsair.dev/concepts/auth.md): How Corsair authenticates to third-party services.
-- [Permissions](https://docs.corsair.dev/concepts/permissions.md): Scope what each instance and tenant can do.
-- [Multi-tenancy](https://docs.corsair.dev/concepts/multi-tenancy.md): Tenants, connect links, and per-customer credentials.
-- [Database](https://docs.corsair.dev/concepts/database.md): Synced cache, schemas, and reading data.
-- [Webhooks](https://docs.corsair.dev/concepts/webhooks.md): Receive and route provider webhooks.
-- [Hooks](https://docs.corsair.dev/concepts/hooks.md): Run logic on Corsair events.
+- [Auth](https://docs.corsair.dev/concepts/auth.md): OAuth, API keys, and bot tokens, handled automatically.
+- [Permissions](https://docs.corsair.dev/concepts/permissions.md): Gate destructive agent actions behind human approval before they execute.
+- [Multi-tenancy](https://docs.corsair.dev/concepts/multi-tenancy.md): One flag, and every user gets their own credentials and data.
+- [Database](https://docs.corsair.dev/concepts/database.md): Five tables, always-fresh integration data, tenant-scoped by default.
+- [Triggers](https://docs.corsair.dev/concepts/webhooks.md): One endpoint for every incoming webhook, automatically routed and verified.
+- [Hooks](https://docs.corsair.dev/concepts/hooks.md): Hook into API calls and webhooks to customize behavior.
 - [API](https://docs.corsair.dev/concepts/api.md): Call plugin operations directly with `tenant.run()`.
-- [Error handling](https://docs.corsair.dev/concepts/error-handling.md): `CorsairApiError` and failure modes.
-- [TypeScript](https://docs.corsair.dev/concepts/typescript.md): Generated types and Zod schemas.
+- [Error handling](https://docs.corsair.dev/concepts/error-handling.md): Error handlers and retry strategies, plus the typed AuthMissingError / ReconnectRequiredError.
+- [TypeScript](https://docs.corsair.dev/concepts/typescript.md): End-to-end type safety with zero configuration.
+- [Provisioning](https://docs.corsair.dev/concepts/provisioning.md): Initialize integrations, accounts, and tenants with `setupCorsair` or the corsair CLI.
 
 ## Authentication
 
-- [API key](https://docs.corsair.dev/concepts/api-key.md): API-key based auth for providers.
-- [OAuth](https://docs.corsair.dev/concepts/oauth.md): OAuth-based auth for providers.
-- [OAuth process](https://docs.corsair.dev/concepts/oauth-process.md): Manual-mode production OAuth flow and connect links.
-
-## Provisioning
-
-- [Provisioning](https://docs.corsair.dev/concepts/provisioning.md): Initialize integrations, accounts, and tenants with `setupCorsair` or the corsair CLI.
+- [API key](https://docs.corsair.dev/concepts/api-key.md): Use static API keys and tokens with Corsair plugins.
+- [OAuth 2.0](https://docs.corsair.dev/concepts/oauth.md): Connect user accounts with OAuth 2.0 flows.
+- [OAuth process](https://docs.corsair.dev/concepts/oauth-process.md): A production OAuth implementation with security best practices.
 
 ## Hub
 
-Optional hosted relay for the parts of Corsair that need a public URL — OAuth callbacks, connect pages, approvals. Stores none of your credentials.
+Optional hosted relay for the parts of Corsair that need a public URL — OAuth callbacks, connect pages, approvals. Your users' API tokens land in your database, not Hub.
 
-- [Overview](https://docs.corsair.dev/hub/overview.md): What Hub is and why it stores no credentials.
-- [Setup](https://docs.corsair.dev/hub/setup.md): Wire the SDK into your app — install, /api/corsair route, keys, self-registration.
-- [Environments](https://docs.corsair.dev/hub/environments.md): Development vs production keys.
-- [Delivery URLs](https://docs.corsair.dev/hub/delivery-urls.md): How Hub delivers results; dev self-registration and production POST.
-- [Dashboard](https://docs.corsair.dev/hub/dashboard.md): Manage keys, connections, and delivery URLs.
-- [Manual or Hub](https://docs.corsair.dev/hub/manual-vs-hub.md): What you build in each mode.
-- [Permissions](https://docs.corsair.dev/hub/permissions.md): Scope what each environment can do.
-- [Hub REST API](https://docs.corsair.dev/hub/rest-api.md): Language-agnostic HTTP contract for non-JS backends.
+- [Overview](https://docs.corsair.dev/hub/overview.md): What Hub is and why it stores none of your credentials.
+- [Setup](https://docs.corsair.dev/hub/setup.md): Install, add the /api/corsair route, add your keys, and start — your app self-registers on first run.
+- [Environments](https://docs.corsair.dev/hub/environments.md): Development and Production environments for different stages of your workflow.
+- [Delivery URLs](https://docs.corsair.dev/hub/delivery-urls.md): How Hub delivers OAuth results, credentials, and approvals — signed POST over a tunnel in dev, to your public URL in prod.
+- [Dashboard](https://docs.corsair.dev/hub/dashboard.md): Manage project keys, connection status, sign-in links, and production delivery.
+- [Manual or Hub](https://docs.corsair.dev/hub/manual-vs-hub.md): The same instance, two ways to handle the surfaces that need a public URL.
+- [Approvals on Hub](https://docs.corsair.dev/hub/permissions.md): Let Hub host the approve/deny UI for gated permissions.
+- [Hub REST API](https://docs.corsair.dev/hub/rest-api.md): Integrate Hub from any language over plain HTTP, no SDK required.
+
+## Management API
+
+- [Overview](https://docs.corsair.dev/management/overview.md): Mount Corsair's management API in your own app — the same routes app.corsair.dev uses.
+- [Handler](https://docs.corsair.dev/management/handler.md): `managementHandler()` turns a Corsair instance into a framework-agnostic fetch handler.
+- [Connect / OAuth](https://docs.corsair.dev/management/connect.md): Connect users to Slack, GitHub, and other plugins with one `createLink` API.
 
 ## Use with AI
 
 Expose Corsair tools to agents over MCP, or wire them into agent SDKs and coding agents.
 
-- [MCP adapters](https://docs.corsair.dev/mcp-adapters/mcp-adapters.md): Local stdio MCP for agents and clients.
-- [Anthropic SDK](https://docs.corsair.dev/mcp-adapters/anthropic-sdk.md): Use Corsair tools with the Anthropic SDK.
-- [Claude Agent SDK](https://docs.corsair.dev/mcp-adapters/claude-sdk.md): `claudeMcpServerConfig` and `query()`.
-- [OpenAI Agents](https://docs.corsair.dev/mcp-adapters/openai-agents.md): Corsair tools in the OpenAI Agents SDK.
-- [Vercel AI SDK](https://docs.corsair.dev/mcp-adapters/vercel-ai.md): `streamText` / `generateText` with Corsair MCP tools.
-- [Mastra](https://docs.corsair.dev/mcp-adapters/mastra.md): Corsair tools in Mastra.
-- [OpenAI](https://docs.corsair.dev/mcp-adapters/openai.md): Responses API with Corsair MCP.
-- [Coding agents](https://docs.corsair.dev/mcp-adapters/coding-agents.md): Give Cursor, Claude Code, and other clients a local MCP server.
-- [Claude Code](https://docs.corsair.dev/mcp-adapters/claude-code.md): `.mcp.json` or `claude mcp add`.
-- [Cursor](https://docs.corsair.dev/mcp-adapters/cursor.md): `.cursor/mcp.json` configuration.
-
-## Management API
-
-- [Overview](https://docs.corsair.dev/management/overview.md): Manage instances, tenants, and connections programmatically.
-- [Handler](https://docs.corsair.dev/management/handler.md): The 9 management routes, options, and error shapes. Mounting lives under [Adapters](https://docs.corsair.dev/adapters/handlers.md).
-- [Connect](https://docs.corsair.dev/management/connect.md): Connect link flow.
+- [MCP adapters](https://docs.corsair.dev/mcp-adapters/mcp-adapters.md): Connect Corsair to any AI framework or agent runtime using MCP adapters.
+- [Anthropic SDK](https://docs.corsair.dev/mcp-adapters/anthropic-sdk.md): Use Corsair tools with the Anthropic SDK via tool use.
+- [Claude Agent SDK](https://docs.corsair.dev/mcp-adapters/claude-sdk.md): Use Corsair with the Claude Agent SDK via an in-process MCP server.
+- [Vercel AI SDK](https://docs.corsair.dev/mcp-adapters/vercel-ai.md): Connect Corsair to the Vercel AI SDK over HTTP.
+- [Mastra](https://docs.corsair.dev/mcp-adapters/mastra.md): Connect Corsair to the Mastra agent framework.
+- [OpenAI](https://docs.corsair.dev/mcp-adapters/openai.md): Connect Corsair to OpenAI via the Agents SDK or the Responses API over HTTP.
+- [Coding agents](https://docs.corsair.dev/mcp-adapters/coding-agents.md): Use Corsair's CLI discovery commands with Claude Code, Cursor, and Copilot.
+- [Claude Code](https://docs.corsair.dev/mcp-adapters/claude-code.md): Connect Corsair to Claude Code via MCP or use the CLI directly.
+- [Cursor](https://docs.corsair.dev/mcp-adapters/cursor.md): Connect Corsair to Cursor via MCP or the CLI.
+- [Codex](https://docs.corsair.dev/mcp-adapters/codex.md): Connect Corsair to OpenAI's Codex CLI via MCP, or the CLI.
+- [OpenCode](https://docs.corsair.dev/mcp-adapters/opencode.md): Connect Corsair to OpenCode via MCP, or the CLI.
+- [Hermes](https://docs.corsair.dev/mcp-adapters/hermes.md): Connect Corsair to the Hermes agent via MCP, or the CLI.
 
 ## Workflow engines
 
-- [Inngest](https://docs.corsair.dev/guides/inngest.md): Run Corsair operations from Inngest functions.
-- [Temporal](https://docs.corsair.dev/guides/temporal.md): Use Corsair in Temporal workflows.
-- [Trigger.dev](https://docs.corsair.dev/guides/trigger-dev.md): Use Corsair in Trigger.dev tasks.
-- [Hatchet](https://docs.corsair.dev/guides/hatchet.md): Use Corsair in Hatchet workflows.
+- [Inngest](https://docs.corsair.dev/guides/inngest.md): Trigger durable Inngest functions from Corsair webhook events.
+- [Temporal](https://docs.corsair.dev/guides/temporal.md): Start Temporal workflows from Corsair webhook events.
+- [Trigger.dev](https://docs.corsair.dev/guides/trigger-dev.md): Run Trigger.dev background tasks from Corsair webhook events.
+- [Hatchet](https://docs.corsair.dev/guides/hatchet.md): Push Hatchet workflow events from Corsair webhook hooks.
+
+## Workflows (beta)
+
+- [Overview](https://docs.corsair.dev/workflows/overview.md): Durable, multi-step workflows that run inside your app against your integrations, no external engine.
+- [Triggering](https://docs.corsair.dev/workflows/triggering.md): Start and list workflow runs, plus webhook and schedule triggers.
+- [Execution & steps](https://docs.corsair.dev/workflows/execution.md): Turn on execution, and how `step()` and `step.sleep()` make a run durable.
 
 ## Plugins
 
-- [Plugins guide](https://docs.corsair.dev/guides/plugins.md): The Corsair plugin catalog and how to use plugins.
-- [Create your own plugin](https://docs.corsair.dev/guides/create-your-own-plugin.md): Build a custom plugin.
-- [Plugin credentials](https://docs.corsair.dev/guides/plugin-credentials.md): Configure credentials for plugins.
+- [Plugins guide](https://docs.corsair.dev/guides/plugins.md): Install an integration package, register it, and browse reference docs for each provider.
+- [Create your own plugin](https://docs.corsair.dev/guides/create-your-own-plugin.md): Scaffold a new Corsair plugin with the generator.
+- [Plugin credentials](https://docs.corsair.dev/guides/plugin-credentials.md): How to obtain API keys, tokens, client IDs, secrets, and webhook credentials for every plugin.
 - [Integrations catalog](https://api.corsair.dev/md/integrations): Complete Corsair integration catalog (Markdown).
 
 ## Guides
 
-- [Webhooks](https://docs.corsair.dev/guides/webhooks.md): End-to-end webhook setup.
-- [Workflows](https://docs.corsair.dev/guides/workflows.md): Build workflows with Corsair.
-- [Dashboard](https://docs.corsair.dev/guides/dashboard.md): Use the Corsair dashboard.
+- [Vibe code your dashboard](https://docs.corsair.dev/guides/dashboard.md): Scaffold a T3 app, wire in Google Calendar, and let an agent build the whole dashboard from one prompt.
+- [Webhooks](https://docs.corsair.dev/guides/webhooks.md): Receive real-time events from any plugin in three steps.
+- [Workflows](https://docs.corsair.dev/guides/workflows.md): Chain webhook events into multi-step automations across any plugin.
+
+## LLM gateway
+
+- [LLM gateway](https://docs.corsair.dev/llm-gateway.md): Use llm.corsair.dev as an OpenAI-compatible API with per-developer keys and budgets.

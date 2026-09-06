@@ -1,0 +1,187 @@
+---
+title: Database
+description: "Habitica local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Habitica plugin syncs data locally. Use `corsair.habitica.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Challenges
+
+Path: `habitica.db.challenges.search`
+
+```ts
+const rows = await corsair.habitica.db.challenges.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `shortName` | `string` | equals, contains, startsWith, endsWith, in |
+| `summary` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `official` | `boolean` | equals |
+| `prize` | `number` | equals, gt, gte, lt, lte, in |
+| `memberCount` | `number` | equals, gt, gte, lt, lte, in |
+| `flagCount` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Groups
+
+Path: `habitica.db.groups.search`
+
+```ts
+const rows = await corsair.habitica.db.groups.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `privacy` | `string` | equals, contains, startsWith, endsWith, in |
+| `summary` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `memberCount` | `number` | equals, gt, gte, lt, lte, in |
+| `challengeCount` | `number` | equals, gt, gte, lt, lte, in |
+| `balance` | `number` | equals, gt, gte, lt, lte, in |
+| `bannedWordsAllowed` | `boolean` | equals |
+| `chatLimitCount` | `number` | equals, gt, gte, lt, lte, in |
+| `logo` | `string` | equals, contains, startsWith, endsWith, in |
+| `leaderMessage` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tags
+
+Path: `habitica.db.tags.search`
+
+```ts
+const rows = await corsair.habitica.db.tags.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `challenge` | `boolean` | equals |
+| `group` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tasks
+
+Path: `habitica.db.tasks.search`
+
+```ts
+const rows = await corsair.habitica.db.tasks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `alias` | `string` | equals, contains, startsWith, endsWith, in |
+| `value` | `number` | equals, gt, gte, lt, lte, in |
+| `priority` | `number` | equals, gt, gte, lt, lte, in |
+| `attribute` | `string` | equals, contains, startsWith, endsWith, in |
+| `userId` | `string` | equals, contains, startsWith, endsWith, in |
+| `byHabitica` | `boolean` | equals |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `up` | `boolean` | equals |
+| `down` | `boolean` | equals |
+| `counterUp` | `number` | equals, gt, gte, lt, lte, in |
+| `counterDown` | `number` | equals, gt, gte, lt, lte, in |
+| `frequency` | `string` | equals, contains, startsWith, endsWith, in |
+| `collapseChecklist` | `boolean` | equals |
+| `completed` | `boolean` | equals |
+| `streak` | `number` | equals, gt, gte, lt, lte, in |
+| `everyX` | `number` | equals, gt, gte, lt, lte, in |
+| `startDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `isDue` | `boolean` | equals |
+| `yesterDaily` | `boolean` | equals |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateCompleted` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Webhooks
+
+Path: `habitica.db.webhooks.search`
+
+```ts
+const rows = await corsair.habitica.db.webhooks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `label` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `enabled` | `boolean` | equals |
+| `failures` | `number` | equals, gt, gte, lt, lte, in |
+| `lastFailureAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
