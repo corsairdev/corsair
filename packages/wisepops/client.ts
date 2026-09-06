@@ -7,6 +7,7 @@ export class WisepopsAPIError extends Error {
 		public readonly status?: number,
 		public readonly retryAfter?: number,
 		public readonly code?: string,
+		public readonly body?: unknown,
 	) {
 		super(message);
 		this.name = 'WisepopsAPIError';
@@ -51,7 +52,13 @@ export async function makeWisepopsRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new WisepopsAPIError(error.message, error.status, error.retryAfter);
+			throw new WisepopsAPIError(
+				error.message,
+				error.status,
+				error.retryAfter,
+				undefined,
+				error.body,
+			);
 		}
 		if (error instanceof Error) {
 			throw new WisepopsAPIError(error.message);

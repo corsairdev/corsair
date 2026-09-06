@@ -2,9 +2,9 @@ import { z } from 'zod';
 
 // Contacts
 export const ContactsGetInputSchema = z.object({
-	collected_after: z.string().optional(),
-	wisepop_id: z.number().optional(),
-	page_size: z.number().optional(),
+	collected_after: z.string().datetime().optional(),
+	wisepop_id: z.number().int().positive().optional(),
+	page_size: z.number().int().positive().max(1000).optional(),
 });
 export type ContactsGetInput = z.infer<typeof ContactsGetInputSchema>;
 
