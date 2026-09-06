@@ -1085,6 +1085,14 @@
                 ]
               },
               {
+                "group": "Dictionary API",
+                "pages": [
+                  "plugins/dictionaryapi/overview",
+                  "plugins/dictionaryapi/api",
+                  "plugins/dictionaryapi/database"
+                ]
+              },
+              {
                 "group": "Diffbot",
                 "pages": [
                   "plugins/diffbot/overview",
