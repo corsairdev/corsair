@@ -1,40 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 
-import { ApiError, request } from 'corsair/http';
-
-export class CountdownApiAPIError extends Error {
-	public readonly status?: number;
-	public readonly statusText?: string;
-	public readonly body?: unknown;
-	public readonly retryAfter?: number;
-
-	constructor(
-		message: string,
-		public readonly code?: number,
-		options?: {
-			cause?: Error;
-			status?: number;
-			statusText?: string;
-			body?: unknown;
-			retryAfter?: number;
-		},
-	) {
-		super(message, options);
-		this.name = 'CountdownApiAPIError';
-		this.status =
-			options?.status ?? (typeof code === 'number' ? code : undefined);
-		this.statusText = options?.statusText;
-		this.body = options?.body;
-		this.retryAfter = options?.retryAfter;
-
-		if (options?.cause instanceof ApiError) {
-			this.status = this.status ?? options.cause.status;
-			this.statusText = this.statusText ?? options.cause.statusText;
-			this.body = this.body ?? options.cause.body;
-			this.retryAfter = this.retryAfter ?? options.cause.retryAfter;
-		}
-	}
-}
+import { request } from 'corsair/http';
 
 const COUNTDOWNAPI_API_BASE = 'https://api.countdownapi.com';
 
@@ -62,21 +28,10 @@ export async function makeCountdownApiRequest<T>(
 		},
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new CountdownApiAPIError(error.message, error.status, {
-				cause: error,
-			});
-		}
-
-		if (error instanceof Error) {
-			throw new CountdownApiAPIError(error.message, undefined, {
-				cause: error,
-			});
-		}
-
-		throw new CountdownApiAPIError('Unknown Countdown API error');
-	}
+	// No try/catch deliberately: `request()` throws a `corsair/http`
+	// `ApiError` (with `.status`/`.retryAfter`) on failure, and
+	// `error-handlers.ts`'s matchers depend on that concrete type. Wrapping
+	// it in a generic error class here would strip the status code before
+	// any handler ever saw it.
+	return await request<T>(config, requestOptions);
 }

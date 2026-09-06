@@ -6,13 +6,13 @@ describe('CountdownApi schema', () => {
 		expect(CountdownApiSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof CountdownApiSchema.entities).toBe('object');
-		expect(CountdownApiSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(CountdownApiSchema.entities))).toBe(true);
-		for (const entity of Object.values(CountdownApiSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	/**
+	 * Zero entities, deliberately: all three operations are live lookups
+	 * against eBay's current listings, not records with durable identities
+	 * worth caching (see `schema/database.ts`).
+	 */
+	it('declares an empty entities map', () => {
+		expect(Object.keys(CountdownApiSchema.entities)).toEqual([]);
 	});
 });
 

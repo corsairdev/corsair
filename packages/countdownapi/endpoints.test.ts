@@ -1,12 +1,13 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
-import { CountdownApiAPIError, makeCountdownApiRequest } from './client';
+import { makeCountdownApiRequest } from './client';
 import { get as autocomplete } from './endpoints/autocomplete';
 import { get as product } from './endpoints/product';
 import { get as search } from './endpoints/search';
 import { CountdownApiEndpointOutputSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { countdownapi } from './index';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -30,43 +31,166 @@ const ctx = {
 	key: 'test-countdownapi-key',
 } as Parameters<typeof search>[0];
 
-const validSearchResponse = {
-	request_metadata: { id: 'req-1', status: 'ok' },
+// Fixtures below follow the official CountdownAPI documentation
+// (docs.trajectdata.com/countdownapi/ebay-product-data-api/results/*):
+// `request_metadata` carries id/created_at/processed_at/total_time_taken/
+// ebay_url (no status), parameters are echoed as `request_parameters`, search
+// items carry a `prices` array, product images are `[{ link }]`, and master
+// product pages have no top-level `product`.
+
+const docSearchResponse = {
+	request_info: { success: true, credits_used: 1, credits_remaining: 999 },
+	request_metadata: {
+		id: '48d63ef58b3eb240d5b18115b674c4170faba51f',
+		created_at: '2021-01-01T00:00:00.000Z',
+		processed_at: '2021-01-01T00:00:00.100Z',
+		total_time_taken: 0.1,
+		ebay_url: 'https://www.ebay.com/sch/i.html?_nkw=memory+cards',
+	},
+	request_parameters: {
+		type: 'search',
+		search_term: 'memory cards',
+		ebay_domain: 'ebay.com',
+	},
+	search_information: { original_search_term: 'memory cards' },
 	search_results: [
 		{
 			position: 1,
-			title: 'iPhone 15',
-			link: 'https://ebay.com/itm/1',
-			price: { raw: '$999.00', value: 999, currency: 'USD' },
+			title: 'SanDisk Ultra 128GB microSDXC Memory Card',
+			epid: '15029998723',
+			link: 'https://www.ebay.com/itm/15029998723',
+			image: 'https://i.ebayimg.com/images/g/ABC123/s-l500.jpg',
+			hotness: '518+ Sold',
+			condition: 'Brand New',
+			is_auction: false,
+			buy_it_now: true,
+			free_returns: true,
+			sponsored: false,
+			item_location: 'United States',
+			rating: 4.9,
+			ratings_total: 1287,
+			shipping_cost: 0,
+			prices: [
+				{
+					symbol: '$',
+					value: 7.85,
+					currency: 'USD',
+					raw: '$7.85',
+					name: '',
+				},
+			],
+			seller_info: {
+				name: 'top_seller',
+				review_count: 12345,
+				positive_feedback_percent: 99.2,
+			},
+		},
+	],
+	pagination: {
+		current_page: 1,
+		total_results: '9893',
+		has_next_page: true,
+		next_page: 2,
+	},
+};
+
+const docProductResponse = {
+	request_info: { success: true, credits_used: 1, credits_remaining: 999 },
+	request_metadata: {
+		id: '1c0ffee4decafbad0ddba115b674c4170faba51f',
+		created_at: '2021-01-01T00:00:00.000Z',
+		processed_at: '2021-01-01T00:00:00.100Z',
+		total_time_taken: 0.1,
+		ebay_url: 'https://www.ebay.com/itm/15029998723',
+	},
+	request_parameters: {
+		type: 'product',
+		epid: '15029998723',
+		ebay_domain: 'ebay.com',
+	},
+	is_master: false,
+	product: {
+		title: 'SanDisk Ultra 128GB microSDXC Memory Card',
+		link: 'https://www.ebay.com/itm/15029998723',
+		images: [
+			{ link: 'https://i.ebayimg.com/images/g/ABC123/s-l1600.jpg' },
+			{ link: 'https://i.ebayimg.com/images/g/DEF456/s-l1600.jpg' },
+		],
+	},
+};
+
+const docMasterProductResponse = {
+	request_info: { success: true, credits_used: 1, credits_remaining: 999 },
+	request_metadata: {
+		id: '2c0ffee4decafbad0ddba115b674c4170faba51f',
+		created_at: '2021-01-01T00:00:00.000Z',
+		processed_at: '2021-01-01T00:00:00.100Z',
+		total_time_taken: 0.1,
+		ebay_url: 'https://www.ebay.com/itm/0619659162982',
+	},
+	request_parameters: {
+		type: 'product',
+		gtin: '0619659162982',
+		ebay_domain: 'ebay.com',
+	},
+	is_master: true,
+	sold_out: false,
+	top_picks: [
+		{
+			title: 'SanDisk Ultra 128GB microSDXC Memory Card',
+			epid: '15029998723',
+			link: 'https://www.ebay.com/itm/15029998723',
+			prices: [
+				{
+					symbol: '$',
+					value: 7.85,
+					currency: 'USD',
+					raw: '$7.85',
+					name: '',
+				},
+			],
 		},
 	],
 };
 
-const validProductResponse = {
-	request_metadata: { id: 'req-2', status: 'ok' },
-	product: {
-		title: 'iPhone 15 Pro',
-		link: 'https://ebay.com/itm/2',
-		price: { raw: '$1,099.00', value: 1099, currency: 'USD' },
+const docAutocompleteResponse = {
+	request_info: { success: true, credits_used: 1, credits_remaining: 999 },
+	request_metadata: {
+		id: '48d63ef58b3eb240d5b18115b674c4170faba51f',
+		created_at: '2021-01-01T00:00:00.000Z',
+		processed_at: '2021-01-01T00:00:00.001Z',
+		total_time_taken: 0.1,
 	},
-};
-
-const validAutocompleteResponse = {
-	request_metadata: { id: 'req-3', status: 'ok' },
-	autocomplete_results: ['iphone 15', 'iphone 14'],
+	request_parameters: {
+		type: 'autocomplete',
+		search_term: 'memory',
+		ebay_domain: 'ebay.com',
+	},
+	autocomplete_results: [
+		{
+			suggestion: 'memory card',
+			type: 'KEYWORD',
+			category_id: 9394,
+			category_name: 'Cell Phone Accessories',
+		},
+		{
+			suggestion: 'memory foam mattress',
+			type: 'KEYWORD',
+		},
+	],
 };
 
 describe('CountdownApi endpoints', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
-		mockRequest.mockResolvedValue(validSearchResponse as any);
+		mockRequest.mockResolvedValue(docSearchResponse as any);
 	});
 
 	it('search sends the correct request and returns validated response', async () => {
-		mockRequest.mockResolvedValue(validSearchResponse as any);
+		mockRequest.mockResolvedValue(docSearchResponse as any);
 
 		const result = await search(ctx, {
-			query: 'iphone',
+			query: 'memory cards',
 			ebay_domain: 'ebay.com',
 		});
 
@@ -75,25 +199,47 @@ describe('CountdownApi endpoints', () => {
 			'test-countdownapi-key',
 			{
 				type: 'search',
-				query: 'iphone',
+				query: 'memory cards',
 				ebay_domain: 'ebay.com',
+				page: undefined,
 			},
 		);
 
-		expect(result).toEqual(validSearchResponse);
+		expect(result).toEqual(docSearchResponse);
 		expect(mockLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'countdownapi.search.get',
-			{ query: 'iphone', ebay_domain: 'ebay.com' },
+			{ query: 'memory cards', ebay_domain: 'ebay.com' },
 			'completed',
 		);
 	});
 
+	it('search forwards the page parameter when provided', async () => {
+		mockRequest.mockResolvedValue(docSearchResponse as any);
+
+		await search(ctx, {
+			query: 'memory cards',
+			ebay_domain: 'ebay.com',
+			page: 3,
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/request',
+			'test-countdownapi-key',
+			{
+				type: 'search',
+				query: 'memory cards',
+				ebay_domain: 'ebay.com',
+				page: 3,
+			},
+		);
+	});
+
 	it('product sends the correct request and returns validated response', async () => {
-		mockRequest.mockResolvedValue(validProductResponse as any);
+		mockRequest.mockResolvedValue(docProductResponse as any);
 
 		const result = await product(ctx, {
-			epid: '123',
+			epid: '15029998723',
 			ebay_domain: 'ebay.com',
 		});
 
@@ -103,7 +249,7 @@ describe('CountdownApi endpoints', () => {
 			{
 				type: 'product',
 				url: undefined,
-				epid: '123',
+				epid: '15029998723',
 				gtin: undefined,
 				ebay_domain: 'ebay.com',
 				include_html: undefined,
@@ -112,20 +258,31 @@ describe('CountdownApi endpoints', () => {
 			},
 		);
 
-		expect(result).toEqual(validProductResponse);
+		expect(result).toEqual(docProductResponse);
 		expect(mockLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'countdownapi.product.get',
-			{ epid: '123', ebay_domain: 'ebay.com' },
+			{ epid: '15029998723', ebay_domain: 'ebay.com' },
 			'completed',
 		);
 	});
 
+	it('product parses a master page response without a top-level product', async () => {
+		mockRequest.mockResolvedValue(docMasterProductResponse as any);
+
+		const result = await product(ctx, {
+			gtin: '0619659162982',
+			ebay_domain: 'ebay.com',
+		});
+
+		expect(result).toEqual(docMasterProductResponse);
+	});
+
 	it('autocomplete uses search_term and returns validated response', async () => {
-		mockRequest.mockResolvedValue(validAutocompleteResponse as any);
+		mockRequest.mockResolvedValue(docAutocompleteResponse as any);
 
 		const result = await autocomplete(ctx, {
-			query: 'iph',
+			query: 'memory',
 			ebay_domain: 'ebay.com',
 		});
 
@@ -134,16 +291,16 @@ describe('CountdownApi endpoints', () => {
 			'test-countdownapi-key',
 			{
 				type: 'autocomplete',
-				search_term: 'iph',
+				search_term: 'memory',
 				ebay_domain: 'ebay.com',
 			},
 		);
 
-		expect(result).toEqual(validAutocompleteResponse);
+		expect(result).toEqual(docAutocompleteResponse);
 		expect(mockLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'countdownapi.autocomplete.get',
-			{ query: 'iph', ebay_domain: 'ebay.com' },
+			{ query: 'memory', ebay_domain: 'ebay.com' },
 			'completed',
 		);
 	});
@@ -153,7 +310,7 @@ describe('CountdownApi endpoints', () => {
 
 		await expect(
 			search(ctx, {
-				query: 'iphone',
+				query: 'memory cards',
 				ebay_domain: 'ebay.com',
 			}),
 		).rejects.toThrow(ZodError);
@@ -161,25 +318,23 @@ describe('CountdownApi endpoints', () => {
 
 	it('product throws Zod validation error on malformed response', async () => {
 		mockRequest.mockResolvedValue({
-			request_metadata: { id: '1', status: 'ok' },
+			request_parameters: { type: 'product' },
 		} as any);
 
 		await expect(
 			product(ctx, {
-				epid: '123',
+				epid: '15029998723',
 				ebay_domain: 'ebay.com',
 			}),
 		).rejects.toThrow(ZodError);
 	});
 
 	it('autocomplete throws Zod validation error on malformed response', async () => {
-		mockRequest.mockResolvedValue({
-			search_parameters: { type: 'autocomplete' },
-		} as any);
+		mockRequest.mockResolvedValue({ request_metadata: { id: '1' } } as any);
 
 		await expect(
 			autocomplete(ctx, {
-				query: 'iph',
+				query: 'memory',
 				ebay_domain: 'ebay.com',
 			}),
 		).rejects.toThrow(ZodError);
@@ -187,31 +342,35 @@ describe('CountdownApi endpoints', () => {
 });
 
 describe('CountdownApi output schemas', () => {
-	it('search schema validates a representative response', () => {
-		const response = {
-			request_metadata: { id: 'req-1', status: 'ok' },
-			search_parameters: { type: 'search', ebay_domain: 'ebay.com' },
-			search_information: { total_results: 500, page: 1 },
-			search_results: [
-				{
-					position: 1,
-					title: 'iPhone 15 Pro',
-					link: 'https://www.ebay.com/itm/123',
-					price: { raw: '$999.00', value: 999, currency: 'USD' },
-					thumbnail: 'https://i.ebayimg.com/images/123.jpg',
-					rating: 4.9,
-					reviews_count: 42,
-				},
-			],
-		};
+	it('search schema validates the documented search response', () => {
+		const result =
+			CountdownApiEndpointOutputSchemas.search.safeParse(docSearchResponse);
+		expect(result.success).toBe(true);
+		if (result.success) {
+			expect(result.data.request_metadata.status).toBeUndefined();
+			expect(result.data.pagination?.total_results).toBe('9893');
+			expect(result.data.search_results[0]?.prices?.[0]).toMatchObject({
+				value: 7.85,
+				raw: '$7.85',
+			});
+		}
+	});
 
-		const result = CountdownApiEndpointOutputSchemas.search.safeParse(response);
+	it('search schema accepts a numeric pagination.total_results', () => {
+		const result = CountdownApiEndpointOutputSchemas.search.safeParse({
+			...docSearchResponse,
+			pagination: {
+				current_page: 1,
+				total_results: 9893,
+				has_next_page: false,
+			},
+		});
 		expect(result.success).toBe(true);
 	});
 
 	it('search schema preserves extra passthrough fields', () => {
 		const response = {
-			request_metadata: { id: 'req-2', status: 'ok', extra_field: true },
+			request_metadata: { id: 'req-2', extra_field: true },
 			search_results: [
 				{
 					title: 'Widget',
@@ -219,68 +378,51 @@ describe('CountdownApi output schemas', () => {
 					sponsored: true,
 				},
 			],
-			pagination: { next_page: 2 },
+			future_field: { nested: 'value' },
 		};
 
 		const result = CountdownApiEndpointOutputSchemas.search.safeParse(response);
 		expect(result.success).toBe(true);
 		if (result.success) {
 			expect(result.data.search_results[0]).toHaveProperty('sponsored', true);
-			expect(result.data).toHaveProperty('pagination');
+			expect(result.data).toHaveProperty('future_field');
 		}
 	});
 
 	it('search schema rejects response missing search_results', () => {
 		const response = {
-			request_metadata: { id: 'req-3', status: 'ok' },
+			request_metadata: { id: 'req-3' },
 		};
 
 		const result = CountdownApiEndpointOutputSchemas.search.safeParse(response);
 		expect(result.success).toBe(false);
 	});
 
-	it('product schema validates a representative response', () => {
-		const response = {
-			request_metadata: { id: 'req-4', status: 'ok' },
-			search_parameters: { type: 'product', ebay_domain: 'ebay.com' },
-			product: {
-				title: 'iPhone 15 Pro 256GB',
-				link: 'https://www.ebay.com/itm/789',
-				price: { raw: '$1,099.00', value: 1099, currency: 'USD' },
-				images: [
-					'https://i.ebayimg.com/images/a.jpg',
-					'https://i.ebayimg.com/images/b.jpg',
-				],
-			},
-		};
-
+	it('product schema validates the documented individual listing response', () => {
 		const result =
-			CountdownApiEndpointOutputSchemas.product.safeParse(response);
-		expect(result.success).toBe(true);
-	});
-
-	it('product schema preserves extra passthrough fields', () => {
-		const response = {
-			request_metadata: { id: 'req-5', status: 'ok' },
-			product: {
-				title: 'Gadget',
-				seller_info: { name: 'top_seller', feedback_score: 99.8 },
-				item_specifics: [{ name: 'Brand', value: 'Apple' }],
-			},
-		};
-
-		const result =
-			CountdownApiEndpointOutputSchemas.product.safeParse(response);
+			CountdownApiEndpointOutputSchemas.product.safeParse(docProductResponse);
 		expect(result.success).toBe(true);
 		if (result.success) {
-			expect(result.data.product).toHaveProperty('seller_info');
-			expect(result.data.product).toHaveProperty('item_specifics');
+			expect(result.data.product?.images?.[0]).toHaveProperty('link');
 		}
 	});
 
-	it('product schema rejects response missing product', () => {
+	it('product schema validates a master page without a top-level product', () => {
+		const result = CountdownApiEndpointOutputSchemas.product.safeParse(
+			docMasterProductResponse,
+		);
+		expect(result.success).toBe(true);
+		if (result.success) {
+			expect(result.data.is_master).toBe(true);
+			expect(result.data.product).toBeUndefined();
+			expect(result.data.top_picks).toHaveLength(1);
+		}
+	});
+
+	it('product schema rejects response missing request_metadata', () => {
 		const response = {
-			request_metadata: { id: 'req-6', status: 'ok' },
+			request_parameters: { type: 'product' },
+			product: { title: 'Gadget' },
 		};
 
 		const result =
@@ -288,11 +430,32 @@ describe('CountdownApi output schemas', () => {
 		expect(result.success).toBe(false);
 	});
 
-	it('autocomplete schema validates a representative response', () => {
+	it('autocomplete schema validates the documented autocomplete response', () => {
+		const result = CountdownApiEndpointOutputSchemas.autocomplete.safeParse(
+			docAutocompleteResponse,
+		);
+		expect(result.success).toBe(true);
+		if (result.success) {
+			expect(result.data.autocomplete_results[0]).toMatchObject({
+				suggestion: 'memory card',
+				type: 'KEYWORD',
+				category_id: 9394,
+				category_name: 'Cell Phone Accessories',
+			});
+		}
+	});
+
+	it('autocomplete schema accepts a string category_id', () => {
 		const response = {
-			request_metadata: { id: 'req-7', status: 'ok' },
-			search_parameters: { type: 'autocomplete', ebay_domain: 'ebay.com' },
-			autocomplete_results: ['iphone 15', 'iphone 14', 'iphone case'],
+			request_metadata: { id: 'req-8' },
+			autocomplete_results: [
+				{
+					suggestion: 'memory card',
+					type: 'KEYWORD',
+					category_id: '9394',
+					category_name: 'Cell Phone Accessories',
+				},
+			],
 		};
 
 		const result =
@@ -302,8 +465,8 @@ describe('CountdownApi output schemas', () => {
 
 	it('autocomplete schema preserves extra passthrough fields', () => {
 		const response = {
-			request_metadata: { id: 'req-8', status: 'ok', timing: 42 },
-			autocomplete_results: ['test'],
+			request_metadata: { id: 'req-9', timing: 42 },
+			autocomplete_results: [{ suggestion: 'test', type: 'KEYWORD' }],
 			extra: 'value',
 		};
 
@@ -317,7 +480,7 @@ describe('CountdownApi output schemas', () => {
 
 	it('autocomplete schema rejects response missing autocomplete_results', () => {
 		const response = {
-			request_metadata: { id: 'req-9', status: 'ok' },
+			request_metadata: { id: 'req-10' },
 		};
 
 		const result =
@@ -344,23 +507,44 @@ describe('CountdownApi output schemas', () => {
 	});
 });
 
-describe('CountdownApi error handlers', () => {
-	it('matches RATE_LIMIT_ERROR for CountdownApiAPIError with status 429 and preserves retryAfter', async () => {
-		const error = new CountdownApiAPIError('Rate limit exceeded', 429, {
-			retryAfter: 3500,
-		});
-
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
-
-		const strategy = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
-		expect(strategy).toEqual({
-			maxRetries: 5,
-			headersRetryAfterMs: 3500,
-		});
+describe('CountdownApi keyBuilder', () => {
+	it('throws AuthMissingError when no key is configured', async () => {
+		const plugin = countdownapi();
+		const keyBuilder = plugin.keyBuilder;
+		expect(keyBuilder).toBeDefined();
+		const ctx = {
+			authType: 'api_key',
+			keys: { get_api_key: async () => undefined },
+		} as never;
+		await expect(keyBuilder?.(ctx, 'endpoint')).rejects.toThrow(
+			AuthMissingError,
+		);
 	});
 
-	it('matches RATE_LIMIT_ERROR for wrapped ApiError with status 429 and preserves retryAfter', async () => {
-		const apiError = new ApiError(
+	it('prefers an explicitly supplied key', async () => {
+		const plugin = countdownapi({ key: 'explicit-key' });
+		const keyBuilder = plugin.keyBuilder;
+		const ctx = {
+			authType: 'api_key',
+			keys: { get_api_key: async () => 'from-store' },
+		} as never;
+		await expect(keyBuilder?.(ctx, 'endpoint')).resolves.toBe('explicit-key');
+	});
+
+	it('returns the stored key when present', async () => {
+		const plugin = countdownapi();
+		const keyBuilder = plugin.keyBuilder;
+		const ctx = {
+			authType: 'api_key',
+			keys: { get_api_key: async () => 'stored-key' },
+		} as never;
+		await expect(keyBuilder?.(ctx, 'endpoint')).resolves.toBe('stored-key');
+	});
+});
+
+describe('CountdownApi error handlers', () => {
+	it('matches RATE_LIMIT_ERROR for ApiError with status 429 and does not stack retries', async () => {
+		const error = new ApiError(
 			{ url: 'https://api.countdownapi.com/request', method: 'GET' },
 			{
 				url: 'https://api.countdownapi.com/request',
@@ -372,19 +556,11 @@ describe('CountdownApi error handlers', () => {
 			'Rate limited',
 			{ retryAfter: 6000 },
 		);
-		const error = new CountdownApiAPIError(apiError.message, apiError.status, {
-			cause: apiError,
-		});
 
-		expect(error.status).toBe(429);
-		expect(error.retryAfter).toBe(6000);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 
 		const strategy = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
-		expect(strategy).toEqual({
-			maxRetries: 5,
-			headersRetryAfterMs: 6000,
-		});
+		expect(strategy).toEqual({ maxRetries: 0 });
 	});
 
 	it('matches RATE_LIMIT_ERROR on message fallback', async () => {
@@ -395,23 +571,11 @@ describe('CountdownApi error handlers', () => {
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error2)).toBe(true);
 
 		const strategy = await errorHandlers.RATE_LIMIT_ERROR.handler(error1);
-		expect(strategy).toEqual({
-			maxRetries: 5,
-			headersRetryAfterMs: undefined,
-		});
-	});
-
-	it('matches AUTH_ERROR for CountdownApiAPIError with status 401', async () => {
-		const error = new CountdownApiAPIError('Invalid API key', 401);
-
-		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
-
-		const strategy = await errorHandlers.AUTH_ERROR.handler(error);
 		expect(strategy).toEqual({ maxRetries: 0 });
 	});
 
-	it('matches AUTH_ERROR for wrapped ApiError with status 401', async () => {
-		const apiError = new ApiError(
+	it('matches AUTH_ERROR for ApiError with status 401', async () => {
+		const error = new ApiError(
 			{ url: 'https://api.countdownapi.com/request', method: 'GET' },
 			{
 				url: 'https://api.countdownapi.com/request',
@@ -422,11 +586,7 @@ describe('CountdownApi error handlers', () => {
 			},
 			'Unauthorized',
 		);
-		const error = new CountdownApiAPIError(apiError.message, apiError.status, {
-			cause: apiError,
-		});
 
-		expect(error.status).toBe(401);
 		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
 
 		const strategy = await errorHandlers.AUTH_ERROR.handler(error);

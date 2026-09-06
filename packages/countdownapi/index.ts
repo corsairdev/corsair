@@ -13,6 +13,8 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 
+import { AuthMissingError } from 'corsair/core';
+
 import { Autocomplete, Product, Search } from './endpoints';
 import type {
 	CountdownApiEndpointInputs,
@@ -158,12 +160,17 @@ export function countdownapi<const T extends CountdownApiPluginOptions>(
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
+			if (ctx.authType === 'api_key') {
 				const key = await ctx.keys.get_api_key();
-				return key ?? '';
+
+				if (!key) {
+					throw new AuthMissingError('countdownapi', 'api_key');
+				}
+
+				return key;
 			}
 
-			return '';
+			throw new AuthMissingError('countdownapi', 'api_key');
 		},
 	} satisfies InternalCountdownApiPlugin;
 }

@@ -1,67 +1,25 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { CountdownApiAPIError } from './client';
 
 export const errorHandlers = {
+	/**
+	 * `maxRetries: 0` is deliberate: the shared request layer already
+	 * retries 429s in a real loop, so reaching this handler means those
+	 * retries failed - stacking a second retry here would only spend extra
+	 * requests against a metered credit balance for no benefit (same
+	 * rationale as `packages/serpapi/error-handlers.ts`).
+	 */
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (
-				error instanceof CountdownApiAPIError &&
-				(error.status === 429 || error.code === 429)
-			) {
-				return true;
-			}
-			if (error instanceof ApiError && error.status === 429) {
-				return true;
-			}
-			if (
-				'cause' in error &&
-				error.cause instanceof ApiError &&
-				error.cause.status === 429
-			) {
-				return true;
-			}
+			if (error instanceof ApiError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
-		handler: async (error?: Error) => {
-			let retryAfterMs: number | undefined;
-			if (
-				error instanceof CountdownApiAPIError &&
-				error.retryAfter !== undefined
-			) {
-				retryAfterMs = error.retryAfter;
-			} else if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			} else if (
-				error &&
-				'cause' in error &&
-				error.cause instanceof ApiError &&
-				error.cause.retryAfter !== undefined
-			) {
-				retryAfterMs = error.cause.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		handler: async (error?: Error) => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (
-				error instanceof CountdownApiAPIError &&
-				(error.status === 401 || error.code === 401)
-			) {
-				return true;
-			}
-			if (error instanceof ApiError && error.status === 401) {
-				return true;
-			}
-			if (
-				'cause' in error &&
-				error.cause instanceof ApiError &&
-				error.cause.status === 401
-			) {
-				return true;
-			}
+			if (error instanceof ApiError && error.status === 401) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
 		},
