@@ -1,0 +1,134 @@
+---
+title: Overview
+description: "Automated document and report generation API that converts templates (DOCX, XLSX, PPTX, ODT) and JSON data into PDFs and other formats."
+---
+
+Use **Carbone** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 7 typed API operations
+- 1 synced entity (`templates`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/carbone
+```
+```bash yarn
+yarn add corsair @corsair-dev/carbone
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/carbone
+```
+```bash bun
+bun add corsair @corsair-dev/carbone
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { carbone } from '@corsair-dev/carbone';
+
+export const corsair = createCorsair({
+	plugins: [
+		carbone(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+carbone()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'carbone',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`status.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.carbone.api.status.get({});
+```
+
+
+**Render document**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.carbone.api.render.render({
+	templateId: 'tmpl_12345',
+	data: { firstname: 'John', lastname: 'Doe' },
+});
+```
+
+
+See the full list on the [API](/plugins/carbone/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.carbone.db.<entity>.search()` and `.list()`: `templates`.
+
+See [Database](/plugins/carbone/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/carbone/api">
+    Every `carbone.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/carbone/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
