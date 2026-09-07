@@ -43,7 +43,11 @@ describe('Zenserp API operations', () => {
 			if (url.includes('/search_engines'))
 				return json([{ name: 'Google', domain: 'google.com' }]);
 			if (url.includes('/hl')) return json([{ name: 'English', value: 'en' }]);
-			return json({ query: 'corsair', organic: [{ title: 'Corsair' }] });
+			return json({
+				query: { q: 'corsair' },
+				organic: [{ title: 'Corsair' }],
+				number_of_results: 1,
+			});
 		});
 	});
 

@@ -55,10 +55,13 @@ export const ListLanguagesInputSchema = EmptyInputSchema;
 const UnknownRecord = z.record(z.string(), z.unknown());
 export const SearchResponseSchema = z
 	.object({
-		query: z.string().optional(),
+		query: UnknownRecord.optional(),
 		organic: z.array(UnknownRecord).optional(),
 		paid: z.array(UnknownRecord).optional(),
 		images: z.array(UnknownRecord).optional(),
+		related_searches: z.array(UnknownRecord).optional(),
+		pagination: UnknownRecord.optional(),
+		number_of_results: z.number().optional(),
 		knowledge_graph: UnknownRecord.optional(),
 	})
 	.loose();
