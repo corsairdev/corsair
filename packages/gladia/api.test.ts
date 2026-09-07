@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
 import { GladiaAPIError } from './client';
 import type { GladiaContext } from './index';
-import { gladia } from './index';
+import { gladia, gladiaEndpointSchemas } from './index';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -19,10 +19,10 @@ const mockLogEvent = logEventFromContext as jest.Mock;
 
 const mockCtx = {
 	key: 'test-api-key',
-	options: {},
-	logEvent: jest.fn(),
-	db: {},
-} as unknown as GladiaContext;
+	$getAccountId: async () => 'test-account-id',
+	database: undefined,
+	endpoints: {},
+} as GladiaContext;
 
 const job = {
 	id: 'job-1',
@@ -49,6 +49,44 @@ describe('Gladia plugin shape', () => {
 		expect(plugin.authConfig).toEqual({
 			api_key: { account: ['tenant_external_id'] },
 		});
+	});
+});
+
+describe('Gladia live input bounds', () => {
+	const live =
+		gladiaEndpointSchemas['live.initiateTranscriptionSession']?.input;
+
+	it('rejects endpointing outside the 0.01 to 10 second range', () => {
+		expect(live!.safeParse({ endpointing: 0.001 }).success).toBe(false);
+		expect(live!.safeParse({ endpointing: 20 }).success).toBe(false);
+		expect(live!.safeParse({ endpointing: 0.05 }).success).toBe(true);
+	});
+
+	it('rejects maximum_duration_without_endpointing outside 5 to 60 seconds', () => {
+		expect(
+			live!.safeParse({ maximum_duration_without_endpointing: 1 }).success,
+		).toBe(false);
+		expect(
+			live!.safeParse({ maximum_duration_without_endpointing: 61 }).success,
+		).toBe(false);
+		expect(
+			live!.safeParse({ maximum_duration_without_endpointing: 30 }).success,
+		).toBe(true);
+	});
+
+	it('requires 8-bit audio for alaw and ulaw encodings', () => {
+		expect(
+			live!.safeParse({ encoding: 'wav/alaw', bit_depth: 16 }).success,
+		).toBe(false);
+		expect(
+			live!.safeParse({ encoding: 'wav/ulaw', bit_depth: 24 }).success,
+		).toBe(false);
+		expect(
+			live!.safeParse({ encoding: 'wav/alaw', bit_depth: 8 }).success,
+		).toBe(true);
+		expect(
+			live!.safeParse({ encoding: 'wav/pcm', bit_depth: 16 }).success,
+		).toBe(true);
 	});
 });
 
@@ -199,5 +237,26 @@ describe('Gladia HTTP client and endpoints', () => {
 				id: 'job-1',
 			}),
 		).rejects.toBeInstanceOf(GladiaAPIError);
+	});
+
+	it('rejects malformed inputs before they reach Gladia', async () => {
+		await expect(async () => {
+			await gladia({
+				key: 'test-api-key',
+			}).endpoints!.preRecorded.initiateTranscription(mockCtx, {
+				audio_url: 'not-a-url',
+			} as never);
+		}).rejects.toThrow(/input validation failed/);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects responses that violate the advertised output contract', async () => {
+		mockRequest.mockResolvedValueOnce({ unexpected: true });
+		await expect(
+			gladia({ key: 'test-api-key' }).endpoints!.live.getTranscriptionResult(
+				mockCtx,
+				{ id: 'job-1' },
+			),
+		).rejects.toThrow(/gladia/i);
 	});
 });
