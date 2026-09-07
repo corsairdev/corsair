@@ -386,11 +386,8 @@ export const ProviderDisplayNames = {
 	buildkite: 'Buildkite',
 	cal: 'Cal',
 	calendly: 'Calendly',
-<<<<<<< HEAD
-	campayn: 'Campayn',
-=======
 	callingly: 'Callingly',
->>>>>>> fdf3575b (feat(plugins): add Callingly integration plugin)
+	campayn: 'Campayn',
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
 	capsulecrm: 'Capsule CRM',
@@ -674,11 +671,8 @@ export type AllProviders =
 	| 'buildkite'
 	| 'cal'
 	| 'calendly'
-<<<<<<< HEAD
-	| 'campayn'
-=======
 	| 'callingly'
->>>>>>> fdf3575b (feat(plugins): add Callingly integration plugin)
+	| 'campayn'
 	| 'canva'
 	| 'canvas'
 	| 'capsulecrm'

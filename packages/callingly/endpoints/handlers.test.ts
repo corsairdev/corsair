@@ -16,16 +16,34 @@ jest.mock('../client', () => ({
 const mockRequest = jest.mocked(makeCallinglyRequest);
 const mockLog = jest.mocked(logEventFromContext);
 
-const ctx = { key: 'test-api-key' } as CallinglyContext;
+const mockDb = {
+	leads: { upsertByEntityId: jest.fn(), deleteByEntityId: jest.fn() },
+	calls: { upsertByEntityId: jest.fn(), deleteByEntityId: jest.fn() },
+	users: { upsertByEntityId: jest.fn(), deleteByEntityId: jest.fn() },
+	teams: { upsertByEntityId: jest.fn(), deleteByEntityId: jest.fn() },
+	teamUsers: { upsertByEntityId: jest.fn(), deleteByEntityId: jest.fn() },
+	schedules: { upsertByEntityId: jest.fn(), deleteByEntityId: jest.fn() },
+	clients: { upsertByEntityId: jest.fn(), deleteByEntityId: jest.fn() },
+	webhooks: { upsertByEntityId: jest.fn(), deleteByEntityId: jest.fn() },
+};
+
+const ctx = {
+	key: 'test-api-key',
+	db: mockDb,
+} as unknown as CallinglyContext;
 
 beforeEach(() => {
 	mockRequest.mockReset();
 	mockLog.mockReset();
+	for (const table of Object.values(mockDb)) {
+		table.upsertByEntityId.mockReset();
+		table.deleteByEntityId.mockReset();
+	}
 });
 
 describe('Callingly Endpoints Handlers', () => {
 	describe('Leads', () => {
-		it('createLead calls POST /leads and logs event', async () => {
+		it('createLead calls POST /leads, validates input, persists to db and logs event', async () => {
 			const lead = {
 				id: 'lead_10',
 				name: 'Test Lead',
@@ -44,6 +62,10 @@ describe('Callingly Endpoints Handlers', () => {
 				accountId: undefined,
 			});
 			expect(res.id).toBe('lead_10');
+			expect(mockDb.leads.upsertByEntityId).toHaveBeenCalledWith(
+				'lead_10',
+				expect.objectContaining({ id: 'lead_10', name: 'Test Lead' }),
+			);
 			expect(mockLog).toHaveBeenCalledWith(
 				ctx,
 				'callingly.leads.create',
@@ -52,7 +74,7 @@ describe('Callingly Endpoints Handlers', () => {
 			);
 		});
 
-		it('getLead calls GET /leads/:id', async () => {
+		it('getLead calls GET /leads/:id and persists to db', async () => {
 			const lead = { id: 'lead_10', phone_number: '+15550001111' };
 			mockRequest.mockResolvedValue(lead);
 
@@ -66,9 +88,18 @@ describe('Callingly Endpoints Handlers', () => {
 				},
 			);
 			expect(res.id).toBe('lead_10');
+			expect(mockDb.leads.upsertByEntityId).toHaveBeenCalledWith(
+				'lead_10',
+				expect.objectContaining({ id: 'lead_10' }),
+			);
 		});
 
-		it('listLeads calls GET /leads with query', async () => {
+		it('getLead rejects invalid input schema', async () => {
+			// @ts-expect-error invalid input missing leadId
+			await expect(Handlers.getLead(ctx, {})).rejects.toThrow();
+		});
+
+		it('listLeads calls GET /leads with query and persists collection', async () => {
 			const leads = [{ id: 'lead_1' }, { id: 'lead_2' }];
 			mockRequest.mockResolvedValue(leads);
 
@@ -79,9 +110,10 @@ describe('Callingly Endpoints Handlers', () => {
 				accountId: undefined,
 			});
 			expect(res).toEqual(leads);
+			expect(mockDb.leads.upsertByEntityId).toHaveBeenCalledTimes(2);
 		});
 
-		it('updateLead calls PUT /leads/:id', async () => {
+		it('updateLead calls PUT /leads/:id and updates db', async () => {
 			const lead = { id: 'lead_10', name: 'Updated' };
 			mockRequest.mockResolvedValue(lead);
 
@@ -99,9 +131,13 @@ describe('Callingly Endpoints Handlers', () => {
 				},
 			);
 			expect(res.name).toBe('Updated');
+			expect(mockDb.leads.upsertByEntityId).toHaveBeenCalledWith(
+				'lead_10',
+				expect.objectContaining({ id: 'lead_10', name: 'Updated' }),
+			);
 		});
 
-		it('deleteLead calls DELETE /leads/:id', async () => {
+		it('deleteLead calls DELETE /leads/:id and deletes from db', async () => {
 			mockRequest.mockResolvedValue({ success: true });
 
 			const res = await Handlers.deleteLead(ctx, { leadId: 'lead_10' });
@@ -114,11 +150,12 @@ describe('Callingly Endpoints Handlers', () => {
 				},
 			);
 			expect(res.success).toBe(true);
+			expect(mockDb.leads.deleteByEntityId).toHaveBeenCalledWith('lead_10');
 		});
 	});
 
 	describe('Calls', () => {
-		it('createCall calls POST /calls', async () => {
+		it('createCall calls POST /calls and persists to db', async () => {
 			const call = { id: 'call_1', lead_id: 'lead_10', status: 'initiated' };
 			mockRequest.mockResolvedValue(call);
 
@@ -129,9 +166,13 @@ describe('Callingly Endpoints Handlers', () => {
 				accountId: undefined,
 			});
 			expect(res.id).toBe('call_1');
+			expect(mockDb.calls.upsertByEntityId).toHaveBeenCalledWith(
+				'call_1',
+				expect.objectContaining({ id: 'call_1' }),
+			);
 		});
 
-		it('getCall calls GET /calls/:id', async () => {
+		it('getCall calls GET /calls/:id and persists to db', async () => {
 			const call = { id: 'call_1', duration: 45 };
 			mockRequest.mockResolvedValue(call);
 
@@ -141,9 +182,13 @@ describe('Callingly Endpoints Handlers', () => {
 				accountId: undefined,
 			});
 			expect(res.duration).toBe(45);
+			expect(mockDb.calls.upsertByEntityId).toHaveBeenCalledWith(
+				'call_1',
+				expect.objectContaining({ id: 'call_1', duration: 45 }),
+			);
 		});
 
-		it('listCalls calls GET /calls', async () => {
+		it('listCalls calls GET /calls and persists collection', async () => {
 			const calls = [{ id: 'call_1' }];
 			mockRequest.mockResolvedValue(calls);
 
@@ -154,11 +199,15 @@ describe('Callingly Endpoints Handlers', () => {
 				accountId: undefined,
 			});
 			expect(res).toEqual(calls);
+			expect(mockDb.calls.upsertByEntityId).toHaveBeenCalledWith(
+				'call_1',
+				expect.objectContaining({ id: 'call_1' }),
+			);
 		});
 	});
 
 	describe('Agents / Users', () => {
-		it('createAgent calls POST /agents', async () => {
+		it('createAgent calls POST /agents and persists to db', async () => {
 			const agent = { id: 'ag_1', name: 'New Agent', email: 'agent@test.com' };
 			mockRequest.mockResolvedValue(agent);
 
@@ -172,9 +221,13 @@ describe('Callingly Endpoints Handlers', () => {
 				accountId: undefined,
 			});
 			expect(res.id).toBe('ag_1');
+			expect(mockDb.users.upsertByEntityId).toHaveBeenCalledWith(
+				'ag_1',
+				expect.objectContaining({ id: 'ag_1' }),
+			);
 		});
 
-		it('listUsers calls GET /users', async () => {
+		it('listUsers calls GET /users and persists collection', async () => {
 			mockRequest.mockResolvedValue([{ id: 'u1', name: 'Agent 1' }]);
 			const res = await Handlers.listUsers(ctx, {});
 			expect(mockRequest).toHaveBeenCalledWith('users', 'test-api-key', {
@@ -183,9 +236,13 @@ describe('Callingly Endpoints Handlers', () => {
 				accountId: undefined,
 			});
 			expect(res).toEqual([{ id: 'u1', name: 'Agent 1' }]);
+			expect(mockDb.users.upsertByEntityId).toHaveBeenCalledWith(
+				'u1',
+				expect.objectContaining({ id: 'u1', name: 'Agent 1' }),
+			);
 		});
 
-		it('getUser calls GET /users/:id', async () => {
+		it('getUser calls GET /users/:id and persists to db', async () => {
 			mockRequest.mockResolvedValue({ id: 'u1', name: 'Agent 1' });
 			const res = await Handlers.getUser(ctx, { userId: 'u1' });
 			expect(mockRequest).toHaveBeenCalledWith('users/u1', 'test-api-key', {
@@ -193,9 +250,13 @@ describe('Callingly Endpoints Handlers', () => {
 				accountId: undefined,
 			});
 			expect(res.id).toBe('u1');
+			expect(mockDb.users.upsertByEntityId).toHaveBeenCalledWith(
+				'u1',
+				expect.objectContaining({ id: 'u1' }),
+			);
 		});
 
-		it('updateAgent calls PUT /agents/:id', async () => {
+		it('updateAgent calls PUT /agents/:id and persists to db', async () => {
 			mockRequest.mockResolvedValue({ id: 'ag_1', name: 'Updated Agent' });
 			const res = await Handlers.updateAgent(ctx, {
 				agentId: 'ag_1',
@@ -207,9 +268,13 @@ describe('Callingly Endpoints Handlers', () => {
 				accountId: undefined,
 			});
 			expect(res.name).toBe('Updated Agent');
+			expect(mockDb.users.upsertByEntityId).toHaveBeenCalledWith(
+				'ag_1',
+				expect.objectContaining({ id: 'ag_1', name: 'Updated Agent' }),
+			);
 		});
 
-		it('deleteAgent calls DELETE /agents/:id', async () => {
+		it('deleteAgent calls DELETE /agents/:id and deletes from db', async () => {
 			mockRequest.mockResolvedValue({ success: true });
 			const res = await Handlers.deleteAgent(ctx, { agentId: 'ag_1' });
 			expect(mockRequest).toHaveBeenCalledWith('agents/ag_1', 'test-api-key', {
@@ -217,9 +282,10 @@ describe('Callingly Endpoints Handlers', () => {
 				accountId: undefined,
 			});
 			expect(res.success).toBe(true);
+			expect(mockDb.users.deleteByEntityId).toHaveBeenCalledWith('ag_1');
 		});
 
-		it('getAgentSchedule calls GET /agents/:id/schedule', async () => {
+		it('getAgentSchedule calls GET /agents/:id/schedule and persists to db', async () => {
 			mockRequest.mockResolvedValue({ agent_id: 'ag_1', timezone: 'UTC' });
 			const res = await Handlers.getAgentSchedule(ctx, { agentId: 'ag_1' });
 			expect(mockRequest).toHaveBeenCalledWith(
@@ -231,9 +297,13 @@ describe('Callingly Endpoints Handlers', () => {
 				},
 			);
 			expect(res.timezone).toBe('UTC');
+			expect(mockDb.schedules.upsertByEntityId).toHaveBeenCalledWith(
+				'ag_1',
+				expect.objectContaining({ agent_id: 'ag_1', timezone: 'UTC' }),
+			);
 		});
 
-		it('updateAgentSchedule calls PUT /agents/:id/schedule', async () => {
+		it('updateAgentSchedule calls PUT /agents/:id/schedule and persists to db', async () => {
 			mockRequest.mockResolvedValue({ agent_id: 'ag_1', timezone: 'EST' });
 			const res = await Handlers.updateAgentSchedule(ctx, {
 				agentId: 'ag_1',
@@ -249,11 +319,15 @@ describe('Callingly Endpoints Handlers', () => {
 				},
 			);
 			expect(res.timezone).toBe('EST');
+			expect(mockDb.schedules.upsertByEntityId).toHaveBeenCalledWith(
+				'ag_1',
+				expect.objectContaining({ agent_id: 'ag_1', timezone: 'EST' }),
+			);
 		});
 	});
 
 	describe('Teams', () => {
-		it('createTeam calls POST /teams', async () => {
+		it('createTeam calls POST /teams and persists to db', async () => {
 			mockRequest.mockResolvedValue({ id: 't1', name: 'New Team' });
 			const res = await Handlers.createTeam(ctx, { name: 'New Team' });
 			expect(mockRequest).toHaveBeenCalledWith('teams', 'test-api-key', {
@@ -262,9 +336,13 @@ describe('Callingly Endpoints Handlers', () => {
 				accountId: undefined,
 			});
 			expect(res.id).toBe('t1');
+			expect(mockDb.teams.upsertByEntityId).toHaveBeenCalledWith(
+				't1',
+				expect.objectContaining({ id: 't1', name: 'New Team' }),
+			);
 		});
 
-		it('listTeams calls GET /teams', async () => {
+		it('listTeams calls GET /teams and persists collection', async () => {
 			mockRequest.mockResolvedValue([{ id: 't1', name: 'Team A' }]);
 			const res = await Handlers.listTeams(ctx, {});
 			expect(mockRequest).toHaveBeenCalledWith('teams', 'test-api-key', {
@@ -273,9 +351,13 @@ describe('Callingly Endpoints Handlers', () => {
 				accountId: undefined,
 			});
 			expect(res).toEqual([{ id: 't1', name: 'Team A' }]);
+			expect(mockDb.teams.upsertByEntityId).toHaveBeenCalledWith(
+				't1',
+				expect.objectContaining({ id: 't1', name: 'Team A' }),
+			);
 		});
 
-		it('getTeam calls GET /teams/:id', async () => {
+		it('getTeam calls GET /teams/:id and persists to db', async () => {
 			mockRequest.mockResolvedValue({ id: 't1', name: 'Team A' });
 			const res = await Handlers.getTeam(ctx, { teamId: 't1' });
 			expect(mockRequest).toHaveBeenCalledWith('teams/t1', 'test-api-key', {
@@ -283,9 +365,13 @@ describe('Callingly Endpoints Handlers', () => {
 				accountId: undefined,
 			});
 			expect(res.name).toBe('Team A');
+			expect(mockDb.teams.upsertByEntityId).toHaveBeenCalledWith(
+				't1',
+				expect.objectContaining({ id: 't1', name: 'Team A' }),
+			);
 		});
 
-		it('listTeamUsers calls GET /teams/:id/users', async () => {
+		it('listTeamUsers calls GET /teams/:id/users and persists collection', async () => {
 			mockRequest.mockResolvedValue([
 				{ id: 'u1', name: 'Agent 1', priority: 1 },
 			]);
@@ -299,9 +385,13 @@ describe('Callingly Endpoints Handlers', () => {
 				},
 			);
 			expect(res).toEqual([{ id: 'u1', name: 'Agent 1', priority: 1 }]);
+			expect(mockDb.teamUsers.upsertByEntityId).toHaveBeenCalledWith(
+				'u1',
+				expect.objectContaining({ id: 'u1', priority: 1 }),
+			);
 		});
 
-		it('updateTeamUsers calls PUT /teams/:id/users', async () => {
+		it('updateTeamUsers calls PUT /teams/:id/users and persists to db', async () => {
 			mockRequest.mockResolvedValue({
 				id: 't1',
 				name: 'Team A',
@@ -321,9 +411,13 @@ describe('Callingly Endpoints Handlers', () => {
 				},
 			);
 			expect(res.id).toBe('t1');
+			expect(mockDb.teams.upsertByEntityId).toHaveBeenCalledWith(
+				't1',
+				expect.objectContaining({ id: 't1' }),
+			);
 		});
 
-		it('updateTeamAgentSettings calls PUT /teams/:id/agents/:agentId', async () => {
+		it('updateTeamAgentSettings calls PUT /teams/:id/agents/:agentId and persists to db', async () => {
 			mockRequest.mockResolvedValue({ id: 'u1', priority: 2, call_cap: 10 });
 			const res = await Handlers.updateTeamAgentSettings(ctx, {
 				teamId: 't1',
@@ -341,9 +435,13 @@ describe('Callingly Endpoints Handlers', () => {
 				},
 			);
 			expect(res.priority).toBe(2);
+			expect(mockDb.teamUsers.upsertByEntityId).toHaveBeenCalledWith(
+				'u1',
+				expect.objectContaining({ id: 'u1', priority: 2, call_cap: 10 }),
+			);
 		});
 
-		it('removeTeamAgent calls DELETE /teams/:id/agents/:agentId', async () => {
+		it('removeTeamAgent calls DELETE /teams/:id/agents/:agentId and deletes from db', async () => {
 			mockRequest.mockResolvedValue({ success: true });
 			const res = await Handlers.removeTeamAgent(ctx, {
 				teamId: 't1',
@@ -358,11 +456,12 @@ describe('Callingly Endpoints Handlers', () => {
 				},
 			);
 			expect(res.success).toBe(true);
+			expect(mockDb.teamUsers.deleteByEntityId).toHaveBeenCalledWith('u1');
 		});
 	});
 
 	describe('Clients (Agency)', () => {
-		it('listClients calls GET /clients', async () => {
+		it('listClients calls GET /clients and persists collection', async () => {
 			mockRequest.mockResolvedValue([{ id: 'c1', name: 'Client 1' }]);
 			const res = await Handlers.listClients(ctx, {});
 			expect(mockRequest).toHaveBeenCalledWith('clients', 'test-api-key', {
@@ -370,18 +469,26 @@ describe('Callingly Endpoints Handlers', () => {
 				query: {},
 			});
 			expect(res).toEqual([{ id: 'c1', name: 'Client 1' }]);
+			expect(mockDb.clients.upsertByEntityId).toHaveBeenCalledWith(
+				'c1',
+				expect.objectContaining({ id: 'c1', name: 'Client 1' }),
+			);
 		});
 
-		it('getClient calls GET /clients/:id', async () => {
+		it('getClient calls GET /clients/:id and persists to db', async () => {
 			mockRequest.mockResolvedValue({ id: 'c1', name: 'Client 1' });
 			const res = await Handlers.getClient(ctx, { clientId: 'c1' });
 			expect(mockRequest).toHaveBeenCalledWith('clients/c1', 'test-api-key', {
 				method: 'GET',
 			});
 			expect(res.name).toBe('Client 1');
+			expect(mockDb.clients.upsertByEntityId).toHaveBeenCalledWith(
+				'c1',
+				expect.objectContaining({ id: 'c1' }),
+			);
 		});
 
-		it('createClient calls POST /clients', async () => {
+		it('createClient calls POST /clients and persists to db', async () => {
 			mockRequest.mockResolvedValue({ id: 'c1', name: 'New Client' });
 			const res = await Handlers.createClient(ctx, { name: 'New Client' });
 			expect(mockRequest).toHaveBeenCalledWith('clients', 'test-api-key', {
@@ -389,18 +496,23 @@ describe('Callingly Endpoints Handlers', () => {
 				body: { name: 'New Client' },
 			});
 			expect(res.name).toBe('New Client');
+			expect(mockDb.clients.upsertByEntityId).toHaveBeenCalledWith(
+				'c1',
+				expect.objectContaining({ id: 'c1', name: 'New Client' }),
+			);
 		});
 
-		it('deleteClient calls DELETE /clients/:id', async () => {
+		it('deleteClient calls DELETE /clients/:id and deletes from db', async () => {
 			mockRequest.mockResolvedValue({ success: true });
 			const res = await Handlers.deleteClient(ctx, { clientId: 'c1' });
 			expect(mockRequest).toHaveBeenCalledWith('clients/c1', 'test-api-key', {
 				method: 'DELETE',
 			});
 			expect(res.success).toBe(true);
+			expect(mockDb.clients.deleteByEntityId).toHaveBeenCalledWith('c1');
 		});
 
-		it('setClientActive calls POST /clients/:id/active', async () => {
+		it('setClientActive calls POST /clients/:id/active and persists to db', async () => {
 			mockRequest.mockResolvedValue({
 				id: 'c1',
 				name: 'Client 1',
@@ -419,11 +531,15 @@ describe('Callingly Endpoints Handlers', () => {
 				},
 			);
 			expect(res.active).toBe(true);
+			expect(mockDb.clients.upsertByEntityId).toHaveBeenCalledWith(
+				'c1',
+				expect.objectContaining({ id: 'c1', active: true }),
+			);
 		});
 	});
 
 	describe('Webhooks Config', () => {
-		it('listWebhooks calls GET /webhooks', async () => {
+		it('listWebhooks calls GET /webhooks and persists collection', async () => {
 			mockRequest.mockResolvedValue([
 				{ id: 'wh_1', url: 'https://test.com/hook' },
 			]);
@@ -434,9 +550,13 @@ describe('Callingly Endpoints Handlers', () => {
 				accountId: undefined,
 			});
 			expect(res).toEqual([{ id: 'wh_1', url: 'https://test.com/hook' }]);
+			expect(mockDb.webhooks.upsertByEntityId).toHaveBeenCalledWith(
+				'wh_1',
+				expect.objectContaining({ id: 'wh_1', url: 'https://test.com/hook' }),
+			);
 		});
 
-		it('getWebhook calls GET /webhooks/:id', async () => {
+		it('getWebhook calls GET /webhooks/:id and persists to db', async () => {
 			mockRequest.mockResolvedValue({
 				id: 'wh_1',
 				url: 'https://test.com/hook',
@@ -451,9 +571,13 @@ describe('Callingly Endpoints Handlers', () => {
 				},
 			);
 			expect(res.id).toBe('wh_1');
+			expect(mockDb.webhooks.upsertByEntityId).toHaveBeenCalledWith(
+				'wh_1',
+				expect.objectContaining({ id: 'wh_1' }),
+			);
 		});
 
-		it('createWebhook calls POST /webhooks', async () => {
+		it('createWebhook calls POST /webhooks and persists to db', async () => {
 			mockRequest.mockResolvedValue({
 				id: 'wh_1',
 				url: 'https://test.com/hook',
@@ -469,9 +593,13 @@ describe('Callingly Endpoints Handlers', () => {
 				accountId: undefined,
 			});
 			expect(res.id).toBe('wh_1');
+			expect(mockDb.webhooks.upsertByEntityId).toHaveBeenCalledWith(
+				'wh_1',
+				expect.objectContaining({ id: 'wh_1', url: 'https://test.com/hook' }),
+			);
 		});
 
-		it('updateWebhook calls PUT /webhooks/:id', async () => {
+		it('updateWebhook calls PUT /webhooks/:id and persists to db', async () => {
 			mockRequest.mockResolvedValue({
 				id: 'wh_1',
 				url: 'https://updated.com/hook',
@@ -490,9 +618,16 @@ describe('Callingly Endpoints Handlers', () => {
 				},
 			);
 			expect(res.url).toBe('https://updated.com/hook');
+			expect(mockDb.webhooks.upsertByEntityId).toHaveBeenCalledWith(
+				'wh_1',
+				expect.objectContaining({
+					id: 'wh_1',
+					url: 'https://updated.com/hook',
+				}),
+			);
 		});
 
-		it('deleteWebhook calls DELETE /webhooks/:id', async () => {
+		it('deleteWebhook calls DELETE /webhooks/:id and deletes from db', async () => {
 			mockRequest.mockResolvedValue({ success: true });
 			const res = await Handlers.deleteWebhook(ctx, { webhookId: 'wh_1' });
 			expect(mockRequest).toHaveBeenCalledWith(
@@ -504,6 +639,7 @@ describe('Callingly Endpoints Handlers', () => {
 				},
 			);
 			expect(res.success).toBe(true);
+			expect(mockDb.webhooks.deleteByEntityId).toHaveBeenCalledWith('wh_1');
 		});
 	});
 });

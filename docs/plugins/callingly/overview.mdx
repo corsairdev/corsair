@@ -107,7 +107,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.callingly.api.agents.get({});
+await tenant.callingly.api.agents.get({ userId: 'agent_123' });
 ```
 
 

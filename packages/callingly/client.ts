@@ -1,10 +1,17 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
+/**
+ * Normalized error thrown when an HTTP call to Callingly fails.
+ */
 export class CallinglyAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly status?: number,
+		/**
+		 * Raw response payload returned from the Callingly API for debugging.
+		 * Typed as unknown because error payloads can be arbitrary JSON objects or error strings.
+		 */
 		public readonly responseData?: unknown,
 	) {
 		super(message);
@@ -14,8 +21,14 @@ export class CallinglyAPIError extends Error {
 
 export const CALLINGLY_API_BASE = 'https://api.callingly.com/v1';
 
+/**
+ * Request options for makeCallinglyRequest.
+ */
 export type MakeCallinglyRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	/**
+	 * JSON request body payload. Keys and values are serializable properties sent to the Callingly API.
+	 */
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 	accountId?: string;
@@ -65,17 +78,22 @@ export async function makeCallinglyRequest<T>(
 			throw error;
 		}
 		if (error && typeof error === 'object' && 'status' in error) {
-			const status =
-				Number((error as { status?: unknown }).status) || undefined;
+			// Type narrowing safely inspects HTTP client error shape with fallback messages
+			const errObj = error as {
+				status?: unknown;
+				message?: string;
+				body?: { message?: string } | unknown;
+			};
+			const status = Number(errObj.status) || undefined;
+			const bodyObj =
+				errObj.body && typeof errObj.body === 'object'
+					? (errObj.body as { message?: string })
+					: undefined;
 			const message =
-				(error as { message?: string }).message ||
-				(error as { body?: { message?: string } }).body?.message ||
+				errObj.message ||
+				bodyObj?.message ||
 				`Callingly API error (${status ?? 'unknown'})`;
-			throw new CallinglyAPIError(
-				message,
-				status,
-				(error as { body?: unknown }).body,
-			);
+			throw new CallinglyAPIError(message, status, errObj.body);
 		}
 		if (error instanceof Error) {
 			throw new CallinglyAPIError(error.message);

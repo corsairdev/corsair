@@ -40,6 +40,7 @@ export const CreateLeadInputSchema = z.object({
 	scheduled_at: z.string().optional(),
 	notes: z.string().optional(),
 	tags: z.array(z.string()).optional(),
+	// Arbitrary custom key-value pairs assigned to the lead
 	custom_fields: z.record(z.string(), z.unknown()).optional(),
 	account_id: z.string().optional(),
 });
@@ -68,6 +69,7 @@ export const UpdateLeadInputSchema = z.object({
 	email: z.string().email().optional(),
 	notes: z.string().optional(),
 	tags: z.array(z.string()).optional(),
+	// Arbitrary custom key-value pairs assigned to the lead
 	custom_fields: z.record(z.string(), z.unknown()).optional(),
 	account_id: z.string().optional(),
 });
@@ -190,6 +192,7 @@ export const GetAgentScheduleInputSchema = z.object({
 export const UpdateAgentScheduleInputSchema = z.object({
 	agentId: z.union([z.string(), z.number()]),
 	timezone: z.string().optional(),
+	// Arbitrary day and time mapping defining agent working shifts
 	schedule: z.record(z.string(), z.unknown()).optional(),
 	days: z.array(z.string()).optional(),
 	account_id: z.string().optional(),

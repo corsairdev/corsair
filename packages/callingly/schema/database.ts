@@ -19,6 +19,7 @@ export const CallinglyLead = z
 		scheduled_at: z.string().optional(),
 		notes: z.string().optional(),
 		tags: z.array(z.string()).optional(),
+		// Arbitrary user-defined custom field key-values configured on the Callingly lead
 		custom_fields: z.record(z.string(), z.unknown()).optional(),
 		created_at: z.string().optional(),
 		updated_at: z.string().optional(),
@@ -102,6 +103,7 @@ export const CallinglySchedule = z
 		agent_id: z.union([z.string(), z.number()]).optional(),
 		user_id: z.union([z.string(), z.number()]).optional(),
 		timezone: z.string().optional(),
+		// Arbitrary day and time mapping defining agent working shifts
 		schedule: z.record(z.string(), z.unknown()).optional(),
 		days: z.array(z.string()).optional(),
 	})

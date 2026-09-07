@@ -1,8 +1,16 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import type { CallinglyAPIError } from './client';
 
-function getStatus(error: Error): number | undefined {
-	return (error as Partial<CallinglyAPIError>).status;
+/**
+ * Safely extracts HTTP status code from an error object.
+ */
+function getStatus(error: unknown): number | undefined {
+	if (error && typeof error === 'object' && 'status' in error) {
+		// Type narrowing safely inspects the optional status number on CallinglyAPIError or HTTP error
+		const status = (error as Partial<CallinglyAPIError>).status;
+		return typeof status === 'number' ? status : undefined;
+	}
+	return undefined;
 }
 
 export const errorHandlers = {
