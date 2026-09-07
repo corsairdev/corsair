@@ -7,6 +7,7 @@ import {
 	TemplatesListInputSchema,
 	UsersListInputSchema,
 } from './endpoints/types';
+import { safetyculture } from './index';
 import { SafetyCultureSchema } from './schema';
 
 describe('SafetyCulture schema', () => {
@@ -109,19 +110,16 @@ describe('SafetyCulture endpoint output schemas', () => {
 });
 
 describe('SafetyCulture plugin factory', () => {
-	it('exports safetyculture function', async () => {
-		const { safetyculture } = await import('.');
+	it('exports safetyculture function', () => {
 		expect(typeof safetyculture).toBe('function');
 	});
 
-	it('creates a plugin with correct id', async () => {
-		const { safetyculture } = await import('.');
+	it('creates a plugin with correct id', () => {
 		const plugin = safetyculture({ key: 'test-key' });
 		expect(plugin.id).toBe('safetyculture');
 	});
 
-	it('creates a plugin with all endpoint groups', async () => {
-		const { safetyculture } = await import('.');
+	it('creates a plugin with all endpoint groups', () => {
 		const plugin = safetyculture({ key: 'test-key' });
 		expect(plugin.endpoints!.inspections).toBeDefined();
 		expect(plugin.endpoints!.templates).toBeDefined();
@@ -129,20 +127,17 @@ describe('SafetyCulture plugin factory', () => {
 		expect(plugin.endpoints!.users).toBeDefined();
 	});
 
-	it('creates a plugin with schema version', async () => {
-		const { safetyculture } = await import('.');
+	it('creates a plugin with schema version', () => {
 		const plugin = safetyculture({ key: 'test-key' });
 		expect(plugin.schema!.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('creates a plugin with empty webhooks', async () => {
-		const { safetyculture } = await import('.');
+	it('creates a plugin with empty webhooks', () => {
 		const plugin = safetyculture({ key: 'test-key' });
 		expect(plugin.webhooks).toEqual({});
 	});
 
-	it('creates a plugin with endpoint meta for all endpoints', async () => {
-		const { safetyculture } = await import('.');
+	it('creates a plugin with endpoint meta for all endpoints', () => {
 		const plugin = safetyculture({ key: 'test-key' });
 		const meta = plugin.endpointMeta!;
 		expect(meta['inspections.list']!.riskLevel).toBe('read');
