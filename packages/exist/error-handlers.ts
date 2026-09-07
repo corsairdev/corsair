@@ -31,7 +31,7 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error) => ({
-			maxRetries: 5,
+			maxRetries: 0,
 			headersRetryAfterMs: retryAfterOf(error),
 		}),
 	},
