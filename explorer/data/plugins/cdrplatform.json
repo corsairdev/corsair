@@ -1,0 +1,246 @@
+{
+  "id": "cdrplatform",
+  "displayName": "CDR Platform",
+  "description": "CDR Platform plugin for Corsair",
+  "npmPackageName": "@corsair-dev/cdrplatform",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "cdrplatform.api.cdr.price",
+      "shortPath": "cdr.price",
+      "description": "Calculate CO2 removal pricing for a method portfolio.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "weight_unit",
+            "optional": false,
+            "type": "g | kg | t"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "usd | eur | gbp | chf"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ method_type: string, cdr_amount: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cost",
+            "optional": false,
+            "type": "{ items: { method_type: string, cdr_amount: number, cost: number }[], removal: number, variable_fees: number, total: number }"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "usd | eur | gbp | chf"
+          },
+          {
+            "key": "weight_unit",
+            "optional": false,
+            "type": "g | kg | t"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cdrplatform.api.cdr.purchase",
+      "shortPath": "cdr.purchase",
+      "description": "Create a CO2 removal purchase request and return its transaction UUID.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "weight_unit",
+            "optional": false,
+            "type": "g | kg | t"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "usd | eur | gbp | chf"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ method_type: string, cdr_amount: number }[]"
+          },
+          {
+            "key": "client_reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "certificate_display_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cdrplatform.api.certificate.get",
+      "shortPath": "certificate.get",
+      "description": "Retrieve a removal certificate by certificate ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "certificate_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "display_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "issued_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "removal_amount_kg",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cdrplatform.api.health.check",
+      "shortPath": "health.check",
+      "description": "Check CDR Platform API health status.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "db_up",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "cdrplatform.db.certificates.search",
+      "entityName": "certificates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "certificate_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "display_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "issued_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "removal_amount_kg",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "cdrplatform.db.priceQuotes.search",
+      "entityName": "priceQuotes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "cdrplatform.db.removalRequests.search",
+      "entityName": "removalRequests",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "transaction_uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "client_reference_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "certificate_display_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3460 @@
+{
+  "id": "scaleai",
+  "displayName": "Scale AI",
+  "description": "Scale AI plugin for Corsair — data labeling tasks, batches, projects and Studio",
+  "npmPackageName": "@corsair-dev/scaleai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 40,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "scaleai.api.audits.getFixlessAudits",
+      "shortPath": "audits.getFixlessAudits",
+      "description": "Retrieve fixless audits by task id or audit id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "scaleai.api.batches.createBatch",
+      "shortPath": "batches.createBatch",
+      "description": "Create a new batch within a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "callback",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calibration_batch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "self_label_batch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.batches.finalizeBatch",
+      "shortPath": "batches.finalizeBatch",
+      "description": "Finalize a batch so its tasks can be worked on",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.batches.getBatch",
+      "shortPath": "batches.getBatch",
+      "description": "Retrieve a batch by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.batches.getBatchStatus",
+      "shortPath": "batches.getBatchStatus",
+      "description": "Retrieve a batch status with task completion counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tasks_pending",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_completed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_error",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tasks_canceled",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.batches.listBatches",
+      "shortPath": "batches.listBatches",
+      "description": "List batches newest-first with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exclude_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "detailed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docs",
+            "optional": false,
+            "type": "{ name: string, project?: string, status?: string, created_at?: string, completed_at?: string, callback?: string, metadata?: {} }[]"
+          },
+          {
+            "key": "totalDocs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.files.getAssets",
+      "shortPath": "files.getAssets",
+      "description": "List file assets filtered by project and metadata (paginated)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docs",
+            "optional": false,
+            "type": "{ id?: string, attachment_url?: string, created_at?: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.files.importFile",
+      "shortPath": "files.importFile",
+      "description": "Import a file into Scale from a remote URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachment_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachment_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.files.uploadFile",
+      "shortPath": "files.uploadFile",
+      "description": "Upload a local file (base64) to Scale, max 80 MB",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mime_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachment_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.projects.getProject",
+      "shortPath": "projects.getProject",
+      "description": "Retrieve a project by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "param_history",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.projects.listProjects",
+      "shortPath": "projects.listProjects",
+      "description": "List all projects, optionally filtered by archived state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ type?: string, name: string, param_history?: {}[], created_at?: string, archived?: boolean }[]"
+      }
+    },
+    {
+      "path": "scaleai.api.projects.setProjectOntology",
+      "shortPath": "projects.setProjectOntology",
+      "description": "Set the ontology (label classes) for a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ontology",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "param_history",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.projects.setProjectParams",
+      "shortPath": "projects.setProjectParams",
+      "description": "Set default task parameters for a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "patch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "param_history",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.quality.getQualityLabelers",
+      "shortPath": "quality.getQualityLabelers",
+      "description": "Retrieve labeler training attempts by quality task id or email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quality_task_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "labeler_emails",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "scaleai.api.studio.addStudioAssignments",
+      "shortPath": "studio.addStudioAssignments",
+      "description": "Assign projects to Studio team members by email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "scaleai.api.studio.getStudioAssignments",
+      "shortPath": "studio.getStudioAssignments",
+      "description": "Retrieve current Studio project assignments per active user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "scaleai.api.studio.getStudioBatches",
+      "shortPath": "studio.getStudioBatches",
+      "description": "List pending Studio batches ordered by priority",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "scaleai.api.studio.removeStudioAssignments",
+      "shortPath": "studio.removeStudioAssignments",
+      "description": "Unassign projects from Studio team members by email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "scaleai.api.studio.resetBatchPriorities",
+      "shortPath": "studio.resetBatchPriorities",
+      "description": "Reset Studio batch priority order to the default",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "scaleai.api.studio.setBatchPriorities",
+      "shortPath": "studio.setBatchPriorities",
+      "description": "Set the priority order of pending Studio batches",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batch_names",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.addTaskTags",
+      "shortPath": "tasks.addTaskTags",
+      "description": "Add tags to a task (duplicates ignored)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "audits",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.createDocumentTranscriptionTask",
+      "shortPath": "tasks.createDocumentTranscriptionTask",
+      "description": "Create a document transcription / annotation task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clear_unique_id_on_error",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachment_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{}[] | {}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "audits",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.createImageAnnotationTask",
+      "shortPath": "tasks.createImageAnnotationTask",
+      "description": "Create an image annotation task (boxes, polygons, points, etc.)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clear_unique_id_on_error",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachment",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attachment_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "geometries",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "annotation_attributes",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "audits",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.createLidarAnnotationTask",
+      "shortPath": "tasks.createLidarAnnotationTask",
+      "description": "Create a LiDAR 3D cuboid annotation task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clear_unique_id_on_error",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "(string | {})[]"
+          },
+          {
+            "key": "annotation_attributes",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "audits",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.createLidarSegmentationTask",
+      "shortPath": "tasks.createLidarSegmentationTask",
+      "description": "Create a LiDAR point cloud semantic segmentation task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clear_unique_id_on_error",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "(string | {})[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "audits",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.createNamedEntityRecognitionTask",
+      "shortPath": "tasks.createNamedEntityRecognitionTask",
+      "description": "Create a named entity recognition task over text",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clear_unique_id_on_error",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "(string | {})[]"
+          },
+          {
+            "key": "labels",
+            "optional": false,
+            "type": "(string | {})[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "audits",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.createSegmentationAnnotationTask",
+      "shortPath": "tasks.createSegmentationAnnotationTask",
+      "description": "Create a semantic segmentation task classifying image pixels",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clear_unique_id_on_error",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachment",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": false,
+            "type": "(string | {})[]"
+          },
+          {
+            "key": "allow_unlabeled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "audits",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.createTextCollectionTask",
+      "shortPath": "tasks.createTextCollectionTask",
+      "description": "Create a text collection task gathering structured field data",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clear_unique_id_on_error",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{}[] | {}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "audits",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.createVideoAnnotationTask",
+      "shortPath": "tasks.createVideoAnnotationTask",
+      "description": "Create a video annotation task across frames or video files",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clear_unique_id_on_error",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachment_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "geometries",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "annotation_attributes",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "events_to_annotate",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "audits",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.createVideoPlaybackAnnotationTask",
+      "shortPath": "tasks.createVideoPlaybackAnnotationTask",
+      "description": "Create a video playback annotation task for object tracking",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clear_unique_id_on_error",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attachment",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "geometries",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "annotation_attributes",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "audits",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.deleteTaskTags",
+      "shortPath": "tasks.deleteTaskTags",
+      "description": "Remove tags from a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "audits",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.deleteTaskUniqueId",
+      "shortPath": "tasks.deleteTaskUniqueId",
+      "description": "Remove a task's unique_id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "audits",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.getTask",
+      "shortPath": "tasks.getTask",
+      "description": "Retrieve a task by id including status, response and metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "audits",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.getTaskResponseUrl",
+      "shortPath": "tasks.getTaskResponseUrl",
+      "description": "Fetch secure authenticated task response data for a task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.listTasks",
+      "shortPath": "tasks.listTasks",
+      "description": "List tasks with filtering and cursor pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "imageannotation | segmentannotation | videoannotation | videoplaybackannotation | lidarannotation | lidarsegmentation | lidartopdown | namedentityrecognition | textcollection | documenttranscription | categorization | transcription | comparison"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "pending | completed | canceled | error"
+          },
+          {
+            "key": "customer_review_status",
+            "optional": true,
+            "type": "accepted | fixed | commented | rejected | pending | accepted | fixed | commented | rejected | pending[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_attachment_url",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limited_response",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docs",
+            "optional": false,
+            "type": "{ task_id: string, created_at?: string, updated_at?: string, completed_at?: string, type?: string, status?: string, instruction?: string, params?: {}, callback_url?: string, callback_completed?: boolean, project?: string, batch?: string, metadata?: {}, response?: {}, audits?: {}[], tags?: string[], unique_id?: string | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.sendTaskCallback",
+      "shortPath": "tasks.sendTaskCallback",
+      "description": "Re-send the callback for a completed or errored task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.setTaskMetadata",
+      "shortPath": "tasks.setTaskMetadata",
+      "description": "Set the metadata object on a task (idempotent)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "audits",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.tasks.updateTaskUniqueId",
+      "shortPath": "tasks.updateTaskUniqueId",
+      "description": "Set or update a task's unique_id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unique_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "audits",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unique_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scaleai.api.teams.getTeams",
+      "shortPath": "teams.getTeams",
+      "description": "List all team members with roles and notification preferences",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id?: string, id?: string, email?: string, role?: string, disableRapidEmails?: boolean, isStudioLabeler?: boolean }[]"
+      }
+    },
+    {
+      "path": "scaleai.api.teams.inviteTeamMember",
+      "shortPath": "teams.inviteTeamMember",
+      "description": "Invite users by email to the team with a role",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "labeler | member | manager"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id?: string, id?: string, email?: string, role?: string, disableRapidEmails?: boolean, isStudioLabeler?: boolean }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "scaleai.db.batches.search",
+      "entityName": "batches",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "completed_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "callback",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "scaleai.db.batchStatuses.search",
+      "entityName": "batchStatuses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tasks_pending",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tasks_completed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tasks_error",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tasks_canceled",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "scaleai.db.files.search",
+      "entityName": "files",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "attachment_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "scaleai.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "scaleai.db.tasks.search",
+      "entityName": "tasks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "task_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "completed_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "instruction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "callback_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "callback_completed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "project",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "batch",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "unique_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "scaleai.db.teammates.search",
+      "entityName": "teammates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "disableRapidEmails",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isStudioLabeler",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}
