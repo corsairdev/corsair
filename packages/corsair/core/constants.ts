@@ -123,6 +123,7 @@ export const BaseProviders = [
 	'clientary',
 	'clockify',
 	'cloudflare',
+	'cloudflareapikey',
 	'cloudinary',
 	'collegefootballdata',
 	'confluence',
@@ -400,6 +401,7 @@ export const ProviderDisplayNames = {
 	clientary: 'Clientary',
 	clockify: 'Clockify',
 	cloudflare: 'Cloudflare',
+	cloudflareapikey: 'Cloudflare API Key',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
@@ -684,6 +686,7 @@ export type AllProviders =
 	| 'clientary'
 	| 'clockify'
 	| 'cloudflare'
+	| 'cloudflareapikey'
 	| 'cloudinary'
 	| 'collegefootballdata'
 	| 'confluence'
