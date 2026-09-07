@@ -53,7 +53,7 @@ const provider = new CorsairToolProvider({
 | `(req) => …` (function)  | Resolve per request (multi-tenant SaaS)    | `'caller-supplied'` |
 | _omitted_                | Connection's tenant → author id → default  | `'per-author'`      |
 
-The function receives the connection id, author id, toolkit, and Mastra's live request context, so you can bucket by whatever your app authenticates on (user, org, workspace):
+When Mastra **resolves and runs** tools it passes the connection id, author id, toolkit, and live request context, so you can bucket by whatever your app authenticates on (user, org, workspace):
 
 ```ts
 new CorsairToolProvider({
@@ -62,6 +62,8 @@ new CorsairToolProvider({
 		orgIdFrom(requestContext) ?? authorId ?? 'default',
 });
 ```
+
+> **Starting a new connection needs a resolvable tenant.** Mastra's `authorize` (the OAuth kickoff for a _fresh_ connection) receives only `toolkit` and `connectionId` — no `authorId` or `requestContext`. A function resolver can therefore scope existing connections but has nothing to resolve a brand-new one from, so it throws rather than guess. To start OAuth under multi-tenancy, either pin `tenantId` to a string or hand it a `connectionId` minted by `encodeConnectionId(tenant, toolkit)`.
 
 Pass `defaultScope` explicitly to override the derived one.
 

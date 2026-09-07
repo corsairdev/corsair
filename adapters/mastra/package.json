@@ -37,7 +37,8 @@
   "scripts": {
     "build": "tsup && tsc -p tsconfig.build.json",
     "build:watch": "tsup --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "tsx src/corsair-tool-provider.check.ts && tsx src/form-field-to-zod.check.ts"
   },
   "dependencies": {
     "corsair": "workspace:*",
@@ -46,10 +47,16 @@
   "peerDependencies": {
     "@mastra/core": ">=1.64.0"
   },
+  "peerDependenciesMeta": {
+    "@mastra/core": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@mastra/core": "^1.64.0",
     "@types/node": "^22.0.0",
     "tsup": "^8.0.1",
+    "tsx": "^4.20.6",
     "typescript": "^5.8.0"
   },
   "files": [
