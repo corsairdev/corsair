@@ -6,8 +6,12 @@ import type { WixRoute } from './routes';
 import { wixRoutes } from './routes';
 import { WixEndpointInputSchemas, WixEndpointOutputSchemas } from './types';
 
+// shared handler input is a json bag across 143 operations; per-op zod
+// schemas validate at the boundary, so a single union type is not practical
 export type WixEndpointInput = Record<string, unknown>;
 
+// responses are operation-specific json passed through to callers; they
+// stay unknown on this shared handler type and callers narrow them
 export type WixEndpoint = CorsairEndpoint<
 	WixContext,
 	WixEndpointInput,
@@ -41,6 +45,8 @@ function camelToSnake(value: string): string {
 		.toLowerCase();
 }
 
+// path segments come from the shared input bag; ids are strings or
+// numbers, but naming them tighter requires a 143-operation union
 function encodePathPart(value: unknown): string {
 	if (value === undefined || value === null || value === '') {
 		throw new Error('[wix] missing required path parameter');
@@ -48,6 +54,8 @@ function encodePathPart(value: unknown): string {
 	return encodeURIComponent(String(value));
 }
 
+// values are looked up by string key on the shared bag, so the return
+// stays unknown until encodePathPart stringifies it
 function resolvePathParam(input: WixEndpointInput, pathKey: string): unknown {
 	const snake = camelToSnake(pathKey);
 	const candidates = [pathKey, snake];
@@ -85,7 +93,9 @@ function buildQuery(route: WixRoute, input: WixEndpointInput) {
 	const queryBag =
 		route.queryBody || route.graphql || route.searchBody
 			? {}
-			: ((input.query ?? {}) as Record<string, unknown>);
+			: // query bags are parsed json records; the factory cannot name
+				// 143 per-operation query shapes without collapsing them here
+				((input.query ?? {}) as Record<string, unknown>);
 	const query: Record<string, unknown> = { ...queryBag };
 	for (const key of route.queryParams ?? []) {
 		const value = input[key] ?? input[camelToSnake(key)];
@@ -97,6 +107,8 @@ function buildQuery(route: WixRoute, input: WixEndpointInput) {
 function buildQueryBody(input: WixEndpointInput): Record<string, unknown> {
 	// Callers may pass Wix query options either as the `{ query: {...} }`
 	// object or as top-level fields; both forms must reach the body query.
+	// same shared-bag limitation as buildQuery: query is a json object
+	// whose fields are operation-specific and validated by zod earlier
 	const query: Record<string, unknown> = {
 		...((input.query ?? {}) as Record<string, unknown>),
 	};
@@ -126,6 +138,8 @@ function buildSearchBody(input: WixEndpointInput): Record<string, unknown> {
 		typeof input.search === 'object' &&
 		!Array.isArray(input.search)
 	) {
+		// object check above already excluded arrays/null; search envelopes
+		// are operation-specific json so a dedicated type is not practical
 		const raw = input.search as Record<string, unknown>;
 		if (raw.expression !== undefined && raw.search === undefined) {
 			search.search = raw;
@@ -157,6 +171,8 @@ function buildSearchBody(input: WixEndpointInput): Record<string, unknown> {
 function buildGraphqlBody(input: WixEndpointInput): Record<string, unknown> {
 	const body: Record<string, unknown> = {};
 	if (input.query !== undefined) body.query = input.query;
+	// graphql variables are an open json map; wix validates them server-side
+	// and a per-document variables type cannot be named in this factory
 	const variables: Record<string, unknown> = {
 		...((input.variables ?? {}) as Record<string, unknown>),
 	};
@@ -165,6 +181,8 @@ function buildGraphqlBody(input: WixEndpointInput): Record<string, unknown> {
 	return body;
 }
 
+// assembled from the shared input bag after zod parse; each route's body
+// shape differs, so the return stays unknown until the transport serializes it
 function requestBody(route: WixRoute, input: WixEndpointInput): unknown {
 	// resolvePath accepts both camelCase and snake_case path parameters, so
 	// both forms must be excluded from the request body.
@@ -241,8 +259,12 @@ export async function requestWixOperation(
 	input: WixEndpointInput,
 	route: WixRoute,
 ) {
+	// route keys are the same literal union as the schema maps; indexing
+	// through string is the factory's only shared lookup
 	const inputSchema =
 		WixEndpointInputSchemas[route.key as keyof typeof WixEndpointInputSchemas];
+	// parse returns a per-operation inferred type; the factory continues
+	// as the shared bag because it cannot switch on 143 schema outputs
 	const validated = (
 		inputSchema ? inputSchema.parse(input ?? {}) : input
 	) as WixEndpointInput;
@@ -257,6 +279,8 @@ export async function requestWixOperation(
 		);
 	}
 	const path = resolvePath(route.path, validated, route);
+	// headers/siteId/accountId are string fields on ops that accept them;
+	// the shared bag cannot name those fields without a 143-op union
 	const headers =
 		(validated.headers as Record<string, string> | undefined) ?? undefined;
 	// Site-level scoping: an explicit per-call siteId always wins. When the
@@ -289,6 +313,7 @@ export async function executeWixOperation(
 		// Responses are validated against the registered output schema so a
 		// payload that breaks the declared contract fails loudly instead of
 		// reaching consumers malformed.
+		// same shared lookup as the input schema map; route.key is a string
 		const outputSchema =
 			WixEndpointOutputSchemas[
 				route.key as keyof typeof WixEndpointOutputSchemas

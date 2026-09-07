@@ -8,6 +8,8 @@ import { ApiError, request } from 'corsair/http';
 export class WixAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// error bodies vary per wix endpoint and arrive as parsed json from
+	// corsair/http's ApiError; a union of those shapes is not maintainable
 	public readonly body?: unknown;
 	public readonly method?: string;
 
@@ -65,6 +67,8 @@ export type WixAuthType = 'api_key' | 'oauth_2';
 
 export type WixRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	// bodies and query values are operation-specific json; the wix api
+	// validates their shape, so they intentionally stay unknown here
 	body?: unknown;
 	query?: Record<string, unknown>;
 	headers?: Record<string, string>;

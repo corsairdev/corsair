@@ -44,7 +44,7 @@ const WixJsonValueSchema: z.ZodType<WixJson> = z.lazy(() =>
 		z.array(WixJsonValueSchema),
 		z.record(z.string(), WixJsonValueSchema),
 	]),
-) as z.ZodType<WixJson>;
+) as z.ZodType<WixJson>; // z.lazy cannot infer the recursive json union
 
 /**
  * Wix query-language filter. The Wix API Query Language supports two forms
@@ -66,6 +66,8 @@ export type WixFilter = {
 		| WixFilter;
 };
 
+// type predicates start from unknown because callers pass unvalidated
+// json; the wix filter grammar is recursive and cannot take a tighter input
 function isWixFilterScalar(value: unknown): boolean {
 	return (
 		typeof value === 'string' ||
@@ -75,6 +77,7 @@ function isWixFilterScalar(value: unknown): boolean {
 	);
 }
 
+// operand is unvalidated json; operator-specific shapes are checked below
 function isWixFilterOperand(operator: string, value: unknown): boolean {
 	switch (operator) {
 		case '$eq':
@@ -111,6 +114,8 @@ function isWixFilterOperand(operator: string, value: unknown): boolean {
 const WixLogicalArrayOperators = new Set(['$and', '$or']);
 const WixLogicalSingleOperators = new Set(['$not']);
 
+// filter trees are unvalidated json; the grammar is recursive so the
+// input cannot be narrower than unknown before this predicate runs
 function isWixFilter(value: unknown): boolean {
 	if (isWixFilterScalar(value)) {
 		return true;
@@ -118,6 +123,8 @@ function isWixFilter(value: unknown): boolean {
 	if (typeof value !== 'object' || value === null || Array.isArray(value)) {
 		return false;
 	}
+	// object check above already excluded null/arrays; Object.entries
+	// needs a record and a dedicated recursive filter type is unwieldy
 	const entries = Object.entries(value as Record<string, unknown>);
 	if (entries.length === 0) {
 		return true;
@@ -168,8 +175,9 @@ const WixFilterSchema: z.ZodType<WixFilter> = z.lazy(() =>
 		message:
 			'Not a valid Wix query-language filter: field paths must map to scalar equality shorthands or documented operators ($eq, $ne, $gt, $gte, $lt, $lte, $in, $nin, $hasSome, $hasAll, $startsWith, $endsWith, $contains, $urlized, $exists) with shape-valid operands; logical operators ($and, $or, $not) nest filters.',
 	}),
-) as z.ZodType<WixFilter>;
+) as z.ZodType<WixFilter>; // z.lazy cannot infer the recursive filter type
 
+// same unvalidated-json input as isWixFilter; emptiness is checked after
 function isNonEmptyWixFilter(value: unknown): boolean {
 	if (!isWixFilter(value)) return false;
 	return (
@@ -184,7 +192,7 @@ const NonEmptyWixFilterSchema: z.ZodType<WixFilter> = z.lazy(() =>
 	z.record(z.string(), WixJsonValueSchema).refine(isNonEmptyWixFilter, {
 		message: 'Filter must include at least one predicate',
 	}),
-) as z.ZodType<WixFilter>;
+) as z.ZodType<WixFilter>; // z.lazy cannot infer the recursive filter type
 
 function isGraphqlQueryDocument(document: string): boolean {
 	const trimmed = document
@@ -253,6 +261,8 @@ const WixItemSchema = z
 		message: 'Wix item contains a non-JSON value',
 	});
 
+// walks unvalidated values to reject non-json (functions, class instances);
+// unknown is the only honest input type for that check
 function isWixJson(value: unknown): boolean {
 	if (
 		value === null ||
@@ -278,6 +288,8 @@ function isWixJson(value: unknown): boolean {
  */
 function typedItemSchema(schema: z.ZodTypeAny): z.ZodTypeAny {
 	return schema.refine(
+		// refine receives the parsed item; we only walk its values, and the
+		// concrete entity schemas differ so a record is the shared shape
 		(item) => Object.values(item as Record<string, unknown>).every(isWixJson),
 		{
 			message: 'Wix item contains a non-JSON value',
