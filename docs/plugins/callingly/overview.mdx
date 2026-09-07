@@ -24,7 +24,7 @@ npm install corsair @corsair-dev/callingly
 yarn add corsair @corsair-dev/callingly
 ```
 ```bash pnpm
-pnpm add corsair @corsair-dev/callingly
+pnpm install corsair @corsair-dev/callingly
 ```
 ```bash bun
 bun add corsair @corsair-dev/callingly
@@ -103,19 +103,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`agents.get`**
+**List leads**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.callingly.api.agents.get({});
+await tenant.callingly.api.leads.list({});
 ```
 
 
-**`agents.create`**
+**Create lead**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.callingly.api.agents.create({});
+await tenant.callingly.api.leads.create({ name: 'John Doe', phone_number: '+15551234567' });
 ```
 
 
@@ -123,15 +123,38 @@ See the full list on the [API](/plugins/callingly/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.callingly.db.<entity>.search()` and `.list()`: `calls`, `clients`, `leads`, `schedules`, `teams`, `teamUsers`, `users`, `webhooks`.
+Search synced leads without hitting Callingly's API.
 
-See [Database](/plugins/callingly/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.callingly.db.leads.search({
+	data: { status: 'new' },
+	limit: 50,
+});
+```
+
+Synced entities: `calls`, `clients`, `leads`, `schedules`, `teams`, `teamUsers`, `users`, `webhooks`. See [Database](/plugins/callingly/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **2** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+React when a call completes and its outcome is logged.
 
-See [Webhooks](/plugins/callingly/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+callingly({
+    webhookHooks: {
+        calls: {
+            completed: {
+                after: async (ctx, result) => {
+                    const duration = result.data?.duration;
+                    console.log('Call completed with duration:', duration);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/callingly/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 
