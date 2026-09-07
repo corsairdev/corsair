@@ -260,6 +260,9 @@ describe('makeExistRequest', () => {
 				body: undefined,
 				query: undefined,
 			}),
+			expect.objectContaining({
+				rateLimitConfig: expect.objectContaining({ maxRetries: 3 }),
+			}),
 		);
 	});
 
@@ -879,8 +882,9 @@ describe('reviewer regressions', () => {
 			expect(receivedSignal?.aborted).toBe(false);
 
 			// Aborting resolves the caller to null rather than rejecting.
-			(receivedSignal as AbortSignal & { dispatchEvent: (e: Event) => boolean })
-				.dispatchEvent?.(new Event('abort'));
+			(
+				receivedSignal as AbortSignal & { dispatchEvent: (e: Event) => boolean }
+			).dispatchEvent?.(new Event('abort'));
 			await expect(pending).resolves.toBeNull();
 		} finally {
 			globalThis.fetch = originalFetch;
@@ -1189,7 +1193,7 @@ describe('error handlers', () => {
 		expect(classify(httpError(401, undefined))).toBe('AUTH_ERROR');
 	});
 
-	it('retries rate limits and forwards the retry-after hint', async () => {
+	it('does not replay writes on rate limits and forwards the retry-after hint', async () => {
 		const error = new ExistAPIError(
 			'Too Many Requests',
 			429,
@@ -1199,14 +1203,14 @@ describe('error handlers', () => {
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(error),
-		).resolves.toEqual({ maxRetries: 5, headersRetryAfterMs: 60_000 });
+		).resolves.toEqual({ maxRetries: 0, headersRetryAfterMs: 60_000 });
 	});
 
 	it('handles a bodiless 429, which is what Exist actually returns', async () => {
 		const error = new ExistAPIError('Too Many Requests', 429);
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(error),
-		).resolves.toEqual({ maxRetries: 5, headersRetryAfterMs: undefined });
+		).resolves.toEqual({ maxRetries: 0, headersRetryAfterMs: undefined });
 	});
 
 	it('never retries auth or permission failures', async () => {
