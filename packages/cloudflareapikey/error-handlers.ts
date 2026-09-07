@@ -38,6 +38,9 @@ export const errorHandlers = {
 	},
 	DEFAULT: {
 		match: () => true,
-		handler: async () => ({ maxRetries: 3 }),
+		// Corsair retries by rerunning the whole endpoint. DNS create, lockdown
+		// create, ruleset create/update, and R2 upload are not idempotent, so
+		// unmatched 5xx/timeouts must not replay the mutation.
+		handler: async () => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;

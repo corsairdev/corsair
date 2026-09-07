@@ -39,7 +39,11 @@ export const CloudflareDnssec = z.object({
 	algorithm: z.string().optional(),
 	digest: z.string().optional(),
 	digest_algorithm: z.string().optional(),
+	digest_type: z.string().optional(),
 	ds: z.string().optional(),
+	dnssec_multi_signer: z.boolean().optional(),
+	dnssec_presigned: z.boolean().optional(),
+	dnssec_use_nsec3: z.boolean().optional(),
 	flags: z.number().optional(),
 	key_tag: z.number().optional(),
 	key_type: z.string().optional(),
@@ -51,6 +55,7 @@ export const CloudflareLockdown = z.object({
 	id: z.string(),
 	zone_id: z.string(),
 	urls: z.array(z.string()),
+	// Lockdown configuration entries are provider-defined JSON (ip vs ip_range).
 	configurations: z.array(z.record(z.string(), z.unknown())),
 	description: z.string().optional(),
 	paused: z.boolean().optional(),
@@ -69,6 +74,7 @@ export const CloudflareRuleset = z.object({
 	version: z.string().optional(),
 	last_updated: z.coerce.date().nullable().optional(),
 	phase: z.string(),
+	// Ruleset rules are provider-defined JSON; action payloads vary by phase.
 	rules: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 

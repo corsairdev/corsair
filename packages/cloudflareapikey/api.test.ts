@@ -330,4 +330,16 @@ describe('Cloudflare API key endpoints', () => {
 			},
 		);
 	});
+
+	it('s3.upload rejects object keys that escape the R2 object route', async () => {
+		await expect(
+			s3Upload(ctx, {
+				account_id: 'a1',
+				bucket_name: 'bucket',
+				object_key: '../../../../../zones/z1/activation_check',
+				content: 'hello',
+			}),
+		).rejects.toThrow('Invalid R2 object key');
+		expect(request).not.toHaveBeenCalled();
+	});
 });

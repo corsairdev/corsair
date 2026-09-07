@@ -104,6 +104,56 @@ describe('Cloudflare API-key endpoint contracts', () => {
 		).toBe(true);
 	});
 
+	it('requires exactly one ruleset rule position selector', () => {
+		expect(
+			CloudflareApiKeyEndpointInputSchemas.rulesetsCreateRule.safeParse({
+				zone_id: 'z1',
+				ruleset_id: 'rs1',
+				action: 'block',
+				expression: 'true',
+				position: {},
+			}).success,
+		).toBe(false);
+		expect(
+			CloudflareApiKeyEndpointInputSchemas.rulesetsCreateRule.safeParse({
+				zone_id: 'z1',
+				ruleset_id: 'rs1',
+				action: 'block',
+				expression: 'true',
+				position: { before: 'rule_1', after: 'rule_2' },
+			}).success,
+		).toBe(false);
+		expect(
+			CloudflareApiKeyEndpointInputSchemas.rulesetsCreateRule.safeParse({
+				zone_id: 'z1',
+				ruleset_id: 'rs1',
+				action: 'block',
+				expression: 'true',
+				position: { index: 0 },
+			}).success,
+		).toBe(false);
+		expect(
+			CloudflareApiKeyEndpointInputSchemas.rulesetsCreateRule.safeParse({
+				zone_id: 'z1',
+				ruleset_id: 'rs1',
+				action: 'block',
+				expression: 'true',
+				position: { index: 1 },
+			}).success,
+		).toBe(true);
+	});
+
+	it('treats dnssecDelete as a string result', () => {
+		expect(
+			CloudflareApiKeyEndpointOutputSchemas.dnssecDelete.safeParse('').success,
+		).toBe(true);
+		expect(
+			CloudflareApiKeyEndpointOutputSchemas.dnssecDelete.safeParse({
+				status: 'disabled',
+			}).success,
+		).toBe(false);
+	});
+
 	it('defines output schemas for every operation', () => {
 		expect(Object.keys(CloudflareApiKeyEndpointOutputSchemas)).toHaveLength(25);
 		expect(Object.keys(CloudflareApiKeyEndpointInputSchemas)).toHaveLength(25);

@@ -4,10 +4,12 @@ export type CloudflareApiResponse<T> = {
 	result: T;
 	success: boolean;
 	errors: Array<{ code: number; message: string }>;
+	// Cloudflare's messages array is unstructured diagnostic JSON.
 	messages: unknown[];
 };
 
 export function isCloudflareEnvelope(
+	// Transport JSON before the Cloudflare {success, result} envelope is unwrapped.
 	response: unknown,
 ): response is CloudflareApiResponse<unknown> {
 	return (
@@ -30,7 +32,10 @@ function isCloudflareErrorsBody(
 	);
 }
 
-export function unwrapCloudflareResponse<T>(response: unknown): T {
+export function unwrapCloudflareResponse<T>(
+	// Parsed HTTP JSON or a raw string result (DNSSEC delete).
+	response: unknown,
+): T {
 	if (typeof response === 'string') {
 		return response as T;
 	}

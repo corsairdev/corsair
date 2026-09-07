@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+/**
+ * Cloudflare ruleset rules and action_parameters are provider-defined JSON:
+ * each action (block, skip, rewrite, …) uses a different nested shape, and
+ * Cloudflare does not publish a closed TypeScript contract for every variant.
+ */
 const LooseObjectSchema = z.record(z.string(), z.unknown());
 
 const PaginationInputSchema = z.object({
@@ -93,17 +98,6 @@ const RulesetSchema = z
 		last_updated: z.string().optional(),
 		phase: z.string(),
 		rules: z.array(LooseObjectSchema).optional(),
-	})
-	.loose();
-
-const RulesetRuleSchema = z
-	.object({
-		id: z.string().optional(),
-		action: z.string().optional(),
-		expression: z.string().optional(),
-		description: z.string().optional(),
-		enabled: z.boolean().optional(),
-		version: z.string().optional(),
 	})
 	.loose();
 
@@ -271,10 +265,17 @@ const RulesetsDeleteInputSchema = ScopeSchema.and(
 
 const RulePositionSchema = z
 	.object({
-		index: z.number().optional(),
-		before: z.string().optional(),
-		after: z.string().optional(),
+		index: z.number().int().min(1).optional(),
+		before: z.string().min(1).optional(),
+		after: z.string().min(1).optional(),
 	})
+	.refine(
+		(value) =>
+			[value.index, value.before, value.after].filter(
+				(selector) => selector !== undefined,
+			).length === 1,
+		{ message: 'Provide exactly one of before, after, or index' },
+	)
 	.optional();
 
 const RulesetsCreateRuleInputSchema = ScopeSchema.and(
@@ -388,7 +389,7 @@ export type CloudflareApiKeyEndpointOutputs = {
 	dnsOverwrite: z.infer<typeof DnsRecordSchema>;
 	dnsDelete: z.infer<typeof IdDeleteResponseSchema>;
 	dnssecUpdate: z.infer<typeof DnssecSchema>;
-	dnssecDelete: z.infer<typeof DnssecSchema>;
+	dnssecDelete: string;
 	lockdownsCreate: z.infer<typeof LockdownSchema>;
 	lockdownsGet: z.infer<typeof LockdownSchema>;
 	lockdownsUpdate: z.infer<typeof LockdownSchema>;
@@ -396,9 +397,9 @@ export type CloudflareApiKeyEndpointOutputs = {
 	rulesetsCreate: z.infer<typeof RulesetSchema>;
 	rulesetsUpdate: z.infer<typeof RulesetSchema>;
 	rulesetsDelete: null;
-	rulesetsCreateRule: z.infer<typeof RulesetRuleSchema>;
-	rulesetsUpdateRule: z.infer<typeof RulesetRuleSchema>;
-	rulesetsDeleteRule: z.infer<typeof RulesetRuleSchema>;
+	rulesetsCreateRule: z.infer<typeof RulesetSchema>;
+	rulesetsUpdateRule: z.infer<typeof RulesetSchema>;
+	rulesetsDeleteRule: z.infer<typeof RulesetSchema>;
 	rulesetsGetEntrypointVersion: z.infer<typeof RulesetSchema>;
 	cacheGetRegionalTieredCache: z.infer<typeof RegionalTieredCacheSchema>;
 	ipsGet: z.infer<typeof IpsSchema>;
@@ -444,7 +445,7 @@ export const CloudflareApiKeyEndpointOutputSchemas = {
 	dnsOverwrite: DnsRecordSchema,
 	dnsDelete: IdDeleteResponseSchema,
 	dnssecUpdate: DnssecSchema,
-	dnssecDelete: DnssecSchema,
+	dnssecDelete: z.string(),
 	lockdownsCreate: LockdownSchema,
 	lockdownsGet: LockdownSchema,
 	lockdownsUpdate: LockdownSchema,
@@ -452,9 +453,9 @@ export const CloudflareApiKeyEndpointOutputSchemas = {
 	rulesetsCreate: RulesetSchema,
 	rulesetsUpdate: RulesetSchema,
 	rulesetsDelete: z.null(),
-	rulesetsCreateRule: RulesetRuleSchema,
-	rulesetsUpdateRule: RulesetRuleSchema,
-	rulesetsDeleteRule: RulesetRuleSchema,
+	rulesetsCreateRule: RulesetSchema,
+	rulesetsUpdateRule: RulesetSchema,
+	rulesetsDeleteRule: RulesetSchema,
 	rulesetsGetEntrypointVersion: RulesetSchema,
 	cacheGetRegionalTieredCache: RegionalTieredCacheSchema,
 	ipsGet: IpsSchema,

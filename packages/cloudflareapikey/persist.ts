@@ -8,7 +8,7 @@ function parseDate(value: string | undefined): Date | null {
 
 async function persist(
 	label: string,
-	fn: () => Promise<unknown>,
+	fn: () => Promise<unknown>, // upsert/delete return the stored row
 ): Promise<void> {
 	try {
 		await fn();
@@ -98,7 +98,11 @@ export async function persistDnssec(
 			algorithm: dnssec.algorithm as string | undefined,
 			digest: dnssec.digest as string | undefined,
 			digest_algorithm: dnssec.digest_algorithm as string | undefined,
+			digest_type: dnssec.digest_type as string | undefined,
 			ds: dnssec.ds as string | undefined,
+			dnssec_multi_signer: dnssec.dnssec_multi_signer as boolean | undefined,
+			dnssec_presigned: dnssec.dnssec_presigned as boolean | undefined,
+			dnssec_use_nsec3: dnssec.dnssec_use_nsec3 as boolean | undefined,
 			flags: dnssec.flags as number | undefined,
 			key_tag: dnssec.key_tag as number | undefined,
 			key_type: dnssec.key_type as string | undefined,

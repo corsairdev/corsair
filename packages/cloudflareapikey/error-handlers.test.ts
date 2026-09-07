@@ -22,4 +22,13 @@ describe('error handlers', () => {
 			maxRetries: 0,
 		});
 	});
+
+	it('does not replay unmatched failures', async () => {
+		const error = new CloudflareApiKeyAPIError('timeout', undefined, 503);
+		expect(errorHandlers.DEFAULT.match()).toBe(true);
+		await expect(errorHandlers.DEFAULT.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
+		expect(error.status).toBe(503);
+	});
 });

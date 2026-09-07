@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { CloudflareApiKeyAPIError } from '../api-error';
 import { makeCloudflareApiKeyRequest } from '../client';
 import type { CloudflareApiKeyEndpoints } from '../index';
 import {
@@ -25,6 +26,22 @@ function rulesetScope(input: { account_id?: string; zone_id?: string }): {
 	zone_id?: string;
 } {
 	return { account_id: input.account_id, zone_id: input.zone_id };
+}
+
+function r2ObjectUrl(
+	accountId: string,
+	bucketName: string,
+	objectKey: string,
+): string {
+	const segments = objectKey.split('/');
+	if (
+		segments.some(
+			(segment) => segment === '' || segment === '.' || segment === '..',
+		)
+	) {
+		throw new CloudflareApiKeyAPIError('Invalid R2 object key');
+	}
+	return `/accounts/${encodeURIComponent(accountId)}/r2/buckets/${encodeURIComponent(bucketName)}/objects/${segments.map(encodeURIComponent).join('/')}`;
 }
 
 export const zonesList: CloudflareApiKeyEndpoints['zonesList'] = async (
@@ -399,6 +416,7 @@ export const rulesetsCreateRule: CloudflareApiKeyEndpoints['rulesetsCreateRule']
 			body,
 		});
 
+		await persistRuleset(result, { account_id, zone_id }, ctx.db);
 		await logEventFromContext(
 			ctx,
 			'cloudflareapikey.rulesets.createRule',
@@ -422,6 +440,7 @@ export const rulesetsUpdateRule: CloudflareApiKeyEndpoints['rulesetsUpdateRule']
 			},
 		);
 
+		await persistRuleset(result, { account_id, zone_id }, ctx.db);
 		await logEventFromContext(
 			ctx,
 			'cloudflareapikey.rulesets.updateRule',
@@ -444,6 +463,7 @@ export const rulesetsDeleteRule: CloudflareApiKeyEndpoints['rulesetsDeleteRule']
 			},
 		);
 
+		await persistRuleset(result, rulesetScope(input), ctx.db);
 		await logEventFromContext(
 			ctx,
 			'cloudflareapikey.rulesets.deleteRule',
@@ -516,15 +536,11 @@ export const s3Upload: CloudflareApiKeyEndpoints['s3Upload'] = async (
 	const { account_id, bucket_name, object_key, content, content_type } = input;
 	const result = await makeCloudflareApiKeyRequest<
 		CloudflareApiKeyEndpointOutputs['s3Upload']
-	>(
-		`/accounts/${account_id}/r2/buckets/${bucket_name}/objects/${object_key}`,
-		ctx.key,
-		{
-			method: 'PUT',
-			rawBody: content,
-			mediaType: content_type ?? 'application/octet-stream',
-		},
-	);
+	>(r2ObjectUrl(account_id, bucket_name, object_key), ctx.key, {
+		method: 'PUT',
+		rawBody: content,
+		mediaType: content_type ?? 'application/octet-stream',
+	});
 
 	await persistR2Object(
 		{ ...result, key: result.key ?? object_key },
