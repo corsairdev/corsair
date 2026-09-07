@@ -8,6 +8,11 @@ const ctx = {
 	options: {},
 	$getAccountId: async () => 'test-account',
 } as never;
+const publicCtx = {
+	key: '',
+	options: {},
+	$getAccountId: async () => 'test-account',
+} as never;
 
 function json(body: unknown): Response {
 	return new Response(JSON.stringify(body), {
@@ -84,10 +89,13 @@ describe('Updown.io API operations', () => {
 
 	it('calls and validates all five catalog operations', async () => {
 		const checks = await listChecks(ctx, {});
-		const nodes = await list(ctx, {});
-		const ips = await listIps(ctx, {});
-		const ipv4 = await listIpv4(ctx, {});
-		const ipv6 = await listIpv6(ctx, {});
+		const nodes = await list(publicCtx, {});
+		const ips = await listIps(publicCtx, {});
+		const ipv4 = await listIpv4(publicCtx, {});
+		const ipv6 = await listIpv6(publicCtx, {});
+		await expect(listChecks(publicCtx, {})).rejects.toThrow(
+			'Updown.io API key is required',
+		);
 		expect(checks[0]?.token).toBe('ngg8');
 		expect(checks[1]).toMatchObject({ token: 'pulse1', type: 'pulse' });
 		expect(nodes.tok?.city).toBe('Tokyo');
@@ -103,9 +111,11 @@ describe('Updown.io API operations', () => {
 			'https://updown.io/api/nodes/ipv4',
 			'https://updown.io/api/nodes/ipv6',
 		]);
-		for (const [, init] of fetchMock.mock.calls)
-			expect(new Headers(init?.headers).get('X-API-KEY')).toBe(
-				'updown-test-key',
-			);
+		expect(
+			new Headers(fetchMock.mock.calls[0]?.[1]?.headers).get('X-API-KEY'),
+		).toBe('updown-test-key');
+		for (const [, init] of fetchMock.mock.calls.slice(1)) {
+			expect(new Headers(init?.headers).has('X-API-KEY')).toBe(false);
+		}
 	});
 });

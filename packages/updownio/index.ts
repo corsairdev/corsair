@@ -159,10 +159,20 @@ export function updownio<const T extends UpdownIOPluginOptions>(
 		pluginWebhookMatcher: undefined,
 		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
 		keyBuilder: async (ctx: UpdownIOKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) return options.key;
+			if (source === 'endpoint' && options.key !== undefined)
+				return options.key;
 			if (source === 'endpoint') {
-				const key = await ctx.keys.get_api_key();
-				if (key) return key;
+				try {
+					return (await ctx.keys.get_api_key()) ?? '';
+				} catch (error) {
+					if (
+						error instanceof AuthMissingError ||
+						(error instanceof Error && /no dek found/i.test(error.message))
+					) {
+						return '';
+					}
+					throw error;
+				}
 			}
 			throw new AuthMissingError('updownio', 'api_key');
 		},
