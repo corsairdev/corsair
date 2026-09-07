@@ -3,7 +3,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
-import { asRecord, readBodyRecord } from 'corsair/core';
+import { readBodyRecord } from 'corsair/core';
 import { z } from 'zod';
 
 // Waboxapp sends webhooks as application/x-www-form-urlencoded (not JSON),
