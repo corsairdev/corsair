@@ -40,6 +40,7 @@ describe('WebScraping.AI API operations', () => {
 				return new Response(
 					JSON.stringify({
 						title: 'Example Domain',
+						description: null,
 						content: 'Example content',
 					}),
 					{ headers: { 'Content-Type': 'application/json' } },

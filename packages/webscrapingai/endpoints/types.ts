@@ -64,7 +64,7 @@ export const TextResponseSchema = z.union([
 	z
 		.object({
 			title: z.string().optional(),
-			description: z.string().optional(),
+			description: z.string().nullable().optional(),
 			content: z.string(),
 		})
 		.loose(),
