@@ -1,0 +1,3066 @@
+{
+  "id": "apisports",
+  "displayName": "API-Sports",
+  "description": "Sports data API covering fixtures, standings, statistics, and live scores worldwide.",
+  "npmPackageName": "@corsair-dev/apisports",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 67,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "apisports.api.afl.getAflGamePlayerStatistics",
+      "shortPath": "afl.getAflGamePlayerStatistics",
+      "description": "Get AFL Game Player Statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.afl.getAflGames",
+      "shortPath": "afl.getAflGames",
+      "description": "Get AFL Games",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.afl.getAflGamesQuarters",
+      "shortPath": "afl.getAflGamesQuarters",
+      "description": "Get AFL Games Quarters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.afl.getAflSeasons",
+      "shortPath": "afl.getAflSeasons",
+      "description": "Get AFL Seasons",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.afl.getAflStandings",
+      "shortPath": "afl.getAflStandings",
+      "description": "Get AFL Standings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.baseball.getBaseballGamesHeadToHead",
+      "shortPath": "baseball.getBaseballGamesHeadToHead",
+      "description": "Get Baseball Games Head-to-Head",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.basketball.getBasketballBets",
+      "shortPath": "basketball.getBasketballBets",
+      "description": "Get Basketball Bets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.basketball.getBasketballBookmakers",
+      "shortPath": "basketball.getBasketballBookmakers",
+      "description": "Get Basketball Bookmakers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.basketball.getBasketballStatistics",
+      "shortPath": "basketball.getBasketballStatistics",
+      "description": "Get Basketball Statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.basketball.getGamesEvents",
+      "shortPath": "basketball.getGamesEvents",
+      "description": "Get Games Events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.basketball.getGameStatisticsByTeams",
+      "shortPath": "basketball.getGameStatisticsByTeams",
+      "description": "Get Game Statistics by Teams",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.basketball.getNbaGameStatistics",
+      "shortPath": "basketball.getNbaGameStatistics",
+      "description": "Get NBA Game Statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.basketball.getPlayerStatistics",
+      "shortPath": "basketball.getPlayerStatistics",
+      "description": "Get Player Statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.core.getCoaches",
+      "shortPath": "core.getCoaches",
+      "description": "Get Coaches",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.core.getCountries",
+      "shortPath": "core.getCountries",
+      "description": "Get Countries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.core.getInjuries",
+      "shortPath": "core.getInjuries",
+      "description": "Get Injuries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.core.getLeagues",
+      "shortPath": "core.getLeagues",
+      "description": "Get Leagues",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.core.getLeagueSeasons",
+      "shortPath": "core.getLeagueSeasons",
+      "description": "Get League Seasons",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.core.getPredictions",
+      "shortPath": "core.getPredictions",
+      "description": "Get Predictions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.core.getSidelined",
+      "shortPath": "core.getSidelined",
+      "description": "Get Sidelined",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.core.getTeams",
+      "shortPath": "core.getTeams",
+      "description": "Get Teams",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.core.getTeamSeasons",
+      "shortPath": "core.getTeamSeasons",
+      "description": "Get Team Seasons",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.core.getTeamStatistics",
+      "shortPath": "core.getTeamStatistics",
+      "description": "Get Team Statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.core.getTimezone",
+      "shortPath": "core.getTimezone",
+      "description": "Get Timezone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.core.getTransfers",
+      "shortPath": "core.getTransfers",
+      "description": "Get Transfers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.core.getTrophies",
+      "shortPath": "core.getTrophies",
+      "description": "Get Trophies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.core.getVenues",
+      "shortPath": "core.getVenues",
+      "description": "Get Venues",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.fixtures.getFixtureLineups",
+      "shortPath": "fixtures.getFixtureLineups",
+      "description": "Get Fixture Lineups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.fixtures.getFixtures",
+      "shortPath": "fixtures.getFixtures",
+      "description": "Get Fixtures",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.fixtures.getFixturesEvents",
+      "shortPath": "fixtures.getFixturesEvents",
+      "description": "Get Fixtures Events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.fixtures.getFixturesPlayers",
+      "shortPath": "fixtures.getFixturesPlayers",
+      "description": "Get Fixtures Players",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.fixtures.getFixturesRounds",
+      "shortPath": "fixtures.getFixturesRounds",
+      "description": "Get Fixtures Rounds",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.fixtures.getFixtureStatistics",
+      "shortPath": "fixtures.getFixtureStatistics",
+      "description": "Get Fixture Statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.fixtures.getHeadToHeadFixtures",
+      "shortPath": "fixtures.getHeadToHeadFixtures",
+      "description": "Get Head-to-Head Fixtures",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.formula1.getFastestLapsRankings",
+      "shortPath": "formula1.getFastestLapsRankings",
+      "description": "Get Fastest Laps Rankings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.formula1.getFormula1Circuits",
+      "shortPath": "formula1.getFormula1Circuits",
+      "description": "Get Formula 1 Circuits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.formula1.getFormula1Competitions",
+      "shortPath": "formula1.getFormula1Competitions",
+      "description": "Get Formula 1 Competitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.formula1.getFormula1DriverRankings",
+      "shortPath": "formula1.getFormula1DriverRankings",
+      "description": "Get Formula 1 Driver Rankings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.formula1.getFormula1Races",
+      "shortPath": "formula1.getFormula1Races",
+      "description": "Get Formula 1 Races",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.formula1.getFormula1StartingGrid",
+      "shortPath": "formula1.getFormula1StartingGrid",
+      "description": "Get Formula 1 Starting Grid",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.formula1.getFormula1TeamRankings",
+      "shortPath": "formula1.getFormula1TeamRankings",
+      "description": "Get Formula 1 Team Rankings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.formula1.getRaceRankings",
+      "shortPath": "formula1.getRaceRankings",
+      "description": "Get Race Rankings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.mma.getFightersRecords",
+      "shortPath": "mma.getFightersRecords",
+      "description": "Get Fighters Records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.mma.getMmaCategories",
+      "shortPath": "mma.getMmaCategories",
+      "description": "Get MMA Categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.mma.getMmaFighters",
+      "shortPath": "mma.getMmaFighters",
+      "description": "Get MMA Fighters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.mma.getMmaFighterStatistics",
+      "shortPath": "mma.getMmaFighterStatistics",
+      "description": "Get MMA Fighter Statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.mma.getMmaFightResults",
+      "shortPath": "mma.getMmaFightResults",
+      "description": "Get MMA Fight Results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.mma.getMmaFights",
+      "shortPath": "mma.getMmaFights",
+      "description": "Get MMA Fights",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.odds.getInPlayOdds",
+      "shortPath": "odds.getInPlayOdds",
+      "description": "Get In-Play Odds",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.odds.getLiveOddsBets",
+      "shortPath": "odds.getLiveOddsBets",
+      "description": "Get Live Odds Bets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.odds.getOdds",
+      "shortPath": "odds.getOdds",
+      "description": "Get Odds",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.odds.getOddsBets",
+      "shortPath": "odds.getOddsBets",
+      "description": "Get Odds Bets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.odds.getOddsBookmakers",
+      "shortPath": "odds.getOddsBookmakers",
+      "description": "Get Odds Bookmakers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.odds.getOddsMapping",
+      "shortPath": "odds.getOddsMapping",
+      "description": "Get Odds Mapping",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.players.getPlayers",
+      "shortPath": "players.getPlayers",
+      "description": "Get Players",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.players.getPlayersProfiles",
+      "shortPath": "players.getPlayersProfiles",
+      "description": "Get Players Profiles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.players.getPlayersSeasons",
+      "shortPath": "players.getPlayersSeasons",
+      "description": "Get Players Seasons",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.players.getPlayersSquads",
+      "shortPath": "players.getPlayersSquads",
+      "description": "Get Players Squads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.players.getPlayersTeams",
+      "shortPath": "players.getPlayersTeams",
+      "description": "Get Players Teams",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.players.getPlayersTopAssists",
+      "shortPath": "players.getPlayersTopAssists",
+      "description": "Get Players Top Assists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.players.getPlayersTopRedCards",
+      "shortPath": "players.getPlayersTopRedCards",
+      "description": "Get Players Top Red Cards",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.players.getPlayersTopScorers",
+      "shortPath": "players.getPlayersTopScorers",
+      "description": "Get Players Top Scorers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.players.getPlayersTopYellowCards",
+      "shortPath": "players.getPlayersTopYellowCards",
+      "description": "Get Players Top Yellow Cards",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.standings.getNflStandingsConferences",
+      "shortPath": "standings.getNflStandingsConferences",
+      "description": "Get NFL Standings Conferences",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.standings.getStandingsDivisions",
+      "shortPath": "standings.getStandingsDivisions",
+      "description": "Get Standings Divisions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.standings.getStandingsGroups",
+      "shortPath": "standings.getStandingsGroups",
+      "description": "Get Standings Groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apisports.api.standings.getStandingsStages",
+      "shortPath": "standings.getStandingsStages",
+      "description": "Get Standings Stages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "get",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ current?: number, total?: number }"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "apisports.db.queries.search",
+      "entityName": "queries",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sport",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "queriedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,861 @@
+{
+  "id": "epicgames",
+  "displayName": "Epic Games",
+  "description": "Gaming platform APIs for Epic Online Services, accounts, and game backend features.",
+  "npmPackageName": "@corsair-dev/epicgames",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 28,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "one"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "epicgames.api.islands.get",
+      "shortPath": "islands.get",
+      "description": "Get metadata for a Fortnite island by code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.islands.getAvgMinutesPerPlayer",
+      "shortPath": "islands.getAvgMinutesPerPlayer",
+      "description": "Get average minutes per unique player for an island",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "day | hour | minute"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.islands.getFavorites",
+      "shortPath": "islands.getFavorites",
+      "description": "Get island favorites metrics for an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "day | hour | minute"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.islands.getMetricsByInterval",
+      "shortPath": "islands.getMetricsByInterval",
+      "description": "Get island usage metrics aggregated by time interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "day | hour | minute"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "averageMinutesPerPlayer | peakCCU | favorites | minutesPlayed | recommendations | plays | uniquePlayers | retention | averageMinutesPerPlayer | peakCCU | favorites | minutesPlayed | recommendations | plays | uniquePlayers | retention[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.islands.getMinutesPlayed",
+      "shortPath": "islands.getMinutesPlayed",
+      "description": "Get total minutes played on an island for an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "day | hour | minute"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.islands.getPeakCcu",
+      "shortPath": "islands.getPeakCcu",
+      "description": "Get peak concurrent users for an island over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "day | hour | minute"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.islands.getPlays",
+      "shortPath": "islands.getPlays",
+      "description": "Get island play/session-start counts for an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "day | hour | minute"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.islands.getRecommendations",
+      "shortPath": "islands.getRecommendations",
+      "description": "Get island recommendation counts for an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "day | hour | minute"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.islands.getRetention",
+      "shortPath": "islands.getRetention",
+      "description": "Get day-over-day retention metrics for an island",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "day"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.islands.getUniquePlayers",
+      "shortPath": "islands.getUniquePlayers",
+      "description": "Get unique player counts for an island over an interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "day | hour | minute"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.islands.list",
+      "shortPath": "islands.list",
+      "description": "List public discoverable Fortnite Creative islands",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | { data?: {}[], items?: {}[], results?: {}[], islands?: {}[], links?: {}, meta?: {} }"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.batch",
+      "shortPath": "remote.batch",
+      "description": "Batch multiple Remote Control API calls into one request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ RequestId: number, URL: string, Verb: PUT | POST | GET | DELETE }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.callObjectFunction",
+      "shortPath": "remote.callObjectFunction",
+      "description": "Call a Blueprint-callable function on a UObject",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectPath",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "functionName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "generateTransaction",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.corsPreflight",
+      "shortPath": "remote.corsPreflight",
+      "description": "CORS preflight OPTIONS against the Remote Control API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.deletePresetMetadataKey",
+      "shortPath": "remote.deletePresetMetadataKey",
+      "description": "Delete a metadata key from a Remote Control preset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presetName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.describeObject",
+      "shortPath": "remote.describeObject",
+      "description": "Describe a UObject by path via Remote Control",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectPath",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.getObjectThumbnail",
+      "shortPath": "remote.getObjectThumbnail",
+      "description": "Fetch Content Browser thumbnail for an asset path",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectPath",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.getPreset",
+      "shortPath": "remote.getPreset",
+      "description": "Get a Remote Control preset by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presetName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.getPresetMetadata",
+      "shortPath": "remote.getPresetMetadata",
+      "description": "Get all metadata entries for a Remote Control preset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presetName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.getPresetMetadataKey",
+      "shortPath": "remote.getPresetMetadataKey",
+      "description": "Get a single metadata key for a Remote Control preset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presetName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.getPresetProperty",
+      "shortPath": "remote.getPresetProperty",
+      "description": "Read a property exposed on a Remote Control preset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presetName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "propertyName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.initiateSession",
+      "shortPath": "remote.initiateSession",
+      "description": "Initiate an Unreal Web Remote Control session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.invokePresetFunction",
+      "shortPath": "remote.invokePresetFunction",
+      "description": "Invoke a function exposed on a Remote Control preset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presetName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "functionName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.listBlueprintCallableFunctions",
+      "shortPath": "remote.listBlueprintCallableFunctions",
+      "description": "List Blueprint-callable functions exposed by a UObject",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectPath",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.putObjectProperty",
+      "shortPath": "remote.putObjectProperty",
+      "description": "Read or set UObject property values via Remote Control",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectPath",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "propertyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "READ_ACCESS | WRITE_ACCESS | WRITE_TRANSACTION_ACCESS"
+          },
+          {
+            "key": "propertyValue",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.putPresetMetadataKey",
+      "shortPath": "remote.putPresetMetadataKey",
+      "description": "Create or update a metadata key on a Remote Control preset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presetName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.updatePresetProperty",
+      "shortPath": "remote.updatePresetProperty",
+      "description": "Update a property exposed on a Remote Control preset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presetName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "propertyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "epicgames.api.remote.waitForObjectEvent",
+      "shortPath": "remote.waitForObjectEvent",
+      "description": "Wait for a UObject event (experimental; requires EnableExperimentalRoutes)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectPath",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "eventType",
+            "optional": true,
+            "type": "ObjectPropertyChanged | PreObjectPropertyChanged"
+          },
+          {
+            "key": "propertyName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "epicgames.db.islands.search",
+      "entityName": "islands",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creatorCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdIn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

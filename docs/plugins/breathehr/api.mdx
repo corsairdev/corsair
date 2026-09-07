@@ -1,0 +1,1984 @@
+---
+title: API
+description: "API reference for Breathe HR: every `breathehr.api.*` operation with input and output types."
+---
+
+Every `breathehr.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Absences
+
+### list
+
+`absences.list`
+
+List absences
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.absences.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `type` | `Holiday \| OtherLeave` | No | — |
+| `end_date` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `rotacloud` | `boolean` | No | — |
+| `employee_id` | `number` | No | — |
+| `department_id` | `number` | No | — |
+| `other_leave_reason_id` | `number` | No | — |
+| `exclude_cancelled_absences` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `absences` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="absences full type">
+
+```ts
+{
+  id?: number,
+  start_date?: string,
+  end_date?: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Account
+
+### get
+
+`account.get`
+
+Retrieve Breathe HR account details
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  domain?: string,
+  uuid?: string,
+  using_rta?: boolean,
+  health_and_safety_enabled?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Benefits
+
+### list
+
+`benefits.list`
+
+List employee benefits
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.benefits.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Bonuses
+
+### list
+
+`bonuses.list`
+
+List employee bonuses
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.bonuses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Change Requests
+
+### list
+
+`changeRequests.list`
+
+List change requests
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.changeRequests.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Company Documents
+
+### list
+
+`companyDocuments.list`
+
+List company documents
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.companyDocuments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Company Projects
+
+### list
+
+`companyProjects.list`
+
+List company projects
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.companyProjects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Company Training Types
+
+### list
+
+`companyTrainingTypes.list`
+
+List company training types
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.companyTrainingTypes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Departments
+
+### list
+
+`departments.list`
+
+List departments
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.departments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listAbsences
+
+`departments.listAbsences`
+
+List absences for a department
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.departments.listAbsences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `exclude_cancelled_absences` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `absences` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="absences full type">
+
+```ts
+{
+  id?: number,
+  start_date?: string,
+  end_date?: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBenefits
+
+`departments.listBenefits`
+
+List benefits for a department
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.departments.listBenefits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listBonuses
+
+`departments.listBonuses`
+
+List bonuses for a department
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.departments.listBonuses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listLeaveRequests
+
+`departments.listLeaveRequests`
+
+List leave requests for a department
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.departments.listLeaveRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `exclude_cancelled_requests` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leave_requests` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="leave_requests full type">
+
+```ts
+{
+  id?: number,
+  start_date?: string,
+  end_date?: string,
+  type?: string,
+  status?: string,
+  notes?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSalaries
+
+`departments.listSalaries`
+
+List salaries for a department
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.departments.listSalaries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Divisions
+
+### list
+
+`divisions.list`
+
+List divisions
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.divisions.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Employee Expense Claims
+
+### list
+
+`employeeExpenseClaims.list`
+
+List employee expense claims
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.employeeExpenseClaims.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `employee_id` | `number` | No | — |
+| `state_filter` | `submitted \| approved \| completed` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`employeeExpenseClaims.update`
+
+Approve or reject an expense claim
+
+**Risk:** `write`
+
+```ts
+await corsair.breathehr.api.employeeExpenseClaims.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `approve` | `boolean` | Yes | — |
+| `approver_rejector_id` | `number` | Yes | — |
+| `rejection_reason` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Employee Expenses
+
+### delete
+
+`employeeExpenses.delete`
+
+Delete an employee expense
+
+**Risk:** `destructive`
+
+```ts
+await corsair.breathehr.api.employeeExpenses.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`employeeExpenses.get`
+
+Get an employee expense by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.employeeExpenses.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employee_expenses` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="employee_expenses full type">
+
+```ts
+{
+  id?: number,
+  amount?: number | string,
+  description?: string,
+  expense_date?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`employeeExpenses.list`
+
+List employee expenses
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.employeeExpenses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `employee_id` | `number` | No | — |
+| `show_claimed` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employee_expenses` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="employee_expenses full type">
+
+```ts
+{
+  id?: number,
+  amount?: number | string,
+  description?: string,
+  expense_date?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Employee Jobs
+
+### list
+
+`employeeJobs.list`
+
+List employee jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.employeeJobs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `employee_id` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Employees
+
+### create
+
+`employees.create`
+
+Create an employee
+
+**Risk:** `write`
+
+```ts
+await corsair.breathehr.api.employees.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `company_join_date` | `string` | No | — |
+| `join_date` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `job_start_date` | `string` | No | — |
+| `hr` | `boolean` | No | — |
+| `dob` | `string` | No | — |
+| `gender` | `string` | No | — |
+| `status` | `string` | No | — |
+| `person_type` | `string` | No | — |
+| `department` | `number` | No | — |
+| `division` | `number` | No | — |
+| `location` | `number` | No | — |
+| `working_pattern` | `number` | No | — |
+| `working_pattern_id` | `number` | No | — |
+| `holiday_allowance` | `number` | No | — |
+| `holiday_allowance_id` | `number` | No | — |
+| `middle_name` | `string` | No | — |
+| `work_mobile` | `string` | No | — |
+| `home_telephone` | `string` | No | — |
+| `personal_mobile` | `string` | No | — |
+| `employee_ref` | `string` | No | — |
+| `full_or_part_time` | `string` | No | — |
+| `receives_statutory_holidays` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employees` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="employees full type">
+
+```ts
+{
+  id?: number,
+  account_id?: number,
+  first_name?: string,
+  last_name?: string,
+  email?: string | null,
+  job_title?: string | null,
+  status?: string,
+  join_date?: string,
+  company_join_date?: string,
+  job_start_date?: string | null,
+  department?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  division?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  location?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  working_pattern?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  holiday_allowance?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  line_manager?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  hr?: boolean,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createChangeRequest
+
+`employees.createChangeRequest`
+
+Create an employee change request
+
+**Risk:** `write`
+
+```ts
+await corsair.breathehr.api.employees.createChangeRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `field` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `approved` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createExpense
+
+`employees.createExpense`
+
+Create an employee expense
+
+**Risk:** `write`
+
+```ts
+await corsair.breathehr.api.employees.createExpense({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employee_id` | `number` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `description` | `string` | Yes | — |
+| `expense_date` | `string` | Yes | — |
+| `payable_to_employee` | `boolean` | Yes | — |
+| `company_expense_type_id` | `number` | Yes | — |
+| `vat` | `number` | No | — |
+| `miles` | `number` | No | — |
+| `client_name` | `string` | No | — |
+| `has_receipt` | `boolean` | No | — |
+| `company_project_id` | `number` | No | — |
+| `chargeable_to_client` | `boolean` | No | — |
+| `company_mileage_rate_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employee_expenses` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="employee_expenses full type">
+
+```ts
+{
+  id?: number,
+  amount?: number | string,
+  description?: string,
+  expense_date?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createExpenseClaim
+
+`employees.createExpenseClaim`
+
+Create an employee expense claim
+
+**Risk:** `write`
+
+```ts
+await corsair.breathehr.api.employees.createExpenseClaim({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employee_id` | `number` | Yes | — |
+| `employee_expense_ids` | `number[]` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createSickness
+
+`employees.createSickness`
+
+Create an employee sickness record
+
+**Risk:** `write`
+
+```ts
+await corsair.breathehr.api.employees.createSickness({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `start_date` | `string` | Yes | — |
+| `company_sicknesstype_id` | `number` | Yes | — |
+| `reason` | `string` | No | — |
+| `status` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `half_day` | `boolean` | No | — |
+| `half_end` | `boolean` | No | — |
+| `half_start` | `boolean` | No | — |
+| `review_notes` | `string` | No | — |
+| `half_end_am_pm` | `am \| pm` | No | — |
+| `half_start_am_pm` | `am \| pm` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sicknesses` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="sicknesses full type">
+
+```ts
+{
+  id?: number,
+  start_date?: string,
+  end_date?: string | null,
+  status?: string,
+  reason?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`employees.get`
+
+Get an employee by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.employees.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employees` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="employees full type">
+
+```ts
+{
+  id?: number,
+  account_id?: number,
+  first_name?: string,
+  last_name?: string,
+  email?: string | null,
+  job_title?: string | null,
+  status?: string,
+  join_date?: string,
+  company_join_date?: string,
+  job_start_date?: string | null,
+  department?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  division?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  location?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  working_pattern?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  holiday_allowance?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  line_manager?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  hr?: boolean,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`employees.list`
+
+List employees with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.employees.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `filter` | `hr \| line_manager \| either` | No | — |
+| `rotacloud` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employees` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="employees full type">
+
+```ts
+{
+  id?: number,
+  account_id?: number,
+  first_name?: string,
+  last_name?: string,
+  email?: string | null,
+  job_title?: string | null,
+  status?: string,
+  join_date?: string,
+  company_join_date?: string,
+  job_start_date?: string | null,
+  department?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  division?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  location?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  working_pattern?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  holiday_allowance?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  line_manager?: {
+    id?: number | string,
+    name?: string
+  } | null,
+  hr?: boolean,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAbsences
+
+`employees.listAbsences`
+
+List absences for an employee
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.employees.listAbsences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `exclude_cancelled_absences` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `absences` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="absences full type">
+
+```ts
+{
+  id?: number,
+  start_date?: string,
+  end_date?: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBenefits
+
+`employees.listBenefits`
+
+List benefits for an employee
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.employees.listBenefits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listBonuses
+
+`employees.listBonuses`
+
+List bonuses for an employee
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.employees.listBonuses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listChangeRequests
+
+`employees.listChangeRequests`
+
+List change requests for an employee
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.employees.listChangeRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listHolidayYears
+
+`employees.listHolidayYears`
+
+List holiday years for an employee
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.employees.listHolidayYears({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `for_date` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listLeaveRequests
+
+`employees.listLeaveRequests`
+
+List leave requests for an employee
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.employees.listLeaveRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `exclude_cancelled_requests` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leave_requests` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="leave_requests full type">
+
+```ts
+{
+  id?: number,
+  start_date?: string,
+  end_date?: string,
+  type?: string,
+  status?: string,
+  notes?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSalaries
+
+`employees.listSalaries`
+
+List salaries for an employee
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.employees.listSalaries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Employee Training Courses
+
+### delete
+
+`employeeTrainingCourses.delete`
+
+Delete an employee training course
+
+**Risk:** `destructive`
+
+```ts
+await corsair.breathehr.api.employeeTrainingCourses.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`employeeTrainingCourses.list`
+
+List employee training courses
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.employeeTrainingCourses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `employee_id` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`employeeTrainingCourses.update`
+
+Update an employee training course
+
+**Risk:** `write`
+
+```ts
+await corsair.breathehr.api.employeeTrainingCourses.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `cost` | `string` | No | — |
+| `name` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `end_on` | `string` | No | — |
+| `status` | `string` | No | — |
+| `outcome` | `string` | No | — |
+| `half_day` | `boolean` | No | — |
+| `start_on` | `string` | No | — |
+| `followup_date` | `string` | No | — |
+| `half_day_am_pm` | `am \| pm` | No | — |
+| `company_training_type_id` | `number` | No | — |
+| `remuneration_currency_id` | `number` | No | — |
+| `company_training_category_id` | `number` | No | — |
+| `company_training_provider_id` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Holiday Allowances
+
+### list
+
+`holidayAllowances.list`
+
+List holiday allowances
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.holidayAllowances.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Leave Requests
+
+### approve
+
+`leaveRequests.approve`
+
+Approve a leave request
+
+**Risk:** `write`
+
+```ts
+await corsair.breathehr.api.leaveRequests.approve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leave_requests` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="leave_requests full type">
+
+```ts
+{
+  id?: number,
+  start_date?: string,
+  end_date?: string,
+  type?: string,
+  status?: string,
+  notes?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`leaveRequests.get`
+
+Get a leave request by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.leaveRequests.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leave_requests` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="leave_requests full type">
+
+```ts
+{
+  id?: number,
+  start_date?: string,
+  end_date?: string,
+  type?: string,
+  status?: string,
+  notes?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCancelling
+
+`leaveRequests.getCancelling`
+
+Get the leave request being cancelled
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.leaveRequests.getCancelling({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leave_requests` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="leave_requests full type">
+
+```ts
+{
+  id?: number,
+  start_date?: string,
+  end_date?: string,
+  type?: string,
+  status?: string,
+  notes?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`leaveRequests.list`
+
+List leave requests
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.leaveRequests.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `end_date` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `rotacloud` | `boolean` | No | — |
+| `employee_id` | `number` | No | — |
+| `department_id` | `number` | No | — |
+| `exclude_cancelled_requests` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leave_requests` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="leave_requests full type">
+
+```ts
+{
+  id?: number,
+  start_date?: string,
+  end_date?: string,
+  type?: string,
+  status?: string,
+  notes?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reject
+
+`leaveRequests.reject`
+
+Reject a leave request
+
+**Risk:** `write`
+
+```ts
+await corsair.breathehr.api.leaveRequests.reject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `rejection_reason` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leave_requests` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="leave_requests full type">
+
+```ts
+{
+  id?: number,
+  start_date?: string,
+  end_date?: string,
+  type?: string,
+  status?: string,
+  notes?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Locations
+
+### list
+
+`locations.list`
+
+List locations
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.locations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Other Leave Reasons
+
+### list
+
+`otherLeaveReasons.list`
+
+List other leave reasons
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.otherLeaveReasons.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Salaries
+
+### list
+
+`salaries.list`
+
+List salaries
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.salaries.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Sicknesses
+
+### list
+
+`sicknesses.list`
+
+List sickness records
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.sicknesses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `end_date` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `rotacloud` | `boolean` | No | — |
+| `employee_id` | `number` | No | — |
+| `department_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sicknesses` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="sicknesses full type">
+
+```ts
+{
+  id?: number,
+  start_date?: string,
+  end_date?: string | null,
+  status?: string,
+  reason?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`sicknesses.update`
+
+Update a sickness record
+
+**Risk:** `write`
+
+```ts
+await corsair.breathehr.api.sicknesses.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `reason` | `string` | No | — |
+| `status` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `half_day` | `boolean` | No | — |
+| `half_end` | `boolean` | No | — |
+| `half_start` | `boolean` | No | — |
+| `start_date` | `string` | No | — |
+| `review_notes` | `string` | No | — |
+| `half_end_am_pm` | `am \| pm` | No | — |
+| `half_start_am_pm` | `am \| pm` | No | — |
+| `company_sicknesstype_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sicknesses` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="sicknesses full type">
+
+```ts
+{
+  id?: number,
+  start_date?: string,
+  end_date?: string | null,
+  status?: string,
+  reason?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Working Patterns
+
+### list
+
+`workingPatterns.list`
+
+List working patterns
+
+**Risk:** `read`
+
+```ts
+await corsair.breathehr.api.workingPatterns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
