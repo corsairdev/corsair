@@ -1,17 +1,22 @@
 import { CloudflareApiKeyAPIError } from './api-error';
 
+/**
+ * Cloudflare HTTP JSON before runtime narrowing. The transport can return an
+ * envelope, a string (DNSSEC delete), null (ruleset delete), or an error
+ * object; `unknown` is required until those cases are discriminated.
+ */
+type CloudflareJson = unknown;
+
 export type CloudflareApiResponse<T> = {
 	result: T;
 	success: boolean;
 	errors: Array<{ code: number; message: string }>;
-	// Cloudflare's messages array is unstructured diagnostic JSON.
-	messages: unknown[];
+	messages: unknown[]; // unstructured Cloudflare diagnostics
 };
 
 export function isCloudflareEnvelope(
-	// Transport JSON before the Cloudflare {success, result} envelope is unwrapped.
-	response: unknown,
-): response is CloudflareApiResponse<unknown> {
+	response: CloudflareJson,
+): response is CloudflareApiResponse<CloudflareJson> {
 	return (
 		response !== null &&
 		typeof response === 'object' &&
@@ -21,21 +26,18 @@ export function isCloudflareEnvelope(
 }
 
 function isCloudflareErrorsBody(
-	body: unknown,
+	body: CloudflareJson,
 ): body is { errors: Array<{ code?: number; message: string }> } {
 	return (
 		body !== null &&
 		typeof body === 'object' &&
 		'errors' in body &&
-		Array.isArray((body as { errors: unknown }).errors) &&
-		(body as { errors: unknown[] }).errors.length > 0
+		Array.isArray((body as { errors: CloudflareJson }).errors) &&
+		(body as { errors: CloudflareJson[] }).errors.length > 0
 	);
 }
 
-export function unwrapCloudflareResponse<T>(
-	// Parsed HTTP JSON or a raw string result (DNSSEC delete).
-	response: unknown,
-): T {
+export function unwrapCloudflareResponse<T>(response: CloudflareJson): T {
 	if (typeof response === 'string') {
 		return response as T;
 	}
@@ -54,7 +56,7 @@ export function unwrapCloudflareResponse<T>(
 }
 
 export function cloudflareErrorFromApiErrorBody(
-	body: unknown,
+	body: CloudflareJson,
 ): CloudflareApiKeyAPIError | null {
 	if (isCloudflareEnvelope(body) && !body.success) {
 		const message =

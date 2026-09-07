@@ -2,13 +2,19 @@ import type { CloudflareApiKeyContext } from './index';
 
 export type CloudflareApiKeyDb = CloudflareApiKeyContext['db'];
 
+/**
+ * Unwrapped Cloudflare objects before field mapping. Extra provider keys are
+ * provider-defined and left unknown so persistence copies only modeled columns.
+ */
+type CloudflareApiObject = Record<string, unknown>;
+
 function parseDate(value: string | undefined): Date | null {
 	return value ? new Date(value) : null;
 }
 
 async function persist(
 	label: string,
-	fn: () => Promise<unknown>, // upsert/delete return the stored row
+	fn: () => Promise<unknown>, // store write result is discarded; only rejection matters
 ): Promise<void> {
 	try {
 		await fn();
@@ -18,7 +24,7 @@ async function persist(
 }
 
 export async function persistZone(
-	zone: Record<string, unknown>,
+	zone: CloudflareApiObject,
 	db: CloudflareApiKeyDb,
 ): Promise<void> {
 	if (!db.zones || zone.id == null) return;
@@ -49,7 +55,7 @@ export async function deleteZone(
 }
 
 export async function persistDnsRecord(
-	record: Record<string, unknown>,
+	record: CloudflareApiObject,
 	zoneId: string,
 	db: CloudflareApiKeyDb,
 ): Promise<void> {
@@ -85,7 +91,7 @@ export async function deleteDnsRecord(
 }
 
 export async function persistDnssec(
-	dnssec: Record<string, unknown>,
+	dnssec: CloudflareApiObject,
 	zoneId: string,
 	db: CloudflareApiKeyDb,
 ): Promise<void> {
@@ -121,7 +127,7 @@ export async function deleteDnssec(
 }
 
 export async function persistLockdown(
-	rule: Record<string, unknown>,
+	rule: CloudflareApiObject,
 	zoneId: string,
 	db: CloudflareApiKeyDb,
 ): Promise<void> {
@@ -132,7 +138,7 @@ export async function persistLockdown(
 			id,
 			zone_id: zoneId,
 			urls: (rule.urls as string[]) ?? [],
-			configurations: (rule.configurations as Record<string, unknown>[]) ?? [],
+			configurations: (rule.configurations as CloudflareApiObject[]) ?? [],
 			description: rule.description as string | undefined,
 			paused: rule.paused as boolean | undefined,
 			priority: rule.priority as number | undefined,
@@ -143,7 +149,7 @@ export async function persistLockdown(
 }
 
 export async function persistRuleset(
-	ruleset: Record<string, unknown>,
+	ruleset: CloudflareApiObject,
 	scope: { zone_id?: string; account_id?: string },
 	db: CloudflareApiKeyDb,
 ): Promise<void> {
@@ -160,7 +166,7 @@ export async function persistRuleset(
 			version: ruleset.version as string | undefined,
 			last_updated: parseDate(ruleset.last_updated as string | undefined),
 			phase: String(ruleset.phase ?? ''),
-			rules: ruleset.rules as Record<string, unknown>[] | undefined,
+			rules: ruleset.rules as CloudflareApiObject[] | undefined,
 		}),
 	);
 }
@@ -176,7 +182,7 @@ export async function deleteRuleset(
 }
 
 export async function persistR2Object(
-	object: Record<string, unknown>,
+	object: CloudflareApiObject,
 	accountId: string,
 	bucketName: string,
 	db: CloudflareApiKeyDb,

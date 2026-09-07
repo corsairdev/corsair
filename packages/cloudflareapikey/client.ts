@@ -16,8 +16,7 @@ export async function makeCloudflareApiKeyRequest<T>(
 	token: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-		// JSON bodies are already validated by each endpoint's Zod input schema.
-		body?: Record<string, unknown>;
+		body?: Record<string, unknown>; // endpoint Zod already validated this JSON body
 		query?: Record<string, string | number | boolean | undefined>;
 		rawBody?: string;
 		mediaType?: string;

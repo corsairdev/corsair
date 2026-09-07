@@ -41,10 +41,10 @@ const ctx = {
 	key: TOKEN ?? '',
 	db: {},
 	$getAccountId: async () => ACCOUNT_ID,
-} as unknown as CloudflareApiKeyContext;
+} as unknown as CloudflareApiKeyContext; // stub Corsair binder fields unused by live calls
 
 async function expectCloudflareError(
-	fn: () => Promise<unknown>,
+	fn: () => Promise<unknown>, // throw-path helper; success payloads vary by op
 ): Promise<CloudflareApiKeyAPIError> {
 	try {
 		await fn();
