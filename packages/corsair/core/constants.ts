@@ -535,7 +535,7 @@ export const ProviderDisplayNames = {
 	tisane: 'Tisane',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
-	tokenmetrics: 'TokenMetrics',
+	tokenmetrics: 'Token Metrics',
 	trello: 'Trello',
 	twentyonerisk: 'TwentyOneRisk',
 	twilio: 'Twilio',
