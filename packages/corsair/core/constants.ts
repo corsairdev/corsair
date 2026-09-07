@@ -124,6 +124,7 @@ export const BaseProviders = [
 	'clockify',
 	'cloudflare',
 	'cloudinary',
+	'coda',
 	'collegefootballdata',
 	'confluence',
 	'connecteam',
@@ -401,6 +402,7 @@ export const ProviderDisplayNames = {
 	clockify: 'Clockify',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
+	coda: 'Coda',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
@@ -637,6 +639,7 @@ export type AllProviders =
 	| 'bestbuy'
 	| 'bettercontact'
 	| 'betterproposals'
+	| 'betterproposals'
 	| 'betterstack'
 	| 'bigdatacloud'
 	| 'bigmailer'
@@ -685,6 +688,7 @@ export type AllProviders =
 	| 'clockify'
 	| 'cloudflare'
 	| 'cloudinary'
+	| 'coda'
 	| 'collegefootballdata'
 	| 'confluence'
 	| 'connecteam'
