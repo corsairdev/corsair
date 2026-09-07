@@ -1,13 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeClickmeetingRequest } from '../client';
 import type { ClickmeetingEndpoints } from '../index';
+import type { ClickmeetingEndpointOutputs } from './types';
 
 export const getFileLibrary: ClickmeetingEndpoints['getFileLibrary'] = async (
 	ctx,
 	input,
 ) => {
 	const query = input.page ? { page: input.page } : undefined;
-	const res = await makeClickmeetingRequest<any>('/file-library', ctx.key, {
+	const res = await makeClickmeetingRequest<
+		ClickmeetingEndpointOutputs['getFileLibrary']
+	>('/file-library', ctx.key, {
 		method: 'GET',
 		query,
 	});
@@ -24,13 +27,11 @@ export const getFileDetails: ClickmeetingEndpoints['getFileDetails'] = async (
 	ctx,
 	input,
 ) => {
-	const res = await makeClickmeetingRequest<any>(
-		`/file-library/${encodeURIComponent(String(input.fileId))}`,
-		ctx.key,
-		{
-			method: 'GET',
-		},
-	);
+	const res = await makeClickmeetingRequest<
+		ClickmeetingEndpointOutputs['getFileDetails']
+	>(`/file-library/${encodeURIComponent(String(input.fileId))}`, ctx.key, {
+		method: 'GET',
+	});
 	await logEventFromContext(
 		ctx,
 		'clickmeeting.files.getFileDetails',
@@ -52,7 +53,15 @@ function decodeFileContent(
 		dataUriIndex !== -1
 			? content.slice(dataUriIndex + 8).trim()
 			: content.trim();
-	return Buffer.from(base64Str.replace(/\s+/g, ''), 'base64');
+	const clean = base64Str.replace(/\s+/g, '');
+	if (
+		clean.length === 0 ||
+		clean.length % 4 !== 0 ||
+		!/^[A-Za-z0-9+/]+={0,2}$/.test(clean)
+	) {
+		throw new Error('Invalid base64 content provided for file upload');
+	}
+	return Buffer.from(clean, 'base64');
 }
 
 export const uploadFile: ClickmeetingEndpoints['uploadFile'] = async (
@@ -66,7 +75,9 @@ export const uploadFile: ClickmeetingEndpoints['uploadFile'] = async (
 	if (input.conference_id !== undefined) {
 		formData.append('conference_id', String(input.conference_id));
 	}
-	const res = await makeClickmeetingRequest<any>('/file-library', ctx.key, {
+	const res = await makeClickmeetingRequest<
+		ClickmeetingEndpointOutputs['uploadFile']
+	>('/file-library', ctx.key, {
 		method: 'POST',
 		body: formData,
 	});
@@ -83,13 +94,11 @@ export const deleteFile: ClickmeetingEndpoints['deleteFile'] = async (
 	ctx,
 	input,
 ) => {
-	const res = await makeClickmeetingRequest<any>(
-		`/file-library/${encodeURIComponent(String(input.fileId))}`,
-		ctx.key,
-		{
-			method: 'DELETE',
-		},
-	);
+	const res = await makeClickmeetingRequest<
+		ClickmeetingEndpointOutputs['deleteFile']
+	>(`/file-library/${encodeURIComponent(String(input.fileId))}`, ctx.key, {
+		method: 'DELETE',
+	});
 	await logEventFromContext(
 		ctx,
 		'clickmeeting.files.deleteFile',
@@ -103,7 +112,9 @@ export const downloadFile: ClickmeetingEndpoints['downloadFile'] = async (
 	ctx,
 	input,
 ) => {
-	const res = await makeClickmeetingRequest<any>(
+	const res = await makeClickmeetingRequest<
+		ClickmeetingEndpointOutputs['downloadFile']
+	>(
 		`/file-library/${encodeURIComponent(String(input.fileId))}/download`,
 		ctx.key,
 		{

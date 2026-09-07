@@ -896,6 +896,15 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 			expect(result).toEqual(mockUpload);
 		});
 
+		it('uploadFile throws error on invalid base64 content', async () => {
+			await expect(
+				plugin.endpoints!.files.uploadFile(mockContext, {
+					name: 'bad.pdf',
+					content: 'not-base64-content!',
+				}),
+			).rejects.toThrow('Invalid base64 content provided for file upload');
+		});
+
 		it('deleteFile', async () => {
 			mockMakeRequest.mockResolvedValueOnce({ status: 'deleted' });
 			const result = await plugin.endpoints!.files.deleteFile(mockContext, {

@@ -531,10 +531,19 @@ export const GetChatsOutputSchema = z.array(ChatItemSchema);
 export const GetChatDetailsInputSchema = z.object({
 	chatId: z.union([z.string(), z.number()]),
 });
+export const ChatMessageItemSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		author: z.string().optional(),
+		text: z.string().optional(),
+		created_at: z.string().optional(),
+	})
+	.passthrough();
+
 export const GetChatDetailsOutputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]).optional(),
-		messages: z.array(z.record(z.string(), z.unknown())).optional(),
+		messages: z.array(ChatMessageItemSchema).optional(),
 	})
 	.passthrough();
 
@@ -552,19 +561,40 @@ export const GetFileDetailsInputSchema = z.object({
 });
 export const GetFileDetailsOutputSchema = FileLibraryItemSchema;
 
-export const UploadFileInputSchema = z.object({
-	name: z.string().describe('File name'),
-	content: z
-		.string()
-		.describe(
-			'File content (base64-encoded string, or raw string when encoding is "raw")',
-		),
-	encoding: z
-		.enum(['base64', 'raw'])
-		.optional()
-		.describe('Content encoding discriminator ("base64" or "raw", defaults to "base64")'),
-	conference_id: z.union([z.string(), z.number()]).optional(),
-});
+export const UploadFileInputSchema = z
+	.object({
+		name: z.string().describe('File name'),
+		content: z
+			.string()
+			.describe(
+				'File content (base64-encoded string, or raw string when encoding is "raw")',
+			),
+		encoding: z
+			.enum(['base64', 'raw'])
+			.optional()
+			.describe(
+				'Content encoding discriminator ("base64" or "raw", defaults to "base64")',
+			),
+		conference_id: z.union([z.string(), z.number()]).optional(),
+	})
+	.refine(
+		(data) => {
+			if (data.encoding === 'raw') return true;
+			const clean = data.content.includes(';base64,')
+				? (data.content.split(';base64,')[1] ?? '').trim().replace(/\s+/g, '')
+				: data.content.trim().replace(/\s+/g, '');
+			return (
+				clean.length > 0 &&
+				clean.length % 4 === 0 &&
+				/^[A-Za-z0-9+/]+={0,2}$/.test(clean)
+			);
+		},
+		{
+			message:
+				'content must be a valid base64-encoded string or data URI when encoding is "base64"',
+			path: ['content'],
+		},
+	);
 export const UploadFileOutputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]).optional(),
