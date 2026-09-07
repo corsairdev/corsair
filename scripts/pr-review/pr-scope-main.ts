@@ -123,6 +123,7 @@ const scope = scopeForCurrentEvent();
 const filters = filtersForScope(scope);
 writeOutput('lane', filters.lane);
 writeOutput('turbo_filter', filters.turboFilter);
+writeOutput('adapters_filter', filters.adaptersFilter);
 writeOutput('skip_heavy', String(filters.skipHeavy));
 writeOutput('include_www', String(filters.includeWww));
 writeOutput('www_install_filter', filters.wwwInstallFilter);

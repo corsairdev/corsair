@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "corsair": "workspace:*",
-    "zod": "^4.1.13"
+    "zod": "^4.4.0"
   },
   "peerDependencies": {
     "@mastra/core": ">=1.64.0"

@@ -8,9 +8,9 @@ if (!apiKey) {
 	);
 }
 
-// Any model works — this points the demo at Corsair's OpenAI-compatible gateway.
+// Pinned to Corsair's gateway so the API key can't be pointed at another host.
 export const model = createOpenAICompatible({
 	name: 'corsair',
-	baseURL: process.env.LITELLM_BASE_URL ?? 'https://llm.corsair.dev/v1',
+	baseURL: 'https://llm.corsair.dev/v1',
 	apiKey,
 }).chatModel(process.env.LITELLM_MODEL ?? 'gpt-5.4-mini');

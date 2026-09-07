@@ -111,11 +111,11 @@ jobs:
 
       - name: Build
         if: steps.scope.outputs.skip_heavy != 'true' && steps.scope.outputs.lane != 'www'
-        run: pnpm exec turbo build --filter="${{ steps.scope.outputs.turbo_filter }}"
+        run: pnpm exec turbo build --filter="${{ steps.scope.outputs.turbo_filter }}" ${{ steps.scope.outputs.adapters_filter }}
 
       - name: Run tests
         if: steps.scope.outputs.skip_heavy != 'true'
-        run: pnpm exec turbo test --filter="${{ steps.scope.outputs.turbo_filter }}" ${{ steps.scope.outputs.www_test_filter }} -- --passWithNoTests --ci --testPathIgnorePatterns="api\.test\.ts$|(^|/)integration\.test\.ts$"
+        run: pnpm exec turbo test --filter="${{ steps.scope.outputs.turbo_filter }}" ${{ steps.scope.outputs.adapters_filter }} ${{ steps.scope.outputs.www_test_filter }} -- --passWithNoTests --ci --testPathIgnorePatterns="api\.test\.ts$|(^|/)integration\.test\.ts$"
         env:
           CI: true
           SKIP_PG_TESTS: 1

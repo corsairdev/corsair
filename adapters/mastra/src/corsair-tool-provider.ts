@@ -92,10 +92,10 @@ export interface CorsairToolProviderConfig extends BaseToolProviderOptions {
 	 * - **omitted** — fall back to the author id, then `'default'`. Derives
 	 *   `defaultScope: 'per-author'`.
 	 *
-	 * An existing connection always resolves to the tenant baked into its
-	 * `connectionId`, regardless of this setting, so a connection stays bound to
-	 * the tenant it was created for. The derived scope is only a default; pass
-	 * `defaultScope` to override it.
+	 * This mapping is authoritative for tenant isolation: a `connectionId` never
+	 * overrides a pinned tenant, and when the caller is known a connectionId
+	 * naming a different tenant is rejected (see {@link resolveTenant}). The
+	 * derived scope is only a default; pass `defaultScope` to override it.
 	 */
 	tenantId?: string | ((input: TenantResolveInput) => string | Promise<string>);
 }
@@ -118,6 +118,12 @@ function scopeForTenant(
 /**
  * Encodes a `(tenant, toolkit)` pair into the opaque `connectionId`/`authId`
  * string Mastra passes around, so the provider can recover the pair later.
+ *
+ * This token is encoded, not signed — treat it as a server-minted handle, not a
+ * capability. The provider never lets it override the configured tenant (see
+ * {@link CorsairToolProviderConfig.tenantId}), so keep connection ids
+ * server-side and derive them from your authenticated identity; do not accept
+ * one verbatim from an untrusted caller.
  *
  * @param tenantId - The Corsair tenant this connection belongs to.
  * @param toolkit - The Corsair plugin (toolkit) slug.
@@ -272,24 +278,53 @@ export class CorsairToolProvider extends BaseToolProvider {
 	/**
 	 * Resolves a request to a Corsair tenant.
 	 *
-	 * A decodable `connectionId` is authoritative: it is minted once when the
-	 * connection is created and then handed identically to `authorize` and
-	 * `resolveToolsVNext`, so binding to it keeps a connection on the same tenant
-	 * for its whole lifecycle. `authorize` receives no author/request context
-	 * (see {@link AuthorizeOpts}), so without this precedence a function resolver
-	 * could open the OAuth flow under one tenant and later resolve tools under
-	 * another. The configured mapping only chooses a tenant when minting a fresh
-	 * connection (no id to decode yet).
+	 * The configured mapping is authoritative; a `connectionId` only ever carries
+	 * a *claim* that must agree with it. `connectionId` is unauthenticated
+	 * (base64url, not signed), so it must never let a caller reach a tenant the
+	 * configuration wouldn't grant:
+	 *
+	 * - **Pinned (`string`)** — always that tenant; a connectionId for a different
+	 *   tenant is forged or stale and is ignored.
+	 * - **Caller-known** (`authorId`/`requestContext` present) — derive the tenant
+	 *   from the caller and reject a connectionId that names a *different* tenant
+	 *   (cross-tenant access attempt).
+	 * - **No caller context** (`authorize`, `getConnectionStatus`; see
+	 *   {@link AuthorizeOpts}) — the connectionId is the only tenant source.
+	 * - **Fresh connection + function resolver** — unsupported: Mastra passes no
+	 *   author/request context to `authorize`, so throw rather than silently open
+	 *   OAuth under a fallback tenant.
 	 */
 	private async resolveTenant(input: TenantResolveInput): Promise<string> {
-		if (input.connectionId) {
-			const decoded = decodeConnectionId(input.connectionId);
-			if (decoded) return decoded.tenantId;
+		if (typeof this.tenantConfig === 'string') return this.tenantConfig;
+
+		const claimed = input.connectionId
+			? decodeConnectionId(input.connectionId)?.tenantId
+			: undefined;
+
+		if (input.authorId != null || input.requestContext != null) {
+			const derived =
+				typeof this.tenantConfig === 'function'
+					? await this.tenantConfig(input)
+					: (input.authorId ?? 'default');
+			if (claimed != null && claimed !== derived) {
+				throw new Error(
+					'CorsairToolProvider: connectionId tenant does not match the caller — refusing cross-tenant access.',
+				);
+			}
+			return derived;
 		}
-		const configured = this.tenantConfig;
-		if (typeof configured === 'function') return configured(input);
-		if (typeof configured === 'string') return configured;
-		return input.authorId ?? 'default';
+
+		if (claimed != null) return claimed;
+
+		if (typeof this.tenantConfig === 'function') {
+			throw new Error(
+				'CorsairToolProvider: cannot resolve a tenant for a new connection. A ' +
+					'function `tenantId` resolver needs author or request context, which ' +
+					'Mastra does not pass to authorize — pin `tenantId` to a string, or ' +
+					'supply a connectionId from encodeConnectionId(tenant, toolkit).',
+			);
+		}
+		return 'default';
 	}
 
 	/** Scopes the Corsair instance to a tenant (multi-tenant), else returns it as-is. */
