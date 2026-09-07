@@ -1,0 +1,97 @@
+---
+title: API
+description: "API reference for Imagior: every `imagior.api.*` operation with input and output types."
+---
+
+Every `imagior.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Retrieve the authenticated Imagior account details and remaining credits
+
+**Risk:** `read`
+
+```ts
+await corsair.imagior.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `statusCode` | `number` | Yes | — |
+| `usage` | `object` | Yes | — |
+| `requestCompletionTime` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  remainingCredits: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### list
+
+`templates.list`
+
+List all design templates owned by the authenticated Imagior account
+
+**Risk:** `read`
+
+```ts
+await corsair.imagior.api.templates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `createdAt \| updatedAt` | No | — |
+| `order` | `asc \| desc` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  createdAt: string,
+  updatedAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
