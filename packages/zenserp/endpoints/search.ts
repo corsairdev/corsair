@@ -9,6 +9,11 @@ import {
 	YandexSearchInputSchema,
 } from './types';
 
+export function imageUrlForEvent(imageUrl: string): string {
+	const url = new URL(imageUrl);
+	return `${url.origin}${url.pathname}`;
+}
+
 export const google: ZenserpEndpoints['searchGoogle'] = async (
 	ctx,
 	rawInput,
@@ -79,7 +84,7 @@ export const reverseImage: ZenserpEndpoints['searchReverseImage'] = async (
 	await logEventFromContext(
 		ctx,
 		'zenserp.search.reverseImage',
-		{ imageUrl: input.imageUrl },
+		{ imageUrl: imageUrlForEvent(input.imageUrl) },
 		'completed',
 	);
 	return response;

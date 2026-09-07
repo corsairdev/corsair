@@ -1,4 +1,6 @@
 // Mocked transport coverage intentionally runs in Corsair's normal CI lane.
+
+import { makeZenserpRequest } from './client';
 import { getStatus } from './endpoints/account';
 import { list as listBatches } from './endpoints/batches';
 import {
@@ -7,7 +9,13 @@ import {
 	listLocations,
 	listSearchEngines,
 } from './endpoints/metadata';
-import { bing, google, reverseImage, yandex } from './endpoints/search';
+import {
+	bing,
+	google,
+	imageUrlForEvent,
+	reverseImage,
+	yandex,
+} from './endpoints/search';
 import { getProduct } from './endpoints/shopping';
 import { get as getTrends } from './endpoints/trends';
 import {
@@ -93,11 +101,12 @@ describe('Zenserp API operations', () => {
 		expect(calls[6]).toContain('/api/v2/status');
 		expect(calls[7]).toContain('/api/v1/batches?page=1');
 		expect(calls[8]).toContain('/api/v2/gl');
-		expect(calls[9]).toContain('/api/v2/locations?q=New%20York');
+		expect(calls[9]).toContain('/api/v2/locations?q=New+York');
 		expect(calls[10]).toContain('/api/v2/search_engines');
 		expect(calls[11]).toContain('/api/v2/hl');
 		for (const [, init] of fetchMock.mock.calls) {
 			expect(new Headers(init?.headers).get('apikey')).toBe('zenserp-test-key');
+			expect(init?.redirect).toBe('error');
 		}
 	});
 
@@ -105,5 +114,26 @@ describe('Zenserp API operations', () => {
 		expect(() => SearchResponseSchema.parse({})).toThrow();
 		expect(() => ShoppingProductResponseSchema.parse({})).toThrow();
 		expect(() => TrendsResponseSchema.parse({})).toThrow();
+	});
+
+	it('refuses redirects before forwarding the custom API key', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(null, {
+				status: 302,
+				headers: { Location: 'http://untrusted.example/collect' },
+			}),
+		);
+		await expect(
+			makeZenserpRequest('/api/v2/status', 'zenserp-test-key'),
+		).rejects.toMatchObject({ status: 302 });
+		expect(fetchMock.mock.calls[0]?.[1]?.redirect).toBe('error');
+	});
+
+	it('redacts query strings and fragments from image URLs before logging', () => {
+		expect(
+			imageUrlForEvent(
+				'https://images.example.com/photo.png?signature=secret#user-123',
+			),
+		).toBe('https://images.example.com/photo.png');
 	});
 });
