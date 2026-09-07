@@ -51,23 +51,28 @@ describe('callingly keyBuilder authentication', () => {
 
 	it('returns options.key for endpoint source', async () => {
 		const withOptionsKey = callingly({ key: KEY });
-		const out = await withOptionsKey.keyBuilder!(
-			{ authType: 'api_key', keys: {} } as CallinglyKeyBuilderContext,
-			'endpoint',
-		);
+		// Cast partial test context: keyBuilder only accesses keys/authType properties
+		const mockCtx = {
+			authType: 'api_key',
+			keys: {},
+		} as unknown as CallinglyKeyBuilderContext;
+		const out = await withOptionsKey.keyBuilder!(mockCtx, 'endpoint');
 		expect(out).toBe(KEY);
 	});
 
 	it('returns options.webhookSecret for webhook source', async () => {
 		const withWebhookSec = callingly({ webhookSecret: SECRET });
-		const out = await withWebhookSec.keyBuilder!(
-			{ authType: 'api_key', keys: {} } as CallinglyKeyBuilderContext,
-			'webhook',
-		);
+		// Cast partial test context: keyBuilder only accesses keys/authType properties
+		const mockCtx = {
+			authType: 'api_key',
+			keys: {},
+		} as unknown as CallinglyKeyBuilderContext;
+		const out = await withWebhookSec.keyBuilder!(mockCtx, 'webhook');
 		expect(out).toBe(SECRET);
 	});
 
 	it('throws AuthMissingError when api key is absent', async () => {
+		// Cast partial test context: keyBuilder only accesses keys.get_api_key
 		const noKeyCtx = {
 			authType: 'api_key',
 			keys: { get_api_key: async () => null },
@@ -79,6 +84,7 @@ describe('callingly keyBuilder authentication', () => {
 	});
 
 	it('reads api key from key manager', async () => {
+		// Cast partial test context: keyBuilder only accesses keys.get_api_key
 		const withKeyCtx = {
 			authType: 'api_key',
 			keys: { get_api_key: async () => KEY },
@@ -88,6 +94,7 @@ describe('callingly keyBuilder authentication', () => {
 	});
 
 	it('reads oauth access token from key manager', async () => {
+		// Cast partial test context: keyBuilder only accesses keys.get_access_token
 		const oauthCtx = {
 			authType: 'oauth_2',
 			keys: { get_access_token: async () => 'oauth-token-123' },
@@ -105,17 +112,20 @@ describe('callingly webhooks', () => {
 
 	it('executes callCompleted webhook handler correctly with signature & db persistence', async () => {
 		const completedWebhook = plugin.webhooks!.calls.completed;
+		const nowIso = new Date().toISOString();
 		const rawPayload = JSON.stringify({
 			event: 'call.completed',
 			call_id: 'call_55',
 			status: 'completed',
 			duration: 120,
+			timestamp: nowIso,
 		});
 		const validSig = createHmac('sha256', webhookSecret)
 			.update(rawPayload)
 			.digest('hex');
 
 		const mockUpsert = jest.fn();
+		// Cast mock context: webhook handler requires database mock and signing key
 		const ctxWithDb = {
 			key: webhookSecret,
 			db: {
@@ -129,6 +139,7 @@ describe('callingly webhooks', () => {
 				call_id: 'call_55',
 				status: 'completed',
 				duration: 120,
+				timestamp: nowIso,
 			},
 			headers: { 'x-callingly-signature': validSig },
 			rawBody: rawPayload,
@@ -151,15 +162,21 @@ describe('callingly webhooks', () => {
 		const rawPayload = JSON.stringify({
 			event: 'call.completed',
 			call_id: 'call_forged',
+			timestamp: new Date().toISOString(),
 		});
 
+		// Cast mock context: webhook handler requires signing key
 		const ctxWithSecret = {
 			key: webhookSecret,
 			db: {},
 		} as unknown as CallinglyContext;
 
 		const result = await completedWebhook.handler(ctxWithSecret, {
-			payload: { event: 'call.completed', call_id: 'call_forged' },
+			payload: {
+				event: 'call.completed',
+				call_id: 'call_forged',
+				timestamp: new Date().toISOString(),
+			},
 			headers: { 'x-callingly-signature': 'invalid_signature_hex' },
 			rawBody: rawPayload,
 		});
@@ -170,17 +187,20 @@ describe('callingly webhooks', () => {
 
 	it('executes leadCreated webhook handler correctly with signature & db persistence', async () => {
 		const leadWebhook = plugin.webhooks!.leads.created;
+		const nowIso = new Date().toISOString();
 		const rawPayload = JSON.stringify({
 			event: 'lead.created',
 			lead_id: 'lead_77',
 			name: 'Bob',
 			phone_number: '+15551234567',
+			timestamp: nowIso,
 		});
 		const validSig = createHmac('sha256', webhookSecret)
 			.update(rawPayload)
 			.digest('hex');
 
 		const mockUpsert = jest.fn();
+		// Cast mock context: webhook handler requires database mock and signing key
 		const ctxWithDb = {
 			key: webhookSecret,
 			db: {
@@ -194,6 +214,7 @@ describe('callingly webhooks', () => {
 				lead_id: 'lead_77',
 				name: 'Bob',
 				phone_number: '+15551234567',
+				timestamp: nowIso,
 			},
 			headers: { 'x-callingly-signature': validSig },
 			rawBody: rawPayload,
@@ -216,15 +237,21 @@ describe('callingly webhooks', () => {
 		const rawPayload = JSON.stringify({
 			event: 'lead.created',
 			lead_id: 'lead_forged',
+			timestamp: new Date().toISOString(),
 		});
 
+		// Cast mock context: webhook handler requires signing key
 		const ctxWithSecret = {
 			key: webhookSecret,
 			db: {},
 		} as unknown as CallinglyContext;
 
 		const result = await leadWebhook.handler(ctxWithSecret, {
-			payload: { event: 'lead.created', lead_id: 'lead_forged' },
+			payload: {
+				event: 'lead.created',
+				lead_id: 'lead_forged',
+				timestamp: new Date().toISOString(),
+			},
 			headers: { 'x-callingly-signature': 'bad_sig' },
 			rawBody: rawPayload,
 		});
@@ -235,6 +262,7 @@ describe('callingly webhooks', () => {
 
 	it('rejects webhook when signing key is missing and not hub-verified', async () => {
 		const completedWebhook = plugin.webhooks!.calls.completed;
+		// Cast mock context: testing failure when key is absent
 		const ctxNoKey = {
 			key: '',
 			db: {},
@@ -252,23 +280,86 @@ describe('callingly webhooks', () => {
 
 	it('rejects webhook when entity id is absent', async () => {
 		const completedWebhook = plugin.webhooks!.calls.completed;
-		const rawPayload = JSON.stringify({ event: 'call.completed' });
+		const nowIso = new Date().toISOString();
+		const rawPayload = JSON.stringify({
+			event: 'call.completed',
+			timestamp: nowIso,
+		});
 		const validSig = createHmac('sha256', webhookSecret)
 			.update(rawPayload)
 			.digest('hex');
 
+		// Cast mock context: testing payload validation with secret
 		const ctxWithSecret = {
 			key: webhookSecret,
 			db: {},
 		} as unknown as CallinglyContext;
 
 		const result = await completedWebhook.handler(ctxWithSecret, {
-			payload: { event: 'call.completed' },
+			payload: { event: 'call.completed', timestamp: nowIso },
 			headers: { 'x-callingly-signature': validSig },
 			rawBody: rawPayload,
 		});
 
 		expect(result.success).toBe(false);
 		expect(result.statusCode).toBe(400);
+	});
+
+	it('rejects replayed webhook when timestamp is expired beyond 5 minutes', async () => {
+		const completedWebhook = plugin.webhooks!.calls.completed;
+		const oldIso = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+		const rawPayload = JSON.stringify({
+			event: 'call.completed',
+			call_id: 'call_old',
+			timestamp: oldIso,
+		});
+		const validSig = createHmac('sha256', webhookSecret)
+			.update(rawPayload)
+			.digest('hex');
+
+		// Cast mock context: testing replay attack validation
+		const ctxWithSecret = {
+			key: webhookSecret,
+			db: {},
+		} as unknown as CallinglyContext;
+
+		const result = await completedWebhook.handler(ctxWithSecret, {
+			payload: {
+				event: 'call.completed',
+				call_id: 'call_old',
+				timestamp: oldIso,
+			},
+			headers: { 'x-callingly-signature': validSig },
+			rawBody: rawPayload,
+		});
+
+		expect(result.success).toBe(false);
+		expect(result.statusCode).toBe(401);
+	});
+
+	it('rejects untimestamped webhook for replay attack prevention', async () => {
+		const completedWebhook = plugin.webhooks!.calls.completed;
+		const rawPayload = JSON.stringify({
+			event: 'call.completed',
+			call_id: 'call_no_ts',
+		});
+		const validSig = createHmac('sha256', webhookSecret)
+			.update(rawPayload)
+			.digest('hex');
+
+		// Cast mock context: testing untimestamped replay rejection
+		const ctxWithSecret = {
+			key: webhookSecret,
+			db: {},
+		} as unknown as CallinglyContext;
+
+		const result = await completedWebhook.handler(ctxWithSecret, {
+			payload: { event: 'call.completed', call_id: 'call_no_ts' },
+			headers: { 'x-callingly-signature': validSig },
+			rawBody: rawPayload,
+		});
+
+		expect(result.success).toBe(false);
+		expect(result.statusCode).toBe(401);
 	});
 });

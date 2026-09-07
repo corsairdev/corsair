@@ -54,12 +54,12 @@ export const CallinglyWebhookEventSchemas = {
 } as const;
 
 /**
- * Verifies Callingly webhook HMAC signatures.
- * Callingly webhook requests can deliver signatures in `x-callingly-signature`,
+ * Verifies Callingly webhook HMAC signatures with 5-minute replay attack prevention.
+ * Callingly webhook requests deliver signatures in `x-callingly-signature`,
  * `callingly-signature`, or `x-callingly-webhook` headers.
  * Supported signature schemes:
- * - Direct HMAC-SHA256 hex/base64 digest or prefixed format (e.g. `sha256=<hash>`).
  * - Timestamped format: `t=<timestamp>,v1=<signature>` with replay protection (5 min window).
+ * - Direct HMAC-SHA256 hex/base64 digest with timestamp in `x-callingly-timestamp` header or payload `timestamp`/`created_at`.
  */
 export function verifyCallinglyWebhookSignature(
 	// Explicit WebhookRequest<unknown> type: signature verification operates on raw headers and body bytes,
@@ -102,39 +102,95 @@ export function verifyCallinglyWebhookSignature(
 
 		let signature = signatureHeader.trim();
 		let signedPayload = rawBody;
+		let timestampMs: number | undefined;
 
-		// Handle timestamped headers if formatted as "t=<timestamp>,v1=<signature>"
+		// 1. Check for timestamped signature header: "t=<timestamp>,v1=<signature>"
 		if (signature.includes('t=') && signature.includes('v1=')) {
 			const parts = signature.split(',');
-			let timestamp: string | undefined;
+			let timestampStr: string | undefined;
 			let v1Sig: string | undefined;
 
 			for (const part of parts) {
 				const trimmed = part.trim();
 				if (trimmed.startsWith('t=')) {
-					timestamp = trimmed.slice(2);
+					timestampStr = trimmed.slice(2);
 				} else if (trimmed.startsWith('v1=')) {
 					v1Sig = trimmed.slice(3);
 				}
 			}
 
-			if (timestamp && v1Sig) {
-				const timestampMs = Number.parseInt(timestamp, 10) * 1000;
-				// Prevent replay attacks by checking timestamp tolerance (5 minutes)
-				if (
-					Number.isNaN(timestampMs) ||
-					Math.abs(Date.now() - timestampMs) > 5 * 60 * 1000
-				) {
-					return {
-						valid: false,
-						error: 'Webhook timestamp is outside tolerance or invalid',
-					};
-				}
+			if (timestampStr && v1Sig) {
+				const parsedSec = Number.parseInt(timestampStr, 10);
+				timestampMs = Number.isNaN(parsedSec) ? undefined : parsedSec * 1000;
 				signature = v1Sig;
-				signedPayload = `${timestamp}.${rawBody}`;
+				signedPayload = `${timestampStr}.${rawBody}`;
 			}
-		} else if (signature.startsWith('sha256=')) {
-			signature = signature.slice(7);
+		} else {
+			// Direct signature: strip optional sha256= prefix
+			if (signature.startsWith('sha256=')) {
+				signature = signature.slice(7);
+			}
+
+			// Look for timestamp in HTTP headers
+			const rawTimestampHeader =
+				headers['x-callingly-timestamp'] ??
+				headers['callingly-timestamp'] ??
+				headers['x-timestamp'] ??
+				headers['timestamp'];
+
+			const timestampHeaderVal = Array.isArray(rawTimestampHeader)
+				? rawTimestampHeader[0]
+				: typeof rawTimestampHeader === 'string'
+					? rawTimestampHeader
+					: undefined;
+
+			if (timestampHeaderVal) {
+				const num = Number(timestampHeaderVal);
+				if (!Number.isNaN(num)) {
+					timestampMs = num < 1e11 ? num * 1000 : num;
+				} else {
+					timestampMs = Date.parse(timestampHeaderVal);
+				}
+			} else {
+				// Look for timestamp in payload body
+				try {
+					// Parse rawBody safely to inspect timestamp field without strict schema requirement
+					const parsed = JSON.parse(rawBody) as Record<string, unknown>;
+					if (parsed && typeof parsed === 'object') {
+						const bodyTs =
+							parsed.timestamp ?? parsed.created_at ?? parsed.event_time;
+						if (bodyTs) {
+							const num = Number(bodyTs);
+							if (!Number.isNaN(num)) {
+								timestampMs = num < 1e11 ? num * 1000 : num;
+							} else {
+								timestampMs = Date.parse(String(bodyTs));
+							}
+						}
+					}
+				} catch {
+					// Raw body is not JSON
+				}
+			}
+		}
+
+		// Enforce replay prevention window across ALL signature schemes
+		if (timestampMs === undefined || Number.isNaN(timestampMs)) {
+			return {
+				valid: false,
+				error:
+					'Missing or unparseable webhook timestamp for replay attack prevention',
+			};
+		}
+
+		const now = Date.now();
+		const TOLERANCE_MS = 5 * 60 * 1000; // 5 minutes
+		if (Math.abs(now - timestampMs) > TOLERANCE_MS) {
+			return {
+				valid: false,
+				error:
+					'Webhook timestamp is outside 5-minute tolerance (replay attack prevention)',
+			};
 		}
 
 		const expectedHex = createHmac('sha256', signingKey)
