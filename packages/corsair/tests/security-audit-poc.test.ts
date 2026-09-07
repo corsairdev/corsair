@@ -35,10 +35,7 @@ describe('PoC #1: harden() membrane allows well-known Symbol access', () => {
 		if (value === null) return null;
 		const type = typeof value;
 		if (type === 'function') {
-			return hardenFunction(
-				value as (...args: unknown[]) => unknown,
-				thisArg,
-			);
+			return hardenFunction(value as (...args: unknown[]) => unknown, thisArg);
 		}
 		if (type === 'object') return hardenObject(value as object);
 		return value;
@@ -63,8 +60,7 @@ describe('PoC #1: harden() membrane allows well-known Symbol access', () => {
 		thisArg: unknown,
 	): (...args: unknown[]) => unknown {
 		return new Proxy(target, {
-			apply: (fn, _thisArg, args) =>
-				Reflect.apply(fn, thisArg, args),
+			apply: (fn, _thisArg, args) => Reflect.apply(fn, thisArg, args),
 			construct() {
 				throw new Error('Workflow code may not construct host objects');
 			},
@@ -122,10 +118,7 @@ describe('PoC #1: harden() membrane allows well-known Symbol access', () => {
 		const hostFn = function hostFunction() {
 			return 'result';
 		};
-		const hardened = harden(hostFn, undefined) as Record<
-			string,
-			unknown
-		>;
+		const hardened = harden(hostFn, undefined) as Record<string, unknown>;
 
 		expect(hardened.constructor).toBeUndefined();
 		expect(hardened.prototype).toBeUndefined();
@@ -220,9 +213,7 @@ describe('PoC #2: HMAC signature does not bind timestamp header', () => {
 		const body = JSON.stringify({ type: 'webhook', payload: {} });
 		const signature = `sha256=${signBody(body)}`;
 		// Timestamp 10 minutes in the past — outside 5-minute window
-		const oldTimestamp = (
-			Math.floor(Date.now() / 1000) - 600
-		).toString();
+		const oldTimestamp = (Math.floor(Date.now() / 1000) - 600).toString();
 
 		expect(
 			verifyEnvelope({
@@ -338,20 +329,14 @@ describe('PoC #5: Open redirect via hubSuccessUrl', () => {
 		}
 
 		// Malicious URLs should be rejected
-		expect(isAllowedRedirectUrl('https://evil-phishing-site.com/')).toBe(
+		expect(isAllowedRedirectUrl('https://evil-phishing-site.com/')).toBe(false);
+		expect(isAllowedRedirectUrl('https://corsair.dev.evil.com/')).toBe(false);
+		expect(isAllowedRedirectUrl('javascript:alert(document.cookie)')).toBe(
 			false,
 		);
-		expect(isAllowedRedirectUrl('https://corsair.dev.evil.com/')).toBe(
-			false,
-		);
-		expect(
-			isAllowedRedirectUrl('javascript:alert(document.cookie)'),
-		).toBe(false);
 
 		// Legitimate URLs should pass
-		expect(isAllowedRedirectUrl('https://hub.corsair.dev/callback')).toBe(
-			true,
-		);
+		expect(isAllowedRedirectUrl('https://hub.corsair.dev/callback')).toBe(true);
 		expect(isAllowedRedirectUrl('http://localhost:3000/api')).toBe(true);
 	});
 });
@@ -442,9 +427,7 @@ describe('PoC #6: decodeOAuthState has no default max-age', () => {
 			{ maxAgeMs = DEFAULT_MAX_AGE_MS }: { maxAgeMs?: number } = {},
 		): OAuthState | null {
 			try {
-				const payload = state.includes('.')
-					? state.split('.')[0]
-					: state;
+				const payload = state.includes('.') ? state.split('.')[0] : state;
 				const decoded = JSON.parse(
 					Buffer.from(payload!, 'base64url').toString('utf-8'),
 				) as unknown;
