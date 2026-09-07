@@ -1,7 +1,7 @@
 {
   "id": "baselinker",
   "displayName": "BaseLinker",
-  "description": "BaseLinker plugin for Corsair",
+  "description": "E-commerce integration hub for orders, inventory, and multichannel marketplace management.",
   "npmPackageName": "@corsair-dev/baselinker",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

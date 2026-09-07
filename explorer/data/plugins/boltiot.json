@@ -1,7 +1,7 @@
 {
   "id": "boltiot",
   "displayName": "Bolt IoT",
-  "description": "Bolt IoT plugin for Corsair",
+  "description": "IoT platform for connecting devices, sensors, and hardware to cloud dashboards.",
   "npmPackageName": "@corsair-dev/boltiot",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

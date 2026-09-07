@@ -1,7 +1,7 @@
 {
   "id": "scrapegraphai",
   "displayName": "ScrapeGraphAI",
-  "description": "ScrapeGraphAI plugin for Corsair",
+  "description": "AI-powered web scraping API that extracts structured data using natural language prompts.",
   "npmPackageName": "@corsair-dev/scrapegraphai",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

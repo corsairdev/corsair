@@ -1,7 +1,7 @@
 {
   "id": "ocrwebservice",
-  "displayName": "OcrWebService",
-  "description": "OcrWebService plugin for Corsair",
+  "displayName": "OCR Web Service",
+  "description": "Cloud OCR service for converting PDFs and images into searchable text content.",
   "npmPackageName": "@corsair-dev/ocrwebservice",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

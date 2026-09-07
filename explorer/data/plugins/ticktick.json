@@ -1,7 +1,7 @@
 {
   "id": "ticktick",
   "displayName": "TickTick",
-  "description": "TickTick plugin for Corsair",
+  "description": "Task and habit manager for to-do lists, calendars, reminders, and personal productivity.",
   "npmPackageName": "@corsair-dev/ticktick",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

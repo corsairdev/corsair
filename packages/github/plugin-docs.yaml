@@ -1,5 +1,5 @@
 displayName: GitHub
-description: "GitHub plugin for Corsair — repositories, issues, pull requests, workflows, and webhook events."
+description: Code hosting platform for repositories, issues, pull requests, and developer workflows.
 examples:
   read:
     path: repositories.list
@@ -13,10 +13,10 @@ examples:
       title: Found a bug
 dbExample:
   entity: repositories
-  note: "Search synced repositories without hitting GitHub."
+  note: Search synced repositories without hitting GitHub.
   limit: 50
 exampleWebhook:
   path: issue.opened
-  note: "Fires when a GitHub issue is opened."
+  note: Fires when a GitHub issue is opened.
   after: |
     console.log('GitHub issue opened:', result.data);

@@ -318,7 +318,7 @@ const botbabaEndpointMeta = {
 	},
 	'contacts.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Botbaba contact [DESTRUCTIVE]',
+		description: 'Delete a Botbaba contact',
 	},
 	'contacts.getAnalytics': {
 		riskLevel: 'read',
@@ -328,7 +328,7 @@ const botbabaEndpointMeta = {
 	'tags.update': { riskLevel: 'write', description: 'Rename a tag' },
 	'tags.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a tag [DESTRUCTIVE]',
+		description: 'Delete a tag',
 	},
 	'templates.get': { riskLevel: 'read', description: 'Get a message template' },
 	'templates.list': {
@@ -341,26 +341,26 @@ const botbabaEndpointMeta = {
 	},
 	'templates.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a message template [DESTRUCTIVE]',
+		description: 'Delete a message template',
 	},
 	'broadcasts.get': { riskLevel: 'read', description: 'Get a broadcast' },
 	'broadcasts.list': { riskLevel: 'read', description: 'List broadcasts' },
 	'broadcasts.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a broadcast [DESTRUCTIVE]',
+		description: 'Delete a broadcast',
 	},
 	'flows.get': { riskLevel: 'read', description: 'Get a conversation flow' },
 	'flows.list': { riskLevel: 'read', description: 'List conversation flows' },
 	'flows.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a conversation flow [DESTRUCTIVE]',
+		description: 'Delete a conversation flow',
 	},
 	'webhooks.get': { riskLevel: 'read', description: 'Get a webhook' },
 	'webhooks.list': { riskLevel: 'read', description: 'List webhooks' },
 	'webhooks.update': { riskLevel: 'write', description: 'Update a webhook' },
 	'webhooks.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a webhook [DESTRUCTIVE]',
+		description: 'Delete a webhook',
 	},
 	'webhooks.listEventTypes': {
 		riskLevel: 'read',

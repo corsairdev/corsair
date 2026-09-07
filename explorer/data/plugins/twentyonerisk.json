@@ -1,7 +1,7 @@
 {
   "id": "twentyonerisk",
-  "displayName": "TwentyOneRisk",
-  "description": "TwentyOneRisk plugin for Corsair",
+  "displayName": "TwentyOne Risk",
+  "description": "Risk intelligence platform for compliance screening, fraud detection, and vendor due diligence.",
   "npmPackageName": "@corsair-dev/twentyonerisk",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

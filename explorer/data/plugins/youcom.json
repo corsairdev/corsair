@@ -1,7 +1,7 @@
 {
   "id": "youcom",
-  "displayName": "You.com Web Search",
-  "description": "You.com Web Search plugin for Corsair",
+  "displayName": "You.com",
+  "description": "AI search engine API for web answers, citations, and research-oriented query results.",
   "npmPackageName": "@corsair-dev/youcom",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

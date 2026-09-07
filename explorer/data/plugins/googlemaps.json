@@ -1,7 +1,7 @@
 {
   "id": "googlemaps",
-  "displayName": "GoogleMaps",
-  "description": "GoogleMaps plugin for Corsair",
+  "displayName": "Google Maps",
+  "description": "Mapping platform for geocoding, directions, places search, and location-based services.",
   "npmPackageName": "@corsair-dev/googlemaps",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

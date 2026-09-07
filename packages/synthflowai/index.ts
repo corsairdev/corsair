@@ -333,7 +333,7 @@ const synthflowaiEndpointMeta = {
 	},
 	'assistants.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Synthflow AI assistant [DESTRUCTIVE]',
+		description: 'Delete a Synthflow AI assistant',
 	},
 	'calls.create': {
 		riskLevel: 'write',
@@ -365,7 +365,7 @@ const synthflowaiEndpointMeta = {
 	},
 	'contacts.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a contact in Synthflow AI [DESTRUCTIVE]',
+		description: 'Delete a contact in Synthflow AI',
 	},
 	'knowledgeBases.create': {
 		riskLevel: 'write',
@@ -381,7 +381,7 @@ const synthflowaiEndpointMeta = {
 	},
 	'knowledgeBases.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a knowledge base in Synthflow AI [DESTRUCTIVE]',
+		description: 'Delete a knowledge base in Synthflow AI',
 	},
 	'knowledgeBases.attach': {
 		riskLevel: 'write',
@@ -409,7 +409,7 @@ const synthflowaiEndpointMeta = {
 	},
 	'memoryStores.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a memory store in Synthflow AI [DESTRUCTIVE]',
+		description: 'Delete a memory store in Synthflow AI',
 	},
 	'memoryStores.attachToAgent': {
 		riskLevel: 'write',
@@ -429,7 +429,7 @@ const synthflowaiEndpointMeta = {
 	},
 	'phoneBooks.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a phone book in Synthflow AI [DESTRUCTIVE]',
+		description: 'Delete a phone book in Synthflow AI',
 	},
 	'actions.create': {
 		riskLevel: 'write',
@@ -449,7 +449,7 @@ const synthflowaiEndpointMeta = {
 	},
 	'actions.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete an action in Synthflow AI [DESTRUCTIVE]',
+		description: 'Delete an action in Synthflow AI',
 	},
 	'actions.attach': {
 		riskLevel: 'write',
