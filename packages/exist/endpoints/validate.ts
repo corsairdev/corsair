@@ -19,16 +19,10 @@ export class ExistValidationError extends Error {
 export type ExistOperationKey = keyof ExistEndpointInputs;
 
 // unknown is necessary because the schema maps are heterogeneous per operation; a closed schema union is infeasible because twelve operations each carry their own shape
-type AnyInputSchema = z.ZodType<any, any, any>;
+type SchemaRecord = Record<ExistOperationKey, z.ZodType<unknown>>;
 
-const inputSchemaRecord = ExistEndpointInputSchemas as Record<
-	ExistOperationKey,
-	AnyInputSchema
->;
-const outputSchemaRecord = ExistEndpointOutputSchemas as Record<
-	ExistOperationKey,
-	AnyInputSchema
->;
+const inputSchemaRecord = ExistEndpointInputSchemas as SchemaRecord;
+const outputSchemaRecord = ExistEndpointOutputSchemas as SchemaRecord;
 
 export function parseExistInput<K extends ExistOperationKey>(
 	operation: K,

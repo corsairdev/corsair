@@ -73,7 +73,7 @@ export class ExistAPIError extends Error {
 
 export type ExistQueryValue = string | number | boolean | undefined;
 
-export type ExistRequestOptions = {
+export type ExistRequestOptions<T = unknown> = {
 	method?: 'GET' | 'POST';
 	/**
 	 * Exist write endpoints take a top-level JSON array of objects; read
@@ -82,7 +82,7 @@ export type ExistRequestOptions = {
 	// unknown is necessary because write batch entries differ per operation; a closed entry union is infeasible because acquire, update and increment each accept different fields
 	body?: readonly Record<string, unknown>[];
 	query?: Record<string, ExistQueryValue>;
-	outputSchema?: z.ZodType<any>;
+	outputSchema?: z.ZodType<T>;
 };
 
 /** Serializes a `groups`/`attributes`/`templates` filter as Exist expects it. */
@@ -140,7 +140,7 @@ function wrapError(error: unknown): never {
 export async function makeExistRequest<T>(
 	endpoint: string,
 	accessToken: string,
-	options: ExistRequestOptions = {},
+	options: ExistRequestOptions<T> = {},
 ): Promise<T> {
 	const { method = 'GET', body, query, outputSchema } = options;
 
@@ -206,7 +206,7 @@ export type ExistRequestContext = {
 export async function makeAuthenticatedExistRequest<T>(
 	endpoint: string,
 	ctx: ExistRequestContext,
-	options: ExistRequestOptions = {},
+	options: ExistRequestOptions<T> = {},
 ): Promise<T> {
 	try {
 		return await makeExistRequest<T>(endpoint, ctx.key, options);
