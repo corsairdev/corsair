@@ -131,45 +131,47 @@ export function verifyCallinglyWebhookSignature(
 				signature = signature.slice(7);
 			}
 
-			// Look for timestamp in HTTP headers
-			const rawTimestampHeader =
-				headers['x-callingly-timestamp'] ??
-				headers['callingly-timestamp'] ??
-				headers['x-timestamp'] ??
-				headers['timestamp'];
+			// For direct signatures, derive timestamp from signed payload body first
+			// to prevent replay attacks using fresh header timestamps with captured bodies.
+			let payloadTimestamp: unknown;
+			try {
+				const parsed = JSON.parse(rawBody) as Record<string, unknown>;
+				if (parsed && typeof parsed === 'object') {
+					payloadTimestamp =
+						parsed.timestamp ?? parsed.created_at ?? parsed.event_time;
+				}
+			} catch {
+				// Raw body is not JSON
+			}
 
-			const timestampHeaderVal = Array.isArray(rawTimestampHeader)
-				? rawTimestampHeader[0]
-				: typeof rawTimestampHeader === 'string'
-					? rawTimestampHeader
-					: undefined;
-
-			if (timestampHeaderVal) {
-				const num = Number(timestampHeaderVal);
+			if (payloadTimestamp) {
+				const num = Number(payloadTimestamp);
 				if (!Number.isNaN(num)) {
 					timestampMs = num < 1e11 ? num * 1000 : num;
 				} else {
-					timestampMs = Date.parse(timestampHeaderVal);
+					timestampMs = Date.parse(String(payloadTimestamp));
 				}
 			} else {
-				// Look for timestamp in payload body
-				try {
-					// Parse rawBody safely to inspect timestamp field without strict schema requirement
-					const parsed = JSON.parse(rawBody) as Record<string, unknown>;
-					if (parsed && typeof parsed === 'object') {
-						const bodyTs =
-							parsed.timestamp ?? parsed.created_at ?? parsed.event_time;
-						if (bodyTs) {
-							const num = Number(bodyTs);
-							if (!Number.isNaN(num)) {
-								timestampMs = num < 1e11 ? num * 1000 : num;
-							} else {
-								timestampMs = Date.parse(String(bodyTs));
-							}
-						}
+				// Look for timestamp in HTTP headers if not present in body
+				const rawTimestampHeader =
+					headers['x-callingly-timestamp'] ??
+					headers['callingly-timestamp'] ??
+					headers['x-timestamp'] ??
+					headers['timestamp'];
+
+				const timestampHeaderVal = Array.isArray(rawTimestampHeader)
+					? rawTimestampHeader[0]
+					: typeof rawTimestampHeader === 'string'
+						? rawTimestampHeader
+						: undefined;
+
+				if (timestampHeaderVal) {
+					const num = Number(timestampHeaderVal);
+					if (!Number.isNaN(num)) {
+						timestampMs = num < 1e11 ? num * 1000 : num;
+					} else {
+						timestampMs = Date.parse(timestampHeaderVal);
 					}
-				} catch {
-					// Raw body is not JSON
 				}
 			}
 		}

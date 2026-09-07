@@ -28,7 +28,7 @@ const rows = await corsair.callingly.db.calls.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `phone_number` | `string` | equals, contains, startsWith, endsWith, in |
 | `status` | `string` | equals, contains, startsWith, endsWith, in |
-| `duration` | `number` | equals, gt, gte, lt, lte, in |
+| `seconds` | `number` | equals, gt, gte, lt, lte, in |
 | `outcome` | `string` | equals, contains, startsWith, endsWith, in |
 | `recording_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `scheduled_at` | `string` | equals, contains, startsWith, endsWith, in |
@@ -223,7 +223,9 @@ const rows = await corsair.callingly.db.webhooks.search({
 | Field | Type | Operators |
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `target_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `event` | `string` | equals, contains, startsWith, endsWith, in |
 | `call_status` | `string` | equals, contains, startsWith, endsWith, in |
 | `call_lead_status` | `string` | equals, contains, startsWith, endsWith, in |

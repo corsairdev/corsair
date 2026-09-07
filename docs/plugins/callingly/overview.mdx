@@ -24,7 +24,7 @@ npm install corsair @corsair-dev/callingly
 yarn add corsair @corsair-dev/callingly
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/callingly
+pnpm add corsair @corsair-dev/callingly
 ```
 ```bash bun
 bun add corsair @corsair-dev/callingly
@@ -107,7 +107,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.callingly.api.agents.get({ userId: 'agent_123' });
+await tenant.callingly.api.agents.get({});
 ```
 
 

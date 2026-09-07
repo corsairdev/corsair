@@ -337,6 +337,41 @@ describe('callingly webhooks', () => {
 		expect(result.statusCode).toBe(401);
 	});
 
+	it('rejects replayed direct webhook even when attacker supplies fresh x-callingly-timestamp header', async () => {
+		const completedWebhook = plugin.webhooks!.calls.completed;
+		const oldIso = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+		const rawPayload = JSON.stringify({
+			event: 'call.completed',
+			call_id: 'call_replayed_with_fresh_header',
+			timestamp: oldIso,
+		});
+		const validSig = createHmac('sha256', webhookSecret)
+			.update(rawPayload)
+			.digest('hex');
+
+		const ctxWithSecret = {
+			key: webhookSecret,
+			db: {},
+		} as unknown as CallinglyContext;
+
+		// Attacker sends authentic rawPayload (with old timestamp) + fresh x-callingly-timestamp header
+		const result = await completedWebhook.handler(ctxWithSecret, {
+			payload: {
+				event: 'call.completed',
+				call_id: 'call_replayed_with_fresh_header',
+				timestamp: oldIso,
+			},
+			headers: {
+				'x-callingly-signature': validSig,
+				'x-callingly-timestamp': String(Date.now()),
+			},
+			rawBody: rawPayload,
+		});
+
+		expect(result.success).toBe(false);
+		expect(result.statusCode).toBe(401);
+	});
+
 	it('rejects untimestamped webhook for replay attack prevention', async () => {
 		const completedWebhook = plugin.webhooks!.calls.completed;
 		const rawPayload = JSON.stringify({
@@ -361,5 +396,129 @@ describe('callingly webhooks', () => {
 
 		expect(result.success).toBe(false);
 		expect(result.statusCode).toBe(401);
+	});
+});
+
+describe('callingly endpoint schemas & error handling', () => {
+	it('requires name, event, and target_url in CreateWebhookInputSchema', async () => {
+		const { CreateWebhookInputSchema } = await import('./endpoints/types');
+
+		// Valid webhook input
+		expect(() =>
+			CreateWebhookInputSchema.parse({
+				name: 'New Lead Webhook',
+				event: 'lead.created',
+				target_url: 'https://example.com/webhook',
+			}),
+		).not.toThrow();
+
+		// Missing target_url should throw
+		expect(() =>
+			CreateWebhookInputSchema.parse({
+				name: 'New Lead Webhook',
+				event: 'lead.created',
+			}),
+		).toThrow();
+
+		// Missing event should throw
+		expect(() =>
+			CreateWebhookInputSchema.parse({
+				name: 'New Lead Webhook',
+				target_url: 'https://example.com/webhook',
+			}),
+		).toThrow();
+
+		// Missing name should throw
+		expect(() =>
+			CreateWebhookInputSchema.parse({
+				event: 'lead.created',
+				target_url: 'https://example.com/webhook',
+			}),
+		).toThrow();
+	});
+
+	it('enforces collection requirement in ListCallsResponseSchema and ListTeamUsersResponseSchema', async () => {
+		const { ListCallsResponseSchema, ListTeamUsersResponseSchema } =
+			await import('./endpoints/types');
+
+		// Valid calls response with calls array
+		expect(() =>
+			ListCallsResponseSchema.parse({
+				calls: [{ id: 'call_1' }],
+			}),
+		).not.toThrow();
+
+		// Valid calls response with data array
+		expect(() =>
+			ListCallsResponseSchema.parse({
+				data: [{ id: 'call_2' }],
+			}),
+		).not.toThrow();
+
+		// Empty passthrough object without calls or data should throw
+		expect(() =>
+			ListCallsResponseSchema.parse({
+				total: 0,
+			}),
+		).toThrow();
+
+		// Valid team users response with agents array
+		expect(() =>
+			ListTeamUsersResponseSchema.parse({
+				agents: [{ id: 'user_1' }],
+			}),
+		).not.toThrow();
+
+		// Valid team users response with users array
+		expect(() =>
+			ListTeamUsersResponseSchema.parse({
+				users: [{ id: 'user_2' }],
+			}),
+		).not.toThrow();
+
+		// Empty passthrough object without agents or users should throw
+		expect(() => ListTeamUsersResponseSchema.parse({})).toThrow();
+	});
+
+	it('restricts SERVER_ERROR retry to GET requests only', async () => {
+		const { errorHandlers } = await import('./error-handlers');
+		const { CallinglyAPIError } = await import('./client');
+
+		const postError = new CallinglyAPIError(
+			'Internal Server Error',
+			500,
+			undefined,
+			'POST',
+		);
+		const postRetry = await errorHandlers.SERVER_ERROR.handler(postError);
+		expect(postRetry.maxRetries).toBe(0);
+
+		const putError = new CallinglyAPIError(
+			'Internal Server Error',
+			500,
+			undefined,
+			'PUT',
+		);
+		const putRetry = await errorHandlers.SERVER_ERROR.handler(putError);
+		expect(putRetry.maxRetries).toBe(0);
+
+		const deleteError = new CallinglyAPIError(
+			'Internal Server Error',
+			500,
+			undefined,
+			'DELETE',
+		);
+		const deleteRetry = await errorHandlers.SERVER_ERROR.handler(deleteError);
+		expect(deleteRetry.maxRetries).toBe(0);
+
+		const getError = new CallinglyAPIError(
+			'Internal Server Error',
+			500,
+			undefined,
+			'GET',
+		);
+		const getRetry = await errorHandlers.SERVER_ERROR.handler(getError);
+		expect(getRetry.maxRetries).toBe(2);
+		expect(getRetry.retryStrategy).toBe('exponential_backoff');
 	});
 });

@@ -587,22 +587,31 @@ describe('Callingly Endpoints Handlers', () => {
 		it('createWebhook calls POST /webhooks and persists to db', async () => {
 			mockRequest.mockResolvedValue({
 				id: 'wh_1',
-				url: 'https://test.com/hook',
+				name: 'Call Webhook',
+				target_url: 'https://test.com/hook',
 				event: 'call_completed',
 			});
 			const res = await Handlers.createWebhook(ctx, {
-				url: 'https://test.com/hook',
+				name: 'Call Webhook',
+				target_url: 'https://test.com/hook',
 				event: 'call_completed',
 			});
 			expect(mockRequest).toHaveBeenCalledWith('webhooks', 'test-api-key', {
 				method: 'POST',
-				body: { url: 'https://test.com/hook', event: 'call_completed' },
+				body: {
+					name: 'Call Webhook',
+					target_url: 'https://test.com/hook',
+					event: 'call_completed',
+				},
 				accountId: undefined,
 			});
 			expect(res.id).toBe('wh_1');
 			expect(mockDb.webhooks.upsertByEntityId).toHaveBeenCalledWith(
 				'wh_1',
-				expect.objectContaining({ id: 'wh_1', url: 'https://test.com/hook' }),
+				expect.objectContaining({
+					id: 'wh_1',
+					target_url: 'https://test.com/hook',
+				}),
 			);
 		});
 

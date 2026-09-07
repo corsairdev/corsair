@@ -130,8 +130,16 @@ export const ListCallsResponseSchema = z.union([
 	z.array(CallinglyCall),
 	z
 		.object({
-			calls: z.array(CallinglyCall).optional(),
+			calls: z.array(CallinglyCall),
 			data: z.array(CallinglyCall).optional(),
+			total: z.number().optional(),
+			page: z.number().optional(),
+		})
+		.passthrough(),
+	z
+		.object({
+			calls: z.array(CallinglyCall).optional(),
+			data: z.array(CallinglyCall),
 			total: z.number().optional(),
 			page: z.number().optional(),
 		})
@@ -309,8 +317,14 @@ export const ListTeamUsersResponseSchema = z.union([
 	z.array(CallinglyTeamUser),
 	z
 		.object({
-			agents: z.array(CallinglyTeamUser).optional(),
+			agents: z.array(CallinglyTeamUser),
 			users: z.array(CallinglyTeamUser).optional(),
+		})
+		.passthrough(),
+	z
+		.object({
+			agents: z.array(CallinglyTeamUser).optional(),
+			users: z.array(CallinglyTeamUser),
 		})
 		.passthrough(),
 ]);
@@ -388,10 +402,10 @@ export const GetWebhookInputSchema = z.object({
 });
 
 export const CreateWebhookInputSchema = z.object({
-	name: z.string().optional(),
+	name: z.string(),
+	event: z.string(),
+	target_url: z.string(),
 	url: z.string().optional(),
-	target_url: z.string().optional(),
-	event: z.string().optional(),
 	events: z.array(z.string()).optional(),
 	call_status: z.string().optional(),
 	call_lead_status: z.string().optional(),

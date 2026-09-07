@@ -1170,7 +1170,7 @@ npm install corsair ${npmPackageName}
 yarn add corsair ${npmPackageName}
 \`\`\`
 \`\`\`bash pnpm
-pnpm install corsair ${npmPackageName}
+pnpm add corsair ${npmPackageName}
 \`\`\`
 \`\`\`bash bun
 bun add corsair ${npmPackageName}
@@ -1421,6 +1421,37 @@ function methodKey(shortPath: string): string {
 	return i === -1 ? shortPath : shortPath.slice(i + 1);
 }
 
+function placeholderForField(key: string, type: string): unknown {
+	const lowerType = type.toLowerCase();
+	if (lowerType === 'boolean') return true;
+	if (lowerType === 'number') return 1;
+	if (lowerType.endsWith('[]')) return [];
+	if (lowerType.startsWith('record<')) return {};
+
+	const kebab = key
+		.replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+		.replace(/_/g, '-')
+		.toLowerCase();
+	return `<${kebab}>`;
+}
+
+function buildApiCallPlaceholder(
+	input: DocSchemaShape,
+): Record<string, unknown> {
+	if (input.kind !== 'object' || input.fields.length === 0) {
+		return {};
+	}
+	const requiredFields = input.fields.filter((f) => !f.optional);
+	if (requiredFields.length === 0) {
+		return {};
+	}
+	const args: Record<string, unknown> = {};
+	for (const f of requiredFields) {
+		args[f.key] = placeholderForField(f.key, f.type);
+	}
+	return args;
+}
+
 function buildApiMdx(
 	pluginId: string,
 	title: string,
@@ -1453,8 +1484,10 @@ function buildApiMdx(
 			sections.push('');
 			const [, ...pathParts] = ep.path.split('.');
 			const callExpr = `corsair.${pluginId}.${pathParts.join('.')}`;
+			const placeholderArgs = buildApiCallPlaceholder(ep.input);
+			const formattedArgs = formatExampleArgs(placeholderArgs);
 			sections.push('```ts');
-			sections.push(`await ${callExpr}({});`);
+			sections.push(`await ${callExpr}(${formattedArgs});`);
 			sections.push('```');
 			sections.push('');
 			sections.push(formatSchemaShape(ep.input, 'Input'));

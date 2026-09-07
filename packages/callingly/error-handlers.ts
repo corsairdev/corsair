@@ -83,8 +83,8 @@ export const errorHandlers = {
 			const method = (
 				error as Partial<CallinglyAPIError> | undefined
 			)?.method?.toUpperCase();
-			// Avoid retrying non-idempotent mutating requests like POST to prevent duplicates
-			if (method === 'POST') {
+			// Retain retries only for GET or explicitly idempotent requests; return maxRetries: 0 for mutations like POST
+			if (method && method !== 'GET') {
 				return { maxRetries: 0 };
 			}
 			return {
