@@ -313,33 +313,34 @@ export async function disconnectConnection(
 	if (!integration) return { ok: true, disconnected: false };
 
 	// Account creation is check-then-insert, so a (tenant, integration) pair can
-	// hold more than one row after a concurrent connect. A revoke must clear every
-	// credential for the pair, not just the first — otherwise live creds survive.
-	const accounts = await db
-		.selectFrom('corsair_accounts')
-		.select(['id'])
-		.where('tenant_id', '=', tenantId)
-		.where('integration_id', '=', integration.id)
-		.execute();
-	if (accounts.length === 0) return { ok: true, disconnected: false };
-	const accountIds = accounts.map((a) => a.id);
-
+	// hold more than one row after a concurrent connect. Resolve and delete inside
+	// one transaction, matching accounts by predicate (not a pre-snapshotted id
+	// list) so a row a racing connect commits before the delete is cleared too —
+	// otherwise live creds could survive the revoke.
+	let disconnected = false;
 	await db.transaction().execute(async (trx) => {
+		const accountsForPair = trx
+			.selectFrom('corsair_accounts')
+			.select('id')
+			.where('tenant_id', '=', tenantId)
+			.where('integration_id', '=', integration.id);
 		await trx
 			.deleteFrom('corsair_events')
-			.where('account_id', 'in', accountIds)
+			.where('account_id', 'in', accountsForPair)
 			.execute();
 		await trx
 			.deleteFrom('corsair_entities')
-			.where('account_id', 'in', accountIds)
+			.where('account_id', 'in', accountsForPair)
 			.execute();
-		await trx
+		const deleted = await trx
 			.deleteFrom('corsair_accounts')
-			.where('id', 'in', accountIds)
-			.execute();
+			.where('tenant_id', '=', tenantId)
+			.where('integration_id', '=', integration.id)
+			.executeTakeFirst();
+		disconnected = (deleted.numDeletedRows ?? 0n) > 0n;
 	});
 
-	return { ok: true, disconnected: true };
+	return { ok: true, disconnected };
 }
 
 // ── permissions ────────────────────────────────────────────────────────────
