@@ -1,15 +1,6 @@
+import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
-
-export class HumanitixAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'HumanitixAPIError';
-	}
-}
+import { request } from 'corsair/http';
 
 const HUMANITIX_API_BASE = 'https://api.humanitix.com/v1';
 
@@ -22,6 +13,10 @@ export async function makeHumanitixRequest<T>(
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
+	if (!apiKey.trim()) {
+		throw new AuthMissingError('humanitix', 'api_key');
+	}
+
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
@@ -29,9 +24,9 @@ export async function makeHumanitixRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: undefined,
 		HEADERS: {
-			'Content-Type': 'application/json',
+			Accept: 'application/json',
 			'x-api-key': apiKey,
 		},
 	};
@@ -47,15 +42,5 @@ export async function makeHumanitixRequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof ApiError) {
-			throw error;
-		}
-		if (error instanceof Error) {
-			throw new HumanitixAPIError(error.message);
-		}
-		throw new HumanitixAPIError('Unknown error');
-	}
+	return request<T>(config, requestOptions);
 }

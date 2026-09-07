@@ -1,26 +1,39 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
+function statusOf(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (statusOf(error) === 429) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			return (
+				msg.includes('rate_limited') ||
+				msg.includes('too many requests') ||
+				msg.includes('429')
+			);
 		},
 		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			return {
+				maxRetries: 5,
+				headersRetryAfterMs:
+					error instanceof ApiError ? error.retryAfter : undefined,
+			};
 		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			const status = statusOf(error);
+			if (status === 401 || status === 403) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('invalid api key') ||
+				msg.includes('invalid_auth')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

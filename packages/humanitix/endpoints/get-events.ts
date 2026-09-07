@@ -3,16 +3,19 @@ import type { HumanitixEndpoints } from '..';
 import { makeHumanitixRequest } from '../client';
 import type { HumanitixEndpointOutputs } from './types';
 
-export const get: HumanitixEndpoints['getEvents'] = async (ctx, input) => {
+export const getEvents: HumanitixEndpoints['getEvents'] = async (
+	ctx,
+	input,
+) => {
 	const response = await makeHumanitixRequest<
 		HumanitixEndpointOutputs['getEvents']
-	>('events', ctx.key, {
+	>('/events', ctx.key, {
 		method: 'GET',
 		query: {
 			page: input.page,
-			since: input.since,
 			pageSize: input.pageSize,
 			inFutureOnly: input.inFutureOnly,
+			since: input.since,
 			overrideLocation: input.overrideLocation,
 		},
 	});

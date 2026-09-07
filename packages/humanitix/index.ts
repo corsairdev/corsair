@@ -12,9 +12,9 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import { Events, Tags } from './endpoints';
 import type {
 	HumanitixEndpointInputs,
 	HumanitixEndpointOutputs,
@@ -27,10 +27,9 @@ import { errorHandlers } from './error-handlers';
 import { HumanitixSchema } from './schema';
 
 export type HumanitixPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
 	hooks?: InternalHumanitixPlugin['hooks'];
-	webhookHooks?: InternalHumanitixPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof humanitixEndpointsNested>;
 };
@@ -61,16 +60,15 @@ export type HumanitixEndpoints = {
 };
 
 export type HumanitixWebhooks = Record<string, never>;
-
 export type HumanitixBoundWebhooks = BindWebhooks<HumanitixWebhooks>;
 
 const humanitixEndpointsNested = {
 	events: {
-		get: Example.getEvent,
-		list: Example.getEvents,
+		get: Events.get,
+		list: Events.list,
 	},
 	tags: {
-		list: Example.getTags,
+		list: Tags.list,
 	},
 } as const;
 
@@ -93,25 +91,25 @@ export const humanitixEndpointSchemas = {
 	typeof humanitixEndpointsNested
 >;
 
-const humanitixWebhookSchemas =
-	{} as const satisfies RequiredPluginWebhookSchemas<
-		typeof humanitixWebhooksNested
-	>;
+const humanitixWebhookSchemas = {} as const;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const humanitixEndpointMeta = {
 	'events.get': {
 		riskLevel: 'read',
-		description: 'Get a specific Humanitix event by ID',
+		description:
+			'Retrieve detailed information about a specific Humanitix event by eventId.',
 	},
 	'events.list': {
 		riskLevel: 'read',
-		description: 'List Humanitix events with pagination and filters',
+		description:
+			'Retrieve a paginated list of Humanitix events (page, pageSize, inFutureOnly, since, overrideLocation).',
 	},
 	'tags.list': {
 		riskLevel: 'read',
-		description: 'List Humanitix tags with pagination',
+		description:
+			'Retrieve a paginated list of Humanitix tags (page, pageSize).',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof humanitixEndpointsNested
@@ -119,9 +117,6 @@ const humanitixEndpointMeta = {
 
 export const humanitixAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -156,15 +151,11 @@ export function humanitix<const T extends HumanitixPluginOptions>(
 		schema: HumanitixSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: humanitixEndpointsNested,
 		webhooks: humanitixWebhooksNested,
 		endpointMeta: humanitixEndpointMeta,
 		endpointSchemas: humanitixEndpointSchemas,
 		webhookSchemas: humanitixWebhookSchemas,
-		// No webhooks are implemented for this integration yet, so no
-		// inbound request should ever be matched to this plugin.
-		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -176,15 +167,13 @@ export function humanitix<const T extends HumanitixPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('humanitix', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('humanitix', 'api_key');
 		},
 	} satisfies InternalHumanitixPlugin;
 }

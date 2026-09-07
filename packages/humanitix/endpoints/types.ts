@@ -1,40 +1,48 @@
 import { z } from 'zod';
+import { HumanitixEvent, HumanitixTag } from '../schema/database';
 
-// Get Event
+const Page = z.number().int().min(1);
+const PageSize = z.number().int().min(1).max(100);
+
 const GetEventInputSchema = z.object({
-	event_id: z.string(),
+	eventId: z.string().min(1),
 });
 export type GetEventInput = z.infer<typeof GetEventInputSchema>;
+export type GetEventResponse = HumanitixEvent;
 
-const GetEventResponseSchema = z.object({
-	data: z.unknown(),
-});
-export type GetEventResponse = z.infer<typeof GetEventResponseSchema>;
-
-// Get Events
 const GetEventsInputSchema = z.object({
-	page: z.number(),
-	since: z.string().optional(),
-	pageSize: z.number().optional(),
+	page: Page,
+	pageSize: PageSize.optional(),
 	inFutureOnly: z.boolean().optional(),
+	since: z.string().optional(),
 	overrideLocation: z.string().optional(),
 });
 export type GetEventsInput = z.infer<typeof GetEventsInputSchema>;
 
-const GetEventsResponseSchema = z.object({
-	data: z.unknown(),
-});
+const GetEventsResponseSchema = z
+	.object({
+		total: z.number(),
+		page: z.number(),
+		pageSize: z.number(),
+		events: z.array(HumanitixEvent),
+	})
+	.loose();
 export type GetEventsResponse = z.infer<typeof GetEventsResponseSchema>;
 
-// Get Tags
 const GetTagsInputSchema = z.object({
-	page: z.number(),
+	page: Page,
+	pageSize: PageSize.optional(),
 });
 export type GetTagsInput = z.infer<typeof GetTagsInputSchema>;
 
-const GetTagsResponseSchema = z.object({
-	data: z.unknown(),
-});
+const GetTagsResponseSchema = z
+	.object({
+		total: z.number(),
+		page: z.number(),
+		pageSize: z.number(),
+		tags: z.array(HumanitixTag),
+	})
+	.loose();
 export type GetTagsResponse = z.infer<typeof GetTagsResponseSchema>;
 
 export type HumanitixEndpointInputs = {
@@ -56,7 +64,7 @@ export const HumanitixEndpointInputSchemas = {
 };
 
 export const HumanitixEndpointOutputSchemas = {
-	getEvent: GetEventResponseSchema,
+	getEvent: HumanitixEvent,
 	getEvents: GetEventsResponseSchema,
 	getTags: GetTagsResponseSchema,
 };

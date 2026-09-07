@@ -3,14 +3,14 @@ import type { HumanitixEndpoints } from '..';
 import { makeHumanitixRequest } from '../client';
 import type { HumanitixEndpointOutputs } from './types';
 
-export const get: HumanitixEndpoints['getEvent'] = async (ctx, input) => {
+export const getEvent: HumanitixEndpoints['getEvent'] = async (ctx, input) => {
 	const response = await makeHumanitixRequest<
 		HumanitixEndpointOutputs['getEvent']
-	>(`events/${input.event_id}`, ctx.key, { method: 'GET' });
+	>(`/events/${input.eventId}`, ctx.key, { method: 'GET' });
 
 	await logEventFromContext(
 		ctx,
-		'humanitix.event.get',
+		'humanitix.events.get',
 		{ ...input },
 		'completed',
 	);
