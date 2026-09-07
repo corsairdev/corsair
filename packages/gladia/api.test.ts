@@ -218,9 +218,7 @@ describe('Gladia HTTP client and endpoints', () => {
 	});
 
 	it('maps delete operations to the documented routes', async () => {
-		mockRequest.mockResolvedValue({
-			message: 'The pre recorded job has been successfully deleted',
-		});
+		mockRequest.mockResolvedValue(undefined);
 		await gladia({ key: 'test-api-key' }).endpoints!.live.deleteSession(
 			mockCtx,
 			{ id: 'live-1' },
@@ -237,6 +235,20 @@ describe('Gladia HTTP client and endpoints', () => {
 				url: '/v2/pre-recorded/pre-1',
 			}),
 		]);
+	});
+
+	it('accepts acknowledgement bodies on delete responses', async () => {
+		mockRequest.mockResolvedValueOnce({
+			message: 'The pre recorded job has been successfully deleted',
+		});
+		await expect(
+			gladia({ key: 'test-api-key' }).endpoints!.preRecorded.deleteJob(
+				mockCtx,
+				{ id: 'pre-1' },
+			),
+		).resolves.toEqual({
+			message: 'The pre recorded job has been successfully deleted',
+		});
 	});
 
 	it('rejects delete responses that are not acknowledgement objects', async () => {

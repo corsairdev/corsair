@@ -146,11 +146,12 @@ const PreRecordedInitResponseSchema = z.object({
 	result_url: z.string().url(),
 });
 
-const DeleteAcknowledgementSchema = z
-	.object({
+const DeleteAcknowledgementSchema = z.union([
+	z.undefined(),
+	z.object({
 		message: z.string(),
-	})
-	.strict();
+	}),
+]);
 
 export type GladiaUploadAudioVideoFileInput = z.infer<typeof UploadInputSchema>;
 export type GladiaUploadAudioVideoFileResponse = z.infer<
