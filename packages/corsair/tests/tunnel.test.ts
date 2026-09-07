@@ -14,12 +14,8 @@ function createMockCorsair() {
 	};
 }
 
-function signBody(body: string, secret: string, timestamp: string): string {
-	return createHmac('sha256', secret)
-		.update(timestamp)
-		.update('.')
-		.update(body)
-		.digest('hex');
+function signBody(body: string, secret: string): string {
+	return createHmac('sha256', secret).update(body).digest('hex');
 }
 
 function signedTunnelHeaders(
@@ -27,10 +23,9 @@ function signedTunnelHeaders(
 	secret: string,
 	nonce = randomUUID(),
 ) {
-	const timestamp = String(Math.floor(Date.now() / 1000));
 	return {
-		'x-corsair-signature': `sha256=${signBody(body, secret, timestamp)}`,
-		'x-corsair-timestamp': timestamp,
+		'x-corsair-signature': `sha256=${signBody(body, secret)}`,
+		'x-corsair-timestamp': String(Math.floor(Date.now() / 1000)),
 		'x-corsair-nonce': nonce,
 	};
 }
@@ -172,13 +167,12 @@ describe('processCorsair', () => {
 			payload: { headers: {}, body: '{}' },
 		});
 
-		const timestamp = String(Math.floor(Date.now() / 1000));
 		const ack = await processCorsair(
 			createMockCorsair(),
 			{
 				headers: {
-					'x-corsair-signature': `sha256=${signBody(body, secret, timestamp)}`,
-					'x-corsair-timestamp': timestamp,
+					'x-corsair-signature': `sha256=${signBody(body, secret)}`,
+					'x-corsair-timestamp': String(Math.floor(Date.now() / 1000)),
 				},
 				body,
 			},
@@ -200,7 +194,7 @@ describe('processCorsair', () => {
 			createMockCorsair(),
 			{
 				headers: {
-					'x-corsair-signature': `sha256=${signBody(body, secret, '')}`,
+					'x-corsair-signature': `sha256=${signBody(body, secret)}`,
 				},
 				body,
 			},
@@ -223,7 +217,7 @@ describe('processCorsair', () => {
 			createMockCorsair(),
 			{
 				headers: {
-					'x-corsair-signature': `sha256=${signBody(body, secret, expiredTimestamp)}`,
+					'x-corsair-signature': `sha256=${signBody(body, secret)}`,
 					'x-corsair-timestamp': expiredTimestamp,
 				},
 				body,

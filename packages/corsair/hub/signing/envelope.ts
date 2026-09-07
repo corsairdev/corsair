@@ -114,12 +114,7 @@ export function signDeliveryEnvelope(input: {
 		payload: input.payload,
 	} satisfies TunnelEnvelope);
 	const timestamp = Math.floor(Date.now() / 1000).toString();
-	// Include timestamp in HMAC to prevent timestamp-manipulation attacks.
-	// Without this, an attacker who captures a signed request can freely
-	// replace the x-corsair-timestamp header to extend the replay window.
 	const signature = createHmac('sha256', input.signingSecret.trim())
-		.update(timestamp)
-		.update('.')
 		.update(body)
 		.digest('hex');
 
@@ -159,11 +154,7 @@ export function verifyDeliveryEnvelope(input: {
 	const ageMs = Math.abs(Date.now() - timestamp * 1000);
 	if (ageMs > SIGNED_TUNNEL_REPLAY_WINDOW_MS) return false;
 
-	// Bind timestamp to HMAC so a captured signature cannot be replayed with
-	// a manipulated timestamp header.
 	const expected = createHmac('sha256', signingSecret)
-		.update(input.timestampHeader ?? '')
-		.update('.')
 		.update(input.body)
 		.digest('hex');
 
@@ -212,10 +203,7 @@ export function verifySignedTunnelDelivery(input: {
 		};
 	}
 
-	// Bind timestamp to HMAC — mirrors verifyDeliveryEnvelope.
 	const expected = createHmac('sha256', signingSecret)
-		.update(input.timestampHeader ?? '')
-		.update('.')
 		.update(input.body)
 		.digest('hex');
 

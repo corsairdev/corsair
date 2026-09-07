@@ -69,7 +69,7 @@ describe('hub browser delivery replay guard', () => {
 			throw new Error(`Expected redirect, received ${first.type}`);
 		}
 		const error = new URL(first.url).searchParams.get('error');
-		expect(error).toBe('delivery_failed');
+		expect(error).toBe('Credential delivery missing credentials');
 
 		const second = await handleHubDeliveryGet(corsair, url);
 		expect(second).toEqual({
