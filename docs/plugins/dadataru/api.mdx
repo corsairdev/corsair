@@ -1,0 +1,2818 @@
+---
+title: API
+description: "API reference for Dadataru: every `dadataru.api.*` operation with input and output types."
+---
+
+Every `dadataru.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Clean
+
+### address
+
+`clean.address`
+
+Clean and standardize Russian addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.clean.address({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queries` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### birthdate
+
+`clean.birthdate`
+
+Clean and standardize birthdates
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.clean.birthdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queries` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### email
+
+`clean.email`
+
+Clean and standardize email addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.clean.email({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queries` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### name
+
+`clean.name`
+
+Clean and parse full names
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.clean.name({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queries` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### passport
+
+`clean.passport`
+
+Clean and validate Russian passport numbers
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.clean.passport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queries` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### phone
+
+`clean.phone`
+
+Clean and standardize phone numbers
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.clean.phone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queries` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### record
+
+`clean.record`
+
+Clean composite multi-field records
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.clean.record({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `structure` | `string[]` | Yes | — |
+| `data` | `string[][]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `structure` | `string[]` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[][]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### vehicle
+
+`clean.vehicle`
+
+Clean and recognize vehicle models
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.clean.vehicle({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queries` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Find
+
+### address
+
+`find.address`
+
+Find address details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.address({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bank
+
+`find.bank`
+
+Find bank details
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.bank({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### carBrand
+
+`find.carBrand`
+
+Find car brand details
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.carBrand({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### companyByEmail
+
+`find.companyByEmail`
+
+Find companies by email domain
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.companyByEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### country
+
+`find.country`
+
+Find country metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.country({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### courtById
+
+`find.courtById`
+
+Find court details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.courtById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### currency
+
+`find.currency`
+
+Find currency details
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.currency({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delivery
+
+`find.delivery`
+
+Find delivery city mapping IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.delivery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fiasById
+
+`find.fiasById`
+
+Find address by FIAS ID
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.fiasById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fmsUnit
+
+`find.fmsUnit`
+
+Find passport issuing authority (FMS)
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.fmsUnit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fnsUnit
+
+`find.fnsUnit`
+
+Find tax office (FNS) details
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.fnsUnit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ftsUnit
+
+`find.ftsUnit`
+
+Find customs office (FTS) details
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.ftsUnit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### medicalPositionById
+
+`find.medicalPositionById`
+
+Find medical positions by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.medicalPositionById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mktu
+
+`find.mktu`
+
+Find MKTU trademark classification items
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.mktu({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### okpd2ById
+
+`find.okpd2ById`
+
+Find OKPD2 classifications by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.okpd2ById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### okpdtrPosition
+
+`find.okpdtrPosition`
+
+Find OKPDTR job positions by code
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.okpdtrPosition({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### okpdtrProfession
+
+`find.okpdtrProfession`
+
+Find OKPDTR worker professions
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.okpdtrProfession({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### oktmoById
+
+`find.oktmoById`
+
+Find territory details by OKTMO code
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.oktmoById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### okved2
+
+`find.okved2`
+
+Find OKVED2 economic activities
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.okved2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### party
+
+`find.party`
+
+Find Russian party/company details
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.party({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### partyBy
+
+`find.partyBy`
+
+Find Belarus party by UNP
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.partyBy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### partyKz
+
+`find.partyKz`
+
+Find Kazakhstan company details
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.partyKz({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postalOffice
+
+`find.postalOffice`
+
+Find postal office details
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.postalOffice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postalUnitById
+
+`find.postalUnitById`
+
+Find postal unit details
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.find.postalUnitById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Geolocate
+
+### address
+
+`geolocate.address`
+
+Find addresses near coordinates
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.geolocate.address({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lon` | `number` | Yes | — |
+| `radius_meters` | `number` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postalUnit
+
+`geolocate.postalUnit`
+
+Find postal units near coordinates
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.geolocate.postalUnit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | — |
+| `lon` | `number` | Yes | — |
+| `radius_meters` | `number` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ip Locate
+
+### address
+
+`ipLocate.address`
+
+Geolocate address by IP
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.ipLocate.address({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Profile
+
+### balance
+
+`profile.balance`
+
+Get current account balance
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.profile.balance({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `balance` | `number` | Yes | — |
+
+
+
+---
+
+### statistics
+
+`profile.statistics`
+
+Get usage statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.profile.statistics({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### versions
+
+`profile.versions`
+
+Get reference database update versions
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.profile.versions({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Suggest
+
+### address
+
+`suggest.address`
+
+Autocomplete and suggest addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.address({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bank
+
+`suggest.bank`
+
+Autocomplete and suggest banks
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.bank({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### carBrand
+
+`suggest.carBrand`
+
+Autocomplete and suggest car brands
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.carBrand({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### country
+
+`suggest.country`
+
+Autocomplete and suggest countries
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.country({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### court
+
+`suggest.court`
+
+Autocomplete and suggest courts
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.court({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### currency
+
+`suggest.currency`
+
+Autocomplete and suggest currencies
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.currency({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### email
+
+`suggest.email`
+
+Autocomplete and suggest emails
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.email({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fias
+
+`suggest.fias`
+
+Autocomplete and suggest FIAS addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.fias({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fmsUnit
+
+`suggest.fmsUnit`
+
+Suggest passport issuing departments
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.fmsUnit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fnsUnit
+
+`suggest.fnsUnit`
+
+Suggest tax inspection (FNS) offices
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.fnsUnit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ftsUnit
+
+`suggest.ftsUnit`
+
+Suggest customs (FTS) offices
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.ftsUnit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### medicalPosition
+
+`suggest.medicalPosition`
+
+Suggest medical positions/specialties
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.medicalPosition({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### metro
+
+`suggest.metro`
+
+Suggest metro stations
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.metro({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mktu
+
+`suggest.mktu`
+
+Suggest MKTU trademark classifications
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.mktu({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### name
+
+`suggest.name`
+
+Autocomplete and suggest names (FIO)
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.name({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### okpd2
+
+`suggest.okpd2`
+
+Suggest product classification (OKPD2) codes
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.okpd2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### okpdtrPosition
+
+`suggest.okpdtrPosition`
+
+Suggest job positions from OKPDTR classifier
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.okpdtrPosition({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### okpdtrProfession
+
+`suggest.okpdtrProfession`
+
+Suggest worker professions from OKPDTR
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.okpdtrProfession({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### oktmo
+
+`suggest.oktmo`
+
+Suggest municipal territories (OKTMO)
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.oktmo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### okved2
+
+`suggest.okved2`
+
+Suggest economic activities (OKVED2)
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.okved2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### party
+
+`suggest.party`
+
+Suggest Russian parties/companies
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.party({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### partyBy
+
+`suggest.partyBy`
+
+Suggest Belarus parties/companies
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.partyBy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### partyKz
+
+`suggest.partyKz`
+
+Suggest Kazakhstan parties/companies
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.partyKz({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postalOffice
+
+`suggest.postalOffice`
+
+Suggest postal offices
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.postalOffice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postalUnit
+
+`suggest.postalUnit`
+
+Suggest postal units
+
+**Risk:** `read`
+
+```ts
+await corsair.dadataru.api.suggest.postalUnit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `kpp` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  value: string,
+  unrestricted_value: string,
+  data: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
