@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class SafetyCultureAPIError extends Error {
 	constructor(
@@ -56,9 +56,14 @@ export async function makeSafetyCultureRequest<T>(
 		const response = await request<T>(config, requestOptions);
 		return response;
 	} catch (error) {
+		// Preserve ApiError so error-handlers can read .status / .retryAfter
+		if (error instanceof ApiError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new SafetyCultureAPIError(error.message);
 		}
 		throw new SafetyCultureAPIError('Unknown error');
 	}
 }
+

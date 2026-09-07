@@ -9,11 +9,8 @@ export const list: SafetyCultureEndpoints['inspectionsList'] = async (
 ) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
 
-	if (input.template) {
-		for (const t of input.template) {
-			// SafetyCulture API accepts repeated template params
-			query.template = t;
-		}
+	if (input.template && input.template.length > 0) {
+		query.template = input.template.join(',');
 	}
 	if (input.modified_after) query.modified_after = input.modified_after;
 	if (input.modified_before) query.modified_before = input.modified_before;
