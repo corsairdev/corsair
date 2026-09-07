@@ -1,0 +1,518 @@
+{
+  "id": "castingwords",
+  "displayName": "Castingwords",
+  "description": "Castingwords plugin for Corsair",
+  "npmPackageName": "@corsair-dev/castingwords",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 11,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "castingwords.api.audiofile.get",
+      "shortPath": "audiofile.get",
+      "description": "Get audiofile details including current state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audiofileId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audiofile",
+            "optional": true,
+            "type": "{ id?: string | number, statename?: string, names?: string, notes?: string, originallink?: string, title?: string, duration?: string | number, description?: string, quality_stars?: string | number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "castingwords.api.invoice.get",
+      "shortPath": "invoice.get",
+      "description": "Get invoice details and line items",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoiceId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "purchase_order",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "createtime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paidtime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string | number, sku?: string, quantity?: string | number, price?: string | number, audiofile?: string | number, total?: string | number }[]"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "PAID | SUBMITTED | OPEN | CREATED"
+          }
+        ]
+      }
+    },
+    {
+      "path": "castingwords.api.order.create",
+      "shortPath": "order.create",
+      "description": "Create a transcription order for public audio/video URLs (API4 order_url)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string | string[]"
+          },
+          {
+            "key": "sku",
+            "optional": false,
+            "type": "TRANS14 | TRANS2 | TRANS6 | TRANS7 | EMSR02 | DIFFQ2 | TSTMP1 | CAPTION1[]"
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "names",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audiofiles",
+            "optional": false,
+            "type": "(string | number)[]"
+          },
+          {
+            "key": "order",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hold",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "castingwords.api.prepayBalance.get",
+      "shortPath": "prepayBalance.get",
+      "description": "Get the current prepaid balance in USD",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "balance",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "castingwords.api.refund.create",
+      "shortPath": "refund.create",
+      "description": "Cancel and refund an audiofile before transcription work starts",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audiofileId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "castingwords.api.skus.list",
+      "shortPath": "skus.list",
+      "description": "List documented CastingWords SKUs from Store API v4 (no live sku endpoint)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skus",
+            "optional": false,
+            "type": "{ sku: string, kind: order | upgrade, description: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "castingwords.api.transcript.get",
+      "shortPath": "transcript.get",
+      "description": "Get a completed transcript (txt, doc, rtf, html, srt, docx, tstxt, vtt)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audiofileId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "extension",
+            "optional": false,
+            "type": "txt | doc | rtf | html | srt | docx | tstxt | vtt"
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "castingwords.api.upgrade.create",
+      "shortPath": "upgrade.create",
+      "description": "Order upgrades for an audiofile (timestamps, captions, etc.)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audiofileId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "sku",
+            "optional": false,
+            "type": "DIFFQ2 | TSTMP1 | CAPTION1 | EDIT01 | UPGRD1 | UPGRD2 | UPGRD3[]"
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "castingwords.api.webhook.get",
+      "shortPath": "webhook.get",
+      "description": "Get the registered account webhook URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "string | "
+          }
+        ]
+      }
+    },
+    {
+      "path": "castingwords.api.webhook.register",
+      "shortPath": "webhook.register",
+      "description": "Register a webhook URL for CastingWords event notifications",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "string | "
+          }
+        ]
+      }
+    },
+    {
+      "path": "castingwords.api.webhook.test",
+      "shortPath": "webhook.test",
+      "description": "Request a test webhook POST for a documented event type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "TRANSCRIPT_COMPLETE | DIFFICULT_AUDIO | REFUND_ISSUED | ORDER_ON_HOLD"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "string | "
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "castingwords.db.audiofiles.search",
+      "entityName": "audiofiles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "statename",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "names",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "originallink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "castingwords.db.balances.search",
+      "entityName": "balances",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "balance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "castingwords.db.invoices.search",
+      "entityName": "invoices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createtime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "paidtime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "castingwords.db.orders.search",
+      "entityName": "orders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hold",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "castingwords.db.skus.search",
+      "entityName": "skus",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sku",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "castingwords.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}
