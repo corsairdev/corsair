@@ -1,11 +1,30 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
+import type { WhautomateHandlerContext } from './client';
+import {
+	addContact,
+	deleteSegment,
+	deleteServiceCategory,
+	getAccountInfo,
+	getAllWebhooks,
+	getBroadcastById,
+	getBroadcasts,
+	getContacts,
+	getMessagesOfContact,
+	getSegments,
+	getServiceById,
+	getServiceCategories,
+	getServices,
+	getStaffAvailabilityBlocks,
+	getStaffById,
+	getStaffs,
+	updateService,
+} from './endpoints';
 import {
 	WhautomateEndpointInputSchemas,
 	WhautomateEndpointOutputSchemas,
 } from './endpoints/types';
-import type { WhautomateContext } from './index';
-import { whautomate } from './index';
+import { requireWhautomateApiKey, whautomate } from './index';
 
 jest.mock('corsair/http', () => {
 	const original = jest.requireActual('corsair/http');
@@ -63,16 +82,14 @@ function expectRequest(expected: {
 
 const getApiHost = jest.fn<Promise<string | null>, []>();
 
-// handlers only read key, keys.get_api_host, and options. CorsairPluginContext
-// carries runtime-bound members a test literal cannot satisfy, so this
-// assertion is required; a structural mock type is not practical
-const mockCtx = {
+const mockCtx: WhautomateHandlerContext = {
 	key: 'test-key',
 	keys: {
 		get_api_host: getApiHost,
 	},
 	options: {},
-} as unknown as WhautomateContext;
+	$getAccountId: async () => 'acct_test',
+};
 
 beforeEach(() => {
 	mockRequest.mockReset();
@@ -92,19 +109,15 @@ describe('Whautomate endpoints', () => {
 
 	it('resolves the api host from the key store', async () => {
 		mockRequest.mockResolvedValue({ name: 'Acme', ownerEmail: 'a@b.com' });
-		await endpoints().account.getAccountInfo(mockCtx, {});
+		await getAccountInfo(mockCtx, {});
 		const { config, options } = lastCall();
 		expect(config.BASE).toBe('https://api.whautomate.com/v1');
 		expect(options.method).toBe('GET');
 	});
 
-	function endpoints() {
-		return whautomate().endpoints!;
-	}
-
 	it('account.getAccountInfo', async () => {
 		mockRequest.mockResolvedValue({ name: 'Acme', ownerEmail: 'a@b.com' });
-		const result = await endpoints().account.getAccountInfo(mockCtx, {});
+		const result = await getAccountInfo(mockCtx, {});
 		expectRequest({ method: 'GET', url: '/account-info' });
 		expect(result).toEqual({ name: 'Acme', ownerEmail: 'a@b.com' });
 		expect(
@@ -114,7 +127,7 @@ describe('Whautomate endpoints', () => {
 
 	it('contacts.addContact does not log the contact payload', async () => {
 		mockRequest.mockResolvedValue({ id: 'c1', name: 'Ada' });
-		const result = await endpoints().contacts.addContact(mockCtx, {
+		const result = await addContact(mockCtx, {
 			name: 'Ada',
 			phoneNumber: '+911234567890',
 			location: { id: 'location-id' },
@@ -141,7 +154,7 @@ describe('Whautomate endpoints', () => {
 
 	it('contacts.getContacts', async () => {
 		mockRequest.mockResolvedValue({ data: [] });
-		await endpoints().contacts.getContacts(mockCtx, {
+		await getContacts(mockCtx, {
 			page: 1,
 			limit: 25,
 			search: 'ada',
@@ -155,7 +168,7 @@ describe('Whautomate endpoints', () => {
 
 	it('contacts.getMessagesOfContact', async () => {
 		mockRequest.mockResolvedValue({ data: [] });
-		await endpoints().contacts.getMessagesOfContact(mockCtx, {
+		await getMessagesOfContact(mockCtx, {
 			contactId: 'c1',
 			startDate: '2026-01-01',
 		});
@@ -177,7 +190,7 @@ describe('Whautomate endpoints', () => {
 
 	it('segments.getSegments', async () => {
 		mockRequest.mockResolvedValue({ data: [] });
-		await endpoints().segments.getSegments(mockCtx, { name: 'vip' });
+		await getSegments(mockCtx, { name: 'vip' });
 		expectRequest({
 			method: 'GET',
 			url: '/segments',
@@ -187,7 +200,7 @@ describe('Whautomate endpoints', () => {
 
 	it('segments.deleteSegment', async () => {
 		mockRequest.mockResolvedValue({ id: 's1' });
-		const result = await endpoints().segments.deleteSegment(mockCtx, {
+		const result = await deleteSegment(mockCtx, {
 			id: 's1',
 		});
 		expectRequest({ method: 'DELETE', url: '/segments/s1' });
@@ -198,16 +211,13 @@ describe('Whautomate endpoints', () => {
 
 	it('serviceCategories.getServiceCategories', async () => {
 		mockRequest.mockResolvedValue({ data: [] });
-		await endpoints().serviceCategories.getServiceCategories(mockCtx, {});
+		await getServiceCategories(mockCtx, {});
 		expectRequest({ method: 'GET', url: '/serviceCategories' });
 	});
 
 	it('serviceCategories.deleteServiceCategory', async () => {
 		mockRequest.mockResolvedValue({ id: 'sc1' });
-		const result = await endpoints().serviceCategories.deleteServiceCategory(
-			mockCtx,
-			{ id: 'sc1' },
-		);
+		const result = await deleteServiceCategory(mockCtx, { id: 'sc1' });
 		expectRequest({ method: 'DELETE', url: '/serviceCategories/sc1' });
 		expect(
 			WhautomateEndpointOutputSchemas.deleteServiceCategory.safeParse(result)
@@ -217,7 +227,7 @@ describe('Whautomate endpoints', () => {
 
 	it('services.getServices', async () => {
 		mockRequest.mockResolvedValue({ data: [] });
-		await endpoints().services.getServices(mockCtx, {
+		await getServices(mockCtx, {
 			isActive: true,
 			search: 'yoga',
 		});
@@ -230,13 +240,13 @@ describe('Whautomate endpoints', () => {
 
 	it('services.getServiceById', async () => {
 		mockRequest.mockResolvedValue({ id: 'sv1', name: 'Yoga' });
-		await endpoints().services.getServiceById(mockCtx, { id: 'sv1' });
+		await getServiceById(mockCtx, { id: 'sv1' });
 		expectRequest({ method: 'GET', url: '/services/sv1' });
 	});
 
 	it('services.updateService', async () => {
 		mockRequest.mockResolvedValue({ id: 'sv1', name: 'New name', price: 500 });
-		await endpoints().services.updateService(mockCtx, {
+		await updateService(mockCtx, {
 			id: 'sv1',
 			name: 'New name',
 			price: 500,
@@ -257,7 +267,7 @@ describe('Whautomate endpoints', () => {
 				isActive: true,
 			},
 		]);
-		const result = await endpoints().webhooks.getAllWebhooks(mockCtx, {});
+		const result = await getAllWebhooks(mockCtx, {});
 		expectRequest({ method: 'GET', url: '/webhooks' });
 		expect(
 			WhautomateEndpointOutputSchemas.getAllWebhooks.safeParse(result).success,
@@ -266,7 +276,7 @@ describe('Whautomate endpoints', () => {
 
 	it('broadcasts.getBroadcasts', async () => {
 		mockRequest.mockResolvedValue({ data: [] });
-		const result = await endpoints().broadcasts.getBroadcasts(mockCtx, {
+		const result = await getBroadcasts(mockCtx, {
 			status: 'sent',
 		});
 		expectRequest({
@@ -285,13 +295,13 @@ describe('Whautomate endpoints', () => {
 			name: 'Launch',
 			status: 'draft',
 		});
-		await endpoints().broadcasts.getBroadcastById(mockCtx, { id: 'b1' });
+		await getBroadcastById(mockCtx, { id: 'b1' });
 		expectRequest({ method: 'GET', url: '/broadcasts/b1' });
 	});
 
 	it('staff.getStaffs', async () => {
 		mockRequest.mockResolvedValue({ data: [] });
-		await endpoints().staff.getStaffs(mockCtx, { page: 2, limit: 10 });
+		await getStaffs(mockCtx, { page: 2, limit: 10 });
 		expectRequest({
 			method: 'GET',
 			url: '/staffs',
@@ -301,13 +311,13 @@ describe('Whautomate endpoints', () => {
 
 	it('staff.getStaffById', async () => {
 		mockRequest.mockResolvedValue({ id: 'st1', firstName: 'A', lastName: 'B' });
-		await endpoints().staff.getStaffById(mockCtx, { id: 'st1' });
+		await getStaffById(mockCtx, { id: 'st1' });
 		expectRequest({ method: 'GET', url: '/staffs/st1' });
 	});
 
 	it('staff.getStaffAvailabilityBlocks', async () => {
 		mockRequest.mockResolvedValue([]);
-		await endpoints().staff.getStaffAvailabilityBlocks(mockCtx, {
+		await getStaffAvailabilityBlocks(mockCtx, {
 			staffId: 'st1',
 			endDate: '2026-02-01',
 		});
@@ -320,7 +330,7 @@ describe('Whautomate endpoints', () => {
 
 	it('forwards page 0 as a query param', async () => {
 		mockRequest.mockResolvedValue({ data: [] });
-		await endpoints().contacts.getContacts(mockCtx, { page: 0, limit: 0 });
+		await getContacts(mockCtx, { page: 0, limit: 0 });
 		expectRequest({
 			method: 'GET',
 			url: '/contacts',
@@ -330,7 +340,7 @@ describe('Whautomate endpoints', () => {
 
 	it('accepts account info without ownerEmail', async () => {
 		mockRequest.mockResolvedValue({ name: 'Acme' });
-		const result = await endpoints().account.getAccountInfo(mockCtx, {});
+		const result = await getAccountInfo(mockCtx, {});
 		expect(result).toEqual({ name: 'Acme' });
 	});
 
@@ -338,31 +348,20 @@ describe('Whautomate endpoints', () => {
 		mockRequest.mockResolvedValue([
 			{ id: 'c1', name: 'Ada', phoneNumber: '+1' },
 		]);
-		const result = await endpoints().contacts.getContacts(mockCtx, {});
+		const result = await getContacts(mockCtx, {});
 		expect(result.data).toHaveLength(1);
 		expect(result.data[0]?.name).toBe('Ada');
 	});
 
 	it('rejects a non-https stored api host before sending', async () => {
 		getApiHost.mockResolvedValue('http://evil.example.com');
-		await expect(
-			endpoints().account.getAccountInfo(mockCtx, {}),
-		).rejects.toMatchObject({ code: 'INVALID_API_HOST' });
+		await expect(getAccountInfo(mockCtx, {})).rejects.toMatchObject({
+			code: 'INVALID_API_HOST',
+		});
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
-	it('throws AuthMissingError when no api key is stored', async () => {
-		const { AuthMissingError } = jest.requireActual('corsair/core') as {
-			AuthMissingError: new (...args: never[]) => Error;
-		};
-		await expect(
-			whautomate().keyBuilder?.(
-				{
-					authType: 'api_key',
-					keys: { get_api_key: async () => null },
-				} as never,
-				'endpoint',
-			),
-		).rejects.toBeInstanceOf(AuthMissingError);
+	it('throws AuthMissingError when no api key is stored', () => {
+		expect(() => requireWhautomateApiKey(null)).toThrow(AuthMissingError);
 	});
 });

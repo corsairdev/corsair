@@ -311,6 +311,15 @@ export type InternalWhautomatePlugin =
 export type ExternalWhautomatePlugin<T extends WhautomatePluginOptions> =
 	BaseWhautomatePlugin<T>;
 
+export function requireWhautomateApiKey(
+	apiKey: string | null | undefined,
+): string {
+	if (!apiKey) {
+		throw new AuthMissingError('whautomate', 'api_key');
+	}
+	return apiKey;
+}
+
 export function whautomate<const T extends WhautomatePluginOptions>(
 	incomingOptions: WhautomatePluginOptions & T = {} as WhautomatePluginOptions &
 		T,
@@ -340,11 +349,7 @@ export function whautomate<const T extends WhautomatePluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const apiKey = await ctx.keys.get_api_key();
-				if (!apiKey) {
-					throw new AuthMissingError('whautomate', 'api_key');
-				}
-				return apiKey;
+				return requireWhautomateApiKey(await ctx.keys.get_api_key());
 			}
 
 			throw new AuthMissingError('whautomate', 'api_key');

@@ -1,10 +1,28 @@
+import type { EventLoggingContext } from 'corsair/core';
 import type {
 	ApiRequestOptions,
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
-import type { WhautomateContext } from './index';
+
+export type WhautomateHandlerContext = EventLoggingContext & {
+	key: string;
+	keys: {
+		get_api_host: () => Promise<string | null | undefined>;
+	};
+	options: {
+		apiHost?: string;
+	};
+};
+
+export type WhautomateHandler<I, O> = (
+	ctx: WhautomateHandlerContext,
+	input: I,
+) => Promise<O>;
+
+export const WHAUTOMATE_API_KEY_HEADER = 'x-api-key';
+export const WHAUTOMATE_LEGACY_API_KEY_HEADER = 'APPOINTO-TOKEN';
 
 export class WhautomateAPIError extends Error {
 	constructor(
@@ -142,7 +160,9 @@ function apiErrorMessage(body: unknown, fallback: string): string {
 	return fallback;
 }
 
-export async function resolveApiHost(ctx: WhautomateContext): Promise<string> {
+export async function resolveApiHost(
+	ctx: WhautomateHandlerContext,
+): Promise<string> {
 	const fromKeys = await ctx.keys.get_api_host();
 	const host = fromKeys ?? ctx.options.apiHost;
 	if (!host) {
@@ -196,10 +216,8 @@ export async function makeWhautomateRequest<T>(
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Accept: 'application/json',
-			// official Whautomate REST API authenticates with x-api-key
-			// (help.whautomate.com/product-guides/whautomate-rest-api);
-			// APPOINTO-TOKEN is not a current auth header
-			'x-api-key': apiKey,
+			[WHAUTOMATE_API_KEY_HEADER]: apiKey,
+			[WHAUTOMATE_LEGACY_API_KEY_HEADER]: apiKey,
 		},
 	};
 

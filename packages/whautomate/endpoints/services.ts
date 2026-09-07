@@ -1,13 +1,17 @@
 import { logEventFromContext } from 'corsair/core';
+import type { WhautomateHandler } from '../client';
 import { makeWhautomateRequest, resolveApiHost } from '../client';
-import type { WhautomateEndpoints } from '../index';
-import type { WhautomateEndpointOutputs } from './types';
+
+import type {
+	WhautomateEndpointInputs,
+	WhautomateEndpointOutputs,
+} from './types';
 import { WhautomateEndpointOutputSchemas } from './types';
 
-export const getServices: WhautomateEndpoints['getServices'] = async (
-	ctx,
-	input,
-) => {
+export const getServices: WhautomateHandler<
+	WhautomateEndpointInputs['getServices'],
+	WhautomateEndpointOutputs['getServices']
+> = async (ctx, input) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
 	if (input.page !== undefined) query.page = input.page;
 	if (input.limit !== undefined) query.limit = input.limit;
@@ -37,10 +41,10 @@ export const getServices: WhautomateEndpoints['getServices'] = async (
 	return result;
 };
 
-export const getServiceById: WhautomateEndpoints['getServiceById'] = async (
-	ctx,
-	input,
-) => {
+export const getServiceById: WhautomateHandler<
+	WhautomateEndpointInputs['getServiceById'],
+	WhautomateEndpointOutputs['getServiceById']
+> = async (ctx, input) => {
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getServiceById']
 	>(
@@ -62,10 +66,10 @@ export const getServiceById: WhautomateEndpoints['getServiceById'] = async (
 	return result;
 };
 
-export const updateService: WhautomateEndpoints['updateService'] = async (
-	ctx,
-	input,
-) => {
+export const updateService: WhautomateHandler<
+	WhautomateEndpointInputs['updateService'],
+	WhautomateEndpointOutputs['updateService']
+> = async (ctx, input) => {
 	const { id, ...body } = input;
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['updateService']

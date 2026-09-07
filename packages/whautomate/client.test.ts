@@ -55,7 +55,7 @@ beforeEach(() => {
 });
 
 describe('Whautomate client', () => {
-	it('sends the api key only via x-api-key', async () => {
+	it('sends the api key via x-api-key and APPOINTO-TOKEN', async () => {
 		await makeWhautomateRequest(
 			'https://api.whautomate.com',
 			'secret-key',
@@ -65,8 +65,8 @@ describe('Whautomate client', () => {
 
 		const { config } = lastCall();
 		expect(config.HEADERS['x-api-key']).toBe('secret-key');
+		expect(config.HEADERS['APPOINTO-TOKEN']).toBe('secret-key');
 		expect(config.HEADERS.Authorization).toBeUndefined();
-		expect(config.HEADERS['APPOINTO-TOKEN']).toBeUndefined();
 		expect(config.TOKEN).toBeUndefined();
 	});
 

@@ -1,13 +1,17 @@
 import { logEventFromContext } from 'corsair/core';
+import type { WhautomateHandler } from '../client';
 import { makeWhautomateRequest, resolveApiHost } from '../client';
-import type { WhautomateEndpoints } from '../index';
-import type { WhautomateEndpointOutputs } from './types';
+
+import type {
+	WhautomateEndpointInputs,
+	WhautomateEndpointOutputs,
+} from './types';
 import { WhautomateEndpointOutputSchemas } from './types';
 
-export const getSegments: WhautomateEndpoints['getSegments'] = async (
-	ctx,
-	input,
-) => {
+export const getSegments: WhautomateHandler<
+	WhautomateEndpointInputs['getSegments'],
+	WhautomateEndpointOutputs['getSegments']
+> = async (ctx, input) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
 	if (input.page !== undefined) query.page = input.page;
 	if (input.limit !== undefined) query.limit = input.limit;
@@ -35,10 +39,10 @@ export const getSegments: WhautomateEndpoints['getSegments'] = async (
 	return result;
 };
 
-export const deleteSegment: WhautomateEndpoints['deleteSegment'] = async (
-	ctx,
-	input,
-) => {
+export const deleteSegment: WhautomateHandler<
+	WhautomateEndpointInputs['deleteSegment'],
+	WhautomateEndpointOutputs['deleteSegment']
+> = async (ctx, input) => {
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['deleteSegment']
 	>(

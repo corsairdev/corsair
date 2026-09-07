@@ -1,12 +1,17 @@
 import { logEventFromContext } from 'corsair/core';
+import type { WhautomateHandler } from '../client';
 import { makeWhautomateRequest, resolveApiHost } from '../client';
-import type { WhautomateEndpoints } from '../index';
-import type { WhautomateEndpointOutputs } from './types';
+
+import type {
+	WhautomateEndpointInputs,
+	WhautomateEndpointOutputs,
+} from './types';
 import { WhautomateEndpointOutputSchemas } from './types';
 
-export const getAccountInfo: WhautomateEndpoints['getAccountInfo'] = async (
-	ctx,
-) => {
+export const getAccountInfo: WhautomateHandler<
+	WhautomateEndpointInputs['getAccountInfo'],
+	WhautomateEndpointOutputs['getAccountInfo']
+> = async (ctx) => {
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getAccountInfo']
 	>(
