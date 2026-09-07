@@ -5,21 +5,27 @@ const GLADIA_API_BASE = 'https://api.gladia.io';
 
 export class GladiaAPIError extends Error {
 	public readonly status?: number;
+	// unknown is necessary because Gladia error payloads vary by endpoint; a closed error body union is infeasible because v2 does not publish one schema for failures
 	public readonly body?: unknown;
+	public readonly retryAfter?: number;
 
+	// unknown is necessary because the cause can be any thrown value from the transport; a closed error union is infeasible because fetch failures are untyped
 	constructor(message: string, cause?: unknown) {
 		super(message, cause instanceof Error ? { cause } : undefined);
 		this.name = 'GladiaAPIError';
 		if (cause instanceof ApiError) {
 			this.status = cause.status;
 			this.body = cause.body;
+			this.retryAfter = cause.retryAfter;
 		}
 	}
 }
 
 type GladiaRequestOptions = {
 	method?: 'GET' | 'POST' | 'DELETE';
+	// unknown is necessary because write bodies are operation-specific JSON bags; a closed union of nine payload shapes is infeasible because the transport is shared
 	body?: unknown;
+	// unknown is necessary because query values include nested filter records; a closed query-value union is infeasible because list filters are provider-defined
 	query?: Record<string, unknown>;
 };
 
