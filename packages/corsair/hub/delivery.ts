@@ -66,9 +66,7 @@ function isAllowedRedirectUrl(url: string): boolean {
 		) {
 			return true;
 		}
-		return (
-			hostname === 'corsair.dev' || hostname.endsWith('.corsair.dev')
-		);
+		return hostname === 'corsair.dev' || hostname.endsWith('.corsair.dev');
 	} catch {
 		return false;
 	}

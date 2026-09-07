@@ -438,7 +438,10 @@ export function managementHandler(
 			// internal details (tenant IDs, integration names, crypto errors)
 			// to API consumers — they could aid reconnaissance.
 			console.error('[corsair:management] Unhandled error:', err);
-			return json(500, { error: 'internal_error', message: 'Internal server error' });
+			return json(500, {
+				error: 'internal_error',
+				message: 'Internal server error',
+			});
 		}
 	};
 }
