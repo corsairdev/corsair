@@ -69,6 +69,11 @@ export async function makeWhautomateRequest<T>(
 	const baseUrl = apiHost.replace(/\/$/, '');
 	const fullUrl = baseUrl.endsWith('/v1') ? baseUrl : `${baseUrl}/v1`;
 
+	const rateLimitConfig: RateLimitConfig =
+		method === 'GET'
+			? WHAUTOMATE_RATE_LIMIT_CONFIG
+			: { ...WHAUTOMATE_RATE_LIMIT_CONFIG, enabled: false };
+
 	const config: OpenAPIConfig = {
 		BASE: fullUrl,
 		VERSION: '1.0.0',
@@ -95,7 +100,7 @@ export async function makeWhautomateRequest<T>(
 
 	try {
 		const response = await request<T>(config, requestOptions, {
-			rateLimitConfig: WHAUTOMATE_RATE_LIMIT_CONFIG,
+			rateLimitConfig,
 		});
 		const parseResult = outputSchema.safeParse(response);
 		if (!parseResult.success) {

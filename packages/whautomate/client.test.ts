@@ -1,3 +1,4 @@
+import type { RateLimitConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import { z } from 'zod';
 import { makeWhautomateRequest } from './client';
@@ -123,6 +124,47 @@ describe('Whautomate client', () => {
 			retryAfter: 30,
 			body: { message: 'slow down' },
 		});
+	});
+
+	it('does not replay write requests on 429', async () => {
+		mockRequest.mockRejectedValue(apiErrorLike({ status: 429, retryAfter: 5 }));
+
+		await expect(
+			makeWhautomateRequest(
+				'https://api.example.com',
+				'k',
+				'/contacts',
+				schema,
+				{
+					method: 'POST',
+					body: { name: 'Ada' },
+				},
+			),
+		).rejects.toMatchObject({ status: 429 });
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const { config } = lastCall();
+		expect(config.BASE).toBe('https://api.example.com/v1');
+	});
+
+	it('keeps transport rate-limit retries enabled for GET requests', async () => {
+		await makeWhautomateRequest('/contacts', 'k', '/contacts', schema, {
+			method: 'GET',
+			query: { page: 1 },
+		});
+		const call = mockRequest.mock.calls[mockRequest.mock.calls.length - 1];
+		const retryOptions = call?.[2] as { rateLimitConfig: RateLimitConfig };
+		expect(retryOptions.rateLimitConfig.enabled).toBe(true);
+		expect(retryOptions.rateLimitConfig.maxRetries).toBe(5);
+	});
+
+	it('disables transport rate-limit retries for write requests', async () => {
+		await makeWhautomateRequest('/services/sv1', 'k', '/services/sv1', schema, {
+			method: 'PATCH',
+			body: { name: 'New name' },
+		});
+		const call = mockRequest.mock.calls[mockRequest.mock.calls.length - 1];
+		const retryOptions = call?.[2] as { rateLimitConfig: RateLimitConfig };
+		expect(retryOptions.rateLimitConfig.enabled).toBe(false);
 	});
 
 	it('omits the body for GET requests', async () => {
