@@ -1,4 +1,4 @@
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import { makeDocupostRequest } from './client';
 import type { DocupostContext } from './index';
@@ -9,7 +9,13 @@ jest.mock('corsair/http', () => ({
 	request: jest.fn(),
 }));
 
+jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
+	logEventFromContext: jest.fn(),
+}));
+
 const mockRequest = request as jest.Mock;
+const mockLogEvent = logEventFromContext as jest.Mock;
 
 const mockCtx = {
 	key: 'test-api-token',
@@ -169,17 +175,15 @@ describe('Docupost request client', () => {
 describe('Docupost endpoints', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
+		mockLogEvent.mockReset();
 		mockRequest.mockResolvedValue({ id: 'mail-1', status: 'queued' });
 	});
 
 	it('maps the account balance read to its route', async () => {
-		await (
-			docupost({ key: 'test-api-token' }).endpoints as unknown as {
-				account: {
-					balance: (ctx: DocupostContext, input: unknown) => Promise<unknown>;
-				};
-			}
-		).account.balance(mockCtx, {});
+		await docupost({ key: 'test-api-token' }).endpoints!.account.balance(
+			mockCtx,
+			{},
+		);
 
 		expect(mockRequest.mock.calls[0]?.[1]).toEqual(
 			expect.objectContaining({
@@ -258,22 +262,25 @@ describe('Docupost endpoints', () => {
 				mockCtx,
 				{
 					...postcardInput,
-					back_image_url: undefined,
+					front_image_url: undefined,
 				} as never,
 			);
 		}).rejects.toThrow(/input validation failed/i);
 	});
 
 	it('does not log letter html or addresses in the event payload', async () => {
-		const logged = jest.fn();
-		const ctx = { ...mockCtx, $getAccountId: async () => 'acct-1' };
-		await docupost({ key: 'test-api-token' }).endpoints!.send.letter(ctx, {
+		await docupost({ key: 'test-api-token' }).endpoints!.send.letter(mockCtx, {
 			...letterInput,
 			pdf_url: undefined,
 			html: '<p>Secret content</p>',
 		} as never);
 
-		expect(logged).not.toHaveBeenCalled();
+		expect(mockLogEvent).toHaveBeenCalledTimes(1);
+		const payload = mockLogEvent.mock.calls[0]?.[2] as Record<string, unknown>;
+		expect(payload).toEqual({ operation: 'sendletter', has_pdf: false });
+		expect(JSON.stringify(payload)).not.toContain('Secret content');
+		expect(JSON.stringify(payload)).not.toContain('John Doe');
+		expect(JSON.stringify(payload)).not.toContain('123 Main St');
 		expect(mockRequest.mock.calls.length).toBe(1);
 	});
 
