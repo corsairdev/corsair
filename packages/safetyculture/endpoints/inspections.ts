@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeSafetyCultureRequest } from '../client';
 import type { SafetyCultureEndpoints } from '..';
+import { makeSafetyCultureRequest } from '../client';
 import type { InspectionsListResponse } from './types';
 
 export const list: SafetyCultureEndpoints['inspectionsList'] = async (
@@ -21,12 +21,11 @@ export const list: SafetyCultureEndpoints['inspectionsList'] = async (
 	if (input.modified_after_cursor)
 		query.modified_after = input.modified_after_cursor;
 
-	const response =
-		await makeSafetyCultureRequest<InspectionsListResponse>(
-			'audits/search',
-			ctx.key,
-			{ method: 'GET', query },
-		);
+	const response = await makeSafetyCultureRequest<InspectionsListResponse>(
+		'audits/search',
+		ctx.key,
+		{ method: 'GET', query },
+	);
 
 	await logEventFromContext(
 		ctx,

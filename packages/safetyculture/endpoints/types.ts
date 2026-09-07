@@ -153,9 +153,7 @@ export const InspectionGetResponseSchema = z.object({
 		.optional(),
 });
 
-export type InspectionGetResponse = z.infer<
-	typeof InspectionGetResponseSchema
->;
+export type InspectionGetResponse = z.infer<typeof InspectionGetResponseSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Templates – List (GET /templates/search)
@@ -193,9 +191,7 @@ export const TemplatesListResponseSchema = z.object({
 	templates: z.array(TemplateFullSchema),
 });
 
-export type TemplatesListResponse = z.infer<
-	typeof TemplatesListResponseSchema
->;
+export type TemplatesListResponse = z.infer<typeof TemplatesListResponseSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Actions – List (GET /actions/search)

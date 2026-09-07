@@ -12,7 +12,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Inspections, Templates, Actions, Users } from './endpoints';
+import { Actions, Inspections, Templates, Users } from './endpoints';
 import type {
 	SafetyCultureEndpointInputs,
 	SafetyCultureEndpointOutputs,
@@ -56,7 +56,11 @@ export type SafetyCultureBoundEndpoints = BindEndpoints<
 type SafetyCultureEndpoint<
 	K extends keyof SafetyCultureEndpointOutputs,
 	Input,
-> = CorsairEndpoint<SafetyCultureContext, Input, SafetyCultureEndpointOutputs[K]>;
+> = CorsairEndpoint<
+	SafetyCultureContext,
+	Input,
+	SafetyCultureEndpointOutputs[K]
+>;
 
 export type SafetyCultureEndpoints = {
 	inspectionsList: SafetyCultureEndpoint<
@@ -176,12 +180,12 @@ export type BaseSafetyCulturePlugin<T extends SafetyCulturePluginOptions> =
 export type InternalSafetyCulturePlugin =
 	BaseSafetyCulturePlugin<SafetyCulturePluginOptions>;
 
-export type ExternalSafetyCulturePlugin<
-	T extends SafetyCulturePluginOptions,
-> = BaseSafetyCulturePlugin<T>;
+export type ExternalSafetyCulturePlugin<T extends SafetyCulturePluginOptions> =
+	BaseSafetyCulturePlugin<T>;
 
 export function safetyculture<const T extends SafetyCulturePluginOptions>(
-	incomingOptions: SafetyCulturePluginOptions & T = {} as SafetyCulturePluginOptions & T,
+	incomingOptions: SafetyCulturePluginOptions &
+		T = {} as SafetyCulturePluginOptions & T,
 ): ExternalSafetyCulturePlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -225,16 +229,16 @@ export function safetyculture<const T extends SafetyCulturePluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
-	SafetyCultureEndpointInputs,
-	SafetyCultureEndpointOutputs,
-	InspectionsListInput,
-	InspectionsListResponse,
-	InspectionGetInput,
-	InspectionGetResponse,
-	TemplatesListInput,
-	TemplatesListResponse,
 	ActionsListInput,
 	ActionsListResponse,
+	InspectionGetInput,
+	InspectionGetResponse,
+	InspectionsListInput,
+	InspectionsListResponse,
+	SafetyCultureEndpointInputs,
+	SafetyCultureEndpointOutputs,
+	TemplatesListInput,
+	TemplatesListResponse,
 	UsersListInput,
 	UsersListResponse,
 } from './endpoints/types';

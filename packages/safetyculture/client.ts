@@ -66,4 +66,3 @@ export async function makeSafetyCultureRequest<T>(
 		throw new SafetyCultureAPIError('Unknown error');
 	}
 }
-

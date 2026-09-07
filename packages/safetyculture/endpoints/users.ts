@@ -1,12 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeSafetyCultureRequest } from '../client';
 import type { SafetyCultureEndpoints } from '..';
+import { makeSafetyCultureRequest } from '../client';
 import type { UsersListResponse } from './types';
 
-export const list: SafetyCultureEndpoints['usersList'] = async (
-	ctx,
-	input,
-) => {
+export const list: SafetyCultureEndpoints['usersList'] = async (ctx, input) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
 
 	if (input.limit) query.limit = input.limit;

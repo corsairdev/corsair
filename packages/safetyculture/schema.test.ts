@@ -1,13 +1,13 @@
-import { SafetyCultureSchema } from './schema';
 import {
+	ActionsListInputSchema,
+	InspectionGetInputSchema,
+	InspectionsListInputSchema,
 	SafetyCultureEndpointInputSchemas,
 	SafetyCultureEndpointOutputSchemas,
-	InspectionsListInputSchema,
-	InspectionGetInputSchema,
 	TemplatesListInputSchema,
-	ActionsListInputSchema,
 	UsersListInputSchema,
 } from './endpoints/types';
+import { SafetyCultureSchema } from './schema';
 
 describe('SafetyCulture schema', () => {
 	it('declares a semver version', () => {

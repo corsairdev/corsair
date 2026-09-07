@@ -1,6 +1,6 @@
-import { list as inspectionsList, get as inspectionsGet } from './inspections';
-import { list as templatesList } from './templates';
 import { list as actionsList } from './actions';
+import { get as inspectionsGet, list as inspectionsList } from './inspections';
+import { list as templatesList } from './templates';
 import { list as usersList } from './users';
 
 export const Inspections = {
