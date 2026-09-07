@@ -1,3 +1,4 @@
+// Mocked transport coverage intentionally runs in Corsair's normal CI lane.
 import { getStatus } from './endpoints/account';
 import { list as listBatches } from './endpoints/batches';
 import {
