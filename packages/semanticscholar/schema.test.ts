@@ -9,7 +9,9 @@ describe('SemanticScholar schema', () => {
 	it('declares an entities map', () => {
 		expect(typeof SemanticScholarSchema.entities).toBe('object');
 		expect(SemanticScholarSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(SemanticScholarSchema.entities))).toBe(true);
+		expect(Array.isArray(Object.keys(SemanticScholarSchema.entities))).toBe(
+			true,
+		);
 		for (const entity of Object.values(SemanticScholarSchema.entities)) {
 			expect(entity).toBeDefined();
 		}

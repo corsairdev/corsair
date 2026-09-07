@@ -1,40 +1,68 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { SemanticScholarEndpointInputs, SemanticScholarEndpointOutputs } from './endpoints/types';
-import { SemanticScholarEndpointInputSchemas, SemanticScholarEndpointOutputSchemas } from './endpoints/types';
+import { AuthMissingError } from 'corsair/core';
+import * as Endpoints from './endpoints';
 import type {
-	SemanticScholarWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { SemanticScholarSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	SemanticScholarEndpointInputs,
+	SemanticScholarEndpointOutputs,
+} from './endpoints/types';
+import {
+	SemanticScholarEndpointInputSchemas,
+	SemanticScholarEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchSemanticScholarTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveSemanticScholarOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { SemanticScholarSchema } from './schema';
+
+const semanticScholarEndpointsNested = {
+	papers: {
+		get: Endpoints.getPaper,
+		batchGet: Endpoints.getPapersBatch,
+		search: Endpoints.searchPapers,
+		relevanceSearch: Endpoints.paperRelevanceSearch,
+		searchBulk: Endpoints.searchBulkPapers,
+		matchTitle: Endpoints.paperTitleSearch,
+		autocomplete: Endpoints.autocompletePapers,
+		listAuthors: Endpoints.getPaperAuthors,
+		listCitations: Endpoints.getPaperCitations,
+		listReferences: Endpoints.getPaperReferences,
+	},
+	authors: {
+		search: Endpoints.searchAuthors,
+		get: Endpoints.getAuthor,
+		listPapers: Endpoints.getAuthorPapers,
+		batchGet: Endpoints.getAuthorsBatch,
+	},
+	recommendations: {
+		fromPaperLists: Endpoints.getPaperRecommendations,
+		forPaper: Endpoints.getRecommendationsForPaper,
+	},
+	datasets: {
+		listReleases: Endpoints.listDatasetReleases,
+		getRelease: Endpoints.getDatasetRelease,
+		get: Endpoints.getDataset,
+		getDiffs: Endpoints.getDatasetDiffs,
+	},
+	snippets: {
+		searchText: Endpoints.searchTextSnippets,
+	},
+} as const;
 
 export type SemanticScholarPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalSemanticScholarPlugin['hooks'];
-	webhookHooks?: InternalSemanticScholarPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof semanticScholarEndpointsNested>;
 };
@@ -44,94 +72,259 @@ export type SemanticScholarContext = CorsairPluginContext<
 	SemanticScholarPluginOptions
 >;
 
-export type SemanticScholarKeyBuilderContext = KeyBuilderContext<SemanticScholarPluginOptions>;
+export type SemanticScholarKeyBuilderContext =
+	KeyBuilderContext<SemanticScholarPluginOptions>;
 
-export type SemanticScholarBoundEndpoints = BindEndpoints<typeof semanticScholarEndpointsNested>;
-
-type SemanticScholarEndpoint<
-	K extends keyof SemanticScholarEndpointOutputs,
-> = CorsairEndpoint<
-	SemanticScholarContext,
-	SemanticScholarEndpointInputs[K],
-	SemanticScholarEndpointOutputs[K]
+export type SemanticScholarBoundEndpoints = BindEndpoints<
+	typeof semanticScholarEndpointsNested
 >;
+
+type SemanticScholarEndpoint<K extends keyof SemanticScholarEndpointOutputs> =
+	CorsairEndpoint<
+		SemanticScholarContext,
+		SemanticScholarEndpointInputs[K],
+		SemanticScholarEndpointOutputs[K]
+	>;
 
 export type SemanticScholarEndpoints = {
-	exampleGet: SemanticScholarEndpoint<'exampleGet'>;
+	getPaper: SemanticScholarEndpoint<'getPaper'>;
+	getPapersBatch: SemanticScholarEndpoint<'getPapersBatch'>;
+	searchPapers: SemanticScholarEndpoint<'searchPapers'>;
+	paperRelevanceSearch: SemanticScholarEndpoint<'paperRelevanceSearch'>;
+	searchBulkPapers: SemanticScholarEndpoint<'searchBulkPapers'>;
+	paperTitleSearch: SemanticScholarEndpoint<'paperTitleSearch'>;
+	autocompletePapers: SemanticScholarEndpoint<'autocompletePapers'>;
+	getPaperAuthors: SemanticScholarEndpoint<'getPaperAuthors'>;
+	getPaperCitations: SemanticScholarEndpoint<'getPaperCitations'>;
+	getPaperReferences: SemanticScholarEndpoint<'getPaperReferences'>;
+	searchAuthors: SemanticScholarEndpoint<'searchAuthors'>;
+	getAuthor: SemanticScholarEndpoint<'getAuthor'>;
+	getAuthorPapers: SemanticScholarEndpoint<'getAuthorPapers'>;
+	getAuthorsBatch: SemanticScholarEndpoint<'getAuthorsBatch'>;
+	getPaperRecommendations: SemanticScholarEndpoint<'getPaperRecommendations'>;
+	getRecommendationsForPaper: SemanticScholarEndpoint<'getRecommendationsForPaper'>;
+	listDatasetReleases: SemanticScholarEndpoint<'listDatasetReleases'>;
+	getDatasetRelease: SemanticScholarEndpoint<'getDatasetRelease'>;
+	getDataset: SemanticScholarEndpoint<'getDataset'>;
+	getDatasetDiffs: SemanticScholarEndpoint<'getDatasetDiffs'>;
+	searchTextSnippets: SemanticScholarEndpoint<'searchTextSnippets'>;
 };
-
-type SemanticScholarWebhook<
-	K extends keyof SemanticScholarWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<SemanticScholarContext, TEvent, SemanticScholarWebhookOutputs[K]>;
-
-export type SemanticScholarWebhooks = {
-	example: SemanticScholarWebhook<'example', ExampleEvent>;
-};
-
-export type SemanticScholarBoundWebhooks = BindWebhooks<SemanticScholarWebhooks>;
-
-const semanticScholarEndpointsNested = {
-	example: {
-		get: Example.get,
-	},
-} as const;
-
-const semanticScholarWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
 
 export const semanticScholarEndpointSchemas = {
-	'example.get': {
-		input: SemanticScholarEndpointInputSchemas.exampleGet,
-		output: SemanticScholarEndpointOutputSchemas.exampleGet,
+	'papers.get': {
+		input: SemanticScholarEndpointInputSchemas.getPaper,
+		output: SemanticScholarEndpointOutputSchemas.getPaper,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof semanticScholarEndpointsNested>;
-
-const semanticScholarWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'papers.batchGet': {
+		input: SemanticScholarEndpointInputSchemas.getPapersBatch,
+		output: SemanticScholarEndpointOutputSchemas.getPapersBatch,
 	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof semanticScholarWebhooksNested>;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
-
-const semanticScholarEndpointMeta = {
-	'example.get': {
-		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+	'papers.search': {
+		input: SemanticScholarEndpointInputSchemas.searchPapers,
+		output: SemanticScholarEndpointOutputSchemas.searchPapers,
 	},
-} as const satisfies RequiredPluginEndpointMeta<typeof semanticScholarEndpointsNested>;
-
-export const semanticScholarAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
+	'papers.relevanceSearch': {
+		input: SemanticScholarEndpointInputSchemas.paperRelevanceSearch,
+		output: SemanticScholarEndpointOutputSchemas.paperRelevanceSearch,
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+	'papers.searchBulk': {
+		input: SemanticScholarEndpointInputSchemas.searchBulkPapers,
+		output: SemanticScholarEndpointOutputSchemas.searchBulkPapers,
 	},
-} as const satisfies PluginAuthConfig;
-
-export type BaseSemanticScholarPlugin<T extends SemanticScholarPluginOptions> = CorsairPlugin<
-	'semanticscholar',
-	typeof SemanticScholarSchema,
-	typeof semanticScholarEndpointsNested,
-	typeof semanticScholarWebhooksNested,
-	T,
-	typeof defaultAuthType
+	'papers.matchTitle': {
+		input: SemanticScholarEndpointInputSchemas.paperTitleSearch,
+		output: SemanticScholarEndpointOutputSchemas.paperTitleSearch,
+	},
+	'papers.autocomplete': {
+		input: SemanticScholarEndpointInputSchemas.autocompletePapers,
+		output: SemanticScholarEndpointOutputSchemas.autocompletePapers,
+	},
+	'papers.listAuthors': {
+		input: SemanticScholarEndpointInputSchemas.getPaperAuthors,
+		output: SemanticScholarEndpointOutputSchemas.getPaperAuthors,
+	},
+	'papers.listCitations': {
+		input: SemanticScholarEndpointInputSchemas.getPaperCitations,
+		output: SemanticScholarEndpointOutputSchemas.getPaperCitations,
+	},
+	'papers.listReferences': {
+		input: SemanticScholarEndpointInputSchemas.getPaperReferences,
+		output: SemanticScholarEndpointOutputSchemas.getPaperReferences,
+	},
+	'authors.search': {
+		input: SemanticScholarEndpointInputSchemas.searchAuthors,
+		output: SemanticScholarEndpointOutputSchemas.searchAuthors,
+	},
+	'authors.get': {
+		input: SemanticScholarEndpointInputSchemas.getAuthor,
+		output: SemanticScholarEndpointOutputSchemas.getAuthor,
+	},
+	'authors.listPapers': {
+		input: SemanticScholarEndpointInputSchemas.getAuthorPapers,
+		output: SemanticScholarEndpointOutputSchemas.getAuthorPapers,
+	},
+	'authors.batchGet': {
+		input: SemanticScholarEndpointInputSchemas.getAuthorsBatch,
+		output: SemanticScholarEndpointOutputSchemas.getAuthorsBatch,
+	},
+	'recommendations.fromPaperLists': {
+		input: SemanticScholarEndpointInputSchemas.getPaperRecommendations,
+		output: SemanticScholarEndpointOutputSchemas.getPaperRecommendations,
+	},
+	'recommendations.forPaper': {
+		input: SemanticScholarEndpointInputSchemas.getRecommendationsForPaper,
+		output: SemanticScholarEndpointOutputSchemas.getRecommendationsForPaper,
+	},
+	'datasets.listReleases': {
+		input: SemanticScholarEndpointInputSchemas.listDatasetReleases,
+		output: SemanticScholarEndpointOutputSchemas.listDatasetReleases,
+	},
+	'datasets.getRelease': {
+		input: SemanticScholarEndpointInputSchemas.getDatasetRelease,
+		output: SemanticScholarEndpointOutputSchemas.getDatasetRelease,
+	},
+	'datasets.get': {
+		input: SemanticScholarEndpointInputSchemas.getDataset,
+		output: SemanticScholarEndpointOutputSchemas.getDataset,
+	},
+	'datasets.getDiffs': {
+		input: SemanticScholarEndpointInputSchemas.getDatasetDiffs,
+		output: SemanticScholarEndpointOutputSchemas.getDatasetDiffs,
+	},
+	'snippets.searchText': {
+		input: SemanticScholarEndpointInputSchemas.searchTextSnippets,
+		output: SemanticScholarEndpointOutputSchemas.searchTextSnippets,
+	},
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof semanticScholarEndpointsNested
 >;
 
-export type InternalSemanticScholarPlugin = BaseSemanticScholarPlugin<SemanticScholarPluginOptions>;
+const defaultAuthType = 'api_key' as const satisfies AuthTypes;
 
-export type ExternalSemanticScholarPlugin<T extends SemanticScholarPluginOptions> =
-	BaseSemanticScholarPlugin<T>;
+export const semanticScholarEndpointMeta = {
+	'papers.get': {
+		riskLevel: 'read',
+		description:
+			'Retrieve details about a paper by Semantic Scholar-supported ID',
+	},
+	'papers.batchGet': {
+		riskLevel: 'read',
+		description: 'Retrieve details for up to 500 papers in one request',
+	},
+	'papers.search': {
+		riskLevel: 'read',
+		description: 'Search papers by relevance with optional publication filters',
+	},
+	'papers.relevanceSearch': {
+		riskLevel: 'read',
+		description:
+			'Deprecated alias for paper relevance search; use papers.search for new code',
+	},
+	'papers.searchBulk': {
+		riskLevel: 'read',
+		description:
+			'Bulk search papers with token pagination and optional sorting',
+	},
+	'papers.matchTitle': {
+		riskLevel: 'read',
+		description: 'Find the closest paper title match for a query',
+	},
+	'papers.autocomplete': {
+		riskLevel: 'read',
+		description: 'Suggest paper query completions for a partial query',
+	},
+	'papers.listAuthors': {
+		riskLevel: 'read',
+		description: 'List authors for a paper with offset pagination',
+	},
+	'papers.listCitations': {
+		riskLevel: 'read',
+		description: 'List papers that cite a paper with offset pagination',
+	},
+	'papers.listReferences': {
+		riskLevel: 'read',
+		description: 'List references cited by a paper with offset pagination',
+	},
+	'authors.search': {
+		riskLevel: 'read',
+		description: 'Search authors by name',
+	},
+	'authors.get': {
+		riskLevel: 'read',
+		description:
+			'Retrieve details about an author by Semantic Scholar author ID',
+	},
+	'authors.listPapers': {
+		riskLevel: 'read',
+		description: 'List papers written by an author with offset pagination',
+	},
+	'authors.batchGet': {
+		riskLevel: 'read',
+		description: 'Retrieve details for up to 1000 authors in one request',
+	},
+	'recommendations.fromPaperLists': {
+		riskLevel: 'read',
+		description:
+			'Get paper recommendations from positive and optional negative paper examples',
+	},
+	'recommendations.forPaper': {
+		riskLevel: 'read',
+		description: 'Get recommended papers for one source paper',
+	},
+	'datasets.listReleases': {
+		riskLevel: 'read',
+		description: 'List available Semantic Scholar dataset releases',
+	},
+	'datasets.getRelease': {
+		riskLevel: 'read',
+		description: 'Retrieve dataset release metadata',
+	},
+	'datasets.get': {
+		riskLevel: 'read',
+		description: 'Get download links for a dataset in a release',
+	},
+	'datasets.getDiffs': {
+		riskLevel: 'read',
+		description: 'Get incremental dataset diffs between two releases',
+	},
+	'snippets.searchText': {
+		riskLevel: 'read',
+		description: 'Search text snippets within Semantic Scholar papers',
+	},
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof semanticScholarEndpointsNested
+>;
 
+export const semanticScholarAuthConfig = {
+	api_key: {},
+} as const satisfies PluginAuthConfig;
+
+export type BaseSemanticScholarPlugin<T extends SemanticScholarPluginOptions> =
+	CorsairPlugin<
+		'semanticscholar',
+		typeof SemanticScholarSchema,
+		typeof semanticScholarEndpointsNested,
+		Record<string, never>,
+		T,
+		typeof defaultAuthType
+	>;
+
+export type InternalSemanticScholarPlugin =
+	BaseSemanticScholarPlugin<SemanticScholarPluginOptions>;
+
+export type ExternalSemanticScholarPlugin<
+	T extends SemanticScholarPluginOptions,
+> = BaseSemanticScholarPlugin<T>;
+
+/**
+ * Semantic Scholar plugin.
+ *
+ * Pull-only integration for Academic Graph, Recommendations, Datasets, and
+ * Snippets APIs. Semantic Scholar does not provide webhooks for this surface.
+ */
 export function semanticscholar<const T extends SemanticScholarPluginOptions>(
-	incomingOptions: SemanticScholarPluginOptions & T = {} as SemanticScholarPluginOptions & T,
+	incomingOptions: SemanticScholarPluginOptions &
+		T = {} as SemanticScholarPluginOptions & T,
 ): ExternalSemanticScholarPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -141,62 +334,36 @@ export function semanticscholar<const T extends SemanticScholarPluginOptions>(
 		id: 'semanticscholar',
 		authConfig: semanticScholarAuthConfig,
 		schema: SemanticScholarSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: semanticScholarEndpointsNested,
-		webhooks: semanticScholarWebhooksNested,
+		webhooks: {},
 		endpointMeta: semanticScholarEndpointMeta,
 		endpointSchemas: semanticScholarEndpointSchemas,
-		webhookSchemas: semanticScholarWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-semanticscholar-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchSemanticScholarTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveSemanticScholarOAuthWebhookTenantLink,
+		webhookSchemas: {},
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: SemanticScholarKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('semanticscholar', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('semanticscholar', 'api_key');
 		},
 	} satisfies InternalSemanticScholarPlugin;
 }
 
 export type {
-	ExampleEvent,
-	SemanticScholarWebhookOutputs,
-} from './webhooks/types';
-
-export type {
 	SemanticScholarEndpointInputs,
 	SemanticScholarEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
 } from './endpoints/types';
