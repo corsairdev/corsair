@@ -9,7 +9,6 @@ import type {
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
@@ -22,11 +21,6 @@ import { FlutterwaveSchema } from './schema';
 
 export const flutterwaveEndpointMeta =
 	generatedFlutterwaveEndpointMeta satisfies RequiredPluginEndpointMeta<
-		typeof flutterwaveEndpointsNested
-	>;
-
-export const typedFlutterwaveEndpointSchemas =
-	flutterwaveEndpointSchemas as unknown as RequiredPluginEndpointSchemas<
 		typeof flutterwaveEndpointsNested
 	>;
 
@@ -56,7 +50,7 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const flutterwaveAuthConfig = {
 	api_key: {
-		account: ['account_id'] as const,
+		account: [] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -94,7 +88,7 @@ export function flutterwave<const T extends FlutterwavePluginOptions>(
 		endpoints: flutterwaveEndpointsNested,
 		webhooks: {},
 		endpointMeta: flutterwaveEndpointMeta,
-		endpointSchemas: typedFlutterwaveEndpointSchemas,
+		endpointSchemas: flutterwaveEndpointSchemas,
 		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
@@ -118,6 +112,7 @@ export function flutterwave<const T extends FlutterwavePluginOptions>(
 	} satisfies InternalFlutterwavePlugin;
 }
 
+export type { FlutterwaveHandlerContext } from './endpoints/factory';
 export type {
 	FlutterwaveEndpointInput,
 	FlutterwaveEndpointInputs,

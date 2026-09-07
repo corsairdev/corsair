@@ -1,20 +1,30 @@
-import type { CorsairEndpoint } from 'corsair/core';
+import type { EventLoggingContext } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
+import type { z } from 'zod';
 import { makeFlutterwaveRequest } from '../client';
-import type { FlutterwaveContext } from '../index';
 import type { FlutterwaveRoute } from './routes';
 import { flutterwaveRoutes } from './routes';
-import type { FlutterwaveEndpointInput } from './types';
+import type {
+	FlutterwaveEndpointInput,
+	FlutterwaveEndpointOutputs,
+} from './types';
+import { FlutterwaveEndpointOutputSchemas } from './types';
 
 const CONTROL_KEYS = new Set(['body', 'query', 'headers']);
 
-export type FlutterwaveEndpoint = CorsairEndpoint<
-	FlutterwaveContext,
-	FlutterwaveEndpointInput,
-	unknown
->;
+export type FlutterwaveHandlerContext = EventLoggingContext & {
+	key: string;
+};
 
-function encodePathPart(value: unknown): string {
+export type FlutterwaveEndpoint = (
+	ctx: FlutterwaveHandlerContext,
+	input?: FlutterwaveEndpointInput,
+) => Promise<FlutterwaveEndpointOutputs[keyof FlutterwaveEndpointOutputs]>;
+
+function encodePathPart(
+	// unknown is necessary because path params arrive from a shared input bag; a closed union is infeasible because each route substitutes different param types
+	value: unknown,
+): string {
 	if (value === undefined || value === null || value === '') {
 		throw new Error('[flutterwave] missing required path parameter');
 	}
@@ -28,13 +38,22 @@ function camelToSnake(value: string): string {
 		.toLowerCase();
 }
 
+function asInputBag(
+	input: FlutterwaveEndpointInput,
+	// unknown is necessary because handlers read dynamic path/query/body keys; a closed bag type is infeasible because the 53 operations do not share one field set
+): Record<string, unknown> {
+	return input as Record<string, unknown>;
+}
+
 function resolvePathParam(
 	input: FlutterwaveEndpointInput,
 	key: string,
+	// unknown is necessary because path values are read from a shared bag; a closed union is infeasible because routes mix string and numeric ids
 ): unknown {
-	if (input[key] !== undefined) return input[key];
+	const bag = asInputBag(input);
+	if (bag[key] !== undefined) return bag[key];
 	const snake = camelToSnake(key);
-	if (input[snake] !== undefined) return input[snake];
+	if (bag[snake] !== undefined) return bag[snake];
 	return undefined;
 }
 
@@ -54,8 +73,11 @@ function buildQuery(
 	route: FlutterwaveRoute,
 	input: FlutterwaveEndpointInput,
 ): Record<string, string | number | boolean | undefined> | undefined {
+	const bag = asInputBag(input);
 	const query: Record<string, string | number | boolean | undefined> = {
-		...(input.query ?? {}),
+		...(typeof bag.query === 'object' && bag.query && !Array.isArray(bag.query)
+			? (bag.query as Record<string, string | number | boolean | undefined>)
+			: {}),
 	};
 
 	for (const key of route.queryParams ?? []) {
@@ -73,23 +95,25 @@ function buildQuery(
 	return Object.keys(query).length > 0 ? query : undefined;
 }
 
-function buildBody(
+function isPlainObject(
+	// unknown is necessary because body may be any JSON value; a closed object type is infeasible because callers pass both maps and primitives
+	value: unknown,
+	// unknown is necessary because a validated plain object still has dynamic keys; a closed field union is infeasible at the bag layer
+): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+export function buildBody(
 	route: FlutterwaveRoute,
 	input: FlutterwaveEndpointInput,
+	// unknown is necessary because write JSON is assembled from leftover input keys; a closed body union is infeasible because each POST/PUT shape differs
 ): Record<string, unknown> | undefined {
-	if (
-		input.body &&
-		typeof input.body === 'object' &&
-		!Array.isArray(input.body)
-	) {
-		return input.body as Record<string, unknown>;
-	}
-
+	const bag = asInputBag(input);
 	const pathParams = new Set(route.pathParams ?? []);
 	const queryParams = new Set(route.queryParams ?? []);
 
-	const body = Object.fromEntries(
-		Object.entries(input).filter(([key, value]) => {
+	const fromFlat = Object.fromEntries(
+		Object.entries(bag).filter(([key, value]) => {
 			if (value === undefined) return false;
 			if (CONTROL_KEYS.has(key)) return false;
 			if (pathParams.has(key)) return false;
@@ -100,6 +124,10 @@ function buildBody(
 		}),
 	);
 
+	const fromBody =
+		isPlainObject(bag.body) && Object.keys(bag.body).length > 0 ? bag.body : {};
+
+	const body = { ...fromFlat, ...fromBody };
 	return Object.keys(body).length > 0 ? body : undefined;
 }
 
@@ -112,10 +140,10 @@ export function getRoute(name: string): FlutterwaveRoute {
 }
 
 export async function executeFlutterwaveOperation(
-	ctx: FlutterwaveContext,
+	ctx: FlutterwaveHandlerContext,
 	input: FlutterwaveEndpointInput,
 	route: FlutterwaveRoute,
-): Promise<unknown> {
+): Promise<FlutterwaveEndpointOutputs[keyof FlutterwaveEndpointOutputs]> {
 	const response = await makeFlutterwaveRequest(
 		resolvePath(route, input),
 		ctx.key,
@@ -123,10 +151,9 @@ export async function executeFlutterwaveOperation(
 			method: route.method,
 			body: buildBody(route, input),
 			query: buildQuery(route, input),
-			headers:
-				typeof input.headers === 'object' && input.headers
-					? (input.headers as Record<string, string>)
-					: undefined,
+			outputSchema: (
+				FlutterwaveEndpointOutputSchemas as Record<string, z.ZodTypeAny>
+			)[route.key],
 		},
 	);
 

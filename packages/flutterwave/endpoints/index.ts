@@ -1,4 +1,7 @@
-import type { RequiredPluginEndpointMeta } from 'corsair/core';
+import type {
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
+} from 'corsair/core';
 import { flutterwaveOperations } from './operations';
 import { flutterwaveRoutes } from './routes';
 import {
@@ -121,7 +124,7 @@ export const flutterwaveEndpointSchemas = Object.fromEntries(
 			output: FlutterwaveEndpointOutputSchemas[route.key],
 		},
 	]),
-);
+) as RequiredPluginEndpointSchemas<typeof flutterwaveEndpointsNested>;
 
 export { flutterwaveRoutes };
 export * from './types';
