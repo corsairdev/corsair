@@ -5945,59 +5945,9 @@ export const BorneoEndpointInputSchemas = {
 		.strict(),
 } as const satisfies Record<BorneoOperationName, z.ZodTypeAny>;
 
-type ComposioJson =
-	| string
-	| number
-	| boolean
-	| null
-	| ComposioJson[]
-	| { [key: string]: ComposioJson };
+import { BorneoEndpointOutputSchemas } from './output-schemas';
 
-const composioJsonValue: z.ZodType<ComposioJson> = z.lazy(() =>
-	z.union([
-		z.string(),
-		z.number(),
-		z.boolean(),
-		z.null(),
-		z.array(composioJsonValue),
-		z.record(z.string(), composioJsonValue),
-	]),
-);
-
-export const BorneoComposioOutputEnvelope = z
-	.object({
-		data: z
-			.object({
-				data: composioJsonValue
-					.describe(
-						'Inner Borneo result. Toolkit 20260429_00 only types this Composio envelope, not per-operation fields.',
-					)
-					.optional(),
-				error: z
-					.string()
-					.describe('Error if any occurred during the execution of the action')
-					.optional(),
-				successful: z
-					.boolean()
-					.describe('Whether or not the action execution was successful or not')
-					.optional(),
-			})
-			.passthrough()
-			.nullable()
-			.optional(),
-		error: z
-			.union([z.string(), z.object({ message: z.string() }).passthrough()])
-			.optional(),
-		successful: z.literal(true),
-		log_id: z.string().optional(),
-	})
-	.passthrough();
-
-export const BorneoEndpointOutputSchemas = Object.fromEntries(
-	(Object.keys(BorneoEndpointInputSchemas) as BorneoOperationName[]).map(
-		(name) => [name, BorneoComposioOutputEnvelope],
-	),
-) as Record<BorneoOperationName, typeof BorneoComposioOutputEnvelope>;
+export { BorneoEndpointOutputSchemas };
 
 export type BorneoEndpointInputs = {
 	[K in BorneoOperationName]: z.infer<(typeof BorneoEndpointInputSchemas)[K]>;

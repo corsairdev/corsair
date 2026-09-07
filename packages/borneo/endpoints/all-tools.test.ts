@@ -1,8 +1,10 @@
 import * as client from '../client';
 import type { BorneoContext } from '../index';
+import type { BorneoOperationName } from '../operations';
 import { BORNEO_OPERATIONS } from '../operations';
 import { BORNEO_OPERATION_SAMPLE_INPUTS } from './generated-operation-samples';
 import * as EndpointGroups from './index';
+import type { BorneoEndpointInputs, BorneoEndpointOutputs } from './types';
 
 jest.mock('corsair/core', () => {
 	const actual =
@@ -30,8 +32,54 @@ const ctx = {
 	},
 } as BorneoContext;
 
-function exportName(group: string): string {
-	return `${group.charAt(0).toUpperCase()}${group.slice(1)}`;
+const ENDPOINT_GROUPS = {
+	accounts: EndpointGroups.Accounts,
+	assets: EndpointGroups.Assets,
+	audit: EndpointGroups.Audit,
+	breaches: EndpointGroups.Breaches,
+	categories: EndpointGroups.Categories,
+	connectors: EndpointGroups.Connectors,
+	dashboard: EndpointGroups.Dashboard,
+	departments: EndpointGroups.Departments,
+	documents: EndpointGroups.Documents,
+	domains: EndpointGroups.Domains,
+	employees: EndpointGroups.Employees,
+	headquarters: EndpointGroups.Headquarters,
+	infotypes: EndpointGroups.Infotypes,
+	misc: EndpointGroups.Misc,
+	processing: EndpointGroups.Processing,
+	recipients: EndpointGroups.Recipients,
+	resources: EndpointGroups.Resources,
+	scans: EndpointGroups.Scans,
+	support: EndpointGroups.Support,
+	users: EndpointGroups.Users,
+} as const;
+
+type EndpointGroupName = keyof typeof ENDPOINT_GROUPS;
+type BorneoEndpoint = (
+	ctx: BorneoContext,
+	input: BorneoEndpointInputs[BorneoOperationName],
+) => Promise<BorneoEndpointOutputs[BorneoOperationName]>;
+
+function isEndpointGroupName(group: string): group is EndpointGroupName {
+	return Object.hasOwn(ENDPOINT_GROUPS, group);
+}
+
+function getEndpoint(
+	operation: (typeof BORNEO_OPERATIONS)[number],
+): BorneoEndpoint {
+	if (!isEndpointGroupName(operation.group)) {
+		throw new Error(`Missing endpoint group: ${operation.group}`);
+	}
+
+	const group = ENDPOINT_GROUPS[operation.group];
+	if (!Object.hasOwn(group, operation.name)) {
+		throw new Error(`Missing endpoint: ${operation.name}`);
+	}
+
+	// Group modules export only createBorneoEndpoint wrappers; the inventory
+	// name is the export key, so this lookup is the typed endpoint itself.
+	return group[operation.name as keyof typeof group] as BorneoEndpoint;
 }
 
 describe('Borneo complete tool surface', () => {
@@ -47,15 +95,7 @@ describe('Borneo complete tool surface', () => {
 		let count = 0;
 
 		for (const operation of BORNEO_OPERATIONS) {
-			const group = (EndpointGroups as Record<string, Record<string, unknown>>)[
-				exportName(operation.group)
-			];
-
-			if (!group) {
-				throw new Error(`Missing endpoint group: ${operation.group}`);
-			}
-
-			expect(typeof group[operation.name]).toBe('function');
+			expect(typeof getEndpoint(operation)).toBe('function');
 			count += 1;
 		}
 
@@ -64,29 +104,12 @@ describe('Borneo complete tool surface', () => {
 
 	for (const operation of BORNEO_OPERATIONS) {
 		it(`validates and executes ${operation.id}`, async () => {
-			const group = (
-				EndpointGroups as Record<
-					string,
-					Record<string, (ctx: unknown, input: unknown) => Promise<unknown>>
-				>
-			)[exportName(operation.group)];
+			const input = BORNEO_OPERATION_SAMPLE_INPUTS[operation.name];
+			const endpoint = getEndpoint(operation);
 
-			if (!group) {
-				throw new Error(`Missing endpoint group: ${operation.group}`);
-			}
-
-			const endpoint = group[operation.name];
-
-			if (!endpoint) {
-				throw new Error(`Missing endpoint: ${operation.name}`);
-			}
-
-			const input =
-				BORNEO_OPERATION_SAMPLE_INPUTS[
-					operation.name as keyof typeof BORNEO_OPERATION_SAMPLE_INPUTS
-				];
-
-			await endpoint(ctx, input);
+			// Sample fixtures are const-narrowed; the endpoint accepts the
+			// operation's input schema, which those fixtures satisfy at runtime.
+			await endpoint(ctx, input as BorneoEndpointInputs[typeof operation.name]);
 
 			expect(executeMock).toHaveBeenCalledWith(
 				operation.id,

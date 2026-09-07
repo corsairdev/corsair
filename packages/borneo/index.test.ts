@@ -7,11 +7,8 @@ describe('Borneo plugin wiring', () => {
 		expect(Object.keys(borneoEndpointSchemas)).toHaveLength(153);
 
 		for (const operation of BORNEO_OPERATIONS) {
-			expect(
-				borneoEndpointSchemas[
-					`${operation.group}.${operation.name}` as keyof typeof borneoEndpointSchemas
-				],
-			).toBeDefined();
+			const path = `${operation.group}.${operation.name}`;
+			expect(Object.hasOwn(borneoEndpointSchemas, path)).toBe(true);
 		}
 	});
 
@@ -47,18 +44,20 @@ describe('Borneo plugin wiring', () => {
 		const plugin = borneo({
 			composioApiKey: 'composio-project-key',
 		});
-		const meta = plugin.endpointMeta as Record<
-			string,
-			{ riskLevel: 'read' | 'write' | 'destructive'; description: string }
-		>;
+
+		const meta = plugin.endpointMeta;
+		if (!meta) {
+			throw new Error('endpointMeta is required');
+		}
 
 		expect(Object.keys(meta)).toHaveLength(153);
 
 		for (const operation of BORNEO_OPERATIONS) {
-			const entry = meta[`${operation.group}.${operation.name}`];
-			expect(entry).toEqual({
-				riskLevel: operation.riskLevel,
-				description: operation.title,
+			expect(meta).toMatchObject({
+				[`${operation.group}.${operation.name}`]: {
+					riskLevel: operation.riskLevel,
+					description: operation.title,
+				},
 			});
 		}
 	});
