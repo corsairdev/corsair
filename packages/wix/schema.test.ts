@@ -76,7 +76,7 @@ describe('Wix input schemas accept valid input', () => {
 		}
 		// Three form queries require a namespace filter, so fewer routes
 		// accept an empty object than before.
-		expect(optionalOnly).toBeGreaterThanOrEqual(46);
+		expect(optionalOnly).toBeGreaterThanOrEqual(45);
 	});
 });
 
@@ -107,6 +107,17 @@ describe('Wix input schemas reject invalid input', () => {
 	it('rejects by-filter deletes without a filter', () => {
 		expect(() =>
 			WixEndpointInputSchemas.bulkDeleteRsvpsByFilter.parse({}),
+		).toThrow();
+		expect(() =>
+			WixEndpointInputSchemas.bulkDeleteRsvpsByFilter.parse({ filter: {} }),
+		).toThrow();
+		expect(() =>
+			WixEndpointInputSchemas.bulkDeleteBenefitItemsByFilter.parse({}),
+		).toThrow();
+		expect(() =>
+			WixEndpointInputSchemas.bulkDeleteBenefitItemsByFilter.parse({
+				filter: {},
+			}),
 		).toThrow();
 	});
 

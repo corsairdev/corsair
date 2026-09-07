@@ -170,6 +170,29 @@ const WixFilterSchema: z.ZodType<WixFilter> = z.lazy(() =>
 	}),
 ) as z.ZodType<WixFilter>;
 
+function isNonEmptyWixFilter(value: unknown): boolean {
+	if (!isWixFilter(value)) return false;
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		!Array.isArray(value) &&
+		Object.keys(value).length > 0
+	);
+}
+
+const NonEmptyWixFilterSchema: z.ZodType<WixFilter> = z.lazy(() =>
+	z.record(z.string(), WixJsonValueSchema).refine(isNonEmptyWixFilter, {
+		message: 'Filter must include at least one predicate',
+	}),
+) as z.ZodType<WixFilter>;
+
+function isGraphqlQueryDocument(document: string): boolean {
+	const trimmed = document
+		.replace(/^\uFEFF/, '')
+		.replace(/^(?:\s*(?:#[^\n]*\n))*\s*/, '');
+	return /^(?:query\b|\{)/i.test(trimmed);
+}
+
 /**
  * Entity patch bodies (bulk `update` etc.) are objects keyed by field path
  * whose values must be JSON-encodable; Wix validates the actual fields
@@ -266,30 +289,14 @@ const WixContactItemSchema = typedItemSchema(WixContact);
 const WixProductItemSchema = typedItemSchema(WixProduct);
 const WixOrderItemSchema = typedItemSchema(WixOrder);
 
-type WixQueryResponse<ItemsField extends string> = {
-	[field in ItemsField]?: z.infer<typeof WixItemSchema>[];
-} & {
-	pagingMetadata?: z.infer<typeof PagingMetadataSchema>;
-} & Record<string, unknown>;
-
-/**
- * A computed `[itemsField]` key makes TypeScript widen the zod shape to a
- * string index signature, so consumers could not see e.g. `contacts` as an
- * array. The narrow assertion restores the literal-key output type; the
- * runtime loose-object parse behavior is unchanged.
- *
- * Endpoints whose resource type has a hand-written entity schema pass it as
- * `itemSchema` so known fields (e.g. `product.name`, `order.status`) are
- * type-checked, not just JSON-encodability-checked.
- */
-function queryResponse<ItemsField extends string>(
-	itemsField: ItemsField,
+function queryResponse(
+	itemsField: string,
 	itemSchema: z.ZodTypeAny = WixItemSchema,
-): z.ZodType<WixQueryResponse<ItemsField>> {
+) {
 	return z.looseObject({
 		[itemsField]: z.array(itemSchema).optional(),
 		pagingMetadata: PagingMetadataSchema.optional(),
-	}) as unknown as z.ZodType<WixQueryResponse<ItemsField>>;
+	});
 }
 
 // ── contacts ───────────────────────────────────────────────────────────────
@@ -299,10 +306,10 @@ const QueryContactsInputSchema = z.looseObject({
 	...QueryOptionFields,
 });
 export type QueryContactsInput = z.infer<typeof QueryContactsInputSchema>;
-const QueryContactsResponseSchema = queryResponse(
-	'contacts',
-	WixContactItemSchema,
-);
+const QueryContactsResponseSchema = z.looseObject({
+	contacts: z.array(WixContactItemSchema).optional(),
+	pagingMetadata: PagingMetadataSchema.optional(),
+});
 export type QueryContactsResponse = z.infer<typeof QueryContactsResponseSchema>;
 
 const ListContactsInputSchema = z.looseObject({
@@ -401,7 +408,16 @@ const SearchProductsInputSchema = z.looseObject({
 	offset: z.number().int().min(0).optional(),
 	fields: z.array(z.string()).optional(),
 	search: z
-		.union([z.string(), z.record(z.string(), WixJsonValueSchema)])
+		.union([
+			z.string(),
+			z.looseObject({
+				search: z.looseObject({ expression: z.string().optional() }).optional(),
+				expression: z.string().optional(),
+				filter: WixFilterSchema.optional(),
+				sort: z.array(SortItemSchema).optional(),
+				paging: PagingSchema.optional(),
+			}),
+		])
 		.optional(),
 });
 export type SearchProductsInput = z.infer<typeof SearchProductsInputSchema>;
@@ -484,7 +500,7 @@ export type BulkGetOrCreateBrandsResponse = z.infer<
 
 const BulkUpdateProductsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: WixFilterSchema,
+	filter: NonEmptyWixFilterSchema,
 	update: WixEntityPatchSchema.optional(),
 	fields: z.array(z.string()).optional(),
 });
@@ -501,7 +517,7 @@ export type BulkUpdateProductsByFilterResponse = z.infer<
 
 const BulkUpdateInventoryItemsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: WixFilterSchema,
+	filter: NonEmptyWixFilterSchema,
 	update: WixEntityPatchSchema.optional(),
 });
 export type BulkUpdateInventoryItemsByFilterInput = z.infer<
@@ -547,7 +563,7 @@ export type BulkCreateProductsWithInventoryResponse = z.infer<
 
 const BulkRemoveInfoSectionsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: WixFilterSchema,
+	filter: NonEmptyWixFilterSchema,
 	infoSectionIds: z.array(z.string()).min(1),
 });
 export type BulkRemoveInfoSectionsByFilterInput = z.infer<
@@ -810,7 +826,7 @@ export type BulkDeleteBookingsServicesResponse = z.infer<
 
 const BulkDeleteBookingsServicesByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: WixFilterSchema,
+	filter: NonEmptyWixFilterSchema,
 });
 export type BulkDeleteBookingsServicesByFilterInput = z.infer<
 	typeof BulkDeleteBookingsServicesByFilterInputSchema
@@ -879,7 +895,7 @@ export type ListBookingsSessionsResponse = z.infer<
 
 const UpdateStaffMemberTagsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: WixFilterSchema,
+	filter: NonEmptyWixFilterSchema,
 	assignTags: z.array(z.string()).optional(),
 	unassignTags: z.array(z.string()).optional(),
 });
@@ -1309,7 +1325,7 @@ const QueryDeletedFormsInputSchema = z.looseObject({
 	...SiteScopeFields,
 	...QueryOptionFields,
 	// Wix requires a namespace filter for deleted-form queries.
-	filter: WixFilterSchema,
+	filter: NonEmptyWixFilterSchema,
 });
 export type QueryDeletedFormsInput = z.infer<
 	typeof QueryDeletedFormsInputSchema
@@ -1323,7 +1339,7 @@ const QueryFormSubmissionsByNamespaceInputSchema = z.looseObject({
 	...SiteScopeFields,
 	...QueryOptionFields,
 	// Wix requires a namespace filter (`$eq`) for submissions-by-namespace.
-	filter: WixFilterSchema,
+	filter: NonEmptyWixFilterSchema,
 });
 export type QueryFormSubmissionsByNamespaceInput = z.infer<
 	typeof QueryFormSubmissionsByNamespaceInputSchema
@@ -1338,7 +1354,7 @@ const QueryFormsFormSubmissionsInputSchema = z.looseObject({
 	...SiteScopeFields,
 	...QueryOptionFields,
 	// Wix requires a namespace filter for form-submissions queries.
-	filter: WixFilterSchema,
+	filter: NonEmptyWixFilterSchema,
 });
 export type QueryFormsFormSubmissionsInput = z.infer<
 	typeof QueryFormsFormSubmissionsInputSchema
@@ -1383,7 +1399,9 @@ const QueryEventsGraphqlInputSchema = z.looseObject({
 	// GraphQL body contract: a non-empty GraphQL document is required —
 	// filter-only inputs are invalid because they carry no query document.
 	// Optional variables; a legacy `filter` is forwarded as `variables.filter`.
-	query: z.string().min(1),
+	query: z.string().min(1).refine(isGraphqlQueryDocument, {
+		message: 'GraphQL document must be a query',
+	}),
 	variables: z.record(z.string(), WixJsonValueSchema).optional(),
 	filter: WixFilterSchema.optional(),
 });
@@ -1401,7 +1419,7 @@ export type QueryEventsGraphqlResponse = z.infer<
 
 const BulkDeleteRsvpsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: WixFilterSchema,
+	filter: NonEmptyWixFilterSchema,
 });
 export type BulkDeleteRsvpsByFilterInput = z.infer<
 	typeof BulkDeleteRsvpsByFilterInputSchema
@@ -1416,7 +1434,7 @@ export type BulkDeleteRsvpsByFilterResponse = z.infer<
 
 const BulkDeleteTicketDefinitionsInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: WixFilterSchema,
+	filter: NonEmptyWixFilterSchema,
 });
 export type BulkDeleteTicketDefinitionsInput = z.infer<
 	typeof BulkDeleteTicketDefinitionsInputSchema
@@ -1911,7 +1929,7 @@ export type BulkUpdateStorageItemTagsResponse = z.infer<
 
 const BulkUpdateStorageItemTagsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: WixFilterSchema,
+	filter: NonEmptyWixFilterSchema,
 	assignTags: z.array(z.string()).optional(),
 	unassignTags: z.array(z.string()).optional(),
 });
@@ -2103,7 +2121,7 @@ export type BulkDeleteBenefitItemsResponse = z.infer<
 const BulkDeleteBenefitItemsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
 	namespace: z.string().optional(),
-	filter: WixFilterSchema.optional(),
+	filter: NonEmptyWixFilterSchema,
 });
 export type BulkDeleteBenefitItemsByFilterInput = z.infer<
 	typeof BulkDeleteBenefitItemsByFilterInputSchema
@@ -2249,7 +2267,7 @@ export type DeleteUserFavoriteResponse = z.infer<
 
 const BulkDeleteReportsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: WixFilterSchema,
+	filter: NonEmptyWixFilterSchema,
 });
 export type BulkDeleteReportsByFilterInput = z.infer<
 	typeof BulkDeleteReportsByFilterInputSchema
@@ -2264,7 +2282,7 @@ export type BulkDeleteReportsByFilterResponse = z.infer<
 
 const UpdateOperationGroupTagsByFilterInputSchema = z.looseObject({
 	...SiteScopeFields,
-	filter: WixFilterSchema,
+	filter: NonEmptyWixFilterSchema,
 	assignTags: z.array(z.string()).optional(),
 	unassignTags: z.array(z.string()).optional(),
 });

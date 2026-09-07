@@ -8,7 +8,6 @@ import {
 	WixEndpointInputSchemas,
 	WixEndpointOutputSchemas,
 } from './endpoints/types';
-import type { WixContext } from './index';
 import { wix, wixAuthConfig, wixEndpointMeta } from './index';
 
 jest.mock('./client', () => {
@@ -38,12 +37,18 @@ function outputSchema(key: string) {
 	return WixEndpointOutputSchemas[key as OutputSchemaKey];
 }
 
-const mockCtx = {
+type TestCtx = {
+	key: string;
+	options?: {
+		authType?: 'api_key' | 'oauth_2';
+		siteId?: string;
+	};
+};
+
+const mockCtx: TestCtx = {
 	key: 'test-api-key',
 	options: {},
-	logEvent: jest.fn(),
-	db: {},
-} as unknown as WixContext;
+};
 
 function endpointFn(group: string, name: string) {
 	const plugin = wix();
@@ -52,7 +57,7 @@ function endpointFn(group: string, name: string) {
 	if (typeof fn !== 'function') {
 		throw new Error(`[wix] missing endpoint: ${group}.${name}`);
 	}
-	return fn as (ctx: WixContext, input: Record<string, unknown>) => unknown;
+	return fn as (ctx: TestCtx, input: Record<string, unknown>) => unknown;
 }
 
 function sampleInput(
@@ -60,7 +65,7 @@ function sampleInput(
 ): Record<string, unknown> {
 	const input: Record<string, unknown> = {
 		siteId: 'test-site-id',
-		filter: {},
+		filter: { id: { $exists: true } },
 		email: 'test@example.com',
 		password: 'test-password',
 		domainName: 'example.com',
@@ -484,10 +489,7 @@ describe('Wix endpoints', () => {
 
 	it('falls back to the plugin-level siteId when the call omits it', async () => {
 		const fn = endpointFn('contacts', 'list');
-		await fn(
-			{ ...mockCtx, options: { siteId: 'plugin-site' } } as WixContext,
-			{},
-		);
+		await fn({ ...mockCtx, options: { siteId: 'plugin-site' } }, {});
 
 		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
@@ -500,9 +502,12 @@ describe('Wix endpoints', () => {
 
 	it('suppresses the plugin-level siteId for explicit account calls', async () => {
 		const fn = endpointFn('sites', 'queryFolders');
-		await fn({ ...mockCtx, options: { siteId: 'plugin-site' } } as WixContext, {
-			accountId: 'account-1',
-		});
+		await fn(
+			{ ...mockCtx, options: { siteId: 'plugin-site' } },
+			{
+				accountId: 'account-1',
+			},
+		);
 
 		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
@@ -614,10 +619,13 @@ describe('Wix endpoints', () => {
 
 	it('forwards the configured authType to makeWixRequest', async () => {
 		const fn = endpointFn('contacts', 'list');
-		await fn({ ...mockCtx, options: { authType: 'api_key' } } as WixContext, {
-			siteId: 's',
-			limit: 1,
-		});
+		await fn(
+			{ ...mockCtx, options: { authType: 'api_key' } },
+			{
+				siteId: 's',
+				limit: 1,
+			},
+		);
 
 		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
@@ -641,6 +649,88 @@ describe('Wix endpoints', () => {
 			search: { expression: 'running shoes' },
 		});
 		expect(options.body).not.toHaveProperty('query');
+	});
+
+	it('wraps an object search expression in the Wix search envelope', async () => {
+		const fn = endpointFn('stores', 'searchProducts');
+		await fn(mockCtx, { siteId: 's', search: { expression: 'shoes' } });
+
+		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
+			string,
+			string,
+			{ body?: { search?: unknown } },
+		];
+		expect(options.body?.search).toEqual({
+			search: { expression: 'shoes' },
+		});
+	});
+
+	it('keeps a nested object search document in the Wix envelope', async () => {
+		const fn = endpointFn('stores', 'searchProducts');
+		await fn(mockCtx, {
+			siteId: 's',
+			search: { search: { expression: 'boots' }, paging: { limit: 10 } },
+		});
+
+		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
+			string,
+			string,
+			{ body?: { search?: unknown } },
+		];
+		expect(options.body?.search).toEqual({
+			search: { expression: 'boots' },
+			paging: { limit: 10 },
+		});
+	});
+
+	it('does not let a raw body bypass query wrapping', async () => {
+		const fn = endpointFn('contacts', 'query');
+		await fn(mockCtx, {
+			siteId: 's',
+			filter: { status: 'ACTIVE' },
+			body: { filter: { leaked: true } },
+		});
+
+		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
+			string,
+			string,
+			{ body?: { query?: unknown; filter?: unknown } },
+		];
+		expect(options.body).toEqual({
+			query: { filter: { status: 'ACTIVE' } },
+		});
+	});
+
+	it('rejects empty filters on irreversible by-filter deletes', async () => {
+		const rsvps = endpointFn('events', 'bulkDeleteRsvpsByFilter');
+		await expect(rsvps(mockCtx, { siteId: 's', filter: {} })).rejects.toThrow();
+		expect(mockMakeWixRequest).not.toHaveBeenCalled();
+
+		const benefits = endpointFn('benefits', 'bulkDeleteBenefitItemsByFilter');
+		await expect(benefits(mockCtx, { siteId: 's' })).rejects.toThrow();
+		await expect(
+			benefits(mockCtx, { siteId: 's', filter: {} }),
+		).rejects.toThrow();
+		expect(mockMakeWixRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects GraphQL mutations on the read-only events query', async () => {
+		const fn = endpointFn('events', 'queryEventsGraphql');
+		await expect(
+			fn(mockCtx, {
+				siteId: 's',
+				query: 'mutation Wipe { deleteEvent(id: "1") { id } }',
+			}),
+		).rejects.toThrow();
+		expect(mockMakeWixRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects siteId and accountId together before transport', async () => {
+		const fn = endpointFn('contacts', 'list');
+		await expect(
+			fn(mockCtx, { siteId: 's', accountId: 'a', limit: 1 }),
+		).rejects.toThrow('mutually exclusive');
+		expect(mockMakeWixRequest).not.toHaveBeenCalled();
 	});
 
 	it('sends the GraphQL body contract for queryEventsGraphql', async () => {
@@ -715,10 +805,7 @@ describe('Wix plugin registration', () => {
 	}
 
 	function flattenEndpoints(plugin: ReturnType<typeof wix>): string[] {
-		const groups = plugin.endpoints as unknown as Record<
-			string,
-			Record<string, unknown>
-		>;
+		const groups = plugin.endpoints as Record<string, Record<string, unknown>>;
 		return Object.entries(groups)
 			.flatMap(([group, ops]) => Object.keys(ops).map((op) => `${group}.${op}`))
 			.sort();

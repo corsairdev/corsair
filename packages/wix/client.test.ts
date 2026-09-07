@@ -207,6 +207,14 @@ describe('makeWixRequest plumbing', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('pins allowlisted baseUrl values to the canonical Wix origin', async () => {
+		await makeWixRequest('/apps/v1/instance', 'tok', {
+			baseUrl: 'https://www.wixapis.com/extra-prefix',
+		});
+		const [config] = mockRequest.mock.calls[0] as [{ BASE?: string }];
+		expect(config.BASE).toBe(WIX_API_BASE);
+	});
+
 	it('wraps ApiError with status and body preserved', async () => {
 		mockRequest.mockRejectedValueOnce(apiError(429, 2000));
 		const failure = await makeWixRequest('/x', 'tok', {}).then(
@@ -279,7 +287,7 @@ describe('makeWixRequest transport', () => {
 				json: async () => payload,
 				text: async () => JSON.stringify(payload),
 			};
-		}) as unknown as typeof global.fetch;
+		}) as typeof global.fetch;
 	}
 
 	beforeEach(() => {

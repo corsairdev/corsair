@@ -48,7 +48,7 @@ function resolveWixBase(baseUrl?: string): string {
 		);
 	}
 
-	return resolvedBase;
+	return WIX_API_BASE;
 }
 
 const WIX_RATE_LIMIT_CONFIG: RateLimitConfig = {

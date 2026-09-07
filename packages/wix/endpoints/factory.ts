@@ -121,8 +121,17 @@ function buildSearchBody(input: WixEndpointInput): Record<string, unknown> {
 	const search: Record<string, unknown> = {};
 	if (typeof input.search === 'string') {
 		search.search = { expression: input.search };
-	} else if (input.search && typeof input.search === 'object') {
-		Object.assign(search, input.search as Record<string, unknown>);
+	} else if (
+		input.search &&
+		typeof input.search === 'object' &&
+		!Array.isArray(input.search)
+	) {
+		const raw = input.search as Record<string, unknown>;
+		if (raw.expression !== undefined && raw.search === undefined) {
+			search.search = raw;
+		} else {
+			Object.assign(search, raw);
+		}
 	}
 	if (input.filter !== undefined) search.filter = input.filter;
 	if (input.sort !== undefined) search.sort = input.sort;
@@ -157,8 +166,6 @@ function buildGraphqlBody(input: WixEndpointInput): Record<string, unknown> {
 }
 
 function requestBody(route: WixRoute, input: WixEndpointInput): unknown {
-	if ('body' in input && input.body !== undefined) return input.body;
-
 	// resolvePath accepts both camelCase and snake_case path parameters, so
 	// both forms must be excluded from the request body.
 	const pathParams = new Set(
@@ -239,6 +246,16 @@ export async function requestWixOperation(
 	const validated = (
 		inputSchema ? inputSchema.parse(input ?? {}) : input
 	) as WixEndpointInput;
+	if (
+		typeof validated.siteId === 'string' &&
+		validated.siteId &&
+		typeof validated.accountId === 'string' &&
+		validated.accountId
+	) {
+		throw new Error(
+			'[wix] siteId and accountId are mutually exclusive; set only one scope',
+		);
+	}
 	const path = resolvePath(route.path, validated, route);
 	const headers =
 		(validated.headers as Record<string, string> | undefined) ?? undefined;
