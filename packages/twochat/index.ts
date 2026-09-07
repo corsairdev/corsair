@@ -14,16 +14,6 @@ import type {
 import { AuthMissingError } from 'corsair/core';
 import { Account, Contacts, Webhooks } from './endpoints';
 import type {
-	CreateContactInput,
-	CreateContactResponse,
-	GetApiUsageInfoInput,
-	GetApiUsageInfoResponse,
-	ListContactsInput,
-	ListContactsResponse,
-	ListWebhooksInput,
-	ListWebhooksResponse,
-	TestApiKeyInput,
-	TestApiKeyResponse,
 	TwoChatEndpointInputs,
 	TwoChatEndpointOutputs,
 } from './endpoints/types';
@@ -176,7 +166,6 @@ export type BaseTwoChatPlugin<T extends TwoChatPluginOptions> = CorsairPlugin<
 	'twochat',
 	typeof TwoChatSchema,
 	typeof twochatEndpointsNested,
-	// biome-ignore lint/complexity/noBannedTypes: empty webhooks object is intentional per spec
 	{},
 	T,
 	typeof defaultAuthType
