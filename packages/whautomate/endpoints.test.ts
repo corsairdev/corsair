@@ -16,6 +16,7 @@ jest.mock('corsair/http', () => {
 });
 
 jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
 	logEventFromContext: jest.fn(),
 }));
 
@@ -25,14 +26,29 @@ const mockRequest = request as jest.Mock;
 
 function lastCall() {
 	const call = mockRequest.mock.calls[mockRequest.mock.calls.length - 1];
-	return { config: call?.[0], options: call?.[1] };
+	// jest mock.calls is an untyped tuple; only BASE/method/url/body/query
+	// are asserted, so a full OpenAPIConfig union is not practical
+	return {
+		config: call?.[0] as { BASE: string },
+		options: call?.[1] as {
+			method?: string;
+			url?: string;
+			body?: Unused;
+			query?: Unused;
+		},
+	};
 }
+
+// unused mock-call fields stay unknown: tests assert a few keys only, and
+// each request body has a different operation-specific shape, so a
+// stricter shared union is not practical
+type Unused = unknown;
 
 function expectRequest(expected: {
 	method: string;
 	url: string;
-	body?: unknown;
-	query?: unknown;
+	body?: Unused;
+	query?: Unused;
 }) {
 	const { options } = lastCall();
 	expect(options.method).toBe(expected.method);
@@ -47,6 +63,9 @@ function expectRequest(expected: {
 
 const getApiHost = jest.fn<Promise<string | null>, []>();
 
+// handlers only read key, keys.get_api_host, and options. CorsairPluginContext
+// carries runtime-bound members a test literal cannot satisfy, so this
+// assertion is required; a structural mock type is not practical
 const mockCtx = {
 	key: 'test-key',
 	keys: {
@@ -59,7 +78,7 @@ beforeEach(() => {
 	mockRequest.mockReset();
 	mockRequest.mockResolvedValue({});
 	getApiHost.mockReset();
-	getApiHost.mockResolvedValue('https://api.example.com');
+	getApiHost.mockResolvedValue('https://api.whautomate.com');
 });
 
 describe('Whautomate endpoints', () => {
@@ -75,7 +94,7 @@ describe('Whautomate endpoints', () => {
 		mockRequest.mockResolvedValue({ name: 'Acme', ownerEmail: 'a@b.com' });
 		await endpoints().account.getAccountInfo(mockCtx, {});
 		const { config, options } = lastCall();
-		expect(config.BASE).toBe('https://api.example.com/v1');
+		expect(config.BASE).toBe('https://api.whautomate.com/v1');
 		expect(options.method).toBe('GET');
 	});
 
@@ -86,7 +105,7 @@ describe('Whautomate endpoints', () => {
 	it('account.getAccountInfo', async () => {
 		mockRequest.mockResolvedValue({ name: 'Acme', ownerEmail: 'a@b.com' });
 		const result = await endpoints().account.getAccountInfo(mockCtx, {});
-		expectRequest({ method: 'GET', url: '/account' });
+		expectRequest({ method: 'GET', url: '/account-info' });
 		expect(result).toEqual({ name: 'Acme', ownerEmail: 'a@b.com' });
 		expect(
 			WhautomateEndpointOutputSchemas.getAccountInfo.safeParse(result).success,
@@ -98,7 +117,7 @@ describe('Whautomate endpoints', () => {
 		const result = await endpoints().contacts.addContact(mockCtx, {
 			name: 'Ada',
 			phoneNumber: '+911234567890',
-			location: 'location-id',
+			location: { id: 'location-id' },
 		});
 		expectRequest({
 			method: 'POST',
@@ -106,7 +125,7 @@ describe('Whautomate endpoints', () => {
 			body: {
 				name: 'Ada',
 				phoneNumber: '+911234567890',
-				location: 'location-id',
+				location: { id: 'location-id' },
 			},
 		});
 		expect(mockLogEvent).toHaveBeenCalledWith(
@@ -142,7 +161,7 @@ describe('Whautomate endpoints', () => {
 		});
 		expectRequest({
 			method: 'GET',
-			url: '/contacts/c1/messages',
+			url: '/messages/c1',
 			query: { startDate: '2026-01-01' },
 		});
 	});
@@ -151,7 +170,7 @@ describe('Whautomate endpoints', () => {
 		expect(
 			WhautomateEndpointInputSchemas.addContact.safeParse({
 				name: 'Ada',
-				location: 'location-id',
+				location: { id: 'location-id' },
 			}).success,
 		).toBe(false);
 	});
@@ -180,7 +199,7 @@ describe('Whautomate endpoints', () => {
 	it('serviceCategories.getServiceCategories', async () => {
 		mockRequest.mockResolvedValue({ data: [] });
 		await endpoints().serviceCategories.getServiceCategories(mockCtx, {});
-		expectRequest({ method: 'GET', url: '/service-categories' });
+		expectRequest({ method: 'GET', url: '/serviceCategories' });
 	});
 
 	it('serviceCategories.deleteServiceCategory', async () => {
@@ -189,7 +208,7 @@ describe('Whautomate endpoints', () => {
 			mockCtx,
 			{ id: 'sc1' },
 		);
-		expectRequest({ method: 'DELETE', url: '/service-categories/sc1' });
+		expectRequest({ method: 'DELETE', url: '/serviceCategories/sc1' });
 		expect(
 			WhautomateEndpointOutputSchemas.deleteServiceCategory.safeParse(result)
 				.success,
@@ -223,7 +242,7 @@ describe('Whautomate endpoints', () => {
 			price: 500,
 		});
 		expectRequest({
-			method: 'PATCH',
+			method: 'PUT',
 			url: '/services/sv1',
 			body: { name: 'New name', price: 500 },
 		});
@@ -275,7 +294,7 @@ describe('Whautomate endpoints', () => {
 		await endpoints().staff.getStaffs(mockCtx, { page: 2, limit: 10 });
 		expectRequest({
 			method: 'GET',
-			url: '/staff',
+			url: '/staffs',
 			query: { page: 2, limit: 10 },
 		});
 	});
@@ -283,7 +302,7 @@ describe('Whautomate endpoints', () => {
 	it('staff.getStaffById', async () => {
 		mockRequest.mockResolvedValue({ id: 'st1', firstName: 'A', lastName: 'B' });
 		await endpoints().staff.getStaffById(mockCtx, { id: 'st1' });
-		expectRequest({ method: 'GET', url: '/staff/st1' });
+		expectRequest({ method: 'GET', url: '/staffs/st1' });
 	});
 
 	it('staff.getStaffAvailabilityBlocks', async () => {
@@ -294,8 +313,56 @@ describe('Whautomate endpoints', () => {
 		});
 		expectRequest({
 			method: 'GET',
-			url: '/staff/st1/availability-blocks',
+			url: '/staffs/st1/availabilityBlocks',
 			query: { endDate: '2026-02-01' },
 		});
+	});
+
+	it('forwards page 0 as a query param', async () => {
+		mockRequest.mockResolvedValue({ data: [] });
+		await endpoints().contacts.getContacts(mockCtx, { page: 0, limit: 0 });
+		expectRequest({
+			method: 'GET',
+			url: '/contacts',
+			query: { page: 0, limit: 0 },
+		});
+	});
+
+	it('accepts account info without ownerEmail', async () => {
+		mockRequest.mockResolvedValue({ name: 'Acme' });
+		const result = await endpoints().account.getAccountInfo(mockCtx, {});
+		expect(result).toEqual({ name: 'Acme' });
+	});
+
+	it('accepts a bare contact array from getContacts', async () => {
+		mockRequest.mockResolvedValue([
+			{ id: 'c1', name: 'Ada', phoneNumber: '+1' },
+		]);
+		const result = await endpoints().contacts.getContacts(mockCtx, {});
+		expect(result.data).toHaveLength(1);
+		expect(result.data[0]?.name).toBe('Ada');
+	});
+
+	it('rejects a non-https stored api host before sending', async () => {
+		getApiHost.mockResolvedValue('http://evil.example.com');
+		await expect(
+			endpoints().account.getAccountInfo(mockCtx, {}),
+		).rejects.toMatchObject({ code: 'INVALID_API_HOST' });
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('throws AuthMissingError when no api key is stored', async () => {
+		const { AuthMissingError } = jest.requireActual('corsair/core') as {
+			AuthMissingError: new (...args: never[]) => Error;
+		};
+		await expect(
+			whautomate().keyBuilder?.(
+				{
+					authType: 'api_key',
+					keys: { get_api_key: async () => null },
+				} as never,
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 });

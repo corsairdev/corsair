@@ -7,15 +7,15 @@ import { WhautomateEndpointOutputSchemas } from './types';
 export const getServiceCategories: WhautomateEndpoints['getServiceCategories'] =
 	async (ctx, input) => {
 		const query: Record<string, string | number | boolean | undefined> = {};
-		if (input.page) query.page = input.page;
-		if (input.limit) query.limit = input.limit;
+		if (input.page !== undefined) query.page = input.page;
+		if (input.limit !== undefined) query.limit = input.limit;
 
 		const result = await makeWhautomateRequest<
 			WhautomateEndpointOutputs['getServiceCategories']
 		>(
 			await resolveApiHost(ctx),
 			ctx.key,
-			'/service-categories',
+			'/serviceCategories',
 			WhautomateEndpointOutputSchemas.getServiceCategories,
 			{
 				method: 'GET',
@@ -39,7 +39,7 @@ export const deleteServiceCategory: WhautomateEndpoints['deleteServiceCategory']
 		>(
 			await resolveApiHost(ctx),
 			ctx.key,
-			`/service-categories/${input.id}`,
+			`/serviceCategories/${input.id}`,
 			WhautomateEndpointOutputSchemas.deleteServiceCategory,
 			{
 				method: 'DELETE',

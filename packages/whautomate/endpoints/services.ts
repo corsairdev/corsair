@@ -9,10 +9,10 @@ export const getServices: WhautomateEndpoints['getServices'] = async (
 	input,
 ) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input.page) query.page = input.page;
-	if (input.limit) query.limit = input.limit;
-	if (input.categoryId) query.categoryId = input.categoryId;
-	if (input.search) query.search = input.search;
+	if (input.page !== undefined) query.page = input.page;
+	if (input.limit !== undefined) query.limit = input.limit;
+	if (input.categoryId !== undefined) query.categoryId = input.categoryId;
+	if (input.search !== undefined) query.search = input.search;
 	if (input.isActive !== undefined) query.isActive = input.isActive;
 
 	const result = await makeWhautomateRequest<
@@ -75,7 +75,7 @@ export const updateService: WhautomateEndpoints['updateService'] = async (
 		`/services/${id}`,
 		WhautomateEndpointOutputSchemas.updateService,
 		{
-			method: 'PATCH',
+			method: 'PUT',
 			body,
 		},
 	);

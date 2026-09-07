@@ -15,11 +15,28 @@ const mockRequest = request as jest.Mock;
 
 const schema = z.object({ ok: z.boolean() });
 
+// unused mock-call slots and unasserted json stay unknown: jest records
+// the full request() tuple, and a complete OpenAPIConfig union is not practical
+type Unused = unknown;
+
+type RequestConfig = {
+	BASE: string;
+	TOKEN?: string;
+	HEADERS: Record<string, string | undefined>;
+};
+
+type RequestOptions = {
+	method?: string;
+	url?: string;
+	body?: Unused;
+	query?: Unused;
+};
+
 function apiErrorLike(fields: {
 	status: number;
 	statusText?: string;
 	retryAfter?: number;
-	body?: unknown;
+	body?: Unused;
 }): ApiError {
 	return Object.setPrototypeOf(
 		{
@@ -40,7 +57,7 @@ beforeEach(() => {
 describe('Whautomate client', () => {
 	it('sends the api key only via x-api-key', async () => {
 		await makeWhautomateRequest(
-			'https://api.example.com',
+			'https://api.whautomate.com',
 			'secret-key',
 			'/contacts',
 			schema,
@@ -49,29 +66,30 @@ describe('Whautomate client', () => {
 		const { config } = lastCall();
 		expect(config.HEADERS['x-api-key']).toBe('secret-key');
 		expect(config.HEADERS.Authorization).toBeUndefined();
+		expect(config.HEADERS['APPOINTO-TOKEN']).toBeUndefined();
 		expect(config.TOKEN).toBeUndefined();
 	});
 
 	it('appends /v1 to hosts that omit it', async () => {
 		await makeWhautomateRequest(
-			'https://api.example.com/',
+			'https://api.whautomate.com/',
 			'k',
 			'/contacts',
 			schema,
 		);
 		const { config } = lastCall();
-		expect(config.BASE).toBe('https://api.example.com/v1');
+		expect(config.BASE).toBe('https://api.whautomate.com/v1');
 	});
 
 	it('keeps /v1 when the host already ends with it', async () => {
 		await makeWhautomateRequest(
-			'https://api.example.com/v1/',
+			'https://api.whautomate.com/v1/',
 			'k',
 			'/contacts',
 			schema,
 		);
 		const { config } = lastCall();
-		expect(config.BASE).toBe('https://api.example.com/v1');
+		expect(config.BASE).toBe('https://api.whautomate.com/v1');
 	});
 
 	it('throws a typed error when the host is missing', async () => {
@@ -85,7 +103,12 @@ describe('Whautomate client', () => {
 
 	it('throws a typed error when the key is missing', async () => {
 		await expect(
-			makeWhautomateRequest('https://api.example.com', '', '/contacts', schema),
+			makeWhautomateRequest(
+				'https://api.whautomate.com',
+				'',
+				'/contacts',
+				schema,
+			),
 		).rejects.toMatchObject({
 			name: 'WhautomateAPIError',
 			code: 'MISSING_API_KEY',
@@ -95,7 +118,12 @@ describe('Whautomate client', () => {
 	it('throws instead of returning raw responses that violate the schema', async () => {
 		mockRequest.mockResolvedValue({ unexpected: true });
 		await expect(
-			makeWhautomateRequest('/contacts', 'k', '/contacts', schema),
+			makeWhautomateRequest(
+				'https://api.whautomate.com',
+				'k',
+				'/contacts',
+				schema,
+			),
 		).rejects.toMatchObject({
 			name: 'WhautomateAPIError',
 			code: 'SCHEMA_VALIDATION_FAILED',
@@ -103,7 +131,12 @@ describe('Whautomate client', () => {
 	});
 
 	it('returns parsed data when the response matches the schema', async () => {
-		const result = await makeWhautomateRequest('/x', 'k', '/x', schema);
+		const result = await makeWhautomateRequest(
+			'https://api.whautomate.com',
+			'k',
+			'/x',
+			schema,
+		);
 		expect(result).toEqual({ ok: true });
 	});
 
@@ -117,7 +150,12 @@ describe('Whautomate client', () => {
 		);
 
 		await expect(
-			makeWhautomateRequest('/contacts', 'k', '/contacts', schema),
+			makeWhautomateRequest(
+				'https://api.whautomate.com',
+				'k',
+				'/contacts',
+				schema,
+			),
 		).rejects.toMatchObject({
 			name: 'WhautomateAPIError',
 			status: 429,
@@ -131,7 +169,7 @@ describe('Whautomate client', () => {
 
 		await expect(
 			makeWhautomateRequest(
-				'https://api.example.com',
+				'https://api.whautomate.com',
 				'k',
 				'/contacts',
 				schema,
@@ -143,42 +181,106 @@ describe('Whautomate client', () => {
 		).rejects.toMatchObject({ status: 429 });
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		const { config } = lastCall();
-		expect(config.BASE).toBe('https://api.example.com/v1');
+		expect(config.BASE).toBe('https://api.whautomate.com/v1');
 	});
 
 	it('keeps transport rate-limit retries enabled for GET requests', async () => {
-		await makeWhautomateRequest('/contacts', 'k', '/contacts', schema, {
-			method: 'GET',
-			query: { page: 1 },
-		});
+		await makeWhautomateRequest(
+			'https://api.whautomate.com',
+			'k',
+			'/contacts',
+			schema,
+			{
+				method: 'GET',
+				query: { page: 1 },
+			},
+		);
 		const call = mockRequest.mock.calls[mockRequest.mock.calls.length - 1];
+		// jest mock.calls is an untyped tuple; only rateLimitConfig is asserted
 		const retryOptions = call?.[2] as { rateLimitConfig: RateLimitConfig };
 		expect(retryOptions.rateLimitConfig.enabled).toBe(true);
 		expect(retryOptions.rateLimitConfig.maxRetries).toBe(5);
 	});
 
 	it('disables transport rate-limit retries for write requests', async () => {
-		await makeWhautomateRequest('/services/sv1', 'k', '/services/sv1', schema, {
-			method: 'PATCH',
-			body: { name: 'New name' },
-		});
+		await makeWhautomateRequest(
+			'https://api.whautomate.com',
+			'k',
+			'/services/sv1',
+			schema,
+			{
+				method: 'PUT',
+				body: { name: 'New name' },
+			},
+		);
 		const call = mockRequest.mock.calls[mockRequest.mock.calls.length - 1];
+		// jest mock.calls is an untyped tuple; only rateLimitConfig is asserted
 		const retryOptions = call?.[2] as { rateLimitConfig: RateLimitConfig };
 		expect(retryOptions.rateLimitConfig.enabled).toBe(false);
 	});
 
 	it('omits the body for GET requests', async () => {
-		await makeWhautomateRequest('/contacts', 'k', '/contacts', schema, {
-			method: 'GET',
-			query: { page: 1 },
-		});
+		await makeWhautomateRequest(
+			'https://api.whautomate.com',
+			'k',
+			'/contacts',
+			schema,
+			{
+				method: 'GET',
+				query: { page: 1 },
+			},
+		);
 		const { options } = lastCall();
 		expect(options.body).toBeUndefined();
 		expect(options.query).toEqual({ page: 1 });
 	});
 
-	function lastCall() {
+	it('rejects http, private, and non-Whautomate api hosts', async () => {
+		await expect(
+			makeWhautomateRequest(
+				'http://api.whautomate.com',
+				'k',
+				'/contacts',
+				schema,
+			),
+		).rejects.toMatchObject({ code: 'INVALID_API_HOST' });
+		await expect(
+			makeWhautomateRequest('https://127.0.0.1', 'k', '/contacts', schema),
+		).rejects.toMatchObject({ code: 'INVALID_API_HOST' });
+		await expect(
+			makeWhautomateRequest('https://localhost/v1', 'k', '/contacts', schema),
+		).rejects.toMatchObject({ code: 'INVALID_API_HOST' });
+		await expect(
+			makeWhautomateRequest(
+				'https://api.example.com',
+				'k',
+				'/contacts',
+				schema,
+			),
+		).rejects.toMatchObject({ code: 'INVALID_API_HOST' });
+		await expect(
+			makeWhautomateRequest('https://[::1]', 'k', '/contacts', schema),
+		).rejects.toMatchObject({ code: 'INVALID_API_HOST' });
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('accepts the India-region Whautomate host', async () => {
+		await makeWhautomateRequest(
+			'https://api.in.whautomate.com',
+			'k',
+			'/contacts',
+			schema,
+		);
+		expect(lastCall().config.BASE).toBe('https://api.in.whautomate.com/v1');
+	});
+
+	function lastCall(): { config: RequestConfig; options: RequestOptions } {
 		const call = mockRequest.mock.calls[mockRequest.mock.calls.length - 1];
-		return { config: call?.[0], options: call?.[1] };
+		// jest mock.calls is an untyped tuple; only BASE/HEADERS/body/query
+		// are asserted, so a full OpenAPIConfig union is not practical
+		return {
+			config: call?.[0] as RequestConfig,
+			options: call?.[1] as RequestOptions,
+		};
 	}
 });

@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	addContact,
 	deleteSegment,
@@ -340,10 +341,13 @@ export function whautomate<const T extends WhautomatePluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const apiKey = await ctx.keys.get_api_key();
-				return apiKey ?? '';
+				if (!apiKey) {
+					throw new AuthMissingError('whautomate', 'api_key');
+				}
+				return apiKey;
 			}
 
-			return '';
+			throw new AuthMissingError('whautomate', 'api_key');
 		},
 	} satisfies InternalWhautomatePlugin;
 }

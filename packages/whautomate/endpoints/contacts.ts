@@ -30,10 +30,10 @@ export const getContacts: WhautomateEndpoints['getContacts'] = async (
 	input,
 ) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input.page) query.page = input.page;
-	if (input.limit) query.limit = input.limit;
-	if (input.search) query.search = input.search;
-	if (input.segmentId) query.segmentId = input.segmentId;
+	if (input.page !== undefined) query.page = input.page;
+	if (input.limit !== undefined) query.limit = input.limit;
+	if (input.search !== undefined) query.search = input.search;
+	if (input.segmentId !== undefined) query.segmentId = input.segmentId;
 
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getContacts']
@@ -61,17 +61,17 @@ export const getMessagesOfContact: WhautomateEndpoints['getMessagesOfContact'] =
 	async (ctx, input) => {
 		const { contactId, ...rest } = input;
 		const query: Record<string, string | number | boolean | undefined> = {};
-		if (rest.page) query.page = rest.page;
-		if (rest.limit) query.limit = rest.limit;
-		if (rest.startDate) query.startDate = rest.startDate;
-		if (rest.endDate) query.endDate = rest.endDate;
+		if (rest.page !== undefined) query.page = rest.page;
+		if (rest.limit !== undefined) query.limit = rest.limit;
+		if (rest.startDate !== undefined) query.startDate = rest.startDate;
+		if (rest.endDate !== undefined) query.endDate = rest.endDate;
 
 		const result = await makeWhautomateRequest<
 			WhautomateEndpointOutputs['getMessagesOfContact']
 		>(
 			await resolveApiHost(ctx),
 			ctx.key,
-			`/contacts/${contactId}/messages`,
+			`/messages/${contactId}`,
 			WhautomateEndpointOutputSchemas.getMessagesOfContact,
 			{
 				method: 'GET',

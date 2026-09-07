@@ -45,8 +45,6 @@ describe('Whautomate endpoint schemas', () => {
 		'updateService',
 	] as const;
 
-	// CI re-run for demo video detection
-
 	describe('input schemas', () => {
 		for (const endpoint of endpoints) {
 			it(`has input schema for ${endpoint}`, () => {
@@ -60,7 +58,7 @@ describe('Whautomate endpoint schemas', () => {
 			const input = {
 				name: 'John Doe',
 				phoneNumber: '+1234567890',
-				location: 'New York, NY',
+				location: { id: 'loc_1', title: 'New York, NY' },
 				email: 'john@example.com',
 				avatar: 'https://example.com/avatar.png',
 				segmentId: 'seg_123',
@@ -69,14 +67,24 @@ describe('Whautomate endpoint schemas', () => {
 			const result = WhautomateEndpointInputSchemas.addContact.parse(input);
 			expect(result.name).toBe('John Doe');
 			expect(result.phoneNumber).toBe('+1234567890');
-			expect(result.location).toBe('New York, NY');
+			expect(result.location).toEqual({ id: 'loc_1', title: 'New York, NY' });
+		});
+
+		it('addContact rejects a string location', () => {
+			expect(() =>
+				WhautomateEndpointInputSchemas.addContact.parse({
+					name: 'Ada',
+					phoneNumber: '+1234567890',
+					location: 'New York, NY',
+				}),
+			).toThrow();
 		});
 
 		it('addContact requires name', () => {
 			expect(() =>
 				WhautomateEndpointInputSchemas.addContact.parse({
 					phoneNumber: '+1234567890',
-					location: 'New York, NY',
+					location: { id: 'loc_1', title: 'New York, NY' },
 				}),
 			).toThrow();
 		});
@@ -153,7 +161,7 @@ describe('Whautomate endpoint schemas', () => {
 					{
 						id: 'contact_1',
 						name: 'John Doe',
-						phone: '+1234567890',
+						phoneNumber: '+1234567890',
 						email: 'john@example.com',
 						avatar: null,
 						segmentId: 'seg_1',
@@ -173,6 +181,21 @@ describe('Whautomate endpoint schemas', () => {
 			expect(result.data).toHaveLength(1);
 			expect(result.data[0]!.name).toBe('John Doe');
 			expect(result.pagination?.total).toBe(1);
+		});
+
+		it('getContacts output parses a bare array', () => {
+			const result = WhautomateEndpointOutputSchemas.getContacts.parse([
+				{ id: 'contact_1', name: 'John Doe', phoneNumber: '+1234567890' },
+			]);
+			expect(result.data).toHaveLength(1);
+			expect(result.data[0]!.name).toBe('John Doe');
+		});
+
+		it('getAccountInfo output parses without ownerEmail', () => {
+			const result = WhautomateEndpointOutputSchemas.getAccountInfo.parse({
+				name: 'My Business',
+			});
+			expect(result.name).toBe('My Business');
 		});
 
 		it('getAccountInfo output parses bare object', () => {
@@ -330,7 +353,7 @@ describe('Whautomate endpoint schemas', () => {
 			const output = {
 				id: 'contact_new',
 				name: 'Jane Doe',
-				phone: '+1987654321',
+				phoneNumber: '+1987654321',
 				email: 'jane@example.com',
 				avatar: 'https://example.com/jane.png',
 				segmentId: 'seg_1',
@@ -377,7 +400,7 @@ describe('Whautomate endpoint schemas', () => {
 			const addInput: AddContactInput = {
 				name: 'Test',
 				phoneNumber: '+1234567890',
-				location: 'Test Location',
+				location: { id: 'loc_1' },
 			};
 			const getInput: GetContactsInput = { page: 1, limit: 10 };
 
@@ -397,6 +420,7 @@ describe('Whautomate endpoint schemas', () => {
 			const addOutput: AddContactOutput = {
 				id: 'c1',
 				name: 'Test',
+				phoneNumber: '+1',
 				phone: null,
 				email: null,
 				avatar: null,

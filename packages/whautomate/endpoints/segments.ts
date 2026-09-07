@@ -9,9 +9,9 @@ export const getSegments: WhautomateEndpoints['getSegments'] = async (
 	input,
 ) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input.page) query.page = input.page;
-	if (input.limit) query.limit = input.limit;
-	if (input.name) query.name = input.name;
+	if (input.page !== undefined) query.page = input.page;
+	if (input.limit !== undefined) query.limit = input.limit;
+	if (input.name !== undefined) query.name = input.name;
 
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getSegments']

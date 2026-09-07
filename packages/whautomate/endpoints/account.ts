@@ -12,7 +12,7 @@ export const getAccountInfo: WhautomateEndpoints['getAccountInfo'] = async (
 	>(
 		await resolveApiHost(ctx),
 		ctx.key,
-		'/account',
+		'/account-info',
 		WhautomateEndpointOutputSchemas.getAccountInfo,
 		{
 			method: 'GET',

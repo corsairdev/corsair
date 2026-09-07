@@ -9,16 +9,16 @@ export const getStaffs: WhautomateEndpoints['getStaffs'] = async (
 	input,
 ) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input.page) query.page = input.page;
-	if (input.limit) query.limit = input.limit;
-	if (input.search) query.search = input.search;
+	if (input.page !== undefined) query.page = input.page;
+	if (input.limit !== undefined) query.limit = input.limit;
+	if (input.search !== undefined) query.search = input.search;
 
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getStaffs']
 	>(
 		await resolveApiHost(ctx),
 		ctx.key,
-		'/staff',
+		'/staffs',
 		WhautomateEndpointOutputSchemas.getStaffs,
 		{
 			method: 'GET',
@@ -44,7 +44,7 @@ export const getStaffById: WhautomateEndpoints['getStaffById'] = async (
 	>(
 		await resolveApiHost(ctx),
 		ctx.key,
-		`/staff/${input.id}`,
+		`/staffs/${input.id}`,
 		WhautomateEndpointOutputSchemas.getStaffById,
 		{
 			method: 'GET',
@@ -64,15 +64,15 @@ export const getStaffAvailabilityBlocks: WhautomateEndpoints['getStaffAvailabili
 	async (ctx, input) => {
 		const { staffId, ...rest } = input;
 		const query: Record<string, string | number | boolean | undefined> = {};
-		if (rest.startDate) query.startDate = rest.startDate;
-		if (rest.endDate) query.endDate = rest.endDate;
+		if (rest.startDate !== undefined) query.startDate = rest.startDate;
+		if (rest.endDate !== undefined) query.endDate = rest.endDate;
 
 		const result = await makeWhautomateRequest<
 			WhautomateEndpointOutputs['getStaffAvailabilityBlocks']
 		>(
 			await resolveApiHost(ctx),
 			ctx.key,
-			`/staff/${staffId}/availability-blocks`,
+			`/staffs/${staffId}/availabilityBlocks`,
 			WhautomateEndpointOutputSchemas.getStaffAvailabilityBlocks,
 			{
 				method: 'GET',

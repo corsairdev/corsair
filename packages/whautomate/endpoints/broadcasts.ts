@@ -9,11 +9,11 @@ export const getBroadcasts: WhautomateEndpoints['getBroadcasts'] = async (
 	input,
 ) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input.page) query.page = input.page;
-	if (input.limit) query.limit = input.limit;
-	if (input.startDate) query.startDate = input.startDate;
-	if (input.endDate) query.endDate = input.endDate;
-	if (input.status) query.status = input.status;
+	if (input.page !== undefined) query.page = input.page;
+	if (input.limit !== undefined) query.limit = input.limit;
+	if (input.startDate !== undefined) query.startDate = input.startDate;
+	if (input.endDate !== undefined) query.endDate = input.endDate;
+	if (input.status !== undefined) query.status = input.status;
 
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getBroadcasts']

@@ -10,13 +10,23 @@ const DateRangeSchema = z.object({
 	endDate: z.string().optional(),
 });
 
+const LocationRefSchema = z.object({
+	id: z.string(),
+	title: z.string().optional(),
+});
+
 const AddContactInputSchema = z.object({
 	name: z.string(),
 	phoneNumber: z.string(),
-	location: z.string(),
+	location: LocationRefSchema,
 	email: z.string().optional(),
 	avatar: z.string().optional(),
 	segmentId: z.string().optional(),
+	stage: z.string().optional(),
+	notes: z.string().optional(),
+	tags: z.array(z.string()).optional(),
+	// Using z.unknown() because custom field values are account-defined json;
+	// a stricter union is infeasible without coupling to each tenant schema
 	customFields: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -130,10 +140,17 @@ const ContactSchema = z
 	.object({
 		id: z.string(),
 		name: z.string(),
+		phoneNumber: z.string().nullable().optional(),
 		phone: z.string().nullable().optional(),
 		email: z.string().nullable().optional(),
 		avatar: z.string().nullable().optional(),
 		segmentId: z.string().nullable().optional(),
+		location: LocationRefSchema.optional(),
+		stage: z.string().nullable().optional(),
+		notes: z.string().nullable().optional(),
+		tags: z.array(z.string()).optional(),
+		// Using z.unknown() because custom field values are account-defined json;
+		// a stricter union is infeasible without coupling to each tenant schema
 		customFields: z.record(z.string(), z.unknown()).nullable().optional(),
 		createdAt: z.string().optional(),
 		updatedAt: z.string().optional(),
@@ -163,7 +180,7 @@ const ServiceCategorySchema = z
 const AccountInfoSchema = z
 	.object({
 		name: z.string(),
-		ownerEmail: z.string(),
+		ownerEmail: z.string().optional(),
 		apiHost: z.string().optional(),
 	})
 	.loose();
@@ -204,23 +221,20 @@ const BroadcastSchema = z
 const MessageSchema = z
 	.object({
 		id: z.string(),
-		contactId: z.string(),
-		direction: z.enum(['inbound', 'outbound']),
-		content: z.string(),
-		type: z
-			.enum([
-				'text',
-				'image',
-				'document',
-				'audio',
-				'video',
-				'location',
-				'contact',
-			])
-			.optional(),
-		status: z.enum(['sent', 'delivered', 'read', 'failed']).optional(),
+		contactId: z.string().optional(),
+		// Using z.unknown() because nested contact objects vary by channel;
+		// a stricter type is infeasible without coupling to each channel payload
+		contact: z.unknown().optional(),
+		channel: z.string().optional(),
+		isIncoming: z.boolean().optional(),
+		direction: z.string().optional(),
+		text: z.string().optional(),
+		content: z.string().optional(),
+		type: z.string().optional(),
+		status: z.string().optional(),
 		mediaUrl: z.string().nullable().optional(),
-		timestamp: z.string(),
+		timestamp: z.string().optional(),
+		createdAt: z.string().optional(),
 	})
 	.loose();
 
@@ -263,11 +277,17 @@ const StaffAvailabilityBlockSchema = z
 		}),
 		date: z.string(),
 		slots: z.array(
-			z.object({
-				start: z.string(),
-				end: z.string(),
-				available: z.boolean(),
-			}),
+			z
+				.object({
+					start: z.string().optional(),
+					end: z.string().optional(),
+					startTime: z.string().optional(),
+					endTime: z.string().optional(),
+					startTimeUTC: z.string().optional(),
+					endTimeUTC: z.string().optional(),
+					available: z.boolean().optional(),
+				})
+				.loose(),
 		),
 		createdAt: z.string().optional(),
 		updatedAt: z.string().optional(),
@@ -275,52 +295,52 @@ const StaffAvailabilityBlockSchema = z
 	.loose();
 
 const PaginationResponseSchema = z.object({
-	page: z.number(),
-	limit: z.number(),
-	total: z.number(),
-	totalPages: z.number(),
+	page: z.number().optional(),
+	limit: z.number().optional(),
+	total: z.number().optional(),
+	totalPages: z.number().optional(),
 });
 
-// List endpoints return bare arrays (no envelope)
+function listed<Item extends z.ZodTypeAny>(item: Item) {
+	return z
+		.union([
+			z.array(item),
+			z
+				.object({
+					data: z.array(item),
+					pagination: PaginationResponseSchema.optional(),
+				})
+				.loose(),
+		])
+		.transform((value) =>
+			Array.isArray(value) ? { data: value, pagination: undefined } : value,
+		);
+}
+
 const AddContactResponseSchema = ContactSchema;
-const DeleteSegmentResponseSchema = z.object({ id: z.string() });
-const DeleteServiceCategoryResponseSchema = z.object({ id: z.string() });
+const DeleteResponseSchema = z
+	.object({
+		id: z.string().optional(),
+		success: z.boolean().optional(),
+	})
+	.loose();
+const DeleteSegmentResponseSchema = DeleteResponseSchema;
+const DeleteServiceCategoryResponseSchema = DeleteResponseSchema;
 const GetAccountInfoResponseSchema = AccountInfoSchema;
 const GetAllWebhooksResponseSchema = z.array(WebhookSchema);
 const GetBroadcastByIdResponseSchema = BroadcastSchema;
-const GetBroadcastsResponseSchema = z.object({
-	data: z.array(BroadcastSchema),
-	pagination: PaginationResponseSchema.optional(),
-});
-const GetContactsResponseSchema = z.object({
-	data: z.array(ContactSchema),
-	pagination: PaginationResponseSchema.optional(),
-});
-const GetMessagesOfContactResponseSchema = z.object({
-	data: z.array(MessageSchema),
-	pagination: PaginationResponseSchema.optional(),
-});
-const GetSegmentsResponseSchema = z.object({
-	data: z.array(SegmentSchema),
-	pagination: PaginationResponseSchema.optional(),
-});
+const GetBroadcastsResponseSchema = listed(BroadcastSchema);
+const GetContactsResponseSchema = listed(ContactSchema);
+const GetMessagesOfContactResponseSchema = listed(MessageSchema);
+const GetSegmentsResponseSchema = listed(SegmentSchema);
 const GetServiceByIdResponseSchema = ServiceSchema;
-const GetServiceCategoriesResponseSchema = z.object({
-	data: z.array(ServiceCategorySchema),
-	pagination: PaginationResponseSchema.optional(),
-});
-const GetServicesResponseSchema = z.object({
-	data: z.array(ServiceSchema),
-	pagination: PaginationResponseSchema.optional(),
-});
+const GetServiceCategoriesResponseSchema = listed(ServiceCategorySchema);
+const GetServicesResponseSchema = listed(ServiceSchema);
 const GetStaffAvailabilityBlocksResponseSchema = z.array(
 	StaffAvailabilityBlockSchema,
 );
 const GetStaffByIdResponseSchema = StaffSchema;
-const GetStaffsResponseSchema = z.object({
-	data: z.array(StaffSchema),
-	pagination: PaginationResponseSchema.optional(),
-});
+const GetStaffsResponseSchema = listed(StaffSchema);
 const UpdateServiceResponseSchema = ServiceSchema;
 
 export const WhautomateEndpointInputSchemas = {
