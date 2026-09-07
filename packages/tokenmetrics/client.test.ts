@@ -1,3 +1,4 @@
+// Mocked transport coverage intentionally runs in Corsair's normal CI lane.
 import { getPrice, getTopMarketCap } from './endpoints/market';
 import { getIndicators } from './endpoints/technical';
 import { list } from './endpoints/tokens';
