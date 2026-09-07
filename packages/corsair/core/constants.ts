@@ -139,6 +139,7 @@ export const BaseProviders = [
 	'datarobot',
 	'deepseek',
 	'devinmcp',
+	'dictionaryapi',
 	'diffbot',
 	'digitalocean',
 	'discord',
@@ -416,6 +417,7 @@ export const ProviderDisplayNames = {
 	datarobot: 'DataRobot',
 	deepseek: 'DeepSeek',
 	devinmcp: 'Devin MCP',
+	dictionaryapi: 'DictionaryApi',
 	diffbot: 'Diffbot',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
@@ -700,6 +702,7 @@ export type AllProviders =
 	| 'datarobot'
 	| 'deepseek'
 	| 'devinmcp'
+	| 'dictionaryapi'
 	| 'diffbot'
 	| 'digitalocean'
 	| 'discord'
