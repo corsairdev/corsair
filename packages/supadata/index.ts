@@ -198,7 +198,6 @@ export function supadata<const T extends SupadataPluginOptions>(
 	} satisfies InternalSupadataPlugin;
 }
 
-export { SupadataAPIError } from './client';
 export type {
 	MetadataAuthor,
 	MetadataInput,

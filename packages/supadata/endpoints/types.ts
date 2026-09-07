@@ -54,7 +54,8 @@ export type TranscriptJobInput = z.infer<typeof TranscriptJobInputSchema>;
 
 export const TranscriptJobStatusOutputSchema = z.object({
 	jobId: z.string(),
-	status: z.enum(['queued', 'processing', 'completed', 'failed']),
+	// 'active' is the in-progress status used by the Supadata API
+	status: z.enum(['queued', 'active', 'processing', 'completed', 'failed']),
 	error: z.string().optional(),
 	result: TranscriptDirectResponseSchema.optional(),
 });
@@ -84,21 +85,44 @@ export const MetadataAuthorSchema = z.object({
 
 export type MetadataAuthor = z.infer<typeof MetadataAuthorSchema>;
 
+export const MetadataStatsSchema = z.object({
+	views: z.number().optional(),
+	likes: z.number().optional(),
+	comments: z.number().optional(),
+	shares: z.number().optional(),
+});
+
+export type MetadataStats = z.infer<typeof MetadataStatsSchema>;
+
+export const MetadataMediaSchema = z.object({
+	thumbnail: z.string().optional(),
+	images: z.array(z.string()).optional(),
+	videos: z.array(z.string()).optional(),
+});
+
+export type MetadataMedia = z.infer<typeof MetadataMediaSchema>;
+
 export const MetadataOutputSchema = z.object({
 	id: z.string().optional(),
+	type: z.string().optional(),
 	title: z.string().optional(),
 	description: z.string().optional(),
 	author: z.union([z.string(), MetadataAuthorSchema]).optional(),
 	authorId: z.string().optional(),
 	authorUrl: z.string().optional(),
 	publishedAt: z.string().optional(),
+	createdAt: z.string().optional(),
 	duration: z.number().optional(),
 	viewsCount: z.number().optional(),
 	likesCount: z.number().optional(),
 	commentsCount: z.number().optional(),
 	sharesCount: z.number().optional(),
+	stats: MetadataStatsSchema.optional(),
 	thumbnail: z.string().optional(),
+	media: MetadataMediaSchema.optional(),
+	tags: z.array(z.string()).optional(),
 	platform: z.string().optional(),
+	additionalData: z.record(z.string(), z.unknown()).optional(),
 	raw: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -111,16 +135,28 @@ export type MetadataOutput = z.infer<typeof MetadataOutputSchema>;
 export const WebScrapeInputSchema = z.object({
 	url: z.string().url('A valid URL is required'),
 	noLinks: z.boolean().optional(),
+	/** Preferred content language (ISO 639-1, e.g. 'en'). Defaults to 'en'. */
+	lang: z.string().optional(),
 });
 
 export type WebScrapeInput = z.infer<typeof WebScrapeInputSchema>;
 
 export const WebScrapeOutputSchema = z.object({
 	url: z.string().optional(),
+	/** Page title (also returned as `name` in some response shapes). */
+	name: z.string().optional(),
+	/** Alias of `name` — some responses use `title`. */
 	title: z.string().optional(),
+	description: z.string().optional(),
+	/** Open Graph canonical URL. */
+	ogUrl: z.string().optional(),
 	content: z.string(),
 	markdown: z.string().optional(),
 	html: z.string().optional(),
+	/** Total character count of the extracted content. */
+	countCharacters: z.number().optional(),
+	/** URLs found on the page. */
+	urls: z.array(z.string()).optional(),
 });
 
 export type WebScrapeOutput = z.infer<typeof WebScrapeOutputSchema>;
@@ -150,11 +186,50 @@ export type WebMapOutput = z.infer<typeof WebMapOutputSchema>;
 
 export const YoutubeSearchInputSchema = z.object({
 	query: z.string().min(1, 'Query is required'),
-	type: z.enum(['video', 'channel', 'playlist']).optional(),
+	/** Content type filter. Defaults to 'all'. */
+	type: z.enum(['all', 'video', 'channel', 'playlist', 'movie']).optional(),
+	/** Maximum results to return (1–5000). */
 	limit: z.number().optional(),
+	/** Age filter. Defaults to 'all'. */
+	uploadDate: z
+		.enum(['all', 'hour', 'today', 'week', 'month', 'year'])
+		.optional(),
+	/** Sort order. Defaults to 'relevance'. */
+	sortBy: z.enum(['relevance', 'rating', 'date', 'views']).optional(),
+	/** Length filter. Defaults to 'all'. */
+	duration: z.enum(['all', 'short', 'medium', 'long']).optional(),
+	/**
+	 * Special feature filters.
+	 * @example ['hd', 'subtitles']
+	 */
+	features: z
+		.array(
+			z.enum([
+				'hd',
+				'subtitles',
+				'creative-commons',
+				'3d',
+				'live',
+				'4k',
+				'360',
+				'location',
+				'hdr',
+				'vr180',
+			]),
+		)
+		.optional(),
+	/** Pagination token from a previous response. When provided, other filters are ignored. */
+	nextPageToken: z.string().optional(),
 });
 
 export type YoutubeSearchInput = z.infer<typeof YoutubeSearchInputSchema>;
+
+export const YoutubeChannelSchema = z.object({
+	id: z.string().optional(),
+	name: z.string().optional(),
+	url: z.string().optional(),
+	thumbnail: z.string().optional(),
+});
 
 export const YoutubeSearchResultItemSchema = z.object({
 	type: z.string().optional(),
@@ -164,9 +239,12 @@ export const YoutubeSearchResultItemSchema = z.object({
 	thumbnail: z.string().optional(),
 	channelTitle: z.string().optional(),
 	channelId: z.string().optional(),
+	channel: YoutubeChannelSchema.optional(),
 	publishedAt: z.string().optional(),
+	uploadDate: z.string().optional(),
 	duration: z.number().optional(),
 	viewsCount: z.number().optional(),
+	viewCount: z.number().optional(),
 });
 
 export type YoutubeSearchResultItem = z.infer<
@@ -176,6 +254,7 @@ export type YoutubeSearchResultItem = z.infer<
 export const YoutubeSearchOutputSchema = z.object({
 	query: z.string().optional(),
 	nextPageToken: z.string().optional(),
+	totalResults: z.number().optional(),
 	results: z.array(YoutubeSearchResultItemSchema),
 });
 
