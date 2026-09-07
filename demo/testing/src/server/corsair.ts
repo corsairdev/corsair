@@ -9,6 +9,7 @@ import { googlesheets } from '@corsair-dev/googlesheets';
 import { hubspot } from '@corsair-dev/hubspot';
 import { linear } from '@corsair-dev/linear';
 import { onedrive } from '@corsair-dev/onedrive';
+import { safetyculture } from '@corsair-dev/safetyculture';
 import { sharepoint } from '@corsair-dev/sharepoint';
 import { slack } from '@corsair-dev/slack';
 import { twilio } from '@corsair-dev/twilio';
@@ -62,5 +63,9 @@ export const corsair = createCorsair({
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
 		}),
 		instagram(),
+		safetyculture({
+			key: process.env.SAFETYCULTURE_API_KEY,
+		}),
 	],
 });
+
