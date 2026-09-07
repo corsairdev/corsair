@@ -6,10 +6,12 @@ import { EXIST_MAX_BATCH_SIZE } from '../client';
 // @see https://developer.exist.io/reference/object_types/
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** "yyyy-mm-dd", the only date format Exist accepts or returns. */
-const ExistDateSchema = z
-	.string()
-	.regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected a yyyy-mm-dd date string');
+/**
+ * "yyyy-mm-dd", the only date format Exist accepts or returns. `z.iso.date()`
+ * validates the calendar too, so an impossible day like 2026-02-31 is rejected
+ * before it reaches the API rather than being stored against the wrong date.
+ */
+const ExistDateSchema = z.iso.date();
 
 const PageSchema = z.number().int().min(1).optional();
 const LimitSchema = z.number().int().min(1).optional();
@@ -261,20 +263,35 @@ export type AttributesListTemplatesResponse = z.infer<
 // @see https://developer.exist.io/reference/attributes/
 // ─────────────────────────────────────────────────────────────────────────────
 
-const AttributesListWithValuesInputSchema = z.object({
-	page: PageSchema,
-	limit: LimitSchema,
-	/** How many days of values to include per attribute. Max 31, default 1. */
-	days: z.number().int().min(1).max(31).optional(),
-	/** Most recent date included in `values`. */
-	date_max: ExistDateSchema.optional(),
-	groups: z.array(z.string()).optional(),
-	/** Filter by attribute name — use this or `templates`, not both. */
-	attributes: z.array(z.string()).optional(),
-	/** Filter by attribute template name — use this or `attributes`, not both. */
-	templates: z.array(z.string()).optional(),
-	manual: z.boolean().optional(),
-});
+const AttributesListWithValuesInputSchema = z
+	.object({
+		page: PageSchema,
+		limit: LimitSchema,
+		/** How many days of values to include per attribute. Max 31, default 1. */
+		days: z.number().int().min(1).max(31).optional(),
+		/** Most recent date included in `values`. */
+		date_max: ExistDateSchema.optional(),
+		groups: z.array(z.string()).optional(),
+		/** Filter by attribute name — use this or `templates`, not both. */
+		attributes: z.array(z.string()).optional(),
+		/** Filter by attribute template name — use this or `attributes`, not both. */
+		templates: z.array(z.string()).optional(),
+		manual: z.boolean().optional(),
+	})
+	.refine(
+		(value) =>
+			!(
+				(value.attributes?.length ?? 0) > 0 &&
+				(value.templates?.length ?? 0) > 0
+			),
+		{
+			// "rather than using both, you would use one or the other of
+			// attributes and templates to filter" — the official reference.
+			message:
+				'Filter by `attributes` or `templates`, not both — Exist accepts only one',
+			path: ['templates'],
+		},
+	);
 export type AttributesListWithValuesInput = z.infer<
 	typeof AttributesListWithValuesInputSchema
 >;

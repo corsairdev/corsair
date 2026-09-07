@@ -9,6 +9,31 @@ import { persistAttributes, persistAttributesWithValues } from './persist';
 import type { ExistEndpointOutputs } from './types';
 
 /**
+ * Summarises a write batch for the operation log. Exist attribute values are
+ * personal analytics data (mood notes, weight, location counts), so the values
+ * themselves are deliberately left out — the log keeps only what is needed to
+ * trace an operation: how many objects were sent, which attributes they
+ * targeted, and which days they covered.
+ */
+function writeBatchSummary(
+	attributes: readonly { name: string; date?: string }[],
+): Record<string, unknown> {
+	const names = [...new Set(attributes.map((a) => a.name))];
+	const dates = [
+		...new Set(
+			attributes
+				.map((a) => a.date)
+				.filter((date): date is string => date !== undefined),
+		),
+	].sort();
+	return {
+		count: attributes.length,
+		attributes: names,
+		...(dates.length > 0 ? { dates } : {}),
+	};
+}
+
+/**
  * List the user's attributes without values.
  * @see https://developer.exist.io/reference/attributes/
  */
@@ -205,7 +230,7 @@ export const increment: ExistEndpoints['attributesIncrement'] = async (
 	await logEventFromContext(
 		ctx,
 		'exist.attributes.increment',
-		{ ...input },
+		writeBatchSummary(input.attributes),
 		'completed',
 	);
 	return result;
@@ -230,7 +255,7 @@ export const update: ExistEndpoints['attributesUpdate'] = async (
 	await logEventFromContext(
 		ctx,
 		'exist.attributes.update',
-		{ ...input },
+		writeBatchSummary(input.attributes),
 		'completed',
 	);
 	return result;

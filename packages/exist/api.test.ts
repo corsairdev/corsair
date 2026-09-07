@@ -19,6 +19,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import type { ExistContext, ExistKeyBuilderContext } from './index';
 import { EXIST_DEFAULT_SCOPES, exist, existEndpointSchemas } from './index';
+import { resolveExistOAuthTenantLink } from './oauth-tenant-link';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -817,6 +818,125 @@ describe('attributes.update', () => {
 			ExistEndpointInputSchemas.attributesUpdate.safeParse({ attributes: [] })
 				.success,
 		).toBe(false);
+	});
+});
+
+describe('reviewer regressions', () => {
+	it('rejects calendar-impossible dates, not just malformed ones', () => {
+		const bad = (date: string) =>
+			ExistEndpointInputSchemas.attributesUpdate.safeParse({
+				attributes: [{ name: 'mood', date, value: 7 }],
+			}).success;
+
+		// Regex-only validation accepted these; z.iso.date() checks the calendar.
+		expect(bad('2026-02-31')).toBe(false);
+		expect(bad('2026-13-01')).toBe(false);
+		expect(bad('2026-00-10')).toBe(false);
+		expect(bad('2026-04-31')).toBe(false);
+		// Real days, including a leap day, still pass.
+		expect(bad('2026-02-28')).toBe(true);
+		expect(bad('2024-02-29')).toBe(true);
+	});
+
+	it('rejects filtering with-values by both attributes and templates', () => {
+		const parse = (input: Record<string, unknown>) =>
+			ExistEndpointInputSchemas.attributesListWithValues.safeParse(input);
+
+		// "you would use one or the other of attributes and templates to filter"
+		expect(parse({ attributes: ['mood'], templates: ['mood'] }).success).toBe(
+			false,
+		);
+		expect(parse({ attributes: ['mood'] }).success).toBe(true);
+		expect(parse({ templates: ['mood'] }).success).toBe(true);
+		// Empty arrays are not a filter, so they do not conflict.
+		expect(parse({ attributes: ['mood'], templates: [] }).success).toBe(true);
+		expect(parse({}).success).toBe(true);
+	});
+
+	it('bounds the OAuth tenant-link profile lookup instead of hanging', async () => {
+		const originalFetch = globalThis.fetch;
+		let receivedSignal: AbortSignal | undefined;
+		globalThis.fetch = ((_url: string, init?: RequestInit) => {
+			receivedSignal = init?.signal ?? undefined;
+			// A profile endpoint that never answers: only the abort signal can
+			// end this request.
+			return new Promise((_resolve, reject) => {
+				init?.signal?.addEventListener('abort', () =>
+					reject(new Error('aborted')),
+				);
+			});
+		}) as typeof fetch;
+
+		try {
+			const pending = resolveExistOAuthTenantLink({
+				access_token: 'token-without-username',
+			} as never);
+
+			// The resolver must hand fetch a signal that is already scheduled to
+			// abort, rather than waiting on Exist indefinitely.
+			await Promise.resolve();
+			expect(receivedSignal).toBeInstanceOf(AbortSignal);
+			expect(receivedSignal?.aborted).toBe(false);
+
+			// Aborting resolves the caller to null rather than rejecting.
+			(receivedSignal as AbortSignal & { dispatchEvent: (e: Event) => boolean })
+				.dispatchEvent?.(new Event('abort'));
+			await expect(pending).resolves.toBeNull();
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
+
+	it('keeps personal attribute values out of the operation log', async () => {
+		mockRequest.mockResolvedValue({ success: [], failed: [] });
+
+		await endpoints().attributes.update(mockCtx(), {
+			attributes: [
+				{ name: 'mood', date: '2022-05-20', value: 7 },
+				{
+					name: 'mood_note',
+					date: '2022-05-20',
+					value: 'A private note about my day',
+				},
+				{ name: 'mood', date: '2022-05-21', value: 3 },
+			],
+		});
+
+		const [, eventType, payload] = mockLog.mock.calls[0] as [
+			unknown,
+			string,
+			Record<string, unknown>,
+		];
+		expect(eventType).toBe('exist.attributes.update');
+		// Operational metadata is retained...
+		expect(payload).toEqual({
+			count: 3,
+			attributes: ['mood', 'mood_note'],
+			dates: ['2022-05-20', '2022-05-21'],
+		});
+		// ...but the values themselves never reach the persistent log.
+		expect(JSON.stringify(payload)).not.toContain('A private note');
+		expect(JSON.stringify(payload)).not.toContain('value');
+	});
+
+	it('summarises increment batches without their deltas', async () => {
+		mockRequest.mockResolvedValue({ success: [], failed: [] });
+
+		await endpoints().attributes.increment(mockCtx(), {
+			attributes: [
+				{ name: 'steps', date: '2022-05-20', value: 700 },
+				// No date: defaults to today, so no date is recorded either.
+				{ name: 'steps_active_min', value: 5 },
+			],
+		});
+
+		const payload = mockLog.mock.calls[0]?.[2] as Record<string, unknown>;
+		expect(payload).toEqual({
+			count: 2,
+			attributes: ['steps', 'steps_active_min'],
+			dates: ['2022-05-20'],
+		});
+		expect(JSON.stringify(payload)).not.toContain('700');
 	});
 });
 
