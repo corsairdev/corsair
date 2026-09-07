@@ -66,7 +66,7 @@ Permanently delete an agent from a Callingly account
 **Risk:** `destructive`
 
 ```ts
-await corsair.callingly.api.agents.delete({});
+await corsair.callingly.api.agents.delete({ agentId: '<agent-id>' });
 ```
 
 **Input**
@@ -98,7 +98,7 @@ Retrieve user details by ID
 **Risk:** `read`
 
 ```ts
-await corsair.callingly.api.agents.get({});
+await corsair.callingly.api.agents.get({ userId: '<user-id>' });
 ```
 
 **Input**
@@ -139,7 +139,7 @@ Retrieve the availability schedule for a specific agent
 **Risk:** `read`
 
 ```ts
-await corsair.callingly.api.agents.getSchedule({});
+await corsair.callingly.api.agents.getSchedule({ agentId: '<agent-id>' });
 ```
 
 **Input**
@@ -266,7 +266,7 @@ Update agent information
 **Risk:** `write`
 
 ```ts
-await corsair.callingly.api.agents.update({});
+await corsair.callingly.api.agents.update({ agentId: '<agent-id>' });
 ```
 
 **Input**
@@ -314,7 +314,7 @@ Update an agent availability schedule
 **Risk:** `write`
 
 ```ts
-await corsair.callingly.api.agents.updateSchedule({});
+await corsair.callingly.api.agents.updateSchedule({ agentId: '<agent-id>' });
 ```
 
 **Input**
@@ -423,7 +423,7 @@ Retrieve call details, duration, and recording by ID
 **Risk:** `read`
 
 ```ts
-await corsair.callingly.api.calls.get({});
+await corsair.callingly.api.calls.get({ callId: '<call-id>' });
 ```
 
 **Input**
@@ -601,7 +601,7 @@ Activate or deactivate a client account
 **Risk:** `write`
 
 ```ts
-await corsair.callingly.api.clients.activateDeactivate({});
+await corsair.callingly.api.clients.activateDeactivate({ clientId: '<client-id>', active: true });
 ```
 
 **Input**
@@ -637,7 +637,7 @@ Create a new agency client account
 **Risk:** `write`
 
 ```ts
-await corsair.callingly.api.clients.create({});
+await corsair.callingly.api.clients.create({ name: '<name>' });
 ```
 
 **Input**
@@ -674,7 +674,7 @@ Delete an agency client account by ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.callingly.api.clients.delete({});
+await corsair.callingly.api.clients.delete({ clientId: '<client-id>' });
 ```
 
 **Input**
@@ -705,7 +705,7 @@ Retrieve agency client account details by ID
 **Risk:** `read`
 
 ```ts
-await corsair.callingly.api.clients.get({});
+await corsair.callingly.api.clients.get({ clientId: '<client-id>' });
 ```
 
 **Input**
@@ -873,7 +873,7 @@ Delete a lead by ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.callingly.api.leads.delete({});
+await corsair.callingly.api.leads.delete({ leadId: '<lead-id>' });
 ```
 
 **Input**
@@ -905,7 +905,7 @@ Retrieve lead details by ID
 **Risk:** `read`
 
 ```ts
-await corsair.callingly.api.leads.get({});
+await corsair.callingly.api.leads.get({ leadId: '<lead-id>' });
 ```
 
 **Input**
@@ -1043,7 +1043,7 @@ Update lead contact details and assignments
 **Risk:** `write`
 
 ```ts
-await corsair.callingly.api.leads.update({});
+await corsair.callingly.api.leads.update({ leadId: '<lead-id>' });
 ```
 
 **Input**
@@ -1121,7 +1121,7 @@ Create a new team in Callingly
 **Risk:** `write`
 
 ```ts
-await corsair.callingly.api.teams.create({});
+await corsair.callingly.api.teams.create({ name: '<name>' });
 ```
 
 **Input**
@@ -1158,7 +1158,7 @@ Retrieve team details by ID
 **Risk:** `read`
 
 ```ts
-await corsair.callingly.api.teams.get({});
+await corsair.callingly.api.teams.get({ teamId: '<team-id>' });
 ```
 
 **Input**
@@ -1248,7 +1248,7 @@ Retrieve all agents assigned to a specific team
 **Risk:** `read`
 
 ```ts
-await corsair.callingly.api.teams.listUsers({});
+await corsair.callingly.api.teams.listUsers({ teamId: '<team-id>' });
 ```
 
 **Input**
@@ -1324,7 +1324,7 @@ Remove a specific agent from a team
 **Risk:** `destructive`
 
 ```ts
-await corsair.callingly.api.teams.removeAgent({});
+await corsair.callingly.api.teams.removeAgent({ teamId: '<team-id>', agentId: '<agent-id>' });
 ```
 
 **Input**
@@ -1357,7 +1357,7 @@ Update priority and capacity settings for a team agent
 **Risk:** `write`
 
 ```ts
-await corsair.callingly.api.teams.updateAgentSettings({});
+await corsair.callingly.api.teams.updateAgentSettings({ teamId: '<team-id>', agentId: '<agent-id>' });
 ```
 
 **Input**
@@ -1396,7 +1396,7 @@ Update the list of agents assigned to a team
 **Risk:** `write`
 
 ```ts
-await corsair.callingly.api.teams.updateUsers({});
+await corsair.callingly.api.teams.updateUsers({ teamId: '<team-id>', user_ids: [] });
 ```
 
 **Input**
@@ -1434,7 +1434,7 @@ Create a new webhook for call or lead events
 **Risk:** `write`
 
 ```ts
-await corsair.callingly.api.webhooks.create({});
+await corsair.callingly.api.webhooks.create({ name: '<name>', event: '<event>', target_url: '<target-url>' });
 ```
 
 **Input**
@@ -1484,7 +1484,7 @@ Delete a webhook by ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.callingly.api.webhooks.delete({});
+await corsair.callingly.api.webhooks.delete({ webhookId: '<webhook-id>' });
 ```
 
 **Input**
@@ -1516,7 +1516,7 @@ Retrieve details of a specific webhook by ID
 **Risk:** `read`
 
 ```ts
-await corsair.callingly.api.webhooks.get({});
+await corsair.callingly.api.webhooks.get({ webhookId: '<webhook-id>' });
 ```
 
 **Input**
@@ -1623,7 +1623,7 @@ Update an existing webhook configuration by ID
 **Risk:** `write`
 
 ```ts
-await corsair.callingly.api.webhooks.update({});
+await corsair.callingly.api.webhooks.update({ webhookId: '<webhook-id>' });
 ```
 
 **Input**

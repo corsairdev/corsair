@@ -228,7 +228,6 @@ export const CallinglyScheduleDayRecordSchema = z
 export const GetAgentScheduleResponseSchema = z.union([
 	CallinglySchedule,
 	z.array(CallinglyScheduleDayRecordSchema),
-	z.array(z.record(z.string(), z.unknown())),
 ]);
 
 export const ListUsersResponseSchema = z.union([
