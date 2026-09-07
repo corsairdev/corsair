@@ -853,7 +853,7 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 			mockMakeRequest.mockResolvedValueOnce(mockUpload);
 			const result = await plugin.endpoints!.files.uploadFile(mockContext, {
 				name: 'doc.pdf',
-				content: 'base64string',
+				content: 'SGVsbG8gV29ybGQ=',
 			});
 			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'/file-library',
@@ -863,6 +863,17 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 					body: expect.any(FormData),
 				},
 			);
+			expect(result).toEqual(mockUpload);
+		});
+
+		it('uploadFile with data URI', async () => {
+			const mockUpload = { id: 803, name: 'image.png', status: 'uploaded' };
+			mockMakeRequest.mockResolvedValueOnce(mockUpload);
+			const result = await plugin.endpoints!.files.uploadFile(mockContext, {
+				name: 'image.png',
+				content:
+					'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+			});
 			expect(result).toEqual(mockUpload);
 		});
 

@@ -40,12 +40,29 @@ export const getFileDetails: ClickmeetingEndpoints['getFileDetails'] = async (
 	return res;
 };
 
+function decodeFileContent(content: string): Buffer | string {
+	const dataUriIndex = content.indexOf(';base64,');
+	if (dataUriIndex !== -1) {
+		return Buffer.from(content.slice(dataUriIndex + 8).trim(), 'base64');
+	}
+	const clean = content.trim();
+	if (
+		clean.length > 0 &&
+		clean.length % 4 === 0 &&
+		/^[A-Za-z0-9+/]+={0,2}$/.test(clean.replace(/\s+/g, ''))
+	) {
+		return Buffer.from(clean.replace(/\s+/g, ''), 'base64');
+	}
+	return content;
+}
+
 export const uploadFile: ClickmeetingEndpoints['uploadFile'] = async (
 	ctx,
 	input,
 ) => {
 	const formData = new FormData();
-	const blob = new Blob([input.content]);
+	const fileData = decodeFileContent(input.content);
+	const blob = new Blob([fileData]);
 	formData.append('uploaded', blob, input.name);
 	if (input.conference_id !== undefined) {
 		formData.append('conference_id', String(input.conference_id));

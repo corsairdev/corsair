@@ -20,7 +20,7 @@ export async function makeClickmeetingRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: any;
+		body?: unknown;
 		mediaType?: string;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
