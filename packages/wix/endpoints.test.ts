@@ -26,6 +26,14 @@ jest.mock('corsair/core', () => ({
 const mockMakeWixRequest = makeWixRequest as jest.Mock;
 const mockLogEvent = logEventFromContext as jest.Mock;
 
+// plugin endpoint trees and sample inputs are json bags across 143 ops;
+// a per-operation union is not practical in shared test helpers
+type JsonBag = Record<string, unknown>;
+
+// unused mock-call fields stay unknown: tests assert a few keys only, and
+// each of the 143 request bodies has a different shape
+type Unused = unknown;
+
 type InputSchemaKey = keyof typeof WixEndpointInputSchemas;
 type OutputSchemaKey = keyof typeof WixEndpointOutputSchemas;
 
@@ -50,20 +58,22 @@ const mockCtx: TestCtx = {
 	options: {},
 };
 
+// endpoints is a nested binder map; tests only need (ctx, input) so the
+// tree is walked as json bags instead of the 143-operation handler union
 function endpointFn(group: string, name: string) {
 	const plugin = wix();
-	const tree = plugin.endpoints as Record<string, Record<string, unknown>>;
+	const tree = plugin.endpoints as Record<string, JsonBag>;
 	const fn = tree[group]?.[name];
 	if (typeof fn !== 'function') {
 		throw new Error(`[wix] missing endpoint: ${group}.${name}`);
 	}
-	return fn as (ctx: TestCtx, input: Record<string, unknown>) => unknown;
+	return fn as (ctx: TestCtx, input: JsonBag) => Unused;
 }
 
-function sampleInput(
-	route: (typeof wixRoutes)[number],
-): Record<string, unknown> {
-	const input: Record<string, unknown> = {
+// required fields differ per route; a single sample bag is filled and
+// trimmed by the per-op zod schema rather than a 143-member input union
+function sampleInput(route: (typeof wixRoutes)[number]): JsonBag {
+	const input: JsonBag = {
 		siteId: 'test-site-id',
 		filter: { id: { $exists: true } },
 		email: 'test@example.com',
@@ -115,7 +125,7 @@ function sampleInput(
 
 function expectedPath(
 	route: (typeof wixRoutes)[number],
-	input: Record<string, unknown>,
+	input: JsonBag,
 ): string {
 	let index = 0;
 	return (route.path.split('?')[0] ?? route.path).replace(
@@ -144,15 +154,15 @@ function requiredShapeKeys(key: string): string[] {
 describe('Wix plugin shape', () => {
 	it('exposes all 143 operations with schemas and no webhooks', () => {
 		const plugin = wix();
-		const endpoints = plugin.endpoints as Record<string, unknown>;
+		const endpoints = plugin.endpoints as JsonBag;
 
 		const leaves: string[] = [];
-		const collect = (tree: Record<string, unknown>, prefix = '') => {
+		const collect = (tree: JsonBag, prefix = '') => {
 			for (const [key, value] of Object.entries(tree)) {
 				const path = prefix ? `${prefix}.${key}` : key;
 				if (typeof value === 'function') leaves.push(path);
 				else if (value && typeof value === 'object') {
-					collect(value as Record<string, unknown>, path);
+					collect(value as JsonBag, path);
 				}
 			}
 		};
@@ -212,8 +222,8 @@ describe('Wix endpoints', () => {
 				string,
 				{
 					method: string;
-					body?: unknown;
-					query?: unknown;
+					body?: Unused;
+					query?: Unused;
 					siteId?: string;
 				},
 			];
@@ -283,7 +293,7 @@ describe('Wix endpoints', () => {
 		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
 			string,
-			{ body?: { query?: { paging?: unknown } } },
+			{ body?: { query?: { paging?: Unused } } },
 		];
 		expect(options.body?.query?.paging).toEqual({ limit: 5, offset: 10 });
 	});
@@ -296,8 +306,8 @@ describe('Wix endpoints', () => {
 			string,
 			string,
 			{
-				body?: { query?: { filter?: unknown } };
-				query?: Record<string, unknown>;
+				body?: { query?: { filter?: Unused } };
+				query?: JsonBag;
 			},
 		];
 		expect(options.body?.query?.filter).toEqual({ firstName: 'Ada' });
@@ -312,7 +322,7 @@ describe('Wix endpoints', () => {
 		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
 			string,
-			{ body?: { query?: { filter?: unknown } } },
+			{ body?: { query?: { filter?: Unused } } },
 		];
 		expect(options.body?.query?.filter).toEqual({ status: 'DONE' });
 	});
@@ -327,7 +337,7 @@ describe('Wix endpoints', () => {
 		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
 			string,
-			{ body?: { query?: { filter?: unknown } } },
+			{ body?: { query?: { filter?: Unused } } },
 		];
 		expect(options.body?.query?.filter).toEqual({
 			lastName: { $startsWith: 'Mu' },
@@ -355,7 +365,7 @@ describe('Wix endpoints', () => {
 		const [path, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
 			string,
-			{ body?: Record<string, unknown> },
+			{ body?: JsonBag },
 		];
 		expect(path).toBe('/contacts/v4/contacts/contact-1/labels');
 		expect(options.body).toEqual({ labelKeys: ['vip'] });
@@ -372,7 +382,7 @@ describe('Wix endpoints', () => {
 		const [path, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
 			string,
-			{ method?: string; query?: unknown; body?: unknown },
+			{ method?: string; query?: Unused; body?: Unused },
 		];
 		expect(options.method).toBe('DELETE');
 		expect(path).toBe('/contacts/v4/contacts/contact-1/labels');
@@ -390,7 +400,7 @@ describe('Wix endpoints', () => {
 		const [path, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
 			string,
-			{ body?: Record<string, unknown> },
+			{ body?: JsonBag },
 		];
 		expect(path).toBe('/contacts/v4/bulk/contacts/update');
 		expect(options.body).toMatchObject({
@@ -409,7 +419,7 @@ describe('Wix endpoints', () => {
 		const [path, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
 			string,
-			{ body?: Record<string, unknown> },
+			{ body?: JsonBag },
 		];
 		expect(path).toBe('/ecom/v1/bulk/orders/update');
 		expect(options.body).toEqual({ orders: [{ order: { id: 'order-1' } }] });
@@ -422,7 +432,7 @@ describe('Wix endpoints', () => {
 		const [path, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
 			string,
-			{ method?: string; query?: unknown },
+			{ method?: string; query?: Unused },
 		];
 		expect(options.method).toBe('DELETE');
 		expect(path).toBe('/loyalty-coupons/v1/coupons/coupon-1');
@@ -439,7 +449,7 @@ describe('Wix endpoints', () => {
 		const [path, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
 			string,
-			{ body?: Record<string, unknown> },
+			{ body?: JsonBag },
 		];
 		expect(path).toBe('/_api/iam/authentication/v2/register');
 		expect(options.body).toEqual({
@@ -472,7 +482,7 @@ describe('Wix endpoints', () => {
 		expect(
 			(
 				mockMakeWixRequest.mock.calls[0]?.[2] as {
-					body?: Record<string, unknown>;
+					body?: JsonBag;
 				}
 			).body,
 		).toEqual({ formIds: ['form-1'] });
@@ -598,7 +608,7 @@ describe('Wix endpoints', () => {
 		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
 			string,
-			{ body?: unknown; query?: Record<string, unknown> },
+			{ body?: Unused; query?: JsonBag },
 		];
 		expect(options.body).toBeUndefined();
 		expect(options.query).toMatchObject({ limit: 5, offset: 0 });
@@ -642,7 +652,7 @@ describe('Wix endpoints', () => {
 		const [path, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
 			string,
-			{ body?: { search?: { search?: unknown }; query?: unknown } },
+			{ body?: { search?: { search?: Unused }; query?: Unused } },
 		];
 		expect(path).toBe('/stores/v3/products/search');
 		expect(options.body?.search).toEqual({
@@ -658,7 +668,7 @@ describe('Wix endpoints', () => {
 		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
 			string,
-			{ body?: { search?: unknown } },
+			{ body?: { search?: Unused } },
 		];
 		expect(options.body?.search).toEqual({
 			search: { expression: 'shoes' },
@@ -675,7 +685,7 @@ describe('Wix endpoints', () => {
 		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
 			string,
-			{ body?: { search?: unknown } },
+			{ body?: { search?: Unused } },
 		];
 		expect(options.body?.search).toEqual({
 			search: { expression: 'boots' },
@@ -694,7 +704,7 @@ describe('Wix endpoints', () => {
 		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
 			string,
-			{ body?: { query?: unknown; filter?: unknown } },
+			{ body?: { query?: Unused; filter?: Unused } },
 		];
 		expect(options.body).toEqual({
 			query: { filter: { status: 'ACTIVE' } },
@@ -746,10 +756,10 @@ describe('Wix endpoints', () => {
 			string,
 			{
 				body?: {
-					query?: unknown;
-					variables?: { filter?: unknown };
+					query?: Unused;
+					variables?: { filter?: Unused };
 				};
-				query?: Record<string, unknown>;
+				query?: JsonBag;
 			},
 		];
 		expect(typeof options.body?.query).toBe('string');
@@ -767,7 +777,7 @@ describe('Wix endpoints', () => {
 		const [, , options] = mockMakeWixRequest.mock.calls[0] as [
 			string,
 			string,
-			{ body?: Record<string, unknown> },
+			{ body?: JsonBag },
 		];
 		expect(options.body).toEqual({ filter: { status: 'CONFIRMED' } });
 	});
@@ -796,16 +806,18 @@ describe('Wix route helpers', () => {
 });
 
 describe('Wix plugin registration', () => {
-	function keyBuilderOf(plugin: { keyBuilder?: unknown }) {
+	// keyBuilder is an optional plugin hook; tests only invoke it as
+	// (ctx, source) => string and cannot name the runtime context type
+	function keyBuilderOf(plugin: { keyBuilder?: Unused }) {
 		const keyBuilder = plugin.keyBuilder;
 		if (typeof keyBuilder !== 'function') {
 			throw new Error('keyBuilder is not registered');
 		}
-		return keyBuilder as (ctx: unknown, source: string) => Promise<string>;
+		return keyBuilder as (ctx: Unused, source: string) => Promise<string>;
 	}
 
 	function flattenEndpoints(plugin: ReturnType<typeof wix>): string[] {
-		const groups = plugin.endpoints as Record<string, Record<string, unknown>>;
+		const groups = plugin.endpoints as Record<string, JsonBag>;
 		return Object.entries(groups)
 			.flatMap(([group, ops]) => Object.keys(ops).map((op) => `${group}.${op}`))
 			.sort();

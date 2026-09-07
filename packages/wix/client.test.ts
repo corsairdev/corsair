@@ -12,6 +12,11 @@ jest.mock('corsair/http', () => {
 
 const mockRequest = request as jest.Mock;
 
+// unused mock-call slots and unasserted json stay unknown: jest records
+// the full request() tuple, and a complete OpenAPIConfig / body union is
+// not practical in these field-level tests
+type Unused = unknown;
+
 function apiError(status: number, retryAfter?: number): ApiError {
 	const req: ApiRequestOptions = { method: 'GET', url: '/test' };
 	const res: ApiResult = {
@@ -79,7 +84,7 @@ describe('makeWixRequest plumbing', () => {
 
 		const [config, , extra] = mockRequest.mock.calls[0] as [
 			{ HEADERS: Record<string, string> },
-			unknown,
+			Unused,
 			{ rateLimitConfig: { enabled: boolean; maxRetries: number } },
 		];
 		expect(config.HEADERS.Authorization).toBe('Bearer tok');
@@ -92,8 +97,8 @@ describe('makeWixRequest plumbing', () => {
 			query: { limit: 5 },
 		});
 		const [, getOptions] = mockRequest.mock.calls[0] as [
-			unknown,
-			{ body?: unknown; query?: unknown },
+			Unused,
+			{ body?: Unused; query?: Unused },
 		];
 		expect(getOptions.query).toEqual({ limit: 5 });
 		expect(getOptions.body).toBeUndefined();
@@ -104,8 +109,8 @@ describe('makeWixRequest plumbing', () => {
 			body: { query: {} },
 		});
 		const [, postOptions] = mockRequest.mock.calls[0] as [
-			unknown,
-			{ body?: unknown; query?: unknown },
+			Unused,
+			{ body?: Unused; query?: Unused },
 		];
 		expect(postOptions.body).toEqual({ query: {} });
 		expect(postOptions.query).toBeUndefined();
@@ -187,8 +192,8 @@ describe('makeWixRequest plumbing', () => {
 			query: { revision: 3 },
 		});
 		const [, options] = mockRequest.mock.calls[0] as [
-			unknown,
-			{ method: string; query?: unknown },
+			Unused,
+			{ method: string; query?: Unused },
 		];
 		expect(options.method).toBe('DELETE');
 		expect(options.query).toEqual({ revision: 3 });
@@ -219,7 +224,7 @@ describe('makeWixRequest plumbing', () => {
 		mockRequest.mockRejectedValueOnce(apiError(429, 2000));
 		const failure = await makeWixRequest('/x', 'tok', {}).then(
 			() => null,
-			(error: unknown) => error,
+			(error: Unused) => error,
 		);
 		expect(failure).toBeInstanceOf(WixAPIError);
 		expect((failure as WixAPIError).status).toBe(429);
@@ -249,13 +254,13 @@ describe('makeWixRequest transport', () => {
 	const realFetch = global.fetch;
 	const { request: liveRequest } = jest.requireActual('corsair/http') as {
 		request: (
-			...args: [OpenAPIConfig, ApiRequestOptions, ...unknown[]]
-		) => Promise<unknown>;
+			...args: [OpenAPIConfig, ApiRequestOptions, ...Unused[]]
+		) => Promise<Unused>;
 	};
 
-	function mockFetch(payload: unknown, status = 200) {
+	function mockFetch(payload: Unused, status = 200) {
 		captured = undefined;
-		global.fetch = (async (url: unknown, init?: RequestInit) => {
+		global.fetch = (async (url: Unused, init?: RequestInit) => {
 			const headers: Record<string, string> = {};
 			const raw = init?.headers;
 			if (raw instanceof Headers) {
@@ -293,7 +298,7 @@ describe('makeWixRequest transport', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
 		mockRequest.mockImplementation(
-			(...args: [OpenAPIConfig, ApiRequestOptions, ...unknown[]]) =>
+			(...args: [OpenAPIConfig, ApiRequestOptions, ...Unused[]]) =>
 				liveRequest(...args),
 		);
 	});
@@ -306,7 +311,7 @@ describe('makeWixRequest transport', () => {
 	it('hits www.wixapis.com with the raw api-key token (no Bearer prefix)', async () => {
 		mockFetch({ contacts: [] });
 
-		const result = await makeWixRequest<{ contacts: unknown[] }>(
+		const result = await makeWixRequest<{ contacts: Unused[] }>(
 			'/contacts/v4/contacts/query',
 			'tok',
 			{
@@ -328,7 +333,7 @@ describe('makeWixRequest transport', () => {
 	it('hits www.wixapis.com with Bearer for oauth_2 (default)', async () => {
 		mockFetch({ contacts: [] });
 
-		await makeWixRequest<{ contacts: unknown[] }>(
+		await makeWixRequest<{ contacts: Unused[] }>(
 			'/contacts/v4/contacts/query',
 			'tok',
 			{ method: 'POST', body: { query: { paging: { limit: 1 } } } },
@@ -370,7 +375,7 @@ describe('makeWixRequest transport', () => {
 			{},
 		).then(
 			() => null,
-			(error: unknown) => error,
+			(error: Unused) => error,
 		);
 
 		expect(failure).toBeInstanceOf(WixAPIError);
