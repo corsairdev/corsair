@@ -609,10 +609,22 @@ describe('Wix endpoints', () => {
 		await expect(inventory(mockCtx, { siteId: 's' })).rejects.toThrow();
 
 		mockMakeWixRequest.mockResolvedValueOnce({
-			coupons: [{ id: 'c1', code: 123 }],
+			coupons: [{ id: 'c1', specification: { code: 123 } }],
 		});
 		const coupons = endpointFn('stores', 'queryCoupons');
 		await expect(coupons(mockCtx, { siteId: 's' })).rejects.toThrow();
+
+		mockMakeWixRequest.mockResolvedValueOnce({
+			coupons: [
+				{
+					id: 'c1',
+					expired: false,
+					specification: { code: 'SAVE10', name: 'Save 10', active: true },
+				},
+			],
+		});
+		const valid = await coupons(mockCtx, { siteId: 's' });
+		expect(valid).toBeDefined();
 	});
 
 	it('sends GET query params as query, not body', async () => {

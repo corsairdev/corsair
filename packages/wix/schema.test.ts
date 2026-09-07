@@ -336,12 +336,17 @@ describe('Wix output schemas', () => {
 		).toThrow();
 		expect(() =>
 			WixEndpointOutputSchemas.queryCoupons.parse({
-				coupons: [{ id: 'c1', code: 123 }],
+				coupons: [{ id: 'c1', specification: { code: 123 } }],
 			}),
 		).toThrow();
 		expect(() =>
 			WixEndpointOutputSchemas.queryCoupons.parse({
-				coupons: [{ id: 'c1', active: 'yes' }],
+				coupons: [{ id: 'c1', specification: { active: 'yes' } }],
+			}),
+		).toThrow();
+		expect(() =>
+			WixEndpointOutputSchemas.queryCoupons.parse({
+				coupons: [{ id: 'c1', expired: 'never' }],
 			}),
 		).toThrow();
 	});
@@ -383,8 +388,13 @@ describe('Wix database entities', () => {
 		expect(WixInventoryItem.safeParse({ trackQuantity: 1 }).success).toBe(
 			false,
 		);
-		expect(WixCoupon.safeParse({ code: 123 }).success).toBe(false);
-		expect(WixCoupon.safeParse({ active: 'yes' }).success).toBe(false);
+		expect(WixCoupon.safeParse({ specification: { code: 123 } }).success).toBe(
+			false,
+		);
+		expect(
+			WixCoupon.safeParse({ specification: { active: 'yes' } }).success,
+		).toBe(false);
+		expect(WixCoupon.safeParse({ expired: 'never' }).success).toBe(false);
 	});
 
 	it('accepts documented inventory and coupon shapes', () => {
@@ -401,10 +411,8 @@ describe('Wix database entities', () => {
 		expect(
 			WixCoupon.safeParse({
 				id: 'c1',
-				code: 'SAVE10',
-				name: 'Save 10',
-				active: true,
 				expired: false,
+				specification: { code: 'SAVE10', name: 'Save 10', active: true },
 			}).success,
 		).toBe(true);
 	});

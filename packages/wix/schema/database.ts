@@ -57,17 +57,23 @@ export type WixInventoryItem = z.infer<typeof WixInventoryItem>;
 
 /**
  * Minimal coupon shape verified from Query Coupons docs.
- * `code` is a unique string (max 20 chars), `active`/`expired` are
- * booleans. All optional: list queries can return partial projections.
+ * Real responses nest `code`/`name`/`active` under `specification`:
+ * `coupons[]: { id, specification: { code, name, active, ... }, expired }`.
+ * `code` is unique max-20 string, `active`/`expired` are booleans.
+ * All optional: list queries can return partial projections.
  * https://dev.wix.com/docs/api-reference/business-solutions/coupons/coupons/query-coupons
  */
 export const WixCoupon = z
 	.object({
 		id: z.string().optional(),
-		code: z.string().optional(),
-		name: z.string().optional(),
-		active: z.boolean().optional(),
 		expired: z.boolean().optional(),
+		specification: z
+			.looseObject({
+				code: z.string().optional(),
+				name: z.string().optional(),
+				active: z.boolean().optional(),
+			})
+			.optional(),
 	})
 	.loose();
 

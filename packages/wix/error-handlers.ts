@@ -25,6 +25,10 @@ function retryAfterMs(error: Error): number | undefined {
 		}
 		const body = error.body;
 		if (body && typeof body === 'object') {
+			// Narrow and safe: body arrives as parsed JSON from corsair/http,
+			// so an object here is a JSON record. The cast only enables
+			// optional reads of retry-after keys below, each re-checked with
+			// typeof/Number.isFinite before use; arrays safely yield undefined.
 			const record = body as Record<string, unknown>;
 			const raw =
 				record.retry_after ?? record.retryAfter ?? record['Retry-After'];
