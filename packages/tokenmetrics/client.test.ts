@@ -1,4 +1,6 @@
 // Mocked transport coverage intentionally runs in Corsair's normal CI lane.
+
+import { makeTokenMetricsRequest } from './client';
 import { getPrice, getTopMarketCap } from './endpoints/market';
 import { getIndicators } from './endpoints/technical';
 import { list } from './endpoints/tokens';
@@ -59,5 +61,31 @@ describe('Token Metrics API operations', () => {
 			expect(new Headers(init?.headers).get('api_key')).toBe(
 				'token-metrics-test-key',
 			);
+		for (const [, init] of fetchMock.mock.calls) {
+			expect(init?.redirect).toBe('error');
+		}
+	});
+
+	it('rejects blank token identifiers', async () => {
+		await expect(getPrice(ctx, { token_id: '   ' })).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('refuses redirects before forwarding the custom API key', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(null, {
+				status: 302,
+				headers: { Location: 'http://untrusted.example/collect' },
+			}),
+		);
+
+		await expect(
+			makeTokenMetricsRequest('/tokens', 'token-metrics-test-key'),
+		).rejects.toMatchObject({ status: 302 });
+		const init = fetchMock.mock.calls[0]?.[1];
+		expect(init?.redirect).toBe('error');
+		expect(new Headers(init?.headers).get('api_key')).toBe(
+			'token-metrics-test-key',
+		);
 	});
 });

@@ -5,7 +5,7 @@ const DateString = z
 	.string()
 	.regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD');
 const IdentifierFields = {
-	token_id: z.union([z.string(), z.number()]).optional(),
+	token_id: z.union([NonEmptyString, z.number()]).optional(),
 	symbol: NonEmptyString.optional(),
 };
 const requireIdentifier = <T extends z.ZodTypeAny>(schema: T) =>
