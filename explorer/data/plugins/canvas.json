@@ -1,7 +1,7 @@
 {
   "id": "canvas",
-  "displayName": "Canvas",
-  "description": "Canvas plugin for Corsair",
+  "displayName": "Canvas LMS",
+  "description": "Learning management system for courses, assignments, grades, and educational content.",
   "npmPackageName": "@corsair-dev/canvas",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

@@ -1,0 +1,249 @@
+---
+title: API
+description: "API reference for Blocknative: every `blocknative.api.*` operation with input and output types."
+---
+
+Every `blocknative.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Gas
+
+### getBaseFeeEstimates
+
+`gas.getBaseFeeEstimates`
+
+Get real-time base fee, blob base fee, and priority fee predictions for the next 5 Ethereum blocks
+
+**Risk:** `read`
+
+```ts
+await corsair.blocknative.api.gas.getBaseFeeEstimates({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `system` | `string` | Yes | — |
+| `network` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `currentBlockNumber` | `number` | No | — |
+| `msSinceLastBlock` | `number` | No | — |
+| `baseFeePerGas` | `number` | No | — |
+| `blobBaseFeePerGas` | `number` | No | — |
+| `estimatedBaseFees` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="estimatedBaseFees full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDistribution
+
+`gas.getDistribution`
+
+Retrieve the current mempool gas price distribution breakdown
+
+**Risk:** `read`
+
+```ts
+await corsair.blocknative.api.gas.getDistribution({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chainid` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `system` | `string` | Yes | — |
+| `network` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `maxPrice` | `number` | No | — |
+| `currentBlockNumber` | `number` | No | — |
+| `msSinceLastBlock` | `number` | No | — |
+| `topNDistribution` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="topNDistribution full type">
+
+```ts
+{
+  distribution: number[][],
+  n: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOracles
+
+`gas.getOracles`
+
+Retrieve metadata on supported gas oracles per chain
+
+**Risk:** `read`
+
+```ts
+await corsair.blocknative.api.gas.getOracles({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `oracles` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="oracles full type">
+
+```ts
+{
+  arch?: string,
+  chainId: number,
+  label: string,
+  icon?: string,
+  system?: string,
+  network?: string,
+  addressByVersion?: {
+  },
+  rpcUrl?: string,
+  blockExplorerUrl?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPrices
+
+`gas.getPrices`
+
+Fetch gas price estimates for specific inclusion probabilities (next block or ~10 seconds)
+
+**Risk:** `read`
+
+```ts
+await corsair.blocknative.api.gas.getPrices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chainid` | `number` | No | — |
+| `system` | `string` | No | — |
+| `network` | `string` | No | — |
+| `confidenceLevels` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `system` | `string` | Yes | — |
+| `network` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `maxPrice` | `number` | No | — |
+| `currentBlockNumber` | `number` | No | — |
+| `msSinceLastBlock` | `number` | No | — |
+| `blockPrices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="blockPrices full type">
+
+```ts
+{
+  blockNumber: number,
+  estimatedTransactionCount?: number,
+  baseFeePerGas?: number | null,
+  blobBaseFeePerGas?: number | null,
+  estimatedPrices: {
+    confidence: number,
+    price: number,
+    maxPriorityFeePerGas?: number | null,
+    maxFeePerGas?: number | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSupportedChains
+
+`gas.getSupportedChains`
+
+Retrieve supported chains metadata for Blocknative gas services
+
+**Risk:** `read`
+
+```ts
+await corsair.blocknative.api.gas.getSupportedChains({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chains` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="chains full type">
+
+```ts
+{
+  arch?: string,
+  chainId: number,
+  label: string,
+  icon?: string,
+  system?: string,
+  network?: string,
+  features?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

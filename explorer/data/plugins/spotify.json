@@ -1,7 +1,7 @@
 {
   "id": "spotify",
   "displayName": "Spotify",
-  "description": "Spotify plugin for Corsair",
+  "description": "Music streaming platform for playlists, tracks, albums, artists, and listening data APIs.",
   "npmPackageName": "@corsair-dev/spotify",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "oauth_2",

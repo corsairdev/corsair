@@ -1,7 +1,7 @@
 {
   "id": "apify",
   "displayName": "Apify",
-  "description": "Apify plugin for Corsair (MCP + REST API)",
+  "description": "Web scraping and automation platform for running actors and extracting structured data.",
   "npmPackageName": "@corsair-dev/apify",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

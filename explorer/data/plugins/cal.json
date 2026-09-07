@@ -1,7 +1,7 @@
 {
   "id": "cal",
-  "displayName": "Cal",
-  "description": "Cal plugin for Corsair",
+  "displayName": "Cal.com",
+  "description": "Open scheduling platform for booking meetings, availability, and calendar integrations.",
   "npmPackageName": "@corsair-dev/cal",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -26,7 +26,7 @@
     {
       "path": "cal.api.bookings.cancel",
       "shortPath": "bookings.cancel",
-      "description": "Cancel a booking [DESTRUCTIVE]",
+      "description": "Cancel a booking",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
