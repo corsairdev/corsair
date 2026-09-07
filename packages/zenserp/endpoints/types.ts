@@ -52,10 +52,16 @@ export const ListLocationsInputSchema = z.object({
 export const ListSearchEnginesInputSchema = EmptyInputSchema;
 export const ListLanguagesInputSchema = EmptyInputSchema;
 
+/**
+ * Search-engine and product payload fields vary by query and Google vertical.
+ * Stable envelope fields are validated explicitly below; documented dynamic
+ * result fields are preserved without asserting a shape the provider does not
+ * guarantee.
+ */
 const UnknownRecord = z.record(z.string(), z.unknown());
 export const SearchResponseSchema = z
 	.object({
-		query: UnknownRecord.optional(),
+		query: UnknownRecord,
 		organic: z.array(UnknownRecord).optional(),
 		paid: z.array(UnknownRecord).optional(),
 		images: z.array(UnknownRecord).optional(),
@@ -66,10 +72,18 @@ export const SearchResponseSchema = z
 	})
 	.loose();
 export const ShoppingProductResponseSchema = z
-	.object({ product: UnknownRecord.optional() })
+	.object({
+		query: UnknownRecord,
+		title: z.string(),
+		description: z.string().nullable().optional(),
+		image: z.string().url().optional(),
+		reviews: z.array(UnknownRecord).optional(),
+		specifications: z.array(UnknownRecord).optional(),
+		sellers: z.array(UnknownRecord).optional(),
+	})
 	.loose();
 export const TrendsResponseSchema = z
-	.object({ data: z.array(UnknownRecord).optional() })
+	.object({ json: UnknownRecord, html: z.string().optional() })
 	.loose();
 export const StatusResponseSchema = z
 	.object({ remaining_requests: z.number().int().min(0) })

@@ -10,6 +10,11 @@ import {
 import { bing, google, reverseImage, yandex } from './endpoints/search';
 import { getProduct } from './endpoints/shopping';
 import { get as getTrends } from './endpoints/trends';
+import {
+	SearchResponseSchema,
+	ShoppingProductResponseSchema,
+	TrendsResponseSchema,
+} from './endpoints/types';
 
 const fetchMock = jest.spyOn(globalThis, 'fetch');
 const ctx = {
@@ -32,9 +37,16 @@ describe('Zenserp API operations', () => {
 			const url = String(input);
 			if (url.includes('/status')) return json({ remaining_requests: 1499 });
 			if (url.includes('/shopping'))
-				return json({ product: { product_id: 'p1', title: 'Keyboard' } });
+				return json({
+					query: { product_id: 'p1' },
+					title: 'Keyboard',
+					description: 'Mechanical keyboard',
+				});
 			if (url.includes('/trends'))
-				return json({ data: [{ keyword: 'corsair' }] });
+				return json({
+					json: { corsair: { trends: {} } },
+					html: '<div>corsair</div>',
+				});
 			if (url.includes('/batches')) return json({ data: [{ id: 'batch-1' }] });
 			if (url.includes('/gl'))
 				return json([{ name: 'United States', value: 'us' }]);
@@ -87,5 +99,11 @@ describe('Zenserp API operations', () => {
 		for (const [, init] of fetchMock.mock.calls) {
 			expect(new Headers(init?.headers).get('apikey')).toBe('zenserp-test-key');
 		}
+	});
+
+	it('rejects empty successful payloads for data-bearing operations', () => {
+		expect(() => SearchResponseSchema.parse({})).toThrow();
+		expect(() => ShoppingProductResponseSchema.parse({})).toThrow();
+		expect(() => TrendsResponseSchema.parse({})).toThrow();
 	});
 });
