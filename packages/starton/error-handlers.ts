@@ -1,6 +1,6 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { isNonIdempotentOperation } from './idempotency';
+import { isRetryableOperation } from './idempotency';
 
 /**
  * Starton documents per-plan rate limits (Free 50 req/min, Developer 100
@@ -8,8 +8,9 @@ import { isNonIdempotentOperation } from './idempotency';
  * but declares no 429 response on any individual path. We therefore route on
  * the HTTP status and honour `Retry-After` when the gateway sends one.
  *
- * Retries are withheld entirely for the operations that broadcast a blockchain
- * transaction — see `./idempotency.ts` for why replaying those is unsafe.
+ * Retries are granted only to operations on the verified retry-safe allowlist
+ * in `./idempotency.ts`; everything else — including an unrecognised operation
+ * or a missing error context — is surfaced to the caller instead of replayed.
  * https://github.com/starton-io/starton-openapi
  */
 export const errorHandlers = {
@@ -22,9 +23,10 @@ export const errorHandlers = {
 		handler: async (error: Error, context?: ErrorContext) => {
 			// `corsair/http` already retried this request up to 3 times before the
 			// error surfaced here. Replaying a transaction-producing write on top of
-			// that could broadcast it twice, so those operations get no further
-			// attempts.
-			if (context && isNonIdempotentOperation(context.operation)) {
+			// that could broadcast it twice, so only operations on the verified
+			// retry-safe allowlist get further attempts — an absent or unrecognised
+			// operation fails closed.
+			if (!isRetryableOperation(context?.operation)) {
 				return { maxRetries: 0 };
 			}
 			let retryAfterMs: number | undefined;
@@ -70,7 +72,7 @@ export const errorHandlers = {
 		// transaction before the response failed. Reads are replayed; writes that
 		// touch the chain are surfaced to the caller instead of being duplicated.
 		handler: async (_error: Error, context?: ErrorContext) => {
-			if (context && isNonIdempotentOperation(context.operation)) {
+			if (!isRetryableOperation(context?.operation)) {
 				return { maxRetries: 0 };
 			}
 			return { maxRetries: 3 };

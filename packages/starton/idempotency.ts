@@ -42,3 +42,32 @@ export const NON_IDEMPOTENT_OPERATIONS = new Set([
 export function isNonIdempotentOperation(operation: string): boolean {
 	return NON_IDEMPOTENT_OPERATIONS.has(operation);
 }
+
+/**
+ * Operations that are verified safe to re-issue after an ambiguous failure.
+ *
+ * This is a deliberate allowlist rather than "everything not in
+ * `NON_IDEMPOTENT_OPERATIONS`": an operation added later is not retryable
+ * until someone classifies it here, and an operation name that cannot be
+ * recognised at all (a rename, a typo, a caller that supplies no error
+ * context) is never retried.
+ */
+export const RETRY_SAFE_OPERATIONS = new Set([
+	// GET /v3/kms/wallet
+	'wallet.list',
+	// GET /v3/transaction/{id}
+	'transaction.get',
+	// POST /v3/smart-contract/{network}/{address}/read — a POST only because
+	// Starton takes the call arguments in a body; it broadcasts nothing.
+	'smartContract.read',
+]);
+
+/**
+ * True only when `operation` is a known, explicitly retry-safe operation.
+ *
+ * Returns false for an absent, unknown or unclassified operation so the retry
+ * decision fails closed.
+ */
+export function isRetryableOperation(operation: string | undefined): boolean {
+	return operation !== undefined && RETRY_SAFE_OPERATIONS.has(operation);
+}

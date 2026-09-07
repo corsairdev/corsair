@@ -60,7 +60,9 @@ export const read: StartonEndpoints['smartContractRead'] = async (
 	const response = await makeStartonRequest<unknown>(
 		`v3/smart-contract/${encodeStartonPathSegment(network)}/${encodeStartonPathSegment(address)}/read`,
 		ctx.key,
-		{ method: 'POST', body },
+		// A POST only because Starton takes the call arguments in a body; it
+		// never broadcasts a transaction, so replaying it is harmless.
+		{ method: 'POST', body, replayable: true },
 	);
 	const result = StartonEndpointOutputSchemas.smartContractRead.parse(response);
 	await logEventFromContext(

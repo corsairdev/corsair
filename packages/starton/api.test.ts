@@ -9,7 +9,9 @@ import {
 import { errorHandlers } from './error-handlers';
 import {
 	isNonIdempotentOperation,
+	isRetryableOperation,
 	NON_IDEMPOTENT_OPERATIONS,
+	RETRY_SAFE_OPERATIONS,
 } from './idempotency';
 import type { StartonContext } from './index';
 import { starton, startonEndpointSchemas } from './index';
@@ -625,7 +627,12 @@ describe('error handling', () => {
 		}).catch((e) => e)) as Error;
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
-		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(err);
+		// A verified retry-safe operation — the handler now fails closed without
+		// one, which is covered separately below.
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
+			err,
+			errorContext('wallet.list'),
+		);
 		expect(result.maxRetries).toBe(5);
 	});
 
@@ -961,7 +968,9 @@ describe('error routing (403 / retry-after)', () => {
 		);
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
-		await expect(errorHandlers.RATE_LIMIT_ERROR.handler(err)).resolves.toEqual({
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(err, errorContext('wallet.list')),
+		).resolves.toEqual({
 			maxRetries: 5,
 			headersRetryAfterMs: 2000,
 		});
@@ -1308,5 +1317,157 @@ describe('credential secrecy', () => {
 
 		expect(err.status).toBe(400);
 		expect(JSON.stringify(err.body)).toContain('INSUFFICIENT_FUNDS');
+	});
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Fail-closed defaults
+//
+// Two review findings, both about defaulting to the unsafe branch:
+//   1. `replayable` defaulted to true, so a future non-GET endpoint that forgot
+//      `replayable: false` would be replayed after a 429.
+//   2. The retry handlers only withheld retries when an ErrorContext was
+//      present, so a missing or unrecognised operation fell through to
+//      retrying.
+// Both now default to "do not replay".
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('replayability defaults to the safe branch per HTTP method', () => {
+	it('GET defaults to replayable', async () => {
+		const attempts = countingFetch(429, 2);
+
+		await makeStartonRequest('v3/transaction/tx_1', 'k', {
+			method: 'GET',
+		}).catch(() => undefined);
+
+		expect(attempts()).toBe(2);
+	});
+
+	it.each(['POST', 'PUT', 'PATCH', 'DELETE'] as const)(
+		'%s defaults to non-replayable even without an explicit flag',
+		async (method) => {
+			const attempts = countingFetch(429);
+
+			await makeStartonRequest('v3/kms/wallet', 'k', {
+				method,
+				body: { kmsId: 'kms_1' },
+			}).catch(() => undefined);
+
+			expect(attempts()).toBe(1);
+		},
+	);
+
+	it('an explicit replayable: true still opts a non-GET into replay', async () => {
+		const attempts = countingFetch(429, 2);
+
+		await makeStartonRequest('v3/smart-contract/n/a/read', 'k', {
+			method: 'POST',
+			body: {},
+			replayable: true,
+		}).catch(() => undefined);
+
+		expect(attempts()).toBe(2);
+	});
+
+	it('an explicit replayable: false still overrides the GET default', async () => {
+		const attempts = countingFetch(429);
+
+		await makeStartonRequest('v3/kms/wallet', 'k', {
+			method: 'GET',
+			replayable: false,
+		}).catch(() => undefined);
+
+		expect(attempts()).toBe(1);
+	});
+
+	it('smartContract.read stays replayable through the endpoint', async () => {
+		const attempts = countingFetch(429, 2);
+
+		await SmartContract.read(ctx, {
+			network: 'polygon-mumbai',
+			address: '0xabc',
+			functionName: 'balanceOf',
+			params: [],
+		}).catch(() => undefined);
+
+		expect(attempts()).toBe(2);
+	});
+});
+
+describe('retry decision fails closed without a verified operation', () => {
+	const rateLimited = new ApiError(
+		{ method: 'POST', url: 'v3/smart-contract/x/y/call' },
+		{
+			url: 'https://api.starton.com',
+			ok: false,
+			status: 429,
+			statusText: 'Too Many Requests',
+			body: {},
+		},
+		'Too Many Requests',
+		{ retryAfter: 1000 },
+	);
+	const serverError = new ApiError(
+		{ method: 'POST', url: 'v3/smart-contract/x/y/call' },
+		{
+			url: 'https://api.starton.com',
+			ok: false,
+			status: 503,
+			statusText: 'Service Unavailable',
+			body: {},
+		},
+		'Service Unavailable',
+	);
+
+	it('withholds retries on both paths when context is absent', async () => {
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(rateLimited),
+		).resolves.toEqual({ maxRetries: 0 });
+		await expect(
+			errorHandlers.SERVER_ERROR.handler(serverError),
+		).resolves.toEqual({ maxRetries: 0 });
+	});
+
+	it('withholds retries on both paths for an unrecognised operation', async () => {
+		const unknown = errorContext('starton.someFutureOperation');
+
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(rateLimited, unknown),
+		).resolves.toEqual({ maxRetries: 0 });
+		await expect(
+			errorHandlers.SERVER_ERROR.handler(serverError, unknown),
+		).resolves.toEqual({ maxRetries: 0 });
+	});
+
+	it('still grants the documented limits to verified-safe operations', async () => {
+		for (const operation of RETRY_SAFE_OPERATIONS) {
+			await expect(
+				errorHandlers.RATE_LIMIT_ERROR.handler(
+					rateLimited,
+					errorContext(operation),
+				),
+			).resolves.toEqual({ maxRetries: 5, headersRetryAfterMs: 1000 });
+			await expect(
+				errorHandlers.SERVER_ERROR.handler(
+					serverError,
+					errorContext(operation),
+				),
+			).resolves.toEqual({ maxRetries: 3 });
+		}
+	});
+
+	it('the two classifications partition every declared operation exactly', () => {
+		const declared = Object.keys(startonEndpointSchemas);
+
+		// Nothing unclassified (would fail closed at runtime) and nothing in both.
+		for (const operation of declared) {
+			expect(
+				isRetryableOperation(operation) !== isNonIdempotentOperation(operation),
+			).toBe(true);
+		}
+		expect(
+			[...RETRY_SAFE_OPERATIONS, ...NON_IDEMPOTENT_OPERATIONS].sort(),
+		).toEqual(declared.sort());
+		expect(isRetryableOperation(undefined)).toBe(false);
 	});
 });

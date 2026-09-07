@@ -43,8 +43,8 @@ export function encodeStartonPathSegment(value: string): string {
  * `corsair/http` retries a request internally when it sees HTTP 429 — three
  * extra attempts by default. That is correct for reads, but a rate-limited
  * write that Starton had already begun processing would be replayed, and
- * Starton offers no idempotency key to make that safe. Callers that broadcast
- * a blockchain transaction pass `replayable: false` to switch it off.
+ * Starton offers no idempotency key to make that safe, so replay defaults to
+ * off for every method except GET.
  */
 const NO_AUTOMATIC_REPLAY: RateLimitConfig = {
 	enabled: false,
@@ -64,9 +64,13 @@ export type StartonRequestOptions = {
 	body?: unknown;
 	query?: Record<string, string | number | boolean | undefined>;
 	/**
-	 * Whether this request may be re-sent automatically after a 429. Defaults to
-	 * `true`; set it to `false` for any call that can create a blockchain
-	 * transaction or otherwise duplicate a side effect.
+	 * Whether this request may be re-sent automatically after a 429.
+	 *
+	 * Defaults to `true` for GET and `false` for every other method, so a new
+	 * write endpoint is safe by default and has to opt in to replay explicitly.
+	 * Set it to `true` only for a non-GET request that provably has no side
+	 * effect — Starton's `read` endpoint is a POST purely because it takes the
+	 * function arguments in a body.
 	 */
 	replayable?: boolean;
 };
@@ -76,7 +80,10 @@ export async function makeStartonRequest<T>(
 	apiKey: string,
 	options: StartonRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, replayable = true } = options;
+	const { method = 'GET', body, query } = options;
+	// Fail closed: anything that is not a GET is treated as a write unless the
+	// caller has explicitly established that replaying it is harmless.
+	const replayable = options.replayable ?? method === 'GET';
 
 	const config: OpenAPIConfig = {
 		BASE: STARTON_API_BASE,
