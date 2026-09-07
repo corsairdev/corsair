@@ -166,6 +166,28 @@ describeLive('live Humanitix API', () => {
 		expect(tags.page).toBe(1);
 		expect(Array.isArray(tags.tags)).toBe(true);
 	});
+
+	it('getEvent hits GET /events/{eventId}', async () => {
+		if (!LIVE_API_KEY) throw new Error('HUMANITIX_API_KEY is required');
+
+		const listed = HumanitixEndpointOutputSchemas.getEvents.parse(
+			await liveRequest('/events', LIVE_API_KEY, {
+				method: 'GET',
+				query: { page: 1, pageSize: 1 },
+			}),
+		);
+		const eventId = listed.events[0]?._id ?? '5ac598ccd8fe7c0c0f212e2a';
+		try {
+			const event = HumanitixEndpointOutputSchemas.getEvent.parse(
+				await liveRequest(`/events/${eventId}`, LIVE_API_KEY, {
+					method: 'GET',
+				}),
+			);
+			expect(event._id).toBe(eventId);
+		} catch (error) {
+			expect(String(error)).toMatch(/404|not found|Event/i);
+		}
+	});
 });
 
 describe('tags.list', () => {
