@@ -92,6 +92,24 @@ export const WixOrder = z
 export type WixOrder = z.infer<typeof WixOrder>;
 
 /**
+ * Update-specific order contract for bulk-update inputs.
+ * The bulk-update route documents field removal via `null`
+ * ("To remove a field, pass null"), so updatable typed fields accept
+ * `null` here. Response schemas (`WixOrder`) stay non-nullable:
+ * Wix never returns `null` status on reads. `id` stays a plain string —
+ * it identifies the order and is never itself removable.
+ */
+export const WixOrderUpdate = z
+	.object({
+		id: z.string().optional(),
+		revision: z.string().optional(),
+		status: z.union([z.string(), z.null()]).optional(),
+	})
+	.loose();
+
+export type WixOrderUpdate = z.infer<typeof WixOrderUpdate>;
+
+/**
  * Minimal booking-category shape verified from Query Categories docs.
  * `categories[]: { id, name, revision, createdDate, updatedDate }`.
  * All optional: paging/projection can omit any of them.

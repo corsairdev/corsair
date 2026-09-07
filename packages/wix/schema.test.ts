@@ -87,6 +87,18 @@ describe('Wix input schemas accept valid input', () => {
 				orders: [{ order: { id: 'o1', status: 'APPROVED' } }],
 			}).orders,
 		).toHaveLength(1);
+		// Documented field removal: null status must reach Wix.
+		expect(
+			WixEndpointInputSchemas.bulkUpdateOrders.parse({
+				orders: [{ order: { id: 'o1', status: null } }],
+			}).orders,
+		).toHaveLength(1);
+		// Read contract stays non-nullable: responses never carry null status.
+		expect(() =>
+			WixEndpointOutputSchemas.queryEcomOrders.parse({
+				orders: [{ id: 'o1', status: null }],
+			}),
+		).toThrow();
 	});
 
 	it('accepts member registration input', () => {

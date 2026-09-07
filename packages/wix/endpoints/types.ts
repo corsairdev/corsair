@@ -16,6 +16,7 @@ import {
 	WixManualTaxMapping,
 	WixModerationRule,
 	WixOrder,
+	WixOrderUpdate,
 	WixProduct,
 	WixSiteFolder,
 	WixTaxGroup,
@@ -269,8 +270,10 @@ const BulkActionMetadataSchema = z
  * contract across all 143 operations is an optional string `id`/`revision`
  * plus JSON-encodable values. Domain queries use dedicated typed schemas
  * below; this stays intentionally narrow so new Wix fields never break
- * existing callers. Do not widen this to guess resource fields — add a
- * dedicated verified entity instead.
+ * existing callers. The two dead v1 endpoints (`sessions`, `catalogs`,
+ * live-verified 404) also stay here rather than inventing shapes.
+ * Do not widen this to guess resource fields — add a dedicated verified
+ * entity instead.
  */
 const WixItemSchema = z
 	.looseObject({
@@ -320,6 +323,7 @@ function typedItemSchema(schema: z.ZodTypeAny): z.ZodTypeAny {
 const WixContactItemSchema = typedItemSchema(WixContact);
 const WixProductItemSchema = typedItemSchema(WixProduct);
 const WixOrderItemSchema = typedItemSchema(WixOrder);
+const WixOrderUpdateItemSchema = typedItemSchema(WixOrderUpdate);
 const WixInventoryItemSchema = typedItemSchema(WixInventoryItem);
 const WixCouponItemSchema = typedItemSchema(WixCoupon);
 const WixBookingCategoryItemSchema = typedItemSchema(WixBookingCategory);
@@ -763,11 +767,10 @@ export type QueryEcomOrdersResponse = z.infer<
 
 const BulkUpdateOrdersInputSchema = z.looseObject({
 	...SiteScopeFields,
-	// Same `WixOrder` contract as query responses: bulk payloads carry
-	// full order objects, not bare ids. Loose so new order fields never
-	// break existing callers.
+	// Update contract (`WixOrderUpdate`), not the read contract: the route
+	// documents field removal via `null`, which read schemas reject.
 	orders: z
-		.array(z.looseObject({ order: WixOrderItemSchema }))
+		.array(z.looseObject({ order: WixOrderUpdateItemSchema }))
 		.min(1)
 		.max(100),
 });
