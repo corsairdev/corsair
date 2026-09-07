@@ -1,0 +1,74 @@
+import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
+import { ChatworkAPIError } from './client';
+
+export const errorHandlers = {
+	RATE_LIMIT_ERROR: {
+		match: (error) => {
+			if (error instanceof ChatworkAPIError && error.status === 429) {
+				return true;
+			}
+			if (error instanceof ApiError && error.status === 429) {
+				return true;
+			}
+			const msg = error.message.toLowerCase();
+			return msg.includes('rate_limit') || msg.includes('429');
+		},
+		handler: async (error) => {
+			let retryAfterMs: number | undefined;
+			if (error instanceof ChatworkAPIError && error.retryAfter !== undefined) {
+				retryAfterMs = error.retryAfter;
+			} else if (error instanceof ApiError && error.retryAfter !== undefined) {
+				retryAfterMs = error.retryAfter;
+			}
+			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+		},
+	},
+	AUTH_ERROR: {
+		match: (error) => {
+			if (error instanceof ChatworkAPIError && error.status === 401) {
+				return true;
+			}
+			if (error instanceof ApiError && error.status === 401) {
+				return true;
+			}
+			const msg = error.message.toLowerCase();
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('invalid_token') ||
+				msg.includes('401')
+			);
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	PERMISSION_ERROR: {
+		match: (error) => {
+			if (error instanceof ChatworkAPIError && error.status === 403) {
+				return true;
+			}
+			if (error instanceof ApiError && error.status === 403) {
+				return true;
+			}
+			const msg = error.message.toLowerCase();
+			return msg.includes('forbidden') || msg.includes('403');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	NOT_FOUND_ERROR: {
+		match: (error) => {
+			if (error instanceof ChatworkAPIError && error.status === 404) {
+				return true;
+			}
+			if (error instanceof ApiError && error.status === 404) {
+				return true;
+			}
+			const msg = error.message.toLowerCase();
+			return msg.includes('not_found') || msg.includes('404');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	DEFAULT: {
+		match: () => true,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+} satisfies CorsairErrorHandler;

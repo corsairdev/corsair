@@ -117,6 +117,7 @@ export const BaseProviders = [
 	'certifier',
 	'chatbotkit',
 	'chatfai',
+	'chatwork',
 	'chmeetings',
 	'circleci',
 	'clickhouse',
@@ -394,6 +395,7 @@ export const ProviderDisplayNames = {
 	certifier: 'Certifier',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
+	chatwork: 'Chatwork',
 	chmeetings: 'ChMeetings',
 	circleci: 'CircleCI',
 	clickhouse: 'Clickhouse',
@@ -678,6 +680,7 @@ export type AllProviders =
 	| 'certifier'
 	| 'chatbotkit'
 	| 'chatfai'
+	| 'chatwork'
 	| 'chmeetings'
 	| 'circleci'
 	| 'clickhouse'
