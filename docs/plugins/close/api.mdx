@@ -1,0 +1,1455 @@
+---
+title: API
+description: "API reference for Close: every `close.api.*` operation with input and output types."
+---
+
+Every `close.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Activities
+
+### createNote
+
+`activities.createNote`
+
+Create a note activity
+
+**Risk:** `write`
+
+```ts
+await corsair.close.api.activities.createNote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_id` | `string` | Yes | — |
+| `note` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `lead_id` | `string` | No | — |
+| `note` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+
+
+
+---
+
+### listCalls
+
+`activities.listCalls`
+
+List call activities
+
+**Risk:** `read`
+
+```ts
+await corsair.close.api.activities.listCalls({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_id` | `string` | No | — |
+| `_limit` | `number` | No | — |
+| `_skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  lead_id?: string,
+  phone?: string,
+  direction?: string,
+  duration?: number,
+  status?: string,
+  user_id?: string | null,
+  organization_id?: string,
+  date_created?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEmails
+
+`activities.listEmails`
+
+List email activities
+
+**Risk:** `read`
+
+```ts
+await corsair.close.api.activities.listEmails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_id` | `string` | No | — |
+| `_limit` | `number` | No | — |
+| `_skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  lead_id?: string,
+  subject?: string,
+  body_text?: string,
+  sender?: string,
+  direction?: string,
+  user_id?: string | null,
+  organization_id?: string,
+  date_created?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listNotes
+
+`activities.listNotes`
+
+List note activities
+
+**Risk:** `read`
+
+```ts
+await corsair.close.api.activities.listNotes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_id` | `string` | No | — |
+| `_limit` | `number` | No | — |
+| `_skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  lead_id?: string,
+  note?: string,
+  user_id?: string | null,
+  organization_id?: string,
+  date_created?: string,
+  date_updated?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.close.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `emails` | `object[]` | No | — |
+| `phones` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  email: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  phone: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `lead_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `emails` | `object[]` | No | — |
+| `phones` | `object[]` | No | — |
+| `organization_id` | `string` | No | — |
+| `created_by` | `string` | No | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  email: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  phone: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.close.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Retrieve a contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.close.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `lead_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `emails` | `object[]` | No | — |
+| `phones` | `object[]` | No | — |
+| `organization_id` | `string` | No | — |
+| `created_by` | `string` | No | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  email: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  phone: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.close.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_id` | `string` | No | — |
+| `_limit` | `number` | No | — |
+| `_skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  lead_id?: string,
+  name?: string,
+  title?: string | null,
+  emails?: {
+    email: string,
+    type?: string
+  }[],
+  phones?: {
+    phone: string,
+    type?: string
+  }[],
+  organization_id?: string,
+  created_by?: string | null,
+  date_created?: string,
+  date_updated?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.close.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `emails` | `object[]` | No | — |
+| `phones` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  email: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  phone: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `lead_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `emails` | `object[]` | No | — |
+| `phones` | `object[]` | No | — |
+| `organization_id` | `string` | No | — |
+| `created_by` | `string` | No | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  email: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  phone: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Custom Fields
+
+### listContact
+
+`customFields.listContact`
+
+List contact custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.close.api.customFields.listContact({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  type?: string,
+  choices?: string[],
+  organization_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLead
+
+`customFields.listLead`
+
+List lead custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.close.api.customFields.listLead({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  type?: string,
+  choices?: string[],
+  organization_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Leads
+
+### create
+
+`leads.create`
+
+Create a new lead
+
+**Risk:** `write`
+
+```ts
+await corsair.close.api.leads.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `status_id` | `string` | No | — |
+| `description` | `string` | No | — |
+| `url` | `string` | No | — |
+| `custom` | `object` | No | — |
+| `contacts` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="contacts full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status_id` | `string` | No | — |
+| `status_label` | `string` | No | — |
+| `description` | `string` | No | — |
+| `url` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `contacts` | `object[]` | No | — |
+| `custom` | `object` | No | — |
+| `created_by` | `string` | No | — |
+| `updated_by` | `string` | No | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="custom full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`leads.delete`
+
+Delete a lead by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.close.api.leads.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`leads.get`
+
+Retrieve a lead by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.close.api.leads.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status_id` | `string` | No | — |
+| `status_label` | `string` | No | — |
+| `description` | `string` | No | — |
+| `url` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `contacts` | `object[]` | No | — |
+| `custom` | `object` | No | — |
+| `created_by` | `string` | No | — |
+| `updated_by` | `string` | No | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="custom full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`leads.list`
+
+List leads with optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.close.api.leads.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_limit` | `number` | No | — |
+| `_skip` | `number` | No | — |
+| `query` | `string` | No | — |
+| `status_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `total_results` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  status_id?: string | null,
+  status_label?: string | null,
+  description?: string | null,
+  url?: string | null,
+  organization_id?: string,
+  contacts?: {
+  }[],
+  custom?: {
+  },
+  created_by?: string | null,
+  updated_by?: string | null,
+  date_created?: string,
+  date_updated?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`leads.update`
+
+Update an existing lead
+
+**Risk:** `write`
+
+```ts
+await corsair.close.api.leads.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status_id` | `string` | No | — |
+| `description` | `string` | No | — |
+| `url` | `string` | No | — |
+| `custom` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status_id` | `string` | No | — |
+| `status_label` | `string` | No | — |
+| `description` | `string` | No | — |
+| `url` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `contacts` | `object[]` | No | — |
+| `custom` | `object` | No | — |
+| `created_by` | `string` | No | — |
+| `updated_by` | `string` | No | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="custom full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Opportunities
+
+### create
+
+`opportunities.create`
+
+Create an opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.close.api.opportunities.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_id` | `string` | Yes | — |
+| `status_id` | `string` | Yes | — |
+| `value` | `number` | No | — |
+| `value_period` | `string` | No | — |
+| `confidence` | `number` | No | — |
+| `user_id` | `string` | No | — |
+| `note` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `lead_id` | `string` | No | — |
+| `lead_name` | `string` | No | — |
+| `status_id` | `string` | No | — |
+| `status_label` | `string` | No | — |
+| `status_type` | `string` | No | — |
+| `value` | `number` | No | — |
+| `value_period` | `string` | No | — |
+| `confidence` | `number` | No | — |
+| `user_id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `date_won` | `string` | No | — |
+| `date_lost` | `string` | No | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`opportunities.delete`
+
+Delete an opportunity
+
+**Risk:** `destructive`
+
+```ts
+await corsair.close.api.opportunities.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`opportunities.get`
+
+Retrieve an opportunity by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.close.api.opportunities.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `lead_id` | `string` | No | — |
+| `lead_name` | `string` | No | — |
+| `status_id` | `string` | No | — |
+| `status_label` | `string` | No | — |
+| `status_type` | `string` | No | — |
+| `value` | `number` | No | — |
+| `value_period` | `string` | No | — |
+| `confidence` | `number` | No | — |
+| `user_id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `date_won` | `string` | No | — |
+| `date_lost` | `string` | No | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`opportunities.list`
+
+List opportunities
+
+**Risk:** `read`
+
+```ts
+await corsair.close.api.opportunities.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_id` | `string` | No | — |
+| `status_id` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `_limit` | `number` | No | — |
+| `_skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  lead_id?: string,
+  lead_name?: string,
+  status_id?: string,
+  status_label?: string,
+  status_type?: string,
+  value?: number,
+  value_period?: string,
+  confidence?: number,
+  user_id?: string | null,
+  organization_id?: string,
+  date_won?: string | null,
+  date_lost?: string | null,
+  date_created?: string,
+  date_updated?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`opportunities.update`
+
+Update an opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.close.api.opportunities.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status_id` | `string` | No | — |
+| `value` | `number` | No | — |
+| `value_period` | `string` | No | — |
+| `confidence` | `number` | No | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `lead_id` | `string` | No | — |
+| `lead_name` | `string` | No | — |
+| `status_id` | `string` | No | — |
+| `status_label` | `string` | No | — |
+| `status_type` | `string` | No | — |
+| `value` | `number` | No | — |
+| `value_period` | `string` | No | — |
+| `confidence` | `number` | No | — |
+| `user_id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `date_won` | `string` | No | — |
+| `date_lost` | `string` | No | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a task
+
+**Risk:** `write`
+
+```ts
+await corsair.close.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_id` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `due_date` | `string` | No | — |
+| `assigned_to` | `string` | No | — |
+| `type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `lead_id` | `string` | No | — |
+| `text` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `is_complete` | `boolean` | No | — |
+| `assigned_to` | `string` | No | — |
+| `type` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `created_by` | `string` | No | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Delete a task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.close.api.tasks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Retrieve a task by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.close.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `lead_id` | `string` | No | — |
+| `text` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `is_complete` | `boolean` | No | — |
+| `assigned_to` | `string` | No | — |
+| `type` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `created_by` | `string` | No | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.close.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_id` | `string` | No | — |
+| `is_complete` | `boolean` | No | — |
+| `assigned_to` | `string` | No | — |
+| `_limit` | `number` | No | — |
+| `_skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  lead_id?: string,
+  text?: string,
+  due_date?: string | null,
+  is_complete?: boolean,
+  assigned_to?: string | null,
+  type?: string,
+  organization_id?: string,
+  created_by?: string | null,
+  date_created?: string,
+  date_updated?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update a task
+
+**Risk:** `write`
+
+```ts
+await corsair.close.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `is_complete` | `boolean` | No | — |
+| `assigned_to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `lead_id` | `string` | No | — |
+| `text` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `is_complete` | `boolean` | No | — |
+| `assigned_to` | `string` | No | — |
+| `type` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+| `created_by` | `string` | No | — |
+| `date_created` | `string` | No | — |
+| `date_updated` | `string` | No | — |
+
+
+
+---
+
+## Users
+
+### getMe
+
+`users.getMe`
+
+Get current authenticated user info
+
+**Risk:** `read`
+
+```ts
+await corsair.close.api.users.getMe({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `image` | `string` | No | — |
+| `organization_id` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List users in the organization
+
+**Risk:** `read`
+
+```ts
+await corsair.close.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string,
+  image?: string | null,
+  organization_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
