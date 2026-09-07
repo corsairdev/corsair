@@ -1,5 +1,10 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { WhautomateContext } from './index';
 
 export class WhautomateAPIError extends Error {
 	constructor(
@@ -14,6 +19,28 @@ export class WhautomateAPIError extends Error {
 	}
 }
 
+const WHAUTOMATE_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 5,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'Retry-After',
+	},
+};
+
+export async function resolveApiHost(ctx: WhautomateContext): Promise<string> {
+	const fromKeys = await ctx.keys.get_api_host();
+	const host = fromKeys ?? ctx.options.apiHost;
+	if (!host) {
+		throw new WhautomateAPIError(
+			'An API host is required for the Whautomate integration (Whautomate account > Settings > API)',
+			'MISSING_API_HOST',
+		);
+	}
+	return host;
+}
+
 export async function makeWhautomateRequest<T>(
 	apiHost: string,
 	apiKey: string,
@@ -25,6 +52,18 @@ export async function makeWhautomateRequest<T>(
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
+	if (!apiHost) {
+		throw new WhautomateAPIError(
+			'An API host is required for the Whautomate integration',
+			'MISSING_API_HOST',
+		);
+	}
+	if (!apiKey) {
+		throw new WhautomateAPIError(
+			'An API key is required for the Whautomate integration (Whautomate account > Settings > API)',
+			'MISSING_API_KEY',
+		);
+	}
 	const { method = 'GET', body, query } = options;
 
 	const baseUrl = apiHost.replace(/\/$/, '');
@@ -35,9 +74,10 @@ export async function makeWhautomateRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: undefined,
 		HEADERS: {
 			'Content-Type': 'application/json',
+			Accept: 'application/json',
 			'x-api-key': apiKey,
 		},
 	};
@@ -54,16 +94,24 @@ export async function makeWhautomateRequest<T>(
 	};
 
 	try {
-		const response = await request<T>(config, requestOptions);
+		const response = await request<T>(config, requestOptions, {
+			rateLimitConfig: WHAUTOMATE_RATE_LIMIT_CONFIG,
+		});
 		const parseResult = outputSchema.safeParse(response);
 		if (!parseResult.success) {
-			console.warn(
-				`[whautomate] Response validation failed for ${endpoint}:`,
+			throw new WhautomateAPIError(
+				`Whautomate response for ${endpoint} failed schema validation: ${parseResult.error.message}`,
+				'SCHEMA_VALIDATION_FAILED',
 				parseResult.error.flatten(),
+				undefined,
+				undefined,
 			);
 		}
-		return parseResult.data ?? response;
+		return parseResult.data;
 	} catch (error) {
+		if (error instanceof WhautomateAPIError) {
+			throw error;
+		}
 		if (error instanceof ApiError) {
 			const bodyMessage =
 				error.body?.error?.message ||

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeWhautomateRequest } from '../client';
+import { makeWhautomateRequest, resolveApiHost } from '../client';
 import type { WhautomateEndpoints } from '../index';
 import type { WhautomateEndpointOutputs } from './types';
 import { WhautomateEndpointOutputSchemas } from './types';
@@ -10,7 +10,7 @@ export const getAllWebhooks: WhautomateEndpoints['getAllWebhooks'] = async (
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getAllWebhooks']
 	>(
-		ctx.options.apiHost!,
+		await resolveApiHost(ctx),
 		ctx.key,
 		'/webhooks',
 		WhautomateEndpointOutputSchemas.getAllWebhooks,

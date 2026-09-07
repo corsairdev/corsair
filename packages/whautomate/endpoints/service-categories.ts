@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeWhautomateRequest } from '../client';
+import { makeWhautomateRequest, resolveApiHost } from '../client';
 import type { WhautomateEndpoints } from '../index';
 import type { WhautomateEndpointOutputs } from './types';
 import { WhautomateEndpointOutputSchemas } from './types';
@@ -13,7 +13,7 @@ export const getServiceCategories: WhautomateEndpoints['getServiceCategories'] =
 		const result = await makeWhautomateRequest<
 			WhautomateEndpointOutputs['getServiceCategories']
 		>(
-			ctx.options.apiHost!,
+			await resolveApiHost(ctx),
 			ctx.key,
 			'/service-categories',
 			WhautomateEndpointOutputSchemas.getServiceCategories,
@@ -37,7 +37,7 @@ export const deleteServiceCategory: WhautomateEndpoints['deleteServiceCategory']
 		const result = await makeWhautomateRequest<
 			WhautomateEndpointOutputs['deleteServiceCategory']
 		>(
-			ctx.options.apiHost!,
+			await resolveApiHost(ctx),
 			ctx.key,
 			`/service-categories/${input.id}`,
 			WhautomateEndpointOutputSchemas.deleteServiceCategory,

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeWhautomateRequest } from '../client';
+import { makeWhautomateRequest, resolveApiHost } from '../client';
 import type { WhautomateEndpoints } from '../index';
 import type { WhautomateEndpointOutputs } from './types';
 import { WhautomateEndpointOutputSchemas } from './types';
@@ -16,7 +16,7 @@ export const getStaffs: WhautomateEndpoints['getStaffs'] = async (
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getStaffs']
 	>(
-		ctx.options.apiHost!,
+		await resolveApiHost(ctx),
 		ctx.key,
 		'/staff',
 		WhautomateEndpointOutputSchemas.getStaffs,
@@ -42,7 +42,7 @@ export const getStaffById: WhautomateEndpoints['getStaffById'] = async (
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getStaffById']
 	>(
-		ctx.options.apiHost!,
+		await resolveApiHost(ctx),
 		ctx.key,
 		`/staff/${input.id}`,
 		WhautomateEndpointOutputSchemas.getStaffById,
@@ -70,7 +70,7 @@ export const getStaffAvailabilityBlocks: WhautomateEndpoints['getStaffAvailabili
 		const result = await makeWhautomateRequest<
 			WhautomateEndpointOutputs['getStaffAvailabilityBlocks']
 		>(
-			ctx.options.apiHost!,
+			await resolveApiHost(ctx),
 			ctx.key,
 			`/staff/${staffId}/availability-blocks`,
 			WhautomateEndpointOutputSchemas.getStaffAvailabilityBlocks,

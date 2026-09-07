@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeWhautomateRequest } from '../client';
+import { makeWhautomateRequest, resolveApiHost } from '../client';
 import type { WhautomateEndpoints } from '../index';
 import type { WhautomateEndpointOutputs } from './types';
 import { WhautomateEndpointOutputSchemas } from './types';
@@ -16,7 +16,7 @@ export const getSegments: WhautomateEndpoints['getSegments'] = async (
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getSegments']
 	>(
-		ctx.options.apiHost!,
+		await resolveApiHost(ctx),
 		ctx.key,
 		'/segments',
 		WhautomateEndpointOutputSchemas.getSegments,
@@ -42,7 +42,7 @@ export const deleteSegment: WhautomateEndpoints['deleteSegment'] = async (
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['deleteSegment']
 	>(
-		ctx.options.apiHost!,
+		await resolveApiHost(ctx),
 		ctx.key,
 		`/segments/${input.id}`,
 		WhautomateEndpointOutputSchemas.deleteSegment,

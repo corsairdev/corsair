@@ -1,12 +1,10 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -56,11 +54,15 @@ export type WhautomatePluginOptions = {
 
 export type WhautomateContext = CorsairPluginContext<
 	typeof WhautomateSchema,
-	WhautomatePluginOptions
+	WhautomatePluginOptions,
+	undefined,
+	typeof whautomateAuthConfig
 >;
 
-export type WhautomateKeyBuilderContext =
-	KeyBuilderContext<WhautomatePluginOptions>;
+export type WhautomateKeyBuilderContext = KeyBuilderContext<
+	WhautomatePluginOptions,
+	typeof whautomateAuthConfig
+>;
 
 export type WhautomateBoundEndpoints = BindEndpoints<
 	typeof whautomateEndpointsNested
@@ -92,17 +94,6 @@ export type WhautomateEndpoints = {
 	getStaffById: WhautomateEndpoint<'getStaffById'>;
 	getStaffAvailabilityBlocks: WhautomateEndpoint<'getStaffAvailabilityBlocks'>;
 };
-
-type WhautomateWebhook<
-	K extends keyof WhautomateWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<WhautomateContext, TEvent, WhautomateWebhookOutputs[K]>;
-
-export type WhautomateWebhooks = {};
-
-export type WhautomateBoundWebhooks = BindWebhooks<WhautomateWebhooks>;
-
-type WhautomateWebhookOutputs = {};
 
 const whautomateEndpointsNested = {
 	contacts: {
@@ -309,7 +300,8 @@ export type BaseWhautomatePlugin<T extends WhautomatePluginOptions> =
 		typeof whautomateEndpointsNested,
 		typeof whautomateWebhooksNested,
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof whautomateAuthConfig
 	>;
 
 export type InternalWhautomatePlugin =
@@ -337,7 +329,6 @@ export function whautomate<const T extends WhautomatePluginOptions>(
 		endpointMeta: whautomateEndpointMeta,
 		endpointSchemas: whautomateEndpointSchemas,
 		webhookSchemas: whautomateWebhookSchemas,
-		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -349,12 +340,6 @@ export function whautomate<const T extends WhautomatePluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const apiKey = await ctx.keys.get_api_key();
-				const apiHost = await (
-					ctx.keys as unknown as { get_api_host: () => Promise<string | null> }
-				).get_api_host();
-				if (apiHost) {
-					ctx.options.apiHost = apiHost;
-				}
 				return apiKey ?? '';
 			}
 

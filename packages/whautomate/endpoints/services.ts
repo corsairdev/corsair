@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeWhautomateRequest } from '../client';
+import { makeWhautomateRequest, resolveApiHost } from '../client';
 import type { WhautomateEndpoints } from '../index';
 import type { WhautomateEndpointOutputs } from './types';
 import { WhautomateEndpointOutputSchemas } from './types';
@@ -18,7 +18,7 @@ export const getServices: WhautomateEndpoints['getServices'] = async (
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getServices']
 	>(
-		ctx.options.apiHost!,
+		await resolveApiHost(ctx),
 		ctx.key,
 		'/services',
 		WhautomateEndpointOutputSchemas.getServices,
@@ -44,7 +44,7 @@ export const getServiceById: WhautomateEndpoints['getServiceById'] = async (
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getServiceById']
 	>(
-		ctx.options.apiHost!,
+		await resolveApiHost(ctx),
 		ctx.key,
 		`/services/${input.id}`,
 		WhautomateEndpointOutputSchemas.getServiceById,
@@ -70,7 +70,7 @@ export const updateService: WhautomateEndpoints['updateService'] = async (
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['updateService']
 	>(
-		ctx.options.apiHost!,
+		await resolveApiHost(ctx),
 		ctx.key,
 		`/services/${id}`,
 		WhautomateEndpointOutputSchemas.updateService,
@@ -83,7 +83,7 @@ export const updateService: WhautomateEndpoints['updateService'] = async (
 	await logEventFromContext(
 		ctx,
 		'whautomate.services.update',
-		{ ...input },
+		{ id: input.id },
 		'completed',
 	);
 	return result;

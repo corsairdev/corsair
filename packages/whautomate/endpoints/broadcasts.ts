@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeWhautomateRequest } from '../client';
+import { makeWhautomateRequest, resolveApiHost } from '../client';
 import type { WhautomateEndpoints } from '../index';
 import type { WhautomateEndpointOutputs } from './types';
 import { WhautomateEndpointOutputSchemas } from './types';
@@ -18,7 +18,7 @@ export const getBroadcasts: WhautomateEndpoints['getBroadcasts'] = async (
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getBroadcasts']
 	>(
-		ctx.options.apiHost!,
+		await resolveApiHost(ctx),
 		ctx.key,
 		'/broadcasts',
 		WhautomateEndpointOutputSchemas.getBroadcasts,
@@ -44,7 +44,7 @@ export const getBroadcastById: WhautomateEndpoints['getBroadcastById'] = async (
 	const result = await makeWhautomateRequest<
 		WhautomateEndpointOutputs['getBroadcastById']
 	>(
-		ctx.options.apiHost!,
+		await resolveApiHost(ctx),
 		ctx.key,
 		`/broadcasts/${input.id}`,
 		WhautomateEndpointOutputSchemas.getBroadcastById,
