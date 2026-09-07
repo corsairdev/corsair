@@ -550,7 +550,7 @@ export const ProviderDisplayNames = {
 	vestaboard: 'Vestaboard',
 	wakatime: 'WakaTime',
 	webflow: 'Webflow',
-	webscrapingai: 'WebScrapingAI',
+	webscrapingai: 'WebScraping.AI',
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
 	witai: 'WitAi',
