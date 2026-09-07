@@ -1,3 +1,4 @@
+// Mocked transport coverage intentionally runs in Corsair's normal CI lane.
 import { list as listChecks } from './endpoints/checks';
 import { list, listIps, listIpv4, listIpv6 } from './endpoints/nodes';
 
