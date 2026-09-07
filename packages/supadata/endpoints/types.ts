@@ -86,10 +86,10 @@ export const MetadataAuthorSchema = z.object({
 export type MetadataAuthor = z.infer<typeof MetadataAuthorSchema>;
 
 export const MetadataStatsSchema = z.object({
-	views: z.number().optional(),
-	likes: z.number().optional(),
-	comments: z.number().optional(),
-	shares: z.number().optional(),
+	views: z.number().nullable().optional(),
+	likes: z.number().nullable().optional(),
+	comments: z.number().nullable().optional(),
+	shares: z.number().nullable().optional(),
 });
 
 export type MetadataStats = z.infer<typeof MetadataStatsSchema>;
@@ -112,11 +112,11 @@ export const MetadataOutputSchema = z.object({
 	authorUrl: z.string().optional(),
 	publishedAt: z.string().optional(),
 	createdAt: z.string().optional(),
-	duration: z.number().optional(),
-	viewsCount: z.number().optional(),
-	likesCount: z.number().optional(),
-	commentsCount: z.number().optional(),
-	sharesCount: z.number().optional(),
+	duration: z.number().nullable().optional(),
+	viewsCount: z.number().nullable().optional(),
+	likesCount: z.number().nullable().optional(),
+	commentsCount: z.number().nullable().optional(),
+	sharesCount: z.number().nullable().optional(),
 	stats: MetadataStatsSchema.optional(),
 	thumbnail: z.string().optional(),
 	media: MetadataMediaSchema.optional(),
