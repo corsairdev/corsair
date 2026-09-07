@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { AuthMissingError } from 'corsair/core';
+import { extractRetryAfterMs } from './client';
 import { SupadataEndpointOutputSchemas, supadata } from './index';
 
 const apiKey = process.env.SUPADATA_API_KEY;
@@ -41,6 +42,48 @@ describe('Supadata Plugin KeyBuilder & Auth Tests', () => {
 				'endpoint',
 			),
 		).rejects.toThrow(AuthMissingError);
+	});
+});
+
+describe('extractRetryAfterMs', () => {
+	const makeResponse = (retryAfter?: string) =>
+		({
+			headers: new Headers(retryAfter ? { 'Retry-After': retryAfter } : {}),
+		}) as Response;
+
+	it('handles numeric Retry-After (e.g. "5")', () => {
+		const res = makeResponse('5');
+		expect(extractRetryAfterMs(res)).toBe(5000);
+	});
+
+	it('caps large numeric Retry-After (e.g. "86400") at 60000 ms', () => {
+		const res = makeResponse('86400');
+		expect(extractRetryAfterMs(res)).toBe(60000);
+	});
+
+	it('handles valid HTTP-date Retry-After', () => {
+		const futureDate = new Date(Date.now() + 10000).toUTCString();
+		const res = makeResponse(futureDate);
+		const result = extractRetryAfterMs(res);
+		expect(result).toBeDefined();
+		expect(result!).toBeGreaterThan(0);
+		expect(result!).toBeLessThanOrEqual(60000);
+	});
+
+	it('caps large HTTP-date Retry-After to 60000 ms', () => {
+		const farFutureDate = new Date(Date.now() + 500000).toUTCString();
+		const res = makeResponse(farFutureDate);
+		expect(extractRetryAfterMs(res)).toBe(60000);
+	});
+
+	it('returns undefined for invalid Retry-After', () => {
+		const res = makeResponse('invalid-date-or-number');
+		expect(extractRetryAfterMs(res)).toBeUndefined();
+	});
+
+	it('returns undefined when Retry-After header is missing', () => {
+		const res = makeResponse();
+		expect(extractRetryAfterMs(res)).toBeUndefined();
 	});
 });
 

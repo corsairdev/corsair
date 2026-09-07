@@ -28,15 +28,29 @@ const SUPADATA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
-function extractRetryAfterMs(res: Response): number | undefined {
+export function extractRetryAfterMs(res: Response): number | undefined {
 	const retryAfter =
 		res.headers.get('Retry-After') ?? res.headers.get('retry-after');
-	if (retryAfter) {
-		const seconds = parseInt(retryAfter, 10);
-		if (!isNaN(seconds)) {
-			return seconds * 1000;
+	if (!retryAfter) {
+		return undefined;
+	}
+
+	let delayMs: number | undefined;
+
+	const seconds = Number(retryAfter);
+	if (Number.isInteger(seconds) && seconds >= 0) {
+		delayMs = seconds * 1000;
+	} else {
+		const retryAt = Date.parse(retryAfter);
+		if (!Number.isNaN(retryAt)) {
+			delayMs = Math.max(0, retryAt - Date.now());
 		}
 	}
+
+	if (delayMs !== undefined) {
+		return Math.min(delayMs, 60_000);
+	}
+
 	return undefined;
 }
 
