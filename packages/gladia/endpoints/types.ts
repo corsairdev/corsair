@@ -1,6 +1,10 @@
 import { z } from 'zod';
 
-const JsonRecordSchema = z.record(z.string(), z.unknown());
+const JsonRecordSchema = z.record(
+	z.string(),
+	// unknown is necessary because Gladia accepts arbitrary JSON metadata values; a closed value union is infeasible because metadata keys are caller-defined
+	z.unknown(),
+);
 const JsonRecordOptionalSchema = JsonRecordSchema.optional();
 const StatusSchema = z.enum(['queued', 'processing', 'done', 'error']);
 
@@ -29,6 +33,7 @@ const JobSchema = z
 		error_code: z.number().nullable().optional(),
 		file: FileMetadataSchema.nullable().optional(),
 		request_params: JsonRecordSchema.nullable().optional(),
+		// unknown is necessary because transcription results differ by feature combination; a closed result union is infeasible because Gladia composes optional processing outputs
 		result: z.unknown().optional(),
 		post_session_metadata: JsonRecordOptionalSchema,
 	})
@@ -63,34 +68,45 @@ const UploadResponseSchema = z.object({
 	audio_metadata: FileMetadataSchema,
 });
 
-const LiveInputSchema = z.object({
-	region: z.enum(['us-west', 'eu-west']).optional(),
-	encoding: z.enum(['wav/pcm', 'wav/alaw', 'wav/ulaw']).optional(),
-	bit_depth: z
-		.union([z.literal(8), z.literal(16), z.literal(24), z.literal(32)])
-		.optional(),
-	sample_rate: z
-		.union([
-			z.literal(8000),
-			z.literal(16000),
-			z.literal(32000),
-			z.literal(44100),
-			z.literal(48000),
-		])
-		.optional(),
-	channels: z.number().int().min(1).max(8).optional(),
-	custom_metadata: JsonRecordOptionalSchema,
-	model: z.string().optional(),
-	endpointing: z.number().optional(),
-	maximum_duration_without_endpointing: z.number().optional(),
-	language_config: JsonRecordOptionalSchema,
-	pre_processing: JsonRecordOptionalSchema,
-	realtime_processing: JsonRecordOptionalSchema,
-	post_processing: JsonRecordOptionalSchema,
-	messages_config: JsonRecordOptionalSchema,
-	callback: z.boolean().optional(),
-	callback_config: JsonRecordOptionalSchema,
-});
+const LiveInputSchema = z
+	.object({
+		region: z.enum(['us-west', 'eu-west']).optional(),
+		encoding: z.enum(['wav/pcm', 'wav/alaw', 'wav/ulaw']).optional(),
+		bit_depth: z
+			.union([z.literal(8), z.literal(16), z.literal(24), z.literal(32)])
+			.optional(),
+		sample_rate: z
+			.union([
+				z.literal(8000),
+				z.literal(16000),
+				z.literal(32000),
+				z.literal(44100),
+				z.literal(48000),
+			])
+			.optional(),
+		channels: z.number().int().min(1).max(8).optional(),
+		custom_metadata: JsonRecordOptionalSchema,
+		model: z.string().optional(),
+		endpointing: z.number().min(0.01).max(10).optional(),
+		maximum_duration_without_endpointing: z.number().min(5).max(60).optional(),
+		language_config: JsonRecordOptionalSchema,
+		pre_processing: JsonRecordOptionalSchema,
+		realtime_processing: JsonRecordOptionalSchema,
+		post_processing: JsonRecordOptionalSchema,
+		messages_config: JsonRecordOptionalSchema,
+		callback: z.boolean().optional(),
+		callback_config: JsonRecordOptionalSchema,
+	})
+	.refine(
+		(value) =>
+			(value.encoding !== 'wav/alaw' && value.encoding !== 'wav/ulaw') ||
+			value.bit_depth === undefined ||
+			value.bit_depth === 8,
+		{
+			message: 'wav/alaw and wav/ulaw encodings require 8-bit audio',
+			path: ['bit_depth'],
+		},
+	);
 const LiveResponseSchema = z.object({
 	id: z.string(),
 	created_at: z.string(),
@@ -183,10 +199,12 @@ export type GladiaEndpointOutputs = {
 	initiateLiveTranscriptionSession: GladiaInitiateLiveTranscriptionSessionResponse;
 	listLiveTranscriptionJobs: GladiaListLiveTranscriptionJobsResponse;
 	getLiveTranscriptionResult: GladiaGetLiveTranscriptionResultResponse;
+	// unknown is necessary because Gladia deletes return 204 with no body; a closed response type is infeasible because there is no payload to model
 	deleteLiveSession: unknown;
 	initiatePreRecordedTranscription: GladiaInitiatePreRecordedTranscriptionResponse;
 	listPreRecordedJobs: GladiaListPreRecordedJobsResponse;
 	getPreRecordedJob: GladiaGetPreRecordedJobResponse;
+	// unknown is necessary because Gladia deletes return 204 with no body; a closed response type is infeasible because there is no payload to model
 	deletePreRecordedJob: unknown;
 };
 
@@ -207,9 +225,11 @@ export const GladiaEndpointOutputSchemas = {
 	initiateLiveTranscriptionSession: LiveResponseSchema,
 	listLiveTranscriptionJobs: JobListSchema,
 	getLiveTranscriptionResult: JobSchema,
+	// unknown is necessary because Gladia deletes return 204 with no body; a closed response type is infeasible because there is no payload to model
 	deleteLiveSession: z.unknown(),
 	initiatePreRecordedTranscription: PreRecordedInitResponseSchema,
 	listPreRecordedJobs: JobListSchema,
 	getPreRecordedJob: JobSchema,
+	// unknown is necessary because Gladia deletes return 204 with no body; a closed response type is infeasible because there is no payload to model
 	deletePreRecordedJob: z.unknown(),
 } as const;
