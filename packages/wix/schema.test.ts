@@ -331,6 +331,8 @@ describe('Wix output schemas', () => {
 		type QueryContactsOutput = z.infer<
 			typeof WixEndpointOutputSchemas.queryContacts
 		>;
+		// `unknown[]` is intentional: this only asserts array-ness of the
+		// inferred field, not its element type (checked by runtime tests).
 		type ContactsIsArray = NonNullable<
 			QueryContactsOutput['contacts']
 		> extends unknown[]
@@ -348,6 +350,8 @@ describe('Wix output schemas', () => {
 		).toThrow();
 		// Live 2026-09-08: contacts v4 returns numeric `revision`,
 		// so it must be accepted and normalized, not rejected.
+		// Narrow test-only cast: parse already validated the shape, this
+		// only reads `revision` without importing the full output type.
 		const parsedLive = WixEndpointOutputSchemas.queryContacts.parse({
 			contacts: [{ id: 'c1', revision: 3 }],
 		}) as { contacts?: Array<{ revision?: unknown }> };
