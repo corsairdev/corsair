@@ -278,20 +278,21 @@ const AttributesListWithValuesInputSchema = z
 		templates: z.array(z.string()).optional(),
 		manual: z.boolean().optional(),
 	})
-	.refine(
-		(value) =>
-			!(
-				(value.attributes?.length ?? 0) > 0 &&
-				(value.templates?.length ?? 0) > 0
-			),
-		{
-			// "rather than using both, you would use one or the other of
-			// attributes and templates to filter" — the official reference.
-			message:
-				'Filter by `attributes` or `templates`, not both — Exist accepts only one',
-			path: ['templates'],
-		},
-	);
+	.superRefine((value, ctx) => {
+		if (
+			(value.attributes?.length ?? 0) > 0 &&
+			(value.templates?.length ?? 0) > 0
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				// "rather than using both, you would use one or the other of
+				// attributes and templates to filter" — the official reference.
+				message:
+					'Filter by `attributes` or `templates`, not both — Exist accepts only one',
+				path: ['templates'],
+			});
+		}
+	});
 export type AttributesListWithValuesInput = z.infer<
 	typeof AttributesListWithValuesInputSchema
 >;
