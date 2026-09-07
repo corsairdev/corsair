@@ -7,7 +7,7 @@ import type { TeamsChannelMessageWebhookResponse } from './types';
 import {
 	createTeamsNotificationMatch,
 	extractODataId,
-	verifyTeamsClientState,
+	verifyTeamsWebhook,
 } from './types';
 
 export const channelMessage: TeamsWebhooks['channelMessage'] = {
@@ -17,7 +17,7 @@ export const channelMessage: TeamsWebhooks['channelMessage'] = {
 	),
 
 	handler: async (ctx, request) => {
-		const { valid, error } = verifyTeamsClientState(request.payload, ctx.key);
+		const { valid, error } = verifyTeamsWebhook(request, ctx.key);
 		if (!valid) {
 			return {
 				success: false,
@@ -47,6 +47,7 @@ export const channelMessage: TeamsWebhooks['channelMessage'] = {
 					if (!messageId) continue;
 
 					// resource format: teams('teamId')/channels('channelId')/messages('messageId')
+					// or, for a thread reply, .../messages('rootId')/replies('replyId')
 					const parts = (resource ?? '').split('/');
 					const teamId = extractODataId(parts[0] ?? '');
 					const channelId = extractODataId(parts[1] ?? '');
@@ -54,12 +55,18 @@ export const channelMessage: TeamsWebhooks['channelMessage'] = {
 					if (changeType === 'deleted') {
 						await ctx.db.messages?.deleteByEntityId(messageId);
 					} else {
+						// Convert the OData notification resource to a REST path so replies
+						// hydrate from .../messages/{root}/replies/{id}, not messages/{id}.
+						const restPath = (resource ?? '')
+							.split('/')
+							.map((seg) => {
+								const m = seg.match(/^([^(]+)\('([^']+)'\)$/);
+								return m ? `${m[1]}/${m[2]}` : seg;
+							})
+							.join('/');
 						const fullMsg = await makeTeamsRequest<
 							TeamsEndpointOutputs['messagesGet']
-						>(
-							`teams/${teamId}/channels/${channelId}/messages/${messageId}`,
-							accessToken,
-						);
+						>(restPath, accessToken);
 						if (data.resourceData?.id === messageId) {
 							data = { ...data, teamId, channelId, message: fullMsg };
 						}
