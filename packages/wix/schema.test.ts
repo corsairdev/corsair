@@ -76,6 +76,19 @@ describe('Wix input schemas accept valid input', () => {
 		expect(parsed.ids).toHaveLength(2);
 	});
 
+	it('validates bulk order inputs against the typed order contract', () => {
+		expect(() =>
+			WixEndpointInputSchemas.bulkUpdateOrders.parse({
+				orders: [{ order: { id: 'o1', status: 5 } }],
+			}),
+		).toThrow();
+		expect(
+			WixEndpointInputSchemas.bulkUpdateOrders.parse({
+				orders: [{ order: { id: 'o1', status: 'APPROVED' } }],
+			}).orders,
+		).toHaveLength(1);
+	});
+
 	it('accepts member registration input', () => {
 		const parsed = WixEndpointInputSchemas.registerMemberV2.parse({
 			loginId: { email: 'member@example.com' },

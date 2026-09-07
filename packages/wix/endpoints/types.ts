@@ -763,8 +763,11 @@ export type QueryEcomOrdersResponse = z.infer<
 
 const BulkUpdateOrdersInputSchema = z.looseObject({
 	...SiteScopeFields,
+	// Same `WixOrder` contract as query responses: bulk payloads carry
+	// full order objects, not bare ids. Loose so new order fields never
+	// break existing callers.
 	orders: z
-		.array(z.looseObject({ order: WixItemSchema }))
+		.array(z.looseObject({ order: WixOrderItemSchema }))
 		.min(1)
 		.max(100),
 });
