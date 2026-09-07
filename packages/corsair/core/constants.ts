@@ -112,6 +112,7 @@ export const BaseProviders = [
 	'canvas',
 	'capsulecrm',
 	'castingwords',
+	'cdrplatform',
 	'certifier',
 	'chatbotkit',
 	'chatfai',
@@ -383,6 +384,7 @@ export const ProviderDisplayNames = {
 	canvas: 'Canvas LMS',
 	capsulecrm: 'Capsule CRM',
 	castingwords: 'CastingWords',
+	cdrplatform: 'CDR Platform',
 	certifier: 'Certifier',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
@@ -661,6 +663,7 @@ export type AllProviders =
 	| 'canvas'
 	| 'capsulecrm'
 	| 'castingwords'
+	| 'cdrplatform'
 	| 'certifier'
 	| 'chatbotkit'
 	| 'chatfai'
