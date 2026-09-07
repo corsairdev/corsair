@@ -17,7 +17,14 @@ export const callCompleted: CallinglyWebhooks['callCompleted'] = {
 	},
 	handler: async (ctx, request) => {
 		const signingKey = ctx.key;
-		if (signingKey) {
+		if (request.hubVerified !== true) {
+			if (!signingKey) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: 'Missing webhook signing key or secret',
+				};
+			}
 			const verification = verifyCallinglyWebhookSignature(request, signingKey);
 			if (!verification.valid) {
 				return {
@@ -32,7 +39,16 @@ export const callCompleted: CallinglyWebhooks['callCompleted'] = {
 			request.payload,
 		);
 
-		const entityId = String(event.call_id ?? event.id ?? '');
+		const rawId = event.call_id ?? event.id;
+		if (rawId === undefined || rawId === null || rawId === '') {
+			return {
+				success: false,
+				statusCode: 400,
+				error: 'Missing call identifier (call_id or id) in webhook payload',
+			};
+		}
+
+		const entityId = String(rawId);
 
 		if (ctx.db.calls && entityId) {
 			try {
@@ -81,7 +97,14 @@ export const leadCreated: CallinglyWebhooks['leadCreated'] = {
 	},
 	handler: async (ctx, request) => {
 		const signingKey = ctx.key;
-		if (signingKey) {
+		if (request.hubVerified !== true) {
+			if (!signingKey) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: 'Missing webhook signing key or secret',
+				};
+			}
 			const verification = verifyCallinglyWebhookSignature(request, signingKey);
 			if (!verification.valid) {
 				return {
@@ -96,7 +119,16 @@ export const leadCreated: CallinglyWebhooks['leadCreated'] = {
 			request.payload,
 		);
 
-		const entityId = String(event.lead_id ?? event.id ?? '');
+		const rawId = event.lead_id ?? event.id;
+		if (rawId === undefined || rawId === null || rawId === '') {
+			return {
+				success: false,
+				statusCode: 400,
+				error: 'Missing lead identifier (lead_id or id) in webhook payload',
+			};
+		}
+
+		const entityId = String(rawId);
 
 		if (ctx.db.leads && entityId) {
 			try {

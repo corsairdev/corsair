@@ -41,7 +41,7 @@ describe('makeCallinglyRequest', () => {
 		expect(req.method).toBe('GET');
 	});
 
-	it('includes X-Account-Id header when accountId is provided', async () => {
+	it('includes X-Account-Id header and account_id parameter when accountId is provided', async () => {
 		mockRequest.mockResolvedValue({ id: '123' });
 
 		await makeCallinglyRequest('calls', 'secret-key', {
@@ -55,7 +55,7 @@ describe('makeCallinglyRequest', () => {
 			'X-Account-Id': 'acc_999',
 			Authorization: 'Bearer secret-key',
 		});
-		expect(req.body).toEqual({ lead_id: '456' });
+		expect(req.body).toEqual({ lead_id: '456', account_id: 'acc_999' });
 		expect(req.method).toBe('POST');
 	});
 
@@ -95,10 +95,24 @@ describe('errorHandlers', () => {
 		expect(errorHandlers.VALIDATION_ERROR.match(err)).toBe(true);
 	});
 
-	it('matches 500 server errors and specifies retry', async () => {
-		const err = new CallinglyAPIError('Internal error', 500);
-		expect(errorHandlers.SERVER_ERROR.match(err)).toBe(true);
-		const res = await errorHandlers.SERVER_ERROR.handler();
-		expect(res.maxRetries).toBe(2);
+	it('matches 500 server errors and specifies retry for idempotent requests', async () => {
+		const getErr = new CallinglyAPIError(
+			'Internal error',
+			500,
+			undefined,
+			'GET',
+		);
+		expect(errorHandlers.SERVER_ERROR.match(getErr)).toBe(true);
+		const resGet = await errorHandlers.SERVER_ERROR.handler(getErr);
+		expect(resGet.maxRetries).toBe(2);
+
+		const postErr = new CallinglyAPIError(
+			'Internal error',
+			500,
+			undefined,
+			'POST',
+		);
+		const resPost = await errorHandlers.SERVER_ERROR.handler(postErr);
+		expect(resPost.maxRetries).toBe(0);
 	});
 });

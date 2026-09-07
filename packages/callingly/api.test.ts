@@ -232,4 +232,43 @@ describe('callingly webhooks', () => {
 		expect(result.success).toBe(false);
 		expect(result.statusCode).toBe(401);
 	});
+
+	it('rejects webhook when signing key is missing and not hub-verified', async () => {
+		const completedWebhook = plugin.webhooks!.calls.completed;
+		const ctxNoKey = {
+			key: '',
+			db: {},
+		} as unknown as CallinglyContext;
+
+		const result = await completedWebhook.handler(ctxNoKey, {
+			payload: { event: 'call.completed', call_id: 'call_1' },
+			headers: {},
+			rawBody: '{"event":"call.completed"}',
+		});
+
+		expect(result.success).toBe(false);
+		expect(result.statusCode).toBe(401);
+	});
+
+	it('rejects webhook when entity id is absent', async () => {
+		const completedWebhook = plugin.webhooks!.calls.completed;
+		const rawPayload = JSON.stringify({ event: 'call.completed' });
+		const validSig = createHmac('sha256', webhookSecret)
+			.update(rawPayload)
+			.digest('hex');
+
+		const ctxWithSecret = {
+			key: webhookSecret,
+			db: {},
+		} as unknown as CallinglyContext;
+
+		const result = await completedWebhook.handler(ctxWithSecret, {
+			payload: { event: 'call.completed' },
+			headers: { 'x-callingly-signature': validSig },
+			rawBody: rawPayload,
+		});
+
+		expect(result.success).toBe(false);
+		expect(result.statusCode).toBe(400);
+	});
 });

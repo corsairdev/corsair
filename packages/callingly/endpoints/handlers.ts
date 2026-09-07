@@ -258,7 +258,9 @@ export const listCalls: CallinglyEndpoints['listCalls'] = async (
 
 	if (ctx.db.calls) {
 		try {
-			const items = Array.isArray(response) ? response : (response.calls ?? []);
+			const items = Array.isArray(response)
+				? response
+				: (response.calls ?? response.data ?? []);
 			for (const item of items) {
 				if (item.id) {
 					await ctx.db.calls.upsertByEntityId(String(item.id), item);
@@ -320,7 +322,7 @@ export const listUsers: CallinglyEndpoints['listUsers'] = async (
 	const validated = In.listUsers.parse(input);
 	const { account_id, ...query } = validated;
 	const response = Out.listUsers.parse(
-		await makeCallinglyRequest('users', ctx.key, {
+		await makeCallinglyRequest('agents', ctx.key, {
 			method: 'GET',
 			query,
 			accountId: account_id,
@@ -469,10 +471,16 @@ export const getAgentSchedule: CallinglyEndpoints['getAgentSchedule'] = async (
 
 	if (ctx.db.schedules) {
 		try {
+			const isArray = Array.isArray(response);
 			const scheduleId = String(
-				response.agent_id ?? response.user_id ?? agentId,
+				!isArray && (response.agent_id ?? response.user_id)
+					? (response.agent_id ?? response.user_id)
+					: agentId,
 			);
-			await ctx.db.schedules.upsertByEntityId(scheduleId, response);
+			const record = isArray
+				? { agent_id: agentId, schedule: { days: response } }
+				: response;
+			await ctx.db.schedules.upsertByEntityId(scheduleId, record);
 		} catch (error) {
 			console.warn('Failed to persist schedule to local database:', error);
 		}
@@ -633,7 +641,7 @@ export const listTeamUsers: CallinglyEndpoints['listTeamUsers'] = async (
 	const { teamId, account_id } = validated;
 	const response = Out.listTeamUsers.parse(
 		await makeCallinglyRequest(
-			`teams/${encodeURIComponent(String(teamId))}/users`,
+			`teams/${encodeURIComponent(String(teamId))}/agents`,
 			ctx.key,
 			{
 				method: 'GET',
@@ -649,7 +657,10 @@ export const listTeamUsers: CallinglyEndpoints['listTeamUsers'] = async (
 				: (response.users ?? response.agents ?? []);
 			for (const item of items) {
 				if (item.id) {
-					await ctx.db.teamUsers.upsertByEntityId(String(item.id), item);
+					await ctx.db.teamUsers.upsertByEntityId(`${teamId}:${item.id}`, {
+						...item,
+						team_id: teamId,
+					});
 				}
 			}
 		} catch (error) {
@@ -671,14 +682,14 @@ export const updateTeamUsers: CallinglyEndpoints['updateTeamUsers'] = async (
 	input,
 ) => {
 	const validated = In.updateTeamUsers.parse(input);
-	const { teamId, account_id, ...body } = validated;
+	const { teamId, user_ids, account_id, ...body } = validated;
 	const response = Out.updateTeamUsers.parse(
 		await makeCallinglyRequest(
-			`teams/${encodeURIComponent(String(teamId))}/users`,
+			`teams/${encodeURIComponent(String(teamId))}/agents`,
 			ctx.key,
 			{
 				method: 'PUT',
-				body,
+				body: { agents: user_ids, ...body },
 				accountId: account_id,
 			},
 		),
@@ -717,9 +728,12 @@ export const updateTeamAgentSettings: CallinglyEndpoints['updateTeamAgentSetting
 			),
 		);
 
-		if (ctx.db.teamUsers && response.id) {
+		if (ctx.db.teamUsers && (response.id ?? agentId)) {
 			try {
-				await ctx.db.teamUsers.upsertByEntityId(String(response.id), response);
+				await ctx.db.teamUsers.upsertByEntityId(`${teamId}:${agentId}`, {
+					...response,
+					team_id: teamId,
+				});
 			} catch (error) {
 				console.warn(
 					'Failed to persist team user settings to local database:',
@@ -755,7 +769,7 @@ export const removeTeamAgent: CallinglyEndpoints['removeTeamAgent'] = async (
 
 	if (ctx.db.teamUsers) {
 		try {
-			await ctx.db.teamUsers.deleteByEntityId(String(agentId));
+			await ctx.db.teamUsers.deleteByEntityId(`${teamId}:${agentId}`);
 		} catch (error) {
 			console.warn('Failed to delete team agent from local database:', error);
 		}
@@ -909,7 +923,7 @@ export const setClientActive: CallinglyEndpoints['setClientActive'] = async (
 			ctx.key,
 			{
 				method: 'POST',
-				body: { active: validated.active },
+				body: { is_active: validated.active ? 1 : 0 },
 			},
 		),
 	);

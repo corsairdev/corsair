@@ -79,10 +79,19 @@ export const errorHandlers = {
 				msg.includes('service unavailable')
 			);
 		},
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error?: Error) => {
+			const method = (
+				error as Partial<CallinglyAPIError> | undefined
+			)?.method?.toUpperCase();
+			// Avoid retrying non-idempotent mutating requests like POST to prevent duplicates
+			if (method === 'POST') {
+				return { maxRetries: 0 };
+			}
+			return {
+				maxRetries: 2,
+				retryStrategy: 'exponential_backoff' as const,
+			};
+		},
 	},
 	DEFAULT: {
 		match: () => true,

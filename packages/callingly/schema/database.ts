@@ -38,7 +38,8 @@ export const CallinglyCall = z
 		agent_id: z.union([z.string(), z.number()]).optional(),
 		phone_number: z.string().optional(),
 		status: z.string().optional(),
-		duration: z.number().optional(),
+		seconds: z.number().optional(),
+		duration: z.union([z.number(), z.string()]).optional(),
 		outcome: z.string().optional(),
 		recording_url: z.string().optional(),
 		scheduled_at: z.string().optional(),
@@ -88,6 +89,7 @@ export const CallinglyTeam = z
 export const CallinglyTeamUser = z
 	.object({
 		id: z.union([z.string(), z.number()]),
+		team_id: z.union([z.string(), z.number()]).optional(),
 		name: z.string().optional(),
 		priority: z.number().optional(),
 		call_cap: z.number().optional(),
@@ -129,7 +131,9 @@ export const CallinglyClient = z
 export const CallinglyWebhookConfig = z
 	.object({
 		id: z.union([z.string(), z.number()]),
-		url: z.string(),
+		name: z.string().optional(),
+		url: z.string().optional(),
+		target_url: z.string().optional(),
 		event: z.string().optional(),
 		events: z.array(z.string()).optional(),
 		call_status: z.string().optional(),

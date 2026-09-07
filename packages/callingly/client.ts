@@ -13,6 +13,7 @@ export class CallinglyAPIError extends Error {
 		 * Typed as unknown because error payloads can be arbitrary JSON objects or error strings.
 		 */
 		public readonly responseData?: unknown,
+		public readonly method?: string,
 	) {
 		super(message);
 		this.name = 'CallinglyAPIError';
@@ -47,8 +48,16 @@ export async function makeCallinglyRequest<T>(
 		Authorization: `Bearer ${apiKey}`,
 	};
 
+	let finalQuery = query;
+	let finalBody = body;
+
 	if (accountId) {
 		headers['X-Account-Id'] = accountId;
+		if (method === 'GET' || method === 'DELETE') {
+			finalQuery = { account_id: accountId, ...query };
+		} else if (method === 'POST' || method === 'PUT' || method === 'PATCH') {
+			finalBody = { account_id: accountId, ...body };
+		}
 	}
 
 	const config: OpenAPIConfig = {
@@ -65,10 +74,10 @@ export async function makeCallinglyRequest<T>(
 		url: endpoint.startsWith('/') ? endpoint : `/${endpoint}`,
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
+				? finalBody
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query,
+		query: finalQuery,
 	};
 
 	try {
@@ -93,13 +102,16 @@ export async function makeCallinglyRequest<T>(
 				errObj.message ||
 				bodyObj?.message ||
 				`Callingly API error (${status ?? 'unknown'})`;
-			throw new CallinglyAPIError(message, status, errObj.body);
+			throw new CallinglyAPIError(message, status, errObj.body, method);
 		}
 		if (error instanceof Error) {
-			throw new CallinglyAPIError(error.message);
+			throw new CallinglyAPIError(error.message, undefined, undefined, method);
 		}
 		throw new CallinglyAPIError(
 			'Unknown error communicating with Callingly API',
+			undefined,
+			undefined,
+			method,
 		);
 	}
 }

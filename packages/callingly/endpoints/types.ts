@@ -130,7 +130,8 @@ export const ListCallsResponseSchema = z.union([
 	z.array(CallinglyCall),
 	z
 		.object({
-			calls: z.array(CallinglyCall),
+			calls: z.array(CallinglyCall).optional(),
+			data: z.array(CallinglyCall).optional(),
 			total: z.number().optional(),
 			page: z.number().optional(),
 		})
@@ -198,6 +199,30 @@ export const UpdateAgentScheduleInputSchema = z.object({
 	account_id: z.string().optional(),
 });
 
+export const CallinglyScheduleDayRecordSchema = z
+	.object({
+		label: z.string().optional(),
+		day: z.union([z.string(), z.number()]).optional(),
+		is_available: z.boolean().optional(),
+		times: z
+			.array(
+				z
+					.object({
+						start: z.string().optional(),
+						end: z.string().optional(),
+					})
+					.passthrough(),
+			)
+			.optional(),
+	})
+	.passthrough();
+
+export const GetAgentScheduleResponseSchema = z.union([
+	CallinglySchedule,
+	z.array(CallinglyScheduleDayRecordSchema),
+	z.array(z.record(z.string(), z.unknown())),
+]);
+
 export const ListUsersResponseSchema = z.union([
 	z.array(CallinglyUser),
 	z
@@ -217,6 +242,9 @@ export type DeleteAgentInput = z.infer<typeof DeleteAgentInputSchema>;
 export type GetAgentScheduleInput = z.infer<typeof GetAgentScheduleInputSchema>;
 export type UpdateAgentScheduleInput = z.infer<
 	typeof UpdateAgentScheduleInputSchema
+>;
+export type GetAgentScheduleResponse = z.infer<
+	typeof GetAgentScheduleResponseSchema
 >;
 export type ListUsersResponse = z.infer<typeof ListUsersResponseSchema>;
 
@@ -281,8 +309,8 @@ export const ListTeamUsersResponseSchema = z.union([
 	z.array(CallinglyTeamUser),
 	z
 		.object({
-			users: z.array(CallinglyTeamUser),
 			agents: z.array(CallinglyTeamUser).optional(),
+			users: z.array(CallinglyTeamUser).optional(),
 		})
 		.passthrough(),
 ]);
@@ -360,7 +388,9 @@ export const GetWebhookInputSchema = z.object({
 });
 
 export const CreateWebhookInputSchema = z.object({
-	url: z.string(),
+	name: z.string().optional(),
+	url: z.string().optional(),
+	target_url: z.string().optional(),
 	event: z.string().optional(),
 	events: z.array(z.string()).optional(),
 	call_status: z.string().optional(),
@@ -372,7 +402,9 @@ export const CreateWebhookInputSchema = z.object({
 
 export const UpdateWebhookInputSchema = z.object({
 	webhookId: z.union([z.string(), z.number()]),
+	name: z.string().optional(),
 	url: z.string().optional(),
+	target_url: z.string().optional(),
 	event: z.string().optional(),
 	events: z.array(z.string()).optional(),
 	call_status: z.string().optional(),
@@ -465,7 +497,7 @@ export type CallinglyEndpointOutputs = {
 	getUser: CallinglyUser;
 	updateAgent: CallinglyUser;
 	deleteAgent: DeleteResponse;
-	getAgentSchedule: CallinglySchedule;
+	getAgentSchedule: GetAgentScheduleResponse;
 	updateAgentSchedule: CallinglySchedule;
 
 	createTeam: CallinglyTeam;
@@ -545,7 +577,7 @@ export const CallinglyEndpointOutputSchemas = {
 	getUser: CallinglyUser,
 	updateAgent: CallinglyUser,
 	deleteAgent: DeleteResponseSchema,
-	getAgentSchedule: CallinglySchedule,
+	getAgentSchedule: GetAgentScheduleResponseSchema,
 	updateAgentSchedule: CallinglySchedule,
 
 	createTeam: CallinglyTeam,
