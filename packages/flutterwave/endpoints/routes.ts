@@ -12,6 +12,7 @@ export type FlutterwaveRoute = {
 	riskLevel: EndpointRiskLevel;
 	pathParams?: readonly string[];
 	queryParams?: readonly string[];
+	// unknown is necessary because fixtures are request examples rather than contracts; a closed example union is infeasible because each of the 53 operations uses a different sample bag
 	testInput?: Record<string, unknown>;
 };
 
@@ -148,6 +149,8 @@ export const flutterwaveRoutes = [
 		riskLevel: 'write' as const,
 		testInput: {
 			email: 'user@example.com',
+			firstname: 'Alexis',
+			lastname: 'Sanchez',
 			tx_ref: 'tx-ref-1',
 			amount: 1000,
 			narration: 'Payment',

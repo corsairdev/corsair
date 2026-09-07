@@ -18,7 +18,10 @@ jest.mock('corsair/http', () => {
 
 const mockRequest = request as jest.Mock;
 
-function countLeaves(tree: Record<string, unknown>): number {
+function countLeaves(
+	// unknown is necessary because the endpoint tree mixes functions and nested groups; a closed node union is infeasible because the tree is generated from 53 operations
+	tree: Record<string, unknown>,
+): number {
 	return Object.values(tree).reduce<number>((count, value) => {
 		if (typeof value === 'function') return count + 1;
 		if (value && typeof value === 'object') {
@@ -28,7 +31,11 @@ function countLeaves(tree: Record<string, unknown>): number {
 	}, 0);
 }
 
-function endpointPaths(tree: Record<string, unknown>, prefix = ''): string[] {
+function endpointPaths(
+	// unknown is necessary because path walkers receive the same mixed endpoint tree; a closed node union is infeasible because groups nest arbitrarily
+	tree: Record<string, unknown>,
+	prefix = '',
+): string[] {
 	return Object.entries(tree).flatMap(([key, value]) => {
 		const path = prefix ? `${prefix}.${key}` : key;
 		if (typeof value === 'function') return [path];
@@ -64,7 +71,7 @@ const tanzaniaChargeInput = {
 describe('Flutterwave plugin shape', () => {
 	it('exposes every listed operation with schemas and no webhooks', () => {
 		const plugin = flutterwave();
-		const endpoints = plugin.endpoints as Record<string, unknown>;
+		const endpoints = plugin.endpoints as Record<string, unknown>; // unknown is necessary because the plugin tree is a nested object of functions; a closed group union is infeasible in this walker
 		const paths = endpointPaths(endpoints).sort();
 
 		expect(countLeaves(endpoints)).toBe(53);
@@ -238,10 +245,12 @@ describe('Flutterwave representative endpoints', () => {
 
 	it('maps every documented operation to a concrete HTTP request', async () => {
 		const plugin = flutterwave({ key: 'test-api-key' });
+		// unknown is necessary because the plugin tree is a nested object of functions; a closed group union is infeasible in this walker
 		const endpointTree = plugin.endpoints as Record<string, unknown>;
 
 		const endpointByPath = new Map<
 			string,
+			// unknown is necessary because the walker invokes every operation with fixture bags; a closed input/output union is infeasible across 53 routes
 			(ctx: FlutterwaveHandlerContext, input: unknown) => Promise<unknown>
 		>();
 		for (const [group, groupValue] of Object.entries(endpointTree)) {
@@ -268,6 +277,7 @@ describe('Flutterwave representative endpoints', () => {
 		expect(mockRequest).toHaveBeenCalledTimes(flutterwaveRoutes.length);
 
 		for (const route of flutterwaveRoutes) {
+			// unknown is necessary because fixtures are untyped example bags; a closed fixture union is infeasible because each route samples different fields
 			const testInput = (route.testInput ?? {}) as Record<string, unknown>;
 			const expectedUrl = route.path.replace(
 				/\{([^}]+)\}/g,
@@ -414,8 +424,89 @@ describe('Flutterwave representative endpoints', () => {
 		expect(createPaymentLinkSchema!.safeParse(paymentLinkInput).success).toBe(
 			true,
 		);
+		expect(
+			createPaymentLinkSchema!.safeParse({
+				tx_ref: 'tx-ref-1',
+				amount: 1000,
+				customer: { email: 'user@example.com' },
+			}).success,
+		).toBe(true);
+		expect(
+			createPaymentLinkSchema!.safeParse({
+				tx_ref: 'tx-ref-1',
+				amount: 1000,
+			}).success,
+		).toBe(false);
 		expect(createSubaccountSchema!.safeParse({}).success).toBe(false);
 		expect(getTransactionSchema!.safeParse({}).success).toBe(false);
 		expect(getTransactionSchema!.safeParse({ id: 1190701 }).success).toBe(true);
+
+		const createVirtualAccountSchema =
+			flutterwaveEndpointSchemas['virtualAccounts.create']?.input;
+		const initiateBvnSchema =
+			flutterwaveEndpointSchemas['verification.initiateBvn']?.input;
+		expect(createVirtualAccountSchema).toBeDefined();
+		expect(initiateBvnSchema).toBeDefined();
+		expect(
+			createVirtualAccountSchema!.safeParse({
+				email: 'user@example.com',
+				firstname: 'Alexis',
+				lastname: 'Sanchez',
+			}).success,
+		).toBe(true);
+		expect(
+			createVirtualAccountSchema!.safeParse({
+				email: 'user@example.com',
+				tx_ref: 'tx-ref-1',
+				amount: 1000,
+				narration: 'Payment',
+			}).success,
+		).toBe(false);
+		expect(
+			initiateBvnSchema!.safeParse({
+				bvn: '12345678901',
+				firstname: 'John',
+				lastname: 'Doe',
+			}).success,
+		).toBe(true);
+
+		const paymentLinkOutput =
+			flutterwaveEndpointSchemas['paymentLinks.create']?.output;
+		const transactionOutput =
+			flutterwaveEndpointSchemas['transactions.get']?.output;
+		const virtualAccountOutput =
+			flutterwaveEndpointSchemas['virtualAccounts.create']?.output;
+		expect(paymentLinkOutput).toBeDefined();
+		expect(transactionOutput).toBeDefined();
+		expect(virtualAccountOutput).toBeDefined();
+		expect(paymentLinkOutput).not.toBe(transactionOutput);
+		expect(transactionOutput).not.toBe(virtualAccountOutput);
+		expect(
+			paymentLinkOutput!.safeParse({
+				status: 'success',
+				data: { link: 'https://checkout.flutterwave.com/v3/hosted/pay/x' },
+			}).success,
+		).toBe(true);
+		expect(
+			transactionOutput!.safeParse({
+				status: 'success',
+				data: {
+					id: 1190701,
+					tx_ref: 'tx-ref-1',
+					amount: 1000,
+					currency: 'NGN',
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			virtualAccountOutput!.safeParse({
+				status: 'success',
+				data: {
+					account_number: '0690000040',
+					bank_name: 'TEST BANK',
+					order_ref: 'URF_1',
+				},
+			}).success,
+		).toBe(true);
 	});
 });
