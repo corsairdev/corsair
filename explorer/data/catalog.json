@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-04T03:29:04.623Z",
-  "corsairVersion": "0.1.126",
+  "generatedAt": "2026-09-07T05:07:59.750Z",
+  "corsairVersion": "0.1.127",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -211,6 +211,21 @@
         "api": 79,
         "webhooks": 0,
         "db": 3
+      }
+    },
+    {
+      "id": "agiled",
+      "displayName": "Agiled",
+      "description": "Agiled plugin for Corsair",
+      "npmPackageName": "@corsair-dev/agiled",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 1,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -620,6 +635,21 @@
       }
     },
     {
+      "id": "appointo",
+      "displayName": "Appointo",
+      "description": "Appointo plugin for Corsair",
+      "npmPackageName": "@corsair-dev/appointo",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 10,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "asana",
       "displayName": "Asana",
       "description": "Work management platform for tasks, projects, teams, and cross-functional collaboration.",
@@ -648,6 +678,21 @@
         "api": 22,
         "webhooks": 0,
         "db": 10
+      }
+    },
+    {
+      "id": "ashby",
+      "displayName": "Ashby",
+      "description": "Ashby plugin for Corsair",
+      "npmPackageName": "@corsair-dev/ashby",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 52,
+        "webhooks": 10,
+        "db": 8
       }
     },
     {
@@ -858,6 +903,21 @@
         "api": 4,
         "webhooks": 0,
         "db": 3
+      }
+    },
+    {
+      "id": "bestbuy",
+      "displayName": "Best Buy Remix API",
+      "description": "Best Buy Remix API plugin for Corsair",
+      "npmPackageName": "@corsair-dev/bestbuy",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 8,
+        "webhooks": 0,
+        "db": 4
       }
     },
     {
@@ -1206,6 +1266,21 @@
       }
     },
     {
+      "id": "brevo",
+      "displayName": "Brevo",
+      "description": "Brevo plugin for Corsair",
+      "npmPackageName": "@corsair-dev/brevo",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 13,
+        "webhooks": 0,
+        "db": 2
+      }
+    },
+    {
       "id": "brex",
       "displayName": "Brex",
       "description": "Corporate card and spend management platform for startups and growing businesses.",
@@ -1264,6 +1339,21 @@
         "api": 7,
         "webhooks": 0,
         "db": 7
+      }
+    },
+    {
+      "id": "browsertool",
+      "displayName": "BrowserTool",
+      "description": "BrowserTool plugin for Corsair",
+      "npmPackageName": "@corsair-dev/browsertool",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 5,
+        "webhooks": 0,
+        "db": 2
       }
     },
     {
@@ -1342,6 +1432,21 @@
       }
     },
     {
+      "id": "campayn",
+      "displayName": "Campayn",
+      "description": "Campayn plugin for Corsair",
+      "npmPackageName": "@corsair-dev/campayn",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 15,
+        "webhooks": 0,
+        "db": 5
+      }
+    },
+    {
       "id": "canva",
       "displayName": "Canva",
       "description": "Design platform for creating graphics, presentations, and visual content collaboratively.",
@@ -1389,6 +1494,36 @@
       }
     },
     {
+      "id": "castingwords",
+      "displayName": "Castingwords",
+      "description": "Castingwords plugin for Corsair",
+      "npmPackageName": "@corsair-dev/castingwords",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 11,
+        "webhooks": 0,
+        "db": 6
+      }
+    },
+    {
+      "id": "cdrplatform",
+      "displayName": "CDR Platform",
+      "description": "CDR Platform plugin for Corsair",
+      "npmPackageName": "@corsair-dev/cdrplatform",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 4,
+        "webhooks": 0,
+        "db": 3
+      }
+    },
+    {
       "id": "certifier",
       "displayName": "Certifier",
       "description": "Digital credential platform for issuing certificates, badges, and verifiable achievements.",
@@ -1431,6 +1566,21 @@
         "api": 3,
         "webhooks": 0,
         "db": 2
+      }
+    },
+    {
+      "id": "chmeetings",
+      "displayName": "ChMeetings",
+      "description": "ChMeetings plugin for Corsair",
+      "npmPackageName": "@corsair-dev/chmeetings",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 28,
+        "webhooks": 0,
+        "db": 3
       }
     },
     {
@@ -1598,6 +1748,21 @@
       }
     },
     {
+      "id": "countdownapi",
+      "displayName": "CountdownApi",
+      "description": "CountdownApi plugin for Corsair",
+      "npmPackageName": "@corsair-dev/countdownapi",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 3,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "crowterminal",
       "displayName": "Crow Terminal",
       "description": "Financial terminal API for market data, trading tools, and investment research workflows.",
@@ -1640,6 +1805,21 @@
         "api": 40,
         "webhooks": 0,
         "db": 7
+      }
+    },
+    {
+      "id": "dadataru",
+      "displayName": "Dadataru",
+      "description": "Dadataru plugin for Corsair",
+      "npmPackageName": "@corsair-dev/dadataru",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 63,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -2006,6 +2186,21 @@
       }
     },
     {
+      "id": "flexisign",
+      "displayName": "Flexisign",
+      "description": "Flexisign plugin for Corsair",
+      "npmPackageName": "@corsair-dev/flexisign",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 1,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "formbricks",
       "displayName": "Formbricks",
       "description": "Open-source experience management platform for in-app surveys and user feedback collection.",
@@ -2095,6 +2290,21 @@
         "api": 2,
         "webhooks": 0,
         "db": 0
+      }
+    },
+    {
+      "id": "googleanalytics",
+      "displayName": "Google Analytics",
+      "description": "Google Analytics 4 plugin for Corsair",
+      "npmPackageName": "@corsair-dev/googleanalytics",
+      "authTypes": [
+        "oauth_2"
+      ],
+      "defaultAuthType": "oauth_2",
+      "counts": {
+        "api": 69,
+        "webhooks": 0,
+        "db": 2
       }
     },
     {
@@ -2427,7 +2637,7 @@
       ],
       "defaultAuthType": "oauth_2",
       "counts": {
-        "api": 23,
+        "api": 36,
         "webhooks": 3,
         "db": 5
       }
@@ -2993,6 +3203,21 @@
       }
     },
     {
+      "id": "runpod",
+      "displayName": "Runpod",
+      "description": "Runpod plugin for Corsair",
+      "npmPackageName": "@corsair-dev/runpod",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 14,
+        "webhooks": 0,
+        "db": 7
+      }
+    },
+    {
       "id": "salesforce",
       "displayName": "Salesforce",
       "description": "Enterprise CRM for leads, accounts, opportunities, service cases, and sales automation.",
@@ -3022,6 +3247,21 @@
         "api": 64,
         "webhooks": 0,
         "db": 12
+      }
+    },
+    {
+      "id": "scaleai",
+      "displayName": "Scale AI",
+      "description": "Scale AI plugin for Corsair — data labeling tasks, batches, projects and Studio",
+      "npmPackageName": "@corsair-dev/scaleai",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 40,
+        "webhooks": 0,
+        "db": 6
       }
     },
     {
@@ -3585,6 +3825,21 @@
       }
     },
     {
+      "id": "uploadcare",
+      "displayName": "Uploadcare",
+      "description": "Uploadcare plugin for Corsair",
+      "npmPackageName": "@corsair-dev/uploadcare",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 33,
+        "webhooks": 0,
+        "db": 2
+      }
+    },
+    {
       "id": "vapi",
       "displayName": "Vapi",
       "description": "Voice AI platform for building phone call agents with LLMs and speech recognition.",
@@ -3822,6 +4077,21 @@
         "api": 11,
         "webhooks": 0,
         "db": 3
+      }
+    },
+    {
+      "id": "zohoinventory",
+      "displayName": "Zoho Inventory",
+      "description": "Track stock, manage orders, and sync inventory across sales channels",
+      "npmPackageName": "@corsair-dev/zohoinventory",
+      "authTypes": [
+        "oauth_2"
+      ],
+      "defaultAuthType": "oauth_2",
+      "counts": {
+        "api": 58,
+        "webhooks": 0,
+        "db": 6
       }
     },
     {
@@ -8796,6 +9066,12 @@
       "kind": "api",
       "shortPath": "workflows.updateWorkflow",
       "haystack": "workflows.updateworkflow agenty.api.workflows.updateworkflow tool to update an existing workflow's configuration by workflow id. use this to modify workflow properties including name, agent selection, trigger conditions, and actions to execute. workflows automate responses to agent events such as job completion, errors, or change detection. common use cases include sending notifications, triggering webhooks, or updating external systems. write"
+    },
+    {
+      "pluginId": "agiled",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list agiled.api.contacts.list list contacts from an agiled workspace read"
     },
     {
       "pluginId": "agilitycms",
@@ -14420,6 +14696,66 @@
       "haystack": "standings.getstandingsstages apisports.api.standings.getstandingsstages get standings stages read"
     },
     {
+      "pluginId": "appointo",
+      "kind": "api",
+      "shortPath": "appointments.getAvailability",
+      "haystack": "appointments.getavailability appointo.api.appointments.getavailability get calendar availability for an appointment read"
+    },
+    {
+      "pluginId": "appointo",
+      "kind": "api",
+      "shortPath": "appointments.list",
+      "haystack": "appointments.list appointo.api.appointments.list list all appointments read"
+    },
+    {
+      "pluginId": "appointo",
+      "kind": "api",
+      "shortPath": "appointments.upsertConfig",
+      "haystack": "appointments.upsertconfig appointo.api.appointments.upsertconfig update appointment configuration write"
+    },
+    {
+      "pluginId": "appointo",
+      "kind": "api",
+      "shortPath": "bookings.cancel",
+      "haystack": "bookings.cancel appointo.api.bookings.cancel cancel a booking destructive"
+    },
+    {
+      "pluginId": "appointo",
+      "kind": "api",
+      "shortPath": "bookings.create",
+      "haystack": "bookings.create appointo.api.bookings.create create a new booking write"
+    },
+    {
+      "pluginId": "appointo",
+      "kind": "api",
+      "shortPath": "bookings.list",
+      "haystack": "bookings.list appointo.api.bookings.list list all bookings read"
+    },
+    {
+      "pluginId": "appointo",
+      "kind": "api",
+      "shortPath": "bookings.reschedule",
+      "haystack": "bookings.reschedule appointo.api.bookings.reschedule reschedule an existing booking write"
+    },
+    {
+      "pluginId": "appointo",
+      "kind": "api",
+      "shortPath": "bookings.update",
+      "haystack": "bookings.update appointo.api.bookings.update update a booking (buffer updates) write"
+    },
+    {
+      "pluginId": "appointo",
+      "kind": "api",
+      "shortPath": "products.list",
+      "haystack": "products.list appointo.api.products.list list all products read"
+    },
+    {
+      "pluginId": "appointo",
+      "kind": "api",
+      "shortPath": "subscriptions.list",
+      "haystack": "subscriptions.list appointo.api.subscriptions.list list all appointment subscriptions read"
+    },
+    {
       "pluginId": "asana",
       "kind": "api",
       "shortPath": "projects.addFollowers",
@@ -15066,6 +15402,378 @@
       "kind": "api",
       "shortPath": "suppliers.upsert",
       "haystack": "suppliers.upsert ascora.api.suppliers.upsert create a supplier or update one when supplierid is provided write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "apiKey.info",
+      "haystack": "apikey.info ashby.api.apikey.info retrieve information and permission scopes for the current api key read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "application.changeStage",
+      "haystack": "application.changestage ashby.api.application.changestage move an application to a different interview stage write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "application.create",
+      "haystack": "application.create ashby.api.application.create create an application linking a candidate to a job write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "application.info",
+      "haystack": "application.info ashby.api.application.info retrieve details for a specific application read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "application.list",
+      "haystack": "application.list ashby.api.application.list list applications filtered by candidate, job, or status read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "application.transfer",
+      "haystack": "application.transfer ashby.api.application.transfer transfer an application to another job write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "application.update",
+      "haystack": "application.update ashby.api.application.update update application metadata or archive status write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "candidate.addTag",
+      "haystack": "candidate.addtag ashby.api.candidate.addtag add a tag to a candidate write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "candidate.anonymize",
+      "haystack": "candidate.anonymize ashby.api.candidate.anonymize anonymize candidate personally identifiable data for gdpr compliance destructive"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "candidate.create",
+      "haystack": "candidate.create ashby.api.candidate.create create a new candidate in ashby write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "candidate.createNote",
+      "haystack": "candidate.createnote ashby.api.candidate.createnote create a note on a candidate record write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "candidate.info",
+      "haystack": "candidate.info ashby.api.candidate.info retrieve detailed candidate information by id read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "candidate.list",
+      "haystack": "candidate.list ashby.api.candidate.list list candidates with cursor-based pagination and time filters read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "candidate.listNotes",
+      "haystack": "candidate.listnotes ashby.api.candidate.listnotes list all notes for a specific candidate read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "candidate.removeTag",
+      "haystack": "candidate.removetag ashby.api.candidate.removetag remove a tag from a candidate write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "candidate.search",
+      "haystack": "candidate.search ashby.api.candidate.search search candidates by name, email address, or phone number read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "candidate.update",
+      "haystack": "candidate.update ashby.api.candidate.update update candidate profile information and custom fields write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "customField.info",
+      "haystack": "customfield.info ashby.api.customfield.info retrieve custom field definition details read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "customField.list",
+      "haystack": "customfield.list ashby.api.customfield.list list custom field definitions filtered by object type read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "customField.setValue",
+      "haystack": "customfield.setvalue ashby.api.customfield.setvalue set a custom field value on a candidate, application, job, or offer write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "department.archive",
+      "haystack": "department.archive ashby.api.department.archive archive a department destructive"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "department.create",
+      "haystack": "department.create ashby.api.department.create create a new department write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "department.info",
+      "haystack": "department.info ashby.api.department.info retrieve department details by id read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "department.list",
+      "haystack": "department.list ashby.api.department.list list all departments in the organization read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "department.update",
+      "haystack": "department.update ashby.api.department.update update department name or parent department write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "interview.info",
+      "haystack": "interview.info ashby.api.interview.info retrieve interview details by id read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "interview.list",
+      "haystack": "interview.list ashby.api.interview.list list interviews for an interview plan read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "interview.scheduleInfo",
+      "haystack": "interview.scheduleinfo ashby.api.interview.scheduleinfo retrieve details of an interview schedule read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "interview.scheduleList",
+      "haystack": "interview.schedulelist ashby.api.interview.schedulelist list scheduled interviews for an application read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "interview.stageList",
+      "haystack": "interview.stagelist ashby.api.interview.stagelist list interview stages for a job or interview plan read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "job.create",
+      "haystack": "job.create ashby.api.job.create create a new job in ashby write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "job.info",
+      "haystack": "job.info ashby.api.job.info retrieve job details by job id read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "job.list",
+      "haystack": "job.list ashby.api.job.list list jobs with status, department, and location filters read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "job.search",
+      "haystack": "job.search ashby.api.job.search search jobs by title or status read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "job.update",
+      "haystack": "job.update ashby.api.job.update update job details, department, or status write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "jobPosting.info",
+      "haystack": "jobposting.info ashby.api.jobposting.info retrieve job posting information by id read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "jobPosting.list",
+      "haystack": "jobposting.list ashby.api.jobposting.list list published and unpublished job postings read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "location.archive",
+      "haystack": "location.archive ashby.api.location.archive archive a location destructive"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "location.create",
+      "haystack": "location.create ashby.api.location.create create a new location write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "location.info",
+      "haystack": "location.info ashby.api.location.info retrieve location details by id read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "location.list",
+      "haystack": "location.list ashby.api.location.list list all locations in the organization read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "location.update",
+      "haystack": "location.update ashby.api.location.update update location name or hierarchy write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "offer.create",
+      "haystack": "offer.create ashby.api.offer.create create a new job offer for an application write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "offer.info",
+      "haystack": "offer.info ashby.api.offer.info retrieve details for a specific offer read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "offer.list",
+      "haystack": "offer.list ashby.api.offer.list list offers filtered by application or status read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "offer.update",
+      "haystack": "offer.update ashby.api.offer.update update job offer details or status write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "user.info",
+      "haystack": "user.info ashby.api.user.info retrieve organization user details by id read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "user.list",
+      "haystack": "user.list ashby.api.user.list list users in the organization read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "user.search",
+      "haystack": "user.search ashby.api.user.search search users by name or email address read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "webhook.create",
+      "haystack": "webhook.create ashby.api.webhook.create register a new webhook subscription in ashby write"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "webhook.delete",
+      "haystack": "webhook.delete ashby.api.webhook.delete delete a webhook subscription destructive"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "api",
+      "shortPath": "webhook.info",
+      "haystack": "webhook.info ashby.api.webhook.info retrieve webhook configuration details by id read"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "webhook",
+      "shortPath": "application.submit",
+      "haystack": "application.submit ashby.webhooks.application.submit triggered when a candidate application is submitted"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "webhook",
+      "shortPath": "application.update",
+      "haystack": "application.update ashby.webhooks.application.update triggered when an application is updated"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "webhook",
+      "shortPath": "candidate.hire",
+      "haystack": "candidate.hire ashby.webhooks.candidate.hire triggered when a candidate is hired"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "webhook",
+      "shortPath": "candidate.stageChange",
+      "haystack": "candidate.stagechange ashby.webhooks.candidate.stagechange triggered when a candidate moves to a different interview stage"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "webhook",
+      "shortPath": "interview.planTransition",
+      "haystack": "interview.plantransition ashby.webhooks.interview.plantransition triggered during interview plan transitions"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "webhook",
+      "shortPath": "interview.scheduleCreate",
+      "haystack": "interview.schedulecreate ashby.webhooks.interview.schedulecreate triggered when an interview schedule is created"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "webhook",
+      "shortPath": "interview.scheduleUpdate",
+      "haystack": "interview.scheduleupdate ashby.webhooks.interview.scheduleupdate triggered when an interview schedule is updated"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "webhook",
+      "shortPath": "offer.create",
+      "haystack": "offer.create ashby.webhooks.offer.create triggered when a job offer is created"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "webhook",
+      "shortPath": "offer.delete",
+      "haystack": "offer.delete ashby.webhooks.offer.delete triggered when a job offer is deleted"
+    },
+    {
+      "pluginId": "ashby",
+      "kind": "webhook",
+      "shortPath": "offer.update",
+      "haystack": "offer.update ashby.webhooks.offer.update triggered when a job offer is updated"
     },
     {
       "pluginId": "asindataapi",
@@ -18282,6 +18990,54 @@
       "kind": "api",
       "shortPath": "user.get",
       "haystack": "user.get beeminder.api.user.get get information about the authenticated user read"
+    },
+    {
+      "pluginId": "bestbuy",
+      "kind": "api",
+      "shortPath": "categories.get",
+      "haystack": "categories.get bestbuy.api.categories.get retrieve detailed information about a category by id read"
+    },
+    {
+      "pluginId": "bestbuy",
+      "kind": "api",
+      "shortPath": "categories.list",
+      "haystack": "categories.list bestbuy.api.categories.list list or filter best buy product categories read"
+    },
+    {
+      "pluginId": "bestbuy",
+      "kind": "api",
+      "shortPath": "products.get",
+      "haystack": "products.get bestbuy.api.products.get retrieve detailed information about a product by sku read"
+    },
+    {
+      "pluginId": "bestbuy",
+      "kind": "api",
+      "shortPath": "products.list",
+      "haystack": "products.list bestbuy.api.products.list retrieve products with optional sku, upc, name, saleprice, and categorypath.id filters read"
+    },
+    {
+      "pluginId": "bestbuy",
+      "kind": "api",
+      "shortPath": "reviews.get",
+      "haystack": "reviews.get bestbuy.api.reviews.get retrieve a single review by id read"
+    },
+    {
+      "pluginId": "bestbuy",
+      "kind": "api",
+      "shortPath": "reviews.list",
+      "haystack": "reviews.list bestbuy.api.reviews.list retrieve product reviews with optional sku, reviewer, and score filters read"
+    },
+    {
+      "pluginId": "bestbuy",
+      "kind": "api",
+      "shortPath": "stores.get",
+      "haystack": "stores.get bestbuy.api.stores.get retrieve detailed information about a store by store id read"
+    },
+    {
+      "pluginId": "bestbuy",
+      "kind": "api",
+      "shortPath": "stores.list",
+      "haystack": "stores.list bestbuy.api.stores.list list best buy stores with optional city, region, postalcode, or area() geo search read"
     },
     {
       "pluginId": "bettercontact",
@@ -23366,6 +24122,84 @@
       "haystack": "workingpatterns.list breathehr.api.workingpatterns.list list working patterns read"
     },
     {
+      "pluginId": "brevo",
+      "kind": "api",
+      "shortPath": "account.get",
+      "haystack": "account.get brevo.api.account.get get brevo account details, plans, and relay settings read"
+    },
+    {
+      "pluginId": "brevo",
+      "kind": "api",
+      "shortPath": "contacts.create",
+      "haystack": "contacts.create brevo.api.contacts.create create a new brevo contact write"
+    },
+    {
+      "pluginId": "brevo",
+      "kind": "api",
+      "shortPath": "contacts.delete",
+      "haystack": "contacts.delete brevo.api.contacts.delete delete a brevo contact [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "brevo",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get brevo.api.contacts.get get a brevo contact by id or email identifier read"
+    },
+    {
+      "pluginId": "brevo",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list brevo.api.contacts.list list brevo contacts with filtering and pagination read"
+    },
+    {
+      "pluginId": "brevo",
+      "kind": "api",
+      "shortPath": "contacts.update",
+      "haystack": "contacts.update brevo.api.contacts.update update an existing brevo contact by id or email identifier write"
+    },
+    {
+      "pluginId": "brevo",
+      "kind": "api",
+      "shortPath": "emailCampaigns.create",
+      "haystack": "emailcampaigns.create brevo.api.emailcampaigns.create create a new brevo email campaign write"
+    },
+    {
+      "pluginId": "brevo",
+      "kind": "api",
+      "shortPath": "emailCampaigns.delete",
+      "haystack": "emailcampaigns.delete brevo.api.emailcampaigns.delete delete a brevo email campaign [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "brevo",
+      "kind": "api",
+      "shortPath": "emailCampaigns.get",
+      "haystack": "emailcampaigns.get brevo.api.emailcampaigns.get get a brevo email campaign by campaign id read"
+    },
+    {
+      "pluginId": "brevo",
+      "kind": "api",
+      "shortPath": "emailCampaigns.list",
+      "haystack": "emailcampaigns.list brevo.api.emailcampaigns.list list brevo email campaigns with filtering and pagination read"
+    },
+    {
+      "pluginId": "brevo",
+      "kind": "api",
+      "shortPath": "emailCampaigns.sendNow",
+      "haystack": "emailcampaigns.sendnow brevo.api.emailcampaigns.sendnow send a brevo email campaign immediately destructive"
+    },
+    {
+      "pluginId": "brevo",
+      "kind": "api",
+      "shortPath": "emailCampaigns.sendTest",
+      "haystack": "emailcampaigns.sendtest brevo.api.emailcampaigns.sendtest send a test email for a brevo email campaign write"
+    },
+    {
+      "pluginId": "brevo",
+      "kind": "api",
+      "shortPath": "emailCampaigns.update",
+      "haystack": "emailcampaigns.update brevo.api.emailcampaigns.update update an existing brevo email campaign write"
+    },
+    {
       "pluginId": "brex",
       "kind": "api",
       "shortPath": "accounts.getCash",
@@ -24042,6 +24876,36 @@
       "kind": "api",
       "shortPath": "unblock.create",
       "haystack": "unblock.create browserless.api.unblock.create post /unblock — bypass bot detection and return content/cookies/screenshot read"
+    },
+    {
+      "pluginId": "browsertool",
+      "kind": "api",
+      "shortPath": "files.get",
+      "haystack": "files.get browsertool.api.files.get get a download url for a task output file read"
+    },
+    {
+      "pluginId": "browsertool",
+      "kind": "api",
+      "shortPath": "sessions.get",
+      "haystack": "sessions.get browsertool.api.sessions.get get the live url for a browser session read"
+    },
+    {
+      "pluginId": "browsertool",
+      "kind": "api",
+      "shortPath": "tasks.create",
+      "haystack": "tasks.create browsertool.api.tasks.create run an ai-powered browser automation task write"
+    },
+    {
+      "pluginId": "browsertool",
+      "kind": "api",
+      "shortPath": "tasks.stop",
+      "haystack": "tasks.stop browsertool.api.tasks.stop stop a running browser task and its session write"
+    },
+    {
+      "pluginId": "browsertool",
+      "kind": "api",
+      "shortPath": "tasks.watch",
+      "haystack": "tasks.watch browsertool.api.tasks.watch poll a browser task for progress and results read"
     },
     {
       "pluginId": "bubble",
@@ -24918,6 +25782,96 @@
       "kind": "webhook",
       "shortPath": "users.updated",
       "haystack": "users.updated calendly.webhooks.users.updated a user was updated"
+    },
+    {
+      "pluginId": "campayn",
+      "kind": "api",
+      "shortPath": "contacts.createContact",
+      "haystack": "contacts.createcontact campayn.api.contacts.createcontact create a new contact in a contact list. write"
+    },
+    {
+      "pluginId": "campayn",
+      "kind": "api",
+      "shortPath": "contacts.deleteContact",
+      "haystack": "contacts.deletecontact campayn.api.contacts.deletecontact delete a contact by contact id. destructive"
+    },
+    {
+      "pluginId": "campayn",
+      "kind": "api",
+      "shortPath": "contacts.getContact",
+      "haystack": "contacts.getcontact campayn.api.contacts.getcontact get full contact details by contact id. read"
+    },
+    {
+      "pluginId": "campayn",
+      "kind": "api",
+      "shortPath": "contacts.getContacts",
+      "haystack": "contacts.getcontacts campayn.api.contacts.getcontacts list contacts for a contact list, with optional contact keyword filtering. read"
+    },
+    {
+      "pluginId": "campayn",
+      "kind": "api",
+      "shortPath": "contacts.unsubscribeContact",
+      "haystack": "contacts.unsubscribecontact campayn.api.contacts.unsubscribecontact unsubscribe contacts from a list by contact id or by email address. write"
+    },
+    {
+      "pluginId": "campayn",
+      "kind": "api",
+      "shortPath": "lists.deleteList",
+      "haystack": "lists.deletelist campayn.api.lists.deletelist delete a contact list by list id. destructive"
+    },
+    {
+      "pluginId": "campayn",
+      "kind": "api",
+      "shortPath": "lists.getLists",
+      "haystack": "lists.getlists campayn.api.lists.getlists list all contact lists visible to the authenticated user. read"
+    },
+    {
+      "pluginId": "campayn",
+      "kind": "api",
+      "shortPath": "lists.updateList",
+      "haystack": "lists.updatelist campayn.api.lists.updatelist update a contact list name or tags by list id. write"
+    },
+    {
+      "pluginId": "campayn",
+      "kind": "api",
+      "shortPath": "messages.getMessages",
+      "haystack": "messages.getmessages campayn.api.messages.getmessages list messages visible to the authenticated user. read"
+    },
+    {
+      "pluginId": "campayn",
+      "kind": "api",
+      "shortPath": "messages.getMessageStatistics",
+      "haystack": "messages.getmessagestatistics campayn.api.messages.getmessagestatistics get message statistics for a specific message id. read"
+    },
+    {
+      "pluginId": "campayn",
+      "kind": "api",
+      "shortPath": "reports.getReports",
+      "haystack": "reports.getreports campayn.api.reports.getreports get report calendar entries for sent and scheduled emails, optionally filtered by unix timestamp range. read"
+    },
+    {
+      "pluginId": "campayn",
+      "kind": "api",
+      "shortPath": "signup.signup",
+      "haystack": "signup.signup campayn.api.signup.signup create a campayn account via post /signup on the site root (not /api/v1). write"
+    },
+    {
+      "pluginId": "campayn",
+      "kind": "api",
+      "shortPath": "webforms.deleteWebform",
+      "haystack": "webforms.deletewebform campayn.api.webforms.deletewebform delete a webform by list id and webform id. destructive"
+    },
+    {
+      "pluginId": "campayn",
+      "kind": "api",
+      "shortPath": "webforms.getWebform",
+      "haystack": "webforms.getwebform campayn.api.webforms.getwebform get a webform by list id and webform id. read"
+    },
+    {
+      "pluginId": "campayn",
+      "kind": "api",
+      "shortPath": "webforms.getWebforms",
+      "haystack": "webforms.getwebforms campayn.api.webforms.getwebforms list webforms for a contact list, with optional form type filter. read"
     },
     {
       "pluginId": "canva",
@@ -27104,6 +28058,96 @@
       "haystack": "users.update capsulecrm.api.users.update update user preferences write"
     },
     {
+      "pluginId": "castingwords",
+      "kind": "api",
+      "shortPath": "audiofile.get",
+      "haystack": "audiofile.get castingwords.api.audiofile.get get audiofile details including current state read"
+    },
+    {
+      "pluginId": "castingwords",
+      "kind": "api",
+      "shortPath": "invoice.get",
+      "haystack": "invoice.get castingwords.api.invoice.get get invoice details and line items read"
+    },
+    {
+      "pluginId": "castingwords",
+      "kind": "api",
+      "shortPath": "order.create",
+      "haystack": "order.create castingwords.api.order.create create a transcription order for public audio/video urls (api4 order_url) write"
+    },
+    {
+      "pluginId": "castingwords",
+      "kind": "api",
+      "shortPath": "prepayBalance.get",
+      "haystack": "prepaybalance.get castingwords.api.prepaybalance.get get the current prepaid balance in usd read"
+    },
+    {
+      "pluginId": "castingwords",
+      "kind": "api",
+      "shortPath": "refund.create",
+      "haystack": "refund.create castingwords.api.refund.create cancel and refund an audiofile before transcription work starts destructive"
+    },
+    {
+      "pluginId": "castingwords",
+      "kind": "api",
+      "shortPath": "skus.list",
+      "haystack": "skus.list castingwords.api.skus.list list documented castingwords skus from store api v4 (no live sku endpoint) read"
+    },
+    {
+      "pluginId": "castingwords",
+      "kind": "api",
+      "shortPath": "transcript.get",
+      "haystack": "transcript.get castingwords.api.transcript.get get a completed transcript (txt, doc, rtf, html, srt, docx, tstxt, vtt) read"
+    },
+    {
+      "pluginId": "castingwords",
+      "kind": "api",
+      "shortPath": "upgrade.create",
+      "haystack": "upgrade.create castingwords.api.upgrade.create order upgrades for an audiofile (timestamps, captions, etc.) write"
+    },
+    {
+      "pluginId": "castingwords",
+      "kind": "api",
+      "shortPath": "webhook.get",
+      "haystack": "webhook.get castingwords.api.webhook.get get the registered account webhook url read"
+    },
+    {
+      "pluginId": "castingwords",
+      "kind": "api",
+      "shortPath": "webhook.register",
+      "haystack": "webhook.register castingwords.api.webhook.register register a webhook url for castingwords event notifications write"
+    },
+    {
+      "pluginId": "castingwords",
+      "kind": "api",
+      "shortPath": "webhook.test",
+      "haystack": "webhook.test castingwords.api.webhook.test request a test webhook post for a documented event type write"
+    },
+    {
+      "pluginId": "cdrplatform",
+      "kind": "api",
+      "shortPath": "cdr.price",
+      "haystack": "cdr.price cdrplatform.api.cdr.price calculate co2 removal pricing for a method portfolio. read"
+    },
+    {
+      "pluginId": "cdrplatform",
+      "kind": "api",
+      "shortPath": "cdr.purchase",
+      "haystack": "cdr.purchase cdrplatform.api.cdr.purchase create a co2 removal purchase request and return its transaction uuid. write"
+    },
+    {
+      "pluginId": "cdrplatform",
+      "kind": "api",
+      "shortPath": "certificate.get",
+      "haystack": "certificate.get cdrplatform.api.certificate.get retrieve a removal certificate by certificate id. read"
+    },
+    {
+      "pluginId": "cdrplatform",
+      "kind": "api",
+      "shortPath": "health.check",
+      "haystack": "health.check cdrplatform.api.health.check check cdr platform api health status. read"
+    },
+    {
       "pluginId": "certifier",
       "kind": "api",
       "shortPath": "attributes.list",
@@ -27432,6 +28476,174 @@
       "kind": "api",
       "shortPath": "conversations.list",
       "haystack": "conversations.list chatfai.api.conversations.list list conversations for the authenticated user (get /v1/conversations) read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "attendance.list",
+      "haystack": "attendance.list chmeetings.api.attendance.list list attendance for an occurrence read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "events.get",
+      "haystack": "events.get chmeetings.api.events.get get an event by id read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "events.list",
+      "haystack": "events.list chmeetings.api.events.list list events in a date range (max 366 days) read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "events.listOccurrences",
+      "haystack": "events.listoccurrences chmeetings.api.events.listoccurrences list occurrences for an event in a date range read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "families.create",
+      "haystack": "families.create chmeetings.api.families.create create a family with members write"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "families.delete",
+      "haystack": "families.delete chmeetings.api.families.delete delete a family destructive"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "families.get",
+      "haystack": "families.get chmeetings.api.families.get get a family by id read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "families.list",
+      "haystack": "families.list chmeetings.api.families.list list families read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "groups.addMember",
+      "haystack": "groups.addmember chmeetings.api.groups.addmember add a person to a group write"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "groups.create",
+      "haystack": "groups.create chmeetings.api.groups.create create a group write"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "groups.delete",
+      "haystack": "groups.delete chmeetings.api.groups.delete delete a group destructive"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "groups.get",
+      "haystack": "groups.get chmeetings.api.groups.get get a group by id read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "groups.list",
+      "haystack": "groups.list chmeetings.api.groups.list list groups read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "groups.removeMember",
+      "haystack": "groups.removemember chmeetings.api.groups.removemember remove a person from a group destructive"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "groups.update",
+      "haystack": "groups.update chmeetings.api.groups.update update a group write"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "notes.list",
+      "haystack": "notes.list chmeetings.api.notes.list list notes for a person read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "organizations.addPerson",
+      "haystack": "organizations.addperson chmeetings.api.organizations.addperson add a person to an organization write"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "organizations.get",
+      "haystack": "organizations.get chmeetings.api.organizations.get get an organization by id read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "organizations.list",
+      "haystack": "organizations.list chmeetings.api.organizations.list list organizations from get /api/v1/organizations read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "organizations.listPeople",
+      "haystack": "organizations.listpeople chmeetings.api.organizations.listpeople list people in an organization read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "organizations.removePerson",
+      "haystack": "organizations.removeperson chmeetings.api.organizations.removeperson remove a person from an organization destructive"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "people.create",
+      "haystack": "people.create chmeetings.api.people.create create a person via post /api/v1/people write"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "people.delete",
+      "haystack": "people.delete chmeetings.api.people.delete delete a person via delete /api/v1/people/{id} destructive"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "people.get",
+      "haystack": "people.get chmeetings.api.people.get get a person by id from get /api/v1/people/{id} read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "people.list",
+      "haystack": "people.list chmeetings.api.people.list list people from get /api/v1/people read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "people.listOrganizations",
+      "haystack": "people.listorganizations chmeetings.api.people.listorganizations list a person organizations read"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "people.update",
+      "haystack": "people.update chmeetings.api.people.update update a person via put /api/v1/people/{id} write"
+    },
+    {
+      "pluginId": "chmeetings",
+      "kind": "api",
+      "shortPath": "settings.get",
+      "haystack": "settings.get chmeetings.api.settings.get get genders, social statuses, grade values, family roles, and member fields read"
     },
     {
       "pluginId": "circleci",
@@ -29672,6 +30884,24 @@
       "haystack": "library.search contextsevenmcp.api.library.search search context7 libraries by name read"
     },
     {
+      "pluginId": "countdownapi",
+      "kind": "api",
+      "shortPath": "autocomplete.get",
+      "haystack": "autocomplete.get countdownapi.api.autocomplete.get get ebay search autocomplete suggestions read"
+    },
+    {
+      "pluginId": "countdownapi",
+      "kind": "api",
+      "shortPath": "product.get",
+      "haystack": "product.get countdownapi.api.product.get get ebay product data using countdown api read"
+    },
+    {
+      "pluginId": "countdownapi",
+      "kind": "api",
+      "shortPath": "search.get",
+      "haystack": "search.get countdownapi.api.search.get search ebay products using countdown api read"
+    },
+    {
       "pluginId": "crowterminal",
       "kind": "api",
       "shortPath": "agent.register",
@@ -30144,6 +31374,384 @@
       "kind": "api",
       "shortPath": "user.updateProfile",
       "haystack": "user.updateprofile customgpt.api.user.updateprofile updates the authenticated user's profile information in customgpt. use this action to modify profile details such as the user's display name, email address, or profile photo url. all fields are optional - only the fields you provide will be updated. the action returns the complete updated user profile. write"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "clean.address",
+      "haystack": "clean.address dadataru.api.clean.address clean and standardize russian addresses read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "clean.birthdate",
+      "haystack": "clean.birthdate dadataru.api.clean.birthdate clean and standardize birthdates read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "clean.email",
+      "haystack": "clean.email dadataru.api.clean.email clean and standardize email addresses read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "clean.name",
+      "haystack": "clean.name dadataru.api.clean.name clean and parse full names read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "clean.passport",
+      "haystack": "clean.passport dadataru.api.clean.passport clean and validate russian passport numbers read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "clean.phone",
+      "haystack": "clean.phone dadataru.api.clean.phone clean and standardize phone numbers read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "clean.record",
+      "haystack": "clean.record dadataru.api.clean.record clean composite multi-field records read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "clean.vehicle",
+      "haystack": "clean.vehicle dadataru.api.clean.vehicle clean and recognize vehicle models read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.address",
+      "haystack": "find.address dadataru.api.find.address find address details by id read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.bank",
+      "haystack": "find.bank dadataru.api.find.bank find bank details read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.carBrand",
+      "haystack": "find.carbrand dadataru.api.find.carbrand find car brand details read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.companyByEmail",
+      "haystack": "find.companybyemail dadataru.api.find.companybyemail find companies by email domain read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.country",
+      "haystack": "find.country dadataru.api.find.country find country metadata read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.courtById",
+      "haystack": "find.courtbyid dadataru.api.find.courtbyid find court details by id read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.currency",
+      "haystack": "find.currency dadataru.api.find.currency find currency details read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.delivery",
+      "haystack": "find.delivery dadataru.api.find.delivery find delivery city mapping ids read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.fiasById",
+      "haystack": "find.fiasbyid dadataru.api.find.fiasbyid find address by fias id read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.fmsUnit",
+      "haystack": "find.fmsunit dadataru.api.find.fmsunit find passport issuing authority (fms) read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.fnsUnit",
+      "haystack": "find.fnsunit dadataru.api.find.fnsunit find tax office (fns) details read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.ftsUnit",
+      "haystack": "find.ftsunit dadataru.api.find.ftsunit find customs office (fts) details read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.medicalPositionById",
+      "haystack": "find.medicalpositionbyid dadataru.api.find.medicalpositionbyid find medical positions by id read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.mktu",
+      "haystack": "find.mktu dadataru.api.find.mktu find mktu trademark classification items read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.okpd2ById",
+      "haystack": "find.okpd2byid dadataru.api.find.okpd2byid find okpd2 classifications by id read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.okpdtrPosition",
+      "haystack": "find.okpdtrposition dadataru.api.find.okpdtrposition find okpdtr job positions by code read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.okpdtrProfession",
+      "haystack": "find.okpdtrprofession dadataru.api.find.okpdtrprofession find okpdtr worker professions read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.oktmoById",
+      "haystack": "find.oktmobyid dadataru.api.find.oktmobyid find territory details by oktmo code read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.okved2",
+      "haystack": "find.okved2 dadataru.api.find.okved2 find okved2 economic activities read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.party",
+      "haystack": "find.party dadataru.api.find.party find russian party/company details read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.partyBy",
+      "haystack": "find.partyby dadataru.api.find.partyby find belarus party by unp read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.partyKz",
+      "haystack": "find.partykz dadataru.api.find.partykz find kazakhstan company details read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.postalOffice",
+      "haystack": "find.postaloffice dadataru.api.find.postaloffice find postal office details read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "find.postalUnitById",
+      "haystack": "find.postalunitbyid dadataru.api.find.postalunitbyid find postal unit details read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "geolocate.address",
+      "haystack": "geolocate.address dadataru.api.geolocate.address find addresses near coordinates read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "geolocate.postalUnit",
+      "haystack": "geolocate.postalunit dadataru.api.geolocate.postalunit find postal units near coordinates read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "ipLocate.address",
+      "haystack": "iplocate.address dadataru.api.iplocate.address geolocate address by ip read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "profile.balance",
+      "haystack": "profile.balance dadataru.api.profile.balance get current account balance read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "profile.statistics",
+      "haystack": "profile.statistics dadataru.api.profile.statistics get usage statistics read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "profile.versions",
+      "haystack": "profile.versions dadataru.api.profile.versions get reference database update versions read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.address",
+      "haystack": "suggest.address dadataru.api.suggest.address autocomplete and suggest addresses read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.bank",
+      "haystack": "suggest.bank dadataru.api.suggest.bank autocomplete and suggest banks read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.carBrand",
+      "haystack": "suggest.carbrand dadataru.api.suggest.carbrand autocomplete and suggest car brands read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.country",
+      "haystack": "suggest.country dadataru.api.suggest.country autocomplete and suggest countries read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.court",
+      "haystack": "suggest.court dadataru.api.suggest.court autocomplete and suggest courts read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.currency",
+      "haystack": "suggest.currency dadataru.api.suggest.currency autocomplete and suggest currencies read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.email",
+      "haystack": "suggest.email dadataru.api.suggest.email autocomplete and suggest emails read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.fias",
+      "haystack": "suggest.fias dadataru.api.suggest.fias autocomplete and suggest fias addresses read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.fmsUnit",
+      "haystack": "suggest.fmsunit dadataru.api.suggest.fmsunit suggest passport issuing departments read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.fnsUnit",
+      "haystack": "suggest.fnsunit dadataru.api.suggest.fnsunit suggest tax inspection (fns) offices read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.ftsUnit",
+      "haystack": "suggest.ftsunit dadataru.api.suggest.ftsunit suggest customs (fts) offices read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.medicalPosition",
+      "haystack": "suggest.medicalposition dadataru.api.suggest.medicalposition suggest medical positions/specialties read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.metro",
+      "haystack": "suggest.metro dadataru.api.suggest.metro suggest metro stations read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.mktu",
+      "haystack": "suggest.mktu dadataru.api.suggest.mktu suggest mktu trademark classifications read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.name",
+      "haystack": "suggest.name dadataru.api.suggest.name autocomplete and suggest names (fio) read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.okpd2",
+      "haystack": "suggest.okpd2 dadataru.api.suggest.okpd2 suggest product classification (okpd2) codes read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.okpdtrPosition",
+      "haystack": "suggest.okpdtrposition dadataru.api.suggest.okpdtrposition suggest job positions from okpdtr classifier read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.okpdtrProfession",
+      "haystack": "suggest.okpdtrprofession dadataru.api.suggest.okpdtrprofession suggest worker professions from okpdtr read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.oktmo",
+      "haystack": "suggest.oktmo dadataru.api.suggest.oktmo suggest municipal territories (oktmo) read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.okved2",
+      "haystack": "suggest.okved2 dadataru.api.suggest.okved2 suggest economic activities (okved2) read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.party",
+      "haystack": "suggest.party dadataru.api.suggest.party suggest russian parties/companies read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.partyBy",
+      "haystack": "suggest.partyby dadataru.api.suggest.partyby suggest belarus parties/companies read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.partyKz",
+      "haystack": "suggest.partykz dadataru.api.suggest.partykz suggest kazakhstan parties/companies read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.postalOffice",
+      "haystack": "suggest.postaloffice dadataru.api.suggest.postaloffice suggest postal offices read"
+    },
+    {
+      "pluginId": "dadataru",
+      "kind": "api",
+      "shortPath": "suggest.postalUnit",
+      "haystack": "suggest.postalunit dadataru.api.suggest.postalunit suggest postal units read"
     },
     {
       "pluginId": "databricks",
@@ -35714,6 +37322,12 @@
       "haystack": "transcriptions.transcriptprocessing fireflies.webhooks.transcriptions.transcriptprocessing transcript is being processed"
     },
     {
+      "pluginId": "flexisign",
+      "kind": "api",
+      "shortPath": "list.templates",
+      "haystack": "list.templates flexisign.api.list.templates list all available document templates in flexisign read"
+    },
+    {
       "pluginId": "formbricks",
       "kind": "api",
       "shortPath": "actionClasses.create",
@@ -37524,6 +39138,420 @@
       "kind": "api",
       "shortPath": "address.validate",
       "haystack": "address.validate googleaddressvalidation.api.address.validate validate a postal address and get standardized results read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "accounts.get",
+      "haystack": "accounts.get googleanalytics.api.accounts.get lookup a single google analytics account read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "accounts.getDataSharingSettings",
+      "haystack": "accounts.getdatasharingsettings googleanalytics.api.accounts.getdatasharingsettings get data sharing settings for an account read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "accounts.list",
+      "haystack": "accounts.list googleanalytics.api.accounts.list list accounts accessible to the caller [deprecated: use accounts.listv1beta] read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "accounts.listSummaries",
+      "haystack": "accounts.listsummaries googleanalytics.api.accounts.listsummaries list summaries of all accessible accounts and their properties read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "accounts.listV1Beta",
+      "haystack": "accounts.listv1beta googleanalytics.api.accounts.listv1beta list accounts accessible to the caller (v1beta) read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "accounts.provisionAccountTicket",
+      "haystack": "accounts.provisionaccountticket googleanalytics.api.accounts.provisionaccountticket request a ticket for creating a google analytics account write"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "audienceExports.create",
+      "haystack": "audienceexports.create googleanalytics.api.audienceexports.create create an audience export for later retrieval of users write"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "audienceExports.get",
+      "haystack": "audienceexports.get googleanalytics.api.audienceexports.get get metadata about an audience export read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "audienceExports.list",
+      "haystack": "audienceexports.list googleanalytics.api.audienceexports.list list audience exports on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "audienceExports.query",
+      "haystack": "audienceexports.query googleanalytics.api.audienceexports.query retrieve user rows from an audience export read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "audienceLists.create",
+      "haystack": "audiencelists.create googleanalytics.api.audiencelists.create create an audience list for later retrieval of users write"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "audienceLists.get",
+      "haystack": "audiencelists.get googleanalytics.api.audiencelists.get get metadata about an audience list read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "audienceLists.list",
+      "haystack": "audiencelists.list googleanalytics.api.audiencelists.list list audience lists on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "audienceLists.query",
+      "haystack": "audiencelists.query googleanalytics.api.audiencelists.query retrieve user rows from an audience list read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "audiences.get",
+      "haystack": "audiences.get googleanalytics.api.audiences.get lookup a single audience configuration read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "audiences.list",
+      "haystack": "audiences.list googleanalytics.api.audiences.list list audiences on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "calculatedMetrics.list",
+      "haystack": "calculatedmetrics.list googleanalytics.api.calculatedmetrics.list list calculated metrics on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "channelGroups.list",
+      "haystack": "channelgroups.list googleanalytics.api.channelgroups.list list channel groups on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "conversionEvents.list",
+      "haystack": "conversionevents.list googleanalytics.api.conversionevents.list list conversion events [deprecated: use keyevents.list] read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "customDimensions.archive",
+      "haystack": "customdimensions.archive googleanalytics.api.customdimensions.archive archive a custom dimension on a property [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "customDimensions.create",
+      "haystack": "customdimensions.create googleanalytics.api.customdimensions.create create a custom dimension on a property write"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "customDimensions.get",
+      "haystack": "customdimensions.get googleanalytics.api.customdimensions.get lookup a single custom dimension read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "customDimensions.list",
+      "haystack": "customdimensions.list googleanalytics.api.customdimensions.list list custom dimensions on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "customMetrics.create",
+      "haystack": "custommetrics.create googleanalytics.api.custommetrics.create create a custom metric on a property write"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "customMetrics.list",
+      "haystack": "custommetrics.list googleanalytics.api.custommetrics.list list custom metrics on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "dataStreams.list",
+      "haystack": "datastreams.list googleanalytics.api.datastreams.list list data streams on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "dataStreams.listEventCreateRules",
+      "haystack": "datastreams.listeventcreaterules googleanalytics.api.datastreams.listeventcreaterules list event create rules on a web data stream read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "dataStreams.listMeasurementProtocolSecrets",
+      "haystack": "datastreams.listmeasurementprotocolsecrets googleanalytics.api.datastreams.listmeasurementprotocolsecrets list measurement protocol secrets under a data stream write"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "dataStreams.listSKAdNetworkConversionValueSchemas",
+      "haystack": "datastreams.listskadnetworkconversionvalueschemas googleanalytics.api.datastreams.listskadnetworkconversionvalueschemas list skadnetwork conversion value schemas on an ios data stream read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "expandedDataSets.create",
+      "haystack": "expandeddatasets.create googleanalytics.api.expandeddatasets.create create an expanded data set on a property write"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "expandedDataSets.list",
+      "haystack": "expandeddatasets.list googleanalytics.api.expandeddatasets.list list expanded data sets on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "keyEvents.get",
+      "haystack": "keyevents.get googleanalytics.api.keyevents.get lookup a single key event (conversion) read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "keyEvents.list",
+      "haystack": "keyevents.list googleanalytics.api.keyevents.list list key events on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "links.listAdSense",
+      "haystack": "links.listadsense googleanalytics.api.links.listadsense list adsense links on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "links.listBigQuery",
+      "haystack": "links.listbigquery googleanalytics.api.links.listbigquery list bigquery links on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "links.listDV360Advertiser",
+      "haystack": "links.listdv360advertiser googleanalytics.api.links.listdv360advertiser list display & video 360 advertiser links on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "links.listDV360Proposals",
+      "haystack": "links.listdv360proposals googleanalytics.api.links.listdv360proposals list display & video 360 advertiser link proposals on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "links.listFirebase",
+      "haystack": "links.listfirebase googleanalytics.api.links.listfirebase list firebase links on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "links.listGoogleAds",
+      "haystack": "links.listgoogleads googleanalytics.api.links.listgoogleads list google ads links on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "links.listSearchAds360",
+      "haystack": "links.listsearchads360 googleanalytics.api.links.listsearchads360 list search ads 360 links on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "measurementProtocol.sendEvents",
+      "haystack": "measurementprotocol.sendevents googleanalytics.api.measurementprotocol.sendevents send events to ga4 via the measurement protocol. requires the stream api_secret (not the oauth token) plus measurementid (web) or firebaseappid (app) write"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "measurementProtocol.validateEvents",
+      "haystack": "measurementprotocol.validateevents googleanalytics.api.measurementprotocol.validateevents validate measurement protocol events against the debug endpoint before sending. requires the stream api_secret read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "properties.createRollup",
+      "haystack": "properties.createrollup googleanalytics.api.properties.createrollup create a roll-up property aggregating multiple properties write"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "properties.get",
+      "haystack": "properties.get googleanalytics.api.properties.get lookup a single ga4 property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "properties.getAttributionSettings",
+      "haystack": "properties.getattributionsettings googleanalytics.api.properties.getattributionsettings get attribution settings for a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "properties.getDataRetentionSettings",
+      "haystack": "properties.getdataretentionsettings googleanalytics.api.properties.getdataretentionsettings get data retention settings for a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "properties.getGoogleSignalsSettings",
+      "haystack": "properties.getgooglesignalssettings googleanalytics.api.properties.getgooglesignalssettings get google signals settings for a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "properties.getPropertyQuotasSnapshot",
+      "haystack": "properties.getpropertyquotassnapshot googleanalytics.api.properties.getpropertyquotassnapshot get a snapshot of property quota usage by category read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "properties.list",
+      "haystack": "properties.list googleanalytics.api.properties.list list child properties under an account [deprecated: use properties.listfiltered] read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "properties.listFiltered",
+      "haystack": "properties.listfiltered googleanalytics.api.properties.listfiltered list ga4 properties matching a filter read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "properties.update",
+      "haystack": "properties.update googleanalytics.api.properties.update update a ga4 property write"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "recurringAudienceLists.create",
+      "haystack": "recurringaudiencelists.create googleanalytics.api.recurringaudiencelists.create create a recurring audience list that refreshes daily write"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "recurringAudienceLists.get",
+      "haystack": "recurringaudiencelists.get googleanalytics.api.recurringaudiencelists.get get metadata about a recurring audience list read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "recurringAudienceLists.list",
+      "haystack": "recurringaudiencelists.list googleanalytics.api.recurringaudiencelists.list list recurring audience lists on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "reportingData.listAnnotations",
+      "haystack": "reportingdata.listannotations googleanalytics.api.reportingdata.listannotations list reporting data annotations on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "reportingData.listSubpropertyEventFilters",
+      "haystack": "reportingdata.listsubpropertyeventfilters googleanalytics.api.reportingdata.listsubpropertyeventfilters list subproperty event filters on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "reportingData.listSubpropertySyncConfigs",
+      "haystack": "reportingdata.listsubpropertysyncconfigs googleanalytics.api.reportingdata.listsubpropertysyncconfigs list subproperty sync configs on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "reports.batchRun",
+      "haystack": "reports.batchrun googleanalytics.api.reports.batchrun run multiple reports in a single batch request read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "reports.batchRunPivot",
+      "haystack": "reports.batchrunpivot googleanalytics.api.reports.batchrunpivot run multiple pivot reports in a single batch request read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "reports.checkCompatibility",
+      "haystack": "reports.checkcompatibility googleanalytics.api.reports.checkcompatibility list dimensions and metrics compatible with a report request read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "reports.getMetadata",
+      "haystack": "reports.getmetadata googleanalytics.api.reports.getmetadata get metadata for available dimensions and metrics. use apinames from here in report requests read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "reports.run",
+      "haystack": "reports.run googleanalytics.api.reports.run run a customized ga4 report. derive dimension/metric apinames from reports.getmetadata read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "reports.runFunnel",
+      "haystack": "reports.runfunnel googleanalytics.api.reports.runfunnel run a customized funnel report read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "reports.runPivot",
+      "haystack": "reports.runpivot googleanalytics.api.reports.runpivot run a customized pivot report read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "reports.runRealtime",
+      "haystack": "reports.runrealtime googleanalytics.api.reports.runrealtime run a realtime report (last 30-60 minutes) read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "reportTasks.create",
+      "haystack": "reporttasks.create googleanalytics.api.reporttasks.create create an asynchronous report task write"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "reportTasks.get",
+      "haystack": "reporttasks.get googleanalytics.api.reporttasks.get get metadata about a report task read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "reportTasks.list",
+      "haystack": "reporttasks.list googleanalytics.api.reporttasks.list list report tasks on a property read"
+    },
+    {
+      "pluginId": "googleanalytics",
+      "kind": "api",
+      "shortPath": "reportTasks.query",
+      "haystack": "reporttasks.query googleanalytics.api.reporttasks.query retrieve a report task content (only when active) read"
     },
     {
       "pluginId": "googlebigquery",
@@ -42424,6 +44452,12 @@
     {
       "pluginId": "instagram",
       "kind": "api",
+      "shortPath": "comments.getReplies",
+      "haystack": "comments.getreplies instagram.api.comments.getreplies get comment replies. read"
+    },
+    {
+      "pluginId": "instagram",
+      "kind": "api",
       "shortPath": "comments.list",
       "haystack": "comments.list instagram.api.comments.list list comments on an instagram media object. read"
     },
@@ -42460,6 +44494,12 @@
     {
       "pluginId": "instagram",
       "kind": "api",
+      "shortPath": "conversations.getConversation",
+      "haystack": "conversations.getconversation instagram.api.conversations.getconversation get conversation details. read"
+    },
+    {
+      "pluginId": "instagram",
+      "kind": "api",
       "shortPath": "conversations.list",
       "haystack": "conversations.list instagram.api.conversations.list list conversations on instagram messaging. read"
     },
@@ -42474,6 +44514,12 @@
       "kind": "api",
       "shortPath": "image.story",
       "haystack": "image.story instagram.api.image.story create an image story container for publishing on instagram. write"
+    },
+    {
+      "pluginId": "instagram",
+      "kind": "api",
+      "shortPath": "media.children",
+      "haystack": "media.children instagram.api.media.children get children media. read"
     },
     {
       "pluginId": "instagram",
@@ -42508,8 +44554,44 @@
     {
       "pluginId": "instagram",
       "kind": "api",
+      "shortPath": "messages.markSeen",
+      "haystack": "messages.markseen instagram.api.messages.markseen mark messages as seen. write"
+    },
+    {
+      "pluginId": "instagram",
+      "kind": "api",
       "shortPath": "messages.send",
       "haystack": "messages.send instagram.api.messages.send send a message in instagram messaging. write"
+    },
+    {
+      "pluginId": "instagram",
+      "kind": "api",
+      "shortPath": "messages.sendImage",
+      "haystack": "messages.sendimage instagram.api.messages.sendimage send image via dm. write"
+    },
+    {
+      "pluginId": "instagram",
+      "kind": "api",
+      "shortPath": "messenger.deleteProfile",
+      "haystack": "messenger.deleteprofile instagram.api.messenger.deleteprofile delete messenger profile. write"
+    },
+    {
+      "pluginId": "instagram",
+      "kind": "api",
+      "shortPath": "messenger.getProfile",
+      "haystack": "messenger.getprofile instagram.api.messenger.getprofile get messenger profile. read"
+    },
+    {
+      "pluginId": "instagram",
+      "kind": "api",
+      "shortPath": "messenger.updateProfile",
+      "haystack": "messenger.updateprofile instagram.api.messenger.updateprofile update messenger profile. write"
+    },
+    {
+      "pluginId": "instagram",
+      "kind": "api",
+      "shortPath": "profile.contentPublishingLimit",
+      "haystack": "profile.contentpublishinglimit instagram.api.profile.contentpublishinglimit get user content publishing limit. read"
     },
     {
       "pluginId": "instagram",
@@ -42522,6 +44604,30 @@
       "kind": "api",
       "shortPath": "profile.insights",
       "haystack": "profile.insights instagram.api.profile.insights get insights for the instagram business account. read"
+    },
+    {
+      "pluginId": "instagram",
+      "kind": "api",
+      "shortPath": "profile.liveMedia",
+      "haystack": "profile.livemedia instagram.api.profile.livemedia get user live media. read"
+    },
+    {
+      "pluginId": "instagram",
+      "kind": "api",
+      "shortPath": "profile.replyMentions",
+      "haystack": "profile.replymentions instagram.api.profile.replymentions reply to mentions. write"
+    },
+    {
+      "pluginId": "instagram",
+      "kind": "api",
+      "shortPath": "profile.stories",
+      "haystack": "profile.stories instagram.api.profile.stories get user stories. read"
+    },
+    {
+      "pluginId": "instagram",
+      "kind": "api",
+      "shortPath": "profile.tags",
+      "haystack": "profile.tags instagram.api.profile.tags get user tags. read"
     },
     {
       "pluginId": "instagram",
@@ -49166,6 +51272,90 @@
       "haystack": "usage.get retailed.api.usage.get get api usage information read"
     },
     {
+      "pluginId": "runpod",
+      "kind": "api",
+      "shortPath": "account.myself",
+      "haystack": "account.myself runpod.api.account.myself get the authenticated runpod user id, email, mfa, and ssh public key read"
+    },
+    {
+      "pluginId": "runpod",
+      "kind": "api",
+      "shortPath": "account.updateSettings",
+      "haystack": "account.updatesettings runpod.api.account.updatesettings update the account ssh public key used for pod access write"
+    },
+    {
+      "pluginId": "runpod",
+      "kind": "api",
+      "shortPath": "catalog.cpuTypes",
+      "haystack": "catalog.cputypes runpod.api.catalog.cputypes list cpu types with vcpu range, ram, and pricing read"
+    },
+    {
+      "pluginId": "runpod",
+      "kind": "api",
+      "shortPath": "catalog.gpuTypes",
+      "haystack": "catalog.gputypes runpod.api.catalog.gputypes list gpu types with memory, cloud availability, pricing, and stock read"
+    },
+    {
+      "pluginId": "runpod",
+      "kind": "api",
+      "shortPath": "clusters.create",
+      "haystack": "clusters.create runpod.api.clusters.create create a multi-node gpu cluster for distributed workloads write"
+    },
+    {
+      "pluginId": "runpod",
+      "kind": "api",
+      "shortPath": "endpoints.save",
+      "haystack": "endpoints.save runpod.api.endpoints.save create or update a serverless endpoint and scaling settings write"
+    },
+    {
+      "pluginId": "runpod",
+      "kind": "api",
+      "shortPath": "pods.get",
+      "haystack": "pods.get runpod.api.pods.get get a pod by id including status, cost, gpu, and memory read"
+    },
+    {
+      "pluginId": "runpod",
+      "kind": "api",
+      "shortPath": "pods.list",
+      "haystack": "pods.list runpod.api.pods.list list pods with optional status, gpu, image, and location filters read"
+    },
+    {
+      "pluginId": "runpod",
+      "kind": "api",
+      "shortPath": "registries.delete",
+      "haystack": "registries.delete runpod.api.registries.delete delete stored container registry credentials write"
+    },
+    {
+      "pluginId": "runpod",
+      "kind": "api",
+      "shortPath": "registries.save",
+      "haystack": "registries.save runpod.api.registries.save store credentials for a private container registry write"
+    },
+    {
+      "pluginId": "runpod",
+      "kind": "api",
+      "shortPath": "registries.update",
+      "haystack": "registries.update runpod.api.registries.update update username or password for a saved registry auth write"
+    },
+    {
+      "pluginId": "runpod",
+      "kind": "api",
+      "shortPath": "secrets.create",
+      "haystack": "secrets.create runpod.api.secrets.create create an encrypted secret referenced as runpod_secret_<name> write"
+    },
+    {
+      "pluginId": "runpod",
+      "kind": "api",
+      "shortPath": "templates.delete",
+      "haystack": "templates.delete runpod.api.templates.delete delete a template that is not in use by pods or endpoints write"
+    },
+    {
+      "pluginId": "runpod",
+      "kind": "api",
+      "shortPath": "templates.save",
+      "haystack": "templates.save runpod.api.templates.save create or update a reusable pod or serverless template write"
+    },
+    {
       "pluginId": "salesforce",
       "kind": "api",
       "shortPath": "accounts.accountCreationWithContentTypeOption",
@@ -50940,6 +53130,246 @@
       "kind": "api",
       "shortPath": "work.getWorkOrder",
       "haystack": "work.getworkorder sapsuccessfactors.api.work.getworkorder retrieve workorder records for contingent workers read"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "audits.getFixlessAudits",
+      "haystack": "audits.getfixlessaudits scaleai.api.audits.getfixlessaudits retrieve fixless audits by task id or audit id read"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "batches.createBatch",
+      "haystack": "batches.createbatch scaleai.api.batches.createbatch create a new batch within a project write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "batches.finalizeBatch",
+      "haystack": "batches.finalizebatch scaleai.api.batches.finalizebatch finalize a batch so its tasks can be worked on write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "batches.getBatch",
+      "haystack": "batches.getbatch scaleai.api.batches.getbatch retrieve a batch by name read"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "batches.getBatchStatus",
+      "haystack": "batches.getbatchstatus scaleai.api.batches.getbatchstatus retrieve a batch status with task completion counts read"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "batches.listBatches",
+      "haystack": "batches.listbatches scaleai.api.batches.listbatches list batches newest-first with pagination read"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "files.getAssets",
+      "haystack": "files.getassets scaleai.api.files.getassets list file assets filtered by project and metadata (paginated) read"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "files.importFile",
+      "haystack": "files.importfile scaleai.api.files.importfile import a file into scale from a remote url write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "files.uploadFile",
+      "haystack": "files.uploadfile scaleai.api.files.uploadfile upload a local file (base64) to scale, max 80 mb write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "projects.getProject",
+      "haystack": "projects.getproject scaleai.api.projects.getproject retrieve a project by name read"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "projects.listProjects",
+      "haystack": "projects.listprojects scaleai.api.projects.listprojects list all projects, optionally filtered by archived state read"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "projects.setProjectOntology",
+      "haystack": "projects.setprojectontology scaleai.api.projects.setprojectontology set the ontology (label classes) for a project write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "projects.setProjectParams",
+      "haystack": "projects.setprojectparams scaleai.api.projects.setprojectparams set default task parameters for a project write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "quality.getQualityLabelers",
+      "haystack": "quality.getqualitylabelers scaleai.api.quality.getqualitylabelers retrieve labeler training attempts by quality task id or email read"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "studio.addStudioAssignments",
+      "haystack": "studio.addstudioassignments scaleai.api.studio.addstudioassignments assign projects to studio team members by email write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "studio.getStudioAssignments",
+      "haystack": "studio.getstudioassignments scaleai.api.studio.getstudioassignments retrieve current studio project assignments per active user read"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "studio.getStudioBatches",
+      "haystack": "studio.getstudiobatches scaleai.api.studio.getstudiobatches list pending studio batches ordered by priority read"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "studio.removeStudioAssignments",
+      "haystack": "studio.removestudioassignments scaleai.api.studio.removestudioassignments unassign projects from studio team members by email write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "studio.resetBatchPriorities",
+      "haystack": "studio.resetbatchpriorities scaleai.api.studio.resetbatchpriorities reset studio batch priority order to the default write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "studio.setBatchPriorities",
+      "haystack": "studio.setbatchpriorities scaleai.api.studio.setbatchpriorities set the priority order of pending studio batches write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.addTaskTags",
+      "haystack": "tasks.addtasktags scaleai.api.tasks.addtasktags add tags to a task (duplicates ignored) write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.createDocumentTranscriptionTask",
+      "haystack": "tasks.createdocumenttranscriptiontask scaleai.api.tasks.createdocumenttranscriptiontask create a document transcription / annotation task write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.createImageAnnotationTask",
+      "haystack": "tasks.createimageannotationtask scaleai.api.tasks.createimageannotationtask create an image annotation task (boxes, polygons, points, etc.) write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.createLidarAnnotationTask",
+      "haystack": "tasks.createlidarannotationtask scaleai.api.tasks.createlidarannotationtask create a lidar 3d cuboid annotation task write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.createLidarSegmentationTask",
+      "haystack": "tasks.createlidarsegmentationtask scaleai.api.tasks.createlidarsegmentationtask create a lidar point cloud semantic segmentation task write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.createNamedEntityRecognitionTask",
+      "haystack": "tasks.createnamedentityrecognitiontask scaleai.api.tasks.createnamedentityrecognitiontask create a named entity recognition task over text write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.createSegmentationAnnotationTask",
+      "haystack": "tasks.createsegmentationannotationtask scaleai.api.tasks.createsegmentationannotationtask create a semantic segmentation task classifying image pixels write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.createTextCollectionTask",
+      "haystack": "tasks.createtextcollectiontask scaleai.api.tasks.createtextcollectiontask create a text collection task gathering structured field data write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.createVideoAnnotationTask",
+      "haystack": "tasks.createvideoannotationtask scaleai.api.tasks.createvideoannotationtask create a video annotation task across frames or video files write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.createVideoPlaybackAnnotationTask",
+      "haystack": "tasks.createvideoplaybackannotationtask scaleai.api.tasks.createvideoplaybackannotationtask create a video playback annotation task for object tracking write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.deleteTaskTags",
+      "haystack": "tasks.deletetasktags scaleai.api.tasks.deletetasktags remove tags from a task write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.deleteTaskUniqueId",
+      "haystack": "tasks.deletetaskuniqueid scaleai.api.tasks.deletetaskuniqueid remove a task's unique_id write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.getTask",
+      "haystack": "tasks.gettask scaleai.api.tasks.gettask retrieve a task by id including status, response and metadata read"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.getTaskResponseUrl",
+      "haystack": "tasks.gettaskresponseurl scaleai.api.tasks.gettaskresponseurl fetch secure authenticated task response data for a task read"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.listTasks",
+      "haystack": "tasks.listtasks scaleai.api.tasks.listtasks list tasks with filtering and cursor pagination read"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.sendTaskCallback",
+      "haystack": "tasks.sendtaskcallback scaleai.api.tasks.sendtaskcallback re-send the callback for a completed or errored task write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.setTaskMetadata",
+      "haystack": "tasks.settaskmetadata scaleai.api.tasks.settaskmetadata set the metadata object on a task (idempotent) write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "tasks.updateTaskUniqueId",
+      "haystack": "tasks.updatetaskuniqueid scaleai.api.tasks.updatetaskuniqueid set or update a task's unique_id write"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "teams.getTeams",
+      "haystack": "teams.getteams scaleai.api.teams.getteams list all team members with roles and notification preferences read"
+    },
+    {
+      "pluginId": "scaleai",
+      "kind": "api",
+      "shortPath": "teams.inviteTeamMember",
+      "haystack": "teams.inviteteammember scaleai.api.teams.inviteteammember invite users by email to the team with a role write"
     },
     {
       "pluginId": "scrapegraphai",
@@ -57302,6 +59732,204 @@
       "haystack": "transaction.encode7702 uniswapapi.api.transaction.encode7702 batch transactions into one for eip-7702 smart contract wallet execution write"
     },
     {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "addons.clamavStatus",
+      "haystack": "addons.clamavstatus uploadcare.api.addons.clamavstatus check clamav scan status read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "addons.executeClamav",
+      "haystack": "addons.executeclamav uploadcare.api.addons.executeclamav start a clamav virus scan write"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "addons.rekognitionModerationStatus",
+      "haystack": "addons.rekognitionmoderationstatus uploadcare.api.addons.rekognitionmoderationstatus check aws rekognition moderation job status read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "addons.rekognitionStatus",
+      "haystack": "addons.rekognitionstatus uploadcare.api.addons.rekognitionstatus check aws rekognition labels job status read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "addons.removeBgStatus",
+      "haystack": "addons.removebgstatus uploadcare.api.addons.removebgstatus check remove.bg add-on status read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "cdn.mirror",
+      "haystack": "cdn.mirror uploadcare.api.cdn.mirror cdn url for a horizontally mirrored image read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "cdn.rotate",
+      "haystack": "cdn.rotate uploadcare.api.cdn.rotate cdn url for a counterclockwise rotated image read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "files.batchDelete",
+      "haystack": "files.batchdelete uploadcare.api.files.batchdelete delete up to 100 files; problems lists invalid uuids write"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "files.batchStore",
+      "haystack": "files.batchstore uploadcare.api.files.batchstore store up to 100 files in one request write"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "files.copyLocal",
+      "haystack": "files.copylocal uploadcare.api.files.copylocal copy a file to local storage in the same project write"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "files.delete",
+      "haystack": "files.delete uploadcare.api.files.delete delete a stored file by uuid write"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "files.deleteMetadataKey",
+      "haystack": "files.deletemetadatakey uploadcare.api.files.deletemetadatakey delete a metadata key from a file write"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "files.get",
+      "haystack": "files.get uploadcare.api.files.get get file info by uuid (official rest v0.7) read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "files.getMetadata",
+      "haystack": "files.getmetadata uploadcare.api.files.getmetadata get all metadata key-value pairs for a file read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "files.getMetadataKey",
+      "haystack": "files.getmetadatakey uploadcare.api.files.getmetadatakey get one metadata value by key read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "files.list",
+      "haystack": "files.list uploadcare.api.files.list list files with pagination, stored/removed filters read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "files.store",
+      "haystack": "files.store uploadcare.api.files.store permanently store a file by uuid write"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "files.updateMetadataKey",
+      "haystack": "files.updatemetadatakey uploadcare.api.files.updatemetadatakey set a metadata key on a file write"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "groups.delete",
+      "haystack": "groups.delete uploadcare.api.groups.delete delete a group (files are not deleted) write"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "groups.get",
+      "haystack": "groups.get uploadcare.api.groups.get get group info by id read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "groups.list",
+      "haystack": "groups.list uploadcare.api.groups.list list file groups read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "project.get",
+      "haystack": "project.get uploadcare.api.project.get get current project info read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "upload.createGroup",
+      "haystack": "upload.creategroup uploadcare.api.upload.creategroup create a file group via upload api write"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "upload.fileInfo",
+      "haystack": "upload.fileinfo uploadcare.api.upload.fileinfo get uploaded file info from upload api read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "upload.fromUrl",
+      "haystack": "upload.fromurl uploadcare.api.upload.fromurl upload a file from a public url write"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "upload.fromUrlStatus",
+      "haystack": "upload.fromurlstatus uploadcare.api.upload.fromurlstatus check from-url upload status read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "upload.groupInfo",
+      "haystack": "upload.groupinfo uploadcare.api.upload.groupinfo get file group info from upload api read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "upload.startMultipart",
+      "haystack": "upload.startmultipart uploadcare.api.upload.startmultipart start multipart upload for files over 100mb write"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create uploadcare.api.webhooks.create create a webhook subscription write"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete uploadcare.api.webhooks.delete delete a webhook by id write"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "webhooks.deleteByUrl",
+      "haystack": "webhooks.deletebyurl uploadcare.api.webhooks.deletebyurl unsubscribe a webhook by target url write"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list uploadcare.api.webhooks.list list project webhooks read"
+    },
+    {
+      "pluginId": "uploadcare",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update uploadcare.api.webhooks.update update a webhook write"
+    },
+    {
       "pluginId": "vapi",
       "kind": "api",
       "shortPath": "assistants.create",
@@ -59424,6 +62052,354 @@
       "kind": "api",
       "shortPath": "users.update",
       "haystack": "users.update zendesk.api.users.update update an existing user write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "bills.create",
+      "haystack": "bills.create zohoinventory.api.bills.create create a bill write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "bills.list",
+      "haystack": "bills.list zohoinventory.api.bills.list list bills read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "compositeItems.delete",
+      "haystack": "compositeitems.delete zohoinventory.api.compositeitems.delete delete a composite item [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "contacts.create",
+      "haystack": "contacts.create zohoinventory.api.contacts.create create a contact write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "contacts.createPerson",
+      "haystack": "contacts.createperson zohoinventory.api.contacts.createperson create a contact person write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "contacts.deactivate",
+      "haystack": "contacts.deactivate zohoinventory.api.contacts.deactivate mark a contact inactive write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "contacts.delete",
+      "haystack": "contacts.delete zohoinventory.api.contacts.delete delete a contact [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "contacts.deletePerson",
+      "haystack": "contacts.deleteperson zohoinventory.api.contacts.deleteperson delete a contact person [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "contacts.email",
+      "haystack": "contacts.email zohoinventory.api.contacts.email email a contact write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "contacts.emailStatement",
+      "haystack": "contacts.emailstatement zohoinventory.api.contacts.emailstatement email a contact statement write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get zohoinventory.api.contacts.get get a contact read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "contacts.getAddress",
+      "haystack": "contacts.getaddress zohoinventory.api.contacts.getaddress get a contact address read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list zohoinventory.api.contacts.list list contacts read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "creditNotes.addComment",
+      "haystack": "creditnotes.addcomment zohoinventory.api.creditnotes.addcomment add a credit note comment write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "creditNotes.applyCredits",
+      "haystack": "creditnotes.applycredits zohoinventory.api.creditnotes.applycredits apply credit note credits to invoices write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "creditNotes.create",
+      "haystack": "creditnotes.create zohoinventory.api.creditnotes.create create a credit note write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "creditNotes.email",
+      "haystack": "creditnotes.email zohoinventory.api.creditnotes.email email a credit note write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "creditNotes.get",
+      "haystack": "creditnotes.get zohoinventory.api.creditnotes.get get a credit note read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "creditNotes.getEmailContent",
+      "haystack": "creditnotes.getemailcontent zohoinventory.api.creditnotes.getemailcontent get credit note email content read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "creditNotes.list",
+      "haystack": "creditnotes.list zohoinventory.api.creditnotes.list list credit notes read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "currencies.list",
+      "haystack": "currencies.list zohoinventory.api.currencies.list list currencies read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "customerPayments.create",
+      "haystack": "customerpayments.create zohoinventory.api.customerpayments.create create a customer payment write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "invoices.addAttachment",
+      "haystack": "invoices.addattachment zohoinventory.api.invoices.addattachment upload an invoice attachment write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "invoices.addComment",
+      "haystack": "invoices.addcomment zohoinventory.api.invoices.addcomment add an invoice comment write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "invoices.bulkEmail",
+      "haystack": "invoices.bulkemail zohoinventory.api.invoices.bulkemail bulk email invoices write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "invoices.bulkExport",
+      "haystack": "invoices.bulkexport zohoinventory.api.invoices.bulkexport bulk export invoices as pdf read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "invoices.bulkPrint",
+      "haystack": "invoices.bulkprint zohoinventory.api.invoices.bulkprint bulk print invoices as pdf read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "invoices.cancelWriteOff",
+      "haystack": "invoices.cancelwriteoff zohoinventory.api.invoices.cancelwriteoff cancel an invoice write-off write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "invoices.create",
+      "haystack": "invoices.create zohoinventory.api.invoices.create create an invoice write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "invoices.delete",
+      "haystack": "invoices.delete zohoinventory.api.invoices.delete delete an invoice [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "invoices.deleteAttachment",
+      "haystack": "invoices.deleteattachment zohoinventory.api.invoices.deleteattachment delete an invoice attachment [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "invoices.deleteComment",
+      "haystack": "invoices.deletecomment zohoinventory.api.invoices.deletecomment delete an invoice comment [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "invoices.disablePaymentReminder",
+      "haystack": "invoices.disablepaymentreminder zohoinventory.api.invoices.disablepaymentreminder disable invoice payment reminders write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "invoices.email",
+      "haystack": "invoices.email zohoinventory.api.invoices.email email an invoice write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "invoices.enablePaymentReminder",
+      "haystack": "invoices.enablepaymentreminder zohoinventory.api.invoices.enablepaymentreminder enable invoice payment reminders write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "invoices.list",
+      "haystack": "invoices.list zohoinventory.api.invoices.list list invoices read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "invoices.listPayments",
+      "haystack": "invoices.listpayments zohoinventory.api.invoices.listpayments list payments on an invoice read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "itemGroups.create",
+      "haystack": "itemgroups.create zohoinventory.api.itemgroups.create create an item group write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "itemGroups.deactivate",
+      "haystack": "itemgroups.deactivate zohoinventory.api.itemgroups.deactivate mark an item group inactive write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "itemGroups.delete",
+      "haystack": "itemgroups.delete zohoinventory.api.itemgroups.delete delete an item group [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "itemGroups.list",
+      "haystack": "itemgroups.list zohoinventory.api.itemgroups.list list item groups read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "items.create",
+      "haystack": "items.create zohoinventory.api.items.create create an inventory item write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "items.deactivate",
+      "haystack": "items.deactivate zohoinventory.api.items.deactivate mark an item inactive write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "items.delete",
+      "haystack": "items.delete zohoinventory.api.items.delete delete an item [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "items.deleteImage",
+      "haystack": "items.deleteimage zohoinventory.api.items.deleteimage delete an item image [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "items.list",
+      "haystack": "items.list zohoinventory.api.items.list list inventory items read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "organizations.list",
+      "haystack": "organizations.list zohoinventory.api.organizations.list list organizations the user can access read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "packages.bulkPrint",
+      "haystack": "packages.bulkprint zohoinventory.api.packages.bulkprint bulk print package slips as pdf read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "packages.create",
+      "haystack": "packages.create zohoinventory.api.packages.create create a package for a sales order write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "packages.delete",
+      "haystack": "packages.delete zohoinventory.api.packages.delete delete a package [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "purchaseOrders.create",
+      "haystack": "purchaseorders.create zohoinventory.api.purchaseorders.create create a purchase order write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "purchaseOrders.list",
+      "haystack": "purchaseorders.list zohoinventory.api.purchaseorders.list list purchase orders read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "salesOrders.bulkDelete",
+      "haystack": "salesorders.bulkdelete zohoinventory.api.salesorders.bulkdelete bulk delete sales orders [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "salesOrders.create",
+      "haystack": "salesorders.create zohoinventory.api.salesorders.create create a sales order write"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "salesOrders.delete",
+      "haystack": "salesorders.delete zohoinventory.api.salesorders.delete delete a sales order [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "salesOrders.get",
+      "haystack": "salesorders.get zohoinventory.api.salesorders.get get a sales order read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "salesOrders.list",
+      "haystack": "salesorders.list zohoinventory.api.salesorders.list list sales orders read"
+    },
+    {
+      "pluginId": "zohoinventory",
+      "kind": "api",
+      "shortPath": "users.getCurrent",
+      "haystack": "users.getcurrent zohoinventory.api.users.getcurrent get the current authenticated user read"
     },
     {
       "pluginId": "zohomail",
