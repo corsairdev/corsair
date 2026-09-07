@@ -5,7 +5,13 @@ import {
 	WixEndpointOutputSchemas,
 } from './endpoints/types';
 import { WixSchema } from './schema';
-import { WixContact, WixOrder, WixProduct } from './schema/database';
+import {
+	WixContact,
+	WixCoupon,
+	WixInventoryItem,
+	WixOrder,
+	WixProduct,
+} from './schema/database';
 
 describe('Wix schema', () => {
 	it('declares a semver version', () => {
@@ -317,6 +323,29 @@ describe('Wix output schemas', () => {
 		).toThrow();
 	});
 
+	it('rejects mistyped inventory and coupon payloads in query responses', () => {
+		expect(() =>
+			WixEndpointOutputSchemas.queryInventoryItems.parse({
+				inventoryItems: [{ id: 'inv-1', quantity: 'ten' }],
+			}),
+		).toThrow();
+		expect(() =>
+			WixEndpointOutputSchemas.queryInventoryItems.parse({
+				inventoryItems: [{ id: 'inv-1', trackQuantity: 'yes' }],
+			}),
+		).toThrow();
+		expect(() =>
+			WixEndpointOutputSchemas.queryCoupons.parse({
+				coupons: [{ id: 'c1', code: 123 }],
+			}),
+		).toThrow();
+		expect(() =>
+			WixEndpointOutputSchemas.queryCoupons.parse({
+				coupons: [{ id: 'c1', active: 'yes' }],
+			}),
+		).toThrow();
+	});
+
 	it('parses bulk action responses', () => {
 		const parsed = WixEndpointOutputSchemas.bulkDeleteProducts.parse({
 			results: [],
@@ -348,6 +377,35 @@ describe('Wix database entities', () => {
 		expect(WixContact.safeParse({ id: 123 }).success).toBe(false);
 		expect(WixContact.safeParse({ revision: 3 }).success).toBe(false);
 		expect(WixProduct.safeParse({ revision: 42 }).success).toBe(false);
+		expect(WixProduct.safeParse({ visible: 'yes' }).success).toBe(false);
 		expect(WixOrder.safeParse({ status: 7 }).success).toBe(false);
+		expect(WixInventoryItem.safeParse({ quantity: 'ten' }).success).toBe(false);
+		expect(WixInventoryItem.safeParse({ trackQuantity: 1 }).success).toBe(
+			false,
+		);
+		expect(WixCoupon.safeParse({ code: 123 }).success).toBe(false);
+		expect(WixCoupon.safeParse({ active: 'yes' }).success).toBe(false);
+	});
+
+	it('accepts documented inventory and coupon shapes', () => {
+		expect(
+			WixInventoryItem.safeParse({
+				id: 'inv-1',
+				variantId: 'v-1',
+				productId: 'p-1',
+				trackQuantity: true,
+				quantity: 5,
+				availabilityStatus: 'IN_STOCK',
+			}).success,
+		).toBe(true);
+		expect(
+			WixCoupon.safeParse({
+				id: 'c1',
+				code: 'SAVE10',
+				name: 'Save 10',
+				active: true,
+				expired: false,
+			}).success,
+		).toBe(true);
 	});
 });

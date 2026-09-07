@@ -1,5 +1,11 @@
 import { z } from 'zod';
-import { WixContact, WixOrder, WixProduct } from '../schema/database';
+import {
+	WixContact,
+	WixCoupon,
+	WixInventoryItem,
+	WixOrder,
+	WixProduct,
+} from '../schema/database';
 
 // ── shared primitives ──────────────────────────────────────────────────────
 
@@ -300,6 +306,8 @@ function typedItemSchema(schema: z.ZodTypeAny): z.ZodTypeAny {
 const WixContactItemSchema = typedItemSchema(WixContact);
 const WixProductItemSchema = typedItemSchema(WixProduct);
 const WixOrderItemSchema = typedItemSchema(WixOrder);
+const WixInventoryItemSchema = typedItemSchema(WixInventoryItem);
+const WixCouponItemSchema = typedItemSchema(WixCoupon);
 
 function queryResponse(
 	itemsField: string,
@@ -448,7 +456,10 @@ const QueryInventoryItemsInputSchema = z.looseObject({
 export type QueryInventoryItemsInput = z.infer<
 	typeof QueryInventoryItemsInputSchema
 >;
-const QueryInventoryItemsResponseSchema = queryResponse('inventoryItems');
+const QueryInventoryItemsResponseSchema = queryResponse(
+	'inventoryItems',
+	WixInventoryItemSchema,
+);
 export type QueryInventoryItemsResponse = z.infer<
 	typeof QueryInventoryItemsResponseSchema
 >;
@@ -689,7 +700,10 @@ const QueryCouponsInputSchema = z.looseObject({
 	...QueryOptionFields,
 });
 export type QueryCouponsInput = z.infer<typeof QueryCouponsInputSchema>;
-const QueryCouponsResponseSchema = queryResponse('coupons');
+const QueryCouponsResponseSchema = queryResponse(
+	'coupons',
+	WixCouponItemSchema,
+);
 export type QueryCouponsResponse = z.infer<typeof QueryCouponsResponseSchema>;
 
 const DeleteBackInStockNotificationInputSchema = z.looseObject({

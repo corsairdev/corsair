@@ -601,6 +601,20 @@ describe('Wix endpoints', () => {
 		).rejects.toThrow();
 	});
 
+	it('rejects typed-entity violations in inventory and coupon responses', async () => {
+		mockMakeWixRequest.mockResolvedValueOnce({
+			inventoryItems: [{ id: 'inv-1', quantity: 'ten' }],
+		});
+		const inventory = endpointFn('stores', 'queryInventory');
+		await expect(inventory(mockCtx, { siteId: 's' })).rejects.toThrow();
+
+		mockMakeWixRequest.mockResolvedValueOnce({
+			coupons: [{ id: 'c1', code: 123 }],
+		});
+		const coupons = endpointFn('stores', 'queryCoupons');
+		await expect(coupons(mockCtx, { siteId: 's' })).rejects.toThrow();
+	});
+
 	it('sends GET query params as query, not body', async () => {
 		const fn = endpointFn('contacts', 'list');
 		await fn(mockCtx, { siteId: 's', limit: 5, offset: 0 });

@@ -1,4 +1,10 @@
-import { WixContact, WixOrder, WixProduct } from './database';
+import {
+	WixContact,
+	WixCoupon,
+	WixInventoryItem,
+	WixOrder,
+	WixProduct,
+} from './database';
 
 export const WixSchema = {
 	version: '1.0.0',
@@ -6,5 +12,7 @@ export const WixSchema = {
 		contacts: WixContact,
 		products: WixProduct,
 		orders: WixOrder,
+		inventoryItems: WixInventoryItem,
+		coupons: WixCoupon,
 	},
 } as const;
