@@ -877,6 +877,25 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 			expect(result).toEqual(mockUpload);
 		});
 
+		it('uploadFile with raw encoding', async () => {
+			const mockUpload = { id: 804, name: 'notes.txt', status: 'uploaded' };
+			mockMakeRequest.mockResolvedValueOnce(mockUpload);
+			const result = await plugin.endpoints!.files.uploadFile(mockContext, {
+				name: 'notes.txt',
+				content: 'test',
+				encoding: 'raw',
+			});
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'/file-library',
+				'test_api_key',
+				{
+					method: 'POST',
+					body: expect.any(FormData),
+				},
+			);
+			expect(result).toEqual(mockUpload);
+		});
+
 		it('deleteFile', async () => {
 			mockMakeRequest.mockResolvedValueOnce({ status: 'deleted' });
 			const result = await plugin.endpoints!.files.deleteFile(mockContext, {

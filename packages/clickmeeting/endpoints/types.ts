@@ -554,7 +554,15 @@ export const GetFileDetailsOutputSchema = FileLibraryItemSchema;
 
 export const UploadFileInputSchema = z.object({
 	name: z.string().describe('File name'),
-	content: z.string().describe('Base64 content or file string'),
+	content: z
+		.string()
+		.describe(
+			'File content (base64-encoded string, or raw string when encoding is "raw")',
+		),
+	encoding: z
+		.enum(['base64', 'raw'])
+		.optional()
+		.describe('Content encoding discriminator ("base64" or "raw", defaults to "base64")'),
 	conference_id: z.union([z.string(), z.number()]).optional(),
 });
 export const UploadFileOutputSchema = z

@@ -576,7 +576,8 @@ await corsair.clickmeeting.api.files.uploadFile({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | File name |
-| `content` | `string` | Yes | Base64 content or file string |
+| `content` | `string` | Yes | File content (base64-encoded string, or raw string when encoding is "raw") |
+| `encoding` | `"base64" \| "raw"` | No | Content encoding discriminator ("base64" or "raw", defaults to "base64") |
 | `conference_id` | `string \| number` | No | — |
 
 

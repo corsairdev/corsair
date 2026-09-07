@@ -40,20 +40,19 @@ export const getFileDetails: ClickmeetingEndpoints['getFileDetails'] = async (
 	return res;
 };
 
-function decodeFileContent(content: string): Buffer | string {
+function decodeFileContent(
+	content: string,
+	encoding?: 'base64' | 'raw',
+): Buffer | string {
+	if (encoding === 'raw') {
+		return content;
+	}
 	const dataUriIndex = content.indexOf(';base64,');
-	if (dataUriIndex !== -1) {
-		return Buffer.from(content.slice(dataUriIndex + 8).trim(), 'base64');
-	}
-	const clean = content.trim();
-	if (
-		clean.length > 0 &&
-		clean.length % 4 === 0 &&
-		/^[A-Za-z0-9+/]+={0,2}$/.test(clean.replace(/\s+/g, ''))
-	) {
-		return Buffer.from(clean.replace(/\s+/g, ''), 'base64');
-	}
-	return content;
+	const base64Str =
+		dataUriIndex !== -1
+			? content.slice(dataUriIndex + 8).trim()
+			: content.trim();
+	return Buffer.from(base64Str.replace(/\s+/g, ''), 'base64');
 }
 
 export const uploadFile: ClickmeetingEndpoints['uploadFile'] = async (
@@ -61,7 +60,7 @@ export const uploadFile: ClickmeetingEndpoints['uploadFile'] = async (
 	input,
 ) => {
 	const formData = new FormData();
-	const fileData = decodeFileContent(input.content);
+	const fileData = decodeFileContent(input.content, input.encoding);
 	const blob = new Blob([fileData]);
 	formData.append('uploaded', blob, input.name);
 	if (input.conference_id !== undefined) {
