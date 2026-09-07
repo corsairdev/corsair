@@ -1,4 +1,4 @@
-import { makeBugherdRequest } from 'file:///C:/Users/ASUS/corsair-bugherd/packages/bugherd/client';
+import { makeBugherdRequest } from '@corsair-dev/bugherd';
 
 const API_KEY = process.env.BUGHERD_API_KEY!;
 

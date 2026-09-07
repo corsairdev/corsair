@@ -1,4 +1,5 @@
 import { makeBugherdRequest } from '../client';
+import * as endpoints from './bugherd';
 import {
 	AddGuestToProjectOutputSchema,
 	AddMemberToProjectOutputSchema,
@@ -41,19 +42,20 @@ const mockMakeRequest = makeBugherdRequest as jest.MockedFunction<
 	typeof makeBugherdRequest
 >;
 
-type MockResponse<T> = T;
+const mockCtx = {
+	key: 'test-api-key',
+	log: jest.fn().mockResolvedValue(undefined),
+	database: undefined,
+	endpoints: {},
+} as any;
 
-function mockResolvedValue<T>(value: T) {
-	mockMakeRequest.mockResolvedValue(value as MockResponse<T>);
-}
-
-describe('BugHerd Endpoint Tests (Mocked)', () => {
+describe('BugHerd Endpoint Tests (Mocked Client, Real Endpoints)', () => {
 	beforeEach(() => {
 		mockMakeRequest.mockReset();
 	});
 
 	describe('projects', () => {
-		it('addGuestToProject returns correct type', async () => {
+		it('addGuestToProject calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				user: {
 					id: 1,
@@ -65,22 +67,30 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					updated_at: '2024-01-01T00:00:00Z',
 				},
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest(
+			const input = {
+				project_id: 123,
+				email: 'guest@example.com',
+				role: 'guest' as const,
+			};
+			const response = await endpoints.addGuestToProject(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'projects/123/guests',
-				'test-key',
-				{
+				'test-api-key',
+				expect.objectContaining({
 					method: 'POST',
 					body: { email: 'guest@example.com', role: 'guest' },
-				},
-			)) as typeof mockResponse;
+				}),
+			);
 
 			AddGuestToProjectOutputSchema.parse(response);
 			expect(response.user.email).toBe('guest@example.com');
 		});
 
-		it('addMemberToProject returns correct type', async () => {
+		it('addMemberToProject calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				user: {
 					id: 2,
@@ -92,22 +102,26 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					updated_at: '2024-01-01T00:00:00Z',
 				},
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest(
+			const input = { project_id: 123, user_id: 2, role: 'member' as const };
+			const response = await endpoints.addMemberToProject(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'projects/123/members',
-				'test-key',
-				{
+				'test-api-key',
+				expect.objectContaining({
 					method: 'POST',
 					body: { user_id: 2, role: 'member' },
-				},
-			)) as typeof mockResponse;
+				}),
+			);
 
 			AddMemberToProjectOutputSchema.parse(response);
 			expect(response.user.id).toBe(2);
 		});
 
-		it('createProject returns correct type', async () => {
+		it('createProject calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				project: {
 					id: 456,
@@ -123,29 +137,43 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					settings: {},
 				},
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest('projects', 'test-key', {
-				method: 'POST',
-				body: { name: 'New Project', is_active: true, is_public: false },
-			})) as typeof mockResponse;
+			const input = { name: 'New Project', is_active: true, is_public: false };
+			const response = await endpoints.createProject(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'projects',
+				'test-api-key',
+				expect.objectContaining({
+					method: 'POST',
+					body: { name: 'New Project', is_active: true, is_public: false },
+				}),
+			);
 
 			CreateProjectOutputSchema.parse(response);
 			expect(response.project.name).toBe('New Project');
 		});
 
-		it('deleteProject returns correct type', async () => {
+		it('deleteProject calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = await makeBugherdRequest('projects/456', 'test-key', {
-				method: 'DELETE',
-			});
+			const input = { project_id: 456 };
+			const response = await endpoints.deleteProject(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'projects/456',
+				'test-api-key',
+				expect.objectContaining({ method: 'DELETE' }),
+			);
 
 			DeleteProjectOutputSchema.parse(response);
 		});
 
-		it('listProjects returns correct type', async () => {
+		it('listProjects calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				projects: [
 					{
@@ -162,23 +190,25 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 						settings: {},
 					},
 				],
-				meta: {
-					current_page: 1,
-					total_pages: 1,
-					total_count: 1,
-				},
+				meta: { current_page: 1, total_pages: 1, total_count: 1 },
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest('projects', 'test-key', {
-				method: 'GET',
-			})) as typeof mockResponse;
+			const input = {};
+			const response = await endpoints.listProjects(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'projects',
+				'test-api-key',
+				expect.objectContaining({ method: 'GET' }),
+			);
 
 			ListProjectsOutputSchema.parse(response);
 			expect(response.projects).toHaveLength(1);
 		});
 
-		it('listActiveProjects returns correct type', async () => {
+		it('listActiveProjects calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				projects: [
 					{
@@ -195,27 +225,28 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 						settings: {},
 					},
 				],
-				meta: {
-					current_page: 1,
-					total_pages: 1,
-					total_count: 1,
-				},
+				meta: { current_page: 1, total_pages: 1, total_count: 1 },
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest(
-				'projects?is_active=true',
-				'test-key',
-				{
+			const input = {};
+			const response = await endpoints.listActiveProjects(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'projects',
+				'test-api-key',
+				expect.objectContaining({
 					method: 'GET',
-				},
-			)) as typeof mockResponse;
+					query: expect.objectContaining({ is_active: true }),
+				}),
+			);
 
 			ListActiveProjectsOutputSchema.parse(response);
 			expect(response.projects).toHaveLength(1);
 		});
 
-		it('showProjectDetails returns correct type', async () => {
+		it('showProjectDetails calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				project: {
 					id: 1,
@@ -231,17 +262,23 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					settings: {},
 				},
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest('projects/1', 'test-key', {
-				method: 'GET',
-			})) as typeof mockResponse;
+			const input = { project_id: 1 };
+			const response = await endpoints.showProjectDetails(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'projects/1',
+				'test-api-key',
+				expect.objectContaining({ method: 'GET' }),
+			);
 
 			ShowProjectDetailsOutputSchema.parse(response);
 			expect(response.project.id).toBe(1);
 		});
 
-		it('updateProject returns correct type', async () => {
+		it('updateProject calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				project: {
 					id: 1,
@@ -257,12 +294,20 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					settings: {},
 				},
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest('projects/1', 'test-key', {
-				method: 'PUT',
-				body: { name: 'Updated Project', is_public: true },
-			})) as typeof mockResponse;
+			const input = { project_id: 1, name: 'Updated Project', is_public: true };
+			const response = await endpoints.updateProject(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'projects/1',
+				'test-api-key',
+				expect.objectContaining({
+					method: 'PUT',
+					body: { name: 'Updated Project', is_public: true },
+				}),
+			);
 
 			UpdateProjectOutputSchema.parse(response);
 			expect(response.project.name).toBe('Updated Project');
@@ -270,7 +315,7 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 	});
 
 	describe('columns', () => {
-		it('createColumn returns correct type', async () => {
+		it('createColumn calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				column: {
 					id: 10,
@@ -281,22 +326,26 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					updated_at: '2024-01-01T00:00:00Z',
 				},
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest(
+			const input = { project_id: 1, name: 'Backlog', position: 1 };
+			const response = await endpoints.createColumn(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'projects/1/columns',
-				'test-key',
-				{
+				'test-api-key',
+				expect.objectContaining({
 					method: 'POST',
 					body: { name: 'Backlog', position: 1 },
-				},
-			)) as typeof mockResponse;
+				}),
+			);
 
 			CreateColumnOutputSchema.parse(response);
 			expect(response.column.name).toBe('Backlog');
 		});
 
-		it('listColumns returns correct type', async () => {
+		it('listColumns calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				columns: [
 					{
@@ -309,21 +358,23 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					},
 				],
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest(
+			const input = { project_id: 1 };
+			const response = await endpoints.listColumns(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'projects/1/columns',
-				'test-key',
-				{
-					method: 'GET',
-				},
-			)) as typeof mockResponse;
+				'test-api-key',
+				expect.objectContaining({ method: 'GET' }),
+			);
 
 			ListColumnsOutputSchema.parse(response);
 			expect(response.columns).toHaveLength(1);
 		});
 
-		it('showColumn returns correct type', async () => {
+		it('showColumn calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				column: {
 					id: 10,
@@ -334,17 +385,23 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					updated_at: '2024-01-01T00:00:00Z',
 				},
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest('columns/10', 'test-key', {
-				method: 'GET',
-			})) as typeof mockResponse;
+			const input = { column_id: 10 };
+			const response = await endpoints.showColumn(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'columns/10',
+				'test-api-key',
+				expect.objectContaining({ method: 'GET' }),
+			);
 
 			ShowColumnOutputSchema.parse(response);
 			expect(response.column.id).toBe(10);
 		});
 
-		it('updateColumn returns correct type', async () => {
+		it('updateColumn calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				column: {
 					id: 10,
@@ -355,12 +412,20 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					updated_at: '2024-01-02T00:00:00Z',
 				},
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest('columns/10', 'test-key', {
-				method: 'PUT',
-				body: { name: 'Todo', position: 2 },
-			})) as typeof mockResponse;
+			const input = { column_id: 10, name: 'Todo', position: 2 };
+			const response = await endpoints.updateColumn(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'columns/10',
+				'test-api-key',
+				expect.objectContaining({
+					method: 'PUT',
+					body: { name: 'Todo', position: 2 },
+				}),
+			);
 
 			UpdateColumnOutputSchema.parse(response);
 			expect(response.column.name).toBe('Todo');
@@ -368,7 +433,7 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 	});
 
 	describe('tasks', () => {
-		it('createTask returns correct type', async () => {
+		it('createTask calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				task: {
 					id: 100,
@@ -390,26 +455,35 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					column_id: 10,
 				},
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest(
+			const input = {
+				project_id: 1,
+				description: 'New task',
+				priority: 'normal' as const,
+				status: 'backlog',
+			};
+			const response = await endpoints.createTask(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'projects/1/tasks',
-				'test-key',
-				{
+				'test-api-key',
+				expect.objectContaining({
 					method: 'POST',
 					body: {
 						description: 'New task',
 						priority: 'normal',
 						status: 'backlog',
 					},
-				},
-			)) as typeof mockResponse;
+				}),
+			);
 
 			CreateTaskOutputSchema.parse(response);
 			expect(response.task.description).toBe('New task');
 		});
 
-		it('updateTask returns correct type', async () => {
+		it('updateTask calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				task: {
 					id: 100,
@@ -431,18 +505,30 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					column_id: 11,
 				},
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest('tasks/100', 'test-key', {
-				method: 'PUT',
-				body: { status: 'in_progress', priority: 'high' },
-			})) as typeof mockResponse;
+			const input = {
+				task_id: 100,
+				status: 'in_progress',
+				priority: 'high' as const,
+			};
+			const response = await endpoints.updateTask(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'tasks/100',
+				'test-api-key',
+				expect.objectContaining({
+					method: 'PUT',
+					body: { status: 'in_progress', priority: 'high' },
+				}),
+			);
 
 			UpdateTaskOutputSchema.parse(response);
 			expect(response.task.status).toBe('in_progress');
 		});
 
-		it('listAttachments returns correct type', async () => {
+		it('listAttachments calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				attachments: [
 					{
@@ -457,27 +543,25 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 						user_id: 1,
 					},
 				],
-				meta: {
-					current_page: 1,
-					total_pages: 1,
-					total_count: 1,
-				},
+				meta: { current_page: 1, total_pages: 1, total_count: 1 },
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest(
+			const input = { task_id: 100 };
+			const response = await endpoints.listAttachments(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'tasks/100/attachments',
-				'test-key',
-				{
-					method: 'GET',
-				},
-			)) as typeof mockResponse;
+				'test-api-key',
+				expect.objectContaining({ method: 'GET' }),
+			);
 
 			ListAttachmentsOutputSchema.parse(response);
 			expect(response.attachments).toHaveLength(1);
 		});
 
-		it('showAttachment returns correct type', async () => {
+		it('showAttachment calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				attachment: {
 					id: 200,
@@ -491,21 +575,23 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					user_id: 1,
 				},
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest(
+			const input = { attachment_id: 200 };
+			const response = await endpoints.showAttachment(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'attachments/200',
-				'test-key',
-				{
-					method: 'GET',
-				},
-			)) as typeof mockResponse;
+				'test-api-key',
+				expect.objectContaining({ method: 'GET' }),
+			);
 
 			ShowAttachmentOutputSchema.parse(response);
 			expect(response.attachment.id).toBe(200);
 		});
 
-		it('createAttachment returns correct type', async () => {
+		it('createAttachment calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				attachment: {
 					id: 201,
@@ -519,26 +605,35 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					user_id: 1,
 				},
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest(
+			const input = {
+				task_id: 100,
+				file_name: 'new.txt',
+				file_size: 2048,
+				content_type: 'text/plain',
+			};
+			const response = await endpoints.createAttachment(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'tasks/100/attachments',
-				'test-key',
-				{
+				'test-api-key',
+				expect.objectContaining({
 					method: 'POST',
 					body: {
 						file_name: 'new.txt',
 						file_size: 2048,
 						content_type: 'text/plain',
 					},
-				},
-			)) as typeof mockResponse;
+				}),
+			);
 
 			CreateAttachmentOutputSchema.parse(response);
 			expect(response.attachment.file_name).toBe('new.txt');
 		});
 
-		it('createComment returns correct type', async () => {
+		it('createComment calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				comment: {
 					id: 300,
@@ -549,22 +644,26 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					user_id: 1,
 				},
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest(
+			const input = { task_id: 100, body: 'Test comment' };
+			const response = await endpoints.createComment(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'tasks/100/comments',
-				'test-key',
-				{
+				'test-api-key',
+				expect.objectContaining({
 					method: 'POST',
 					body: { body: 'Test comment' },
-				},
-			)) as typeof mockResponse;
+				}),
+			);
 
 			CreateCommentOutputSchema.parse(response);
 			expect(response.comment.body).toBe('Test comment');
 		});
 
-		it('uploadAttachment returns correct type', async () => {
+		it('uploadAttachment returns parsed response', async () => {
 			const mockResponse = {
 				attachment: {
 					id: 202,
@@ -578,24 +677,15 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					user_id: 1,
 				},
 			};
-			mockResolvedValue(mockResponse);
-
-			const response = (await makeBugherdRequest(
-				'tasks/100/attachments',
-				'test-key',
-				{
-					method: 'POST',
-					body: {} as Record<string, unknown>,
-				},
-			)) as typeof mockResponse;
-
-			UploadAttachmentOutputSchema.parse(response);
-			expect(response.attachment.id).toBe(202);
+			// uploadAttachment uses a different code path with FormData
+			// We just verify the output schema parsing works
+			UploadAttachmentOutputSchema.parse(mockResponse);
+			expect(mockResponse.attachment.id).toBe(202);
 		});
 	});
 
 	describe('webhooks', () => {
-		it('createWebhook returns correct type', async () => {
+		it('createWebhook calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				webhook: {
 					id: 500,
@@ -606,25 +696,33 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					updated_at: '2024-01-01T00:00:00Z',
 				},
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest(
+			const input = {
+				project_id: 1,
+				url: 'https://example.com/webhook',
+				events: ['task_created'],
+			};
+			const response = await endpoints.createWebhook(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'projects/1/webhooks',
-				'test-key',
-				{
+				'test-api-key',
+				expect.objectContaining({
 					method: 'POST',
 					body: {
 						url: 'https://example.com/webhook',
 						events: ['task_created'],
 					},
-				},
-			)) as typeof mockResponse;
+				}),
+			);
 
 			CreateWebhookOutputSchema.parse(response);
 			expect(response.webhook.url).toBe('https://example.com/webhook');
 		});
 
-		it('listWebhooks returns correct type', async () => {
+		it('listWebhooks calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				webhooks: [
 					{
@@ -636,21 +734,19 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 						updated_at: '2024-01-01T00:00:00Z',
 					},
 				],
-				meta: {
-					current_page: 1,
-					total_pages: 1,
-					total_count: 1,
-				},
+				meta: { current_page: 1, total_pages: 1, total_count: 1 },
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest(
+			const input = { project_id: 1 };
+			const response = await endpoints.listWebhooks(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'projects/1/webhooks',
-				'test-key',
-				{
-					method: 'GET',
-				},
-			)) as typeof mockResponse;
+				'test-api-key',
+				expect.objectContaining({ method: 'GET' }),
+			);
 
 			ListWebhooksOutputSchema.parse(response);
 			expect(response.webhooks).toHaveLength(1);
@@ -658,7 +754,7 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 	});
 
 	describe('users', () => {
-		it('listUsers returns correct type', async () => {
+		it('listUsers calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				users: [
 					{
@@ -671,23 +767,25 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 						updated_at: '2024-01-01T00:00:00Z',
 					},
 				],
-				meta: {
-					current_page: 1,
-					total_pages: 1,
-					total_count: 1,
-				},
+				meta: { current_page: 1, total_pages: 1, total_count: 1 },
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest('users', 'test-key', {
-				method: 'GET',
-			})) as typeof mockResponse;
+			const input = {};
+			const response = await endpoints.listUsers(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'users',
+				'test-api-key',
+				expect.objectContaining({ method: 'GET' }),
+			);
 
 			ListUsersOutputSchema.parse(response);
 			expect(response.users).toHaveLength(1);
 		});
 
-		it('showUserProjects returns correct type', async () => {
+		it('showUserProjects calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				projects: [
 					{
@@ -704,27 +802,25 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 						settings: {},
 					},
 				],
-				meta: {
-					current_page: 1,
-					total_pages: 1,
-					total_count: 1,
-				},
+				meta: { current_page: 1, total_pages: 1, total_count: 1 },
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest(
+			const input = { user_id: 1 };
+			const response = await endpoints.showUserProjects(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'users/1/projects',
-				'test-key',
-				{
-					method: 'GET',
-				},
-			)) as typeof mockResponse;
+				'test-api-key',
+				expect.objectContaining({ method: 'GET' }),
+			);
 
 			ShowUserProjectsOutputSchema.parse(response);
 			expect(response.projects).toHaveLength(1);
 		});
 
-		it('showUserTasks returns correct type', async () => {
+		it('showUserTasks calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				tasks: [
 					{
@@ -747,17 +843,19 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 						column_id: 10,
 					},
 				],
-				meta: {
-					current_page: 1,
-					total_pages: 1,
-					total_count: 1,
-				},
+				meta: { current_page: 1, total_pages: 1, total_count: 1 },
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest('users/1/tasks', 'test-key', {
-				method: 'GET',
-			})) as typeof mockResponse;
+			const input = { user_id: 1 };
+			const response = await endpoints.showUserTasks(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'users/1/tasks',
+				'test-api-key',
+				expect.objectContaining({ method: 'GET' }),
+			);
 
 			ShowUserTasksOutputSchema.parse(response);
 			expect(response.tasks).toHaveLength(1);
@@ -765,7 +863,7 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 	});
 
 	describe('organization', () => {
-		it('showOrganization returns correct type', async () => {
+		it('showOrganization calls client with correct args and returns parsed response', async () => {
 			const mockResponse = {
 				organization: {
 					id: 1,
@@ -774,11 +872,17 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 					updated_at: '2024-01-01T00:00:00Z',
 				},
 			};
-			mockResolvedValue(mockResponse);
+			mockMakeRequest.mockResolvedValue(mockResponse);
 
-			const response = (await makeBugherdRequest('organization', 'test-key', {
-				method: 'GET',
-			})) as typeof mockResponse;
+			const input = {};
+			const response = await endpoints.showOrganization(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'organization',
+				'test-api-key',
+				expect.objectContaining({ method: 'GET' }),
+			);
 
 			ShowOrganizationOutputSchema.parse(response);
 			expect(response.organization.name).toBe('Test Org');
@@ -791,7 +895,7 @@ describe('BugHerd Endpoint Tests (Mocked)', () => {
 			mockMakeRequest.mockRejectedValue(new BugherdAPIError('Not Found'));
 
 			await expect(
-				makeBugherdRequest('projects/999', 'test-key', { method: 'GET' }),
+				endpoints.showProjectDetails(mockCtx, { project_id: 999 }),
 			).rejects.toThrow(BugherdAPIError);
 		});
 	});
