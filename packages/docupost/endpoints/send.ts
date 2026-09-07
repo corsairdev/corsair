@@ -1,33 +1,76 @@
+import type { EventLoggingContext } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
-
-import type { DocupostEndpoints } from '..';
+import type { z } from 'zod';
 import { makeDocupostRequest } from '../client';
 import type { DocupostEndpointOutputs } from './types';
+import {
+	DocupostEndpointInputSchemas,
+	DocupostEndpointOutputSchemas,
+} from './types';
 
-export const accountBalance: DocupostEndpoints['accountBalance'] = async (
-	ctx,
-	input,
-) => {
+export type DocupostHandlerContext = EventLoggingContext & {
+	key: string;
+};
+
+class DocupostValidationError extends Error {
+	constructor(
+		public readonly kind: 'input' | 'output',
+		public readonly operation: string,
+		// unknown is necessary because Zod issue arrays are provider-agnostic; a closed issue union is infeasible because paths and codes vary by schema
+		public readonly issues: unknown,
+	) {
+		super(`[docupost] ${kind} validation failed for ${operation}: ${issues}`);
+		this.name = 'DocupostValidationError';
+	}
+}
+
+function parseInput<T extends z.ZodTypeAny>(
+	operation: string,
+	schema: T,
+	// unknown is necessary because handlers receive shared raw input bags; a closed input union is infeasible because each operation validates its own shape
+	input: unknown,
+): z.infer<T> {
+	const parsed = schema.safeParse(input);
+	if (!parsed.success) {
+		throw new DocupostValidationError('input', operation, parsed.error);
+	}
+	return parsed.data;
+}
+
+export const accountBalance = async (
+	ctx: DocupostHandlerContext,
+	// unknown is necessary because handler inputs are raw bags validated by the operation schema; a closed bag type is infeasible because three operations share this handler shape
+	input: Record<string, unknown>,
+): Promise<DocupostEndpointOutputs['accountBalance']> => {
+	const parsed = parseInput(
+		'accountBalance',
+		DocupostEndpointInputSchemas.accountBalance,
+		input,
+	);
 	const response = await makeDocupostRequest<
 		DocupostEndpointOutputs['accountBalance']
 	>('accountbalance', ctx.key, {
 		method: 'GET',
+		outputSchema: DocupostEndpointOutputSchemas.accountBalance,
 	});
 
-	await logEventFromContext(
-		ctx,
-		'docupost.account.balance',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'docupost.account.balance', {
+		operation: 'accountbalance',
+	});
 
 	return response;
 };
 
-export const sendLetter: DocupostEndpoints['sendLetter'] = async (
-	ctx,
-	input,
-) => {
+export const sendLetter = async (
+	ctx: DocupostHandlerContext,
+	// unknown is necessary because handler inputs are raw bags validated by the operation schema; a closed bag type is infeasible because three operations share this handler shape
+	input: Record<string, unknown>,
+): Promise<DocupostEndpointOutputs['sendLetter']> => {
+	const parsed = parseInput(
+		'sendLetter',
+		DocupostEndpointInputSchemas.sendLetter,
+		input,
+	);
 	const {
 		to_name,
 		to_address,
@@ -41,7 +84,7 @@ export const sendLetter: DocupostEndpoints['sendLetter'] = async (
 		from_zip,
 		pdf_url,
 		html,
-	} = input;
+	} = parsed;
 
 	const query: Record<string, string | undefined> = {
 		to_name,
@@ -63,22 +106,27 @@ export const sendLetter: DocupostEndpoints['sendLetter'] = async (
 		method: 'POST',
 		query,
 		body: html ? { html } : undefined,
+		outputSchema: DocupostEndpointOutputSchemas.sendLetter,
 	});
 
-	await logEventFromContext(
-		ctx,
-		'docupost.letter.send',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'docupost.send.letter', {
+		operation: 'sendletter',
+		has_pdf: Boolean(pdf_url),
+	});
 
 	return response;
 };
 
-export const sendPostcard: DocupostEndpoints['sendPostcard'] = async (
-	ctx,
-	input,
-) => {
+export const sendPostcard = async (
+	ctx: DocupostHandlerContext,
+	// unknown is necessary because handler inputs are raw bags validated by the operation schema; a closed bag type is infeasible because three operations share this handler shape
+	input: Record<string, unknown>,
+): Promise<DocupostEndpointOutputs['sendPostcard']> => {
+	const parsed = parseInput(
+		'sendPostcard',
+		DocupostEndpointInputSchemas.sendPostcard,
+		input,
+	);
 	const {
 		to_name,
 		to_address,
@@ -92,7 +140,7 @@ export const sendPostcard: DocupostEndpoints['sendPostcard'] = async (
 		from_zip,
 		front_image_url,
 		back_image_url,
-	} = input;
+	} = parsed;
 
 	const response = await makeDocupostRequest<
 		DocupostEndpointOutputs['sendPostcard']
@@ -112,14 +160,12 @@ export const sendPostcard: DocupostEndpoints['sendPostcard'] = async (
 			front_image: front_image_url,
 			back_image: back_image_url,
 		},
+		outputSchema: DocupostEndpointOutputSchemas.sendPostcard,
 	});
 
-	await logEventFromContext(
-		ctx,
-		'docupost.postcard.send',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'docupost.send.postcard', {
+		operation: 'sendpostcard',
+	});
 
 	return response;
 };

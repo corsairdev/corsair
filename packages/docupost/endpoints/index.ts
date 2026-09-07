@@ -1,7 +1,10 @@
 import { accountBalance, sendLetter, sendPostcard } from './send';
 
+export const Account = {
+	balance: accountBalance,
+};
+
 export const Send = {
-	accountBalance,
 	letter: sendLetter,
 	postcard: sendPostcard,
 };
