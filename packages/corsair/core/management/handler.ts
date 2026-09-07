@@ -281,7 +281,9 @@ const ROUTES: Route[] = [
 		method: 'POST',
 		pattern: '/disconnect',
 		handler: async ({ internal, body, scopedTenant }) => {
-			const input = body as DisconnectInput;
+			// An empty or non-JSON body arrives as undefined; default it so a missing
+			// `plugin` reaches disconnectConnection's 400, not a property-access 500.
+			const input = (body ?? {}) as DisconnectInput;
 			const tenantId = resolveScopedTenant(scopedTenant, input.tenantId);
 			return json(
 				200,

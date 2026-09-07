@@ -57,7 +57,9 @@ async function seedConnection(
 	accountId: string,
 ) {
 	const now = new Date();
-	const integrationId = `slack-int-${tenantId}`;
+	// One integration row per plugin name (that's how disconnect looks it up);
+	// tenants share it and are told apart by the account's tenant_id.
+	const integrationId = 'slack-int';
 	await db
 		.insertInto('corsair_integrations')
 		.values({
@@ -190,6 +192,31 @@ describe('manage.disconnect', () => {
 					.executeTakeFirst(),
 			).toBeDefined();
 			expect(await countFor(db, 'corsair_entities', 'acc2')).toBe(1);
+		} finally {
+			await destroy();
+		}
+	});
+
+	it('removes every duplicate account for the pair, not just the first', async () => {
+		const { db, destroy } = createTestDatabase();
+		try {
+			// A concurrent connect can leave two accounts for one (tenant, integration).
+			await seedConnection(db, 't1', 'acc1');
+			await seedConnection(db, 't1', 'acc1-dup');
+
+			const result = await disconnectConnection(internalFor(db), {
+				plugin: 'slack',
+				tenantId: 't1',
+			});
+
+			expect(result).toEqual({ ok: true, disconnected: true });
+			const remaining = await db
+				.selectFrom('corsair_accounts')
+				.select('id')
+				.where('tenant_id', '=', 't1')
+				.execute();
+			expect(remaining).toEqual([]);
+			expect(await countFor(db, 'corsair_events', 'acc1-dup')).toBe(0);
 		} finally {
 			await destroy();
 		}

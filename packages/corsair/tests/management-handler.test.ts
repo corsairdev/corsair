@@ -484,3 +484,48 @@ describe('managementHandler — /permissions', () => {
 		expect(noTokenBody.missingFields).toEqual(['token']);
 	});
 });
+
+describe('managementHandler — /disconnect', () => {
+	let env: ReturnType<typeof makeEnv>;
+	afterEach(() => env?.cleanup?.());
+
+	it('rejects an empty body with 400, not 500', async () => {
+		env = makeEnv();
+		const corsair = createCorsair({
+			plugins: [slackOAuth],
+			database: env.db,
+			kek: KEK,
+		} as any);
+		const handler = managementHandler(corsair);
+
+		const res = await handler(
+			new Request('http://x/api/corsair/disconnect', { method: 'POST' }),
+		);
+		expect(res.status).toBe(400);
+		const body = await readJson<{ error: string; missingFields?: string[] }>(
+			res,
+		);
+		expect(body.error).toBe('bad_request');
+		expect(body.missingFields).toEqual(['plugin']);
+	});
+
+	it('is idempotent for a plugin with no stored connection', async () => {
+		env = makeEnv();
+		const corsair = createCorsair({
+			plugins: [slackOAuth],
+			database: env.db,
+			kek: KEK,
+		} as any);
+		const handler = managementHandler(corsair);
+
+		const res = await handler(
+			new Request('http://x/api/corsair/disconnect', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ plugin: 'slack' }),
+			}),
+		);
+		expect(res.status).toBe(200);
+		expect(await readJson(res)).toEqual({ ok: true, disconnected: false });
+	});
+});
