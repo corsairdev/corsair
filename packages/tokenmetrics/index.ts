@@ -142,7 +142,7 @@ export type InternalTokenMetricsPlugin =
 export type ExternalTokenMetricsPlugin<T extends TokenMetricsPluginOptions> =
 	BaseTokenMetricsPlugin<T>;
 
-export function tokenMetrics<const T extends TokenMetricsPluginOptions>(
+export function tokenmetrics<const T extends TokenMetricsPluginOptions>(
 	incomingOptions: TokenMetricsPluginOptions &
 		T = {} as TokenMetricsPluginOptions & T,
 ): ExternalTokenMetricsPlugin<T> {
