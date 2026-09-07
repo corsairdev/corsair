@@ -16,8 +16,16 @@ function retryAfterMs(response: Response): number | undefined {
 async function responseBody(response: Response): Promise<unknown> {
 	if (response.status === 204) return undefined;
 	const contentType = response.headers.get('content-type')?.toLowerCase() ?? '';
-	if (contentType.includes('json')) return await response.json();
-	return await response.text();
+	const text = await response.text();
+	if (!text.trim()) return undefined;
+	if (contentType.includes('json')) {
+		try {
+			return JSON.parse(text);
+		} catch {
+			return text;
+		}
+	}
+	return text;
 }
 
 export async function makeTokenMetricsRequest<T>(

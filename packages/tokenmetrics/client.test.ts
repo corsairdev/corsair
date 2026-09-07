@@ -88,4 +88,25 @@ describe('Token Metrics API operations', () => {
 			'token-metrics-test-key',
 		);
 	});
+
+	it('preserves status and retry metadata for malformed JSON errors', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response('{not-json', {
+				status: 429,
+				statusText: 'Too Many Requests',
+				headers: {
+					'Content-Type': 'application/json',
+					'Retry-After': '2',
+				},
+			}),
+		);
+
+		await expect(
+			makeTokenMetricsRequest('/tokens', 'token-metrics-test-key'),
+		).rejects.toMatchObject({
+			status: 429,
+			retryAfter: 2000,
+			body: '{not-json',
+		});
+	});
 });
