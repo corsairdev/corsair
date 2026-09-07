@@ -157,6 +157,7 @@ export const BaseProviders = [
 	'filloutforms',
 	'firecrawl',
 	'fireflies',
+	'flexisign',
 	'formbricks',
 	'gemini',
 	'github',
@@ -431,6 +432,7 @@ export const ProviderDisplayNames = {
 	filloutforms: 'FilloutForms',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
+	flexisign: 'Flexisign',
 	formbricks: 'Formbricks',
 	gemini: 'Gemini',
 	github: 'GitHub',
@@ -712,6 +714,7 @@ export type AllProviders =
 	| 'filloutforms'
 	| 'firecrawl'
 	| 'fireflies'
+	| 'flexisign'
 	| 'formbricks'
 	| 'gemini'
 	| 'github'
