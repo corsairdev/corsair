@@ -94,8 +94,8 @@ export const BaseProviders = [
 	'box',
 	'boxhero',
 	'brandfetch',
-	'brevo',
 	'breathehr',
+	'brevo',
 	'brex',
 	'brightdata',
 	'browseai',
@@ -113,6 +113,7 @@ export const BaseProviders = [
 	'certifier',
 	'chatbotkit',
 	'chatfai',
+	'chmeetings',
 	'circleci',
 	'clickhouse',
 	'clientary',
@@ -361,8 +362,8 @@ export const ProviderDisplayNames = {
 	box: 'Box',
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
-	brevo: 'Brevo',
 	breathehr: 'Breathe HR',
+	brevo: 'Brevo',
 	brex: 'Brex',
 	brightdata: 'Bright Data',
 	browseai: 'Browse AI',
@@ -380,6 +381,7 @@ export const ProviderDisplayNames = {
 	certifier: 'Certifier',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
+	chmeetings: 'ChMeetings',
 	circleci: 'CircleCI',
 	clickhouse: 'Clickhouse',
 	clientary: 'Clientary',
@@ -635,8 +637,8 @@ export type AllProviders =
 	| 'box'
 	| 'boxhero'
 	| 'brandfetch'
-	| 'brevo'
 	| 'breathehr'
+	| 'brevo'
 	| 'brex'
 	| 'brightdata'
 	| 'browseai'
@@ -654,6 +656,7 @@ export type AllProviders =
 	| 'certifier'
 	| 'chatbotkit'
 	| 'chatfai'
+	| 'chmeetings'
 	| 'circleci'
 	| 'clickhouse'
 	| 'clientary'
