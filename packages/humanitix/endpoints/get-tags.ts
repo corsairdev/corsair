@@ -1,23 +1,28 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HumanitixEndpoints } from '..';
 import { makeHumanitixRequest } from '../client';
-import type { HumanitixEndpointOutputs } from './types';
+import {
+	HumanitixEndpointInputSchemas,
+	HumanitixEndpointOutputSchemas,
+} from './types';
 
 export const getTags: HumanitixEndpoints['getTags'] = async (ctx, input) => {
-	const response = await makeHumanitixRequest<
-		HumanitixEndpointOutputs['getTags']
-	>('/tags', ctx.key, {
+	const parsed = HumanitixEndpointInputSchemas.getTags.parse(input);
+	// Raw transport payload typed unknown, then validated against the zod
+	// output schema below — no narrower static type exists for it.
+	const raw = await makeHumanitixRequest<unknown>('/tags', ctx.key, {
 		method: 'GET',
 		query: {
-			page: input.page,
-			pageSize: input.pageSize,
+			page: parsed.page,
+			pageSize: parsed.pageSize,
 		},
 	});
+	const response = HumanitixEndpointOutputSchemas.getTags.parse(raw);
 
 	await logEventFromContext(
 		ctx,
 		'humanitix.tags.list',
-		{ ...input },
+		{ ...parsed },
 		'completed',
 	);
 	return response;

@@ -8,8 +8,7 @@ export async function makeHumanitixRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
+		method?: 'GET';
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
@@ -17,7 +16,7 @@ export async function makeHumanitixRequest<T>(
 		throw new AuthMissingError('humanitix', 'api_key');
 	}
 
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', query } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: HUMANITIX_API_BASE,
@@ -34,12 +33,7 @@ export async function makeHumanitixRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	return request<T>(config, requestOptions);

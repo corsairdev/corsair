@@ -96,6 +96,11 @@ describe('input and output schemas', () => {
 });
 
 describe('events.get', () => {
+	it('rejects a malformed getEvent payload', async () => {
+		mockRequest.mockResolvedValue({ name: 'no id' });
+		await expect(Events.get(ctx, { eventId: 'abc' })).rejects.toThrow();
+	});
+
 	it('GETs /events/{eventId}', async () => {
 		mockRequest.mockResolvedValue(event);
 

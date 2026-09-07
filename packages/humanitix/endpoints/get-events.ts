@@ -1,29 +1,34 @@
 import { logEventFromContext } from 'corsair/core';
 import type { HumanitixEndpoints } from '..';
 import { makeHumanitixRequest } from '../client';
-import type { HumanitixEndpointOutputs } from './types';
+import {
+	HumanitixEndpointInputSchemas,
+	HumanitixEndpointOutputSchemas,
+} from './types';
 
 export const getEvents: HumanitixEndpoints['getEvents'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeHumanitixRequest<
-		HumanitixEndpointOutputs['getEvents']
-	>('/events', ctx.key, {
+	const parsed = HumanitixEndpointInputSchemas.getEvents.parse(input);
+	// Raw transport payload typed unknown, then validated against the zod
+	// output schema below — no narrower static type exists for it.
+	const raw = await makeHumanitixRequest<unknown>('/events', ctx.key, {
 		method: 'GET',
 		query: {
-			page: input.page,
-			pageSize: input.pageSize,
-			inFutureOnly: input.inFutureOnly,
-			since: input.since,
-			overrideLocation: input.overrideLocation,
+			page: parsed.page,
+			pageSize: parsed.pageSize,
+			inFutureOnly: parsed.inFutureOnly,
+			since: parsed.since,
+			overrideLocation: parsed.overrideLocation,
 		},
 	});
+	const response = HumanitixEndpointOutputSchemas.getEvents.parse(raw);
 
 	await logEventFromContext(
 		ctx,
 		'humanitix.events.list',
-		{ ...input },
+		{ ...parsed },
 		'completed',
 	);
 	return response;

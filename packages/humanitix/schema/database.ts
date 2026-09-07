@@ -54,7 +54,19 @@ export const HumanitixEvent = z
 		url: z.string().optional(),
 		tagIds: z.array(z.string()).optional(),
 		category: z.string().optional(),
-		classification: z.unknown().optional(),
+		// Official docs: OneOf(enum string | { category, subcategory, type }).
+		classification: z
+			.union([
+				z.string(),
+				z
+					.object({
+						category: z.string().optional(),
+						subcategory: z.string().optional(),
+						type: z.string().optional(),
+					})
+					.loose(),
+			])
+			.optional(),
 		public: z.boolean().optional(),
 		published: z.boolean().optional(),
 		suspendSales: z.boolean().optional(),
