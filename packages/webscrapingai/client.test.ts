@@ -1,3 +1,4 @@
+// Mocked transport coverage intentionally runs in Corsair's normal CI lane.
 import { getInfo } from './endpoints/account';
 import { askQuestion, extractFields } from './endpoints/ai';
 import {
