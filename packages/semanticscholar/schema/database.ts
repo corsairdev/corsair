@@ -172,7 +172,7 @@ export const SemanticScholarSnippet = z
 			.object({
 				corpusId: SN,
 				title: S,
-				authors: z.array(SemanticScholarAuthorSummary).nullable().optional(),
+				authors: z.array(z.string()).nullable().optional(),
 				openAccessInfo: z.object({}).loose().nullable().optional(),
 			})
 			.loose(),

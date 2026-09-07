@@ -176,6 +176,37 @@ describe('Semantic Scholar endpoints', () => {
 		).toBe(false);
 	});
 
+	it('papers.autocomplete routes partial title queries and validates matches', async () => {
+		mockFetch({
+			matches: [
+				{
+					id: 'p1',
+					title: 'Semantic Scholar',
+					authorsYear: 'Ammar et al., 2018',
+				},
+			],
+		});
+
+		const out = await Endpoints.autocompletePapers(makeCtx(), {
+			query: 'semanti',
+		});
+
+		expect(parsed().path).toBe('/graph/v1/paper/autocomplete');
+		expect(parsed().query.get('query')).toBe('semanti');
+		expect(captured?.method).toBe('GET');
+		expect(captured?.headers.get('x-api-key')).toBe('test-key');
+		expect(out.matches[0]).toEqual({
+			id: 'p1',
+			title: 'Semantic Scholar',
+			authorsYear: 'Ammar et al., 2018',
+		});
+		expect(
+			semanticScholarEndpointSchemas['papers.autocomplete'].output.safeParse({
+				matches: [{ id: 1, title: 'Bad' }],
+			}).success,
+		).toBe(false);
+	});
+
 	it('papers.authors, papers.citations, and papers.references use paginated child paths', async () => {
 		mockFetch({
 			offset: 0,
@@ -289,6 +320,41 @@ describe('Semantic Scholar endpoints', () => {
 		});
 		expect(parsed().path).toBe('/graph/v1/snippet/search');
 		expect(parsed().query.get('fields')).toBe('snippet.text');
+	});
+
+	it('snippets.searchText accepts documented snippet paper author names', async () => {
+		mockFetch({
+			data: [
+				{
+					score: 0.56,
+					paper: {
+						corpusId: '19170988',
+						title: 'Construction of the Literature Graph in Semantic Scholar',
+						authors: ['Bridger Waleed Ammar', 'Dirk Groeneveld'],
+						openAccessInfo: {
+							license: 'CCBY',
+							status: 'HYBRID',
+						},
+					},
+					snippet: {
+						text: 'In this paper, we discuss the construction of a graph.',
+						snippetKind: 'body',
+					},
+				},
+			],
+			retrievalVersion: 'test-version',
+		});
+
+		const out = await Endpoints.searchTextSnippets(makeCtx(), {
+			query: 'literature graph',
+			limit: 1,
+		});
+
+		expect(parsed().path).toBe('/graph/v1/snippet/search');
+		expect(out.data[0]?.paper.authors).toEqual([
+			'Bridger Waleed Ammar',
+			'Dirk Groeneveld',
+		]);
 	});
 
 	it('rejects invalid input before calling Semantic Scholar', async () => {
