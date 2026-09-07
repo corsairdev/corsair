@@ -98,7 +98,10 @@ function makeNonCanonical(): { body: string; headers: Record<string, string> } {
 		},
 	});
 	const body = canonical.replace('{"type"', '{ "type"');
+	const timestamp = Math.floor(Date.now() / 1000).toString();
 	const signature = createHmac('sha256', SIGNING_SECRET)
+		.update(timestamp)
+		.update('.')
 		.update(body)
 		.digest('hex');
 	return {
@@ -106,7 +109,7 @@ function makeNonCanonical(): { body: string; headers: Record<string, string> } {
 		headers: {
 			'content-type': 'application/json',
 			'x-corsair-signature': `sha256=${signature}`,
-			'x-corsair-timestamp': Math.floor(Date.now() / 1000).toString(),
+			'x-corsair-timestamp': timestamp,
 			'x-corsair-project': PROJECT,
 			'x-corsair-nonce': randomUUID(),
 		},
