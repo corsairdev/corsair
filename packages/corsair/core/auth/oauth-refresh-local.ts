@@ -3,6 +3,8 @@
 // single implementation covers every provider that speaks standard OAuth 2.0,
 // replacing the per-plugin refresh<X>AccessToken helpers.
 
+import { validateTokenUrl } from './url-validator';
+
 export type OAuthTokenAuthMethod =
 	| 'body' // client_id + client_secret in the request body (most providers)
 	| 'basic' // HTTP Basic base64(client_id:client_secret) (Bitbucket)
@@ -62,6 +64,10 @@ export async function refreshOAuthTokensLocal(
 		headers['Content-Type'] = 'application/x-www-form-urlencoded';
 	}
 
+	// SSRF guard: reject private IPs, cloud metadata, and non-HTTPS URLs before
+	// sending client credentials over the wire.
+	validateTokenUrl(tokenUrl);
+
 	const response = await fetch(tokenUrl, {
 		method: 'POST',
 		headers,
@@ -71,13 +77,22 @@ export async function refreshOAuthTokensLocal(
 				: new URLSearchParams(params),
 	});
 
-	if (!response.ok) {
+	// Cap response body to prevent OOM from oversized responses (DoS).
+	const MAX_TOKEN_RESPONSE_BYTES = 1024 * 1024; // 1 MB
+	const body = await response.text();
+	if (body.length > MAX_TOKEN_RESPONSE_BYTES) {
 		throw new Error(
-			`OAuth token refresh failed (${response.status}): ${await response.text()}`,
+			`OAuth token refresh response exceeded maximum size (${MAX_TOKEN_RESPONSE_BYTES} bytes)`,
 		);
 	}
 
-	const json = JSON.parse(await response.text()) as Record<string, unknown>;
+	if (!response.ok) {
+		throw new Error(
+			`OAuth token refresh failed (${response.status}): ${body}`,
+		);
+	}
+
+	const json = JSON.parse(body) as Record<string, unknown>;
 	if (typeof json.access_token !== 'string' || json.access_token.length === 0) {
 		throw new Error('OAuth token refresh returned no access_token');
 	}

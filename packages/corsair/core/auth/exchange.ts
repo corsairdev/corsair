@@ -1,6 +1,7 @@
 import * as https from 'node:https';
 import * as querystring from 'node:querystring';
 import type { OAuthConfig } from '../plugins';
+import { validateTokenUrl } from './url-validator';
 
 const TOKEN_NUMERIC_FIELDS = ['expires_in', 'refresh_token_expires_in'];
 
@@ -58,7 +59,7 @@ export function exchangeCodeForTokens(
 	oauthConfig: OAuthConfig,
 	redirectUri: string,
 ): Promise<TokenResponse> {
-	const tokenUrl = new URL(oauthConfig.tokenUrl);
+	const tokenUrl = validateTokenUrl(oauthConfig.tokenUrl);
 	const useBasicAuth = oauthConfig.tokenAuthMethod === 'basic';
 
 	return new Promise((resolve, reject) => {
@@ -96,7 +97,17 @@ export function exchangeCodeForTokens(
 			},
 			(res) => {
 				let data = '';
+				const MAX_RESPONSE_BYTES = 1024 * 1024; // 1 MB
 				res.on('data', (chunk) => {
+					if (data.length + chunk.length > MAX_RESPONSE_BYTES) {
+						req.destroy();
+						reject(
+							new Error(
+								`Token exchange response exceeded maximum size (${MAX_RESPONSE_BYTES} bytes)`,
+							),
+						);
+						return;
+					}
 					data += chunk;
 				});
 				res.on('end', () => {
