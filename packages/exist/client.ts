@@ -1,5 +1,10 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { z } from 'zod';
 
 /**
  * Exist API v2 base URL.
@@ -27,6 +32,25 @@ export const EXIST_OAUTH_TOKEN_URL = 'https://exist.io/oauth2/access_token';
  */
 export const EXIST_RATE_LIMIT_PER_HOUR = 300;
 
+const EXIST_GET_RATE_LIMIT: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'retry-after',
+		resetTime: 'x-ratelimit-reset',
+		remaining: 'x-ratelimit-remaining',
+		limit: 'x-ratelimit-limit',
+	},
+};
+
+const EXIST_WRITE_RATE_LIMIT: RateLimitConfig = {
+	...EXIST_GET_RATE_LIMIT,
+	enabled: false,
+	maxRetries: 0,
+};
+
 /**
  * Write endpoints (`acquire`, `release`, `update`, `increment`) accept at most
  * 35 objects per array.
@@ -38,6 +62,7 @@ export class ExistAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly status?: number,
+		// unknown is necessary because Exist error payloads vary by endpoint; a closed error body union is infeasible because the API publishes no single failure schema
 		public readonly body?: unknown,
 		public readonly retryAfter?: number,
 	) {
@@ -54,8 +79,10 @@ export type ExistRequestOptions = {
 	 * Exist write endpoints take a top-level JSON array of objects; read
 	 * endpoints take no body at all.
 	 */
+	// unknown is necessary because write batch entries differ per operation; a closed entry union is infeasible because acquire, update and increment each accept different fields
 	body?: readonly Record<string, unknown>[];
 	query?: Record<string, ExistQueryValue>;
+	outputSchema?: z.ZodType<any>;
 };
 
 /** Serializes a `groups`/`attributes`/`templates` filter as Exist expects it. */
@@ -84,11 +111,13 @@ export function compactQuery(
 	return out;
 }
 
+// unknown is necessary because the transport can throw any value; a closed error union is infeasible because fetch-level failures are untyped
 function wrapError(error: unknown): never {
 	if (error instanceof ExistAPIError) throw error;
 	if (error instanceof ApiError) {
 		let message = error.message;
 		if (error.body && typeof error.body === 'object') {
+			// unknown is necessary because error detail payloads are provider-defined; a closed detail union is infeasible across endpoints
 			const body = error.body as Record<string, unknown>;
 			const detail = body.error ?? body.detail ?? body.message;
 			if (typeof detail === 'string' && detail.length > 0) message = detail;
@@ -113,7 +142,7 @@ export async function makeExistRequest<T>(
 	accessToken: string,
 	options: ExistRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, outputSchema } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: EXIST_API_BASE,
@@ -136,12 +165,26 @@ export async function makeExistRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		const response = await request<T>(config, requestOptions, {
+			rateLimitConfig:
+				method === 'GET' ? EXIST_GET_RATE_LIMIT : EXIST_WRITE_RATE_LIMIT,
+		});
+		if (outputSchema) {
+			const parsed = outputSchema.safeParse(response);
+			if (!parsed.success) {
+				throw new ExistAPIError(
+					`Exist response failed schema validation: ${parsed.error.message}`,
+				);
+			}
+			return parsed.data as T;
+		}
+		return response;
 	} catch (error) {
 		wrapError(error);
 	}
 }
 
+// unknown is necessary because callers pass arbitrary thrown values for classification; a closed error union is infeasible at this boundary
 export function isUnauthorizedError(error: unknown): boolean {
 	if (error instanceof ExistAPIError) return error.status === 401;
 	if (error instanceof ApiError) return error.status === 401;
