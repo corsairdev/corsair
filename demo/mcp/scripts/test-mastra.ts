@@ -10,7 +10,8 @@ const tools = await provider.resolveTools(data.map((t) => t.slug));
 
 const litellm = createOpenAICompatible({
 	name: 'corsair-litellm',
-	baseURL: process.env.LITELLM_BASE_URL ?? 'https://llm.corsair.dev/v1',
+	// Pinned to Corsair's gateway so the API key can't be pointed at another host.
+	baseURL: 'https://llm.corsair.dev/v1',
 	apiKey: getLlmApiKey(),
 });
 
