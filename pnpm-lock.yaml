@@ -219,9 +219,6 @@ importers:
       '@corsair-dev/slack':
         specifier: workspace:*
         version: link:../../packages/slack
-      '@corsair-dev/supadata':
-        specifier: workspace:*
-        version: link:../../packages/supadata
       '@corsair-dev/teams':
         specifier: workspace:*
         version: link:../../packages/teams
