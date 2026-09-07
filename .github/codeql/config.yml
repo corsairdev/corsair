@@ -1,0 +1,11 @@
+name: 'Corsair CodeQL config'
+
+# Trims the JS/TS database build. Test and build output carry no findings we'd
+# act on. www/ is deliberately NOT excluded -- it hosts the webhook, auth, tRPC
+# and Inngest route handlers, which are the most externally reachable code here.
+paths-ignore:
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - '**/__tests__/**'
+  - '**/dist/**'
+  - '**/node_modules/**'
