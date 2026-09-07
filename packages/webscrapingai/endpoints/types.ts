@@ -8,10 +8,10 @@ const HttpUrl = z
 const CommonPageOptions = {
 	url: HttpUrl,
 	js: z.boolean().optional(),
-	js_timeout: z.number().int().min(0).max(30000).optional(),
-	timeout: z.number().int().min(1000).max(30000).optional(),
+	js_timeout: z.number().int().min(1).max(20000).optional(),
+	timeout: z.number().int().min(1).max(30000).optional(),
 	wait_for: NonEmptyString.optional(),
-	proxy: z.enum(['datacenter', 'residential']).optional(),
+	proxy: z.enum(['datacenter', 'residential', 'stealth']).optional(),
 	country: z.string().length(2).optional(),
 	device: z.enum(['desktop', 'mobile', 'tablet']).optional(),
 	headers: z.record(z.string(), z.string()).optional(),

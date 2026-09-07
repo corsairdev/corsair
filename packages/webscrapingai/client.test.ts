@@ -1,4 +1,5 @@
 // Mocked transport coverage intentionally runs in Corsair's normal CI lane.
+import { logEventFromContext } from 'corsair/core';
 import { getInfo } from './endpoints/account';
 import { askQuestion, extractFields } from './endpoints/ai';
 import {
@@ -7,17 +8,25 @@ import {
 	getSelectedMultiple,
 	getText,
 } from './endpoints/scraping';
+import { GetHtmlInputSchema } from './endpoints/types';
+import type { WebScrapingAIContext } from './index';
+
+jest.mock('corsair/core', () => {
+	const actual = jest.requireActual('corsair/core');
+	return { ...actual, logEventFromContext: jest.fn().mockResolvedValue(null) };
+});
 
 const fetchMock = jest.spyOn(globalThis, 'fetch');
-const ctx = {
-	key: 'webscraping-test-key',
-	options: {},
-	$getAccountId: async () => 'test-account',
-} as never;
+const mockLogEvent = jest.mocked(logEventFromContext);
+
+function testContext(): WebScrapingAIContext {
+	return { key: 'webscraping-test-key', options: {} } as WebScrapingAIContext;
+}
 
 describe('WebScraping.AI API operations', () => {
 	beforeEach(() => {
 		fetchMock.mockReset();
+		mockLogEvent.mockReset().mockResolvedValue(null);
 		fetchMock.mockImplementation(async (input) => {
 			const url = String(input);
 			if (url.includes('/ai/question'))
@@ -53,6 +62,7 @@ describe('WebScraping.AI API operations', () => {
 	afterAll(() => fetchMock.mockRestore());
 
 	it('calls and validates all seven catalog operations', async () => {
+		const ctx = testContext();
 		const question = await askQuestion(ctx, {
 			url: 'https://example.com',
 			question: 'What is this page?',
@@ -89,5 +99,38 @@ describe('WebScraping.AI API operations', () => {
 		expect(calls[6]).toContain('/account?api_key=webscraping-test-key');
 		for (const url of calls)
 			expect(url).toContain('api_key=webscraping-test-key');
+		expect(mockLogEvent).toHaveBeenCalledTimes(7);
+		expect(mockLogEvent.mock.calls.map((call) => [call[1], call[3]])).toEqual([
+			['webscrapingai.ai.askQuestion', 'completed'],
+			['webscrapingai.ai.extractFields', 'completed'],
+			['webscrapingai.scraping.getHtml', 'completed'],
+			['webscrapingai.scraping.getSelectedHtml', 'completed'],
+			['webscrapingai.scraping.getSelectedMultiple', 'completed'],
+			['webscrapingai.scraping.getText', 'completed'],
+			['webscrapingai.account.getInfo', 'completed'],
+		]);
+	});
+
+	it('accepts the documented timeout bounds and stealth proxy', () => {
+		expect(
+			GetHtmlInputSchema.safeParse({
+				url: 'https://example.com',
+				js_timeout: 1,
+				timeout: 1,
+				proxy: 'stealth',
+			}).success,
+		).toBe(true);
+		expect(
+			GetHtmlInputSchema.safeParse({
+				url: 'https://example.com',
+				js_timeout: 0,
+			}).success,
+		).toBe(false);
+		expect(
+			GetHtmlInputSchema.safeParse({
+				url: 'https://example.com',
+				js_timeout: 20001,
+			}).success,
+		).toBe(false);
 	});
 });
