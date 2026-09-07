@@ -152,6 +152,7 @@ export const BaseProviders = [
 	'dynapictures',
 	'epicgames',
 	'exa',
+	'exist',
 	'facebook',
 	'faraday',
 	'figma',
@@ -429,6 +430,7 @@ export const ProviderDisplayNames = {
 	dynapictures: 'Dynapictures',
 	epicgames: 'Epic Games',
 	exa: 'Exa',
+	exist: 'Exist',
 	facebook: 'Facebook',
 	faraday: 'Faraday',
 	figma: 'Figma',
@@ -713,6 +715,7 @@ export type AllProviders =
 	| 'dynapictures'
 	| 'epicgames'
 	| 'exa'
+	| 'exist'
 	| 'facebook'
 	| 'faraday'
 	| 'figma'
