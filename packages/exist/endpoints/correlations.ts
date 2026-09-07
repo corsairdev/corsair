@@ -1,25 +1,29 @@
 import { logEventFromContext } from 'corsair/core';
-import { compactQuery, makeAuthenticatedExistRequest, toFlag } from '../client';
+import { compactQuery, toFlag } from '../client';
 import type { ExistEndpoints } from '../index';
-import type { ExistEndpointOutputs } from './types';
+import { parseExistInput, validatedExistRequest } from './validate';
 
 /**
  * List the correlations Exist has computed between the user's attributes.
  * @see https://developer.exist.io/reference/correlations/
  */
 export const list: ExistEndpoints['correlationsList'] = async (ctx, input) => {
-	const result = await makeAuthenticatedExistRequest<
-		ExistEndpointOutputs['correlationsList']
-	>('correlations/', ctx, {
-		method: 'GET',
-		query: compactQuery({
-			page: input.page,
-			limit: input.limit,
-			strong: toFlag(input.strong),
-			confident: toFlag(input.confident),
-			attribute: input.attribute,
-		}),
-	});
+	const parsed = parseExistInput('correlationsList', input);
+	const result = await validatedExistRequest(
+		'correlationsList',
+		'correlations/',
+		ctx,
+		{
+			method: 'GET',
+			query: compactQuery({
+				page: parsed.page,
+				limit: parsed.limit,
+				strong: toFlag(parsed.strong),
+				confident: toFlag(parsed.confident),
+				attribute: parsed.attribute,
+			}),
+		},
+	);
 
 	if (ctx.db.correlations) {
 		try {

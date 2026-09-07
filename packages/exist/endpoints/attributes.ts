@@ -1,12 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
-import {
-	compactQuery,
-	makeAuthenticatedExistRequest,
-	toCommaList,
-} from '../client';
+import { compactQuery, toCommaList } from '../client';
 import type { ExistEndpoints } from '../index';
 import { persistAttributes, persistAttributesWithValues } from './persist';
-import type { ExistEndpointOutputs } from './types';
+import { parseExistInput, validatedExistRequest } from './validate';
 
 /**
  * Summarises a write batch for the operation log. Exist attribute values are
@@ -15,9 +11,15 @@ import type { ExistEndpointOutputs } from './types';
  * trace an operation: how many objects were sent, which attributes they
  * targeted, and which days they covered.
  */
+type WriteBatchSummary = {
+	count: number;
+	attributes: string[];
+	dates?: string[];
+};
+
 function writeBatchSummary(
 	attributes: readonly { name: string; date?: string }[],
-): Record<string, unknown> {
+): WriteBatchSummary {
 	const names = [...new Set(attributes.map((a) => a.name))];
 	const dates = [
 		...new Set(
@@ -38,22 +40,26 @@ function writeBatchSummary(
  * @see https://developer.exist.io/reference/attributes/
  */
 export const list: ExistEndpoints['attributesList'] = async (ctx, input) => {
-	const result = await makeAuthenticatedExistRequest<
-		ExistEndpointOutputs['attributesList']
-	>('attributes/', ctx, {
-		method: 'GET',
-		query: compactQuery({
-			page: input.page,
-			limit: input.limit,
-			groups: toCommaList(input.groups),
-			attributes: toCommaList(input.attributes),
-			exclude_custom: input.exclude_custom,
-			manual: input.manual,
-			include_inactive: input.include_inactive,
-			include_low_priority: input.include_low_priority,
-			owned: input.owned,
-		}),
-	});
+	const parsed = parseExistInput('attributesList', input);
+	const result = await validatedExistRequest(
+		'attributesList',
+		'attributes/',
+		ctx,
+		{
+			method: 'GET',
+			query: compactQuery({
+				page: parsed.page,
+				limit: parsed.limit,
+				groups: toCommaList(parsed.groups),
+				attributes: toCommaList(parsed.attributes),
+				exclude_custom: parsed.exclude_custom,
+				manual: parsed.manual,
+				include_inactive: parsed.include_inactive,
+				include_low_priority: parsed.include_low_priority,
+				owned: parsed.owned,
+			}),
+		},
+	);
 
 	await persistAttributes(ctx, result.results);
 	await logEventFromContext(
@@ -73,17 +79,21 @@ export const listTemplates: ExistEndpoints['attributesListTemplates'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeAuthenticatedExistRequest<
-		ExistEndpointOutputs['attributesListTemplates']
-	>('attributes/templates/', ctx, {
-		method: 'GET',
-		query: compactQuery({
-			page: input.page,
-			limit: input.limit,
-			include_low_priority: input.include_low_priority,
-			groups: toCommaList(input.groups),
-		}),
-	});
+	const parsed = parseExistInput('attributesListTemplates', input);
+	const result = await validatedExistRequest(
+		'attributesListTemplates',
+		'attributes/templates/',
+		ctx,
+		{
+			method: 'GET',
+			query: compactQuery({
+				page: parsed.page,
+				limit: parsed.limit,
+				include_low_priority: parsed.include_low_priority,
+				groups: toCommaList(parsed.groups),
+			}),
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -100,21 +110,25 @@ export const listTemplates: ExistEndpoints['attributesListTemplates'] = async (
  */
 export const listWithValues: ExistEndpoints['attributesListWithValues'] =
 	async (ctx, input) => {
-		const result = await makeAuthenticatedExistRequest<
-			ExistEndpointOutputs['attributesListWithValues']
-		>('attributes/with-values/', ctx, {
-			method: 'GET',
-			query: compactQuery({
-				page: input.page,
-				limit: input.limit,
-				days: input.days,
-				date_max: input.date_max,
-				groups: toCommaList(input.groups),
-				attributes: toCommaList(input.attributes),
-				templates: toCommaList(input.templates),
-				manual: input.manual,
-			}),
-		});
+		const parsed = parseExistInput('attributesListWithValues', input);
+		const result = await validatedExistRequest(
+			'attributesListWithValues',
+			'attributes/with-values/',
+			ctx,
+			{
+				method: 'GET',
+				query: compactQuery({
+					page: parsed.page,
+					limit: parsed.limit,
+					days: parsed.days,
+					date_max: parsed.date_max,
+					groups: toCommaList(parsed.groups),
+					attributes: toCommaList(parsed.attributes),
+					templates: toCommaList(parsed.templates),
+					manual: parsed.manual,
+				}),
+			},
+		);
 
 		await persistAttributesWithValues(ctx, result.results);
 		await logEventFromContext(
@@ -134,21 +148,25 @@ export const listOwned: ExistEndpoints['attributesListOwned'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeAuthenticatedExistRequest<
-		ExistEndpointOutputs['attributesListOwned']
-	>('attributes/owned/', ctx, {
-		method: 'GET',
-		query: compactQuery({
-			page: input.page,
-			limit: input.limit,
-			groups: toCommaList(input.groups),
-			attributes: toCommaList(input.attributes),
-			exclude_custom: input.exclude_custom,
-			manual: input.manual,
-			include_inactive: input.include_inactive,
-			include_low_priority: input.include_low_priority,
-		}),
-	});
+	const parsed = parseExistInput('attributesListOwned', input);
+	const result = await validatedExistRequest(
+		'attributesListOwned',
+		'attributes/owned/',
+		ctx,
+		{
+			method: 'GET',
+			query: compactQuery({
+				page: parsed.page,
+				limit: parsed.limit,
+				groups: toCommaList(parsed.groups),
+				attributes: toCommaList(parsed.attributes),
+				exclude_custom: parsed.exclude_custom,
+				manual: parsed.manual,
+				include_inactive: parsed.include_inactive,
+				include_low_priority: parsed.include_low_priority,
+			}),
+		},
+	);
 
 	await persistAttributes(ctx, result.results);
 	await logEventFromContext(
@@ -169,15 +187,19 @@ export const acquire: ExistEndpoints['attributesAcquire'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeAuthenticatedExistRequest<
-		ExistEndpointOutputs['attributesAcquire']
-	>('attributes/acquire/', ctx, {
-		method: 'POST',
-		body: input.attributes,
-		query: compactQuery({
-			success_objects: input.success_objects === true ? 1 : undefined,
-		}),
-	});
+	const parsed = parseExistInput('attributesAcquire', input);
+	const result = await validatedExistRequest(
+		'attributesAcquire',
+		'attributes/acquire/',
+		ctx,
+		{
+			method: 'POST',
+			body: parsed.attributes,
+			query: compactQuery({
+				success_objects: parsed.success_objects === true ? 1 : undefined,
+			}),
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -196,12 +218,16 @@ export const release: ExistEndpoints['attributesRelease'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeAuthenticatedExistRequest<
-		ExistEndpointOutputs['attributesRelease']
-	>('attributes/release/', ctx, {
-		method: 'POST',
-		body: input.attributes,
-	});
+	const parsed = parseExistInput('attributesRelease', input);
+	const result = await validatedExistRequest(
+		'attributesRelease',
+		'attributes/release/',
+		ctx,
+		{
+			method: 'POST',
+			body: parsed.attributes,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -220,17 +246,21 @@ export const increment: ExistEndpoints['attributesIncrement'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeAuthenticatedExistRequest<
-		ExistEndpointOutputs['attributesIncrement']
-	>('attributes/increment/', ctx, {
-		method: 'POST',
-		body: input.attributes,
-	});
+	const parsed = parseExistInput('attributesIncrement', input);
+	const result = await validatedExistRequest(
+		'attributesIncrement',
+		'attributes/increment/',
+		ctx,
+		{
+			method: 'POST',
+			body: parsed.attributes,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
 		'exist.attributes.increment',
-		writeBatchSummary(input.attributes),
+		writeBatchSummary(parsed.attributes),
 		'completed',
 	);
 	return result;
@@ -245,17 +275,21 @@ export const update: ExistEndpoints['attributesUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeAuthenticatedExistRequest<
-		ExistEndpointOutputs['attributesUpdate']
-	>('attributes/update/', ctx, {
-		method: 'POST',
-		body: input.attributes,
-	});
+	const parsed = parseExistInput('attributesUpdate', input);
+	const result = await validatedExistRequest(
+		'attributesUpdate',
+		'attributes/update/',
+		ctx,
+		{
+			method: 'POST',
+			body: parsed.attributes,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
 		'exist.attributes.update',
-		writeBatchSummary(input.attributes),
+		writeBatchSummary(parsed.attributes),
 		'completed',
 	);
 	return result;

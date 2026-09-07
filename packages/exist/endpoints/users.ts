@@ -1,7 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeAuthenticatedExistRequest } from '../client';
 import type { ExistEndpoints } from '../index';
-import type { ExistEndpointOutputs } from './types';
+import { parseExistInput, validatedExistRequest } from './validate';
 
 /**
  * Get the authenticated user's profile and unit preferences.
@@ -11,9 +10,13 @@ export const getProfile: ExistEndpoints['usersGetProfile'] = async (
 	ctx,
 	_input,
 ) => {
-	const result = await makeAuthenticatedExistRequest<
-		ExistEndpointOutputs['usersGetProfile']
-	>('accounts/profile/', ctx, { method: 'GET' });
+	const parsed = parseExistInput('usersGetProfile', _input);
+	const result = await validatedExistRequest(
+		'usersGetProfile',
+		'accounts/profile/',
+		ctx,
+		{ method: 'GET' },
+	);
 
 	if (ctx.db.profile) {
 		try {

@@ -1,23 +1,22 @@
 import { logEventFromContext } from 'corsair/core';
-import { compactQuery, makeAuthenticatedExistRequest } from '../client';
+import { compactQuery } from '../client';
 import type { ExistEndpoints } from '../index';
-import type { ExistEndpointOutputs } from './types';
+import { parseExistInput, validatedExistRequest } from './validate';
 
 /**
  * List the insights Exist has generated about the user's data.
  * @see https://developer.exist.io/reference/insights/
  */
 export const list: ExistEndpoints['insightsList'] = async (ctx, input) => {
-	const result = await makeAuthenticatedExistRequest<
-		ExistEndpointOutputs['insightsList']
-	>('insights/', ctx, {
+	const parsed = parseExistInput('insightsList', input);
+	const result = await validatedExistRequest('insightsList', 'insights/', ctx, {
 		method: 'GET',
 		query: compactQuery({
-			page: input.page,
-			limit: input.limit,
-			date_min: input.date_min,
-			date_max: input.date_max,
-			priority: input.priority,
+			page: parsed.page,
+			limit: parsed.limit,
+			date_min: parsed.date_min,
+			date_max: parsed.date_max,
+			priority: parsed.priority,
 		}),
 	});
 

@@ -1,30 +1,24 @@
 import { logEventFromContext } from 'corsair/core';
-import {
-	compactQuery,
-	makeAuthenticatedExistRequest,
-	toCommaList,
-	toFlag,
-} from '../client';
+import { compactQuery, toCommaList, toFlag } from '../client';
 import type { ExistEndpoints } from '../index';
-import type { ExistEndpointOutputs } from './types';
+import { parseExistInput, validatedExistRequest } from './validate';
 
 /**
  * Get weekly average values per attribute, optionally including history.
  * @see https://developer.exist.io/reference/averages/
  */
 export const list: ExistEndpoints['averagesList'] = async (ctx, input) => {
-	const result = await makeAuthenticatedExistRequest<
-		ExistEndpointOutputs['averagesList']
-	>('averages/', ctx, {
+	const parsed = parseExistInput('averagesList', input);
+	const result = await validatedExistRequest('averagesList', 'averages/', ctx, {
 		method: 'GET',
 		query: compactQuery({
-			page: input.page,
-			limit: input.limit,
-			date_min: input.date_min,
-			date_max: input.date_max,
-			groups: toCommaList(input.groups),
-			attributes: toCommaList(input.attributes),
-			include_historical: toFlag(input.include_historical),
+			page: parsed.page,
+			limit: parsed.limit,
+			date_min: parsed.date_min,
+			date_max: parsed.date_max,
+			groups: toCommaList(parsed.groups),
+			attributes: toCommaList(parsed.attributes),
+			include_historical: toFlag(parsed.include_historical),
 		}),
 	});
 
