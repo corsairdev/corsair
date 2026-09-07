@@ -133,6 +133,7 @@ export const BaseProviders = [
 	'crowterminal',
 	'cursor',
 	'customgpt',
+	'dadataru',
 	'databricks',
 	'datadog',
 	'datarobot',
@@ -408,6 +409,7 @@ export const ProviderDisplayNames = {
 	crowterminal: 'CrowTerminal',
 	cursor: 'Cursor',
 	customgpt: 'CustomGPT',
+	dadataru: 'Dadataru',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
 	datarobot: 'DataRobot',
@@ -690,6 +692,7 @@ export type AllProviders =
 	| 'crowterminal'
 	| 'cursor'
 	| 'customgpt'
+	| 'dadataru'
 	| 'databricks'
 	| 'datadog'
 	| 'datarobot'
