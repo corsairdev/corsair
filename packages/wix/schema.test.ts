@@ -6,11 +6,25 @@ import {
 } from './endpoints/types';
 import { WixSchema } from './schema';
 import {
+	WixBookingCategory,
+	WixBrand,
+	WixCampaign,
 	WixContact,
 	WixCoupon,
+	WixCurrency,
+	WixCustomField,
+	WixExtendedBooking,
+	WixForm,
+	WixFormSubmission,
+	WixGroupRequest,
 	WixInventoryItem,
+	WixLocation,
+	WixManualTaxMapping,
+	WixModerationRule,
 	WixOrder,
 	WixProduct,
+	WixSiteFolder,
+	WixTaxGroup,
 } from './schema/database';
 
 describe('Wix schema', () => {
@@ -307,11 +321,12 @@ describe('Wix output schemas', () => {
 				contacts: [{ id: 123 }],
 			}),
 		).toThrow();
-		expect(() =>
-			WixEndpointOutputSchemas.queryContacts.parse({
-				contacts: [{ revision: 3 }],
-			}),
-		).toThrow();
+		// Live 2026-09-08: contacts v4 returns numeric `revision`,
+		// so it must be accepted and normalized, not rejected.
+		const parsedLive = WixEndpointOutputSchemas.queryContacts.parse({
+			contacts: [{ id: 'c1', revision: 3 }],
+		}) as { contacts?: Array<{ revision?: unknown }> };
+		expect(parsedLive.contacts?.[0]?.revision).toBe('3');
 	});
 
 	it('rejects mistyped bulk action results', () => {
@@ -380,7 +395,8 @@ describe('Wix database entities', () => {
 
 	it('rejects mistyped entity fields', () => {
 		expect(WixContact.safeParse({ id: 123 }).success).toBe(false);
-		expect(WixContact.safeParse({ revision: 3 }).success).toBe(false);
+		// Numeric contact revision is live-valid (normalized to string).
+		expect(WixContact.safeParse({ revision: 3 }).success).toBe(true);
 		expect(WixProduct.safeParse({ revision: 42 }).success).toBe(false);
 		expect(WixProduct.safeParse({ visible: 'yes' }).success).toBe(false);
 		expect(WixOrder.safeParse({ status: 7 }).success).toBe(false);
@@ -395,6 +411,22 @@ describe('Wix database entities', () => {
 			WixCoupon.safeParse({ specification: { active: 'yes' } }).success,
 		).toBe(false);
 		expect(WixCoupon.safeParse({ expired: 'never' }).success).toBe(false);
+		expect(WixBookingCategory.safeParse({ name: 123 }).success).toBe(false);
+		expect(WixSiteFolder.safeParse({ siteCount: 'many' }).success).toBe(false);
+		expect(WixCampaign.safeParse({ title: 123 }).success).toBe(false);
+		expect(WixForm.safeParse({ namespace: 123 }).success).toBe(false);
+		expect(WixFormSubmission.safeParse({ status: 123 }).success).toBe(false);
+		expect(WixLocation.safeParse({ timeZone: 123 }).success).toBe(false);
+		expect(WixModerationRule.safeParse({ enabled: 'yes' }).success).toBe(false);
+		expect(WixTaxGroup.safeParse({ name: 123 }).success).toBe(false);
+		expect(
+			WixExtendedBooking.safeParse({ booking: { status: 123 } }).success,
+		).toBe(false);
+		expect(WixManualTaxMapping.safeParse({ taxRate: 5 }).success).toBe(false);
+		expect(WixCustomField.safeParse({ name: 123 }).success).toBe(false);
+		expect(WixGroupRequest.safeParse({ status: 123 }).success).toBe(false);
+		expect(WixCurrency.safeParse({ code: 123 }).success).toBe(false);
+		expect(WixBrand.safeParse({ name: 123 }).success).toBe(false);
 	});
 
 	it('accepts documented inventory and coupon shapes', () => {
@@ -415,5 +447,175 @@ describe('Wix database entities', () => {
 				specification: { code: 'SAVE10', name: 'Save 10', active: true },
 			}).success,
 		).toBe(true);
+		expect(
+			WixBookingCategory.safeParse({
+				id: 'cat-1',
+				name: 'Hair Services',
+				revision: '2',
+			}).success,
+		).toBe(true);
+	});
+
+	it('rejects mistyped booking-category payloads in query responses', () => {
+		expect(() =>
+			WixEndpointOutputSchemas.queryBookingsCategories.parse({
+				categories: [{ id: 'cat-1', name: 123 }],
+			}),
+		).toThrow();
+	});
+
+	it('rejects mistyped site-folder payloads in query responses', () => {
+		expect(() =>
+			WixEndpointOutputSchemas.querySiteFolders.parse({
+				folders: [{ id: 'f1', siteCount: 'many' }],
+			}),
+		).toThrow();
+		expect(
+			WixSiteFolder.safeParse({
+				id: 'f1',
+				name: 'Clients',
+				siteCount: 3,
+			}).success,
+		).toBe(true);
+	});
+
+	it('rejects mistyped campaign payloads in query responses', () => {
+		expect(() =>
+			WixEndpointOutputSchemas.listEmailCampaigns.parse({
+				campaigns: [{ campaignId: 'c1', title: 123 }],
+			}),
+		).toThrow();
+		expect(
+			WixCampaign.safeParse({
+				campaignId: 'c1',
+				title: 'Launch',
+				status: 'ACTIVE',
+			}).success,
+		).toBe(true);
+	});
+
+	it('rejects mistyped form, submission, and location payloads', () => {
+		expect(() =>
+			WixEndpointOutputSchemas.queryDeletedForms.parse({
+				forms: [{ id: 'f1', namespace: 123 }],
+			}),
+		).toThrow();
+		expect(() =>
+			WixEndpointOutputSchemas.queryFormSubmissionsByNamespace.parse({
+				submissions: [{ id: 's1', status: 123 }],
+			}),
+		).toThrow();
+		expect(() =>
+			WixEndpointOutputSchemas.queryLocations.parse({
+				locations: [{ id: 'l1', timeZone: 123 }],
+			}),
+		).toThrow();
+		expect(
+			WixForm.safeParse({ id: 'f1', namespace: 'wix.form', name: 'N' }).success,
+		).toBe(true);
+		expect(
+			WixFormSubmission.safeParse({ id: 's1', status: 'CONFIRMED' }).success,
+		).toBe(true);
+		expect(WixLocation.safeParse({ id: 'l1', status: 'ACTIVE' }).success).toBe(
+			true,
+		);
+		expect(
+			WixModerationRule.safeParse({
+				id: 'r1',
+				namespace: 'comments',
+				enabled: true,
+			}).success,
+		).toBe(true);
+	});
+
+	it('rejects mistyped moderation-rule payloads', () => {
+		expect(() =>
+			WixEndpointOutputSchemas.queryModerationRules.parse({
+				rules: [{ id: 'r1', enabled: 'yes' }],
+			}),
+		).toThrow();
+	});
+
+	it('accepts and rejects tax-group and extended-booking payloads', () => {
+		expect(WixTaxGroup.safeParse({ id: 'tg1', name: 'VAT' }).success).toBe(
+			true,
+		);
+		expect(() =>
+			WixEndpointOutputSchemas.queryTaxGroups.parse({
+				taxGroups: [{ id: 'tg1', name: 123 }],
+			}),
+		).toThrow();
+		expect(
+			WixExtendedBooking.safeParse({
+				booking: { id: 'b1', status: 'CONFIRMED' },
+			}).success,
+		).toBe(true);
+		expect(() =>
+			WixEndpointOutputSchemas.queryExtendedBookings.parse({
+				extendedBookings: [{ booking: { id: 'b1', status: 123 } }],
+			}),
+		).toThrow();
+	});
+
+	it('accepts and rejects manual-tax-mapping payloads', () => {
+		expect(
+			WixManualTaxMapping.safeParse({
+				id: 'm1',
+				taxGroupId: 'tg1',
+				taxRate: '0.05',
+			}).success,
+		).toBe(true);
+		expect(() =>
+			WixEndpointOutputSchemas.queryManualTaxMappings.parse({
+				manualTaxMappings: [{ id: 'm1', taxRate: 5 }],
+			}),
+		).toThrow();
+		expect(() =>
+			WixEndpointOutputSchemas.listManualTaxMappings.parse({
+				manualTaxMappings: [{ id: 'm1', taxGroupId: 123 }],
+			}),
+		).toThrow();
+	});
+
+	it('accepts correct keys and rejects mistyped custom-field, memberIds, group-request payloads', () => {
+		expect(
+			WixCustomField.safeParse({ id: 'cf1', name: 'Nickname', key: 'nick' })
+				.success,
+		).toBe(true);
+		expect(() =>
+			WixEndpointOutputSchemas.listMembersCustomFields.parse({
+				fields: [{ id: 'cf1', name: 123 }],
+			}),
+		).toThrow();
+		expect(() =>
+			WixEndpointOutputSchemas.listMemberFollowing.parse({
+				memberIds: ['m1', 123],
+			}),
+		).toThrow();
+		expect(
+			WixEndpointOutputSchemas.listMemberFollowing.parse({
+				memberIds: ['m1', 'm2'],
+			}),
+		).toBeDefined();
+		expect(
+			WixGroupRequest.safeParse({ id: 'gr1', status: 'PENDING' }).success,
+		).toBe(true);
+		expect(WixCurrency.safeParse({ code: 'USD' }).success).toBe(true);
+		expect(WixBrand.safeParse({ id: 'b1', name: 'Nike' }).success).toBe(true);
+		expect(() =>
+			WixEndpointOutputSchemas.listCurrencies.parse({
+				currencies: [{ code: 123 }],
+			}),
+		).toThrow();
+		expect(() =>
+			WixEndpointOutputSchemas.bulkGetOrCreateBrands.parse({
+				brands: [{ id: 'b1', name: 123 }],
+			}),
+		).toThrow();
+		expect(() =>
+			WixEndpointOutputSchemas.queryGroupRequests.parse({
+				groupRequests: [{ id: 'gr1', status: 123 }],
+			}),
+		).toThrow();
 	});
 });

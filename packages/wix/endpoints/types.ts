@@ -1,10 +1,24 @@
 import { z } from 'zod';
 import {
+	WixBookingCategory,
+	WixBrand,
+	WixCampaign,
 	WixContact,
 	WixCoupon,
+	WixCurrency,
+	WixCustomField,
+	WixExtendedBooking,
+	WixForm,
+	WixFormSubmission,
+	WixGroupRequest,
 	WixInventoryItem,
+	WixLocation,
+	WixManualTaxMapping,
+	WixModerationRule,
 	WixOrder,
 	WixProduct,
+	WixSiteFolder,
+	WixTaxGroup,
 } from '../schema/database';
 
 // ── shared primitives ──────────────────────────────────────────────────────
@@ -250,13 +264,13 @@ const BulkActionMetadataSchema = z
 	.loose();
 
 /**
- * Wix resources returned in query and bulk-action responses are objects
- * carrying string `id` and, when versioned, string `revision` fields
- * (int64 encoded). Typing them rejects malformed resource payloads while
- * tolerating resources that legitimately omit them. Wix response bodies are
- * JSON, so every item value is additionally validated recursively as JSON —
- * non-JSON garbage (functions, class instances, `undefined`) in nested
- * fields fails loudly instead of reaching consumers.
+ * Generic fallback for bulk-operation `results[]` and deprecated aliases.
+ * These are operation outcomes, not domain resources: the only stable
+ * contract across all 143 operations is an optional string `id`/`revision`
+ * plus JSON-encodable values. Domain queries use dedicated typed schemas
+ * below; this stays intentionally narrow so new Wix fields never break
+ * existing callers. Do not widen this to guess resource fields — add a
+ * dedicated verified entity instead.
  */
 const WixItemSchema = z
 	.looseObject({
@@ -308,6 +322,20 @@ const WixProductItemSchema = typedItemSchema(WixProduct);
 const WixOrderItemSchema = typedItemSchema(WixOrder);
 const WixInventoryItemSchema = typedItemSchema(WixInventoryItem);
 const WixCouponItemSchema = typedItemSchema(WixCoupon);
+const WixBookingCategoryItemSchema = typedItemSchema(WixBookingCategory);
+const WixSiteFolderItemSchema = typedItemSchema(WixSiteFolder);
+const WixCampaignItemSchema = typedItemSchema(WixCampaign);
+const WixFormItemSchema = typedItemSchema(WixForm);
+const WixFormSubmissionItemSchema = typedItemSchema(WixFormSubmission);
+const WixLocationItemSchema = typedItemSchema(WixLocation);
+const WixModerationRuleItemSchema = typedItemSchema(WixModerationRule);
+const WixTaxGroupItemSchema = typedItemSchema(WixTaxGroup);
+const WixExtendedBookingItemSchema = typedItemSchema(WixExtendedBooking);
+const WixManualTaxMappingItemSchema = typedItemSchema(WixManualTaxMapping);
+const WixCustomFieldItemSchema = typedItemSchema(WixCustomField);
+const WixGroupRequestItemSchema = typedItemSchema(WixGroupRequest);
+const WixCurrencyItemSchema = typedItemSchema(WixCurrency);
+const WixBrandItemSchema = typedItemSchema(WixBrand);
 
 function queryResponse(
 	itemsField: string,
@@ -515,7 +543,7 @@ export type BulkGetOrCreateBrandsInput = z.infer<
 	typeof BulkGetOrCreateBrandsInputSchema
 >;
 const BulkGetOrCreateBrandsResponseSchema = z.looseObject({
-	brands: z.array(WixItemSchema).optional(),
+	brands: z.array(WixBrandItemSchema).optional(),
 });
 export type BulkGetOrCreateBrandsResponse = z.infer<
 	typeof BulkGetOrCreateBrandsResponseSchema
@@ -689,7 +717,7 @@ export type GetCollectionBySlugResponse = z.infer<
 const ListCurrenciesInputSchema = z.looseObject({ ...SiteScopeFields });
 export type ListCurrenciesInput = z.infer<typeof ListCurrenciesInputSchema>;
 const ListCurrenciesResponseSchema = z.looseObject({
-	currencies: z.array(WixItemSchema).optional(),
+	currencies: z.array(WixCurrencyItemSchema).optional(),
 });
 export type ListCurrenciesResponse = z.infer<
 	typeof ListCurrenciesResponseSchema
@@ -818,7 +846,10 @@ const QueryBookingsCategoriesInputSchema = z.looseObject({
 export type QueryBookingsCategoriesInput = z.infer<
 	typeof QueryBookingsCategoriesInputSchema
 >;
-const QueryBookingsCategoriesResponseSchema = queryResponse('categories');
+const QueryBookingsCategoriesResponseSchema = queryResponse(
+	'categories',
+	WixBookingCategoryItemSchema,
+);
 export type QueryBookingsCategoriesResponse = z.infer<
 	typeof QueryBookingsCategoriesResponseSchema
 >;
@@ -885,7 +916,10 @@ const QueryExtendedBookingsInputSchema = z.looseObject({
 export type QueryExtendedBookingsInput = z.infer<
 	typeof QueryExtendedBookingsInputSchema
 >;
-const QueryExtendedBookingsResponseSchema = queryResponse('extendedBookings');
+const QueryExtendedBookingsResponseSchema = queryResponse(
+	'extendedBookings',
+	WixExtendedBookingItemSchema,
+);
 export type QueryExtendedBookingsResponse = z.infer<
 	typeof QueryExtendedBookingsResponseSchema
 >;
@@ -914,6 +948,10 @@ const ListBookingsSessionsInputSchema = z.looseObject({
 export type ListBookingsSessionsInput = z.infer<
 	typeof ListBookingsSessionsInputSchema
 >;
+// Legacy endpoint: `/bookings/v1/sessions` is deprecated and may be
+// replaced by Calendar V3 `events`. Live 2026-09-08 against a real site
+// returns 404 with an empty body, so no v1 shape exists to verify against.
+// Stays intentionally generic rather than inventing fields.
 const ListBookingsSessionsResponseSchema = queryResponse('sessions');
 export type ListBookingsSessionsResponse = z.infer<
 	typeof ListBookingsSessionsResponseSchema
@@ -1006,7 +1044,13 @@ const ListMembersCustomFieldsInputSchema = z.looseObject({
 export type ListMembersCustomFieldsInput = z.infer<
 	typeof ListMembersCustomFieldsInputSchema
 >;
-const ListMembersCustomFieldsResponseSchema = queryResponse('customFields');
+const ListMembersCustomFieldsResponseSchema = z.looseObject({
+	fields: z.array(WixCustomFieldItemSchema).optional(),
+	// Deprecated alias: previous revisions validated `customFields`.
+	// Real API sends `fields`. Kept optional for backward compat.
+	customFields: z.array(WixItemSchema).optional(),
+	pagingMetadata: PagingMetadataSchema.optional(),
+});
 export type ListMembersCustomFieldsResponse = z.infer<
 	typeof ListMembersCustomFieldsResponseSchema
 >;
@@ -1020,7 +1064,14 @@ const ListMemberFollowingInputSchema = z.looseObject({
 export type ListMemberFollowingInput = z.infer<
 	typeof ListMemberFollowingInputSchema
 >;
-const ListMemberFollowingResponseSchema = queryResponse('members');
+const ListMemberFollowingResponseSchema = z.looseObject({
+	// Real API returns flat `memberIds: string[]`, not `members` objects.
+	memberIds: z.array(z.string()).optional(),
+	// Deprecated alias: previous revisions validated `members` objects.
+	// Kept optional so existing callers keep typechecking.
+	members: z.array(WixItemSchema).optional(),
+	pagingMetadata: PagingMetadataSchema.optional(),
+});
 export type ListMemberFollowingResponse = z.infer<
 	typeof ListMemberFollowingResponseSchema
 >;
@@ -1033,7 +1084,13 @@ const ListMyMemberFollowersInputSchema = z.looseObject({
 export type ListMyMemberFollowersInput = z.infer<
 	typeof ListMyMemberFollowersInputSchema
 >;
-const ListMyMemberFollowersResponseSchema = queryResponse('members');
+const ListMyMemberFollowersResponseSchema = z.looseObject({
+	// Same shape as following: flat `memberIds: string[]`.
+	memberIds: z.array(z.string()).optional(),
+	// Deprecated alias, same reason as above.
+	members: z.array(WixItemSchema).optional(),
+	pagingMetadata: PagingMetadataSchema.optional(),
+});
 export type ListMyMemberFollowersResponse = z.infer<
 	typeof ListMyMemberFollowersResponseSchema
 >;
@@ -1183,7 +1240,10 @@ const QuerySiteFoldersInputSchema = z.looseObject({
 	...QueryOptionFields,
 });
 export type QuerySiteFoldersInput = z.infer<typeof QuerySiteFoldersInputSchema>;
-const QuerySiteFoldersResponseSchema = queryResponse('folders');
+const QuerySiteFoldersResponseSchema = queryResponse(
+	'folders',
+	WixSiteFolderItemSchema,
+);
 export type QuerySiteFoldersResponse = z.infer<
 	typeof QuerySiteFoldersResponseSchema
 >;
@@ -1193,7 +1253,10 @@ const QueryLocationsInputSchema = z.looseObject({
 	...QueryOptionFields,
 });
 export type QueryLocationsInput = z.infer<typeof QueryLocationsInputSchema>;
-const QueryLocationsResponseSchema = queryResponse('locations');
+const QueryLocationsResponseSchema = queryResponse(
+	'locations',
+	WixLocationItemSchema,
+);
 export type QueryLocationsResponse = z.infer<
 	typeof QueryLocationsResponseSchema
 >;
@@ -1222,7 +1285,10 @@ const ListEmailCampaignsInputSchema = z.looseObject({
 export type ListEmailCampaignsInput = z.infer<
 	typeof ListEmailCampaignsInputSchema
 >;
-const ListEmailCampaignsResponseSchema = queryResponse('campaigns');
+const ListEmailCampaignsResponseSchema = queryResponse(
+	'campaigns',
+	WixCampaignItemSchema,
+);
 export type ListEmailCampaignsResponse = z.infer<
 	typeof ListEmailCampaignsResponseSchema
 >;
@@ -1356,7 +1422,10 @@ const QueryDeletedFormsInputSchema = z.looseObject({
 export type QueryDeletedFormsInput = z.infer<
 	typeof QueryDeletedFormsInputSchema
 >;
-const QueryDeletedFormsResponseSchema = queryResponse('forms');
+const QueryDeletedFormsResponseSchema = queryResponse(
+	'forms',
+	WixFormItemSchema,
+);
 export type QueryDeletedFormsResponse = z.infer<
 	typeof QueryDeletedFormsResponseSchema
 >;
@@ -1370,8 +1439,10 @@ const QueryFormSubmissionsByNamespaceInputSchema = z.looseObject({
 export type QueryFormSubmissionsByNamespaceInput = z.infer<
 	typeof QueryFormSubmissionsByNamespaceInputSchema
 >;
-const QueryFormSubmissionsByNamespaceResponseSchema =
-	queryResponse('submissions');
+const QueryFormSubmissionsByNamespaceResponseSchema = queryResponse(
+	'submissions',
+	WixFormSubmissionItemSchema,
+);
 export type QueryFormSubmissionsByNamespaceResponse = z.infer<
 	typeof QueryFormSubmissionsByNamespaceResponseSchema
 >;
@@ -1385,7 +1456,10 @@ const QueryFormsFormSubmissionsInputSchema = z.looseObject({
 export type QueryFormsFormSubmissionsInput = z.infer<
 	typeof QueryFormsFormSubmissionsInputSchema
 >;
-const QueryFormsFormSubmissionsResponseSchema = queryResponse('submissions');
+const QueryFormsFormSubmissionsResponseSchema = queryResponse(
+	'submissions',
+	WixFormSubmissionItemSchema,
+);
 export type QueryFormsFormSubmissionsResponse = z.infer<
 	typeof QueryFormsFormSubmissionsResponseSchema
 >;
@@ -1626,6 +1700,9 @@ const ListRestaurantCatalogsInputSchema = z.looseObject({
 export type ListRestaurantCatalogsInput = z.infer<
 	typeof ListRestaurantCatalogsInputSchema
 >;
+// Legacy endpoint: `/restaurants/v1/catalogs` is deprecated, replaced by
+// Menus API. Live 2026-09-08 against a real site returns 404 with an empty
+// body, so no v1 shape exists to verify against. Stays intentionally generic.
 const ListRestaurantCatalogsResponseSchema = queryResponse('catalogs');
 export type ListRestaurantCatalogsResponse = z.infer<
 	typeof ListRestaurantCatalogsResponseSchema
@@ -1723,7 +1800,7 @@ export type ListDefaultTaxGroupsInput = z.infer<
 	typeof ListDefaultTaxGroupsInputSchema
 >;
 const ListDefaultTaxGroupsResponseSchema = z.looseObject({
-	taxGroups: z.array(WixItemSchema).optional(),
+	taxGroups: z.array(WixTaxGroupItemSchema).optional(),
 });
 export type ListDefaultTaxGroupsResponse = z.infer<
 	typeof ListDefaultTaxGroupsResponseSchema
@@ -1737,7 +1814,7 @@ export type ListDefaultTaxGroupsByAppIdsInput = z.infer<
 	typeof ListDefaultTaxGroupsByAppIdsInputSchema
 >;
 const ListDefaultTaxGroupsByAppIdsResponseSchema = z.looseObject({
-	taxGroups: z.array(WixItemSchema).optional(),
+	taxGroups: z.array(WixTaxGroupItemSchema).optional(),
 });
 export type ListDefaultTaxGroupsByAppIdsResponse = z.infer<
 	typeof ListDefaultTaxGroupsByAppIdsResponseSchema
@@ -1751,7 +1828,14 @@ const ListManualTaxMappingsInputSchema = z.looseObject({
 export type ListManualTaxMappingsInput = z.infer<
 	typeof ListManualTaxMappingsInputSchema
 >;
-const ListManualTaxMappingsResponseSchema = queryResponse('mappings');
+const ListManualTaxMappingsResponseSchema = z.looseObject({
+	manualTaxMappings: z.array(WixManualTaxMappingItemSchema).optional(),
+	// Deprecated alias: previous revisions validated `mappings`.
+	// Kept optional so existing callers keep typechecking; real API sends
+	// `manualTaxMappings`.
+	mappings: z.array(WixItemSchema).optional(),
+	pagingMetadata: PagingMetadataSchema.optional(),
+});
 export type ListManualTaxMappingsResponse = z.infer<
 	typeof ListManualTaxMappingsResponseSchema
 >;
@@ -1763,7 +1847,12 @@ const QueryManualTaxMappingsInputSchema = z.looseObject({
 export type QueryManualTaxMappingsInput = z.infer<
 	typeof QueryManualTaxMappingsInputSchema
 >;
-const QueryManualTaxMappingsResponseSchema = queryResponse('mappings');
+const QueryManualTaxMappingsResponseSchema = z.looseObject({
+	manualTaxMappings: z.array(WixManualTaxMappingItemSchema).optional(),
+	// Deprecated alias, same reason as list above.
+	mappings: z.array(WixItemSchema).optional(),
+	pagingMetadata: PagingMetadataSchema.optional(),
+});
 export type QueryManualTaxMappingsResponse = z.infer<
 	typeof QueryManualTaxMappingsResponseSchema
 >;
@@ -1773,7 +1862,10 @@ const QueryTaxGroupsInputSchema = z.looseObject({
 	...QueryOptionFields,
 });
 export type QueryTaxGroupsInput = z.infer<typeof QueryTaxGroupsInputSchema>;
-const QueryTaxGroupsResponseSchema = queryResponse('taxGroups');
+const QueryTaxGroupsResponseSchema = queryResponse(
+	'taxGroups',
+	WixTaxGroupItemSchema,
+);
 export type QueryTaxGroupsResponse = z.infer<
 	typeof QueryTaxGroupsResponseSchema
 >;
@@ -1988,7 +2080,10 @@ const QueryModerationRulesInputSchema = z.looseObject({
 export type QueryModerationRulesInput = z.infer<
 	typeof QueryModerationRulesInputSchema
 >;
-const QueryModerationRulesResponseSchema = queryResponse('rules');
+const QueryModerationRulesResponseSchema = queryResponse(
+	'rules',
+	WixModerationRuleItemSchema,
+);
 export type QueryModerationRulesResponse = z.infer<
 	typeof QueryModerationRulesResponseSchema
 >;
@@ -2018,7 +2113,13 @@ const ListGroupRequestsInputSchema = z.looseObject({
 export type ListGroupRequestsInput = z.infer<
 	typeof ListGroupRequestsInputSchema
 >;
-const ListGroupRequestsResponseSchema = queryResponse('requests');
+const ListGroupRequestsResponseSchema = z.looseObject({
+	groupRequests: z.array(WixGroupRequestItemSchema).optional(),
+	// Deprecated alias: previous revisions validated `requests`.
+	// Real API sends `groupRequests`. Kept optional for backward compat.
+	requests: z.array(WixItemSchema).optional(),
+	pagingMetadata: PagingMetadataSchema.optional(),
+});
 export type ListGroupRequestsResponse = z.infer<
 	typeof ListGroupRequestsResponseSchema
 >;
@@ -2030,7 +2131,12 @@ const QueryGroupRequestsInputSchema = z.looseObject({
 export type QueryGroupRequestsInput = z.infer<
 	typeof QueryGroupRequestsInputSchema
 >;
-const QueryGroupRequestsResponseSchema = queryResponse('requests');
+const QueryGroupRequestsResponseSchema = z.looseObject({
+	groupRequests: z.array(WixGroupRequestItemSchema).optional(),
+	// Deprecated alias, same reason as list above.
+	requests: z.array(WixItemSchema).optional(),
+	pagingMetadata: PagingMetadataSchema.optional(),
+});
 export type QueryGroupRequestsResponse = z.infer<
 	typeof QueryGroupRequestsResponseSchema
 >;

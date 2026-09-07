@@ -1,13 +1,30 @@
 import 'dotenv/config';
+import type { WixAuthType } from './client';
 import { makeWixRequest } from './client';
 import { WixEndpointOutputSchemas } from './endpoints/types';
 
 const TOKEN = process.env.WIX_API_KEY ?? process.env.WIX_ACCESS_TOKEN;
 const SITE_ID = process.env.WIX_SITE_ID;
+const ACCOUNT_ID = process.env.WIX_ACCOUNT_ID;
 const describeLive = TOKEN ? describe : describe.skip;
 
-function siteScope(): { siteId?: string } {
-	return SITE_ID ? { siteId: SITE_ID } : {};
+// Client default stays `oauth_2` (Bearer). When the credential comes from
+// `WIX_API_KEY`, Wix expects the raw key (no Bearer prefix) plus a scope
+// header, so live tests must explicitly opt into `api_key` auth here.
+const LIVE_AUTH_TYPE: WixAuthType = process.env.WIX_API_KEY
+	? 'api_key'
+	: 'oauth_2';
+
+function siteScope(): {
+	siteId?: string;
+	accountId?: string;
+	authType: WixAuthType;
+} {
+	return {
+		...(SITE_ID ? { siteId: SITE_ID } : {}),
+		...(!SITE_ID && ACCOUNT_ID ? { accountId: ACCOUNT_ID } : {}),
+		authType: LIVE_AUTH_TYPE,
+	};
 }
 
 describeLive('Wix live API', () => {
