@@ -544,7 +544,7 @@ export const ProviderDisplayNames = {
 	typeform: 'Typeform',
 	unione: 'Unione',
 	uniswapapi: 'Uniswap',
-	updownio: 'UpdownIO',
+	updownio: 'Updown.io',
 	uploadcare: 'Uploadcare',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
