@@ -1,0 +1,4049 @@
+{
+  "id": "toggl",
+  "displayName": "Toggl Track",
+  "description": "Time tracking tool for logging work hours, projects, reports, and team billable time.",
+  "npmPackageName": "@corsair-dev/toggl",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 73,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "toggl.api.clients.archive",
+      "shortPath": "clients.archive",
+      "description": "Archive a client",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, wid?: number | null, name: string, notes?: string | null, archived?: boolean | null, creator_id?: number | null, at?: string | null } | { items?: number[] | null }"
+      }
+    },
+    {
+      "path": "toggl.api.clients.create",
+      "shortPath": "clients.create",
+      "description": "Create a client",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "wid",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "creator_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.clients.delete",
+      "shortPath": "clients.delete",
+      "description": "Delete a client",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.clients.get",
+      "shortPath": "clients.get",
+      "description": "Get a client by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "wid",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "creator_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.clients.list",
+      "shortPath": "clients.list",
+      "description": "List clients in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | archived | both"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, wid?: number | null, name: string, notes?: string | null, archived?: boolean | null, creator_id?: number | null, at?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.clients.update",
+      "shortPath": "clients.update",
+      "description": "Update or archive a client",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "wid",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "creator_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.me.disableProductEmails",
+      "shortPath": "me.disableProductEmails",
+      "description": "Unsubscribe the account from Toggl product emails",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "disable_code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.me.disableWeeklyReport",
+      "shortPath": "me.disableWeeklyReport",
+      "description": "Unsubscribe the account from the weekly report email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.me.get",
+      "shortPath": "me.get",
+      "description": "Get the authenticated Toggl user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "with_related_data",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fullname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toggl_accounts_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_account_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "default_workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "beginning_of_week",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "has_password",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "openid_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "openid_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "oauth_providers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.me.getClients",
+      "shortPath": "me.getClients",
+      "description": "List clients across all workspaces the user can access",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, wid?: number | null, name: string, notes?: string | null, archived?: boolean | null, creator_id?: number | null, at?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.me.getLocation",
+      "shortPath": "me.getLocation",
+      "description": "Get the last known location of the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city_lat_long",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.me.getLogged",
+      "shortPath": "me.getLogged",
+      "description": "Check that the API token is valid",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.me.getPreferences",
+      "shortPath": "me.getPreferences",
+      "description": "Get the authenticated user preferences",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "BeginningOfWeek",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeofday_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_timeline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "send_product_emails",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "send_timer_notifications",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "send_weekly_report",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pg_time_zone_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alpha_features",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.me.getProjects",
+      "shortPath": "me.getProjects",
+      "description": "List projects across all workspaces the user can access",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, workspace_id?: number | null, client_id?: number | null, name: string, is_private?: boolean | null, active?: boolean | null, billable?: boolean | null, color?: string | null, currency?: string | null, rate?: number | null, estimated_hours?: number | null, actual_hours?: number | null, start_date?: string | null, end_date?: string | null, template?: boolean | null, recurring?: boolean | null, server_deleted_at?: string | null, created_at?: string | null, at?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.me.getQuota",
+      "shortPath": "me.getQuota",
+      "description": "Get remaining API request quota per organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ organization_id?: number | null, remaining: number, total: number, resets_in_secs?: number | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.me.getTags",
+      "shortPath": "me.getTags",
+      "description": "List tags across all workspaces the user can access",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, workspace_id?: number | null, name: string, creator_id?: number | null, at?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.me.getTasks",
+      "shortPath": "me.getTasks",
+      "description": "List tasks across all workspaces the user can access",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, workspace_id?: number | null, project_id?: number | null, user_id?: number | null, name: string, active?: boolean | null, estimated_seconds?: number | null, tracked_seconds?: number | null, server_deleted_at?: string | null, at?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.me.update",
+      "shortPath": "me.update",
+      "description": "Update the authenticated user profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fullname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "beginning_of_week",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "default_workspace_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fullname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toggl_accounts_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_account_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "default_workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "beginning_of_week",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "has_password",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "openid_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "openid_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "oauth_providers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.me.updatePreferences",
+      "shortPath": "me.updatePreferences",
+      "description": "Update the authenticated user preferences",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timeofday_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration_format",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "BeginningOfWeek",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeofday_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "record_timeline",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "send_product_emails",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "send_timer_notifications",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "send_weekly_report",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pg_time_zone_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alpha_features",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.organizations.create",
+      "shortPath": "organizations.create",
+      "description": "Create an organization and its first workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pricing_plan_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_multi_workspace_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "max_workspaces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trial_info",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.organizations.createGroup",
+      "shortPath": "organizations.createGroup",
+      "description": "Create a group in an organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "workspaces",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.organizations.createInvitation",
+      "shortPath": "organizations.createInvitation",
+      "description": "Invite people to an organization by email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "workspaces",
+            "optional": true,
+            "type": "{ workspace_id: number, admin?: boolean }[]"
+          },
+          {
+            "key": "prevent_email_notification",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "toggl.api.organizations.deleteGroup",
+      "shortPath": "organizations.deleteGroup",
+      "description": "Delete an organization group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.organizations.get",
+      "shortPath": "organizations.get",
+      "description": "Get an organization by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pricing_plan_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_multi_workspace_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "max_workspaces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trial_info",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.organizations.getGroups",
+      "shortPath": "organizations.getGroups",
+      "description": "List groups in an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ group_id?: number | null, id?: number | null, organization_id?: number | null, name: string, users?: {}[] | null, workspaces?: {}[] | null, at?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.organizations.getPlans",
+      "shortPath": "organizations.getPlans",
+      "description": "Get billing and plan details for an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "toggl.api.organizations.getSubscriptionPlans",
+      "shortPath": "organizations.getSubscriptionPlans",
+      "description": "List subscription plans available to an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "toggl.api.organizations.getUsers",
+      "shortPath": "organizations.getUsers",
+      "description": "List users in an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "only_admins",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, user_id?: number | null, organization_id?: number | null, email?: string | null, name?: string | null, admin?: boolean | null, owner?: boolean | null, joined?: boolean | null, inactive?: boolean | null, workspaces?: {}[] | null, groups?: {}[] | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.organizations.getWorkspaces",
+      "shortPath": "organizations.getWorkspaces",
+      "description": "List workspaces in an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, organization_id?: number | null, name: string, premium?: boolean | null, business_ws?: boolean | null, admin?: boolean | null, role?: string | null, default_currency?: string | null, default_hourly_rate?: number | null, only_admins_may_create_projects?: boolean | null, only_admins_may_create_tags?: boolean | null, only_admins_see_billable_rates?: boolean | null, rounding?: number | null, rounding_minutes?: number | null, suspended_at?: string | null, server_deleted_at?: string | null, logo_url?: string | null, at?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.organizations.update",
+      "shortPath": "organizations.update",
+      "description": "Rename an organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pricing_plan_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_multi_workspace_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "max_workspaces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trial_info",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.projects.addUser",
+      "shortPath": "projects.addUser",
+      "description": "Add a user to a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "labour_cost",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "labour_cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "estimated_hours",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "estimated_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "actual_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recurring",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "server_deleted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a project and its time entries",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.projects.deleteGroup",
+      "shortPath": "projects.deleteGroup",
+      "description": "Delete a project group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_group_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a project by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "estimated_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "actual_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recurring",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "server_deleted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, workspace_id?: number | null, client_id?: number | null, name: string, is_private?: boolean | null, active?: boolean | null, billable?: boolean | null, color?: string | null, currency?: string | null, rate?: number | null, estimated_hours?: number | null, actual_hours?: number | null, start_date?: string | null, end_date?: string | null, template?: boolean | null, recurring?: boolean | null, server_deleted_at?: string | null, created_at?: string | null, at?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "estimated_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "actual_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recurring",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "server_deleted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.reference.getCountries",
+      "shortPath": "reference.getCountries",
+      "description": "List countries Toggl supports, with VAT settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, country_code?: string | null, vat_applicable?: boolean | null, vat_percentage?: number | null, vat_regex?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.reference.getCountrySubdivisions",
+      "shortPath": "reference.getCountrySubdivisions",
+      "description": "List states or provinces for a country id from getCountries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ country_subdivision_id?: number | null, country_id?: number | null, name: string, iso_code?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.reference.getCurrencies",
+      "shortPath": "reference.getCurrencies",
+      "description": "List currencies Toggl supports",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ currency_id?: number | null, iso_code: string, symbol?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.reference.getKeys",
+      "shortPath": "reference.getKeys",
+      "description": "Get the JWKS keyset used to verify Toggl JWTs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keys",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.reference.getTimezoneOffsets",
+      "shortPath": "reference.getTimezoneOffsets",
+      "description": "List timezones with their UTC offsets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name: string, utc: string }[]"
+      }
+    },
+    {
+      "path": "toggl.api.reference.getTimezones",
+      "shortPath": "reference.getTimezones",
+      "description": "List timezones Toggl supports",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "toggl.api.smail.sendContact",
+      "shortPath": "smail.sendContact",
+      "description": "Send an email to a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.smail.sendDemo",
+      "shortPath": "smail.sendDemo",
+      "description": "Send a product demo request email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.smail.sendMeet",
+      "shortPath": "smail.sendMeet",
+      "description": "Send a meeting invitation email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create a tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "creator_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.tags.delete",
+      "shortPath": "tags.delete",
+      "description": "Delete a tag",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List tags in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, workspace_id?: number | null, name: string, creator_id?: number | null, at?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.tags.update",
+      "shortPath": "tags.update",
+      "description": "Rename a tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "creator_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "estimated_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "estimated_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tracked_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "server_deleted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Delete a task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get a task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "estimated_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tracked_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "server_deleted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List tasks in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, workspace_id?: number | null, project_id?: number | null, user_id?: number | null, name: string, active?: boolean | null, estimated_seconds?: number | null, tracked_seconds?: number | null, server_deleted_at?: string | null, at?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "estimated_seconds",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "estimated_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tracked_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "server_deleted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.timeEntries.bulkEdit",
+      "shortPath": "timeEntries.bulkEdit",
+      "description": "Bulk edit up to 100 time entries with JSON Patch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "time_entry_ids",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "operations",
+            "optional": false,
+            "type": "{ op: add | remove | replace, path: string, value?: any }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "failure",
+            "optional": true,
+            "type": "{ id?: number | null, message?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.timeEntries.create",
+      "shortPath": "timeEntries.create",
+      "description": "Create or start a time entry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_with",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "duronly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "server_deleted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.timeEntries.delete",
+      "shortPath": "timeEntries.delete",
+      "description": "Delete a time entry",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "time_entry_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.timeEntries.get",
+      "shortPath": "timeEntries.get",
+      "description": "Get a time entry by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_entry_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "duronly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "server_deleted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.timeEntries.getCurrent",
+      "shortPath": "timeEntries.getCurrent",
+      "description": "Get the currently running time entry, if any",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "duronly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "server_deleted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.timeEntries.list",
+      "shortPath": "timeEntries.list",
+      "description": "List the current user time entries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, workspace_id?: number | null, project_id?: number | null, task_id?: number | null, user_id?: number | null, description?: string | null, start: string, stop?: string | null, duration: number, billable?: boolean | null, duronly?: boolean | null, tags?: string[] | null, tag_ids?: number[] | null, server_deleted_at?: string | null, at?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.timeEntries.stop",
+      "shortPath": "timeEntries.stop",
+      "description": "Stop a running time entry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "time_entry_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "duronly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "server_deleted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.timeEntries.update",
+      "shortPath": "timeEntries.update",
+      "description": "Update a time entry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "time_entry_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stop",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "billable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "duronly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "server_deleted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.webhooks.deleteSubscription",
+      "shortPath": "webhooks.deleteSubscription",
+      "description": "Delete a webhook subscription",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscription_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.webhooks.getEventFilters",
+      "shortPath": "webhooks.getEventFilters",
+      "description": "List event types available for webhook subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "toggl.api.webhooks.getStatus",
+      "shortPath": "webhooks.getStatus",
+      "description": "Check the Toggl webhooks service status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.webhooks.listSubscriptions",
+      "shortPath": "webhooks.listSubscriptions",
+      "description": "List webhook subscriptions for a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ subscription_id?: number | null, workspace_id?: number | null, user_id?: number | null, url_callback?: string | null, enabled?: boolean | null, description?: string | null, event_filters?: {}[] | null, created_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.workspaces.get",
+      "shortPath": "workspaces.get",
+      "description": "Get a workspace by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "premium",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "business_ws",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "only_admins_may_create_projects",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "only_admins_may_create_tags",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "only_admins_see_billable_rates",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "rounding",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rounding_minutes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "suspended_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_deleted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logo_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.workspaces.getLogo",
+      "shortPath": "workspaces.getLogo",
+      "description": "Get the workspace logo URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.workspaces.getPreferences",
+      "shortPath": "workspaces.getPreferences",
+      "description": "Get workspace preferences",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "initial_pricing_plan",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hide_start_end_times",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "toggl.api.workspaces.getUsers",
+      "shortPath": "workspaces.getUsers",
+      "description": "List users in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, user_id?: number | null, workspace_id?: number | null, admin?: boolean | null, active?: boolean | null, email?: string | null, name?: string | null, role?: string | null, at?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.workspaces.list",
+      "shortPath": "workspaces.list",
+      "description": "List workspaces the user belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "since",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, organization_id?: number | null, name: string, premium?: boolean | null, business_ws?: boolean | null, admin?: boolean | null, role?: string | null, default_currency?: string | null, default_hourly_rate?: number | null, only_admins_may_create_projects?: boolean | null, only_admins_may_create_tags?: boolean | null, only_admins_see_billable_rates?: boolean | null, rounding?: number | null, rounding_minutes?: number | null, suspended_at?: string | null, server_deleted_at?: string | null, logo_url?: string | null, at?: string | null }[]"
+      }
+    },
+    {
+      "path": "toggl.api.workspaces.update",
+      "shortPath": "workspaces.update",
+      "description": "Update workspace settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "only_admins_may_create_projects",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "only_admins_may_create_tags",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "premium",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "business_ws",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "only_admins_may_create_projects",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "only_admins_may_create_tags",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "only_admins_see_billable_rates",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "rounding",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rounding_minutes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "suspended_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_deleted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logo_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "toggl.db.clients.search",
+      "entityName": "clients",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "workspace_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "toggl.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "workspace_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "client_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "billable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "toggl.db.tags.search",
+      "entityName": "tags",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "workspace_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "toggl.db.workspaces.search",
+      "entityName": "workspaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "premium",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "default_currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

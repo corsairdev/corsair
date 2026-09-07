@@ -1,0 +1,1767 @@
+{
+  "id": "ambee",
+  "displayName": "Ambee",
+  "description": "Environmental data API for air quality, pollen, weather, and wildfire information.",
+  "npmPackageName": "@corsair-dev/ambee",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 29,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ambee.api.airQuality.getForecastByLatLng",
+      "shortPath": "airQuality.getForecastByLatLng",
+      "description": "Get the hourly air quality forecast for a latitude/longitude (next 48 hours)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude, between -90 and 90"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude, between -180 and 180"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ CO?: number | null, NO2?: number | null, OZONE?: number | null, PM10?: number | null, PM25?: number | null, SO2?: number | null, NO?: number | null, AQI?: number | null, aqiInfo?: { pollutant?: string | null, concentration?: number | null, category?: string | null }, time?: number | null, updatedAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.airQuality.getHistoryByLatLng",
+      "shortPath": "airQuality.getHistoryByLatLng",
+      "description": "Get hourly historical air quality for a latitude/longitude over a time range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude, between -90 and 90"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude, between -180 and 180"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string",
+            "description": "Start of the time range, as \"YYYY-MM-DD hh:mm:ss\" (UTC) or an ISO 8601 date"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string",
+            "description": "End of the time range, as \"YYYY-MM-DD hh:mm:ss\" (UTC) or an ISO 8601 date"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ CO?: number | null, NO2?: number | null, OZONE?: number | null, PM10?: number | null, PM25?: number | null, SO2?: number | null, NO?: number | null, AQI?: number | null, aqiInfo?: { pollutant?: string | null, concentration?: number | null, category?: string | null }, time?: number | null, updatedAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.airQuality.getHistoryByPostalCode",
+      "shortPath": "airQuality.getHistoryByPostalCode",
+      "description": "Get hourly historical air quality for a postal code over a time range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postalCode",
+            "optional": false,
+            "type": "string",
+            "description": "Postal code, e.g. \"560020\""
+          },
+          {
+            "key": "countryCode",
+            "optional": false,
+            "type": "string",
+            "description": "Three-letter ISO country code, e.g. \"IND\" or \"USA\""
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string",
+            "description": "Start of the time range, as \"YYYY-MM-DD hh:mm:ss\" (UTC) or an ISO 8601 date"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string",
+            "description": "End of the time range, as \"YYYY-MM-DD hh:mm:ss\" (UTC) or an ISO 8601 date"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ CO?: number | null, NO2?: number | null, OZONE?: number | null, PM10?: number | null, PM25?: number | null, SO2?: number | null, NO?: number | null, AQI?: number | null, aqiInfo?: { pollutant?: string | null, concentration?: number | null, category?: string | null }, time?: number | null, updatedAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.airQuality.getLatestByCity",
+      "shortPath": "airQuality.getLatestByCity",
+      "description": "Get the latest air quality for the stations in a city",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "city",
+            "optional": false,
+            "type": "string",
+            "description": "City name, e.g. \"Bengaluru\""
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of stations to return (Ambee defaults to 1)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "stations",
+            "optional": true,
+            "type": "{ CO?: number | null, NO2?: number | null, OZONE?: number | null, PM10?: number | null, PM25?: number | null, SO2?: number | null, NO?: number | null, AQI?: number | null, aqiInfo?: { pollutant?: string | null, concentration?: number | null, category?: string | null }, city?: string | null, countryCode?: string | null, division?: string | null, state?: string | null, placeName?: string | null, postalCode?: string | number | null, lat?: number | null, lng?: number | null, updatedAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.airQuality.getLatestByCountryCode",
+      "shortPath": "airQuality.getLatestByCountryCode",
+      "description": "Get the latest air quality for the monitoring stations across a country",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "countryCode",
+            "optional": false,
+            "type": "string",
+            "description": "Three-letter ISO country code, e.g. \"IND\" or \"USA\""
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of stations to return (Ambee defaults to 1)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "stations",
+            "optional": true,
+            "type": "{ CO?: number | null, NO2?: number | null, OZONE?: number | null, PM10?: number | null, PM25?: number | null, SO2?: number | null, NO?: number | null, AQI?: number | null, aqiInfo?: { pollutant?: string | null, concentration?: number | null, category?: string | null }, city?: string | null, countryCode?: string | null, division?: string | null, state?: string | null, placeName?: string | null, postalCode?: string | number | null, lat?: number | null, lng?: number | null, updatedAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.airQuality.getLatestByLatLng",
+      "shortPath": "airQuality.getLatestByLatLng",
+      "description": "Get the latest air quality (AQI and pollutant concentrations) for a latitude/longitude",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude, between -90 and 90"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude, between -180 and 180"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "stations",
+            "optional": true,
+            "type": "{ CO?: number | null, NO2?: number | null, OZONE?: number | null, PM10?: number | null, PM25?: number | null, SO2?: number | null, NO?: number | null, AQI?: number | null, aqiInfo?: { pollutant?: string | null, concentration?: number | null, category?: string | null }, city?: string | null, countryCode?: string | null, division?: string | null, state?: string | null, placeName?: string | null, postalCode?: string | number | null, lat?: number | null, lng?: number | null, updatedAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.airQuality.getLatestByPostalCode",
+      "shortPath": "airQuality.getLatestByPostalCode",
+      "description": "Get the latest air quality for a postal code and country",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postalCode",
+            "optional": false,
+            "type": "string",
+            "description": "Postal code, e.g. \"560020\""
+          },
+          {
+            "key": "countryCode",
+            "optional": false,
+            "type": "string",
+            "description": "Three-letter ISO country code, e.g. \"IND\" or \"USA\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "stations",
+            "optional": true,
+            "type": "{ CO?: number | null, NO2?: number | null, OZONE?: number | null, PM10?: number | null, PM25?: number | null, SO2?: number | null, NO?: number | null, AQI?: number | null, aqiInfo?: { pollutant?: string | null, concentration?: number | null, category?: string | null }, city?: string | null, countryCode?: string | null, division?: string | null, state?: string | null, placeName?: string | null, postalCode?: string | number | null, lat?: number | null, lng?: number | null, updatedAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.disasters.getHistoryByContinent",
+      "shortPath": "disasters.getHistoryByContinent",
+      "description": "Get historical natural disasters on a continent over a date range (paginated)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "continent",
+            "optional": false,
+            "type": "AFR | ANT | ASIA | AUS | EUR | NAR | SAR | Ocean",
+            "description": "Continent code"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string",
+            "description": "Start of the time range, as \"YYYY-MM-DD hh:mm:ss\" (UTC) or an ISO 8601 date"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string",
+            "description": "End of the time range, as \"YYYY-MM-DD hh:mm:ss\" (UTC) or an ISO 8601 date"
+          },
+          {
+            "key": "eventType",
+            "optional": true,
+            "type": "TN | EQ | TC | WF | FL | ET | DR | SW | SI | VO | LS | Misc",
+            "description": "Restrict results to a single Ambee event-type code"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page (Ambee defaults to 1)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-based (Ambee defaults to 1)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.disasters.getHistoryByCountryCode",
+      "shortPath": "disasters.getHistoryByCountryCode",
+      "description": "Get historical natural disasters in a country over a date range (paginated)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "countryCode",
+            "optional": false,
+            "type": "string",
+            "description": "Three-letter ISO country code, e.g. \"IND\" or \"USA\""
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string",
+            "description": "Start of the time range, as \"YYYY-MM-DD hh:mm:ss\" (UTC) or an ISO 8601 date"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string",
+            "description": "End of the time range, as \"YYYY-MM-DD hh:mm:ss\" (UTC) or an ISO 8601 date"
+          },
+          {
+            "key": "eventType",
+            "optional": true,
+            "type": "TN | EQ | TC | WF | FL | ET | DR | SW | SI | VO | LS | Misc",
+            "description": "Restrict results to a single Ambee event-type code"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page (Ambee defaults to 1)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-based (Ambee defaults to 1)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.disasters.getHistoryByDateRange",
+      "shortPath": "disasters.getHistoryByDateRange",
+      "description": "Get historical natural disasters worldwide over a date range (paginated)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string",
+            "description": "Start of the time range, as \"YYYY-MM-DD hh:mm:ss\" (UTC) or an ISO 8601 date"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "End of the time range, as \"YYYY-MM-DD hh:mm:ss\" (UTC) or an ISO 8601 date"
+          },
+          {
+            "key": "eventType",
+            "optional": true,
+            "type": "TN | EQ | TC | WF | FL | ET | DR | SW | SI | VO | LS | Misc",
+            "description": "Restrict results to a single Ambee event-type code"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page (Ambee defaults to 1)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-based (Ambee defaults to 1)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.disasters.getHistoryByLatLng",
+      "shortPath": "disasters.getHistoryByLatLng",
+      "description": "Get historical natural disasters near a latitude/longitude over a date range (paginated)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude, between -90 and 90"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude, between -180 and 180"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string",
+            "description": "Start of the time range, as \"YYYY-MM-DD hh:mm:ss\" (UTC) or an ISO 8601 date"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string",
+            "description": "End of the time range, as \"YYYY-MM-DD hh:mm:ss\" (UTC) or an ISO 8601 date"
+          },
+          {
+            "key": "eventType",
+            "optional": true,
+            "type": "TN | EQ | TC | WF | FL | ET | DR | SW | SI | VO | LS | Misc",
+            "description": "Restrict results to a single Ambee event-type code"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page (Ambee defaults to 1)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-based (Ambee defaults to 1)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.disasters.getLatestByContinent",
+      "shortPath": "disasters.getLatestByContinent",
+      "description": "Get the latest natural disasters on a continent (paginated)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "continent",
+            "optional": false,
+            "type": "AFR | ANT | ASIA | AUS | EUR | NAR | SAR | Ocean",
+            "description": "Continent code"
+          },
+          {
+            "key": "eventType",
+            "optional": true,
+            "type": "TN | EQ | TC | WF | FL | ET | DR | SW | SI | VO | LS | Misc",
+            "description": "Restrict results to a single Ambee event-type code"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page (Ambee defaults to 1)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-based (Ambee defaults to 1)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.disasters.getLatestByCountryCode",
+      "shortPath": "disasters.getLatestByCountryCode",
+      "description": "Get the latest natural disasters in a country (paginated)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "countryCode",
+            "optional": false,
+            "type": "string",
+            "description": "Three-letter ISO country code, e.g. \"IND\" or \"USA\""
+          },
+          {
+            "key": "eventType",
+            "optional": true,
+            "type": "TN | EQ | TC | WF | FL | ET | DR | SW | SI | VO | LS | Misc",
+            "description": "Restrict results to a single Ambee event-type code"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page (Ambee defaults to 1)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-based (Ambee defaults to 1)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.disasters.getLatestByLatLng",
+      "shortPath": "disasters.getLatestByLatLng",
+      "description": "Get the latest natural disasters near a latitude/longitude (paginated)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude, between -90 and 90"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude, between -180 and 180"
+          },
+          {
+            "key": "eventType",
+            "optional": true,
+            "type": "TN | EQ | TC | WF | FL | ET | DR | SW | SI | VO | LS | Misc",
+            "description": "Restrict results to a single Ambee event-type code"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page (Ambee defaults to 1)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, 1-based (Ambee defaults to 1)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ event_id?: string | number | null, event_type?: string | null, event_name?: string | null, lat?: number | null, lng?: number | null, country_code?: string | null, continent?: string | null, date?: string | number | null, updated_at?: string | number | null, severity?: string | number | null, source?: string | null, details?: {} }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.elevation.getByLatLng",
+      "shortPath": "elevation.getByLatLng",
+      "description": "Get the ground elevation at a latitude/longitude",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude, between -90 and 90"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude, between -180 and 180"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ lat?: number | null, lng?: number | null, elevation?: number | null, minElevation?: number | null, maxElevation?: number | null, meanElevation?: number | null, placeName?: string | null, unit?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.elevation.getByPlace",
+      "shortPath": "elevation.getByPlace",
+      "description": "Get the ground elevation for a named place",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "place",
+            "optional": false,
+            "type": "string",
+            "description": "Place name, e.g. \"San Francisco, USA\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ lat?: number | null, lng?: number | null, elevation?: number | null, minElevation?: number | null, maxElevation?: number | null, meanElevation?: number | null, placeName?: string | null, unit?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.fire.getLatestByLatLng",
+      "shortPath": "fire.getLatestByLatLng",
+      "description": "Get wildfires detected or reported near a latitude/longitude in the last 7 days",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude, between -90 and 90"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude, between -180 and 180"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "reported | detected",
+            "description": "Restrict results to reported or satellite-detected fires"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ fireId?: string | number | null, lat?: number | null, lng?: number | null, detectedAt?: string | number | null, detectedAtLocalTime?: string | null, confidence?: string | number | null, frp?: number | null, satellite?: string | null, instrument?: string | null, fireType?: string | null, fireName?: string | null, locationName?: string | null, area?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.fire.getLatestByPlace",
+      "shortPath": "fire.getLatestByPlace",
+      "description": "Get wildfires detected or reported near a named place in the last 7 days",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "place",
+            "optional": false,
+            "type": "string",
+            "description": "Place name, e.g. \"Virgin, UT\""
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "reported | detected",
+            "description": "Restrict results to reported or satellite-detected fires"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ fireId?: string | number | null, lat?: number | null, lng?: number | null, detectedAt?: string | number | null, detectedAtLocalTime?: string | null, confidence?: string | number | null, frp?: number | null, satellite?: string | null, instrument?: string | null, fireType?: string | null, fireName?: string | null, locationName?: string | null, area?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.fire.getRiskByLatLng",
+      "shortPath": "fire.getRiskByLatLng",
+      "description": "Get the wildfire risk forecast for a latitude/longitude (up to 4 weeks ahead)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude, between -90 and 90"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude, between -180 and 180"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ date?: string | null, time?: number | null, risk?: string | number | null, riskCategory?: string | null, lat?: number | null, lng?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.fire.getRiskByPlace",
+      "shortPath": "fire.getRiskByPlace",
+      "description": "Get the wildfire risk forecast for a named place (up to 4 weeks ahead)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "place",
+            "optional": false,
+            "type": "string",
+            "description": "Place name, e.g. \"Leon, Mexico\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ date?: string | null, time?: number | null, risk?: string | number | null, riskCategory?: string | null, lat?: number | null, lng?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.geocode.byPlace",
+      "shortPath": "geocode.byPlace",
+      "description": "Geocode a place name or address into coordinates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "place",
+            "optional": false,
+            "type": "string",
+            "description": "Address or place name to geocode"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ lat?: string | number | null, lng?: string | number | null, city?: string | null, state?: string | null, countryCode?: string | null, countryName?: string | null, postalCode?: string | number | null, placeName?: string | null, formattedAddress?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.geocode.reverseByLatLng",
+      "shortPath": "geocode.reverseByLatLng",
+      "description": "Reverse-geocode a latitude/longitude into a human-readable address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude, between -90 and 90"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude, between -180 and 180"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ lat?: string | number | null, lng?: string | number | null, city?: string | null, state?: string | null, countryCode?: string | null, countryName?: string | null, postalCode?: string | number | null, placeName?: string | null, formattedAddress?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.ili.getForecastByLatLng",
+      "shortPath": "ili.getForecastByLatLng",
+      "description": "Get the daily influenza-like-illness risk forecast for a latitude/longitude",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude, between -90 and 90"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude, between -180 and 180"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the supporting 28-day weather and pollen forecast (defaults to false)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ date?: string | null, time?: number | null, risk?: string | number | null, riskCategory?: string | null, details?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.pollen.getForecast",
+      "shortPath": "pollen.getForecast",
+      "description": "Get the pollen forecast for a location (48 hours hourly or 120 hours 3-hourly)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{ lat: number, lng: number, hours?: 48 | 120, speciesRisk?: boolean } | { place: string, hours?: 48 | 120, speciesRisk?: boolean }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ time?: number | null, updatedAt?: string | null, Count?: { grass_pollen?: number | null, tree_pollen?: number | null, weed_pollen?: number | null }, Risk?: { grass_pollen?: string | null, tree_pollen?: string | null, weed_pollen?: string | null }, Species?: {}, Risks?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.pollen.getHistory",
+      "shortPath": "pollen.getHistory",
+      "description": "Get historical pollen counts for a location over a time range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{ lat: number, lng: number, from: string, to: string, speciesRisk?: boolean } | { place: string, from: string, to: string, speciesRisk?: boolean }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ time?: number | null, updatedAt?: string | null, Count?: { grass_pollen?: number | null, tree_pollen?: number | null, weed_pollen?: number | null }, Risk?: { grass_pollen?: string | null, tree_pollen?: string | null, weed_pollen?: string | null }, Species?: {}, Risks?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.pollen.getLatest",
+      "shortPath": "pollen.getLatest",
+      "description": "Get the latest grass, tree and weed pollen counts and risk levels for a location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{ lat: number, lng: number, speciesRisk?: boolean } | { place: string, speciesRisk?: boolean }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ time?: number | null, updatedAt?: string | null, Count?: { grass_pollen?: number | null, tree_pollen?: number | null, weed_pollen?: number | null }, Risk?: { grass_pollen?: string | null, tree_pollen?: string | null, weed_pollen?: string | null }, Species?: {}, Risks?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ambee.api.weather.getForecast",
+      "shortPath": "weather.getForecast",
+      "description": "Get the hourly weather forecast for a latitude/longitude (next 72 hours)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude, between -90 and 90"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude, between -180 and 180"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "si",
+            "description": "Pass \"si\" to receive SI units instead of the imperial default"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "ambee.api.weather.getHistory",
+      "shortPath": "weather.getHistory",
+      "description": "Get hourly historical weather for a latitude/longitude over a time range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude, between -90 and 90"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude, between -180 and 180"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string",
+            "description": "Start of the time range, as \"YYYY-MM-DD hh:mm:ss\" (UTC) or an ISO 8601 date"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string",
+            "description": "End of the time range, as \"YYYY-MM-DD hh:mm:ss\" (UTC) or an ISO 8601 date"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "si",
+            "description": "Pass \"si\" to receive SI units instead of the imperial default"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "ambee.api.weather.getLatest",
+      "shortPath": "weather.getLatest",
+      "description": "Get current weather conditions (temperature, humidity, wind, UV) for a latitude/longitude",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude, between -90 and 90"
+          },
+          {
+            "key": "lng",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude, between -180 and 180"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "si",
+            "description": "Pass \"si\" to receive SI units instead of the imperial default"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Ambee status message, \"success\" on a successful call"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ time?: number | null, summary?: string | null, icon?: string | null, temperature?: number | null, apparentTemperature?: number | null, dewPoint?: number | null, humidity?: number | null, pressure?: number | null, surfacePressure?: number | null, windSpeed?: number | null, windGust?: number | null, windBearing?: number | null, cloudCover?: number | null, visibility?: number | null, ozone?: number | null, uvIndex?: number | null, precipIntensity?: number | null, precipProbability?: number | null, precipType?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "ambee.db.airQualityReadings.search",
+      "entityName": "airQualityReadings",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "locationKey",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "postalCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "placeName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lat",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lng",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "aqi",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "aqiCategory",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dominantPollutant",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pm25",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pm10",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "no2",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "so2",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "co",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "ozone",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "observedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ambee.db.geocodedPlaces.search",
+      "entityName": "geocodedPlaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lat",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lng",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "postalCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "placeName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "formattedAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ambee.db.weatherObservations.search",
+      "entityName": "weatherObservations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "locationKey",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lat",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lng",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "summary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "icon",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "temperature",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "apparentTemperature",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "humidity",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pressure",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "windSpeed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "windGust",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "cloudCover",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "uvIndex",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "observedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

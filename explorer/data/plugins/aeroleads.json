@@ -1,0 +1,308 @@
+{
+  "id": "aeroleads",
+  "displayName": "AeroLeads",
+  "description": "B2B lead generation tool for finding business emails and prospect contact data.",
+  "npmPackageName": "@corsair-dev/aeroleads",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 1,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "aeroleads.api.linkedinDetails.get",
+      "shortPath": "linkedinDetails.get",
+      "description": "Retrieve detailed information about a prospect using their LinkedIn profile URL, including emails, phone numbers, job details, and company data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "linkedin_url",
+            "optional": false,
+            "type": "string",
+            "description": "The LinkedIn profile URL of the prospect"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedin_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_company_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_company_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_company_linkedin_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "education",
+            "optional": true,
+            "type": "string | any[]"
+          },
+          {
+            "key": "experience",
+            "optional": true,
+            "type": "string | any[]"
+          },
+          {
+            "key": "interests",
+            "optional": true,
+            "type": "string | any[]"
+          },
+          {
+            "key": "skills",
+            "optional": true,
+            "type": "string | any[]"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "string | {} | any[]"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string | any[]"
+          },
+          {
+            "key": "phone_numbers",
+            "optional": true,
+            "type": "string | any[]"
+          },
+          {
+            "key": "cb_rank",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "db_logo_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile_picture_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_company_size",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_title_detailed_role_s2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_founded_year_s2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_facebook_url_s2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_twitter_url_s2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_current_technologies_s2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails_s2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_numbers_s2",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "aeroleads.db.linkedinDetails.search",
+      "entityName": "linkedinDetails",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "full_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "linkedin_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_company_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_company_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_company_linkedin_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cb_rank",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "db_logo_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profile_picture_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "industry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_title_detailed_role_s2",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_founded_year_s2",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_facebook_url_s2",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_twitter_url_s2",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_current_technologies_s2",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "emails_s2",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_numbers_s2",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}
