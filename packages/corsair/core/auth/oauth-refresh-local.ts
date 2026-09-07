@@ -87,9 +87,7 @@ export async function refreshOAuthTokensLocal(
 	}
 
 	if (!response.ok) {
-		throw new Error(
-			`OAuth token refresh failed (${response.status}): ${body}`,
-		);
+		throw new Error(`OAuth token refresh failed (${response.status}): ${body}`);
 	}
 
 	const json = JSON.parse(body) as Record<string, unknown>;
