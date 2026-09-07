@@ -510,7 +510,7 @@ export const ProviderDisplayNames = {
 	ticktick: 'TickTick',
 	timecamp: 'TimeCamp',
 	timelink: 'Timelink',
-	tinypng: 'Tinypng',
+	tinypng: 'TinyPNG',
 	tinyurl: 'TinyURL',
 	tisane: 'Tisane',
 	todoist: 'Todoist',
