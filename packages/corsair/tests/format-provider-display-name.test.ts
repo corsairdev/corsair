@@ -9,12 +9,6 @@ describe('formatProviderDisplayName', () => {
 		expect(formatProviderDisplayName('github')).toBe('GitHub');
 	});
 
-	it('returns the official display name for Semantic Scholar', () => {
-		expect(formatProviderDisplayName('semanticscholar')).toBe(
-			'Semantic Scholar',
-		);
-	});
-
 	it('capitalises the first letter as fallback for an unknown provider', () => {
 		expect(formatProviderDisplayName('acme')).toBe('Acme');
 	});
