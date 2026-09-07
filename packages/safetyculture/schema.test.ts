@@ -123,16 +123,16 @@ describe('SafetyCulture plugin factory', () => {
 	it('creates a plugin with all endpoint groups', async () => {
 		const { safetyculture } = await import('.');
 		const plugin = safetyculture({ key: 'test-key' });
-		expect(plugin.endpoints.inspections).toBeDefined();
-		expect(plugin.endpoints.templates).toBeDefined();
-		expect(plugin.endpoints.actions).toBeDefined();
-		expect(plugin.endpoints.users).toBeDefined();
+		expect(plugin.endpoints!.inspections).toBeDefined();
+		expect(plugin.endpoints!.templates).toBeDefined();
+		expect(plugin.endpoints!.actions).toBeDefined();
+		expect(plugin.endpoints!.users).toBeDefined();
 	});
 
 	it('creates a plugin with schema version', async () => {
 		const { safetyculture } = await import('.');
 		const plugin = safetyculture({ key: 'test-key' });
-		expect(plugin.schema.version).toMatch(/^\d+\.\d+\.\d+$/);
+		expect(plugin.schema!.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
 	it('creates a plugin with empty webhooks', async () => {
@@ -144,11 +144,11 @@ describe('SafetyCulture plugin factory', () => {
 	it('creates a plugin with endpoint meta for all endpoints', async () => {
 		const { safetyculture } = await import('.');
 		const plugin = safetyculture({ key: 'test-key' });
-		const meta = plugin.endpointMeta;
-		expect(meta['inspections.list'].riskLevel).toBe('read');
-		expect(meta['inspections.get'].riskLevel).toBe('read');
-		expect(meta['templates.list'].riskLevel).toBe('read');
-		expect(meta['actions.list'].riskLevel).toBe('read');
-		expect(meta['users.list'].riskLevel).toBe('read');
+		const meta = plugin.endpointMeta!;
+		expect(meta['inspections.list']!.riskLevel).toBe('read');
+		expect(meta['inspections.get']!.riskLevel).toBe('read');
+		expect(meta['templates.list']!.riskLevel).toBe('read');
+		expect(meta['actions.list']!.riskLevel).toBe('read');
+		expect(meta['users.list']!.riskLevel).toBe('read');
 	});
 });
