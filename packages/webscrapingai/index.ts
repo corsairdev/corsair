@@ -164,7 +164,7 @@ export type InternalWebScrapingAIPlugin =
 export type ExternalWebScrapingAIPlugin<T extends WebScrapingAIPluginOptions> =
 	BaseWebScrapingAIPlugin<T>;
 
-export function webScrapingAI<const T extends WebScrapingAIPluginOptions>(
+export function webscrapingai<const T extends WebScrapingAIPluginOptions>(
 	incomingOptions: WebScrapingAIPluginOptions &
 		T = {} as WebScrapingAIPluginOptions & T,
 ): ExternalWebScrapingAIPlugin<T> {
