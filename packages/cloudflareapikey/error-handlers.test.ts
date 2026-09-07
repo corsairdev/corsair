@@ -1,5 +1,15 @@
+import type { ErrorContext } from 'corsair/core';
 import { CloudflareApiKeyAPIError } from './api-error';
 import { errorHandlers } from './error-handlers';
+
+function context(operation: string): ErrorContext {
+	return {
+		pluginId: 'cloudflareapikey',
+		operation,
+		input: {},
+		originalError: new Error('unmatched'),
+	};
+}
 
 describe('error handlers', () => {
 	it('retries wrapped 429 errors and keeps Retry-After', async () => {
@@ -23,12 +33,25 @@ describe('error handlers', () => {
 		});
 	});
 
-	it('does not replay unmatched failures', async () => {
+	it('retries unmatched failures on idempotent reads', async () => {
 		const error = new CloudflareApiKeyAPIError('timeout', undefined, 503);
 		expect(errorHandlers.DEFAULT.match()).toBe(true);
-		await expect(errorHandlers.DEFAULT.handler()).resolves.toEqual({
-			maxRetries: 0,
-		});
+		await expect(
+			errorHandlers.DEFAULT.handler(error, context('zones.list')),
+		).resolves.toEqual({ maxRetries: 3 });
+		await expect(
+			errorHandlers.DEFAULT.handler(error, context('dns.list')),
+		).resolves.toEqual({ maxRetries: 3 });
+	});
+
+	it('does not replay unmatched mutation failures', async () => {
+		const error = new CloudflareApiKeyAPIError('timeout', undefined, 503);
+		await expect(
+			errorHandlers.DEFAULT.handler(error, context('dns.create')),
+		).resolves.toEqual({ maxRetries: 0 });
+		await expect(
+			errorHandlers.DEFAULT.handler(error, context('s3.upload')),
+		).resolves.toEqual({ maxRetries: 0 });
 		expect(error.status).toBe(503);
 	});
 });

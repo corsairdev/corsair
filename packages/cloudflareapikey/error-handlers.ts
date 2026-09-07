@@ -1,4 +1,4 @@
-import type { CorsairErrorHandler } from 'corsair/core';
+import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { CloudflareApiKeyAPIError } from './api-error';
 
@@ -15,6 +15,17 @@ function retryAfterOf(error: Error): number | undefined {
 	}
 	return undefined;
 }
+
+const IDEMPOTENT_READS = new Set([
+	'zones.list',
+	'zones.get',
+	'dns.list',
+	'lockdowns.get',
+	'rulesets.get',
+	'rulesets.getEntrypointVersion',
+	'cache.getRegionalTieredCache',
+	'ips.get',
+]);
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
@@ -38,9 +49,13 @@ export const errorHandlers = {
 	},
 	DEFAULT: {
 		match: () => true,
-		// Corsair retries by rerunning the whole endpoint. DNS create, lockdown
-		// create, ruleset create/update, and R2 upload are not idempotent, so
-		// unmatched 5xx/timeouts must not replay the mutation.
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (_error: Error, context: ErrorContext) => {
+			// Corsair retries by rerunning the whole endpoint. Only GET/list
+			// ops are safe to replay; create/update/delete/upload must not.
+			if (IDEMPOTENT_READS.has(context.operation)) {
+				return { maxRetries: 3 };
+			}
+			return { maxRetries: 0 };
+		},
 	},
 } satisfies CorsairErrorHandler;
