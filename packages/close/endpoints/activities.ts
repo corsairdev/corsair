@@ -10,63 +10,67 @@ import type {
 	ActivitiesListNotesInput,
 	ActivitiesListNotesResponse,
 } from './types';
+import {
+	ActivitiesCreateNoteInputSchema,
+	ActivitiesCreateNoteResponseSchema,
+	ActivitiesListCallsInputSchema,
+	ActivitiesListCallsResponseSchema,
+	ActivitiesListEmailsInputSchema,
+	ActivitiesListEmailsResponseSchema,
+	ActivitiesListNotesInputSchema,
+	ActivitiesListNotesResponseSchema,
+} from './types';
 
 export const activitiesListNotes = async (
 	ctx: CloseContext,
 	input?: ActivitiesListNotesInput,
 ): Promise<ActivitiesListNotesResponse> => {
-	const res = await makeCloseRequest<ActivitiesListNotesResponse>(
-		'activity/note/',
-		ctx.key,
-		{
-			method: 'GET',
-			query: input,
-		},
-	);
-	return res;
+	const parsedInput = input
+		? ActivitiesListNotesInputSchema.parse(input)
+		: undefined;
+	const res = await makeCloseRequest<unknown>('activity/note/', ctx.key, {
+		method: 'GET',
+		query: parsedInput,
+	});
+	return ActivitiesListNotesResponseSchema.parse(res);
 };
 
 export const activitiesCreateNote = async (
 	ctx: CloseContext,
 	input: ActivitiesCreateNoteInput,
 ): Promise<ActivitiesCreateNoteResponse> => {
-	const res = await makeCloseRequest<ActivitiesCreateNoteResponse>(
-		'activity/note/',
-		ctx.key,
-		{
-			method: 'POST',
-			body: input as Record<string, unknown>,
-		},
-	);
-	return res;
+	const parsedInput = ActivitiesCreateNoteInputSchema.parse(input);
+	const res = await makeCloseRequest<unknown>('activity/note/', ctx.key, {
+		method: 'POST',
+		body: parsedInput as Record<string, unknown>,
+	});
+	return ActivitiesCreateNoteResponseSchema.parse(res);
 };
 
 export const activitiesListCalls = async (
 	ctx: CloseContext,
 	input?: ActivitiesListCallsInput,
 ): Promise<ActivitiesListCallsResponse> => {
-	const res = await makeCloseRequest<ActivitiesListCallsResponse>(
-		'activity/call/',
-		ctx.key,
-		{
-			method: 'GET',
-			query: input,
-		},
-	);
-	return res;
+	const parsedInput = input
+		? ActivitiesListCallsInputSchema.parse(input)
+		: undefined;
+	const res = await makeCloseRequest<unknown>('activity/call/', ctx.key, {
+		method: 'GET',
+		query: parsedInput,
+	});
+	return ActivitiesListCallsResponseSchema.parse(res);
 };
 
 export const activitiesListEmails = async (
 	ctx: CloseContext,
 	input?: ActivitiesListEmailsInput,
 ): Promise<ActivitiesListEmailsResponse> => {
-	const res = await makeCloseRequest<ActivitiesListEmailsResponse>(
-		'activity/email/',
-		ctx.key,
-		{
-			method: 'GET',
-			query: input,
-		},
-	);
-	return res;
+	const parsedInput = input
+		? ActivitiesListEmailsInputSchema.parse(input)
+		: undefined;
+	const res = await makeCloseRequest<unknown>('activity/email/', ctx.key, {
+		method: 'GET',
+		query: parsedInput,
+	});
+	return ActivitiesListEmailsResponseSchema.parse(res);
 };

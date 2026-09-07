@@ -6,24 +6,33 @@ import type {
 	UsersListInput,
 	UsersListResponse,
 } from './types';
+import {
+	UsersGetMeInputSchema,
+	UsersGetMeResponseSchema,
+	UsersListInputSchema,
+	UsersListResponseSchema,
+} from './types';
 
 export const usersGetMe = async (
 	ctx: CloseContext,
-	_input?: UsersGetMeInput,
+	input?: UsersGetMeInput,
 ): Promise<UsersGetMeResponse> => {
-	const res = await makeCloseRequest<UsersGetMeResponse>('me/', ctx.key, {
+	const parsedInput = input ? UsersGetMeInputSchema.parse(input) : undefined;
+	const res = await makeCloseRequest<unknown>('me/', ctx.key, {
 		method: 'GET',
+		query: parsedInput,
 	});
-	return res;
+	return UsersGetMeResponseSchema.parse(res);
 };
 
 export const usersList = async (
 	ctx: CloseContext,
 	input?: UsersListInput,
 ): Promise<UsersListResponse> => {
-	const res = await makeCloseRequest<UsersListResponse>('user/', ctx.key, {
+	const parsedInput = input ? UsersListInputSchema.parse(input) : undefined;
+	const res = await makeCloseRequest<unknown>('user/', ctx.key, {
 		method: 'GET',
-		query: input,
+		query: parsedInput,
 	});
-	return res;
+	return UsersListResponseSchema.parse(res);
 };

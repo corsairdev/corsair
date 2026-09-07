@@ -12,63 +12,76 @@ import type {
 	LeadsUpdateInput,
 	LeadsUpdateResponse,
 } from './types';
+import {
+	LeadsCreateInputSchema,
+	LeadsCreateResponseSchema,
+	LeadsDeleteInputSchema,
+	LeadsDeleteResponseSchema,
+	LeadsGetInputSchema,
+	LeadsGetResponseSchema,
+	LeadsListInputSchema,
+	LeadsListResponseSchema,
+	LeadsUpdateInputSchema,
+	LeadsUpdateResponseSchema,
+} from './types';
 
 export const leadsList = async (
 	ctx: CloseContext,
 	input?: LeadsListInput,
 ): Promise<LeadsListResponse> => {
-	const res = await makeCloseRequest<LeadsListResponse>('lead/', ctx.key, {
+	const parsedInput = input ? LeadsListInputSchema.parse(input) : undefined;
+	const res = await makeCloseRequest<unknown>('lead/', ctx.key, {
 		method: 'GET',
-		query: input,
+		query: parsedInput,
 	});
-	return res;
+	return LeadsListResponseSchema.parse(res);
 };
 
 export const leadsGet = async (
 	ctx: CloseContext,
 	input: LeadsGetInput,
 ): Promise<LeadsGetResponse> => {
-	const res = await makeCloseRequest<LeadsGetResponse>(
-		`lead/${input.id}/`,
+	const parsedInput = LeadsGetInputSchema.parse(input);
+	const res = await makeCloseRequest<unknown>(
+		`lead/${parsedInput.id}/`,
 		ctx.key,
 		{ method: 'GET' },
 	);
-	return res;
+	return LeadsGetResponseSchema.parse(res);
 };
 
 export const leadsCreate = async (
 	ctx: CloseContext,
 	input: LeadsCreateInput,
 ): Promise<LeadsCreateResponse> => {
-	const res = await makeCloseRequest<LeadsCreateResponse>('lead/', ctx.key, {
+	const parsedInput = LeadsCreateInputSchema.parse(input);
+	const res = await makeCloseRequest<unknown>('lead/', ctx.key, {
 		method: 'POST',
-		body: input as Record<string, unknown>,
+		body: parsedInput as Record<string, unknown>,
 	});
-	return res;
+	return LeadsCreateResponseSchema.parse(res);
 };
 
 export const leadsUpdate = async (
 	ctx: CloseContext,
 	input: LeadsUpdateInput,
 ): Promise<LeadsUpdateResponse> => {
-	const { id, ...body } = input;
-	const res = await makeCloseRequest<LeadsUpdateResponse>(
-		`lead/${id}/`,
-		ctx.key,
-		{
-			method: 'PUT',
-			body: body as Record<string, unknown>,
-		},
-	);
-	return res;
+	const parsedInput = LeadsUpdateInputSchema.parse(input);
+	const { id, ...body } = parsedInput;
+	const res = await makeCloseRequest<unknown>(`lead/${id}/`, ctx.key, {
+		method: 'PUT',
+		body: body as Record<string, unknown>,
+	});
+	return LeadsUpdateResponseSchema.parse(res);
 };
 
 export const leadsDelete = async (
 	ctx: CloseContext,
 	input: LeadsDeleteInput,
 ): Promise<LeadsDeleteResponse> => {
-	await makeCloseRequest<unknown>(`lead/${input.id}/`, ctx.key, {
+	const parsedInput = LeadsDeleteInputSchema.parse(input);
+	await makeCloseRequest<unknown>(`lead/${parsedInput.id}/`, ctx.key, {
 		method: 'DELETE',
 	});
-	return { success: true, id: input.id };
+	return LeadsDeleteResponseSchema.parse({ success: true, id: parsedInput.id });
 };

@@ -6,27 +6,38 @@ import type {
 	CustomFieldsListLeadInput,
 	CustomFieldsListLeadResponse,
 } from './types';
+import {
+	CustomFieldsListContactInputSchema,
+	CustomFieldsListContactResponseSchema,
+	CustomFieldsListLeadInputSchema,
+	CustomFieldsListLeadResponseSchema,
+} from './types';
 
 export const customFieldsListLead = async (
 	ctx: CloseContext,
-	_input?: CustomFieldsListLeadInput,
+	input?: CustomFieldsListLeadInput,
 ): Promise<CustomFieldsListLeadResponse> => {
-	const res = await makeCloseRequest<CustomFieldsListLeadResponse>(
-		'custom_field/lead/',
-		ctx.key,
-		{ method: 'GET' },
-	);
-	return res;
+	const parsedInput = input
+		? CustomFieldsListLeadInputSchema.parse(input)
+		: undefined;
+	const res = await makeCloseRequest<unknown>('custom_field/lead/', ctx.key, {
+		method: 'GET',
+		query: parsedInput,
+	});
+	return CustomFieldsListLeadResponseSchema.parse(res);
 };
 
 export const customFieldsListContact = async (
 	ctx: CloseContext,
-	_input?: CustomFieldsListContactInput,
+	input?: CustomFieldsListContactInput,
 ): Promise<CustomFieldsListContactResponse> => {
-	const res = await makeCloseRequest<CustomFieldsListContactResponse>(
+	const parsedInput = input
+		? CustomFieldsListContactInputSchema.parse(input)
+		: undefined;
+	const res = await makeCloseRequest<unknown>(
 		'custom_field/contact/',
 		ctx.key,
-		{ method: 'GET' },
+		{ method: 'GET', query: parsedInput },
 	);
-	return res;
+	return CustomFieldsListContactResponseSchema.parse(res);
 };
