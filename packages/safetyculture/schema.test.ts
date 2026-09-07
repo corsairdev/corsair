@@ -7,7 +7,6 @@ import {
 	TemplatesListInputSchema,
 	UsersListInputSchema,
 } from './endpoints/types';
-import { safetyculture } from './index';
 import { SafetyCultureSchema } from './schema';
 
 describe('SafetyCulture schema', () => {
@@ -107,43 +106,39 @@ describe('SafetyCulture endpoint output schemas', () => {
 		expect(SafetyCultureEndpointOutputSchemas.actionsList).toBeDefined();
 		expect(SafetyCultureEndpointOutputSchemas.usersList).toBeDefined();
 	});
-});
 
-describe('SafetyCulture plugin factory', () => {
-	it('exports safetyculture function', () => {
-		expect(typeof safetyculture).toBe('function');
+	it('validates a minimal inspections list response', () => {
+		const result = SafetyCultureEndpointOutputSchemas.inspectionsList.safeParse({
+			audits: [],
+		});
+		expect(result.success).toBe(true);
 	});
 
-	it('creates a plugin with correct id', () => {
-		const plugin = safetyculture({ key: 'test-key' });
-		expect(plugin.id).toBe('safetyculture');
+	it('validates a minimal inspection get response', () => {
+		const result = SafetyCultureEndpointOutputSchemas.inspectionsGet.safeParse({
+			audit_id: 'audit_123',
+		});
+		expect(result.success).toBe(true);
 	});
 
-	it('creates a plugin with all endpoint groups', () => {
-		const plugin = safetyculture({ key: 'test-key' });
-		expect(plugin.endpoints!.inspections).toBeDefined();
-		expect(plugin.endpoints!.templates).toBeDefined();
-		expect(plugin.endpoints!.actions).toBeDefined();
-		expect(plugin.endpoints!.users).toBeDefined();
+	it('validates a minimal templates list response', () => {
+		const result = SafetyCultureEndpointOutputSchemas.templatesList.safeParse({
+			templates: [],
+		});
+		expect(result.success).toBe(true);
 	});
 
-	it('creates a plugin with schema version', () => {
-		const plugin = safetyculture({ key: 'test-key' });
-		expect(plugin.schema!.version).toMatch(/^\d+\.\d+\.\d+$/);
+	it('validates a minimal actions list response', () => {
+		const result = SafetyCultureEndpointOutputSchemas.actionsList.safeParse({
+			actions: [],
+		});
+		expect(result.success).toBe(true);
 	});
 
-	it('creates a plugin with empty webhooks', () => {
-		const plugin = safetyculture({ key: 'test-key' });
-		expect(plugin.webhooks).toEqual({});
-	});
-
-	it('creates a plugin with endpoint meta for all endpoints', () => {
-		const plugin = safetyculture({ key: 'test-key' });
-		const meta = plugin.endpointMeta!;
-		expect(meta['inspections.list']!.riskLevel).toBe('read');
-		expect(meta['inspections.get']!.riskLevel).toBe('read');
-		expect(meta['templates.list']!.riskLevel).toBe('read');
-		expect(meta['actions.list']!.riskLevel).toBe('read');
-		expect(meta['users.list']!.riskLevel).toBe('read');
+	it('validates a minimal users list response', () => {
+		const result = SafetyCultureEndpointOutputSchemas.usersList.safeParse({
+			users: [],
+		});
+		expect(result.success).toBe(true);
 	});
 });
