@@ -4,25 +4,19 @@ dotenv.config({ path: '../.env' });
 
 import { corsair } from '@/server/corsair';
 
-async function setInstagramCredentials() {
-	const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, IG_ACCESS_TOKEN } = process.env;
-
-	if (FACEBOOK_APP_ID) {
-		await corsair.keys.instagram.set_client_id(FACEBOOK_APP_ID);
-	}
-	if (FACEBOOK_APP_SECRET) {
-		await corsair.keys.instagram.set_client_secret(FACEBOOK_APP_SECRET);
-	}
-	if (IG_ACCESS_TOKEN) {
-		await corsair.instagram.keys.set_access_token(IG_ACCESS_TOKEN);
-	}
-}
-
 const main = async () => {
-	const res = await corsair.slack.api.messages.post({
-		channel: 'general',
-		text: 'hello',
-	});
+	console.log('Testing Close CRM Corsair Plugin...');
+	console.log('Close plugin initialized:', corsair.close !== undefined);
+
+	if (process.env.CLOSE_API_KEY) {
+		console.log('Listing leads from Close CRM...');
+		const leads = await corsair.close.api.leads.list({ _limit: 5 });
+		console.log('Fetched Close leads successfully:', leads);
+	} else {
+		console.log(
+			'No CLOSE_API_KEY found in environment (skipping live API call).',
+		);
+	}
 };
 
 main().catch((err) => {
