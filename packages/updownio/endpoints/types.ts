@@ -11,7 +11,7 @@ const NullableTimestamp = z.string().nullable().optional();
 export const CheckSchema = z
 	.object({
 		token: z.string(),
-		url: z.string().url(),
+		url: z.string().url().nullable().optional(),
 		type: z.string(),
 		alias: z.string().nullable().optional(),
 		last_status: z.number().int().nullable(),

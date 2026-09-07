@@ -137,7 +137,7 @@ export type InternalUpdownIOPlugin = BaseUpdownIOPlugin<UpdownIOPluginOptions>;
 export type ExternalUpdownIOPlugin<T extends UpdownIOPluginOptions> =
 	BaseUpdownIOPlugin<T>;
 
-export function updownIO<const T extends UpdownIOPluginOptions>(
+export function updownio<const T extends UpdownIOPluginOptions>(
 	incomingOptions: UpdownIOPluginOptions & T = {} as UpdownIOPluginOptions & T,
 ): ExternalUpdownIOPlugin<T> {
 	const options = {

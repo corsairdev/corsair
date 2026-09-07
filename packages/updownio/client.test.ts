@@ -43,6 +43,25 @@ describe('Updown.io API operations', () => {
 						next_check_at: null,
 						created_at: '2026-09-01T10:00:00Z',
 					},
+					{
+						token: 'pulse1',
+						type: 'pulse',
+						last_status: null,
+						uptime: 100,
+						down: false,
+						down_since: null,
+						up_since: null,
+						error: null,
+						period: 60,
+						apdex_t: 0.5,
+						enabled: true,
+						published: false,
+						disabled_locations: [],
+						recipients: [],
+						last_check_at: null,
+						next_check_at: null,
+						created_at: '2026-09-01T10:00:00Z',
+					},
 				]);
 			if (url.endsWith('/nodes'))
 				return json({
@@ -70,6 +89,7 @@ describe('Updown.io API operations', () => {
 		const ipv4 = await listIpv4(ctx, {});
 		const ipv6 = await listIpv6(ctx, {});
 		expect(checks[0]?.token).toBe('ngg8');
+		expect(checks[1]).toMatchObject({ token: 'pulse1', type: 'pulse' });
 		expect(nodes.tok?.city).toBe('Tokyo');
 		expect(ips).toHaveLength(2);
 		expect(ipv4[0]).toBe('45.76.104.117');
