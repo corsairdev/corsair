@@ -102,7 +102,7 @@ export const SearchPapersInputSchema = z.object({
 });
 
 export const SearchBulkPapersInputSchema = z.object({
-	query: z.string().trim().min(1),
+	query: z.string().trim().min(1).optional(),
 	...SearchFilters,
 	token: z.string().trim().min(1).optional(),
 	sort: z
@@ -217,6 +217,16 @@ const AutocompleteOutputSchema = z
 const PapersBatchOutputSchema = z.array(SemanticScholarPaper.nullable());
 const AuthorsBatchOutputSchema = z.array(SemanticScholarAuthor.nullable());
 
+const PaperTitleMatchItemSchema = SemanticScholarPaper.extend({
+	matchScore: z.number(),
+});
+
+const PaperTitleSearchOutputSchema = z
+	.object({
+		data: z.array(PaperTitleMatchItemSchema),
+	})
+	.loose();
+
 const DatasetReleasesOutputSchema = z.union([
 	z.array(z.string()),
 	z.object({ releaseIds: z.array(z.string()) }).loose(),
@@ -269,7 +279,7 @@ export type SemanticScholarEndpointOutputs = {
 	searchPapers: z.infer<typeof PaginatedPapersOutputSchema>;
 	paperRelevanceSearch: z.infer<typeof PaginatedPapersOutputSchema>;
 	searchBulkPapers: z.infer<typeof PaginatedPapersOutputSchema>;
-	paperTitleSearch: z.infer<typeof SemanticScholarPaper>;
+	paperTitleSearch: z.infer<typeof PaperTitleSearchOutputSchema>;
 	autocompletePapers: z.infer<typeof AutocompleteOutputSchema>;
 	getPaperAuthors: z.infer<typeof PaginatedAuthorsOutputSchema>;
 	getPaperCitations: z.infer<typeof PaginatedCitationsOutputSchema>;
@@ -321,7 +331,7 @@ export const SemanticScholarEndpointOutputSchemas = {
 	searchPapers: PaginatedPapersOutputSchema,
 	paperRelevanceSearch: PaginatedPapersOutputSchema,
 	searchBulkPapers: PaginatedPapersOutputSchema,
-	paperTitleSearch: SemanticScholarPaper,
+	paperTitleSearch: PaperTitleSearchOutputSchema,
 	autocompletePapers: AutocompleteOutputSchema,
 	getPaperAuthors: PaginatedAuthorsOutputSchema,
 	getPaperCitations: PaginatedCitationsOutputSchema,

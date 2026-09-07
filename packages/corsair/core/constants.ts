@@ -509,7 +509,7 @@ export const ProviderDisplayNames = {
 	scaleai: 'Scale AI',
 	scrapegraphai: 'ScrapeGraphAI',
 	securitytrails: 'SecurityTrails',
-	semanticscholar: 'SemanticScholar',
+	semanticscholar: 'Semantic Scholar',
 	sendgrid: 'SendGrid',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',

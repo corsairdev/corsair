@@ -128,6 +128,54 @@ describe('Semantic Scholar endpoints', () => {
 		expect(parsed().query.get('sort')).toBe('citationCount:desc');
 	});
 
+	it('papers.searchBulk supports filter-only searches without query', async () => {
+		mockFetch({ total: 1, data: [{ paperId: 'p1', title: 'Paper' }] });
+
+		await Endpoints.searchBulkPapers(makeCtx(), {
+			fieldsOfStudy: 'Computer Science',
+			year: '2020-2024',
+			fields: 'title,year',
+		});
+
+		expect(parsed().path).toBe('/graph/v1/paper/search/bulk');
+		expect(parsed().query.get('query')).toBeNull();
+		expect(parsed().query.get('fieldsOfStudy')).toBe('Computer Science');
+		expect(parsed().query.get('year')).toBe('2020-2024');
+		expect(parsed().query.get('fields')).toBe('title,year');
+	});
+
+	it('papers.matchTitle validates the documented response envelope', async () => {
+		mockFetch({
+			data: [
+				{
+					paperId: 'p1',
+					title: 'Construction of the Literature Graph in Semantic Scholar',
+					matchScore: 0.97,
+					year: 2020,
+				},
+			],
+		});
+
+		const out = await Endpoints.paperTitleSearch(makeCtx(), {
+			query: 'Construction of the Literature Graph in Semantic Scholar',
+			fields: 'title,year',
+		});
+
+		expect(parsed().path).toBe('/graph/v1/paper/search/match');
+		expect(parsed().query.get('query')).toBe(
+			'Construction of the Literature Graph in Semantic Scholar',
+		);
+		expect(parsed().query.get('fields')).toBe('title,year');
+		expect(out.data[0]?.matchScore).toBe(0.97);
+		expect(out.data[0]?.year).toBe(2020);
+		expect(
+			semanticScholarEndpointSchemas['papers.matchTitle'].output.safeParse({
+				paperId: 'p1',
+				title: 'Top-level paper is not the documented shape',
+			}).success,
+		).toBe(false);
+	});
+
 	it('papers.authors, papers.citations, and papers.references use paginated child paths', async () => {
 		mockFetch({
 			offset: 0,
