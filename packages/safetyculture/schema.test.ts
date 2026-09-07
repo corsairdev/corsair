@@ -108,37 +108,32 @@ describe('SafetyCulture endpoint output schemas', () => {
 	});
 
 	it('validates a minimal inspections list response', () => {
-		const result = SafetyCultureEndpointOutputSchemas.inspectionsList.safeParse({
-			audits: [],
-		});
+		const schema = SafetyCultureEndpointOutputSchemas.inspectionsList;
+		const result = schema.safeParse({ audits: [] });
 		expect(result.success).toBe(true);
 	});
 
 	it('validates a minimal inspection get response', () => {
-		const result = SafetyCultureEndpointOutputSchemas.inspectionsGet.safeParse({
-			audit_id: 'audit_123',
-		});
+		const schema = SafetyCultureEndpointOutputSchemas.inspectionsGet;
+		const result = schema.safeParse({ audit_id: 'audit_123' });
 		expect(result.success).toBe(true);
 	});
 
 	it('validates a minimal templates list response', () => {
-		const result = SafetyCultureEndpointOutputSchemas.templatesList.safeParse({
-			templates: [],
-		});
+		const schema = SafetyCultureEndpointOutputSchemas.templatesList;
+		const result = schema.safeParse({ templates: [] });
 		expect(result.success).toBe(true);
 	});
 
 	it('validates a minimal actions list response', () => {
-		const result = SafetyCultureEndpointOutputSchemas.actionsList.safeParse({
-			actions: [],
-		});
+		const schema = SafetyCultureEndpointOutputSchemas.actionsList;
+		const result = schema.safeParse({ actions: [] });
 		expect(result.success).toBe(true);
 	});
 
 	it('validates a minimal users list response', () => {
-		const result = SafetyCultureEndpointOutputSchemas.usersList.safeParse({
-			users: [],
-		});
+		const schema = SafetyCultureEndpointOutputSchemas.usersList;
+		const result = schema.safeParse({ users: [] });
 		expect(result.success).toBe(true);
 	});
 });
