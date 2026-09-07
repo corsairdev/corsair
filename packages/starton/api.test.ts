@@ -7,6 +7,10 @@ import {
 	StartonEndpointOutputSchemas,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import {
+	isNonIdempotentOperation,
+	NON_IDEMPOTENT_OPERATIONS,
+} from './idempotency';
 import type { StartonContext } from './index';
 import { starton, startonEndpointSchemas } from './index';
 
@@ -134,7 +138,16 @@ describe('endpoint request wiring', () => {
 
 	it('Wallet.list -> GET /v3/kms/wallet with pagination filters', async () => {
 		nextResponseBody = {
-			items: [{ address: '0xabc', providerKeyId: 'pk_1', kmsId: 'kms_1', projectId: 'p', createdAt: 'x', updatedAt: 'x' }],
+			items: [
+				{
+					address: '0xabc',
+					providerKeyId: 'pk_1',
+					kmsId: 'kms_1',
+					projectId: 'p',
+					createdAt: 'x',
+					updatedAt: 'x',
+				},
+			],
 			meta: { itemCount: 1, itemsPerPage: 20, currentPage: 0 },
 		};
 		const res = await Wallet.list(ctx, { page: 0, limit: 20 });
@@ -425,8 +438,9 @@ describe('input schema validation', () => {
 				.success,
 		).toBe(true);
 		expect(
-			StartonEndpointInputSchemas.walletList.safeParse({ name: 'Treasury/../x' })
-				.success,
+			StartonEndpointInputSchemas.walletList.safeParse({
+				name: 'Treasury/../x',
+			}).success,
 		).toBe(false);
 	});
 
@@ -448,7 +462,11 @@ describe('input schema validation', () => {
 				templateId: 'ERC20_MINT_META_TRANSACTION',
 				name: 'TestToken',
 				params: [],
-				uiData: { version: '1', deployMethod: 'carrier-pigeon', imported: false },
+				uiData: {
+					version: '1',
+					deployMethod: 'carrier-pigeon',
+					imported: false,
+				},
 			}).success,
 		).toBe(false);
 	});
@@ -634,7 +652,9 @@ describe('error handling', () => {
 		}).catch((e) => e)) as Error;
 
 		expect(errorHandlers.SERVER_ERROR.match(err)).toBe(true);
-		await expect(errorHandlers.SERVER_ERROR.handler()).resolves.toEqual({
+		await expect(
+			errorHandlers.SERVER_ERROR.handler(err, errorContext('transaction.get')),
+		).resolves.toEqual({
 			maxRetries: 3,
 		});
 	});
@@ -663,14 +683,20 @@ const TX_FIXTURE = {
 
 describe('request serialization', () => {
 	it('Wallet.list sends no query string when no filters are supplied', async () => {
-		nextResponseBody = { items: [], meta: { itemCount: 0, itemsPerPage: 100, currentPage: 0 } };
+		nextResponseBody = {
+			items: [],
+			meta: { itemCount: 0, itemsPerPage: 100, currentPage: 0 },
+		};
 		await Wallet.list(ctx, {});
 
 		expect(captured?.url).toBe('https://api.starton.com/v3/kms/wallet');
 	});
 
 	it('Wallet.list forwards the name and kmsId filters from the official spec', async () => {
-		nextResponseBody = { items: [], meta: { itemCount: 0, itemsPerPage: 100, currentPage: 0 } };
+		nextResponseBody = {
+			items: [],
+			meta: { itemCount: 0, itemsPerPage: 100, currentPage: 0 },
+		};
 		await Wallet.list(ctx, { name: 'Treasury', kmsId: 'kms_1' });
 
 		expect(captured?.url).toContain('name=Treasury');
@@ -779,10 +805,12 @@ describe('response parsing', () => {
 	});
 
 	it('rejects a Transaction that is missing a spec-required field', () => {
-		const withoutLogs: Record<string, unknown> = { ...TX_FIXTURE };
-		delete withoutLogs.logs;
+		// Omit the key entirely rather than setting it to undefined, so this
+		// asserts a genuinely absent required field.
+		const { logs: _logs, ...withoutLogs } = TX_FIXTURE;
 		expect(
-			StartonEndpointOutputSchemas.transactionGet.safeParse(withoutLogs).success,
+			StartonEndpointOutputSchemas.transactionGet.safeParse(withoutLogs)
+				.success,
 		).toBe(false);
 	});
 
@@ -905,7 +933,10 @@ describe('error routing (403 / retry-after)', () => {
 
 	it('routes a 404 COULD_NOT_FIND_RESOURCE to the non-retryable handler', async () => {
 		nextResponseStatus = 404;
-		nextResponseBody = { statusCode: 404, errorCode: 'COULD_NOT_FIND_RESOURCE' };
+		nextResponseBody = {
+			statusCode: 404,
+			errorCode: 'COULD_NOT_FIND_RESOURCE',
+		};
 		const err = (await makeStartonRequest('v3/transaction/nope', 'k', {
 			method: 'GET',
 		}).catch((e) => e)) as Error;
@@ -918,7 +949,13 @@ describe('error routing (403 / retry-after)', () => {
 	it('surfaces Retry-After from a 429 as headersRetryAfterMs', async () => {
 		const err = new ApiError(
 			{ method: 'GET', url: 'v3/kms/wallet' },
-			{ url: 'https://api.starton.com/v3/kms/wallet', ok: false, status: 429, statusText: 'Too Many Requests', body: {} },
+			{
+				url: 'https://api.starton.com/v3/kms/wallet',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: {},
+			},
 			'Too Many Requests',
 			{ retryAfter: 2000 },
 		);
@@ -934,7 +971,342 @@ describe('error routing (403 / retry-after)', () => {
 		expect(
 			errorHandlers.RATE_LIMIT_ERROR.match(new Error('Too Many Requests')),
 		).toBe(true);
-		expect(errorHandlers.AUTH_ERROR.match(new Error('Unauthorized'))).toBe(true);
+		expect(errorHandlers.AUTH_ERROR.match(new Error('Unauthorized'))).toBe(
+			true,
+		);
 		expect(errorHandlers.DEFAULT.match()).toBe(true);
+	});
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Retry safety
+//
+// Starton exposes no idempotency key, and Corsair can replay a failed call at
+// two layers: `corsair/http` retries 429 internally, and the endpoint binder
+// re-invokes the whole endpoint whenever an error handler returns
+// `maxRetries > 0`. A replayed write would broadcast a second transaction, so
+// both layers must stay shut for the transaction-producing operations.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function errorContext(operation: string) {
+	return {
+		pluginId: 'starton',
+		operation,
+		input: {},
+		originalError: new Error('test'),
+	};
+}
+
+/** Count fetch attempts, optionally succeeding once the Nth attempt is reached. */
+function countingFetch(status: number, succeedOnAttempt?: number) {
+	let attempts = 0;
+	globalThis.fetch = (async () => {
+		attempts += 1;
+		const ok = succeedOnAttempt !== undefined && attempts >= succeedOnAttempt;
+		return new Response(JSON.stringify(ok ? TX_FIXTURE : { errorCode: 'X' }), {
+			status: ok ? 200 : status,
+			statusText: ok ? 'OK' : `status ${status}`,
+			headers: { 'Content-Type': 'application/json' },
+		});
+	}) as typeof fetch;
+	return () => attempts;
+}
+
+describe('retry safety: HTTP layer (429 replay)', () => {
+	it('does not replay smartContract.call — a replay would broadcast twice', async () => {
+		const attempts = countingFetch(429);
+
+		await SmartContract.call(ctx, {
+			network: 'polygon-mumbai',
+			address: '0xabc',
+			functionName: 'mint',
+			params: [],
+			signerWallet: '0x298',
+		}).catch(() => undefined);
+
+		expect(attempts()).toBe(1);
+	});
+
+	it('does not replay smartContract.deployFromTemplate', async () => {
+		const attempts = countingFetch(429);
+
+		await SmartContract.deployFromTemplate(ctx, {
+			network: 'polygon-mumbai',
+			signerWallet: '0x298',
+			templateId: 'ERC20_MINT_META_TRANSACTION',
+			name: 'TestToken',
+			params: [],
+		}).catch(() => undefined);
+
+		expect(attempts()).toBe(1);
+	});
+
+	it('does not replay wallet.create — a replay would provision a second wallet', async () => {
+		const attempts = countingFetch(429);
+
+		await Wallet.create(ctx, { kmsId: 'kms_1' }).catch(() => undefined);
+
+		expect(attempts()).toBe(1);
+	});
+
+	it('still replays a rate-limited read (the flag is scoped, not a blanket off-switch)', async () => {
+		const attempts = countingFetch(429, 2);
+
+		await Transaction.get(ctx, { id: 'tx_1' }).catch(() => undefined);
+
+		expect(attempts()).toBe(2);
+	});
+});
+
+describe('retry safety: binder layer (error-handler maxRetries)', () => {
+	it('withholds 5xx retries for every transaction-producing operation', async () => {
+		const err = new ApiError(
+			{ method: 'POST', url: 'v3/smart-contract/x/y/call' },
+			{
+				url: 'https://api.starton.com',
+				ok: false,
+				status: 502,
+				statusText: 'Bad Gateway',
+				body: {},
+			},
+			'Bad Gateway',
+		);
+
+		for (const operation of NON_IDEMPOTENT_OPERATIONS) {
+			await expect(
+				errorHandlers.SERVER_ERROR.handler(err, errorContext(operation)),
+			).resolves.toEqual({ maxRetries: 0 });
+		}
+	});
+
+	it('still retries 5xx for reads', async () => {
+		const err = new ApiError(
+			{ method: 'GET', url: 'v3/transaction/tx_1' },
+			{
+				url: 'https://api.starton.com',
+				ok: false,
+				status: 500,
+				statusText: 'Server Error',
+				body: {},
+			},
+			'Server Error',
+		);
+
+		for (const operation of [
+			'transaction.get',
+			'wallet.list',
+			'smartContract.read',
+		]) {
+			await expect(
+				errorHandlers.SERVER_ERROR.handler(err, errorContext(operation)),
+			).resolves.toEqual({ maxRetries: 3 });
+		}
+	});
+
+	it('withholds 429 retries for transaction-producing operations', async () => {
+		const err = new ApiError(
+			{ method: 'POST', url: 'v3/smart-contract/x/y/call' },
+			{
+				url: 'https://api.starton.com',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: {},
+			},
+			'Too Many Requests',
+			{ retryAfter: 1000 },
+		);
+
+		for (const operation of NON_IDEMPOTENT_OPERATIONS) {
+			await expect(
+				errorHandlers.RATE_LIMIT_ERROR.handler(err, errorContext(operation)),
+			).resolves.toEqual({ maxRetries: 0 });
+		}
+
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(err, errorContext('wallet.list')),
+		).resolves.toEqual({ maxRetries: 5, headersRetryAfterMs: 1000 });
+	});
+});
+
+describe('idempotency classification', () => {
+	it('classifies every declared operation, and only real operations', () => {
+		const declared = Object.keys(startonEndpointSchemas);
+
+		// No entry may reference an operation that does not exist — this catches a
+		// rename that would silently re-enable replay on a write.
+		for (const operation of NON_IDEMPOTENT_OPERATIONS) {
+			expect(declared).toContain(operation);
+		}
+
+		expect(declared.filter(isNonIdempotentOperation).sort()).toEqual([
+			'smartContract.call',
+			'smartContract.deployFromTemplate',
+			'wallet.create',
+		]);
+		expect(
+			declared.filter((op) => !isNonIdempotentOperation(op)).sort(),
+		).toEqual(['smartContract.read', 'transaction.get', 'wallet.list']);
+	});
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Runtime response validation
+//
+// Corsair's endpoint binder does not validate against `endpointSchemas` — those
+// feed introspection (`zodToFormSchema`) only. Each endpoint therefore parses
+// the provider payload itself, so a malformed Starton response surfaces as an
+// error instead of being handed back as trustworthy typed data.
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('runtime response validation', () => {
+	it('rejects a transaction response missing a spec-required field', async () => {
+		const { chainId: _chainId, ...incomplete } = TX_FIXTURE;
+		nextResponseBody = incomplete;
+
+		await expect(Transaction.get(ctx, { id: 'tx_1' })).rejects.toThrow();
+	});
+
+	it('rejects a transaction whose field has the wrong primitive type', async () => {
+		nextResponseBody = { ...TX_FIXTURE, chainId: '80001' };
+
+		await expect(Transaction.get(ctx, { id: 'tx_1' })).rejects.toThrow();
+	});
+
+	it('rejects a status outside the official enum rather than passing it through', async () => {
+		nextResponseBody = { ...TX_FIXTURE, status: 'NOT_A_REAL_STATUS' };
+
+		await expect(Transaction.get(ctx, { id: 'tx_1' })).rejects.toThrow();
+	});
+
+	it('rejects a wallet-list page with a malformed nested item', async () => {
+		nextResponseBody = {
+			items: [{ address: '0xabc' }],
+			meta: { itemCount: 1, itemsPerPage: 100, currentPage: 0 },
+		};
+
+		await expect(Wallet.list(ctx, {})).rejects.toThrow();
+	});
+
+	it('rejects an entirely unexpected response shape', async () => {
+		nextResponseBody = { unexpected: 'payload' };
+
+		await expect(Wallet.create(ctx, { kmsId: 'kms_1' })).rejects.toThrow();
+	});
+
+	it('rejects a deploy envelope missing the transaction half', async () => {
+		nextResponseBody = {
+			smartContract: {
+				id: 'sc_1',
+				name: 'TestToken',
+				network: 'polygon-mumbai',
+				address: '0xdef',
+				status: 'PUBLISHED',
+				state: 'PENDING',
+				projectId: 'p',
+				createdAt: 'x',
+				updatedAt: 'x',
+			},
+		};
+
+		await expect(
+			SmartContract.deployFromTemplate(ctx, {
+				network: 'polygon-mumbai',
+				signerWallet: '0x298',
+				templateId: 'ERC20_MINT_META_TRANSACTION',
+				name: 'TestToken',
+				params: [],
+			}),
+		).rejects.toThrow();
+	});
+
+	it('still accepts a valid response and preserves unknown forward-compatible fields', async () => {
+		nextResponseBody = { ...TX_FIXTURE, aFutureStartonField: 'kept' };
+
+		const result = await Transaction.get(ctx, { id: 'tx_1' });
+
+		expect(result.id).toBe('tx_1');
+		expect((result as Record<string, unknown>).aFutureStartonField).toBe(
+			'kept',
+		);
+	});
+
+	it('a malformed response is not retried (DEFAULT handler, no side-effect replay)', async () => {
+		const validationError = new Error('Invalid input');
+
+		expect(errorHandlers.DEFAULT.match()).toBe(true);
+		await expect(errorHandlers.DEFAULT.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
+		expect(errorHandlers.SERVER_ERROR.match(validationError)).toBe(false);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(validationError)).toBe(false);
+	});
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Credential handling
+// ─────────────────────────────────────────────────────────────────────────────
+
+const SECRET = 'test-starton-api-key';
+
+describe('credential secrecy', () => {
+	it('sends the key only as the x-api-key header, never in the URL or body', async () => {
+		nextResponseBody = TX_FIXTURE;
+
+		await SmartContract.call(ctx, {
+			network: 'polygon-mumbai',
+			address: '0xabc',
+			functionName: 'mint',
+			params: ['1'],
+			signerWallet: '0x298',
+		});
+
+		expect(captured?.headers['x-api-key']).toBe(SECRET);
+		expect(captured?.url).not.toContain(SECRET);
+		expect(captured?.body ?? '').not.toContain(SECRET);
+		expect(captured?.headers.authorization).toBeUndefined();
+	});
+
+	it('never leaks the key into a thrown provider error', async () => {
+		nextResponseStatus = 500;
+		nextResponseBody = { statusCode: 500, errorCode: 'UNKNOWN' };
+
+		const err = (await makeStartonRequest('v3/kms/wallet', SECRET, {
+			method: 'GET',
+		}).catch((e) => e)) as ApiError;
+
+		// Message, and every own enumerable property (url, request, body, ...).
+		const serialized = `${err.message} ${JSON.stringify(err, Object.getOwnPropertyNames(err))}`;
+		expect(serialized).not.toContain(SECRET);
+	});
+
+	it('never leaks the key into a thrown transport error', async () => {
+		globalThis.fetch = (async () => {
+			throw new Error('socket hang up');
+		}) as typeof fetch;
+
+		const err = (await makeStartonRequest('v3/kms/wallet', SECRET, {
+			method: 'GET',
+		}).catch((e) => e)) as Error;
+
+		const serialized = `${err.message} ${JSON.stringify(err, Object.getOwnPropertyNames(err))}`;
+		expect(serialized).not.toContain(SECRET);
+		expect(err).toBeInstanceOf(Error);
+	});
+
+	it('keeps the provider error useful (status and error code survive)', async () => {
+		nextResponseStatus = 400;
+		nextResponseBody = {
+			statusCode: 400,
+			errorCode: 'INSUFFICIENT_FUNDS',
+			message: 'Your funds are insufficient.',
+		};
+
+		const err = (await makeStartonRequest('v3/kms/wallet', SECRET, {
+			method: 'GET',
+		}).catch((e) => e)) as ApiError;
+
+		expect(err.status).toBe(400);
+		expect(JSON.stringify(err.body)).toContain('INSUFFICIENT_FUNDS');
 	});
 });

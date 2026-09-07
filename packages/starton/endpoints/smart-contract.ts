@@ -1,57 +1,73 @@
 import { logEventFromContext } from 'corsair/core';
 import type { StartonEndpoints } from '..';
 import { encodeStartonPathSegment, makeStartonRequest } from '../client';
-import type { StartonTransaction } from '../schema/database';
-import type {
-	SmartContractDeployFromTemplateResponse,
-	SmartContractReadResponse,
-} from './types';
+import { StartonEndpointOutputSchemas } from './types';
 
 export const deployFromTemplate: StartonEndpoints['smartContractDeployFromTemplate'] =
 	async (ctx, input) => {
 		const { simulate, ...body } = input;
-		const response = await makeStartonRequest<SmartContractDeployFromTemplateResponse>(
+		const response = await makeStartonRequest<unknown>(
 			'v3/smart-contract/from-template',
 			ctx.key,
-			{ method: 'POST', body, query: { simulate } },
+			// Deploys a contract on-chain — never replay it.
+			{ method: 'POST', body, query: { simulate }, replayable: false },
 		);
+		// Validate the provider payload before returning it as typed data.
+		const deployment =
+			StartonEndpointOutputSchemas.smartContractDeployFromTemplate.parse(
+				response,
+			);
 		await logEventFromContext(
 			ctx,
 			'starton.smartContract.deployFromTemplate',
-			{ network: input.network, templateId: input.templateId, name: input.name },
+			{
+				network: input.network,
+				templateId: input.templateId,
+				name: input.name,
+			},
 			'completed',
 		);
-		return response;
+		return deployment;
 	};
 
-export const call: StartonEndpoints['smartContractCall'] = async (ctx, input) => {
+export const call: StartonEndpoints['smartContractCall'] = async (
+	ctx,
+	input,
+) => {
 	const { network, address, simulate, ...body } = input;
-	const response = await makeStartonRequest<StartonTransaction>(
+	const response = await makeStartonRequest<unknown>(
 		`v3/smart-contract/${encodeStartonPathSegment(network)}/${encodeStartonPathSegment(address)}/call`,
 		ctx.key,
-		{ method: 'POST', body, query: { simulate } },
+		// Broadcasts a state-changing transaction — never replay it.
+		{ method: 'POST', body, query: { simulate }, replayable: false },
 	);
+	const transaction =
+		StartonEndpointOutputSchemas.smartContractCall.parse(response);
 	await logEventFromContext(
 		ctx,
 		'starton.smartContract.call',
 		{ network, address, functionName: input.functionName },
 		'completed',
 	);
-	return response;
+	return transaction;
 };
 
-export const read: StartonEndpoints['smartContractRead'] = async (ctx, input) => {
+export const read: StartonEndpoints['smartContractRead'] = async (
+	ctx,
+	input,
+) => {
 	const { network, address, ...body } = input;
-	const response = await makeStartonRequest<SmartContractReadResponse>(
+	const response = await makeStartonRequest<unknown>(
 		`v3/smart-contract/${encodeStartonPathSegment(network)}/${encodeStartonPathSegment(address)}/read`,
 		ctx.key,
 		{ method: 'POST', body },
 	);
+	const result = StartonEndpointOutputSchemas.smartContractRead.parse(response);
 	await logEventFromContext(
 		ctx,
 		'starton.smartContract.read',
 		{ network, address, functionName: input.functionName },
 		'completed',
 	);
-	return response;
+	return result;
 };

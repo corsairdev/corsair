@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 /**
@@ -35,10 +39,36 @@ export function encodeStartonPathSegment(value: string): string {
 	return encodeURIComponent(value);
 }
 
+/**
+ * `corsair/http` retries a request internally when it sees HTTP 429 — three
+ * extra attempts by default. That is correct for reads, but a rate-limited
+ * write that Starton had already begun processing would be replayed, and
+ * Starton offers no idempotency key to make that safe. Callers that broadcast
+ * a blockchain transaction pass `replayable: false` to switch it off.
+ */
+const NO_AUTOMATIC_REPLAY: RateLimitConfig = {
+	enabled: false,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		retryAfter: 'retry-after',
+		resetTime: 'x-ratelimit-reset',
+		remaining: 'x-ratelimit-remaining',
+		limit: 'x-ratelimit-limit',
+	},
+};
+
 export type StartonRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: unknown;
 	query?: Record<string, string | number | boolean | undefined>;
+	/**
+	 * Whether this request may be re-sent automatically after a 429. Defaults to
+	 * `true`; set it to `false` for any call that can create a blockchain
+	 * transaction or otherwise duplicate a side effect.
+	 */
+	replayable?: boolean;
 };
 
 export async function makeStartonRequest<T>(
@@ -46,7 +76,7 @@ export async function makeStartonRequest<T>(
 	apiKey: string,
 	options: StartonRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, replayable = true } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: STARTON_API_BASE,
@@ -68,7 +98,11 @@ export async function makeStartonRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(
+			config,
+			requestOptions,
+			replayable ? undefined : { rateLimitConfig: NO_AUTOMATIC_REPLAY },
+		);
 	} catch (error) {
 		// Preserve ApiError so the plugin error handlers can inspect `status`
 		// and `retryAfter` (rate limiting, auth failures, blockchain errors).
