@@ -434,9 +434,11 @@ export function managementHandler(
 				if (overridden) return overridden;
 			}
 			if (err instanceof ManagementApiError) return errorResponse(err);
-			const message =
-				err instanceof Error ? err.message : 'Internal server error';
-			return json(500, { error: 'internal_error', message });
+			// Log the full error server-side for debugging, but never expose
+			// internal details (tenant IDs, integration names, crypto errors)
+			// to API consumers — they could aid reconnaissance.
+			console.error('[corsair:management] Unhandled error:', err);
+			return json(500, { error: 'internal_error', message: 'Internal server error' });
 		}
 	};
 }

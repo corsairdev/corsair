@@ -14,9 +14,14 @@ export function encodeOAuthState(plugin: string, tenantId: string): string {
 	).toString('base64url');
 }
 
+// Default max-age for decoded OAuth states when no explicit maxAgeMs is
+// provided. Prevents indefinitely-old states from being accepted by
+// callers that forget to pass maxAgeMs.
+const DEFAULT_DECODE_MAX_AGE_MS = 30 * 60 * 1000; // 30 minutes
+
 export function decodeOAuthState(
 	state: string,
-	{ maxAgeMs }: { maxAgeMs?: number } = {},
+	{ maxAgeMs = DEFAULT_DECODE_MAX_AGE_MS }: { maxAgeMs?: number } = {},
 ): OAuthState | null {
 	try {
 		const payload = state.includes('.') ? state.split('.')[0] : state;
@@ -33,7 +38,6 @@ export function decodeOAuthState(
 		) {
 			const result = decoded as OAuthState;
 			if (
-				maxAgeMs !== undefined &&
 				typeof result.iat === 'number' &&
 				Date.now() - result.iat > maxAgeMs
 			) {

@@ -54,13 +54,40 @@ export type HubDeliveryRequest = {
 	body?: string;
 };
 
+function isAllowedRedirectUrl(url: string): boolean {
+	try {
+		const { hostname, protocol } = new URL(url);
+		if (protocol !== 'http:' && protocol !== 'https:') return false;
+		if (
+			hostname === 'localhost' ||
+			hostname === '127.0.0.1' ||
+			hostname === '[::1]' ||
+			hostname === '::1'
+		) {
+			return true;
+		}
+		return (
+			hostname === 'corsair.dev' || hostname.endsWith('.corsair.dev')
+		);
+	} catch {
+		return false;
+	}
+}
+
 function buildBrowserDeliveryReturnUrl(
 	hubSuccessUrl: string,
 	input: { status?: unknown; error?: string; connectedPlugin?: string },
 ): string {
+	// Validate the redirect target to prevent open-redirect attacks.
+	// Only allow redirects to corsair.dev subdomains and loopback addresses.
+	if (!isAllowedRedirectUrl(hubSuccessUrl)) {
+		throw new Error('Redirect URL does not belong to an allowed origin');
+	}
 	const url = new URL(hubSuccessUrl);
 	if (input.error) {
-		url.searchParams.set('error', input.error);
+		// Sanitize error messages in redirect URLs to prevent leaking
+		// internal details via browser history, referrer headers, or logs.
+		url.searchParams.set('error', 'delivery_failed');
 		return url.toString();
 	}
 	if (input.connectedPlugin) {
