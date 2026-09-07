@@ -379,7 +379,7 @@ export const ProviderDisplayNames = {
 	clientary: 'Clientary',
 	clockify: 'Clockify',
 	cloudflare: 'Cloudflare',
-	cloudflareapikey: 'CloudflareApiKey',
+	cloudflareapikey: 'Cloudflare API Key',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',

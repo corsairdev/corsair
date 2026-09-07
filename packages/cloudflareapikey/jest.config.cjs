@@ -2,19 +2,13 @@ module.exports = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	roots: ['<rootDir>'],
-	testMatch: [
-		'**/*.test.ts',
-		'**/tests/**/*.test.ts',
-		'**/plugins/**/*.test.ts',
-		'**/setup/**/*.test.ts',
-	],
+	testMatch: ['**/*.test.ts'],
 	collectCoverageFrom: [
 		'**/*.ts',
 		'!**/*.d.ts',
 		'!**/node_modules/**',
 		'!**/dist/**',
 		'!jest.config.ts',
-		'!tests/**',
 	],
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
 	transform: {
@@ -44,8 +38,8 @@ module.exports = {
 		],
 	},
 	moduleNameMapper: {
-		'^corsair/core$': '<rootDir>/../corsair/core.ts',
 		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		'^corsair/core$': '<rootDir>/../corsair/core.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],

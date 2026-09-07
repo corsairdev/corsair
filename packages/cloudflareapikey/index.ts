@@ -1,40 +1,42 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { CloudflareApiKeyEndpointInputs, CloudflareApiKeyEndpointOutputs } from './endpoints/types';
-import { CloudflareApiKeyEndpointInputSchemas, CloudflareApiKeyEndpointOutputSchemas } from './endpoints/types';
+import {
+	CacheEndpoints,
+	DNSEndpoints,
+	DnssecEndpoints,
+	IpsEndpoints,
+	LockdownsEndpoints,
+	RulesetsEndpoints,
+	S3Endpoints,
+	ZonesEndpoints,
+} from './endpoints';
 import type {
-	CloudflareApiKeyWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { DNSEndpoints, RulesetsEndpoints, WorkerRoutesEndpoints, WorkersEndpoints, ZonesEndpoints } from './endpoints';
-import { CloudflareApiKeySchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	CloudflareApiKeyEndpointInputs,
+	CloudflareApiKeyEndpointOutputs,
+} from './endpoints/types';
+import {
+	CloudflareApiKeyEndpointInputSchemas,
+	CloudflareApiKeyEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchCloudflareApiKeyTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveCloudflareApiKeyOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { CloudflareApiKeySchema } from './schema';
 
 export type CloudflareApiKeyPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalCloudflareApiKeyPlugin['hooks'];
-	webhookHooks?: InternalCloudflareApiKeyPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof cloudflareApiKeyEndpointsNested>;
 };
@@ -44,120 +46,276 @@ export type CloudflareApiKeyContext = CorsairPluginContext<
 	CloudflareApiKeyPluginOptions
 >;
 
-export type CloudflareApiKeyKeyBuilderContext = KeyBuilderContext<CloudflareApiKeyPluginOptions>;
+export type CloudflareApiKeyKeyBuilderContext =
+	KeyBuilderContext<CloudflareApiKeyPluginOptions>;
 
-export type CloudflareApiKeyBoundEndpoints = BindEndpoints<typeof cloudflareApiKeyEndpointsNested>;
-
-type CloudflareApiKeyEndpoint<
-	K extends keyof CloudflareApiKeyEndpointOutputs,
-> = CorsairEndpoint<
-	CloudflareApiKeyContext,
-	CloudflareApiKeyEndpointInputs[K],
-	CloudflareApiKeyEndpointOutputs[K]
+export type CloudflareApiKeyBoundEndpoints = BindEndpoints<
+	typeof cloudflareApiKeyEndpointsNested
 >;
 
+type CloudflareApiKeyEndpoint<K extends keyof CloudflareApiKeyEndpointOutputs> =
+	CorsairEndpoint<
+		CloudflareApiKeyContext,
+		CloudflareApiKeyEndpointInputs[K],
+		CloudflareApiKeyEndpointOutputs[K]
+	>;
+
 export type CloudflareApiKeyEndpoints = {
-	zonesList: CloudflareApiKeyEndpoint<'zonesList'>; zonesGet: CloudflareApiKeyEndpoint<'zonesGet'>; zonesCreate: CloudflareApiKeyEndpoint<'zonesCreate'>; zonesEdit: CloudflareApiKeyEndpoint<'zonesEdit'>; zonesDelete: CloudflareApiKeyEndpoint<'zonesDelete'>;
-	dnsList: CloudflareApiKeyEndpoint<'dnsList'>; dnsGet: CloudflareApiKeyEndpoint<'dnsGet'>; dnsCreate: CloudflareApiKeyEndpoint<'dnsCreate'>; dnsEdit: CloudflareApiKeyEndpoint<'dnsEdit'>; dnsDelete: CloudflareApiKeyEndpoint<'dnsDelete'>;
-	workersList: CloudflareApiKeyEndpoint<'workersList'>; workersGet: CloudflareApiKeyEndpoint<'workersGet'>; workersUpload: CloudflareApiKeyEndpoint<'workersUpload'>; workersDelete: CloudflareApiKeyEndpoint<'workersDelete'>;
-	workerRoutesList: CloudflareApiKeyEndpoint<'workerRoutesList'>; workerRoutesGet: CloudflareApiKeyEndpoint<'workerRoutesGet'>; workerRoutesCreate: CloudflareApiKeyEndpoint<'workerRoutesCreate'>; workerRoutesEdit: CloudflareApiKeyEndpoint<'workerRoutesEdit'>; workerRoutesDelete: CloudflareApiKeyEndpoint<'workerRoutesDelete'>;
-	rulesetsList: CloudflareApiKeyEndpoint<'rulesetsList'>; rulesetsGet: CloudflareApiKeyEndpoint<'rulesetsGet'>; rulesetsCreate: CloudflareApiKeyEndpoint<'rulesetsCreate'>; rulesetsUpdate: CloudflareApiKeyEndpoint<'rulesetsUpdate'>; rulesetsDelete: CloudflareApiKeyEndpoint<'rulesetsDelete'>;
+	[K in keyof CloudflareApiKeyEndpointOutputs]: CloudflareApiKeyEndpoint<K>;
 };
-
-type CloudflareApiKeyWebhook<
-	K extends keyof CloudflareApiKeyWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<CloudflareApiKeyContext, TEvent, CloudflareApiKeyWebhookOutputs[K]>;
-
-export type CloudflareApiKeyWebhooks = {
-	example: CloudflareApiKeyWebhook<'example', ExampleEvent>;
-};
-
-export type CloudflareApiKeyBoundWebhooks = BindWebhooks<CloudflareApiKeyWebhooks>;
 
 const cloudflareApiKeyEndpointsNested = {
 	zones: ZonesEndpoints,
 	dns: DNSEndpoints,
-	workers: { scripts: WorkersEndpoints, routes: WorkerRoutesEndpoints },
+	dnssec: DnssecEndpoints,
+	lockdowns: LockdownsEndpoints,
 	rulesets: RulesetsEndpoints,
-} as const;
-
-const cloudflareApiKeyWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
+	cache: CacheEndpoints,
+	ips: IpsEndpoints,
+	s3: S3Endpoints,
 } as const;
 
 export const cloudflareApiKeyEndpointSchemas = {
-	'zones.list': { input: CloudflareApiKeyEndpointInputSchemas.zonesList, output: CloudflareApiKeyEndpointOutputSchemas.zonesList },
-	'zones.get': { input: CloudflareApiKeyEndpointInputSchemas.zonesGet, output: CloudflareApiKeyEndpointOutputSchemas.zonesGet },
-	'zones.create': { input: CloudflareApiKeyEndpointInputSchemas.zonesCreate, output: CloudflareApiKeyEndpointOutputSchemas.zonesCreate },
-	'zones.edit': { input: CloudflareApiKeyEndpointInputSchemas.zonesEdit, output: CloudflareApiKeyEndpointOutputSchemas.zonesEdit },
-	'zones.delete': { input: CloudflareApiKeyEndpointInputSchemas.zonesDelete, output: CloudflareApiKeyEndpointOutputSchemas.zonesDelete },
-	'dns.list': { input: CloudflareApiKeyEndpointInputSchemas.dnsList, output: CloudflareApiKeyEndpointOutputSchemas.dnsList },
-	'dns.get': { input: CloudflareApiKeyEndpointInputSchemas.dnsGet, output: CloudflareApiKeyEndpointOutputSchemas.dnsGet },
-	'dns.create': { input: CloudflareApiKeyEndpointInputSchemas.dnsCreate, output: CloudflareApiKeyEndpointOutputSchemas.dnsCreate },
-	'dns.edit': { input: CloudflareApiKeyEndpointInputSchemas.dnsEdit, output: CloudflareApiKeyEndpointOutputSchemas.dnsEdit },
-	'dns.delete': { input: CloudflareApiKeyEndpointInputSchemas.dnsDelete, output: CloudflareApiKeyEndpointOutputSchemas.dnsDelete },
-	'workers.scripts.list': { input: CloudflareApiKeyEndpointInputSchemas.workersList, output: CloudflareApiKeyEndpointOutputSchemas.workersList },
-	'workers.scripts.get': { input: CloudflareApiKeyEndpointInputSchemas.workersGet, output: CloudflareApiKeyEndpointOutputSchemas.workersGet },
-	'workers.scripts.upload': { input: CloudflareApiKeyEndpointInputSchemas.workersUpload, output: CloudflareApiKeyEndpointOutputSchemas.workersUpload },
-	'workers.scripts.delete': { input: CloudflareApiKeyEndpointInputSchemas.workersDelete, output: CloudflareApiKeyEndpointOutputSchemas.workersDelete },
-	'workers.routes.list': { input: CloudflareApiKeyEndpointInputSchemas.workerRoutesList, output: CloudflareApiKeyEndpointOutputSchemas.workerRoutesList },
-	'workers.routes.get': { input: CloudflareApiKeyEndpointInputSchemas.workerRoutesGet, output: CloudflareApiKeyEndpointOutputSchemas.workerRoutesGet },
-	'workers.routes.create': { input: CloudflareApiKeyEndpointInputSchemas.workerRoutesCreate, output: CloudflareApiKeyEndpointOutputSchemas.workerRoutesCreate },
-	'workers.routes.edit': { input: CloudflareApiKeyEndpointInputSchemas.workerRoutesEdit, output: CloudflareApiKeyEndpointOutputSchemas.workerRoutesEdit },
-	'workers.routes.delete': { input: CloudflareApiKeyEndpointInputSchemas.workerRoutesDelete, output: CloudflareApiKeyEndpointOutputSchemas.workerRoutesDelete },
-	'rulesets.list': { input: CloudflareApiKeyEndpointInputSchemas.rulesetsList, output: CloudflareApiKeyEndpointOutputSchemas.rulesetsList },
-	'rulesets.get': { input: CloudflareApiKeyEndpointInputSchemas.rulesetsGet, output: CloudflareApiKeyEndpointOutputSchemas.rulesetsGet },
-	'rulesets.create': { input: CloudflareApiKeyEndpointInputSchemas.rulesetsCreate, output: CloudflareApiKeyEndpointOutputSchemas.rulesetsCreate },
-	'rulesets.update': { input: CloudflareApiKeyEndpointInputSchemas.rulesetsUpdate, output: CloudflareApiKeyEndpointOutputSchemas.rulesetsUpdate },
-	'rulesets.delete': { input: CloudflareApiKeyEndpointInputSchemas.rulesetsDelete, output: CloudflareApiKeyEndpointOutputSchemas.rulesetsDelete },
-} as const satisfies RequiredPluginEndpointSchemas<typeof cloudflareApiKeyEndpointsNested>;
-
-const cloudflareApiKeyWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'zones.list': {
+		input: CloudflareApiKeyEndpointInputSchemas.zonesList,
+		output: CloudflareApiKeyEndpointOutputSchemas.zonesList,
 	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof cloudflareApiKeyWebhooksNested>;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
+	'zones.get': {
+		input: CloudflareApiKeyEndpointInputSchemas.zonesGet,
+		output: CloudflareApiKeyEndpointOutputSchemas.zonesGet,
+	},
+	'zones.update': {
+		input: CloudflareApiKeyEndpointInputSchemas.zonesUpdate,
+		output: CloudflareApiKeyEndpointOutputSchemas.zonesUpdate,
+	},
+	'zones.delete': {
+		input: CloudflareApiKeyEndpointInputSchemas.zonesDelete,
+		output: CloudflareApiKeyEndpointOutputSchemas.zonesDelete,
+	},
+	'zones.rerunActivationCheck': {
+		input: CloudflareApiKeyEndpointInputSchemas.zonesRerunActivationCheck,
+		output: CloudflareApiKeyEndpointOutputSchemas.zonesRerunActivationCheck,
+	},
+	'dns.list': {
+		input: CloudflareApiKeyEndpointInputSchemas.dnsList,
+		output: CloudflareApiKeyEndpointOutputSchemas.dnsList,
+	},
+	'dns.create': {
+		input: CloudflareApiKeyEndpointInputSchemas.dnsCreate,
+		output: CloudflareApiKeyEndpointOutputSchemas.dnsCreate,
+	},
+	'dns.overwrite': {
+		input: CloudflareApiKeyEndpointInputSchemas.dnsOverwrite,
+		output: CloudflareApiKeyEndpointOutputSchemas.dnsOverwrite,
+	},
+	'dns.delete': {
+		input: CloudflareApiKeyEndpointInputSchemas.dnsDelete,
+		output: CloudflareApiKeyEndpointOutputSchemas.dnsDelete,
+	},
+	'dnssec.update': {
+		input: CloudflareApiKeyEndpointInputSchemas.dnssecUpdate,
+		output: CloudflareApiKeyEndpointOutputSchemas.dnssecUpdate,
+	},
+	'dnssec.delete': {
+		input: CloudflareApiKeyEndpointInputSchemas.dnssecDelete,
+		output: CloudflareApiKeyEndpointOutputSchemas.dnssecDelete,
+	},
+	'lockdowns.create': {
+		input: CloudflareApiKeyEndpointInputSchemas.lockdownsCreate,
+		output: CloudflareApiKeyEndpointOutputSchemas.lockdownsCreate,
+	},
+	'lockdowns.get': {
+		input: CloudflareApiKeyEndpointInputSchemas.lockdownsGet,
+		output: CloudflareApiKeyEndpointOutputSchemas.lockdownsGet,
+	},
+	'lockdowns.update': {
+		input: CloudflareApiKeyEndpointInputSchemas.lockdownsUpdate,
+		output: CloudflareApiKeyEndpointOutputSchemas.lockdownsUpdate,
+	},
+	'rulesets.get': {
+		input: CloudflareApiKeyEndpointInputSchemas.rulesetsGet,
+		output: CloudflareApiKeyEndpointOutputSchemas.rulesetsGet,
+	},
+	'rulesets.create': {
+		input: CloudflareApiKeyEndpointInputSchemas.rulesetsCreate,
+		output: CloudflareApiKeyEndpointOutputSchemas.rulesetsCreate,
+	},
+	'rulesets.update': {
+		input: CloudflareApiKeyEndpointInputSchemas.rulesetsUpdate,
+		output: CloudflareApiKeyEndpointOutputSchemas.rulesetsUpdate,
+	},
+	'rulesets.delete': {
+		input: CloudflareApiKeyEndpointInputSchemas.rulesetsDelete,
+		output: CloudflareApiKeyEndpointOutputSchemas.rulesetsDelete,
+	},
+	'rulesets.createRule': {
+		input: CloudflareApiKeyEndpointInputSchemas.rulesetsCreateRule,
+		output: CloudflareApiKeyEndpointOutputSchemas.rulesetsCreateRule,
+	},
+	'rulesets.updateRule': {
+		input: CloudflareApiKeyEndpointInputSchemas.rulesetsUpdateRule,
+		output: CloudflareApiKeyEndpointOutputSchemas.rulesetsUpdateRule,
+	},
+	'rulesets.deleteRule': {
+		input: CloudflareApiKeyEndpointInputSchemas.rulesetsDeleteRule,
+		output: CloudflareApiKeyEndpointOutputSchemas.rulesetsDeleteRule,
+	},
+	'rulesets.getEntrypointVersion': {
+		input: CloudflareApiKeyEndpointInputSchemas.rulesetsGetEntrypointVersion,
+		output: CloudflareApiKeyEndpointOutputSchemas.rulesetsGetEntrypointVersion,
+	},
+	'cache.getRegionalTieredCache': {
+		input: CloudflareApiKeyEndpointInputSchemas.cacheGetRegionalTieredCache,
+		output: CloudflareApiKeyEndpointOutputSchemas.cacheGetRegionalTieredCache,
+	},
+	'ips.get': {
+		input: CloudflareApiKeyEndpointInputSchemas.ipsGet,
+		output: CloudflareApiKeyEndpointOutputSchemas.ipsGet,
+	},
+	's3.upload': {
+		input: CloudflareApiKeyEndpointInputSchemas.s3Upload,
+		output: CloudflareApiKeyEndpointOutputSchemas.s3Upload,
+	},
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof cloudflareApiKeyEndpointsNested
+>;
 
 const cloudflareApiKeyEndpointMeta = {
-	'zones.list': { riskLevel: 'read', description: 'List zones' }, 'zones.get': { riskLevel: 'read', description: 'Get a zone' }, 'zones.create': { riskLevel: 'write', description: 'Create a zone' }, 'zones.edit': { riskLevel: 'write', description: 'Edit a zone' }, 'zones.delete': { riskLevel: 'write', description: 'Delete a zone' },
-	'dns.list': { riskLevel: 'read', description: 'List DNS records' }, 'dns.get': { riskLevel: 'read', description: 'Get a DNS record' }, 'dns.create': { riskLevel: 'write', description: 'Create a DNS record' }, 'dns.edit': { riskLevel: 'write', description: 'Edit a DNS record' }, 'dns.delete': { riskLevel: 'write', description: 'Delete a DNS record' },
-	'workers.scripts.list': { riskLevel: 'read', description: 'List Worker scripts' }, 'workers.scripts.get': { riskLevel: 'read', description: 'Get a Worker script' }, 'workers.scripts.upload': { riskLevel: 'write', description: 'Upload a Worker script' }, 'workers.scripts.delete': { riskLevel: 'write', description: 'Delete a Worker script' },
-	'workers.routes.list': { riskLevel: 'read', description: 'List Worker routes' }, 'workers.routes.get': { riskLevel: 'read', description: 'Get a Worker route' }, 'workers.routes.create': { riskLevel: 'write', description: 'Create a Worker route' }, 'workers.routes.edit': { riskLevel: 'write', description: 'Edit a Worker route' }, 'workers.routes.delete': { riskLevel: 'write', description: 'Delete a Worker route' },
-	'rulesets.list': { riskLevel: 'read', description: 'List rulesets' }, 'rulesets.get': { riskLevel: 'read', description: 'Get a ruleset' }, 'rulesets.create': { riskLevel: 'write', description: 'Create a ruleset' }, 'rulesets.update': { riskLevel: 'write', description: 'Update a ruleset' }, 'rulesets.delete': { riskLevel: 'write', description: 'Delete a ruleset' },
-} as const satisfies RequiredPluginEndpointMeta<typeof cloudflareApiKeyEndpointsNested>;
+	'zones.list': {
+		riskLevel: 'read',
+		description: 'List, search, sort, and filter Cloudflare zones',
+	},
+	'zones.get': {
+		riskLevel: 'read',
+		description: 'Get details for a specific zone',
+	},
+	'zones.update': {
+		riskLevel: 'write',
+		description:
+			'Edit a Cloudflare zone (one of paused, type, or vanity_name_servers)',
+	},
+	'zones.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete an existing zone [DESTRUCTIVE]',
+	},
+	'zones.rerunActivationCheck': {
+		riskLevel: 'write',
+		description: 'Trigger a new activation check for a pending zone',
+	},
+	'dns.list': {
+		riskLevel: 'read',
+		description: 'List, search, sort, and filter DNS records for a zone',
+	},
+	'dns.create': {
+		riskLevel: 'write',
+		description: 'Create a DNS record in a zone',
+	},
+	'dns.overwrite': {
+		riskLevel: 'write',
+		description: 'Completely overwrite a DNS record',
+	},
+	'dns.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a DNS record [DESTRUCTIVE]',
+	},
+	'dnssec.update': {
+		riskLevel: 'write',
+		description: 'Enable or disable DNSSEC for a zone',
+	},
+	'dnssec.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete DNSSEC configuration for a zone [DESTRUCTIVE]',
+	},
+	'lockdowns.create': {
+		riskLevel: 'write',
+		description: 'Create a Zone Lockdown rule',
+	},
+	'lockdowns.get': {
+		riskLevel: 'read',
+		description: 'Get a Zone Lockdown rule by ID',
+	},
+	'lockdowns.update': {
+		riskLevel: 'write',
+		description: 'Update a Zone Lockdown rule',
+	},
+	'rulesets.get': {
+		riskLevel: 'read',
+		description: 'Fetch the latest version of a ruleset by ID',
+	},
+	'rulesets.create': {
+		riskLevel: 'write',
+		description: 'Create a ruleset at account or zone scope',
+	},
+	'rulesets.update': {
+		riskLevel: 'write',
+		description: 'Update a ruleset (include every rule you want to keep)',
+	},
+	'rulesets.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete all versions of a ruleset [DESTRUCTIVE]',
+	},
+	'rulesets.createRule': {
+		riskLevel: 'write',
+		description: 'Add a rule to an existing ruleset',
+	},
+	'rulesets.updateRule': {
+		riskLevel: 'write',
+		description: 'Update a specific rule in a ruleset',
+	},
+	'rulesets.deleteRule': {
+		riskLevel: 'destructive',
+		description: 'Delete a rule from a ruleset [DESTRUCTIVE]',
+	},
+	'rulesets.getEntrypointVersion': {
+		riskLevel: 'read',
+		description: 'Get a historical entrypoint ruleset version',
+	},
+	'cache.getRegionalTieredCache': {
+		riskLevel: 'read',
+		description: 'Get the regional tiered cache setting for a zone',
+	},
+	'ips.get': {
+		riskLevel: 'read',
+		description: 'Retrieve Cloudflare or JD Cloud IP CIDR blocks',
+	},
+	's3.upload': {
+		riskLevel: 'write',
+		description:
+			'Upload file content to an R2 bucket (S3-compatible object storage)',
+	},
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof cloudflareApiKeyEndpointsNested
+>;
+
+const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const cloudflareApiKeyAuthConfig = {
 	api_key: {
 		account: ['account_id'] as const,
 	},
-	oauth_2: {
-		account: ['account_id'] as const,
-	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseCloudflareApiKeyPlugin<T extends CloudflareApiKeyPluginOptions> = CorsairPlugin<
+export type BaseCloudflareApiKeyPlugin<
+	T extends CloudflareApiKeyPluginOptions,
+> = CorsairPlugin<
 	'cloudflareapikey',
 	typeof CloudflareApiKeySchema,
 	typeof cloudflareApiKeyEndpointsNested,
-	typeof cloudflareApiKeyWebhooksNested,
+	{},
 	T,
 	typeof defaultAuthType
 >;
 
-export type InternalCloudflareApiKeyPlugin = BaseCloudflareApiKeyPlugin<CloudflareApiKeyPluginOptions>;
+export type InternalCloudflareApiKeyPlugin =
+	BaseCloudflareApiKeyPlugin<CloudflareApiKeyPluginOptions>;
 
-export type ExternalCloudflareApiKeyPlugin<T extends CloudflareApiKeyPluginOptions> =
-	BaseCloudflareApiKeyPlugin<T>;
+export type ExternalCloudflareApiKeyPlugin<
+	T extends CloudflareApiKeyPluginOptions,
+> = BaseCloudflareApiKeyPlugin<T>;
 
 export function cloudflareapikey<const T extends CloudflareApiKeyPluginOptions>(
-	incomingOptions: CloudflareApiKeyPluginOptions & T = {} as CloudflareApiKeyPluginOptions & T,
+	incomingOptions: CloudflareApiKeyPluginOptions &
+		T = {} as CloudflareApiKeyPluginOptions & T,
 ): ExternalCloudflareApiKeyPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -167,34 +325,19 @@ export function cloudflareapikey<const T extends CloudflareApiKeyPluginOptions>(
 		id: 'cloudflareapikey',
 		authConfig: cloudflareApiKeyAuthConfig,
 		schema: CloudflareApiKeySchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: cloudflareApiKeyEndpointsNested,
-		webhooks: cloudflareApiKeyWebhooksNested,
+		webhooks: {},
 		endpointMeta: cloudflareApiKeyEndpointMeta,
 		endpointSchemas: cloudflareApiKeyEndpointSchemas,
-		webhookSchemas: cloudflareApiKeyWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'cf-webhook-auth' in headers || 'webhook-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchCloudflareApiKeyTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveCloudflareApiKeyOAuthWebhookTenantLink,
+		pluginWebhookMatcher: () => false,
+		pluginTenantWebhookMatcher: () => null,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CloudflareApiKeyKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -204,20 +347,10 @@ export function cloudflareapikey<const T extends CloudflareApiKeyPluginOptions>(
 				return res ?? '';
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
 			return '';
 		},
 	} satisfies InternalCloudflareApiKeyPlugin;
 }
-
-export type {
-	ExampleEvent,
-	CloudflareApiKeyWebhookOutputs,
-} from './webhooks/types';
 
 export type {
 	CloudflareApiKeyEndpointInputs,
