@@ -121,9 +121,11 @@ export const GladiaEndpoints: GladiaEndpointTypes = {
 			ctx,
 			'gladia.live.deleteSession',
 			input,
-			makeGladiaRequest('/v2/live/' + encodeURIComponent(parsed.id), ctx.key, {
-				method: 'DELETE',
-			}),
+			makeGladiaRequest<GladiaEndpointOutputs['deleteLiveSession']>(
+				'/v2/live/' + encodeURIComponent(parsed.id),
+				ctx.key,
+				{ method: 'DELETE' },
+			).then((response) => parseOutput('deleteLiveSession', response)),
 		);
 	},
 	initiatePreRecordedTranscription: (ctx, input) => {
@@ -170,11 +172,11 @@ export const GladiaEndpoints: GladiaEndpointTypes = {
 			ctx,
 			'gladia.preRecorded.deleteJob',
 			input,
-			makeGladiaRequest(
+			makeGladiaRequest<GladiaEndpointOutputs['deletePreRecordedJob']>(
 				'/v2/pre-recorded/' + encodeURIComponent(parsed.id),
 				ctx.key,
 				{ method: 'DELETE' },
-			),
+			).then((response) => parseOutput('deletePreRecordedJob', response)),
 		);
 	},
 };

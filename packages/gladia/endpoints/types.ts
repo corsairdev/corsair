@@ -100,7 +100,6 @@ const LiveInputSchema = z
 	.refine(
 		(value) =>
 			(value.encoding !== 'wav/alaw' && value.encoding !== 'wav/ulaw') ||
-			value.bit_depth === undefined ||
 			value.bit_depth === 8,
 		{
 			message: 'wav/alaw and wav/ulaw encodings require 8-bit audio',
@@ -147,6 +146,12 @@ const PreRecordedInitResponseSchema = z.object({
 	result_url: z.string().url(),
 });
 
+const DeleteAcknowledgementSchema = z
+	.object({
+		message: z.string(),
+	})
+	.strict();
+
 export type GladiaUploadAudioVideoFileInput = z.infer<typeof UploadInputSchema>;
 export type GladiaUploadAudioVideoFileResponse = z.infer<
 	typeof UploadResponseSchema
@@ -180,7 +185,13 @@ export type GladiaListPreRecordedJobsInput = z.infer<typeof ListInputSchema>;
 export type GladiaListPreRecordedJobsResponse = z.infer<typeof JobListSchema>;
 export type GladiaGetPreRecordedJobInput = z.infer<typeof IdInputSchema>;
 export type GladiaGetPreRecordedJobResponse = z.infer<typeof JobSchema>;
+export type GladiaDeleteLiveSessionResponse = z.infer<
+	typeof DeleteAcknowledgementSchema
+>;
 export type GladiaDeletePreRecordedJobInput = z.infer<typeof IdInputSchema>;
+export type GladiaDeletePreRecordedJobResponse = z.infer<
+	typeof DeleteAcknowledgementSchema
+>;
 
 export type GladiaEndpointInputs = {
 	uploadAudioVideoFile: GladiaUploadAudioVideoFileInput;
@@ -199,13 +210,11 @@ export type GladiaEndpointOutputs = {
 	initiateLiveTranscriptionSession: GladiaInitiateLiveTranscriptionSessionResponse;
 	listLiveTranscriptionJobs: GladiaListLiveTranscriptionJobsResponse;
 	getLiveTranscriptionResult: GladiaGetLiveTranscriptionResultResponse;
-	// unknown is necessary because Gladia deletes return 204 with no body; a closed response type is infeasible because there is no payload to model
-	deleteLiveSession: unknown;
+	deleteLiveSession: GladiaDeleteLiveSessionResponse;
 	initiatePreRecordedTranscription: GladiaInitiatePreRecordedTranscriptionResponse;
 	listPreRecordedJobs: GladiaListPreRecordedJobsResponse;
 	getPreRecordedJob: GladiaGetPreRecordedJobResponse;
-	// unknown is necessary because Gladia deletes return 204 with no body; a closed response type is infeasible because there is no payload to model
-	deletePreRecordedJob: unknown;
+	deletePreRecordedJob: GladiaDeletePreRecordedJobResponse;
 };
 
 export const GladiaEndpointInputSchemas = {
@@ -225,11 +234,9 @@ export const GladiaEndpointOutputSchemas = {
 	initiateLiveTranscriptionSession: LiveResponseSchema,
 	listLiveTranscriptionJobs: JobListSchema,
 	getLiveTranscriptionResult: JobSchema,
-	// unknown is necessary because Gladia deletes return 204 with no body; a closed response type is infeasible because there is no payload to model
-	deleteLiveSession: z.unknown(),
+	deleteLiveSession: DeleteAcknowledgementSchema,
 	initiatePreRecordedTranscription: PreRecordedInitResponseSchema,
 	listPreRecordedJobs: JobListSchema,
 	getPreRecordedJob: JobSchema,
-	// unknown is necessary because Gladia deletes return 204 with no body; a closed response type is infeasible because there is no payload to model
-	deletePreRecordedJob: z.unknown(),
+	deletePreRecordedJob: DeleteAcknowledgementSchema,
 } as const;

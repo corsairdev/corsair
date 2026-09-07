@@ -88,6 +88,13 @@ describe('Gladia live input bounds', () => {
 			live!.safeParse({ encoding: 'wav/pcm', bit_depth: 16 }).success,
 		).toBe(true);
 	});
+
+	it('rejects alaw and ulaw when bit_depth is omitted', () => {
+		expect(live!.safeParse({ encoding: 'wav/alaw' }).success).toBe(false);
+		expect(live!.safeParse({ encoding: 'wav/ulaw' }).success).toBe(false);
+		expect(live!.safeParse({ encoding: 'wav/pcm' }).success).toBe(true);
+		expect(live!.safeParse({}).success).toBe(true);
+	});
 });
 
 describe('Gladia HTTP client and endpoints', () => {
@@ -211,7 +218,9 @@ describe('Gladia HTTP client and endpoints', () => {
 	});
 
 	it('maps delete operations to the documented routes', async () => {
-		mockRequest.mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue({
+			message: 'The pre recorded job has been successfully deleted',
+		});
 		await gladia({ key: 'test-api-key' }).endpoints!.live.deleteSession(
 			mockCtx,
 			{ id: 'live-1' },
@@ -228,6 +237,16 @@ describe('Gladia HTTP client and endpoints', () => {
 				url: '/v2/pre-recorded/pre-1',
 			}),
 		]);
+	});
+
+	it('rejects delete responses that are not acknowledgement objects', async () => {
+		mockRequest.mockResolvedValueOnce({ unexpected: true });
+		await expect(async () => {
+			await gladia({ key: 'test-api-key' }).endpoints!.preRecorded.deleteJob(
+				mockCtx,
+				{ id: 'pre-1' },
+			);
+		}).rejects.toThrow(/output validation failed/);
 	});
 
 	it('wraps transport failures with the provider error type', async () => {
