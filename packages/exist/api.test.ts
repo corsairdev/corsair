@@ -144,7 +144,7 @@ beforeEach(() => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('exist plugin shape', () => {
-	it('registers the twelve Exist API operations and no triggers', () => {
+	it('registers the thirteen Exist operations and no triggers', () => {
 		const plugin = exist();
 		expect(plugin.id).toBe('exist');
 		expect(plugin.options?.authType).toBe('oauth_2');
@@ -163,6 +163,7 @@ describe('exist plugin shape', () => {
 			'averages.list',
 			'correlations.list',
 			'insights.list',
+			'oauth.authorize',
 			'users.getProfile',
 		]);
 	});
@@ -821,6 +822,131 @@ describe('attributes.update', () => {
 			ExistEndpointInputSchemas.attributesUpdate.safeParse({ attributes: [] })
 				.success,
 		).toBe(false);
+	});
+});
+
+describe('oauth.authorize', () => {
+	function oauthCtx(
+		credentials: Record<string, string | null>,
+		options: Record<string, unknown> = {},
+	) {
+		return {
+			key: ACCESS_TOKEN,
+			authType: 'oauth_2' as const,
+			options,
+			db: {},
+			tenantId: 'default',
+			$getAccountId: async () => 'acct',
+			keys: { get_integration_credentials: async () => credentials },
+		} as unknown as ExistContext;
+	}
+
+	const validCreds = {
+		client_id: 'exist-client-id',
+		client_secret: 'exist-client-secret',
+		redirect_url: 'https://app.example.com/callback',
+	};
+
+	it('builds the documented authorisation URL without calling the API', async () => {
+		const result = await endpoints().oauth.authorize(
+			oauthCtx(validCreds, { scopes: ['mood_read', 'mood_write'] }),
+			{},
+		);
+
+		// This operation must never issue an HTTP request.
+		expect(mockRequest).not.toHaveBeenCalled();
+
+		const url = new URL(result.url);
+		expect(`${url.origin}${url.pathname}`).toBe(
+			'https://exist.io/oauth2/authorize',
+		);
+		expect(url.searchParams.get('response_type')).toBe('code');
+		expect(url.searchParams.get('client_id')).toBe('exist-client-id');
+		expect(url.searchParams.get('redirect_uri')).toBe(
+			'https://app.example.com/callback',
+		);
+		// Exist documents a space-separated scope list.
+		expect(url.searchParams.get('scope')).toBe('mood_read mood_write');
+		expect(result.scopes).toEqual(['mood_read', 'mood_write']);
+	});
+
+	it('never puts the client secret in the URL', async () => {
+		const result = await endpoints().oauth.authorize(oauthCtx(validCreds), {
+			scopes: ['mood_read'],
+		});
+		expect(result.url).not.toContain('exist-client-secret');
+		expect(result.url).not.toContain('client_secret');
+	});
+
+	it('emits an unguessable, per-call state for CSRF protection', async () => {
+		const ctx = oauthCtx(validCreds);
+		const first = await endpoints().oauth.authorize(ctx, {
+			scopes: ['mood_read'],
+		});
+		const second = await endpoints().oauth.authorize(ctx, {
+			scopes: ['mood_read'],
+		});
+
+		expect(first.state).not.toBe(second.state);
+		expect(first.state.length).toBeGreaterThanOrEqual(16);
+		// The state in the URL is the one handed back to the caller to compare.
+		expect(new URL(first.url).searchParams.get('state')).toBe(first.state);
+	});
+
+	it('falls back to the scopes the plugin was configured with', async () => {
+		const result = await endpoints().oauth.authorize(
+			oauthCtx(validCreds, { scopes: ['sleep_read'] }),
+			{},
+		);
+		expect(new URL(result.url).searchParams.get('scope')).toBe('sleep_read');
+	});
+
+	it('rejects a non-HTTPS redirect, which Exist will not accept', async () => {
+		await expect(
+			endpoints().oauth.authorize(
+				oauthCtx({ ...validCreds, redirect_url: 'http://localhost:3000/cb' }),
+				{ scopes: ['mood_read'] },
+			),
+		).rejects.toThrow(/HTTPS/i);
+	});
+
+	it('reports missing client credentials clearly', async () => {
+		await expect(
+			endpoints().oauth.authorize(
+				oauthCtx({ ...validCreds, client_id: null }),
+				{ scopes: ['mood_read'] },
+			),
+		).rejects.toThrow(/client_id/);
+
+		await expect(
+			endpoints().oauth.authorize(
+				oauthCtx({ ...validCreds, redirect_url: null }),
+				{ scopes: ['mood_read'] },
+			),
+		).rejects.toThrow(/redirect_url/);
+	});
+
+	it('requires at least one scope', async () => {
+		await expect(
+			endpoints().oauth.authorize(oauthCtx(validCreds, {}), {}),
+		).rejects.toThrow(/scope/i);
+		// An explicitly empty scope array is a schema violation.
+		expect(
+			ExistEndpointInputSchemas.oauthAuthorize.safeParse({ scopes: [] })
+				.success,
+		).toBe(false);
+	});
+
+	it('logs only the scope count, not the client id or redirect target', async () => {
+		await endpoints().oauth.authorize(oauthCtx(validCreds), {
+			scopes: ['mood_read', 'sleep_read'],
+		});
+
+		const payload = mockLog.mock.calls[0]?.[2] as Record<string, unknown>;
+		expect(payload).toEqual({ scopeCount: 2 });
+		const serialized = JSON.stringify(payload);
+		expect(serialized).not.toContain('exist-client-id');
+		expect(serialized).not.toContain('app.example.com');
 	});
 });
 

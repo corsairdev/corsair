@@ -18,6 +18,7 @@ import {
 	Averages,
 	Correlations,
 	Insights,
+	Oauth,
 	Users,
 } from './endpoints';
 import type {
@@ -167,6 +168,9 @@ const existEndpointsNested = {
 	insights: {
 		list: Insights.list,
 	},
+	oauth: {
+		authorize: Oauth.authorize,
+	},
 } as const;
 
 export type ExistBoundEndpoints = BindEndpoints<typeof existEndpointsNested>;
@@ -192,6 +196,7 @@ export const existEndpointSchemas = {
 	'averages.list': schema('averagesList'),
 	'correlations.list': schema('correlationsList'),
 	'insights.list': schema('insightsList'),
+	'oauth.authorize': schema('oauthAuthorize'),
 } as const satisfies RequiredPluginEndpointSchemas<typeof existEndpointsNested>;
 
 const defaultAuthType = 'oauth_2' as const;
@@ -249,6 +254,11 @@ const existEndpointMeta = {
 	'insights.list': {
 		riskLevel: 'read',
 		description: "List insights Exist generated about the user's data",
+	},
+	'oauth.authorize': {
+		riskLevel: 'read',
+		description:
+			'Build the Exist OAuth2 authorisation URL a user visits to grant access, with a CSRF state value; makes no API call',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof existEndpointsNested>;
 
@@ -354,6 +364,8 @@ export type {
 	ExistEndpointOutputs,
 	InsightsListInput,
 	InsightsListResponse,
+	OauthAuthorizeInput,
+	OauthAuthorizeResponse,
 	UsersGetProfileInput,
 	UsersGetProfileResponse,
 } from './endpoints/types';

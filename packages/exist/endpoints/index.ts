@@ -11,6 +11,7 @@ import {
 import { list as averagesList } from './averages';
 import { list as correlationsList } from './correlations';
 import { list as insightsList } from './insights';
+import { authorize } from './oauth';
 import { getProfile } from './users';
 
 export const Attributes = {
@@ -34,6 +35,10 @@ export const Correlations = {
 
 export const Insights = {
 	list: insightsList,
+};
+
+export const Oauth = {
+	authorize,
 };
 
 export const Users = {

@@ -532,6 +532,36 @@ const InsightsListResponseSchema = paged(ExistInsightSchema);
 export type InsightsListResponse = z.infer<typeof InsightsListResponseSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
+// oauth.authorize — builds https://exist.io/oauth2/authorize (no API call)
+// @see https://developer.exist.io/reference/authentication/oauth2/
+// ─────────────────────────────────────────────────────────────────────────────
+
+const OauthAuthorizeInputSchema = z.object({
+	/**
+	 * Scopes to request. Defaults to the scopes the plugin was configured with.
+	 * Exist only exposes attributes matching the granted scopes, so request the
+	 * narrowest set the integration needs.
+	 */
+	scopes: z.array(z.string()).min(1).optional(),
+});
+export type OauthAuthorizeInput = z.infer<typeof OauthAuthorizeInputSchema>;
+
+const OauthAuthorizeResponseSchema = z.object({
+	/** The authorisation URL to send the user to. */
+	url: z.string(),
+	/**
+	 * Unguessable CSRF value embedded as the `state` parameter. Store it and
+	 * compare it against the `state` Exist returns to the redirect URI.
+	 */
+	state: z.string(),
+	/** The scopes actually requested in the URL. */
+	scopes: z.array(z.string()),
+});
+export type OauthAuthorizeResponse = z.infer<
+	typeof OauthAuthorizeResponseSchema
+>;
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Aggregates
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -545,6 +575,7 @@ export type ExistEndpointInputs = {
 	attributesRelease: AttributesReleaseInput;
 	attributesIncrement: AttributesIncrementInput;
 	attributesUpdate: AttributesUpdateInput;
+	oauthAuthorize: OauthAuthorizeInput;
 	averagesList: AveragesListInput;
 	correlationsList: CorrelationsListInput;
 	insightsList: InsightsListInput;
@@ -560,6 +591,7 @@ export type ExistEndpointOutputs = {
 	attributesRelease: AttributesReleaseResponse;
 	attributesIncrement: AttributesIncrementResponse;
 	attributesUpdate: AttributesUpdateResponse;
+	oauthAuthorize: OauthAuthorizeResponse;
 	averagesList: AveragesListResponse;
 	correlationsList: CorrelationsListResponse;
 	insightsList: InsightsListResponse;
@@ -575,6 +607,7 @@ export const ExistEndpointInputSchemas = {
 	attributesRelease: AttributesReleaseInputSchema,
 	attributesIncrement: AttributesIncrementInputSchema,
 	attributesUpdate: AttributesUpdateInputSchema,
+	oauthAuthorize: OauthAuthorizeInputSchema,
 	averagesList: AveragesListInputSchema,
 	correlationsList: CorrelationsListInputSchema,
 	insightsList: InsightsListInputSchema,
@@ -590,6 +623,7 @@ export const ExistEndpointOutputSchemas = {
 	attributesRelease: AttributesReleaseResponseSchema,
 	attributesIncrement: AttributesIncrementResponseSchema,
 	attributesUpdate: AttributesUpdateResponseSchema,
+	oauthAuthorize: OauthAuthorizeResponseSchema,
 	averagesList: AveragesListResponseSchema,
 	correlationsList: CorrelationsListResponseSchema,
 	insightsList: InsightsListResponseSchema,
