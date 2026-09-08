@@ -29,7 +29,12 @@ type SubscribeCtx = {
  */
 export async function msGraphSubscribe(
 	ctx: SubscribeCtx,
-	input: { webhookUrl: string; resource: string; changeType: string },
+	input: {
+		webhookUrl: string;
+		resource: string;
+		changeType: string;
+		clientState?: string;
+	},
 ): Promise<CorsairPluginSubscribeResult | null> {
 	const accessToken = await ctx.keys.get_access_token();
 	if (!accessToken) return null;
@@ -65,7 +70,10 @@ export async function msGraphSubscribe(
 		// cleanup is best-effort — never block arming the new subscription
 	}
 
-	const clientState = randomUUID();
+	// Prefer Hub's shared endpoint clientState (all tenants' subs must share it so
+	// verifyMsGraph accepts every notification); fall back to a random one only if
+	// Hub didn't supply it (pre-fix Hub / non-managed).
+	const clientState = input.clientState ?? randomUUID();
 	const expirationDateTime = new Date(
 		Date.now() + EXPIRATION_MINUTES * 60_000,
 	).toISOString();

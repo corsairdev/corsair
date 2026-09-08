@@ -6,7 +6,7 @@ import type { TeamsWebhooks } from '../index';
 import {
 	createTeamsNotificationMatch,
 	extractODataId,
-	verifyTeamsClientState,
+	verifyTeamsWebhook,
 } from './types';
 
 export const chatMessage: TeamsWebhooks['chatMessage'] = {
@@ -16,7 +16,7 @@ export const chatMessage: TeamsWebhooks['chatMessage'] = {
 	),
 
 	handler: async (ctx, request) => {
-		const { valid, error } = verifyTeamsClientState(request.payload, ctx.key);
+		const { valid, error } = verifyTeamsWebhook(request, ctx.key);
 		if (!valid) {
 			return {
 				success: false,
