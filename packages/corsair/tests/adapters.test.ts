@@ -4,13 +4,7 @@ import { CORSAIR_INTERNAL } from '../core';
 import type { CorsairPlugin } from '../core/plugins';
 import type { AnyCorsairInstance, FormFieldSchema } from '../inspect';
 
-// A fake Corsair instance: inspect helpers only read `internal.plugins` off the
-// CORSAIR_INTERNAL symbol, and invocation walks `instance[id].api.<path>`. So a
-// plain object with both wired up exercises the real discovery/schema/invoke
-// path with no database or network.
-// Stub operations receive args the tool's own Zod schema has already validated;
-// their shape is arbitrary per operation, so Record<string, unknown> is the
-// honest boundary type (and the return is likewise opaque `unknown`).
+// Offline fake instance — no DB or network.
 function makeInstance(overrides?: {
 	listStub?: (args: Record<string, unknown>) => unknown;
 	withTenant?: (id: string) => AnyCorsairInstance;

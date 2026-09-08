@@ -2,9 +2,7 @@ import assert from 'node:assert/strict';
 import { z } from 'zod';
 import { corsairTools } from './index.js';
 
-// Offline fake Corsair instance: inspect helpers read `internal.plugins` off the
-// global CORSAIR_INTERNAL symbol, and invocation walks `instance[id].api.<path>`.
-// (Mirrors packages/corsair/tests/adapters.test.ts — no database or network.)
+// Offline fake instance — no DB or network (mirrors tests/adapters.test.ts).
 const CORSAIR_INTERNAL = Symbol.for('corsair:internal');
 // Recorded tool args: already validated by each tool's Zod schema, shape is
 // arbitrary per operation, so Record<string, unknown> is the honest type here.
@@ -50,5 +48,9 @@ assert.equal(list.metadata.description, 'List channels');
 const out = await list.call({ channel: 'C1' });
 assert.deepEqual(calls, [{ channel: 'C1' }]);
 assert.equal(out, JSON.stringify({ ok: true, args: { channel: 'C1' } }));
+
+// A bad arg is rejected by the schema before the operation runs.
+await assert.rejects(async () => list.call({} as never));
+assert.deepEqual(calls, [{ channel: 'C1' }]);
 
 console.log('ok: @corsair-dev/llamaindex');

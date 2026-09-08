@@ -3,12 +3,9 @@ import type { AnyCorsairInstance, FormFieldSchema } from './inspect';
 import { getInputSchema, getStructuredSchema, listOperations } from './inspect';
 
 /**
- * Converts the machine-readable schema from {@link getStructuredSchema} into a
- * Zod schema, so a Corsair operation can back a framework tool's input schema.
- * Applies the field's `description` and `optional` flag on top of its base type.
- *
- * Corsair is on Zod v4, and the current LangChain and LlamaIndex tool APIs both
- * accept a Zod v4 schema directly — no JSON Schema conversion needed.
+ * Converts a {@link getStructuredSchema} field into a Zod schema for a tool's
+ * input. LangChain and LlamaIndex both accept a Zod v4 schema directly, so no
+ * JSON Schema conversion is needed.
  */
 export function formFieldToZod(field: FormFieldSchema): z.ZodTypeAny {
 	let schema = baseType(field);
@@ -44,12 +41,7 @@ function baseType(field: FormFieldSchema): z.ZodTypeAny {
 	}
 }
 
-/**
- * A single Corsair operation shaped as a framework-agnostic tool: a Zod input
- * schema plus a bound `execute`. Every LLM-tool adapter (LangChain, LlamaIndex,
- * …) maps this onto its own tool primitive; the only per-framework difference is
- * the final wrap.
- */
+/** A Corsair operation as a framework-agnostic tool: a Zod input schema plus a bound `execute`. */
 export interface CorsairOperationTool {
 	/**
 	 * LLM-facing function name: the operation path with every character outside
@@ -108,8 +100,7 @@ export function buildCorsairTools(
 
 	return operations.map((operation) => {
 		const structured = getStructuredSchema(instance, operation);
-		// Prefer the raw Zod schema (preserves min/max, regex, refinements, etc.).
-		// Fall back to formFieldToZod only when the endpoint has no schema entry.
+		// raw schema preserves constraints; structured is the lossy fallback
 		const rawInput = getInputSchema(instance, operation);
 		const inputSchema =
 			rawInput ??
@@ -150,11 +141,8 @@ function scopeInstance(
 }
 
 /**
- * Invokes a Corsair operation by its dotted path (e.g. `slack.api.channels.list`),
- * preserving the `this` binding of the namespace that owns the method.
- * Both `instance` and the return type are `unknown` because the Corsair plugin
- * namespace is not statically typed at this call site — callers receive the result
- * through `CorsairOperationTool.execute` which documents the opaque shape.
+ * Invokes an operation by dotted path (e.g. `slack.api.channels.list`), bound to
+ * the namespace that owns the method.
  */
 async function invokeOperation(
 	instance: unknown,

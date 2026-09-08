@@ -1,10 +1,4 @@
-/**
- * `@corsair-dev/llamaindex` — Corsair tools for LlamaIndex.TS. Turns a Corsair
- * instance's API operations into LlamaIndex tools, backed by managed OAuth and
- * with credentials that stay in your own database.
- *
- * @packageDocumentation
- */
+/** @packageDocumentation */
 
 import type { BaseToolWithCall } from '@llamaindex/core/llms';
 import type { AnyCorsairInstance, BuildCorsairToolsOptions } from 'corsair';

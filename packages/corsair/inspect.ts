@@ -111,12 +111,9 @@ export function getStructuredSchema(
 }
 
 /**
- * Returns the raw Zod input schema for a given operation path, preserving all
- * validation constraints (min/max, regex, refinements, etc.) defined by the
- * endpoint. Prefer this over the lossy `getStructuredSchema` path whenever a
- * faithful schema is needed (e.g. LLM tool definitions).
- *
- * Returns `null` if the path is unknown or the endpoint has no input schema.
+ * Returns the raw Zod input schema for an operation path, preserving its
+ * validation constraints (min/max, regex, refinements). `null` if the path is
+ * not a known endpoint.
  */
 export function getInputSchema(
 	corsair: AnyCorsairInstance,

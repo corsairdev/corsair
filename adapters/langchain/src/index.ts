@@ -1,10 +1,4 @@
-/**
- * `@corsair-dev/langchain` — Corsair tools for LangChain.js / LangGraph. Turns a
- * Corsair instance's API operations into LangChain tools, backed by managed
- * OAuth and with credentials that stay in your own database.
- *
- * @packageDocumentation
- */
+/** @packageDocumentation */
 
 import type { DynamicStructuredTool } from '@langchain/core/tools';
 import type { AnyCorsairInstance, BuildCorsairToolsOptions } from 'corsair';
@@ -43,8 +37,7 @@ export async function corsairTools(
 	});
 	return buildCorsairTools(corsair, build).map((op) =>
 		tool(
-			// args: LangChain validates against op.schema before this callback;
-			// Record<string,unknown> is as narrow as possible given ZodTypeAny.
+			// LangChain validates against op.schema before calling; arg shape is arbitrary here
 			async (args: Record<string, unknown>) =>
 				toContent(await op.execute(args)),
 			{
