@@ -127,7 +127,7 @@ const RemoveDocumentAuthenticationInputSchema = z.object({
 
 const ListDocumentsInputSchema = z.object({
 	page: z.number().int().positive(),
-	pageSize: z.number().int().positive().optional(),
+	pageSize: z.number().int().positive().max(100).optional(),
 	startDate: z.string().optional(),
 	endDate: z.string().optional(),
 	status: z.array(z.string()).optional(),
@@ -144,7 +144,7 @@ const ListDocumentsInputSchema = z.object({
 const ListBehalfDocumentsInputSchema = z.object({
 	page: z.number().int().positive(),
 	pageType: z.string().optional(),
-	pageSize: z.number().int().positive().optional(),
+	pageSize: z.number().int().positive().max(100).optional(),
 	emailAddress: z.array(z.string()).optional(),
 	signers: z.array(z.string()).optional(),
 	startDate: z.string().optional(),
@@ -158,7 +158,7 @@ const ListBehalfDocumentsInputSchema = z.object({
 
 const ListTeamDocumentsInputSchema = z.object({
 	page: z.number().int().positive(),
-	pageSize: z.number().int().positive().optional(),
+	pageSize: z.number().int().positive().max(100).optional(),
 	userId: z.array(z.string()).optional(),
 	teamId: z.array(z.string()).optional(),
 	startDate: z.string().optional(),
@@ -175,9 +175,11 @@ const ListTeamDocumentsInputSchema = z.object({
 const GetApiCreditsCountInputSchema = z.object({}).optional().default({});
 
 const UploadFileHelperInputSchema = z.object({
-	fileName: z.string(),
-	mimeType: z.string(),
-	base64Content: z.string(),
+	fileName: z.string().min(1),
+	// Strict MIME validation prevents data URI injection via
+	// toUploadFile (`data:${mimeType};base64,`) — only allow type/subtype chars
+	mimeType: z.string().regex(/^[a-zA-Z]+\/[a-zA-Z0-9.\-+]+$/),
+	base64Content: z.string().min(1),
 });
 
 const CustomFieldMessageSchema = z.object({

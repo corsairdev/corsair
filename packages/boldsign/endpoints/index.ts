@@ -41,10 +41,15 @@ export const CustomFields = {
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.createCustomField.parse(response);
+		// PII-safe: only log non-sensitive identifiers, omit formField details
 		await logEventFromContext(
 			ctx,
 			'boldsign.customFields.create',
-			{ ...validInput },
+			{
+				fieldName: validInput.fieldName,
+				brandId: validInput.brandId,
+				sharedField: validInput.sharedField,
+			},
 			'completed',
 		);
 		return parsed;
@@ -64,10 +69,11 @@ export const CustomFields = {
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.editCustomField.parse(response);
+		// PII-safe: only log identifiers, omit formField payload
 		await logEventFromContext(
 			ctx,
 			'boldsign.customFields.edit',
-			{ customFieldId, ...body },
+			{ customFieldId, fieldName: body.fieldName, brandId: body.brandId },
 			'completed',
 		);
 		return parsed;
@@ -123,10 +129,15 @@ export const Documents = {
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.createEmbeddedRequestLink.parse(response);
+		// PII-safe: do not log signer emails or message content, only counts and title
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.createEmbeddedRequestLink',
-			{ ...validInput },
+			{
+				title: validInput.title,
+				signersCount: validInput.signers?.length ?? 0,
+				filesCount: validInput.files?.length ?? 0,
+			},
 			'completed',
 		);
 		return parsed;
@@ -140,10 +151,16 @@ export const Documents = {
 			{ method: 'POST', body: validInput },
 		);
 		const parsed = BoldsignEndpointOutputSchemas.sendDocument.parse(response);
+		// PII-safe: avoid logging signer emails and file payloads
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.send',
-			{ ...validInput },
+			{
+				title: validInput.title,
+				signersCount: validInput.signers?.length ?? 0,
+				filesCount: validInput.files?.length ?? 0,
+				brandId: validInput.brandId,
+			},
 			'completed',
 		);
 		return parsed;
@@ -159,10 +176,15 @@ export const Documents = {
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.editDocumentBeta.parse(response);
+		// PII-safe: do not log signer/cc/file details which may contain emails
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.editBeta',
-			{ documentId, ...body },
+			{
+				documentId,
+				title: body.title,
+				signersCount: body.signers?.length ?? 0,
+			},
 			'completed',
 		);
 		return parsed;
@@ -193,10 +215,11 @@ export const Documents = {
 		const parsed = BoldsignEndpointOutputSchemas.extendDocumentExpiry.parse({
 			success: true,
 		});
+		// PII-safe: omit onBehalfOf email, keep non-sensitive expiry data
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.extendExpiry',
-			{ documentId, newExpiryValue, warnPrior, onBehalfOf },
+			{ documentId, newExpiryValue, warnPrior },
 			'completed',
 		);
 		return parsed;
@@ -225,10 +248,11 @@ export const Documents = {
 			BoldsignEndpointOutputSchemas.removeDocumentAuthentication.parse({
 				success: true,
 			});
+		// PII-safe: omit emailId/onBehalfOf which are email addresses
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.removeAuthentication',
-			{ documentId, emailId, zOrder, onBehalfOf },
+			{ documentId, zOrder },
 			'completed',
 		);
 		return parsed;
@@ -242,10 +266,16 @@ export const Documents = {
 			{ method: 'GET', query: validInput },
 		);
 		const parsed = BoldsignEndpointOutputSchemas.listDocuments.parse(response);
+		// PII-safe: omit sentBy/recipients email arrays, log only pagination and status
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.list',
-			{ ...validInput },
+			{
+				page: validInput.page,
+				pageSize: validInput.pageSize,
+				status: validInput.status,
+				nextCursor: validInput.nextCursor,
+			},
 			'completed',
 		);
 		return parsed;
@@ -261,10 +291,17 @@ export const Documents = {
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.listBehalfDocuments.parse(response);
+		// PII-safe: omit emailAddress/signers email arrays
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.listBehalf',
-			{ ...validInput },
+			{
+				page: validInput.page,
+				pageSize: validInput.pageSize,
+				pageType: validInput.pageType,
+				status: validInput.status,
+				nextCursor: validInput.nextCursor,
+			},
 			'completed',
 		);
 		return parsed;
@@ -280,10 +317,16 @@ export const Documents = {
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.listTeamDocuments.parse(response);
+		// PII-safe: omit userId/teamId arrays tied to identities, log pagination only
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.listTeam',
-			{ ...validInput },
+			{
+				page: validInput.page,
+				pageSize: validInput.pageSize,
+				status: validInput.status,
+				nextCursor: validInput.nextCursor,
+			},
 			'completed',
 		);
 		return parsed;

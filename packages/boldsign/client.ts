@@ -55,9 +55,11 @@ export async function makeBoldsignRequest<T>(
 	const { method = 'GET', body, query } = options;
 	const key = typeof ctxOrKey === 'string' ? ctxOrKey : ctxOrKey.key;
 	// OAuth 2.0 is the plugin's sole auth type, so every request carries the
-	// access token as a Bearer token.
+	// access token as a Bearer token. Strip CR/LF to prevent header injection
+	// if a compromised token contained newline characters.
+	const sanitizedKey = key.replace(/[\r\n]/g, '');
 	const headers: Record<string, string> = {
-		Authorization: `Bearer ${key}`,
+		Authorization: `Bearer ${sanitizedKey}`,
 	};
 
 	if (!(typeof FormData !== 'undefined' && body instanceof FormData)) {

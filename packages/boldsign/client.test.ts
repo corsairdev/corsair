@@ -188,4 +188,46 @@ describe('makeBoldsignRequest', () => {
 			}),
 		).rejects.toBeInstanceOf(ApiError);
 	});
+
+	it('strips CRLF from bearer token to prevent header injection', async () => {
+		// Type-safe: key is still string, sanitization happens at transport boundary
+		await makeBoldsignRequest(
+			'/v1/document/list',
+			{ key: 'abc\r\nInjected', authType: 'oauth_2' },
+			{ method: 'GET' },
+		);
+		await makeBoldsignRequest(
+			'/v1/document/list',
+			{ key: 'xyz\nevil', authType: 'oauth_2' },
+			{ method: 'GET' },
+		);
+
+		expect(mockRequest).toHaveBeenNthCalledWith(
+			1,
+			expect.objectContaining({
+				HEADERS: expect.objectContaining({
+					Authorization: 'Bearer abcInjected',
+				}),
+			}),
+			expect.anything(),
+			expect.anything(),
+		);
+		expect(mockRequest).toHaveBeenNthCalledWith(
+			2,
+			expect.objectContaining({
+				HEADERS: expect.objectContaining({ Authorization: 'Bearer xyzevil' }),
+			}),
+			expect.anything(),
+			expect.anything(),
+		);
+		// Ensure no header contains CR or LF after sanitization
+		const headers1 = mockRequest.mock.calls[0]![0] as {
+			HEADERS: Record<string, string>;
+		};
+		const headers2 = mockRequest.mock.calls[1]![0] as {
+			HEADERS: Record<string, string>;
+		};
+		expect(headers1.HEADERS.Authorization).not.toMatch(/[\r\n]/);
+		expect(headers2.HEADERS.Authorization).not.toMatch(/[\r\n]/);
+	});
 });

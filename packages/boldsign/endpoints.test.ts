@@ -85,6 +85,77 @@ describe('BoldSign endpoint inputs', () => {
 			}).success,
 		).toBe(true);
 	});
+
+	it('enforces max 100 on pageSize for all list endpoints', () => {
+		// Type-safe: pageSize is number | undefined, max(100) is part of zod schema
+		const over = { page: 1, pageSize: 101 };
+		const atMax = { page: 1, pageSize: 100 };
+		const valid = { page: 1, pageSize: 20 };
+
+		expect(
+			BoldsignEndpointInputSchemas.listDocuments.safeParse(over).success,
+		).toBe(false);
+		expect(
+			BoldsignEndpointInputSchemas.listBehalfDocuments.safeParse(over).success,
+		).toBe(false);
+		expect(
+			BoldsignEndpointInputSchemas.listTeamDocuments.safeParse(over).success,
+		).toBe(false);
+
+		expect(
+			BoldsignEndpointInputSchemas.listDocuments.safeParse(atMax).success,
+		).toBe(true);
+		expect(
+			BoldsignEndpointInputSchemas.listBehalfDocuments.safeParse(atMax).success,
+		).toBe(true);
+		expect(
+			BoldsignEndpointInputSchemas.listTeamDocuments.safeParse(atMax).success,
+		).toBe(true);
+
+		expect(
+			BoldsignEndpointInputSchemas.listDocuments.safeParse(valid).success,
+		).toBe(true);
+	});
+
+	it('validates mimeType format for uploadFile helper to prevent data URI injection', () => {
+		const valid = BoldsignEndpointInputSchemas.uploadFileHelper.safeParse({
+			fileName: 'a.pdf',
+			mimeType: 'application/pdf',
+			base64Content: 'cGRm',
+		});
+		expect(valid.success).toBe(true);
+
+		const withImage = BoldsignEndpointInputSchemas.uploadFileHelper.safeParse({
+			fileName: 'img.png',
+			mimeType: 'image/png',
+			base64Content: 'cGRm',
+		});
+		expect(withImage.success).toBe(true);
+
+		// Injection attempts must fail — type-safe string but rejected by regex
+		const injectedSemicolon =
+			BoldsignEndpointInputSchemas.uploadFileHelper.safeParse({
+				fileName: 'a.pdf',
+				mimeType: 'application/pdf; charset=utf-8',
+				base64Content: 'cGRm',
+			});
+		expect(injectedSemicolon.success).toBe(false);
+
+		const injectedComma =
+			BoldsignEndpointInputSchemas.uploadFileHelper.safeParse({
+				fileName: 'a.pdf',
+				mimeType: 'text/html,foo',
+				base64Content: 'cGRm',
+			});
+		expect(injectedComma.success).toBe(false);
+
+		const emptyMime = BoldsignEndpointInputSchemas.uploadFileHelper.safeParse({
+			fileName: 'a.pdf',
+			mimeType: '',
+			base64Content: 'cGRm',
+		});
+		expect(emptyMime.success).toBe(false);
+	});
 });
 
 describe('BoldSign endpoint requests', () => {
@@ -294,5 +365,180 @@ describe('BoldSign endpoint requests', () => {
 			{},
 			'completed',
 		);
+	});
+
+	it('logs PII-safe payloads for document send and embedded link without signer emails', async () => {
+		mockRequest
+			.mockResolvedValueOnce({
+				documentId: 'doc_1',
+				sendUrl: 'https://app.boldsign.com/embed/1',
+			})
+			.mockResolvedValueOnce({ documentId: 'doc_2' });
+
+		await Documents.createEmbeddedRequestLink(ctx, {
+			title: 'Agreement',
+			signers: [
+				{
+					name: 'Alice',
+					emailAddress: 'alice@example.com',
+					formFields: [{ fieldType: 'Signature' }],
+				},
+				{ name: 'Bob', emailAddress: 'bob@example.com' },
+			],
+			files: [
+				'data:application/pdf;base64,abc',
+				'data:application/pdf;base64,def',
+			],
+		});
+		await Documents.send(ctx, {
+			title: 'NDA',
+			signers: [{ name: 'Eve', emailAddress: 'eve@example.com' }],
+			files: ['data:application/pdf;base64,abc'],
+			brandId: 'br_1',
+		});
+
+		// First call: createEmbeddedRequestLink — should log counts, not emails
+		expect(mockLog).toHaveBeenNthCalledWith(
+			1,
+			ctx,
+			'boldsign.documents.createEmbeddedRequestLink',
+			{ title: 'Agreement', signersCount: 2, filesCount: 2 },
+			'completed',
+		);
+		// Second call: send — should log counts and brandId, not signer payload
+		expect(mockLog).toHaveBeenNthCalledWith(
+			2,
+			ctx,
+			'boldsign.documents.send',
+			{ title: 'NDA', signersCount: 1, filesCount: 1, brandId: 'br_1' },
+			'completed',
+		);
+		// Type-safe check: logged objects must not contain email addresses
+		const firstLogPayload = mockLog.mock.calls[0]![2] as Record<
+			string,
+			unknown
+		>;
+		const secondLogPayload = mockLog.mock.calls[1]![2] as Record<
+			string,
+			unknown
+		>;
+		expect(JSON.stringify(firstLogPayload)).not.toContain('alice@example.com');
+		expect(JSON.stringify(firstLogPayload)).not.toContain('bob@example.com');
+		expect(JSON.stringify(secondLogPayload)).not.toContain('eve@example.com');
+		expect(firstLogPayload).not.toHaveProperty('signers');
+		expect(secondLogPayload).not.toHaveProperty('signers');
+	});
+
+	it('logs PII-safe payloads for extendExpiry and removeAuthentication without emails', async () => {
+		mockRequest.mockResolvedValue(undefined);
+
+		await Documents.extendExpiry(ctx, {
+			documentId: 'doc_1',
+			newExpiryValue: '2022-12-15',
+			warnPrior: true,
+			onBehalfOf: 'admin@example.com',
+		});
+		await Documents.removeAuthentication(ctx, {
+			documentId: 'doc_1',
+			emailId: 'user@example.com',
+			zOrder: 2,
+			onBehalfOf: 'admin@example.com',
+		});
+
+		expect(mockLog).toHaveBeenNthCalledWith(
+			1,
+			ctx,
+			'boldsign.documents.extendExpiry',
+			{ documentId: 'doc_1', newExpiryValue: '2022-12-15', warnPrior: true },
+			'completed',
+		);
+		expect(mockLog).toHaveBeenNthCalledWith(
+			2,
+			ctx,
+			'boldsign.documents.removeAuthentication',
+			{ documentId: 'doc_1', zOrder: 2 },
+			'completed',
+		);
+		// Ensure emails are not in logged payloads
+		expect(JSON.stringify(mockLog.mock.calls[0]![2])).not.toContain(
+			'admin@example.com',
+		);
+		expect(JSON.stringify(mockLog.mock.calls[1]![2])).not.toContain(
+			'user@example.com',
+		);
+	});
+
+	it('logs PII-safe payloads for list endpoints without email arrays', async () => {
+		const page = {
+			pageDetails: {
+				page: 1,
+				pageSize: 10,
+				totalRecordsCount: 1,
+				totalPages: 1,
+			},
+			result: [{ documentId: 'doc_1', status: 'Sent' }],
+		};
+		mockRequest.mockResolvedValue(page);
+
+		await Documents.list(ctx, {
+			page: 1,
+			pageSize: 20,
+			sentBy: ['sender@example.com'],
+			recipients: ['recipient@example.com'],
+			status: ['Completed'],
+			nextCursor: 123,
+		});
+		await Documents.listBehalf(ctx, {
+			page: 1,
+			pageSize: 10,
+			emailAddress: ['behalf@example.com'],
+			signers: ['signer@example.com'],
+			status: ['Completed'],
+			nextCursor: 456,
+		});
+		await Documents.listTeam(ctx, {
+			page: 1,
+			pageSize: 10,
+			userId: ['user_1'],
+			teamId: ['team_1'],
+			status: ['Completed'],
+			nextCursor: 789,
+		});
+
+		expect(mockLog).toHaveBeenNthCalledWith(
+			1,
+			ctx,
+			'boldsign.documents.list',
+			{ page: 1, pageSize: 20, status: ['Completed'], nextCursor: 123 },
+			'completed',
+		);
+		expect(mockLog).toHaveBeenNthCalledWith(
+			2,
+			ctx,
+			'boldsign.documents.listBehalf',
+			{
+				page: 1,
+				pageSize: 10,
+				pageType: undefined,
+				status: ['Completed'],
+				nextCursor: 456,
+			},
+			'completed',
+		);
+		expect(mockLog).toHaveBeenNthCalledWith(
+			3,
+			ctx,
+			'boldsign.documents.listTeam',
+			{ page: 1, pageSize: 10, status: ['Completed'], nextCursor: 789 },
+			'completed',
+		);
+		// Emails / IDs must not appear in logs
+		expect(JSON.stringify(mockLog.mock.calls[0]![2])).not.toContain(
+			'sender@example.com',
+		);
+		expect(JSON.stringify(mockLog.mock.calls[1]![2])).not.toContain(
+			'behalf@example.com',
+		);
+		expect(JSON.stringify(mockLog.mock.calls[2]![2])).not.toContain('user_1');
 	});
 });
