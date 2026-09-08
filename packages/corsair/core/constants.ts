@@ -91,6 +91,7 @@ export const BaseProviders = [
 	'boltiot',
 	'bonsai',
 	'bookingmood',
+	'borneo',
 	'botbaba',
 	'botpress',
 	'botsonic',
@@ -376,6 +377,7 @@ export const ProviderDisplayNames = {
 	boltiot: 'Bolt IoT',
 	bonsai: 'Bonsai',
 	bookingmood: 'Bookingmood',
+	borneo: 'Borneo',
 	botbaba: 'Botbaba',
 	botpress: 'Botpress',
 	botsonic: 'Botsonic',
@@ -668,6 +670,7 @@ export type AllProviders =
 	| 'boltiot'
 	| 'bonsai'
 	| 'bookingmood'
+	| 'borneo'
 	| 'botbaba'
 	| 'botpress'
 	| 'botsonic'
