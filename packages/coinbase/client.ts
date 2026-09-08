@@ -3,6 +3,7 @@ export class CoinbaseAPIError extends Error {
 		message: string,
 		public readonly code?: string,
 		public readonly status?: number,
+		// unknown is necessary because Coinbase error payloads vary by endpoint; a closed body union is infeasible because the API publishes no single failure schema
 		public readonly body?: unknown,
 	) {
 		super(message);
@@ -14,6 +15,7 @@ export class CoinbaseRateLimitError extends CoinbaseAPIError {
 	constructor(
 		message = 'Too Many Requests',
 		public readonly retryAfterMs?: number,
+		// unknown is necessary because rate-limit error bodies are provider-defined; a closed body union is infeasible for 429 payloads
 		body?: unknown,
 	) {
 		super(message, 'RATE_LIMIT_ERROR', 429, body);
@@ -31,6 +33,7 @@ const REQUEST_TIMEOUT_MS = 20_000;
 
 export type CoinbaseRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	// unknown is necessary because write bodies are operation-specific JSON bags; a closed union is infeasible because the transport is shared across endpoints
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 };
@@ -44,6 +47,7 @@ function retryAfterMs(res: Response): number | undefined {
 	return Number.isFinite(at) ? Math.max(0, at - Date.now()) : undefined;
 }
 
+// unknown is necessary because error bodies arrive untyped from the transport; a closed body union is infeasible across Coinbase failure shapes
 function errorMessage(body: unknown, fallback: string): string {
 	if (body !== null && typeof body === 'object') {
 		const rec = body as Record<string, unknown>;
@@ -69,6 +73,7 @@ function errorMessage(body: unknown, fallback: string): string {
 	return fallback;
 }
 
+// unknown is necessary because error bodies arrive untyped from the transport; a closed body union is infeasible across Coinbase failure shapes
 function errorCode(body: unknown): string | undefined {
 	if (body !== null && typeof body === 'object') {
 		const rec = body as Record<string, unknown>;

@@ -372,7 +372,7 @@ describe('Coinbase client errors', () => {
 });
 
 describe('Coinbase webhooks', () => {
-	it('verifies CB-SIGNATURE HMAC-SHA256', () => {
+	it('verifies X-CC-Webhook-Signature HMAC-SHA256', () => {
 		const secret = 'webhook-secret';
 		const rawBody = JSON.stringify({ type: 'ping', id: 'n-1' });
 		const signature = createHmac('sha256', secret)
@@ -381,7 +381,7 @@ describe('Coinbase webhooks', () => {
 		const result = verifyCoinbaseWebhookSignature(
 			{
 				payload: { type: 'ping' },
-				headers: { 'cb-signature': signature },
+				headers: { 'x-cc-webhook-signature': signature },
 				rawBody,
 			},
 			secret,
@@ -393,7 +393,7 @@ describe('Coinbase webhooks', () => {
 		const result = verifyCoinbaseWebhookSignature(
 			{
 				payload: { type: 'ping' },
-				headers: { 'cb-signature': 'deadbeef' },
+				headers: { 'x-cc-webhook-signature': 'deadbeef' },
 				rawBody: '{"type":"ping"}',
 			},
 			'webhook-secret',
@@ -428,7 +428,9 @@ describe('Coinbase webhooks', () => {
 	});
 
 	it('detects Coinbase signature headers', () => {
-		expect(coinbaseSignatureHeader({ 'cb-signature': 'abc' })).toBe('abc');
+		expect(coinbaseSignatureHeader({ 'x-hook0-signature': 't=1,v0=abc' })).toBe(
+			't=1,v0=abc',
+		);
 		expect(coinbaseSignatureHeader({ 'x-cc-webhook-signature': 'def' })).toBe(
 			'def',
 		);
