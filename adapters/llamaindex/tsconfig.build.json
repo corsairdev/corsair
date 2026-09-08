@@ -3,5 +3,7 @@
   "compilerOptions": {
     "emitDeclarationOnly": true,
     "outDir": "./dist"
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "**/*.check.ts"]
 }
