@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/mcp",
-  "version": "0.1.28",
-  "description": "MCP server and framework adapters for Corsair. Expose 200+ integrations to any agent framework (Mastra, OpenAI, Vercel AI, Claude) as tools.",
+  "version": "0.1.29",
+  "description": "MCP server and framework adapters for Corsair. Expose 200+ integrations to any agent framework (Mastra, LangChain, LlamaIndex, OpenAI, Vercel AI, Claude) as tools.",
   "keywords": [
     "mcp",
     "model-context-protocol",
@@ -9,6 +9,8 @@
     "tools",
     "tool-calling",
     "mastra",
+    "langchain",
+    "llamaindex",
     "openai",
     "vercel-ai",
     "integrations",
@@ -39,6 +41,16 @@
       "dev-source": "./src/mastra.ts",
       "types": "./dist/mastra.d.ts",
       "default": "./dist/mastra.js"
+    },
+    "./langchain": {
+      "dev-source": "./src/langchain.ts",
+      "types": "./dist/langchain.d.ts",
+      "default": "./dist/langchain.js"
+    },
+    "./llamaindex": {
+      "dev-source": "./src/llamaindex.ts",
+      "types": "./dist/llamaindex.d.ts",
+      "default": "./dist/llamaindex.js"
     }
   },
   "scripts": {
@@ -48,6 +60,8 @@
   },
   "dependencies": {
     "@ai-sdk/mcp": "^1.0.0",
+    "@corsair-dev/langchain": "workspace:*",
+    "@corsair-dev/llamaindex": "workspace:*",
     "@corsair-dev/mastra": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.27.1",
     "corsair": "workspace:*",
@@ -57,6 +71,8 @@
   "peerDependencies": {
     "@anthropic-ai/claude-agent-sdk": ">=0.2.0",
     "@anthropic-ai/sdk": ">=0.78.0",
+    "@langchain/core": ">=1.0.0",
+    "@llamaindex/core": ">=0.6.23",
     "@mastra/core": ">=1.64.0",
     "@openai/agents": ">=0.5.0",
     "openai": ">=4.0.0"
@@ -66,6 +82,12 @@
       "optional": true
     },
     "@anthropic-ai/sdk": {
+      "optional": true
+    },
+    "@langchain/core": {
+      "optional": true
+    },
+    "@llamaindex/core": {
       "optional": true
     },
     "@mastra/core": {
@@ -80,6 +102,8 @@
   },
   "devDependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
+    "@langchain/core": "^1.0.0",
+    "@llamaindex/core": "^0.6.23",
     "@mastra/core": "^1.64.0",
     "@types/express": "^4.17.21",
     "@types/node": "^22.0.0",
