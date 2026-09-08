@@ -5,6 +5,26 @@ import {
 	makeLeexiRequest,
 	resolveLeexiCredentials,
 } from './client';
+import type { LeexiContext } from './index';
+
+/**
+ * Minimal `LeexiContext` stand-in for `resolveLeexiCredentials`, which only
+ * reads `key`, `options.keySecret`, and `keys.get_key_secret`. The full
+ * context type carries many other fields (tenantId, hooks, db, ...) that
+ * this unit test never touches, so the object is deliberately partial and
+ * cast the same way the plugin's own endpoint tests mock a context.
+ */
+function mockCredentialsContext(
+	key: string,
+	keySecretOption: string | undefined,
+	getKeySecret: () => Promise<string | null>,
+): LeexiContext {
+	return {
+		key,
+		options: { keySecret: keySecretOption },
+		keys: { get_key_secret: getKeySecret },
+	} as unknown as LeexiContext;
+}
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -132,11 +152,9 @@ describe('makeLeexiRequest', () => {
 describe('resolveLeexiCredentials', () => {
 	it('prefers an explicit keySecret option over the stored account secret', async () => {
 		const getKeySecret = jest.fn().mockResolvedValue('stored-secret');
-		const credentials = await resolveLeexiCredentials({
-			key: 'key-id',
-			options: { keySecret: 'override-secret' },
-			keys: { get_key_secret: getKeySecret },
-		});
+		const credentials = await resolveLeexiCredentials(
+			mockCredentialsContext('key-id', 'override-secret', getKeySecret),
+		);
 
 		expect(credentials).toEqual({
 			keyId: 'key-id',
@@ -147,11 +165,9 @@ describe('resolveLeexiCredentials', () => {
 
 	it('falls back to the stored account secret when no override is given', async () => {
 		const getKeySecret = jest.fn().mockResolvedValue('stored-secret');
-		const credentials = await resolveLeexiCredentials({
-			key: 'key-id',
-			options: {},
-			keys: { get_key_secret: getKeySecret },
-		});
+		const credentials = await resolveLeexiCredentials(
+			mockCredentialsContext('key-id', undefined, getKeySecret),
+		);
 
 		expect(credentials).toEqual({
 			keyId: 'key-id',
@@ -161,11 +177,9 @@ describe('resolveLeexiCredentials', () => {
 
 	it('falls back to an empty string when no secret is available anywhere', async () => {
 		const getKeySecret = jest.fn().mockResolvedValue(null);
-		const credentials = await resolveLeexiCredentials({
-			key: 'key-id',
-			options: {},
-			keys: { get_key_secret: getKeySecret },
-		});
+		const credentials = await resolveLeexiCredentials(
+			mockCredentialsContext('key-id', undefined, getKeySecret),
+		);
 
 		expect(credentials).toEqual({ keyId: 'key-id', keySecret: '' });
 	});

@@ -1,6 +1,7 @@
 import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { LeexiContext } from './index';
 
 export class LeexiAPIError extends Error {
 	public readonly status?: number;
@@ -37,7 +38,7 @@ export async function makeLeexiRequest<T>(
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
-		query?: Record<string, unknown>;
+		query?: Record<string, string | number | boolean | string[] | undefined>;
 	} = {},
 ): Promise<T> {
 	const { keyId, keySecret } = credentials;
@@ -96,11 +97,9 @@ export async function makeLeexiRequest<T>(
  * Secret (from the `key_secret` account field extension) that together form
  * Leexi's Basic auth credentials.
  */
-export async function resolveLeexiCredentials(ctx: {
-	key: string;
-	options: { keySecret?: string };
-	keys: { get_key_secret: () => Promise<string | null> };
-}): Promise<LeexiCredentials> {
+export async function resolveLeexiCredentials(
+	ctx: LeexiContext,
+): Promise<LeexiCredentials> {
 	const keySecret =
 		ctx.options.keySecret ?? (await ctx.keys.get_key_secret()) ?? '';
 	return { keyId: ctx.key, keySecret };

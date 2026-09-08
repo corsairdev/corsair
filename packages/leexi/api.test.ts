@@ -130,6 +130,85 @@ describe('Leexi Meeting Events endpoints', () => {
 		expect(options.method).toBe('POST');
 		expect(options.url).toBe('meeting_events');
 		expect(options.body).toEqual(input);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'leexi.meetingEvents.create',
+			{ user_uuid: 'user_1', meeting_host: 'zoom.us', to_record: true },
+			'completed',
+		);
+	});
+
+	it('sends the full meeting URL to the real API but never persists its passcode/token in the audit log', async () => {
+		const sensitiveUrl =
+			'https://zoom.us/j/123456789?pwd=SuperSecretPasscode&tk=eyJhbGciOiJIUzI1NiJ9.signed-token';
+		const apiResponse = {
+			success: true,
+			message: 'Meeting event successfully created',
+			data: { uuid: 'me_3' },
+		};
+		mockRequest.mockResolvedValueOnce(apiResponse);
+		const ctx = createMockContext();
+
+		const input = {
+			meeting_url: sensitiveUrl,
+			user_uuid: 'user_1',
+			start_time: '2026-09-10T10:00:00.000Z',
+			end_time: '2026-09-10T10:30:00.000Z',
+			owned: false,
+			internal: false,
+			to_record: false,
+			organizer: 'organizer@example.com',
+		};
+
+		await MeetingEvents.create(ctx, input);
+
+		// The real outbound API request must still carry the untouched, full URL.
+		const { options } = lastRequestOptions();
+		expect(options.body).toMatchObject({ meeting_url: sensitiveUrl });
+
+		// The audit log must never see the passcode, token, or full URL —
+		// only the hostname and other non-sensitive fields.
+		expect(mockLogEvent).toHaveBeenCalledTimes(1);
+		const loggedPayload = mockLogEvent.mock.calls[0]?.[2];
+		const loggedJson = JSON.stringify(loggedPayload);
+		expect(loggedJson).not.toContain('SuperSecretPasscode');
+		expect(loggedJson).not.toContain('eyJhbGciOiJIUzI1NiJ9');
+		expect(loggedJson).not.toContain(sensitiveUrl);
+		expect(loggedPayload).toEqual({
+			user_uuid: 'user_1',
+			meeting_host: 'zoom.us',
+			to_record: false,
+		});
+	});
+
+	it('logs an undefined meeting_host rather than any raw fallback when the URL cannot be parsed', async () => {
+		const apiResponse = {
+			success: true,
+			message: 'Meeting event successfully created',
+			data: { uuid: 'me_4' },
+		};
+		mockRequest.mockResolvedValueOnce(apiResponse);
+		const ctx = createMockContext();
+
+		const input = {
+			meeting_url: 'not-a-valid-url',
+			user_uuid: 'user_1',
+			start_time: '2026-09-10T10:00:00.000Z',
+			end_time: '2026-09-10T10:30:00.000Z',
+			owned: false,
+			internal: false,
+			to_record: false,
+			organizer: 'organizer@example.com',
+		};
+
+		await MeetingEvents.create(ctx, input);
+
+		const loggedPayload = mockLogEvent.mock.calls[0]?.[2];
+		expect(loggedPayload).toEqual({
+			user_uuid: 'user_1',
+			meeting_host: undefined,
+			to_record: false,
+		});
 	});
 
 	it('rejects create input missing required fields before calling the API', async () => {
