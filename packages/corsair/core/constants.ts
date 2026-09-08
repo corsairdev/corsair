@@ -220,6 +220,7 @@ export const BaseProviders = [
 	'perplexityai',
 	'pinecone',
 	'posthog',
+	'prisma',
 	'razorpay',
 	'reddit',
 	'removebg',
@@ -497,6 +498,7 @@ export const ProviderDisplayNames = {
 	perplexityai: 'Perplexity AI',
 	pinecone: 'Pinecone',
 	posthog: 'PostHog',
+	prisma: 'Prisma',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
 	removebg: 'remove.bg',
@@ -781,6 +783,7 @@ export type AllProviders =
 	| 'perplexityai'
 	| 'pinecone'
 	| 'posthog'
+	| 'prisma'
 	| 'razorpay'
 	| 'reddit'
 	| 'removebg'
