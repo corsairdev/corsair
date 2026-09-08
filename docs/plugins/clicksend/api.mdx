@@ -1,0 +1,582 @@
+---
+title: API
+description: "API reference for ClickSend: every `clicksend.api.*` operation with input and output types."
+---
+
+Every `clicksend.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Retrieve ClickSend account details and credit balance
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number \| string` | Yes | — |
+| `username` | `string` | Yes | — |
+| `user_email` | `string` | Yes | — |
+| `user_first_name` | `string` | No | — |
+| `user_last_name` | `string` | No | — |
+| `balance` | `number` | Yes | — |
+| `currency` | `string` | No | — |
+
+
+
+---
+
+## Contact Lists
+
+### create
+
+`contactLists.create`
+
+Create a new contact list
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.contactLists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_name` | `string` | Yes | Name for the contact list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | — |
+| `list_name` | `string` | Yes | — |
+| `contact_count` | `number` | No | — |
+
+
+
+---
+
+### getAll
+
+`contactLists.getAll`
+
+Retrieve all contact lists with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.contactLists.getAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `current_page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  list_id: number,
+  list_name: string,
+  contact_count?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Add a new contact to a specific list
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | Target contact list ID |
+| `phone_number` | `string` | Yes | Phone number of the contact |
+| `first_name` | `string` | No | First name |
+| `last_name` | `string` | No | Last name |
+| `email` | `string` | No | Email address |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `number` | Yes | — |
+| `list_id` | `number` | Yes | — |
+| `phone_number` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts within a specific contact list
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | List ID to fetch contacts from |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `current_page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  contact_id: number,
+  list_id: number,
+  phone_number: string,
+  first_name?: string,
+  last_name?: string,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sms
+
+### history
+
+`sms.history`
+
+List sent SMS message history with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.sms.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `date_from` | `number` | No | Start epoch timestamp |
+| `date_to` | `number` | No | End epoch timestamp |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `current_page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  direction?: string,
+  date?: number,
+  to: string,
+  body: string,
+  from?: string,
+  schedule?: number,
+  message_id: string,
+  message_parts?: number,
+  message_price?: string,
+  custom_string?: string,
+  user_id?: number,
+  subaccount_id?: number,
+  country?: string,
+  carrier?: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### inbound
+
+`sms.inbound`
+
+List received inbound SMS messages with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.sms.inbound({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `current_page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message_id: string,
+  to: string,
+  from: string,
+  body: string,
+  timestamp?: number,
+  original_message_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### receipts
+
+`sms.receipts`
+
+List SMS delivery receipts with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.sms.receipts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `current_page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message_id: string,
+  status: string,
+  status_code?: string,
+  status_text?: string,
+  timestamp?: number,
+  original_message_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`sms.send`
+
+Send one or more SMS messages
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.sms.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | Array of SMS messages to send |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  to: string,
+  body: string,
+  from?: string,
+  schedule?: number,
+  source?: string,
+  custom_string?: string,
+  country?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_price` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `queued_count` | `number` | No | — |
+| `blocked_count` | `number` | No | — |
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  direction?: string,
+  date?: number,
+  to: string,
+  body: string,
+  from?: string,
+  schedule?: number,
+  message_id: string,
+  message_parts?: number,
+  message_price?: string,
+  custom_string?: string,
+  user_id?: number,
+  subaccount_id?: number,
+  country?: string,
+  carrier?: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Voice
+
+### history
+
+`voice.history`
+
+List voice call history with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.clicksend.api.voice.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `current_page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `total` | `number` | No | — |
+| `last_page` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  to: string,
+  body: string,
+  voice?: string,
+  lang?: string,
+  message_id: string,
+  status: string,
+  date?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`voice.send`
+
+Initiate outbound text-to-speech voice call
+
+**Risk:** `write`
+
+```ts
+await corsair.clicksend.api.voice.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  to: string,
+  body: string,
+  voice?: female | male,
+  lang?: string,
+  schedule?: number,
+  require_input?: number,
+  machine_detection?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_price` | `number` | No | — |
+| `total_count` | `number` | No | — |
+| `queued_count` | `number` | No | — |
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  to: string,
+  body: string,
+  voice?: string,
+  lang?: string,
+  message_id: string,
+  status: string,
+  date?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

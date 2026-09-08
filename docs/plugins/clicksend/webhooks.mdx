@@ -1,0 +1,145 @@
+---
+title: Webhooks
+description: "ClickSend incoming webhooks: event paths, payloads, and response data."
+---
+
+The ClickSend plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/clicksend/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `sms`
+  - `deliveryReceipt` (`sms.deliveryReceipt`)
+  - `inbound` (`sms.inbound`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Sms
+
+### Delivery Receipt
+
+`sms.deliveryReceipt`
+
+A delivery receipt update was received for an SMS message
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `status_code` | `string` | No | — |
+| `status_text` | `string` | No | — |
+| `timestamp` | `number \| string` | No | — |
+| `original_message_id` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  message_id: string,
+  status: string,
+  status_code?: string,
+  status_text?: string,
+  timestamp?: number | string,
+  original_message_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+clicksend({
+    webhookHooks: {
+        sms: {
+            deliveryReceipt: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Inbound
+
+`sms.inbound`
+
+An incoming SMS message was received by ClickSend
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `timestamp` | `number \| string` | No | — |
+| `original_message_id` | `string` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  message_id: string,
+  from: string,
+  to: string,
+  body: string,
+  timestamp?: number | string,
+  original_message_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+clicksend({
+    webhookHooks: {
+        sms: {
+            inbound: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
