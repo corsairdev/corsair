@@ -1,5 +1,5 @@
 displayName: Outlook
-description: "Outlook plugin for Corsair — mail, calendar, and message events."
+description: Microsoft email and calendar service for messages, events, contacts, and scheduling.
 examples:
   read:
     path: messages.list
@@ -13,12 +13,12 @@ examples:
       body: Hello from Corsair
 dbExample:
   entity: messages
-  note: "Search synced mail without hitting Outlook."
+  note: Search synced mail without hitting Outlook.
   data:
     isRead: false
   limit: 50
 exampleWebhook:
   path: messages.newMessage
-  note: "Fires when a new Outlook message arrives."
+  note: Fires when a new Outlook message arrives.
   after: |
     console.log('Outlook message:', result.corsairEntityId);

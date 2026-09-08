@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Posthog plugin for Corsair"
+description: "Product analytics platform for event tracking, feature flags, session replay, and experiments."
 ---
 
-Use **Posthog** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+Use **PostHog** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
@@ -46,8 +46,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```
@@ -97,11 +97,11 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 _No read-style endpoint inferred; pick any operation from the [API](/plugins/posthog/api) reference._
 
 
-**`events.aliasCreate`**
+**Capture an event**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.posthog.api.events.aliasCreate({});
+await tenant.posthog.api.events.eventCreate({ distinct_id: 'abc123', event: 'corsair_example' });
 ```
 
 
@@ -109,15 +109,37 @@ See the full list on the [API](/plugins/posthog/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.posthog.db.<entity>.search()` and `.list()`: `events`.
+Search synced events without hitting PostHog.
 
-See [Database](/plugins/posthog/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.posthog.db.events.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `events`. See [Database](/plugins/posthog/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a PostHog event is captured.
 
-See [Webhooks](/plugins/posthog/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+posthog({
+    webhookHooks: {
+        events: {
+            captured: {
+                after: async (ctx, result) => {
+                    console.log('PostHog event captured:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/posthog/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 
