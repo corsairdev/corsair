@@ -1,7 +1,7 @@
 {
   "id": "pagerduty",
-  "displayName": "Pagerduty",
-  "description": "Pagerduty plugin for Corsair",
+  "displayName": "PagerDuty",
+  "description": "Incident response platform for on-call schedules, alerts, and operational reliability workflows.",
   "npmPackageName": "@corsair-dev/pagerduty",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

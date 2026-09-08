@@ -1,6 +1,6 @@
 ---
 title: API
-description: "API reference for Youtube: every `youtube.api.*` operation with input and output types."
+description: "API reference for YouTube: every `youtube.api.*` operation with input and output types."
 ---
 
 Every `youtube.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
@@ -3001,7 +3001,6 @@ await corsair.youtube.api.subscriptions.subscribe({});
 | `contentDetails` | `object` | No | — |
 | `subscriberSnippet` | `object` | No | — |
 | `already_subscribed` | `boolean` | No | — |
-| `composio_execution_message` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="snippet full type">
@@ -3586,7 +3585,6 @@ await corsair.youtube.api.videos.getBatch({});
 | `partial_failure` | `boolean` | No | — |
 | `nextPageToken` | `string` | No | — |
 | `prevPageToken` | `string` | No | — |
-| `composio_execution_message` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -3944,7 +3942,6 @@ await corsair.youtube.api.videos.update({});
 | `tags` | `string[]` | No | Updated video tags |
 | `categoryId` | `string` | No | Updated category ID |
 | `privacy_status` | `string` | No | Updated privacy status (public, private, unlisted) |
-| `composio_execution_message` | `string` | No | — |
 
 
 

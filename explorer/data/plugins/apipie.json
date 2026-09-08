@@ -1,7 +1,7 @@
 {
   "id": "apipie",
-  "displayName": "APIpie AI",
-  "description": "APIpie AI plugin for Corsair",
+  "displayName": "APIpie",
+  "description": "AI model aggregation API for routing requests across multiple LLM providers.",
   "npmPackageName": "@corsair-dev/apipie",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

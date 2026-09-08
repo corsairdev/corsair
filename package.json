@@ -22,6 +22,8 @@
     "generate:docs": "tsx --conditions=dev-source scripts/generate-plugin-docs.ts",
     "generate:docs:all": "tsx --conditions=dev-source scripts/generate-plugin-docs.ts --all",
     "build:explorer-catalog": "tsx --conditions=dev-source scripts/build-explorer-catalog.ts",
+    "build:integration-pages": "tsx scripts/build-integration-pages.ts",
+    "fetch:plugin-icons": "tsx scripts/fetch-plugin-icons.ts",
     "validate:plugins": "tsx scripts/validate-plugins.ts",
     "validate:docs": "tsx scripts/lint-docs-imports.ts",
     "prepare": "simple-git-hooks"

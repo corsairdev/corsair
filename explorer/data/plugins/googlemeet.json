@@ -1,7 +1,7 @@
 {
   "id": "googlemeet",
   "displayName": "Google Meet",
-  "description": "Google Meet plugin for Corsair",
+  "description": "Video conferencing service for scheduling and managing online meetings and calls.",
   "npmPackageName": "@corsair-dev/googlemeet",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -523,7 +523,7 @@
     {
       "path": "googlemeet.api.spaces.endActiveConference",
       "shortPath": "spaces.endActiveConference",
-      "description": "End an active conference [DESTRUCTIVE]",
+      "description": "End an active conference",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {

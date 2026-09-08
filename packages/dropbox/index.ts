@@ -152,7 +152,7 @@ const dropboxEndpointMeta = {
 	},
 	'files.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a file [DESTRUCTIVE]',
+		description: 'Delete a file',
 	},
 	'files.download': { riskLevel: 'read', description: 'Download a file' },
 	'files.move': {
@@ -167,7 +167,7 @@ const dropboxEndpointMeta = {
 	'folders.create': { riskLevel: 'write', description: 'Create a new folder' },
 	'folders.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a folder and all its contents [DESTRUCTIVE]',
+		description: 'Delete a folder and all its contents',
 	},
 	'folders.list': {
 		riskLevel: 'read',

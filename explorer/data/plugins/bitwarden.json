@@ -1,7 +1,7 @@
 {
   "id": "bitwarden",
   "displayName": "Bitwarden",
-  "description": "Bitwarden plugin for Corsair",
+  "description": "Open-source password manager for secure credential storage and team secret sharing.",
   "npmPackageName": "@corsair-dev/bitwarden",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

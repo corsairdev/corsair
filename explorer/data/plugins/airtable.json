@@ -1,7 +1,7 @@
 {
   "id": "airtable",
   "displayName": "Airtable",
-  "description": "Airtable plugin for Corsair",
+  "description": "Spreadsheet-database hybrid for organizing records, workflows, and collaborative project data.",
   "npmPackageName": "@corsair-dev/airtable",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -170,7 +170,7 @@
     {
       "path": "airtable.api.records.delete",
       "shortPath": "records.delete",
-      "description": "Delete a record from a table [DESTRUCTIVE]",
+      "description": "Delete a record from a table",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

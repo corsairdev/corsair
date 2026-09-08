@@ -1,7 +1,7 @@
 {
   "id": "vapi",
   "displayName": "Vapi",
-  "description": "Vapi plugin for Corsair",
+  "description": "Voice AI platform for building phone call agents with LLMs and speech recognition.",
   "npmPackageName": "@corsair-dev/vapi",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -237,7 +237,7 @@
     {
       "path": "vapi.api.assistants.delete",
       "shortPath": "assistants.delete",
-      "description": "Delete a Vapi assistant [DESTRUCTIVE]",
+      "description": "Delete a Vapi assistant",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -801,7 +801,7 @@
     {
       "path": "vapi.api.calls.delete",
       "shortPath": "calls.delete",
-      "description": "Delete a Vapi call [DESTRUCTIVE]",
+      "description": "Delete a Vapi call",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1129,7 +1129,7 @@
     {
       "path": "vapi.api.files.delete",
       "shortPath": "files.delete",
-      "description": "Delete a Vapi file [DESTRUCTIVE]",
+      "description": "Delete a Vapi file",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1438,7 +1438,7 @@
     {
       "path": "vapi.api.knowledgeBases.delete",
       "shortPath": "knowledgeBases.delete",
-      "description": "Delete a Vapi knowledge base [DESTRUCTIVE]",
+      "description": "Delete a Vapi knowledge base",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1757,7 +1757,7 @@
     {
       "path": "vapi.api.phoneNumbers.delete",
       "shortPath": "phoneNumbers.delete",
-      "description": "Delete a Vapi phone number [DESTRUCTIVE]",
+      "description": "Delete a Vapi phone number",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2081,7 +2081,7 @@
     {
       "path": "vapi.api.squads.delete",
       "shortPath": "squads.delete",
-      "description": "Delete a Vapi squad [DESTRUCTIVE]",
+      "description": "Delete a Vapi squad",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2385,7 +2385,7 @@
     {
       "path": "vapi.api.tools.delete",
       "shortPath": "tools.delete",
-      "description": "Delete a Vapi tool [DESTRUCTIVE]",
+      "description": "Delete a Vapi tool",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

@@ -1,7 +1,7 @@
 {
   "id": "ambee",
   "displayName": "Ambee",
-  "description": "Ambee plugin for Corsair",
+  "description": "Environmental data API for air quality, pollen, weather, and wildfire information.",
   "npmPackageName": "@corsair-dev/ambee",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

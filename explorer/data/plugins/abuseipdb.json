@@ -1,7 +1,7 @@
 {
   "id": "abuseipdb",
   "displayName": "AbuseIPDB",
-  "description": "AbuseIPDB plugin for Corsair",
+  "description": "IP address reputation database for detecting and reporting malicious network activity.",
   "npmPackageName": "@corsair-dev/abuseipdb",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

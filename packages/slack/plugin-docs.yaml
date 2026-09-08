@@ -1,10 +1,6 @@
-# Overrides for scripts/generate-plugin-docs.ts
-# Plugin-specific examples; the generator owns Hub-shaped wiring and shared copy.
-
 displayName: Slack
-description: "Slack plugin for Corsair — messages, channels, reactions, and workspace events."
+description: Team messaging platform for channels, direct messages, files, and workplace collaboration.
 recommendedAuth: managed
-
 examples:
   read:
     path: channels.list
@@ -15,17 +11,15 @@ examples:
     args:
       channel: C01234567
       text: Hello from Corsair
-
 dbExample:
   entity: channels
-  note: "Search synced channels without hitting Slack's API."
+  note: Search synced channels without hitting Slack's API.
   data:
     is_archived: false
   limit: 50
-
 exampleWebhook:
   path: messages.message
-  note: "React when someone posts in a channel — `messages.message` is the common entry point."
+  note: React when someone posts in a channel — `messages.message` is the common entry point.
   after: |
     const text = result.data?.text;
     console.log('Slack message:', text);

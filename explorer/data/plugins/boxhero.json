@@ -1,7 +1,7 @@
 {
   "id": "boxhero",
   "displayName": "BoxHero",
-  "description": "BoxHero plugin for Corsair",
+  "description": "Inventory management app for tracking stock, barcodes, and warehouse item movements.",
   "npmPackageName": "@corsair-dev/boxhero",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
