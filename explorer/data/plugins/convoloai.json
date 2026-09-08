@@ -1,0 +1,1563 @@
+{
+  "id": "convoloai",
+  "displayName": "ConvoloAi",
+  "description": "ConvoloAi plugin for Corsair",
+  "npmPackageName": "@corsair-dev/convoloai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 31,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "convoloai.api.agent.create",
+      "shortPath": "agent.create",
+      "description": "Create a new agent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.agent.delete",
+      "shortPath": "agent.delete",
+      "description": "Delete an agent",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "convoloai.api.agent.get",
+      "shortPath": "agent.get",
+      "description": "Get one agent by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.agent.list",
+      "shortPath": "agent.list",
+      "description": "List agents with filtering, sorting, and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchString",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsPerPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "name"
+          },
+          {
+            "key": "sortDirection",
+            "optional": true,
+            "type": "ASC | DESC"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "withStats",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "withActiveWidgetsData",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "withDeletedWidgetsData",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDelegate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "teamMemberOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fullAccountAccess",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delegateAccessToDialerAgentId",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.agent.listV2",
+      "shortPath": "agent.listV2",
+      "description": "List agents via the v2 endpoint",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchString",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsPerPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "name"
+          },
+          {
+            "key": "sortDirection",
+            "optional": true,
+            "type": "ASC | DESC"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "withStats",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "withActiveWidgetsData",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "withDeletedWidgetsData",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDelegate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "teamMemberOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fullAccountAccess",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delegateAccessToDialerAgentId",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.agent.update",
+      "shortPath": "agent.update",
+      "description": "Update an agent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.agent.updateSchedule",
+      "shortPath": "agent.updateSchedule",
+      "description": "Update the working schedule of an agent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.call.getDetails",
+      "shortPath": "call.getDetails",
+      "description": "Get detailed info for one call",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.call.getEndWebhookPayload",
+      "shortPath": "call.getEndWebhookPayload",
+      "description": "Get the end-call webhook payload for one call",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.call.getLog",
+      "shortPath": "call.getLog",
+      "description": "Get the log for one call",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.call.list",
+      "shortPath": "call.list",
+      "description": "List calls with filters and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "widget_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "max_calls",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_string",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "CallStatusType.OPERATOR_ANSWERED | CallStatusType.CLIENT_ANSWERED | CallStatusType.NO_ANSWER | CallStatusType.FAILED | CallStatusType.PENDING | CallStatusType.INITIATED | CallStatusType.ON_DEMAND | CallStatusType.FUTURE | CallStatusType.DONE | CallStatusType.PROCESSED"
+          },
+          {
+            "key": "filter_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_referer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_lead_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_agent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_answer_time_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_answer_time_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_talk_time_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_talk_time_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_wait_time_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_wait_time_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_disconnected_by",
+            "optional": true,
+            "type": "lead | agent | none"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.call.listPayloadData",
+      "shortPath": "call.listPayloadData",
+      "description": "List webhook payload data for calls",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "widget_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "max_calls",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_string",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "CallStatusType.OPERATOR_ANSWERED | CallStatusType.CLIENT_ANSWERED | CallStatusType.NO_ANSWER | CallStatusType.FAILED | CallStatusType.PENDING | CallStatusType.INITIATED | CallStatusType.ON_DEMAND | CallStatusType.FUTURE | CallStatusType.DONE | CallStatusType.PROCESSED"
+          },
+          {
+            "key": "filter_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_referer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_lead_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_agent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_answer_time_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_answer_time_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_talk_time_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_talk_time_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_wait_time_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_wait_time_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_disconnected_by",
+            "optional": true,
+            "type": "lead | agent | none"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.call.listV5",
+      "shortPath": "call.listV5",
+      "description": "List calls via the v5 endpoint with fixed delegate logic",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "widget_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "max_calls",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_string",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "CallStatusType.OPERATOR_ANSWERED | CallStatusType.CLIENT_ANSWERED | CallStatusType.NO_ANSWER | CallStatusType.FAILED | CallStatusType.PENDING | CallStatusType.INITIATED | CallStatusType.ON_DEMAND | CallStatusType.FUTURE | CallStatusType.DONE | CallStatusType.PROCESSED"
+          },
+          {
+            "key": "filter_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_referer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_lead_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_agent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_answer_time_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_answer_time_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_talk_time_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_talk_time_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_wait_time_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_wait_time_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_disconnected_by",
+            "optional": true,
+            "type": "lead | agent | none"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.call.listWithTags",
+      "shortPath": "call.listWithTags",
+      "description": "List calls with S2L tag filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "widget_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "max_calls",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_string",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "CallStatusType.OPERATOR_ANSWERED | CallStatusType.CLIENT_ANSWERED | CallStatusType.NO_ANSWER | CallStatusType.FAILED | CallStatusType.PENDING | CallStatusType.INITIATED | CallStatusType.ON_DEMAND | CallStatusType.FUTURE | CallStatusType.DONE | CallStatusType.PROCESSED"
+          },
+          {
+            "key": "filter_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_referer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_lead_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_agent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_answer_time_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_answer_time_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_talk_time_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_talk_time_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_wait_time_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_wait_time_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_disconnected_by",
+            "optional": true,
+            "type": "lead | agent | none"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_s2l_ai_action_set_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "filter_s2l_tag_names",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "filter_s2l_tag_categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "filter_s2l_has_tag",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.call.setRating",
+      "shortPath": "call.setRating",
+      "description": "Set a rating on a call for an agent or supervisor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "positive | negative | neutral"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.call.setS2lTag",
+      "shortPath": "call.setS2lTag",
+      "description": "Set an S2L tag on a call from an external AI agent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.call.trigger",
+      "shortPath": "call.trigger",
+      "description": "Trigger a call through the external call API",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "widget_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lc_number",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.getCustomWidgetParams",
+      "shortPath": "getCustomWidgetParams",
+      "description": "Get custom widget fields for integrations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widget_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api_key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.getOpenApiDocument",
+      "shortPath": "getOpenApiDocument",
+      "description": "Get the OpenAPI document this API key may call",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.lead.getOutcomeTags",
+      "shortPath": "lead.getOutcomeTags",
+      "description": "Get widget outcome tags by lead id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.lead.list",
+      "shortPath": "lead.list",
+      "description": "List leads with filters and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_string",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "websites",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "widgets",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "lc_params",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agent_answer_time_lte",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "agent_answer_time_gte",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "talk_time_lte",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "talk_time_gte",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "agents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "lead_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search_lead_data",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visitor_source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items_per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.lead.listByPost",
+      "shortPath": "lead.listByPost",
+      "description": "List leads via a POST body query",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.widget.create",
+      "shortPath": "widget.create",
+      "description": "Create a new widget",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.widget.delete",
+      "shortPath": "widget.delete",
+      "description": "Delete a widget",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "convoloai.api.widget.get",
+      "shortPath": "widget.get",
+      "description": "Get one widget by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.widget.getHtmlSiteCode",
+      "shortPath": "widget.getHtmlSiteCode",
+      "description": "Get the HTML site code for a widget",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.widget.list",
+      "shortPath": "widget.list",
+      "description": "List widgets with filters and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchString",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsPerPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "siteName | createDate"
+          },
+          {
+            "key": "sortDirection",
+            "optional": true,
+            "type": "ASC | DESC"
+          },
+          {
+            "key": "statsDateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statsDateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needCallsAndVisitsStats",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdDateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isDelegate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDeleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.widget.toggle",
+      "shortPath": "widget.toggle",
+      "description": "Toggle a widget on or off",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "new_state",
+            "optional": false,
+            "type": "0 | 1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.widget.update",
+      "shortPath": "widget.update",
+      "description": "Update a widget",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.widget.updateSettings",
+      "shortPath": "widget.updateSettings",
+      "description": "Update widget settings via the external API",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widget_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "convoloai.api.widget.updateV2",
+      "shortPath": "widget.updateV2",
+      "description": "Update a widget via the v2 endpoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widgetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "convoloai.db.agents.search",
+      "entityName": "agents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "convoloai.db.calls.search",
+      "entityName": "calls",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "callId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "widgetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "leadNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "convoloai.db.leads.search",
+      "entityName": "leads",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rating",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "convoloai.db.widgets.search",
+      "entityName": "widgets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "siteName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

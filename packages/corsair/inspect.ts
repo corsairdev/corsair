@@ -1,3 +1,4 @@
+import type { ZodTypeAny } from 'zod';
 import type { CorsairInternalConfig } from './core';
 import { CORSAIR_INTERNAL } from './core';
 // Import these directly from their source modules (not the ./core barrel) so
@@ -105,4 +106,35 @@ export function getStructuredSchema(
 	description?: string;
 } | null {
 	return getStructuredSchemaCore(getPlugins(corsair), path);
+}
+
+/**
+ * Returns the raw Zod input schema for an operation path, preserving its
+ * validation constraints (min/max, regex, refinements). `null` if the path is
+ * not a known endpoint.
+ */
+export function getInputSchema(
+	corsair: AnyCorsairInstance,
+	path: string,
+): ZodTypeAny | null {
+	const plugins = getPlugins(corsair);
+	const normalised = path.toLowerCase();
+	const dotIndex = normalised.indexOf('.');
+	if (dotIndex === -1) return null;
+
+	const pluginId = normalised.slice(0, dotIndex);
+	const remainder = normalised.slice(dotIndex + 1);
+	const plugin = plugins.find((p) => p.id === pluginId);
+	if (!plugin?.endpointSchemas) return null;
+
+	let endpointPath = remainder;
+	if (endpointPath.startsWith('api.')) endpointPath = endpointPath.slice(4);
+
+	// Case-insensitive match (endpointSchemas keys use camelCase)
+	for (const [key, entry] of Object.entries(plugin.endpointSchemas)) {
+		if (key.toLowerCase() === endpointPath) {
+			return entry.input ?? null;
+		}
+	}
+	return null;
 }
