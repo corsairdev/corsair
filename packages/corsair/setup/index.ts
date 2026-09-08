@@ -12,20 +12,20 @@ import {
 	ZodString,
 	ZodType,
 } from 'zod';
-import type {
-	AuthTypes,
-	BaseKeyManager,
-	CorsairInternalConfig,
-	CorsairPlugin,
-	CorsairSingleTenantClient,
-	CorsairTenantWrapper,
-} from '../core';
+import type { AuthTypes, BaseKeyManager, CorsairInternalConfig } from '../core';
 import {
 	BASE_AUTH_FIELDS,
 	createAccountKeyManager,
 	createCorsair,
 	createIntegrationKeyManager,
 } from '../core';
+// Direct source-module imports (not the ./core barrel) to avoid a circular
+// chunk dependency between setup and core/index.
+import type {
+	CorsairSingleTenantClient,
+	CorsairTenantWrapper,
+} from '../core/client';
+import type { CorsairPlugin } from '../core/plugins';
 import {
 	getCallableProperty,
 	isMultiTenantInstance,
@@ -313,9 +313,7 @@ function isBackfillYaml(value: unknown): value is BackfillYaml {
 // Table check
 // ─────────────────────────────────────────────────────────────────────────────
 
-const REQUIRED_TABLES = {
-	...TABLE_SCHEMAS,
-};
+const REQUIRED_TABLES = TABLE_SCHEMAS;
 
 function describeZodSchema(schema: ZodTypeAny): unknown {
 	if (schema instanceof ZodObject) {

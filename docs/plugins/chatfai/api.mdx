@@ -1,0 +1,164 @@
+---
+title: API
+description: "API reference for ChatFAI: every `chatfai.api.*` operation with input and output types."
+---
+
+Every `chatfai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Characters
+
+### get
+
+`characters.get`
+
+Get a public ChatFAI character by ID (GET /v1/characters/{id})
+
+**Risk:** `read`
+
+```ts
+await corsair.chatfai.api.characters.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Public character ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `uid` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `nickname` | `string` | No | — |
+| `publicDescription` | `string` | No | — |
+| `image` | `string` | No | — |
+| `visibility` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+| `featured` | `boolean` | No | — |
+| `firstMessage` | `string` | No | — |
+| `voiceEnabled` | `boolean` | No | — |
+| `likes` | `number` | No | — |
+| `installs` | `number` | No | — |
+| `followers` | `number` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### search
+
+`characters.search`
+
+Search public ChatFAI characters by name or keyword (GET /v1/characters/search)
+
+**Risk:** `read`
+
+```ts
+await corsair.chatfai.api.characters.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Search query for public characters by name or keyword |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `characters` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="characters full type">
+
+```ts
+{
+  id: string,
+  uid: string,
+  name: string,
+  nickname?: string | null,
+  publicDescription?: string | null,
+  image?: string | null,
+  visibility?: string,
+  categories?: string[],
+  featured?: boolean,
+  firstMessage?: string | null,
+  voiceEnabled?: boolean,
+  likes?: number,
+  installs?: number,
+  followers?: number,
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Conversations
+
+### list
+
+`conversations.list`
+
+List conversations for the authenticated user (GET /v1/conversations)
+
+**Risk:** `read`
+
+```ts
+await corsair.chatfai.api.conversations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversations` | `object[]` | Yes | — |
+| `nextCursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="conversations full type">
+
+```ts
+{
+  id: string,
+  character_id?: string,
+  characterId?: string,
+  title?: string,
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

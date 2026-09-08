@@ -1,0 +1,406 @@
+{
+  "id": "gemini",
+  "displayName": "Gemini",
+  "description": "Google multimodal AI API for text, image, and code generation with Gemini models.",
+  "npmPackageName": "@corsair-dev/gemini",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 8,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "gemini.api.content.countTokens",
+      "shortPath": "content.countTokens",
+      "description": "Count tokens in text using Gemini tokenization, for cost estimation and input limit checks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Gemini model to count tokens against, e.g. gemini-2.5-flash, gemini-2.5-pro"
+          },
+          {
+            "key": "contents",
+            "optional": false,
+            "type": "{ role?: user | model, parts: { text?: string, inlineData?: { mimeType: string, data: string } }[] }[]",
+            "description": "The content to count tokens for"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalTokens",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cachedContentTokenCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gemini.api.content.embedContent",
+      "shortPath": "content.embedContent",
+      "description": "Generate a numerical vector embedding for text, for semantic search and similarity comparison",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Gemini embedding model, e.g. gemini-embedding-001"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ role?: user | model, parts: { text?: string, inlineData?: { mimeType: string, data: string } }[] }",
+            "description": "The content to embed"
+          },
+          {
+            "key": "taskType",
+            "optional": true,
+            "type": "string",
+            "description": "Optional task type hint, e.g. SEMANTIC_SIMILARITY, RETRIEVAL_QUERY, RETRIEVAL_DOCUMENT, CLASSIFICATION, CLUSTERING"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Optional title, used with RETRIEVAL_DOCUMENT taskType"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "embedding",
+            "optional": false,
+            "type": "{ values: number[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gemini.api.content.generateContent",
+      "shortPath": "content.generateContent",
+      "description": "Generate text or speech audio from a prompt using a Gemini Flash/Pro model",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Gemini model to generate with, e.g. gemini-2.5-flash, gemini-2.5-pro"
+          },
+          {
+            "key": "contents",
+            "optional": false,
+            "type": "{ role?: user | model, parts: { text?: string, inlineData?: { mimeType: string, data: string } }[] }[]",
+            "description": "Conversation contents to generate a response for"
+          },
+          {
+            "key": "generationConfig",
+            "optional": true,
+            "type": "{ temperature?: number, topP?: number, topK?: number, candidateCount?: number, maxOutputTokens?: number, stopSequences?: string[], responseModalities?: TEXT | IMAGE | AUDIO[] }"
+          },
+          {
+            "key": "safetySettings",
+            "optional": true,
+            "type": "{ category: string, threshold: string }[]"
+          },
+          {
+            "key": "systemInstruction",
+            "optional": true,
+            "type": "{ role?: user | model, parts: { text?: string, inlineData?: { mimeType: string, data: string } }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidates",
+            "optional": true,
+            "type": "{ content?: { role?: user | model, parts: { text?: string, inlineData?: { mimeType: string, data: string } }[] }, finishReason?: string, index?: number, safetyRatings?: any[] }[]"
+          },
+          {
+            "key": "usageMetadata",
+            "optional": true,
+            "type": "{ promptTokenCount?: number, candidatesTokenCount?: number, totalTokenCount?: number, cachedContentTokenCount?: number }"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "Convenience field: first candidate text with markdown code fences stripped"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gemini.api.images.generateImage",
+      "shortPath": "images.generateImage",
+      "description": "Generate a raster image (JPG/PNG/WebP) from a prompt using a Nano Banana image model",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Nano Banana image model, e.g. gemini-2.5-flash-image, gemini-3-pro-image-preview, gemini-2.0-flash-exp-image-generation"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string",
+            "description": "Text prompt describing the image to generate"
+          },
+          {
+            "key": "referenceImages",
+            "optional": true,
+            "type": "{ mimeType: string, data: string }[]",
+            "description": "Optional reference/input images for image editing or composition"
+          },
+          {
+            "key": "generationConfig",
+            "optional": true,
+            "type": "{ temperature?: number, topP?: number, topK?: number, candidateCount?: number, maxOutputTokens?: number, stopSequences?: string[], responseModalities?: TEXT | IMAGE | AUDIO[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ mimeType: string, contentBase64: string }[]"
+          },
+          {
+            "key": "candidates",
+            "optional": true,
+            "type": "{ content?: { role?: user | model, parts: { text?: string, inlineData?: { mimeType: string, data: string } }[] }, finishReason?: string, index?: number, safetyRatings?: any[] }[]"
+          },
+          {
+            "key": "usageMetadata",
+            "optional": true,
+            "type": "{ promptTokenCount?: number, candidatesTokenCount?: number, totalTokenCount?: number, cachedContentTokenCount?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gemini.api.models.listModels",
+      "shortPath": "models.listModels",
+      "description": "List available Gemini and Veo models and their capabilities/limits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "models",
+            "optional": false,
+            "type": "{ name: string, baseModelId?: string, version?: string, displayName?: string, description?: string, inputTokenLimit?: number, outputTokenLimit?: number, supportedGenerationMethods?: string[], temperature?: number, topP?: number, topK?: number }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gemini.api.videos.generateVideos",
+      "shortPath": "videos.generateVideos",
+      "description": "Generate a text-to-video clip using a Veo model; returns an operation name for status tracking",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string",
+            "description": "Veo video model, e.g. veo-2.0-generate-001"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string",
+            "description": "Text prompt describing the video to generate"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "{ bytesBase64Encoded: string, mimeType: string }"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{ aspectRatio?: string, personGeneration?: string, numberOfVideos?: number, durationSeconds?: number, negativePrompt?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "operationName",
+            "optional": false,
+            "type": "string",
+            "description": "Pass to GEMINI_GET_VIDEOS_OPERATION or GEMINI_WAIT_FOR_VIDEO"
+          },
+          {
+            "key": "done",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gemini.api.videos.getVideosOperation",
+      "shortPath": "videos.getVideosOperation",
+      "description": "(Deprecated — use videos.waitForVideo) Check the status of a Veo video generation operation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "operationName",
+            "optional": false,
+            "type": "string",
+            "description": "The operation name returned by GEMINI_GENERATE_VIDEOS"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "done",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code?: number, message?: string }"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ generateVideoResponse?: { generatedSamples?: { video?: { uri?: string } }[] } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gemini.api.videos.waitForVideo",
+      "shortPath": "videos.waitForVideo",
+      "description": "Poll a Veo video generation operation until it completes and return the generated video",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "operationName",
+            "optional": false,
+            "type": "string",
+            "description": "The operation name returned by GEMINI_GENERATE_VIDEOS"
+          },
+          {
+            "key": "pollIntervalMs",
+            "optional": false,
+            "type": "number",
+            "description": "Delay between status checks"
+          },
+          {
+            "key": "timeoutMs",
+            "optional": false,
+            "type": "number",
+            "description": "Give up and return done=false after this long"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "operationName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "done",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ video_file?: { mimeType: string, contentBase64: string } }"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ code?: number, message?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
