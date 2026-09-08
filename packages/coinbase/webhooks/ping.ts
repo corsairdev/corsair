@@ -19,7 +19,7 @@ export const ping: CoinbaseWebhooks['ping'] = {
 		await logEventFromContext(
 			ctx,
 			'coinbase.webhook.ping',
-			{ ...event },
+			{ id: event.id, type: event.type },
 			'completed',
 		);
 

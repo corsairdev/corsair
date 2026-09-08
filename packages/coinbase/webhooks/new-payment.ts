@@ -19,7 +19,7 @@ export const newPayment: CoinbaseWebhooks['newPayment'] = {
 		await logEventFromContext(
 			ctx,
 			'coinbase.webhook.newPayment',
-			{ ...event },
+			{ id: event.id, type: event.type },
 			'completed',
 		);
 
