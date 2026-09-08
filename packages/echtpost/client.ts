@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class EchtpostAPIError extends Error {
 	constructor(
@@ -50,7 +50,10 @@ export async function makeEchtpostRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof Error) throw new EchtpostAPIError(error.message);
-		throw new EchtpostAPIError('Unknown error');
+		// Re-throw ApiError directly so error handlers can inspect status/retryAfter
+		if (error instanceof ApiError) throw error;
+		throw new EchtpostAPIError(
+			error instanceof Error ? error.message : 'Unknown error',
+		);
 	}
 }

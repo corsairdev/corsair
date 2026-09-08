@@ -26,7 +26,6 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { EchtpostSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
 import { resolveEchtpostOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchEchtpostTenantWebhook } from './webhooks/tenant-matcher';
 import type { EchtpostWebhookOutputs, ExampleEvent } from './webhooks/types';
@@ -87,11 +86,7 @@ const echtpostEndpointsNested = {
 	},
 } as const;
 
-const echtpostWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const echtpostWebhooksNested = {} as const;
 
 export const echtpostEndpointSchemas = {
 	'templates.list': {
