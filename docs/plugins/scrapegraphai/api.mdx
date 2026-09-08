@@ -1,0 +1,1491 @@
+---
+title: API
+description: "API reference for ScrapeGraphAI: every `scrapegraphai.api.*` operation with input and output types."
+---
+
+Every `scrapegraphai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### credits
+
+`account.credits`
+
+Get remaining and used credit balance
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.account.credits({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `remaining_credits` | `number` | Yes | — |
+| `total_credits_used` | `number` | Yes | — |
+
+
+
+---
+
+### usageTimeline
+
+`account.usageTimeline`
+
+Get a timeline of past request usage
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.account.usageTimeline({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `days` | `7 \| 14 \| 30 \| all` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeline` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="timeline full type">
+
+```ts
+{
+  service: string,
+  timestamp: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validateApiKey
+
+`account.validateApiKey`
+
+Validate that the configured API key is active
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.account.validateApiKey({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Agentic Scraper
+
+### getLiveSessionUrl
+
+`agenticScraper.getLiveSessionUrl`
+
+Open a live, remotely-controllable browser session for a URL
+
+**Risk:** `write`
+
+```ts
+await corsair.scrapegraphai.api.agenticScraper.getLiveSessionUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `timeout` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_url` | `string` | Yes | — |
+| `session_id` | `string` | Yes | — |
+
+
+
+---
+
+### history
+
+`agenticScraper.history`
+
+List past agentic (browser-driven) scraper requests
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.agenticScraper.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | Yes | — |
+| `next_key` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  request_id: string,
+  user_id: string,
+  webpage_id: string,
+  website_url: string,
+  user_prompt?: string | null,
+  output_schema?: {
+  } | null,
+  requested_at: string,
+  finished_at?: string | null,
+  status: queued | processing | processinghtml | processedhtml | completed | failed,
+  metadata?: any | null,
+  result?: any | null,
+  total_cost?: number | null,
+  usage_id?: string | null,
+  error?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="next_key full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Endpoint
+
+### getSuggestions
+
+`endpoint.getSuggestions`
+
+Analyze a webpage and suggest reusable scraping endpoint configs (spends credits)
+
+**Risk:** `write`
+
+```ts
+await corsair.scrapegraphai.api.endpoint.getSuggestions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `website_url` | `string` | Yes | — |
+| `prompt` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+| `html_with_markdowns` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  endpoint: string,
+  method?: string,
+  description: string,
+  target_url: string,
+  parameters: {
+    name: string,
+    type: string,
+    location: string,
+    required: boolean,
+    description: string,
+    is_url?: boolean
+  }[],
+  pydantic_schema: {
+  },
+  extraction_prompt: string,
+  interaction_steps?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### save
+
+`endpoint.save`
+
+Save custom scraping endpoint configurations
+
+**Risk:** `write`
+
+```ts
+await corsair.scrapegraphai.api.endpoint.save({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  endpoint: string,
+  method?: string,
+  description: string,
+  target_url: string,
+  parameters: {
+    name: string,
+    type: string,
+    location: string,
+    required: boolean,
+    description: string,
+    is_url?: boolean
+  }[],
+  pydantic_schema: {
+  },
+  extraction_prompt: string,
+  interaction_steps?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Feedback
+
+### submit
+
+`feedback.submit`
+
+Submit a rating/feedback for a completed request
+
+**Risk:** `write`
+
+```ts
+await corsair.scrapegraphai.api.feedback.submit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `rating` | `number` | Yes | — |
+| `feedback_text` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `feedback_id` | `string` | Yes | — |
+| `request_id` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `feedback_timestamp` | `string` | Yes | — |
+
+
+
+---
+
+### submitProduct
+
+`feedback.submitProduct`
+
+Submit general product feedback
+
+**Risk:** `write`
+
+```ts
+await corsair.scrapegraphai.api.feedback.submitProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `feedback_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `company` | `string` | No | — |
+| `how_discovered` | `string` | No | — |
+| `usage_frequency` | `string` | No | — |
+| `use_cases` | `string[]` | No | — |
+| `rating` | `number` | No | — |
+| `liked_most` | `string` | No | — |
+| `disliked` | `string` | No | — |
+| `requested_features` | `string` | No | — |
+| `setup_easy` | `boolean` | No | — |
+| `issues` | `string` | No | — |
+| `recommend_score` | `number` | No | — |
+| `improvement_suggestions` | `string` | No | — |
+| `can_contact` | `boolean` | No | — |
+| `contact_method` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+
+
+
+---
+
+## Markdownify
+
+### history
+
+`markdownify.history`
+
+List past Markdownify requests
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.markdownify.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | Yes | — |
+| `next_key` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  request_id?: string,
+  user_id?: string | null,
+  webpage_id?: string | null,
+  requested_at?: string,
+  status?: queued | processing | completed | failed,
+  error?: string | null,
+  website_url: string,
+  finished_at?: string | null,
+  metadata?: {
+  } | null,
+  usage_id?: string | null,
+  request_params?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="next_key full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`markdownify.start`
+
+Start converting a webpage to clean Markdown (async, spends credits)
+
+**Risk:** `write`
+
+```ts
+await corsair.scrapegraphai.api.markdownify.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `website_url` | `string` | Yes | — |
+| `render_heavy_js` | `boolean` | No | — |
+| `mock` | `boolean` | No | — |
+| `stealth` | `boolean` | No | — |
+| `branding` | `boolean` | No | — |
+| `stream` | `boolean` | No | — |
+| `country_code` | `string` | No | — |
+| `wait_ms` | `number` | No | — |
+| `headers` | `object` | No | — |
+| `steps` | `string[]` | No | — |
+| `webhook_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `status` | `queued \| processing \| completed \| failed` | Yes | — |
+| `website_url` | `string` | Yes | — |
+| `result` | `string` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### status
+
+`markdownify.status`
+
+Get status and results for a Markdownify job
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.markdownify.status({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | No | — |
+| `status` | `queued \| processing \| completed \| failed` | No | — |
+| `website_url` | `string` | No | — |
+| `result` | `string` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+## Scheduled Jobs
+
+### list
+
+`scheduledJobs.list`
+
+List scheduled recurring scraping jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.scheduledJobs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `service_type` | `smartscraper \| searchscraper \| markdownify \| smartcrawler \| agenticscrapper \| site_monitor` | No | — |
+| `is_active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `jobs` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="jobs full type">
+
+```ts
+{
+  id: string,
+  user_id: string,
+  job_name: string,
+  service_type: smartscraper | searchscraper | markdownify | smartcrawler | agenticscrapper | site_monitor,
+  cron_expression: string,
+  job_config: {
+  },
+  is_active: boolean,
+  created_at: string,
+  updated_at: string,
+  last_run_at?: string | null,
+  next_run_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Schema
+
+### generate
+
+`schema.generate`
+
+Generate or refine a JSON schema from a natural-language prompt (spends credits)
+
+**Risk:** `write`
+
+```ts
+await corsair.scrapegraphai.api.schema.generate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_prompt` | `string` | Yes | — |
+| `existing_schema` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="existing_schema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `user_prompt` | `string` | Yes | — |
+| `refined_prompt` | `string` | Yes | — |
+| `generated_schema` | `object` | Yes | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="generated_schema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Scrape
+
+### history
+
+`scrape.history`
+
+List past single-page Scrape requests
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.scrape.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | Yes | — |
+| `next_key` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  request_id: string,
+  user_id?: string | null,
+  website_url: string,
+  render_heavy_js?: boolean,
+  result?: string | null,
+  status?: queued | processing | completed | failed,
+  metadata?: {
+  },
+  error?: string | null,
+  finished_at?: string | null,
+  requested_at?: string,
+  cost?: number,
+  request_params?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="next_key full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search Scraper
+
+### history
+
+`searchScraper.history`
+
+List past SearchScraper requests
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.searchScraper.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | Yes | — |
+| `next_key` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  request_id: string,
+  user_id?: string | null,
+  user_prompt: string,
+  search_query?: string | null,
+  extraction_query?: string | null,
+  references_urls?: string[] | null,
+  output_schema?: {
+  } | null,
+  result?: any | null,
+  status?: queued | processing | completed | failed,
+  metadata?: {
+  },
+  error?: string | null,
+  requested_at?: string,
+  finished_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="next_key full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`searchScraper.start`
+
+Start an AI-powered web search job (async, spends credits)
+
+**Risk:** `write`
+
+```ts
+await corsair.scrapegraphai.api.searchScraper.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_prompt` | `string` | Yes | — |
+| `num_results` | `number` | No | — |
+| `headers` | `object` | No | — |
+| `output_schema` | `object` | No | — |
+| `extraction_mode` | `boolean` | No | — |
+| `markdown_mode` | `boolean` | No | — |
+| `stealth` | `boolean` | No | — |
+| `mock` | `boolean` | No | — |
+| `stream` | `boolean` | No | — |
+| `webhook_url` | `string` | No | — |
+| `location_geo_code` | `string` | No | — |
+| `time_range` | `past_hour \| past_24_hours \| past_week \| past_month \| past_year` | No | — |
+
+<AccordionGroup>
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="output_schema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `status` | `queued \| processing \| completed \| failed` | Yes | — |
+| `user_prompt` | `string` | Yes | — |
+| `num_results` | `number` | No | — |
+| `result` | `any` | No | — |
+| `reference_urls` | `string[]` | No | — |
+| `markdown_content` | `string` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### status
+
+`searchScraper.status`
+
+Get status and results for a SearchScraper job
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.searchScraper.status({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | No | — |
+| `status` | `queued \| processing \| completed \| failed` | No | — |
+| `user_prompt` | `string` | No | — |
+| `num_results` | `number` | No | — |
+| `result` | `any` | No | — |
+| `reference_urls` | `string[]` | No | — |
+| `markdown_content` | `string` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+## Sitemap
+
+### history
+
+`sitemap.history`
+
+List past sitemap generation requests
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.sitemap.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | Yes | — |
+| `next_key` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  request_id: string,
+  website_url: string,
+  api_key_id: string,
+  user_id: string,
+  requested_at: string,
+  status: string,
+  urls_count: number,
+  error_message?: string | null,
+  metadata?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="next_key full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Smart Crawler
+
+### history
+
+`smartCrawler.history`
+
+List past SmartCrawler requests
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.smartCrawler.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | Yes | — |
+| `next_key` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  request_id: string,
+  user_id: string,
+  url: string,
+  prompt?: string | null,
+  max_pages: number,
+  status: queued | processing | completed | failed,
+  error?: string | null,
+  metadata?: {
+  } | null,
+  requested_at: string,
+  finished_at?: string | null,
+  total_cost?: number | null,
+  credits_used?: number | null,
+  pages_processed?: number | null,
+  crawled_urls?: string[] | null,
+  task_id?: string | null,
+  result?: {
+  } | null,
+  result_url?: string | null,
+  request_params?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="next_key full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`smartCrawler.start`
+
+Start a multi-page crawl of a site with optional AI extraction (async, spends credits)
+
+**Risk:** `write`
+
+```ts
+await corsair.scrapegraphai.api.smartCrawler.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `depth` | `number` | No | — |
+| `breadth` | `number` | No | — |
+| `max_pages` | `number` | No | — |
+| `prompt` | `string` | No | — |
+| `schema` | `object` | No | — |
+| `rules` | `object` | No | — |
+| `sitemap` | `boolean` | No | — |
+| `render_heavy_js` | `boolean` | No | — |
+| `extraction_mode` | `boolean` | No | — |
+| `stealth` | `boolean` | No | — |
+| `mock` | `boolean` | No | — |
+| `webhook_url` | `string` | No | — |
+| `reader_mode` | `boolean` | No | — |
+| `wait_ms` | `number` | No | — |
+| `country_code` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="rules full type">
+
+```ts
+{
+  exclude?: string[] | null,
+  include_paths?: string[] | null,
+  exclude_paths?: string[] | null,
+  same_domain?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `status` | `string` | No | — |
+| `url` | `string` | No | — |
+| `prompt` | `string` | No | — |
+| `max_pages` | `number` | No | — |
+| `error` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `requested_at` | `string` | No | — |
+| `finished_at` | `string` | No | — |
+| `total_cost` | `number` | No | — |
+| `credits_used` | `number` | No | — |
+| `pages_processed` | `number` | No | — |
+| `crawled_urls` | `string[]` | No | — |
+| `result` | `object` | No | — |
+| `result_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### status
+
+`smartCrawler.status`
+
+Get status and results for a SmartCrawler job
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.smartCrawler.status({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | No | — |
+| `request_id` | `string` | No | — |
+| `status` | `string` | No | — |
+| `url` | `string` | No | — |
+| `prompt` | `string` | No | — |
+| `max_pages` | `number` | No | — |
+| `error` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `requested_at` | `string` | No | — |
+| `finished_at` | `string` | No | — |
+| `total_cost` | `number` | No | — |
+| `credits_used` | `number` | No | — |
+| `pages_processed` | `number` | No | — |
+| `crawled_urls` | `string[]` | No | — |
+| `result` | `object` | No | — |
+| `result_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### webhookLogs
+
+`smartCrawler.webhookLogs`
+
+Get webhook delivery logs for a SmartCrawler job
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.smartCrawler.webhookLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crawler_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logs` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Smart Scraper
+
+### history
+
+`smartScraper.history`
+
+List past SmartScraper requests
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.smartScraper.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | Yes | — |
+| `next_key` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  request_id: string,
+  user_id?: string | null,
+  webpage_id?: string | null,
+  website_url?: string | null,
+  user_prompt: string,
+  output_schema?: {
+  } | null,
+  result?: {
+  } | string | null,
+  status?: queued | processing | completed | failed,
+  requested_at: string,
+  finished_at?: string | null,
+  error?: string | null,
+  metadata?: {
+  } | null,
+  request_params?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="next_key full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`smartScraper.start`
+
+Start an AI-powered structured extraction job for a webpage (async, spends credits)
+
+**Risk:** `write`
+
+```ts
+await corsair.scrapegraphai.api.smartScraper.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_prompt` | `string` | Yes | — |
+| `website_url` | `string` | No | — |
+| `website_html` | `string` | No | — |
+| `website_markdown` | `string` | No | — |
+| `render_heavy_js` | `boolean` | No | — |
+| `mock` | `boolean` | No | — |
+| `stealth` | `boolean` | No | — |
+| `branding` | `boolean` | No | — |
+| `stream` | `boolean` | No | — |
+| `country_code` | `string` | No | — |
+| `wait_ms` | `number` | No | — |
+| `output_schema` | `object` | No | — |
+| `headers` | `object` | No | — |
+| `number_of_scrolls` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `steps` | `string[]` | No | — |
+| `cookies` | `object` | No | — |
+| `plain_text` | `boolean` | No | — |
+| `webhook_url` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `is_multipage_child` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="output_schema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="cookies full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `status` | `queued \| processing \| completed \| failed` | Yes | — |
+| `website_url` | `string` | No | — |
+| `user_prompt` | `string` | Yes | — |
+| `result` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### status
+
+`smartScraper.status`
+
+Get status and results for a SmartScraper job
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.smartScraper.status({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | No | — |
+| `status` | `queued \| processing \| completed \| failed` | No | — |
+| `website_url` | `string` | No | — |
+| `user_prompt` | `string` | No | — |
+| `result` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Utilities
+
+### toonify
+
+`utilities.toonify`
+
+Convert JSON to TOON (Token-Oriented Object Notation) to reduce LLM token usage
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapegraphai.api.utilities.toonify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

@@ -1,7 +1,7 @@
 {
   "id": "accrediblecertificates",
-  "displayName": "AccredibleCertificates",
-  "description": "AccredibleCertificates plugin for Corsair",
+  "displayName": "Accredible",
+  "description": "Digital certificate and badge platform for courses, events, and professional credentials.",
   "npmPackageName": "@corsair-dev/accrediblecertificates",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

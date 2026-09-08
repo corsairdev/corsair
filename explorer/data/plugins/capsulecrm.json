@@ -1,7 +1,7 @@
 {
   "id": "capsulecrm",
   "displayName": "Capsule CRM",
-  "description": "Capsule CRM plugin for Corsair",
+  "description": "Simple CRM for tracking contacts, sales pipelines, and customer relationship history.",
   "npmPackageName": "@corsair-dev/capsulecrm",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
@@ -169,7 +169,7 @@
     {
       "path": "capsulecrm.api.boards.delete",
       "shortPath": "boards.delete",
-      "description": "Delete (archive) a board [DESTRUCTIVE]",
+      "description": "Delete (archive) a board",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -346,7 +346,7 @@
     {
       "path": "capsulecrm.api.categories.delete",
       "shortPath": "categories.delete",
-      "description": "Delete a category [DESTRUCTIVE]",
+      "description": "Delete a category",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -491,7 +491,7 @@
     {
       "path": "capsulecrm.api.customFields.delete",
       "shortPath": "customFields.delete",
-      "description": "Delete a custom field definition [DESTRUCTIVE]",
+      "description": "Delete a custom field definition",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -618,7 +618,7 @@
     {
       "path": "capsulecrm.api.entries.delete",
       "shortPath": "entries.delete",
-      "description": "Delete an entry [DESTRUCTIVE]",
+      "description": "Delete an entry",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -844,7 +844,7 @@
     {
       "path": "capsulecrm.api.lostReasons.delete",
       "shortPath": "lostReasons.delete",
-      "description": "Delete a lost reason [DESTRUCTIVE]",
+      "description": "Delete a lost reason",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -955,7 +955,7 @@
     {
       "path": "capsulecrm.api.milestones.delete",
       "shortPath": "milestones.delete",
-      "description": "Delete a milestone [DESTRUCTIVE]",
+      "description": "Delete a milestone",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -1097,7 +1097,7 @@
     {
       "path": "capsulecrm.api.opportunities.delete",
       "shortPath": "opportunities.delete",
-      "description": "Delete an opportunity [DESTRUCTIVE]",
+      "description": "Delete an opportunity",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -1390,7 +1390,7 @@
     {
       "path": "capsulecrm.api.parties.delete",
       "shortPath": "parties.delete",
-      "description": "Delete a party [DESTRUCTIVE]",
+      "description": "Delete a party",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -1817,7 +1817,7 @@
     {
       "path": "capsulecrm.api.projects.delete",
       "shortPath": "projects.delete",
-      "description": "Delete a project [DESTRUCTIVE]",
+      "description": "Delete a project",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -2113,7 +2113,7 @@
     {
       "path": "capsulecrm.api.stages.delete",
       "shortPath": "stages.delete",
-      "description": "Delete a stage [DESTRUCTIVE]",
+      "description": "Delete a stage",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -2215,7 +2215,7 @@
     {
       "path": "capsulecrm.api.tags.delete",
       "shortPath": "tags.delete",
-      "description": "Delete a tag [DESTRUCTIVE]",
+      "description": "Delete a tag",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -2346,7 +2346,7 @@
     {
       "path": "capsulecrm.api.tasks.delete",
       "shortPath": "tasks.delete",
-      "description": "Delete a task [DESTRUCTIVE]",
+      "description": "Delete a task",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -2487,7 +2487,7 @@
     {
       "path": "capsulecrm.api.titles.delete",
       "shortPath": "titles.delete",
-      "description": "Delete a title [DESTRUCTIVE]",
+      "description": "Delete a title",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -2558,7 +2558,7 @@
     {
       "path": "capsulecrm.api.trackDefinitions.delete",
       "shortPath": "trackDefinitions.delete",
-      "description": "Delete a track definition [DESTRUCTIVE]",
+      "description": "Delete a track definition",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {
@@ -2680,7 +2680,7 @@
     {
       "path": "capsulecrm.api.tracks.delete",
       "shortPath": "tracks.delete",
-      "description": "Delete a track [DESTRUCTIVE]",
+      "description": "Delete a track",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {

@@ -1,5 +1,5 @@
 displayName: Jira
-description: "Jira plugin for Corsair — issues, projects, and issue events."
+description: Issue and project tracking tool for agile sprints, bugs, epics, and team workflows.
 examples:
   read:
     path: issues.search
@@ -14,10 +14,10 @@ examples:
       summary: Follow up from Corsair
 dbExample:
   entity: issues
-  note: "Search synced issues without hitting Jira."
+  note: 'Search synced issues without hitting Jira.'
   limit: 50
 exampleWebhook:
   path: issues.newIssue
-  note: "Fires when a Jira issue is created."
+  note: 'Fires when a Jira issue is created.'
   after: |
     console.log('Jira issue created:', result.data);

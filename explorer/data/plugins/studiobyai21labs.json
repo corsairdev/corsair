@@ -1,7 +1,7 @@
 {
   "id": "studiobyai21labs",
-  "displayName": "StudioByAI21Labs",
-  "description": "StudioByAI21Labs plugin for Corsair",
+  "displayName": "ElevenLabs Studio",
+  "description": "AI audio studio for voice generation, dubbing, and long-form spoken content production.",
   "npmPackageName": "@corsair-dev/studiobyai21labs",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "ably",
   "displayName": "Ably",
-  "description": "Ably plugin for Corsair",
+  "description": "Realtime messaging platform for pub/sub, chat, and live data streaming at scale.",
   "npmPackageName": "@corsair-dev/ably",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "youtube",
-  "displayName": "Youtube",
-  "description": "Youtube plugin for Corsair",
+  "displayName": "YouTube",
+  "description": "Video platform for uploading, managing channels, playlists, analytics, and content metadata.",
   "npmPackageName": "@corsair-dev/youtube",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -2235,11 +2235,6 @@
             "key": "already_subscribed",
             "optional": true,
             "type": "boolean"
-          },
-          {
-            "key": "composio_execution_message",
-            "optional": true,
-            "type": "string"
           }
         ]
       }
@@ -2808,11 +2803,6 @@
             "key": "prevPageToken",
             "optional": true,
             "type": "string"
-          },
-          {
-            "key": "composio_execution_message",
-            "optional": true,
-            "type": "string"
           }
         ]
       }
@@ -3020,11 +3010,6 @@
             "optional": true,
             "type": "string",
             "description": "Updated privacy status (public, private, unlisted)"
-          },
-          {
-            "key": "composio_execution_message",
-            "optional": true,
-            "type": "string"
           }
         ]
       },

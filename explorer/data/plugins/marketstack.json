@@ -1,7 +1,7 @@
 {
   "id": "marketstack",
-  "displayName": "Marketstack stock market data",
-  "description": "Marketstack stock market data plugin for Corsair",
+  "displayName": "Marketstack",
+  "description": "Stock market data API for real-time and historical end-of-day exchange prices worldwide.",
   "npmPackageName": "@corsair-dev/marketstack",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

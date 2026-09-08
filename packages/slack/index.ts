@@ -429,7 +429,7 @@ const defaultAuthType = 'api_key' as const;
 const slackEndpointMeta = {
 	'channels.archive': {
 		riskLevel: 'destructive',
-		description: 'Archive a Slack channel [DESTRUCTIVE]',
+		description: 'Archive a Slack channel',
 	},
 	'channels.close': {
 		riskLevel: 'write',
@@ -528,7 +528,7 @@ const slackEndpointMeta = {
 	'files.upload': { riskLevel: 'write', description: 'Upload a file to Slack' },
 	'messages.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a message [DESTRUCTIVE]',
+		description: 'Delete a message',
 	},
 	'messages.getPermalink': {
 		riskLevel: 'read',

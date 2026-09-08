@@ -1,5 +1,5 @@
 displayName: Zoho Mail
-description: Zoho Mail plugin for Corsair — send and read emails, manage folders
+description: Business email service for sending, reading, organizing messages, and mailbox management.
 overviewNote: |
   Zoho Mail runs region-specific datacenters. Pass `region` to the plugin factory
   (`'us'` default, plus `'eu'`, `'in'`, `'au'`, `'jp'`, `'cn'`) so the correct

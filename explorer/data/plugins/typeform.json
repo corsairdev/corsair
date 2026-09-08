@@ -1,7 +1,7 @@
 {
   "id": "typeform",
   "displayName": "Typeform",
-  "description": "Typeform plugin for Corsair",
+  "description": "Conversational form builder for surveys, quizzes, lead capture, and interactive questionnaires.",
   "npmPackageName": "@corsair-dev/typeform",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -194,7 +194,7 @@
     {
       "path": "typeform.api.forms.delete",
       "shortPath": "forms.delete",
-      "description": "Permanently delete a form [DESTRUCTIVE]",
+      "description": "Permanently delete a form",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -765,7 +765,7 @@
     {
       "path": "typeform.api.images.delete",
       "shortPath": "images.delete",
-      "description": "Permanently delete an image [DESTRUCTIVE]",
+      "description": "Permanently delete an image",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1017,7 +1017,7 @@
     {
       "path": "typeform.api.responses.delete",
       "shortPath": "responses.delete",
-      "description": "Delete specific responses from a form [DESTRUCTIVE]",
+      "description": "Delete specific responses from a form",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1270,7 +1270,7 @@
     {
       "path": "typeform.api.themes.delete",
       "shortPath": "themes.delete",
-      "description": "Permanently delete a theme [DESTRUCTIVE]",
+      "description": "Permanently delete a theme",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1771,7 +1771,7 @@
     {
       "path": "typeform.api.webhooksConfig.delete",
       "shortPath": "webhooksConfig.delete",
-      "description": "Delete a webhook configuration [DESTRUCTIVE]",
+      "description": "Delete a webhook configuration",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2031,7 +2031,7 @@
     {
       "path": "typeform.api.workspaces.delete",
       "shortPath": "workspaces.delete",
-      "description": "Permanently delete a workspace [DESTRUCTIVE]",
+      "description": "Permanently delete a workspace",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
