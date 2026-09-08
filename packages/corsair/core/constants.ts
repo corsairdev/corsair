@@ -55,6 +55,7 @@ export const BaseProviders = [
 	'apininjas',
 	'apipie',
 	'apisports',
+	'appointo',
 	'asana',
 	'ascora',
 	'ashby',
@@ -72,6 +73,8 @@ export const BaseProviders = [
 	'basin',
 	'beaconstac',
 	'beeminder',
+	'benchmarkemail',
+	'bestbuy',
 	'bettercontact',
 	'betterproposals',
 	'betterstack',
@@ -83,19 +86,21 @@ export const BaseProviders = [
 	'blazemeter',
 	'blocknative',
 	'bluesky',
+	'boldsign',
 	'boloforms',
 	'boltiot',
 	'bonsai',
-	'botbaba',
 	'bookingmood',
+	'borneo',
+	'botbaba',
 	'botpress',
 	'botsonic',
 	'bouncer',
 	'box',
 	'boxhero',
 	'brandfetch',
-	'brevo',
 	'breathehr',
+	'brevo',
 	'brex',
 	'brightdata',
 	'browseai',
@@ -104,15 +109,19 @@ export const BaseProviders = [
 	'bubble',
 	'bugsnag',
 	'buildkite',
+	'bunnycdn',
 	'cal',
 	'calendly',
+	'campayn',
 	'canva',
 	'canvas',
 	'capsulecrm',
 	'castingwords',
+	'cdrplatform',
 	'certifier',
 	'chatbotkit',
 	'chatfai',
+	'chmeetings',
 	'circleci',
 	'clickhouse',
 	'clientary',
@@ -124,9 +133,12 @@ export const BaseProviders = [
 	'connecteam',
 	'contentfulgraphql',
 	'contextsevenmcp',
+	'convoloai',
+	'countdownapi',
 	'crowterminal',
 	'cursor',
 	'customgpt',
+	'dadataru',
 	'databricks',
 	'datadog',
 	'datarobot',
@@ -145,18 +157,22 @@ export const BaseProviders = [
 	'dynapictures',
 	'epicgames',
 	'exa',
+	'exist',
 	'facebook',
 	'faraday',
 	'figma',
 	'filloutforms',
 	'firecrawl',
 	'fireflies',
+	'flexisign',
 	'formbricks',
 	'gemini',
 	'github',
 	'gitlab',
+	'gladia',
 	'gmail',
 	'googleaddressvalidation',
+	'googleanalytics',
 	'googlebigquery',
 	'googlecalendar',
 	'googlecloudvision',
@@ -166,6 +182,7 @@ export const BaseProviders = [
 	'googlemeet',
 	'googlesheets',
 	'grafana',
+	'griptape',
 	'groqcloud',
 	'habitica',
 	'hackernews',
@@ -216,6 +233,7 @@ export const BaseProviders = [
 	'removebg',
 	'resend',
 	'retailed',
+	'runpod',
 	'salesforce',
 	'sapsuccessfactors',
 	'scaleai',
@@ -256,6 +274,7 @@ export const BaseProviders = [
 	'typeform',
 	'unione',
 	'uniswapapi',
+	'uploadcare',
 	'vapi',
 	'vercel',
 	'vestaboard',
@@ -264,10 +283,11 @@ export const BaseProviders = [
 	'webvizio',
 	'whatsapp',
 	'witai',
-	'worldnewsapi',
+	'wix',
 	'wiza',
 	'workday',
 	'workiom',
+	'worldnewsapi',
 	'xquik',
 	'youcom',
 	'youtube',
@@ -321,6 +341,7 @@ export const ProviderDisplayNames = {
 	apininjas: 'API Ninjas',
 	apipie: 'APIpie AI',
 	apisports: 'API-Sports',
+	appointo: 'Appointo',
 	asana: 'Asana',
 	ascora: 'Ascora',
 	ashby: 'Ashby',
@@ -338,6 +359,8 @@ export const ProviderDisplayNames = {
 	basin: 'Basin',
 	beaconstac: 'Beaconstac',
 	beeminder: 'Beeminder',
+	benchmarkemail: 'BenchmarkEmail',
+	bestbuy: 'Best Buy',
 	bettercontact: 'BetterContact',
 	betterproposals: 'Better Proposals',
 	betterstack: 'Better Stack',
@@ -349,19 +372,21 @@ export const ProviderDisplayNames = {
 	blazemeter: 'BlazeMeter',
 	blocknative: 'Blocknative',
 	bluesky: 'Bluesky',
+	boldsign: 'Boldsign',
 	boloforms: 'Boloforms',
 	boltiot: 'Bolt IoT',
 	bonsai: 'Bonsai',
-	botbaba: 'Botbaba',
 	bookingmood: 'Bookingmood',
+	borneo: 'Borneo',
+	botbaba: 'Botbaba',
 	botpress: 'Botpress',
 	botsonic: 'Botsonic',
 	bouncer: 'Bouncer',
 	box: 'Box',
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
-	brevo: 'Brevo',
 	breathehr: 'Breathe HR',
+	brevo: 'Brevo',
 	brex: 'Brex',
 	brightdata: 'Bright Data',
 	browseai: 'Browse AI',
@@ -370,15 +395,19 @@ export const ProviderDisplayNames = {
 	bubble: 'Bubble',
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
+	bunnycdn: 'Bunnycdn',
 	cal: 'Cal',
 	calendly: 'Calendly',
+	campayn: 'Campayn',
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
 	capsulecrm: 'Capsule CRM',
 	castingwords: 'CastingWords',
+	cdrplatform: 'CDR Platform',
 	certifier: 'Certifier',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
+	chmeetings: 'ChMeetings',
 	circleci: 'CircleCI',
 	clickhouse: 'Clickhouse',
 	clientary: 'Clientary',
@@ -390,9 +419,12 @@ export const ProviderDisplayNames = {
 	connecteam: 'Connecteam',
 	contentfulgraphql: 'Contentful GraphQL',
 	contextsevenmcp: 'Context7',
+	convoloai: 'ConvoloAi',
+	countdownapi: 'Countdown API',
 	crowterminal: 'CrowTerminal',
 	cursor: 'Cursor',
 	customgpt: 'CustomGPT',
+	dadataru: 'Dadataru',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
 	datarobot: 'DataRobot',
@@ -411,18 +443,22 @@ export const ProviderDisplayNames = {
 	dynapictures: 'Dynapictures',
 	epicgames: 'Epic Games',
 	exa: 'Exa',
+	exist: 'Exist',
 	facebook: 'Facebook',
 	faraday: 'Faraday',
 	figma: 'Figma',
 	filloutforms: 'FilloutForms',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
+	flexisign: 'Flexisign',
 	formbricks: 'Formbricks',
 	gemini: 'Gemini',
 	github: 'GitHub',
 	gitlab: 'GitLab',
+	gladia: 'Gladia',
 	gmail: 'Gmail',
 	googleaddressvalidation: 'Google Address Validation',
+	googleanalytics: 'Google Analytics',
 	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
 	googlecloudvision: 'Google Cloud Vision',
@@ -432,6 +468,7 @@ export const ProviderDisplayNames = {
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
+	griptape: 'Griptape',
 	groqcloud: 'GroqCloud',
 	habitica: 'Habitica',
 	hackernews: 'Hacker News',
@@ -482,6 +519,7 @@ export const ProviderDisplayNames = {
 	removebg: 'remove.bg',
 	resend: 'Resend',
 	retailed: 'Retailed',
+	runpod: 'RunPod',
 	salesforce: 'Salesforce',
 	sapsuccessfactors: 'SAP SuccessFactors',
 	scaleai: 'Scale AI',
@@ -522,6 +560,7 @@ export const ProviderDisplayNames = {
 	typeform: 'Typeform',
 	unione: 'Unione',
 	uniswapapi: 'Uniswap',
+	uploadcare: 'Uploadcare',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
 	vestaboard: 'Vestaboard',
@@ -530,10 +569,11 @@ export const ProviderDisplayNames = {
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
 	witai: 'WitAi',
-	worldnewsapi: 'World News API',
+	wix: 'Wix',
 	wiza: 'Wiza',
 	workday: 'Workday',
 	workiom: 'Workiom',
+	worldnewsapi: 'World News API',
 	xquik: 'XQuik',
 	youcom: 'You.com',
 	youtube: 'YouTube',
@@ -594,6 +634,7 @@ export type AllProviders =
 	| 'apininjas'
 	| 'apipie'
 	| 'apisports'
+	| 'appointo'
 	| 'asana'
 	| 'ascora'
 	| 'ashby'
@@ -611,6 +652,8 @@ export type AllProviders =
 	| 'basin'
 	| 'beaconstac'
 	| 'beeminder'
+	| 'benchmarkemail'
+	| 'bestbuy'
 	| 'bettercontact'
 	| 'betterproposals'
 	| 'betterstack'
@@ -622,19 +665,21 @@ export type AllProviders =
 	| 'blazemeter'
 	| 'blocknative'
 	| 'bluesky'
+	| 'boldsign'
 	| 'boloforms'
 	| 'boltiot'
 	| 'bonsai'
-	| 'botbaba'
 	| 'bookingmood'
+	| 'borneo'
+	| 'botbaba'
 	| 'botpress'
 	| 'botsonic'
 	| 'bouncer'
 	| 'box'
 	| 'boxhero'
 	| 'brandfetch'
-	| 'brevo'
 	| 'breathehr'
+	| 'brevo'
 	| 'brex'
 	| 'brightdata'
 	| 'browseai'
@@ -643,15 +688,19 @@ export type AllProviders =
 	| 'bubble'
 	| 'bugsnag'
 	| 'buildkite'
+	| 'bunnycdn'
 	| 'cal'
 	| 'calendly'
+	| 'campayn'
 	| 'canva'
 	| 'canvas'
 	| 'capsulecrm'
 	| 'castingwords'
+	| 'cdrplatform'
 	| 'certifier'
 	| 'chatbotkit'
 	| 'chatfai'
+	| 'chmeetings'
 	| 'circleci'
 	| 'clickhouse'
 	| 'clientary'
@@ -663,9 +712,12 @@ export type AllProviders =
 	| 'connecteam'
 	| 'contentfulgraphql'
 	| 'contextsevenmcp'
+	| 'convoloai'
+	| 'countdownapi'
 	| 'crowterminal'
 	| 'cursor'
 	| 'customgpt'
+	| 'dadataru'
 	| 'databricks'
 	| 'datadog'
 	| 'datarobot'
@@ -684,18 +736,22 @@ export type AllProviders =
 	| 'dynapictures'
 	| 'epicgames'
 	| 'exa'
+	| 'exist'
 	| 'facebook'
 	| 'faraday'
 	| 'figma'
 	| 'filloutforms'
 	| 'firecrawl'
 	| 'fireflies'
+	| 'flexisign'
 	| 'formbricks'
 	| 'gemini'
 	| 'github'
 	| 'gitlab'
+	| 'gladia'
 	| 'gmail'
 	| 'googleaddressvalidation'
+	| 'googleanalytics'
 	| 'googlebigquery'
 	| 'googlecalendar'
 	| 'googlecloudvision'
@@ -705,6 +761,7 @@ export type AllProviders =
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
+	| 'griptape'
 	| 'groqcloud'
 	| 'habitica'
 	| 'hackernews'
@@ -755,6 +812,7 @@ export type AllProviders =
 	| 'removebg'
 	| 'resend'
 	| 'retailed'
+	| 'runpod'
 	| 'salesforce'
 	| 'sapsuccessfactors'
 	| 'scaleai'
@@ -795,6 +853,7 @@ export type AllProviders =
 	| 'typeform'
 	| 'unione'
 	| 'uniswapapi'
+	| 'uploadcare'
 	| 'vapi'
 	| 'vercel'
 	| 'vestaboard'
@@ -803,10 +862,11 @@ export type AllProviders =
 	| 'webvizio'
 	| 'whatsapp'
 	| 'witai'
-	| 'worldnewsapi'
+	| 'wix'
 	| 'wiza'
 	| 'workday'
 	| 'workiom'
+	| 'worldnewsapi'
 	| 'xquik'
 	| 'youcom'
 	| 'youtube'
