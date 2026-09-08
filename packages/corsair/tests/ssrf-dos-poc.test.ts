@@ -158,9 +158,7 @@ describe('PoC #2: Unbounded response body — OOM DoS', () => {
 		);
 		expect(src).toContain('MAX_RESPONSE_BYTES');
 		expect(src).toContain('1024 * 1024');
-		expect(src).toContain(
-			'Token exchange response exceeded maximum size',
-		);
+		expect(src).toContain('Token exchange response exceeded maximum size');
 	});
 
 	test('oauth-refresh-local.ts caps response body to prevent OOM', () => {
