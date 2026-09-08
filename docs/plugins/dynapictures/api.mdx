@@ -1,0 +1,273 @@
+---
+title: API
+description: "API reference for Dynapictures: every `dynapictures.api.*` operation with input and output types."
+---
+
+Every `dynapictures.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Media
+
+### upload
+
+`media.upload`
+
+Upload an image and create a media asset in a workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.dynapictures.api.media.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | The ID of a workspace to upload an image to. |
+| `fileUrl` | `string` | Yes | Public URL of the image uploaded as the official file field. |
+| `filename` | `string` | No | Filename of uploaded image. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of an asset. |
+| `folder` | `boolean` | Yes | Whether this asset is a folder instead of an image. |
+| `mimeType` | `string` | Yes | MIME type of an image. |
+| `filename` | `string` | Yes | Filename of an image. |
+| `size` | `number` | Yes | Image size in bytes. |
+| `animated` | `boolean` | No | — |
+| `url` | `string` | Yes | Link to an image. |
+| `thumbnailUrl` | `string` | Yes | Link to an image thumbnail. |
+| `dateCreated` | `string` | Yes | Creation date of an asset. |
+| `dateUpdated` | `string` | Yes | Last modification date of an asset. |
+
+
+
+---
+
+## Templates
+
+### list
+
+`templates.list`
+
+Get image templates that are ready and have Sync to Zapier enabled
+
+**Risk:** `read`
+
+```ts
+await corsair.dynapictures.api.templates.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  thumbnail: string,
+  dateCreated: string,
+  dateUpdated: string,
+  layers?: {
+    type: string,
+    name: string,
+    width?: string,
+    height?: string,
+    text?: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Webhooks
+
+### unsubscribe
+
+`webhooks.unsubscribe`
+
+Unsubscribe from webhook notifications using the original subscribe fields
+
+**Risk:** `write`
+
+```ts
+await corsair.dynapictures.api.webhooks.unsubscribe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `targetUrl` | `string` | Yes | The URL of the REST endpoint receiving notifications. |
+| `eventType` | `NEW_IMAGE` | Yes | Event type passed when subscribing this webhook. |
+| `templateId` | `string` | Yes | The UID of the image template used when subscribing. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `boolean` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+## Workspaces
+
+### create
+
+`workspaces.create`
+
+Create a new workspace for templates, images, and media
+
+**Risk:** `write`
+
+```ts
+await corsair.dynapictures.api.workspaces.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a new workspace. Required field. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of a workspace. |
+| `name` | `string` | Yes | The name of a workspace. |
+| `dateCreated` | `string` | Yes | Creation date of a workspace. |
+| `dateUpdated` | `string` | Yes | Last modification date of a workspace. |
+| `memberRole` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`workspaces.delete`
+
+Permanently delete a workspace and all associated templates, media, and images
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dynapictures.api.workspaces.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of a workspace to be deleted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of a workspace. |
+| `name` | `string` | Yes | The name of a workspace. |
+| `dateCreated` | `string` | Yes | Creation date of a workspace. |
+| `dateUpdated` | `string` | Yes | Last modification date of a workspace. |
+| `memberRole` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`workspaces.list`
+
+Get all workspaces the authenticated user is a member of
+
+**Risk:** `read`
+
+```ts
+await corsair.dynapictures.api.workspaces.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  dateCreated: string,
+  dateUpdated: string,
+  memberRole?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`workspaces.update`
+
+Update an existing workspace name by workspace ID
+
+**Risk:** `write`
+
+```ts
+await corsair.dynapictures.api.workspaces.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of a workspace to be updated. |
+| `name` | `string` | Yes | New name of a workspace. Required field. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of a workspace. |
+| `name` | `string` | Yes | The name of a workspace. |
+| `dateCreated` | `string` | Yes | Creation date of a workspace. |
+| `dateUpdated` | `string` | Yes | Last modification date of a workspace. |
+| `memberRole` | `string` | No | — |
+
+
+
+---
+

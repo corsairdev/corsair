@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 const CONTACT_EMAIL = 'dev@corsair.dev';
-const LAST_UPDATED = 'July 21, 2026';
+const LAST_UPDATED = 'September 7, 2026';
 const LOG_RETENTION_PERIOD = '90 days';
 
 export default function PrivacyPolicyPage() {
@@ -217,6 +217,21 @@ export default function PrivacyPolicyPage() {
 						basic profile information from that provider as described in
 						Sections 5 and 6 below.
 					</li>
+					<li>
+						<strong className="font-medium text-[#1c1c1c]">
+							Webhook notifications.
+						</strong>{' '}
+						When a Customer registers Corsair&apos;s webhook endpoint with
+						Google for push notifications (for example, Gmail or Calendar change
+						notifications), Google sends those notifications to Corsair&apos;s
+						infrastructure, which forwards them to the Customer&apos;s
+						registered development and production endpoints. These notifications
+						are change pings only, such as a resource identifier and a
+						timestamp, and do not contain the substantive content of the
+						underlying email, calendar event, or other Google Account data.
+						Corsair does not hold OAuth credentials for the End User and cannot
+						independently query Google for that content.
+					</li>
 				</ul>
 			</LegalSection>
 
@@ -390,6 +405,12 @@ export default function PrivacyPolicyPage() {
 					single refresh operation. Operational logs described in Section 4 are
 					retained for {LOG_RETENTION_PERIOD} for security and diagnostic
 					purposes, after which they are deleted or anonymized.
+				</p>
+				<p>
+					Webhook notifications are deleted immediately upon successful delivery
+					to the Customer&apos;s registered endpoint. If delivery fails, we
+					retain the notification for up to 7 days to allow the Customer to
+					request redelivery, after which it is deleted.
 				</p>
 			</LegalSection>
 

@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Google Sheets plugin for Corsair — spreadsheets, rows, and range updates."
+description: "Web-based spreadsheets for managing, visualizing, and analyzing data collaboratively online."
 ---
 
 Use **Google Sheets** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -46,8 +46,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```
@@ -96,7 +96,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.googlesheets.api.sheets.getRows({ spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms' });
+await tenant.googlesheets.api.sheets.getRows({ spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms', sheetName: 'Class Data' });
 ```
 
 
@@ -106,6 +106,7 @@ await tenant.googlesheets.api.sheets.getRows({ spreadsheetId: '1BxiMVs0XRA5nFMdK
 const tenant = corsair.withTenant('acme');
 await tenant.googlesheets.api.sheets.appendRow({
 	spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
+	sheetName: 'Class Data',
 	values: ['Hello', 'from Corsair'],
 });
 ```
@@ -120,7 +121,7 @@ Search synced rows without hitting Sheets.
 ```ts
 const tenant = corsair.withTenant('acme');
 const rows = await tenant.googlesheets.db.rows.search({
-	data: {},
+	data: { spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms' },
 	limit: 50,
 });
 ```
@@ -136,7 +137,7 @@ googlesheets({
     webhookHooks: {
         rangeUpdated: {
             after: async (ctx, result) => {
-                console.log('Sheet range updated:', result.data);
+                console.log('Sheet range updated:', result.data?.spreadsheetId, result.data?.sheetName, result.data?.range);
             }
         },
     },

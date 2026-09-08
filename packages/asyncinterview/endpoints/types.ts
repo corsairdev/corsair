@@ -6,7 +6,6 @@ import {
 
 /**
  * Integer job id as string or number.
- * https://docs.composio.dev/toolkits/async_interview
  */
 export const JobIdInput = z.union([
 	z.number().int(),
