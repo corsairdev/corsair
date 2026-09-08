@@ -113,7 +113,7 @@ const htmlToImageEndpointMeta = {
 	},
 	'html.convertToImage': {
 		riskLevel: 'write',
-		description: 'Convert HTML content into an image',
+		description: 'Convert HTML or a public URL into an image',
 	},
 	'image.getImage': {
 		riskLevel: 'read',

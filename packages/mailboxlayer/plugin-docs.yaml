@@ -5,3 +5,4 @@ overviewNote: |
   parameters. mailboxlayer's free-tier plans reject HTTPS entirely (API
   error 105, `https_access_restricted`) and only work over plain HTTP, so
   this plugin requires a paid mailboxlayer plan.
+description: Email verification API for checking address validity, format, and deliverability scores.

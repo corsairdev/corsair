@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Github plugin for Corsair"
+description: "Code hosting platform for repositories, issues, pull requests, and developer workflows."
 ---
 
-Use **Github** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+Use **GitHub** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
@@ -48,8 +48,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```
@@ -62,7 +62,7 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Tabs>
 <Tab title="Managed OAuth (Recommended)">
 
-No setup required. Corsair hosts the OAuth app for **Github** — your tenants connect through Hub when they sign in.
+No setup required. Corsair hosts the OAuth app for **GitHub** — your tenants connect through Hub when they sign in.
 
 Provider walkthrough: [Get Credentials](/plugins/github/get-credentials).
 
@@ -90,7 +90,7 @@ More: [API Key](/concepts/api-key)
 </Tab>
 <Tab title="OAuth 2.0">
 
-Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Github OAuth app.
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your GitHub OAuth app.
 
 Provider walkthrough: [Get Credentials](/plugins/github/get-credentials).
 
@@ -124,19 +124,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`comments.get`**
+**List repositories**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.github.api.comments.get({});
+await tenant.github.api.repositories.list({});
 ```
 
 
-**`comments.delete`**
+**Create an issue**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.github.api.comments.delete({});
+await tenant.github.api.issues.create({ owner: 'octocat', repo: 'hello-world', title: 'Found a bug' });
 ```
 
 
@@ -144,15 +144,37 @@ See the full list on the [API](/plugins/github/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.github.db.<entity>.search()` and `.list()`: `branches`, `comments`, `discussions`, `events`, `forks`, `issues`, `pullRequests`, `releases`, `repositories`, `users`, `workflows`.
+Search synced repositories without hitting GitHub.
 
-See [Database](/plugins/github/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.github.db.repositories.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `branches`, `comments`, `discussions`, `events`, `forks`, `issues`, `pullRequests`, `releases`, `repositories`, `users`, `workflows`. See [Database](/plugins/github/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **100** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a GitHub issue is opened.
 
-See [Webhooks](/plugins/github/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+github({
+    webhookHooks: {
+        issue: {
+            opened: {
+                after: async (ctx, result) => {
+                    console.log('GitHub issue opened:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/github/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 
