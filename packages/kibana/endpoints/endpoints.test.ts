@@ -36,23 +36,53 @@ jest.mock('../client', () => {
 
 const mockedRequest = jest.mocked(client.makeKibanaRequest);
 
-const ctx = {
-	key: 'test-api-key',
-	options: {
-		baseUrl: 'https://kibana.example.com:5601',
-	},
-	keys: {
-		get_base_url: jest
-			.fn()
-			.mockResolvedValue('https://kibana.example.com:5601'),
-	},
-	// Narrow test double: only key/options/keys are implemented because those
-	// are the sole context fields endpoints read, so the cast cannot mask a
-	// missing dependency. A full KibanaContext (bound endpoint tree, key
-	// managers, entity services) is impractical to construct for unit doubles.
-} as unknown as Parameters<typeof SavedObjects.find>[0];
-
 const BASE = 'https://kibana.example.com:5601';
+
+type Ctx = Parameters<typeof SavedObjects.find>[0];
+
+// Inert entity-client stub: endpoints under test never touch the database,
+// so reads resolve empty and the single non-nullable write rejects if called.
+function stubDb(): Ctx['db'] {
+	const stub = {
+		findByEntityId: () => Promise.resolve(null),
+		existsByEntityId: () => Promise.resolve(false),
+		findIdByEntityId: () => Promise.resolve(null),
+		findById: () => Promise.resolve(null),
+		findManyByEntityIds: () => Promise.resolve([]),
+		list: () => Promise.resolve([]),
+		search: () => Promise.resolve([]),
+		upsertByEntityId: () =>
+			Promise.reject(new Error('db stub: unused in endpoint tests')),
+		deleteById: () => Promise.resolve(false),
+		deleteByEntityId: () => Promise.resolve(false),
+		count: () => Promise.resolve(0),
+	};
+	return { savedObjects: stub, spaces: stub, dataViews: stub };
+}
+
+function buildCtx(): Ctx {
+	return {
+		endpoints: {},
+		$getAccountId: () => Promise.resolve('test-account'),
+		key: 'test-api-key',
+		options: { baseUrl: BASE },
+		keys: {
+			get_dek: () => Promise.resolve('test-dek'),
+			issue_new_dek: () => Promise.resolve('test-dek'),
+			get_api_key: () => Promise.resolve('test-api-key'),
+			set_api_key: () => Promise.resolve(),
+			get_webhook_signature: () => Promise.resolve(null),
+			set_webhook_signature: () => Promise.resolve(),
+			get_base_url: () => Promise.resolve(BASE),
+			set_base_url: () => Promise.resolve(),
+			get_tenant_external_id: () => Promise.resolve(null),
+			set_tenant_external_id: () => Promise.resolve(),
+		},
+		db: stubDb(),
+	};
+}
+
+const ctx = buildCtx();
 
 describe('Kibana Endpoints', () => {
 	beforeEach(() => {
