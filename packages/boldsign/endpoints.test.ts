@@ -353,6 +353,36 @@ describe('BoldSign endpoint requests', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('rejects mismatched mimeType when base64Content is already a data URI', async () => {
+		// Declared application/pdf but prefixed URI is text/html — must reject (P1 MIME bypass)
+		await expect(
+			Helpers.uploadFile(ctx, {
+				fileName: 'a.pdf',
+				mimeType: 'application/pdf',
+				base64Content: 'data:text/html;base64,PGh0bWw+',
+			}),
+		).rejects.toThrow(/MIME type mismatch/);
+
+		// Wrong mime with different case should also reject
+		await expect(
+			Helpers.uploadFile(ctx, {
+				fileName: 'a.pdf',
+				mimeType: 'application/pdf',
+				base64Content: 'data:image/png;base64,abc',
+			}),
+		).rejects.toThrow(/MIME type mismatch/);
+
+		// Matching mime (case-insensitive) should succeed — type-safe string literal
+		const ok = await Helpers.uploadFile(ctx, {
+			fileName: 'a.pdf',
+			mimeType: 'application/pdf',
+			base64Content: 'data:application/pdf;base64,cGRm',
+		});
+		expect(ok.file.base64).toBe('data:application/pdf;base64,cGRm');
+		// Ensure no HTTP call was made for helper — still local validation
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
 	it('reads API credits and logs the operation', async () => {
 		mockRequest.mockResolvedValue({ BalanceCredits: 42 });
 

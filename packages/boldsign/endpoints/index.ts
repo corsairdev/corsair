@@ -18,9 +18,23 @@ const NoContentResponseSchema = z.union([
 ]);
 
 function toUploadFile(base64Content: string, mimeType: string): string {
-	return base64Content.startsWith('data:')
-		? base64Content
-		: `data:${mimeType};base64,${base64Content}`;
+	if (base64Content.startsWith('data:')) {
+		const expectedPrefix = `data:${mimeType};base64,`;
+		if (!base64Content.toLowerCase().startsWith(expectedPrefix.toLowerCase())) {
+			const match = base64Content.match(/^data:([^;,]+)(?:;[^,]*)?;base64,/i);
+			const actualMime = match?.[1] ?? 'unknown';
+			throw new Error(
+				`MIME type mismatch: declared ${mimeType} but data URI is ${actualMime}. When base64Content is already a data URI, its MIME must match mimeType, or provide raw base64 instead.`,
+			);
+		}
+		if (!/^data:[^;,]+(?:;[^,]*)?;base64,/.test(base64Content)) {
+			throw new Error(
+				'Invalid data URI format: expected data:<mime>;base64,<data>',
+			);
+		}
+		return base64Content;
+	}
+	return `data:${mimeType};base64,${base64Content}`;
 }
 
 function authTypeFromContext(ctx: {
