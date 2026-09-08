@@ -3,8 +3,6 @@
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { cn } from '@/lib/utils';
-
 import { IntegrationTagBadge } from './integration-tag-badge';
 import { useOssNavigation } from './oss-navigation';
 import { buildOssHref } from './oss-url';
@@ -25,7 +23,6 @@ export function IntegrationTagFilter({
 }: IntegrationTagFilterProps) {
 	const { navigate } = useOssNavigation();
 	const searchParams = useSearchParams();
-	const isLeaderboard = searchParams.get('view') === 'leaderboard';
 	const q = searchParams.get('q')?.trim() ?? '';
 	const [optimisticSlugs, setOptimisticSlugs] = useState(selectedSlugs);
 
@@ -57,27 +54,20 @@ export function IntegrationTagFilter({
 					<button
 						type="button"
 						onClick={clearTags}
-						disabled={isLeaderboard}
-						className="text-xs text-[#1c1c1c66] underline-offset-2 transition-colors hover:text-[#1c1c1c] hover:underline disabled:cursor-not-allowed disabled:opacity-50"
+						className="text-xs text-[#1c1c1c66] underline-offset-2 transition-colors hover:text-[#1c1c1c] hover:underline"
 					>
 						Clear tags
 					</button>
 				) : null}
 			</div>
 
-			<div
-				className={cn(
-					'flex flex-wrap gap-1.5 sm:gap-2',
-					isLeaderboard && 'pointer-events-none opacity-50',
-				)}
-			>
+			<div className="flex flex-wrap gap-1.5 sm:gap-2">
 				{tags.map((tag) => (
 					<IntegrationTagBadge
 						key={tag.slug}
 						tag={tag}
 						selected={optimisticSlugs.includes(tag.slug)}
 						count={tag.integrationCount}
-						disabled={isLeaderboard}
 						onClick={() => toggleTag(tag.slug)}
 						className="px-2.5 py-1 sm:px-3 sm:py-1.5"
 					/>
