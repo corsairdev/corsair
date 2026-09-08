@@ -12,6 +12,7 @@ export const CasesCreateInputSchema = z.object({
 	title: z.string(),
 	description: z.string(),
 	owner: z.enum(['cases', 'observability', 'securitySolution']),
+	// Connector payload varies by connector type; unknown allows safe extension.
 	connector: z.record(z.string(), z.unknown()),
 	settings: z
 		.object({
@@ -20,6 +21,7 @@ export const CasesCreateInputSchema = z.object({
 		})
 		.passthrough(),
 	tags: z.array(z.string()),
+	// Extra create fields vary by connector; unknown allows safe extension.
 	body: z.record(z.string(), z.unknown()).optional(),
 });
 export type CasesCreateInput = z.infer<typeof CasesCreateInputSchema>;
@@ -51,6 +53,7 @@ export const CasesListResponseSchema = z
 		page: z.number().optional(),
 		per_page: z.number().optional(),
 		total: z.number().optional(),
+		// Case records are provider-defined; unknown allows safe extension.
 		cases: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.passthrough();

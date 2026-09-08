@@ -25,6 +25,7 @@ export const EndpointListItemsResponseSchema = z
 		page: z.number().optional(),
 		per_page: z.number().optional(),
 		total: z.number().optional(),
+		// Endpoint list items are provider-defined; unknown allows safe extension.
 		data: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.passthrough();
@@ -42,6 +43,7 @@ export type EntityStoreStatusInput = z.infer<
 export const EntityStoreStatusResponseSchema = z
 	.object({
 		status: z.string().optional(),
+		// Engine entries are provider-defined; unknown allows safe extension.
 		engines: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.passthrough();
@@ -56,6 +58,7 @@ export type EntityStoreEnginesInput = z.infer<
 
 export const EntityStoreEnginesResponseSchema = z
 	.object({
+		// Engine entries are provider-defined; unknown allows safe extension.
 		engines: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.passthrough();
@@ -82,6 +85,7 @@ export type EntityStoreEntitiesListInput = z.infer<
 
 export const EntityStoreEntitiesListResponseSchema = z
 	.object({
+		// Entity records are provider-defined; unknown allows safe extension.
 		records: z.array(z.record(z.string(), z.unknown())).optional(),
 		total: z.number().optional(),
 	})

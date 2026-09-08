@@ -260,6 +260,7 @@ export const SavedObjectsFindResponseSchema = z
 			z.object({
 				id: z.string(),
 				type: z.string(),
+				// Provider-defined attributes/references; unknown allows safe extension.
 				attributes: z.record(z.string(), z.unknown()),
 				references: z.array(z.record(z.string(), z.unknown())).optional(),
 				updated_at: z.string().optional(),
@@ -282,6 +283,7 @@ export const SavedObjectsGetResponseSchema = z
 	.object({
 		id: z.string(),
 		type: z.string(),
+		// Provider-defined attributes/references; unknown allows safe extension.
 		attributes: z.record(z.string(), z.unknown()),
 		references: z.array(z.record(z.string(), z.unknown())).optional(),
 		updated_at: z.string().optional(),
@@ -295,6 +297,7 @@ export type SavedObjectsGetResponse = z.infer<
 export const SavedObjectsCreateInputSchema = z.object({
 	type: z.string(),
 	id: z.string().optional(),
+	// Provider-defined attributes/references; unknown allows safe extension.
 	attributes: z.record(z.string(), z.unknown()),
 	references: z.array(z.record(z.string(), z.unknown())).optional(),
 	overwrite: z.boolean().optional(),
@@ -307,6 +310,7 @@ export const SavedObjectsCreateResponseSchema = z
 	.object({
 		id: z.string(),
 		type: z.string(),
+		// Provider-defined attributes/references; unknown allows safe extension.
 		attributes: z.record(z.string(), z.unknown()),
 		references: z.array(z.record(z.string(), z.unknown())).optional(),
 		updated_at: z.string().optional(),
@@ -327,6 +331,7 @@ export type SavedObjectsDeleteInput = z.infer<
 
 export const SavedObjectsDeleteResponseSchema = z.record(
 	z.string(),
+	// Delete returns an open payload; unknown allows safe extension.
 	z.unknown(),
 );
 export type SavedObjectsDeleteResponse = z.infer<
@@ -336,6 +341,7 @@ export type SavedObjectsDeleteResponse = z.infer<
 export const SavedObjectsUpdateInputSchema = z.object({
 	type: z.string(),
 	id: z.string(),
+	// Provider-defined attributes/references; unknown allows safe extension.
 	attributes: z.record(z.string(), z.unknown()),
 	references: z.array(z.record(z.string(), z.unknown())).optional(),
 });
@@ -347,6 +353,7 @@ export const SavedObjectsUpdateResponseSchema = z
 	.object({
 		id: z.string(),
 		type: z.string(),
+		// Provider-defined attributes/references; unknown allows safe extension.
 		attributes: z.record(z.string(), z.unknown()),
 		references: z.array(z.record(z.string(), z.unknown())).optional(),
 		updated_at: z.string().optional(),
@@ -369,6 +376,7 @@ export const DataViewsGetResponseSchema = z
 			title: z.string(),
 			name: z.string().optional(),
 			timeFieldName: z.string().optional(),
+			// Source filters vary by data view; unknown allows safe extension.
 			sourceFilters: z.array(z.record(z.string(), z.unknown())).optional(),
 		}),
 	})

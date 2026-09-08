@@ -12,6 +12,7 @@ export type DataViewsListInput = z.infer<typeof DataViewsListInputSchema>;
 
 export const DataViewsListResponseSchema = z
 	.object({
+		// Data-view entries vary by index pattern; unknown allows safe extension.
 		data_view: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.passthrough();

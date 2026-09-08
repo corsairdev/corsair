@@ -5,6 +5,7 @@ import { z } from 'zod';
 export const KibanaSavedObject = z.object({
 	id: z.string(),
 	type: z.string(),
+	// Attributes vary by saved-object type; unknown allows safe extension.
 	attributes: z.record(z.string(), z.unknown()),
 	version: z.string().optional(),
 	updated_at: z.string().optional(),
@@ -25,6 +26,7 @@ export const KibanaDataView = z.object({
 	title: z.string(),
 	name: z.string().optional(),
 	timeFieldName: z.string().optional(),
+	// Source filters and fields vary by data view; unknown allows safe extension.
 	sourceFilters: z.array(z.record(z.string(), z.unknown())).optional(),
 	fields: z.record(z.string(), z.unknown()).optional(),
 });

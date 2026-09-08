@@ -20,6 +20,7 @@ export type ReportingJobsListInput = z.infer<
 
 export const ReportingJobsListResponseSchema = z
 	.object({
+		// Job entries are provider-defined; unknown allows safe extension.
 		jobs: z.array(z.record(z.string(), z.unknown())).optional(),
 		total: z.number().optional(),
 	})
@@ -36,6 +37,7 @@ export type NodeMetricsInput = z.infer<typeof NodeMetricsInputSchema>;
 
 export const NodeMetricsResponseSchema = z
 	.object({
+		// Node payloads are provider-defined; unknown allows safe extension.
 		nodes: z.record(z.string(), z.unknown()).optional(),
 	})
 	.passthrough();
@@ -48,6 +50,7 @@ export type IndexIndicesInput = z.infer<typeof IndexIndicesInputSchema>;
 
 export const IndexIndicesResponseSchema = z
 	.object({
+		// Index entries are provider-defined; unknown allows safe extension.
 		indices: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.passthrough();

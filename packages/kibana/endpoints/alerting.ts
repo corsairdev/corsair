@@ -10,6 +10,7 @@ import type { KibanaEndpointOutputs } from './types';
 
 export const AlertingRuleCreateInputSchema = z.object({
 	id: z.string(),
+	// Rule bodies vary by rule type; unknown allows safe extension.
 	body: z.record(z.string(), z.unknown()),
 });
 export type AlertingRuleCreateInput = z.infer<
@@ -44,6 +45,7 @@ export const AlertingRulesListResponseSchema = z
 		page: z.number().optional(),
 		per_page: z.number().optional(),
 		total: z.number().optional(),
+		// Rule records are provider-defined; unknown allows safe extension.
 		data: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.passthrough();
@@ -60,6 +62,7 @@ export type AlertingRuleDeleteInput = z.infer<
 
 export const AlertingRuleDeleteResponseSchema = z.record(
 	z.string(),
+	// Delete returns an open payload; unknown allows safe extension.
 	z.unknown(),
 );
 export type AlertingRuleDeleteResponse = z.infer<
@@ -73,6 +76,7 @@ export type AlertingRuleTypesListInput = z.infer<
 
 export const AlertingRuleTypesListResponseSchema = z
 	.object({
+		// Rule-type entries are provider-defined; unknown allows safe extension.
 		rule_types: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.passthrough();

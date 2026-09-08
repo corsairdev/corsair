@@ -25,6 +25,7 @@ export const DetectionRulesFindResponseSchema = z
 		page: z.number().optional(),
 		per_page: z.number().optional(),
 		total: z.number().optional(),
+		// Rule records are provider-defined; unknown allows safe extension.
 		data: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.passthrough();
@@ -33,6 +34,7 @@ export type DetectionRulesFindResponse = z.infer<
 >;
 
 export const AlertsFindInputSchema = z.object({
+	// Elasticsearch query DSL; unknown allows safe extension.
 	query: z.record(z.string(), z.unknown()).optional(),
 	aggs: z.record(z.string(), z.unknown()).optional(),
 	size: z.number().optional(),
@@ -41,6 +43,7 @@ export type AlertsFindInput = z.infer<typeof AlertsFindInputSchema>;
 
 export const AlertsFindResponseSchema = z
 	.object({
+		// Hit/aggregation payloads are provider-defined; unknown allows safe extension.
 		hits: z.record(z.string(), z.unknown()).optional(),
 		aggregations: z.record(z.string(), z.unknown()).optional(),
 		took: z.number().optional(),

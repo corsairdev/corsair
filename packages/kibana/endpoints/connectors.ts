@@ -12,6 +12,7 @@ export const ConnectorsCreateInputSchema = z.object({
 	id: z.string(),
 	connector_type_id: z.string(),
 	name: z.string(),
+	// Config/secrets vary by connector type; unknown allows safe extension.
 	config: z.record(z.string(), z.unknown()).optional(),
 	secrets: z.record(z.string(), z.unknown()).optional(),
 });
@@ -40,6 +41,7 @@ export const ConnectorsListInputSchema = z.object({});
 export type ConnectorsListInput = z.infer<typeof ConnectorsListInputSchema>;
 
 export const ConnectorsListResponseSchema = z.array(
+	// Connector entries vary by type; unknown allows safe extension.
 	z.record(z.string(), z.unknown()),
 );
 export type ConnectorsListResponse = z.infer<
@@ -51,7 +53,11 @@ export const ConnectorsDeleteInputSchema = z.object({
 });
 export type ConnectorsDeleteInput = z.infer<typeof ConnectorsDeleteInputSchema>;
 
-export const ConnectorsDeleteResponseSchema = z.record(z.string(), z.unknown());
+export const ConnectorsDeleteResponseSchema = z.record(
+	z.string(),
+	// Delete returns an open payload; unknown allows safe extension.
+	z.unknown(),
+);
 export type ConnectorsDeleteResponse = z.infer<
 	typeof ConnectorsDeleteResponseSchema
 >;
@@ -65,6 +71,7 @@ export type ConnectorTypesListInput = z.infer<
 
 export const ConnectorTypesListResponseSchema = z
 	.object({
+		// Connector-type entries are provider-defined; unknown allows safe extension.
 		connector_types: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.passthrough();

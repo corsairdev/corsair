@@ -15,6 +15,7 @@ export type DashboardsSearchInput = z.infer<typeof DashboardsSearchInputSchema>;
 
 export const DashboardsSearchResponseSchema = z
 	.object({
+		// Dashboard entries are provider-defined; unknown allows safe extension.
 		data: z.array(z.record(z.string(), z.unknown())).optional(),
 		meta: z
 			.object({
@@ -33,6 +34,7 @@ export type DashboardsSearchResponse = z.infer<
 export const DashboardsCreateInputSchema = z.object({
 	title: z.string(),
 	description: z.string().optional(),
+	// Panel layouts vary by visualization; unknown allows safe extension.
 	panels: z.array(z.record(z.string(), z.unknown())).optional(),
 	dashboard_id: z.string().optional(),
 });
@@ -65,6 +67,7 @@ export const DashboardsUpsertInputSchema = z.object({
 	id: z.string(),
 	title: z.string().optional(),
 	description: z.string().optional(),
+	// Panel layouts vary by visualization; unknown allows safe extension.
 	panels: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 export type DashboardsUpsertInput = z.infer<typeof DashboardsUpsertInputSchema>;
@@ -79,7 +82,11 @@ export const DashboardsDeleteInputSchema = z.object({
 });
 export type DashboardsDeleteInput = z.infer<typeof DashboardsDeleteInputSchema>;
 
-export const DashboardsDeleteResponseSchema = z.record(z.string(), z.unknown());
+export const DashboardsDeleteResponseSchema = z.record(
+	z.string(),
+	// Delete returns an open payload; unknown allows safe extension.
+	z.unknown(),
+);
 export type DashboardsDeleteResponse = z.infer<
 	typeof DashboardsDeleteResponseSchema
 >;

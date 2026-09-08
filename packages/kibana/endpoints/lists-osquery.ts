@@ -15,7 +15,11 @@ export const ListsDeleteInputSchema = z.object({
 });
 export type ListsDeleteInput = z.infer<typeof ListsDeleteInputSchema>;
 
-export const ListsDeleteResponseSchema = z.record(z.string(), z.unknown());
+export const ListsDeleteResponseSchema = z.record(
+	z.string(),
+	// Delete returns an open payload; unknown allows safe extension.
+	z.unknown(),
+);
 export type ListsDeleteResponse = z.infer<typeof ListsDeleteResponseSchema>;
 
 type Ctx = Parameters<KibanaEndpoints['listsDelete']>[0];
@@ -57,6 +61,7 @@ export type OsquerySavedQueryDeleteInput = z.infer<
 
 export const OsquerySavedQueryDeleteResponseSchema = z.record(
 	z.string(),
+	// Delete returns an open payload; unknown allows safe extension.
 	z.unknown(),
 );
 export type OsquerySavedQueryDeleteResponse = z.infer<

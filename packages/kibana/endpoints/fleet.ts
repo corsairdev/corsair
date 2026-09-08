@@ -51,6 +51,7 @@ export type FleetAgentPoliciesListInput = z.infer<
 >;
 export const FleetAgentPoliciesListResponseSchema = z
 	.object({
+		// Agent-policy entries are provider-defined; unknown allows safe extension.
 		items: z.array(z.record(z.string(), z.unknown())).optional(),
 		total: z.number().optional(),
 	})
@@ -79,6 +80,7 @@ export type FleetEnrollmentKeysListInput = z.infer<
 >;
 export const FleetEnrollmentKeysListResponseSchema = z
 	.object({
+		// Enrollment-key entries are provider-defined; unknown allows safe extension.
 		items: z.array(z.record(z.string(), z.unknown())).optional(),
 		total: z.number().optional(),
 	})
@@ -92,7 +94,10 @@ export type FleetEnrollmentKeyGetInput = z.infer<
 	typeof FleetEnrollmentKeyGetInputSchema
 >;
 export const FleetEnrollmentKeyGetResponseSchema = z
-	.object({ item: z.record(z.string(), z.unknown()).optional() })
+	.object({
+		// Single-item payloads are provider-defined; unknown allows safe extension.
+		item: z.record(z.string(), z.unknown()).optional(),
+	})
 	.passthrough();
 export type FleetEnrollmentKeyGetResponse = z.infer<
 	typeof FleetEnrollmentKeyGetResponseSchema
@@ -103,7 +108,10 @@ export type FleetServerHostsListInput = z.infer<
 	typeof FleetServerHostsListInputSchema
 >;
 export const FleetServerHostsListResponseSchema = z
-	.object({ items: z.array(z.record(z.string(), z.unknown())).optional() })
+	.object({
+		// Server-host entries are provider-defined; unknown allows safe extension.
+		items: z.array(z.record(z.string(), z.unknown())).optional(),
+	})
 	.passthrough();
 export type FleetServerHostsListResponse = z.infer<
 	typeof FleetServerHostsListResponseSchema
@@ -114,7 +122,10 @@ export type FleetServerHostGetInput = z.infer<
 	typeof FleetServerHostGetInputSchema
 >;
 export const FleetServerHostGetResponseSchema = z
-	.object({ item: z.record(z.string(), z.unknown()).optional() })
+	.object({
+		// Single-item payloads are provider-defined; unknown allows safe extension.
+		item: z.record(z.string(), z.unknown()).optional(),
+	})
 	.passthrough();
 export type FleetServerHostGetResponse = z.infer<
 	typeof FleetServerHostGetResponseSchema
@@ -126,6 +137,7 @@ export type FleetOutputDeleteInput = z.infer<
 >;
 export const FleetOutputDeleteResponseSchema = z.record(
 	z.string(),
+	// Delete returns an open payload; unknown allows safe extension.
 	z.unknown(),
 );
 export type FleetOutputDeleteResponse = z.infer<
@@ -134,7 +146,11 @@ export type FleetOutputDeleteResponse = z.infer<
 
 export const FleetProxyDeleteInputSchema = z.object({ itemId: z.string() });
 export type FleetProxyDeleteInput = z.infer<typeof FleetProxyDeleteInputSchema>;
-export const FleetProxyDeleteResponseSchema = z.record(z.string(), z.unknown());
+export const FleetProxyDeleteResponseSchema = z.record(
+	z.string(),
+	// Delete returns an open payload; unknown allows safe extension.
+	z.unknown(),
+);
 export type FleetProxyDeleteResponse = z.infer<
 	typeof FleetProxyDeleteResponseSchema
 >;
@@ -164,7 +180,10 @@ export type FleetEpmPackagesListInput = z.infer<
 	typeof FleetEpmPackagesListInputSchema
 >;
 export const FleetEpmPackagesListResponseSchema = z
-	.object({ response: z.array(z.record(z.string(), z.unknown())).optional() })
+	.object({
+		// Package entries are provider-defined; unknown allows safe extension.
+		response: z.array(z.record(z.string(), z.unknown())).optional(),
+	})
 	.passthrough();
 export type FleetEpmPackagesListResponse = z.infer<
 	typeof FleetEpmPackagesListResponseSchema
@@ -189,7 +208,10 @@ export type FleetEpmPackagesInstalledInput = z.infer<
 	typeof FleetEpmPackagesInstalledInputSchema
 >;
 export const FleetEpmPackagesInstalledResponseSchema = z
-	.object({ response: z.array(z.record(z.string(), z.unknown())).optional() })
+	.object({
+		// Package entries are provider-defined; unknown allows safe extension.
+		response: z.array(z.record(z.string(), z.unknown())).optional(),
+	})
 	.passthrough();
 export type FleetEpmPackagesInstalledResponse = z.infer<
 	typeof FleetEpmPackagesInstalledResponseSchema
@@ -204,7 +226,10 @@ export type FleetEpmPackageDetailsInput = z.infer<
 	typeof FleetEpmPackageDetailsInputSchema
 >;
 export const FleetEpmPackageDetailsResponseSchema = z
-	.object({ response: z.record(z.string(), z.unknown()).optional() })
+	.object({
+		// Package detail payloads are provider-defined; unknown allows safe extension.
+		response: z.record(z.string(), z.unknown()).optional(),
+	})
 	.passthrough();
 export type FleetEpmPackageDetailsResponse = z.infer<
 	typeof FleetEpmPackageDetailsResponseSchema
@@ -230,7 +255,10 @@ export type FleetEpmPackageStatsInput = z.infer<
 	typeof FleetEpmPackageStatsInputSchema
 >;
 export const FleetEpmPackageStatsResponseSchema = z
-	.object({ response: z.record(z.string(), z.unknown()).optional() })
+	.object({
+		// Package detail payloads are provider-defined; unknown allows safe extension.
+		response: z.record(z.string(), z.unknown()).optional(),
+	})
 	.passthrough();
 export type FleetEpmPackageStatsResponse = z.infer<
 	typeof FleetEpmPackageStatsResponseSchema
@@ -245,6 +273,7 @@ export type FleetEpmDataStreamsInput = z.infer<
 >;
 export const FleetEpmDataStreamsResponseSchema = z
 	.object({
+		// Data-stream entries are provider-defined; unknown allows safe extension.
 		data_streams: z.array(z.record(z.string(), z.unknown())).optional(),
 	})
 	.passthrough();
@@ -259,7 +288,10 @@ export type FleetEpmCategoriesInput = z.infer<
 	typeof FleetEpmCategoriesInputSchema
 >;
 export const FleetEpmCategoriesResponseSchema = z
-	.object({ response: z.array(z.record(z.string(), z.unknown())).optional() })
+	.object({
+		// Package entries are provider-defined; unknown allows safe extension.
+		response: z.array(z.record(z.string(), z.unknown())).optional(),
+	})
 	.passthrough();
 export type FleetEpmCategoriesResponse = z.infer<
 	typeof FleetEpmCategoriesResponseSchema
