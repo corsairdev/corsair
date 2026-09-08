@@ -1,13 +1,13 @@
 /**
- * Security PoC tests — SSRF via unvalidated tokenUrl + Unbounded response DoS
+ * Security PoC tests â€” SSRF via unvalidated tokenUrl + Unbounded response DoS
  *
  * These tests prove exploitability of two critical vulnerabilities and verify
  * the applied fixes block each attack vector.
  *
- * Vulnerability 1: SSRF — tokenUrl accepted ANY URL, sending client_secret +
+ * Vulnerability 1: SSRF â€” tokenUrl accepted ANY URL, sending client_secret +
  *   refresh_token to attacker-controlled servers or cloud metadata endpoints.
  *
- * Vulnerability 2: Unbounded response — no size cap on token exchange HTTP
+ * Vulnerability 2: Unbounded response â€” no size cap on token exchange HTTP
  *   response bodies, allowing OOM-crash DoS via oversized responses.
  */
 
@@ -16,47 +16,47 @@ import {
 	validateTokenUrl,
 } from '../core/auth/url-validator';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// PoC #1 — SSRF via unvalidated tokenUrl
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// PoC #1 â€” SSRF via unvalidated tokenUrl
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 describe('PoC #1: SSRF via unvalidated tokenUrl', () => {
-	// ── Attack vector: HTTP scheme (credential interception) ─────────────
+	// â”€â”€ Attack vector: HTTP scheme (credential interception) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-	test('BLOCKS http:// tokenUrl — credentials would be sent in plaintext', () => {
+	test('BLOCKS http:// tokenUrl â€” credentials would be sent in plaintext', () => {
 		const url = 'http://oauth.provider.com/token';
 		expect(() => validateTokenUrl(url)).toThrow(TokenUrlValidationError);
 		expect(() => validateTokenUrl(url)).toThrow(/must use HTTPS/);
 	});
 
-	// ── Attack vector: AWS Instance Metadata Service (IMDS) ─────────────
+	// â”€â”€ Attack vector: AWS Instance Metadata Service (IMDS) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-	test('BLOCKS AWS metadata IP 169.254.169.254 — IAM credential theft', () => {
+	test('BLOCKS AWS metadata IP 169.254.169.254 â€” IAM credential theft', () => {
 		const url =
 			'https://169.254.169.254/latest/meta-data/iam/security-credentials/';
 		expect(() => validateTokenUrl(url)).toThrow(TokenUrlValidationError);
 		expect(() => validateTokenUrl(url)).toThrow(/private\/reserved IP/);
 	});
 
-	// ── Attack vector: GCP metadata service ─────────────────────────────
+	// â”€â”€ Attack vector: GCP metadata service â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-	test('BLOCKS GCP metadata hostname — service account token theft', () => {
+	test('BLOCKS GCP metadata hostname â€” service account token theft', () => {
 		const url =
 			'https://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token';
 		expect(() => validateTokenUrl(url)).toThrow(TokenUrlValidationError);
 		expect(() => validateTokenUrl(url)).toThrow(/blocked/);
 	});
 
-	// ── Attack vector: Azure IMDS ───────────────────────────────────────
+	// â”€â”€ Attack vector: Azure IMDS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-	test('BLOCKS Azure metadata IP 169.254.169.254 — managed identity theft', () => {
+	test('BLOCKS Azure metadata IP 169.254.169.254 â€” managed identity theft', () => {
 		const url = 'https://169.254.169.254/metadata/identity/oauth2/token';
 		expect(() => validateTokenUrl(url)).toThrow(TokenUrlValidationError);
 	});
 
-	// ── Attack vector: localhost / loopback ──────────────────────────────
+	// â”€â”€ Attack vector: localhost / loopback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-	test('BLOCKS localhost — internal service access', () => {
+	test('BLOCKS localhost â€” internal service access', () => {
 		const url = 'https://localhost:6379/';
 		expect(() => validateTokenUrl(url)).toThrow(TokenUrlValidationError);
 		expect(() => validateTokenUrl(url)).toThrow(/blocked/);
@@ -71,9 +71,9 @@ describe('PoC #1: SSRF via unvalidated tokenUrl', () => {
 		);
 	});
 
-	// ── Attack vector: RFC 1918 private networks ────────────────────────
+	// â”€â”€ Attack vector: RFC 1918 private networks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-	test('BLOCKS 10.x.x.x private range — internal network scanning', () => {
+	test('BLOCKS 10.x.x.x private range â€” internal network scanning', () => {
 		expect(() => validateTokenUrl('https://10.0.0.1:8500/v1/kv/')).toThrow(
 			/private\/reserved IP/,
 		);
@@ -86,7 +86,7 @@ describe('PoC #1: SSRF via unvalidated tokenUrl', () => {
 		expect(() => validateTokenUrl('https://172.31.255.255/token')).toThrow(
 			/private\/reserved IP/,
 		);
-		// 172.32.x.x is NOT private — should pass
+		// 172.32.x.x is NOT private â€” should pass
 		expect(() => validateTokenUrl('https://172.32.0.1/token')).not.toThrow();
 	});
 
@@ -96,7 +96,7 @@ describe('PoC #1: SSRF via unvalidated tokenUrl', () => {
 		);
 	});
 
-	// ── Attack vector: Credential exfiltration to attacker server ───────
+	// â”€â”€ Attack vector: Credential exfiltration to attacker server â”€â”€â”€â”€â”€â”€â”€
 
 	test('ALLOWS legitimate HTTPS tokenUrl (positive case)', () => {
 		expect(() =>
@@ -115,7 +115,7 @@ describe('PoC #1: SSRF via unvalidated tokenUrl', () => {
 		).not.toThrow();
 	});
 
-	// ── Attack vector: Invalid/garbage URLs ─────────────────────────────
+	// â”€â”€ Attack vector: Invalid/garbage URLs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	test('BLOCKS unparseable URLs', () => {
 		expect(() => validateTokenUrl('not-a-url')).toThrow(
@@ -124,7 +124,7 @@ describe('PoC #1: SSRF via unvalidated tokenUrl', () => {
 		expect(() => validateTokenUrl('')).toThrow(TokenUrlValidationError);
 	});
 
-	// ── Attack vector: IPv6 loopback ────────────────────────────────────
+	// â”€â”€ Attack vector: IPv6 loopback â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	test('BLOCKS IPv6 loopback [::1]', () => {
 		expect(() => validateTokenUrl('https://[::1]/token')).toThrow(
@@ -132,7 +132,7 @@ describe('PoC #1: SSRF via unvalidated tokenUrl', () => {
 		);
 	});
 
-	// ── Attack vector: 0.x.x.x current-network ─────────────────────────
+	// â”€â”€ Attack vector: 0.x.x.x current-network â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 	test('BLOCKS 0.x.x.x current-network range', () => {
 		expect(() => validateTokenUrl('https://0.0.0.0/token')).toThrow(
@@ -141,11 +141,11 @@ describe('PoC #1: SSRF via unvalidated tokenUrl', () => {
 	});
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// PoC #2 — Unbounded OAuth response body → OOM DoS
-// ─────────────────────────────────────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// PoC #2 â€” Unbounded OAuth response body â†’ OOM DoS
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-describe('PoC #2: Unbounded response body — OOM DoS', () => {
+describe('PoC #2: Unbounded response body â€” OOM DoS', () => {
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
 	const fs = require('node:fs');
 	// eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -192,4 +192,3 @@ describe('PoC #2: Unbounded response body — OOM DoS', () => {
 		expect(src).not.toContain('new URL(oauthConfig.tokenUrl)');
 	});
 });
-
