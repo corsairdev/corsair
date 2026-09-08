@@ -1997,6 +1997,14 @@
                 ]
               },
               {
+                "group": "Rootly",
+                "pages": [
+                  "plugins/rootly/overview",
+                  "plugins/rootly/api",
+                  "plugins/rootly/database"
+                ]
+              },
+              {
                 "group": "Runpod",
                 "pages": [
                   "plugins/runpod/overview",

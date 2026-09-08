@@ -1,0 +1,418 @@
+---
+title: API
+description: "API reference for Rootly: every `rootly.api.*` operation with input and output types."
+---
+
+Every `rootly.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Action Items
+
+### delete
+
+`actionItems.delete`
+
+Delete a Rootly incident action item
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.rootly.api.actionItems.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`actionItems.get`
+
+Get a Rootly incident action item
+
+**Risk:** `read`
+
+```ts
+await corsair.rootly.api.actionItems.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`actionItems.list`
+
+List action items for a Rootly incident
+
+**Risk:** `read`
+
+```ts
+await corsair.rootly.api.actionItems.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incident_id` | `string` | Yes | — |
+| `include` | `string` | No | — |
+| `page_number` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `included` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Incidents
+
+### delete
+
+`incidents.delete`
+
+Delete a Rootly incident
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.rootly.api.incidents.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`incidents.get`
+
+Get a Rootly incident
+
+**Risk:** `read`
+
+```ts
+await corsair.rootly.api.incidents.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`incidents.update`
+
+Update a Rootly incident
+
+**Risk:** `write`
+
+```ts
+await corsair.rootly.api.incidents.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `parent_incident_id` | `string` | No | — |
+| `duplicate_incident_id` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `private` | `boolean` | No | — |
+| `severity_id` | `string` | No | — |
+| `public_title` | `string` | No | — |
+| `alert_ids` | `string[]` | No | — |
+| `environment_ids` | `string[]` | No | — |
+| `incident_type_ids` | `string[]` | No | — |
+| `service_ids` | `string[]` | No | — |
+| `cause_ids` | `string[]` | No | — |
+| `labels` | `object` | No | — |
+| `slack_channel_id` | `string` | No | — |
+| `slack_channel_name` | `string` | No | — |
+| `slack_channel_url` | `string` | No | — |
+| `slack_channel_archived` | `boolean` | No | — |
+| `google_drive_parent_id` | `string` | No | — |
+| `google_drive_url` | `string` | No | — |
+| `jira_issue_key` | `string` | No | — |
+| `jira_issue_id` | `string` | No | — |
+| `jira_issue_url` | `string` | No | — |
+| `scheduled_for` | `string` | No | — |
+| `scheduled_until` | `string` | No | — |
+| `in_triage_at` | `string` | No | — |
+| `started_at` | `string` | No | — |
+| `detected_at` | `string` | No | — |
+| `acknowledged_at` | `string` | No | — |
+| `mitigated_at` | `string` | No | — |
+| `resolved_at` | `string` | No | — |
+| `closed_at` | `string` | No | — |
+| `cancelled_at` | `string` | No | — |
+| `mitigation_message` | `string` | No | — |
+| `resolution_message` | `string` | No | — |
+| `cancellation_message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
