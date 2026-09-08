@@ -1,0 +1,39 @@
+name: Prepare workspace
+description: Install pnpm/node and the lane-scoped workspace dependencies. Assumes the repo is already checked out.
+inputs:
+  lane:
+    description: Scope lane (plugin | full | www) from the scope job.
+    required: true
+  turbo_filter:
+    description: Turbo/pnpm filter for the lane's package(s).
+    required: true
+  www_install_filter:
+    description: Extra pnpm filter that pulls in www on a full-lane PR that also touches www.
+    required: false
+    default: ''
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v4
+      with:
+        version: 10.20.0
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '24.x'
+        cache: 'pnpm'
+
+    - name: Install plugin dependencies
+      if: inputs.lane == 'plugin'
+      shell: bash
+      run: pnpm install --frozen-lockfile --filter . --filter corsair... --filter="${{ inputs.turbo_filter }}"
+
+    - name: Install package dependencies
+      if: inputs.lane == 'full'
+      shell: bash
+      run: pnpm install --frozen-lockfile --filter . --filter "./packages/**" ${{ inputs.www_install_filter }}
+
+    - name: Install www dependencies
+      if: inputs.lane == 'www'
+      shell: bash
+      run: pnpm install --frozen-lockfile --filter . --filter "@corsair/www..."
