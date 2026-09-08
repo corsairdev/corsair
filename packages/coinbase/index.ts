@@ -52,6 +52,7 @@ export type CoinbasePluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
 	webhookSecret?: string;
+	requireApiKey?: boolean;
 	hooks?: InternalCoinbasePlugin['hooks'];
 	webhookHooks?: InternalCoinbasePlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -326,7 +327,13 @@ export function coinbase<const T extends CoinbasePluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					if (options.requireApiKey) {
+						throw new AuthMissingError('coinbase', 'api_key');
+					}
+					return '';
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
