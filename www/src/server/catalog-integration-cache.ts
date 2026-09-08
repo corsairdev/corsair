@@ -51,12 +51,20 @@ function getCachedCatalogIntegrationById(id: string) {
 
 export const getCatalogIntegrationsList = cache(
 	async (): Promise<IntegrationCatalogEntry[]> => {
-		return getCachedCatalogIntegrationsList();
+		try {
+			return await getCachedCatalogIntegrationsList();
+		} catch {
+			return [];
+		}
 	},
 );
 
 export const getCatalogIntegrationIds = cache(async (): Promise<string[]> => {
-	return getCachedCatalogIntegrationIds();
+	try {
+		return await getCachedCatalogIntegrationIds();
+	} catch {
+		return [];
+	}
 });
 
 export const getCatalogIntegrationById = cache(
