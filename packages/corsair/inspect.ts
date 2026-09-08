@@ -20,21 +20,19 @@ import type { CorsairPlugin } from './core/plugins';
 export type { ListOperationsOptions, FormFieldSchema };
 export { formatDocSchemaShape };
 
-// Deliberately shallow plugin shape for inspect helpers.
-type InspectCorsairPlugin = {
-	id: CorsairPlugin['id'];
-};
-
 /**
- * Any form of Corsair instance:
- * - single-tenant client (`createCorsair({ ... })`)
- * - multi-tenant wrapper (`createCorsair({ multiTenancy: true, ... })`)
- * - tenant-scoped client (`corsair.withTenant("tenant-id")`)
+ * Any form of Corsair instance: single-tenant client (`createCorsair()`),
+ * multi-tenant wrapper (`createCorsair({ multiTenancy: true })`), or tenant-scoped
+ * client (`corsair.withTenant()`).
+ *
+ * Mixed type arguments are deliberate: the two clients are matched structurally
+ * (empty plugin set is their common supertype), while the wrapper is matched by
+ * its plugin tuple and so needs the open array — an empty tuple rejects a real one.
  */
 export type AnyCorsairInstance =
-	| CorsairSingleTenantClient<readonly InspectCorsairPlugin[]>
-	| CorsairTenantWrapper<readonly InspectCorsairPlugin[]>
-	| CorsairClient<readonly InspectCorsairPlugin[]>;
+	| CorsairSingleTenantClient<readonly []>
+	| CorsairTenantWrapper<readonly CorsairPlugin[]>
+	| CorsairClient<readonly []>;
 
 function getPlugins(corsair: AnyCorsairInstance): readonly CorsairPlugin[] {
 	const internal = (corsair as unknown as Record<symbol, unknown>)[
