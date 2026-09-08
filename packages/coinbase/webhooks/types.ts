@@ -1,3 +1,4 @@
+import { createHmac } from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -78,9 +79,36 @@ export function coinbaseSignatureHeader(
 	headers: Record<string, string | string[] | undefined>,
 ): string | undefined {
 	return (
-		getHeader(headers, 'cb-signature') ??
+		getHeader(headers, 'x-hook0-signature') ??
 		getHeader(headers, 'x-cc-webhook-signature')
 	);
+}
+
+function verifyHook0Signature(
+	rawBody: string,
+	secret: string,
+	header: string,
+): boolean {
+	const parts = header.split(',');
+	const timestamp = parts
+		.find((part) => part.trim().startsWith('t='))
+		?.slice(2)
+		.trim();
+	const v0 = parts
+		.find((part) => part.trim().startsWith('v0='))
+		?.slice(3)
+		.trim();
+	if (!timestamp || !v0) return false;
+
+	const sentAt = Number(timestamp);
+	if (!Number.isFinite(sentAt) || sentAt <= 0) return false;
+	const ageSeconds = Math.floor(Date.now() / 1000) - sentAt;
+	if (ageSeconds > 300 || ageSeconds < -300) return false;
+
+	const expected = createHmac('sha256', secret)
+		.update(`${timestamp}.${rawBody}`)
+		.digest('hex');
+	return expected === v0;
 }
 
 export function verifyCoinbaseWebhookSignature(
@@ -105,7 +133,17 @@ export function verifyCoinbaseWebhookSignature(
 
 	const signature = coinbaseSignatureHeader(request.headers);
 	if (!signature) {
-		return { valid: false, error: 'Missing CB-SIGNATURE header' };
+		return {
+			valid: false,
+			error: 'Missing X-Hook0-Signature or X-CC-Webhook-Signature header',
+		};
+	}
+
+	if (signature.includes('t=')) {
+		if (!verifyHook0Signature(rawBody, secret, signature)) {
+			return { valid: false, error: 'Invalid signature' };
+		}
+		return { valid: true };
 	}
 
 	if (!verifyHmacSignature(rawBody, secret, signature, 'sha256')) {
