@@ -161,6 +161,7 @@ export const BaseProviders = [
 	'flexisign',
 	'formbricks',
 	'gemini',
+	'giphy',
 	'github',
 	'gitlab',
 	'gmail',
@@ -438,6 +439,7 @@ export const ProviderDisplayNames = {
 	flexisign: 'Flexisign',
 	formbricks: 'Formbricks',
 	gemini: 'Gemini',
+	giphy: 'Giphy',
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	gmail: 'Gmail',
@@ -722,6 +724,7 @@ export type AllProviders =
 	| 'flexisign'
 	| 'formbricks'
 	| 'gemini'
+	| 'giphy'
 	| 'github'
 	| 'gitlab'
 	| 'gmail'
