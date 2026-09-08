@@ -1,14 +1,23 @@
 import { z } from 'zod';
 
+/**
+ * JSON:API Resource Object.
+ * Attributes and relationships are provider-defined JSON:API object mappings.
+ */
 const JsonApiResourceSchema = z
 	.object({
 		id: z.string(),
 		type: z.string().optional(),
+		/** Key-value record of provider-defined resource attributes */
 		attributes: z.record(z.string(), z.unknown()).optional(),
+		/** Key-value record of provider-defined related resource linkages */
 		relationships: z.record(z.string(), z.unknown()).optional(),
 	})
 	.loose();
 
+/**
+ * JSON:API Single Resource Document.
+ */
 const JsonApiSingleResponseSchema = z
 	.object({
 		data: JsonApiResourceSchema,
@@ -16,15 +25,35 @@ const JsonApiSingleResponseSchema = z
 	})
 	.loose();
 
+/**
+ * JSON:API Top-Level Links Object containing pagination or resource URLs.
+ */
+const JsonApiLinksSchema = z
+	.record(z.string(), z.string().nullable())
+	.optional();
+
+/**
+ * JSON:API Top-Level Meta Object containing provider-defined response metadata.
+ */
+const JsonApiMetaSchema = z.record(z.string(), z.unknown()).optional();
+
+/**
+ * JSON:API Resource Collection Document.
+ */
 const JsonApiListResponseSchema = z
 	.object({
 		data: z.array(JsonApiResourceSchema),
-		links: z.record(z.string(), z.unknown()).optional(),
-		meta: z.record(z.string(), z.unknown()).optional(),
+		/** Pagination and navigational links */
+		links: JsonApiLinksSchema,
+		/** Pagination and response metadata */
+		meta: JsonApiMetaSchema,
 		included: z.array(JsonApiResourceSchema).optional(),
 	})
 	.loose();
 
+/**
+ * JSON:API Delete Response Document.
+ */
 const DeleteResponseSchema = z
 	.object({
 		data: JsonApiResourceSchema.optional(),
@@ -72,8 +101,11 @@ const IncidentUpdateInputSchema = z.object({
 	environment_ids: z.array(z.string()).optional(),
 	incident_type_ids: z.array(z.string()).optional(),
 	service_ids: z.array(z.string()).optional(),
+	functionality_ids: z.array(z.string()).optional(),
+	muted_service_ids: z.array(z.string()).optional(),
 	cause_ids: z.array(z.string()).optional(),
-	labels: z.record(z.string(), z.unknown()).optional(),
+	/** Key-value string labels assigned to the incident */
+	labels: z.record(z.string(), z.string()).optional(),
 	slack_channel_id: z.string().nullable().optional(),
 	slack_channel_name: z.string().nullable().optional(),
 	slack_channel_url: z.string().nullable().optional(),

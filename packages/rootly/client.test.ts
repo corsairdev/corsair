@@ -74,20 +74,16 @@ describe('makeRootlyRequest', () => {
 		);
 		mockedRequest.mockRejectedValueOnce(apiError);
 
-		await expect(makeRootlyRequest('incidents', 'test-key')).rejects.toThrow(
-			RootlyAPIError,
+		const error = await makeRootlyRequest('incidents', 'test-key').catch(
+			(err: unknown) => err,
 		);
 
-		try {
-			await makeRootlyRequest('incidents', 'test-key');
-		} catch (error) {
-			expect(error).toBeInstanceOf(RootlyAPIError);
-			const rootlyError = error as RootlyAPIError;
-			expect(rootlyError.status).toBe(429);
-			expect(rootlyError.retryAfter).toBe(2500);
-			expect(rootlyError.isRateLimitError()).toBe(true);
-			expect(rootlyError.cause).toBe(apiError);
-		}
+		expect(error).toBeInstanceOf(RootlyAPIError);
+		const rootlyError = error as RootlyAPIError;
+		expect(rootlyError.status).toBe(429);
+		expect(rootlyError.retryAfter).toBe(2500);
+		expect(rootlyError.isRateLimitError()).toBe(true);
+		expect(rootlyError.cause).toBe(apiError);
 	});
 
 	it('preserves 401 status on authentication ApiError', async () => {
@@ -104,13 +100,27 @@ describe('makeRootlyRequest', () => {
 		);
 		mockedRequest.mockRejectedValueOnce(apiError);
 
-		try {
-			await makeRootlyRequest('incidents', 'test-key');
-		} catch (error) {
-			expect(error).toBeInstanceOf(RootlyAPIError);
-			const rootlyError = error as RootlyAPIError;
-			expect(rootlyError.status).toBe(401);
-			expect(rootlyError.isRateLimitError()).toBe(false);
-		}
+		const error = await makeRootlyRequest('incidents', 'test-key').catch(
+			(err: unknown) => err,
+		);
+
+		expect(error).toBeInstanceOf(RootlyAPIError);
+		const rootlyError = error as RootlyAPIError;
+		expect(rootlyError.status).toBe(401);
+		expect(rootlyError.isRateLimitError()).toBe(false);
+	});
+
+	it('throws RootlyAPIError if raw string response cannot be parsed as JSON', async () => {
+		mockedRequest.mockResolvedValueOnce('invalid json' as never);
+
+		const error = await makeRootlyRequest('incidents', 'test-key').catch(
+			(err: unknown) => err,
+		);
+
+		expect(error).toBeInstanceOf(RootlyAPIError);
+		const rootlyError = error as RootlyAPIError;
+		expect(rootlyError.message).toContain(
+			'Failed to parse Rootly API JSON response',
+		);
 	});
 });

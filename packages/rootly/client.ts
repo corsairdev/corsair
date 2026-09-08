@@ -4,6 +4,7 @@ import { ApiError, request } from 'corsair/http';
 export class RootlyAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	/** Provider error response payload if available */
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 	public readonly rateLimitReset?: number;
@@ -43,6 +44,7 @@ export async function makeRootlyRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		/** JSON payload to send in request body */
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
@@ -81,13 +83,21 @@ export async function makeRootlyRequest<T>(
 		if (typeof response === 'string') {
 			try {
 				return JSON.parse(response) as T;
-			} catch {
-				return response as unknown as T;
+			} catch (parseError) {
+				throw new RootlyAPIError(
+					'Failed to parse Rootly API JSON response',
+					undefined,
+					{ cause: parseError instanceof Error ? parseError : undefined },
+				);
 			}
 		}
 
 		return response as T;
 	} catch (error) {
+		if (error instanceof RootlyAPIError) {
+			throw error;
+		}
+
 		if (error instanceof ApiError) {
 			throw new RootlyAPIError(error.message, error.status, {
 				cause: error,
