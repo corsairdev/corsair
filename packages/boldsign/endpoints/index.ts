@@ -54,7 +54,6 @@ export const CustomFields = {
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.createCustomField.parse(response);
-		// PII-safe: only log non-sensitive identifiers, omit formField details
 		await logEventFromContext(
 			ctx,
 			'boldsign.customFields.create',
@@ -82,7 +81,6 @@ export const CustomFields = {
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.editCustomField.parse(response);
-		// PII-safe: only log identifiers, omit formField payload
 		await logEventFromContext(
 			ctx,
 			'boldsign.customFields.edit',
@@ -142,7 +140,6 @@ export const Documents = {
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.createEmbeddedRequestLink.parse(response);
-		// PII-safe: do not log signer emails or message content, only counts and title
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.createEmbeddedRequestLink',
@@ -164,7 +161,6 @@ export const Documents = {
 			{ method: 'POST', body: validInput },
 		);
 		const parsed = BoldsignEndpointOutputSchemas.sendDocument.parse(response);
-		// PII-safe: avoid logging signer emails and file payloads
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.send',
@@ -189,7 +185,6 @@ export const Documents = {
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.editDocumentBeta.parse(response);
-		// PII-safe: do not log signer/cc/file details which may contain emails
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.editBeta',
@@ -208,9 +203,7 @@ export const Documents = {
 			BoldsignEndpointInputSchemas.extendDocumentExpiry.parse(input);
 		// Body keys use the PascalCase names from
 		// https://developers.boldsign.com/documents/extend-document-expiry
-		// unknown: this call returns no content (see NoContentResponseSchema
-		// below), so no narrower response type exists; the actual payload is
-		// validated right after this call.
+		// unknown: this call returns no content, so no narrower type exists; validated via NoContentResponseSchema
 		const response = await makeBoldsignRequest<unknown>(
 			'/v1/document/extendExpiry',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
@@ -228,7 +221,6 @@ export const Documents = {
 		const parsed = BoldsignEndpointOutputSchemas.extendDocumentExpiry.parse({
 			success: true,
 		});
-		// PII-safe: omit onBehalfOf email, keep non-sensitive expiry data
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.extendExpiry',
@@ -241,12 +233,8 @@ export const Documents = {
 	removeAuthentication: (async (ctx, input) => {
 		const { documentId, emailId, zOrder, onBehalfOf } =
 			BoldsignEndpointInputSchemas.removeDocumentAuthentication.parse(input);
-		// Query param is lowercase `documentId` and body keys use the
-		// PascalCase names from
-		// https://developers.boldsign.com/documents/remove-authentication-from-the-document
-		// unknown: this call returns 204 No Content (see
-		// NoContentResponseSchema below), so no narrower response type exists;
-		// the actual payload is validated right after this call.
+		// Query param is lowercase `documentId` and body keys use PascalCase names
+		// unknown: this call returns 204 No Content, so no narrower type exists; validated via NoContentResponseSchema
 		const response = await makeBoldsignRequest<unknown>(
 			'/v1/document/RemoveAuthentication',
 			{ key: ctx.key, authType: authTypeFromContext(ctx) },
@@ -261,7 +249,6 @@ export const Documents = {
 			BoldsignEndpointOutputSchemas.removeDocumentAuthentication.parse({
 				success: true,
 			});
-		// PII-safe: omit emailId/onBehalfOf which are email addresses
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.removeAuthentication',
@@ -279,7 +266,6 @@ export const Documents = {
 			{ method: 'GET', query: validInput },
 		);
 		const parsed = BoldsignEndpointOutputSchemas.listDocuments.parse(response);
-		// PII-safe: omit sentBy/recipients email arrays, log only pagination and status
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.list',
@@ -304,7 +290,6 @@ export const Documents = {
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.listBehalfDocuments.parse(response);
-		// PII-safe: omit emailAddress/signers email arrays
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.listBehalf',
@@ -330,7 +315,6 @@ export const Documents = {
 		);
 		const parsed =
 			BoldsignEndpointOutputSchemas.listTeamDocuments.parse(response);
-		// PII-safe: omit userId/teamId arrays tied to identities, log pagination only
 		await logEventFromContext(
 			ctx,
 			'boldsign.documents.listTeam',

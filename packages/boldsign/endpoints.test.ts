@@ -461,11 +461,11 @@ describe('BoldSign endpoint requests', () => {
 		// Type-safe check: logged objects must not contain email addresses
 		const firstLogPayload = mockLog.mock.calls[0]![2] as Record<
 			string,
-			unknown
+			string | number
 		>;
 		const secondLogPayload = mockLog.mock.calls[1]![2] as Record<
 			string,
-			unknown
+			string | number
 		>;
 		expect(JSON.stringify(firstLogPayload)).not.toContain('alice@example.com');
 		expect(JSON.stringify(firstLogPayload)).not.toContain('bob@example.com');

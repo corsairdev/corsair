@@ -75,8 +75,7 @@ const SendDocumentInputSchema = z
 		enableSigningOrder: z.boolean().optional(),
 		expiryValue: z.number().optional(),
 		expiryDateType: z.enum(['Days', 'DateTime']).optional(),
-		// unknown values: BoldSign accepts provider-defined reminder settings
-		// keys here, so a narrower value type is not practical.
+		// unknown: provider-defined reminder settings, narrower type not practical
 		reminderSettings: z.record(z.string(), z.unknown()).optional(),
 		disableEmails: z.boolean().optional(),
 		disableSMS: z.boolean().optional(),
@@ -94,11 +93,9 @@ const EditDocumentBetaInputSchema = z
 		title: z.string().optional(),
 		message: z.string().optional(),
 		signers: z.array(SignerSchema).optional(),
-		// unknown values: CC entries carry provider-defined fields, so a
-		// narrower value type is not practical.
+		// unknown: CC entries with provider-defined fields, narrower type not practical
 		cc: z.array(z.record(z.string(), z.unknown())).optional(),
-		// unknown values: file entries carry provider-defined fields, so a
-		// narrower value type is not practical.
+		// unknown: file entries with provider-defined fields, narrower type not practical
 		files: z.array(z.record(z.string(), z.unknown())).optional(),
 		enableSigningOrder: z.boolean().optional(),
 		disableEmails: z.boolean().optional(),
