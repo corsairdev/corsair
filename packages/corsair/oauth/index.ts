@@ -87,18 +87,12 @@ async function ensureAccount(
 	await database.db.transaction().execute(async (trx) => {
 		// Lock the integration row before the check-then-insert so this
 		// cannot interleave with a concurrent disconnect (or another connect).
-		const integrationRow = await (database.isPg === true
-			? trx
-					.selectFrom('corsair_integrations')
-					.select(['id'])
-					.where('name', '=', pluginId)
-					.forUpdate()
-					.executeTakeFirst()
-			: trx
-					.selectFrom('corsair_integrations')
-					.select(['id'])
-					.where('name', '=', pluginId)
-					.executeTakeFirst());
+		let integrationQuery = trx
+			.selectFrom('corsair_integrations')
+			.select(['id'])
+			.where('name', '=', pluginId);
+		if (database.isPg === true) integrationQuery = integrationQuery.forUpdate();
+		const integrationRow = await integrationQuery.executeTakeFirst();
 
 		if (!integrationRow) {
 			throw new Error(
