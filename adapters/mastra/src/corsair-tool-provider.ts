@@ -406,6 +406,10 @@ export class CorsairToolProvider extends BaseToolProvider {
 	 * resolved tenant's Corsair credentials. The runtime calls this once per
 	 * connection; each tool's `execute` runs the Corsair operation with the
 	 * managed token from your database.
+	 *
+	 * `ToolAction<any, any, any>` matches the abstract base class signature from
+	 * `@mastra/core` — the input/output schemas are dynamically derived per plugin
+	 * at runtime and cannot be statically parameterised.
 	 */
 	async resolveToolsVNext(
 		opts: ResolveToolsOpts,
