@@ -167,6 +167,7 @@ export const BaseProviders = [
 	'gemini',
 	'github',
 	'gitlab',
+	'gladia',
 	'gmail',
 	'googleaddressvalidation',
 	'googleanalytics',
@@ -450,6 +451,7 @@ export const ProviderDisplayNames = {
 	gemini: 'Gemini',
 	github: 'GitHub',
 	gitlab: 'GitLab',
+	gladia: 'Gladia',
 	gmail: 'Gmail',
 	googleaddressvalidation: 'Google Address Validation',
 	googleanalytics: 'Google Analytics',
@@ -740,6 +742,7 @@ export type AllProviders =
 	| 'gemini'
 	| 'github'
 	| 'gitlab'
+	| 'gladia'
 	| 'gmail'
 	| 'googleaddressvalidation'
 	| 'googleanalytics'
