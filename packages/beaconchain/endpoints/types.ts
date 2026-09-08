@@ -239,6 +239,7 @@ export const GetValidatorIncomeHistoryInputSchema = z.object({
 	chain,
 	cursor,
 	page_size: pageSize,
+	epoch: z.number().optional(),
 });
 export type GetValidatorIncomeHistoryInput = z.infer<
 	typeof GetValidatorIncomeHistoryInputSchema
@@ -310,12 +311,14 @@ export type GetValidatorsByWithdrawalCredentialsInput = z.infer<
 >;
 
 export const PostValidatorsInputSchema = z.object({
-	indicesOrPubkeys: z
-		.array(z.string())
-		.min(1, 'At least one validator index or pubkey is required'),
 	chain,
 	cursor,
 	page_size: pageSize,
+	validator: z.object({
+		validator_identifiers: z
+			.array(z.string())
+			.min(1, 'At least one validator index or pubkey is required'),
+	}),
 });
 export type PostValidatorsInput = z.infer<typeof PostValidatorsInputSchema>;
 

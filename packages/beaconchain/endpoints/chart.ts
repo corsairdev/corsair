@@ -7,6 +7,12 @@ import {
 import type { BeaconchainEndpoints } from '../index';
 import { BeaconchainV1ResponseSchema, GetChartInputSchema } from './types';
 
+/**
+ * Retrieves chart data from Beaconchain V1 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including chartName and optional chain
+ * @returns Chart data response
+ */
 export const getChart: BeaconchainEndpoints['getChart'] = async (
 	ctx,
 	input,

@@ -10,6 +10,12 @@ import {
 	GetRocketpoolValidatorInputSchema,
 } from './types';
 
+/**
+ * Retrieves Rocket Pool validator details via Beaconchain V1 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including indexOrPubkey and optional chain
+ * @returns Rocket Pool validator response
+ */
 export const getRocketpoolValidator: BeaconchainEndpoints['getRocketpoolValidator'] =
 	async (ctx, input) => {
 		const parsed = GetRocketpoolValidatorInputSchema.parse(input);

@@ -277,7 +277,7 @@ describe('Beaconchain endpoint contracts', () => {
 				ctx.key,
 				{
 					method: 'POST',
-					body: { chain: 'mainnet', period: 290 },
+					body: { chain: 'mainnet', sync_committee_period: { period: 290 } },
 				},
 			);
 		});
@@ -300,7 +300,9 @@ describe('Beaconchain endpoint contracts', () => {
 
 		it('looks up validators with nested identifiers', async () => {
 			await Validator.getValidator(ctx, { indexOrPubkey: '1' });
-			await Validators.postValidators(ctx, { indicesOrPubkeys: ['1', '2'] });
+			await Validators.postValidators(ctx, {
+				validator: { validator_identifiers: ['1', '2'] },
+			});
 			expect(mockedV2Request).toHaveBeenCalledWith(
 				'ethereum/validators',
 				ctx.key,
@@ -429,7 +431,7 @@ describe('Beaconchain endpoint contracts', () => {
 
 		it('forwards chain and cursor pagination on list lookups', async () => {
 			await Validators.postValidators(ctx, {
-				indicesOrPubkeys: ['1'],
+				validator: { validator_identifiers: ['1'] },
 				chain: 'hoodi',
 				cursor: 'abc',
 				page_size: 10,

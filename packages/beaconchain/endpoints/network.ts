@@ -10,6 +10,12 @@ import {
 	GetNetworkPerformanceInputSchema,
 } from './types';
 
+/**
+ * Retrieves network performance metrics via Beaconchain V2 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including chain and optional evaluation_window
+ * @returns Network performance response
+ */
 export const getNetworkPerformance: BeaconchainEndpoints['getNetworkPerformance'] =
 	async (ctx, input) => {
 		const parsed = GetNetworkPerformanceInputSchema.parse(input);

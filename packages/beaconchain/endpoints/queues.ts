@@ -7,6 +7,12 @@ import {
 import type { BeaconchainEndpoints } from '../index';
 import { BeaconchainV2ResponseSchema, GetQueuesInputSchema } from './types';
 
+/**
+ * Retrieves current activation and exit queue info via Beaconchain V2 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including optional chain
+ * @returns Network queues response
+ */
 export const getQueues: BeaconchainEndpoints['getQueues'] = async (
 	ctx,
 	input,

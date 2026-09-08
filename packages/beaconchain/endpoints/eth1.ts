@@ -10,6 +10,12 @@ import {
 	GetEth1DepositsByTxHashInputSchema,
 } from './types';
 
+/**
+ * Retrieves Eth1 deposits by transaction hash via Beaconchain V1 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including txHash and optional chain
+ * @returns Eth1 deposits response
+ */
 export const getEth1DepositsByTxHash: BeaconchainEndpoints['getEth1DepositsByTxHash'] =
 	async (ctx, input) => {
 		const parsed = GetEth1DepositsByTxHashInputSchema.parse(input);

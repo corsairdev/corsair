@@ -6,6 +6,12 @@ import {
 	GetNodeHealthInputSchema,
 } from './types';
 
+/**
+ * Retrieves node health status via Beaconchain health endpoint.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including optional chain
+ * @returns Node health response
+ */
 export const getNodeHealth: BeaconchainEndpoints['getNodeHealth'] = async (
 	ctx,
 	input,

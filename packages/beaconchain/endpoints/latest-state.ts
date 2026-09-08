@@ -10,6 +10,12 @@ import {
 	GetLatestStateInputSchema,
 } from './types';
 
+/**
+ * Retrieves the latest chain state via Beaconchain V2 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including optional chain
+ * @returns Latest chain state response
+ */
 export const getLatestState: BeaconchainEndpoints['getLatestState'] = async (
 	ctx,
 	input,

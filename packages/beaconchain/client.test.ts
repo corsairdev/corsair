@@ -107,8 +107,14 @@ describe('makeBeaconchainV2Request', () => {
 				method: 'POST',
 				body: { chain: 'mainnet' },
 			}),
+		).rejects.toBeInstanceOf(BeaconchainAPIError);
+
+		await expect(
+			makeBeaconchainV2Request('ethereum/validators', 'test-key', {
+				method: 'POST',
+				body: { chain: 'mainnet' },
+			}),
 		).rejects.toMatchObject({
-			constructor: BeaconchainAPIError,
 			status: 429,
 			retryAfter: 2000,
 		});

@@ -25,6 +25,13 @@ import {
 	GetValidatorWithdrawalsInputSchema,
 } from './types';
 
+/**
+ * Builds the validator request body for V2 API calls.
+ * @param input - Input parameters with chain, cursor, page_size
+ * @param indexOrPubkey - Validator index or public key
+ * @param extra - Additional properties for the request body
+ * @returns Formatted request body with validator identifiers
+ */
 function validatorBody(
 	input: { chain?: 'mainnet' | 'hoodi'; cursor?: string; page_size?: number },
 	indexOrPubkey: string,
@@ -36,6 +43,12 @@ function validatorBody(
 	});
 }
 
+/**
+ * Retrieves validator details by index or public key via Beaconchain V2 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including indexOrPubkey, chain, cursor, page_size
+ * @returns Validator details response
+ */
 export const getValidator: BeaconchainEndpoints['getValidator'] = async (
 	ctx,
 	input,
@@ -58,6 +71,12 @@ export const getValidator: BeaconchainEndpoints['getValidator'] = async (
 	return BeaconchainV2ResponseSchema.parse(res);
 };
 
+/**
+ * Retrieves validator attestation efficiency via Beaconchain V2 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including indexOrPubkey, chain, evaluation_window
+ * @returns Validator attestation efficiency response
+ */
 export const getValidatorAttestationEfficiency: BeaconchainEndpoints['getValidatorAttestationEfficiency'] =
 	async (ctx, input) => {
 		const parsed = GetValidatorAttestationEfficiencyInputSchema.parse(input);
@@ -82,6 +101,12 @@ export const getValidatorAttestationEfficiency: BeaconchainEndpoints['getValidat
 		return BeaconchainV2ResponseSchema.parse(res);
 	};
 
+/**
+ * Retrieves attestations performed by a validator via Beaconchain V2 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including indexOrPubkey, chain, cursor, page_size
+ * @returns Validator attestations response
+ */
 export const getValidatorAttestations: BeaconchainEndpoints['getValidatorAttestations'] =
 	async (ctx, input) => {
 		const parsed = GetValidatorAttestationsInputSchema.parse(input);
@@ -102,6 +127,12 @@ export const getValidatorAttestations: BeaconchainEndpoints['getValidatorAttesta
 		return BeaconchainV2ResponseSchema.parse(res);
 	};
 
+/**
+ * Retrieves BLS to execution change operations for a validator via Beaconchain V1 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including indexOrPubkey and optional chain
+ * @returns Validator BLS changes response
+ */
 export const getValidatorBlsChanges: BeaconchainEndpoints['getValidatorBlsChanges'] =
 	async (ctx, input) => {
 		const parsed = GetValidatorBlsChangesInputSchema.parse(input);
@@ -119,6 +150,12 @@ export const getValidatorBlsChanges: BeaconchainEndpoints['getValidatorBlsChange
 		return BeaconchainV1ResponseSchema.parse(res);
 	};
 
+/**
+ * Retrieves balance history for a validator via Beaconchain V2 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including indexOrPubkey, chain, cursor, page_size
+ * @returns Validator balance history response
+ */
 export const getValidatorBalanceHistory: BeaconchainEndpoints['getValidatorBalanceHistory'] =
 	async (ctx, input) => {
 		const parsed = GetValidatorBalanceHistoryInputSchema.parse(input);
@@ -139,6 +176,12 @@ export const getValidatorBalanceHistory: BeaconchainEndpoints['getValidatorBalan
 		return BeaconchainV2ResponseSchema.parse(res);
 	};
 
+/**
+ * Retrieves consensus rewards for a validator via Beaconchain V2 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including indexOrPubkey, chain, evaluation_window
+ * @returns Validator consensus rewards response
+ */
 export const getValidatorConsensusRewards: BeaconchainEndpoints['getValidatorConsensusRewards'] =
 	async (ctx, input) => {
 		const parsed = GetValidatorConsensusRewardsInputSchema.parse(input);
@@ -160,9 +203,17 @@ export const getValidatorConsensusRewards: BeaconchainEndpoints['getValidatorCon
 			{ indexOrPubkey: parsed.indexOrPubkey },
 			'completed',
 		);
-		return BeaconchainV2ResponseSchema.parse(res);
+		const parsedRes = BeaconchainV2ResponseSchema.parse(res);
+		const data = parsedRes.data as Record<string, unknown> | undefined;
+		return { ...parsedRes, data: data?.consensus ?? parsedRes.data };
 	};
 
+/**
+ * Retrieves daily stats for a validator via Beaconchain V1 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including indexOrPubkey and optional chain
+ * @returns Validator daily stats response
+ */
 export const getValidatorDailyStats: BeaconchainEndpoints['getValidatorDailyStats'] =
 	async (ctx, input) => {
 		const parsed = GetValidatorDailyStatsInputSchema.parse(input);
@@ -180,6 +231,12 @@ export const getValidatorDailyStats: BeaconchainEndpoints['getValidatorDailyStat
 		return BeaconchainV1ResponseSchema.parse(res);
 	};
 
+/**
+ * Retrieves deposits for a validator via Beaconchain V1 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including indexOrPubkey and optional chain
+ * @returns Validator deposits response
+ */
 export const getValidatorDeposits: BeaconchainEndpoints['getValidatorDeposits'] =
 	async (ctx, input) => {
 		const parsed = GetValidatorDepositsInputSchema.parse(input);
@@ -197,6 +254,12 @@ export const getValidatorDeposits: BeaconchainEndpoints['getValidatorDeposits'] 
 		return BeaconchainV1ResponseSchema.parse(res);
 	};
 
+/**
+ * Retrieves execution layer rewards for a validator via Beaconchain V2 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including indexOrPubkey, chain, evaluation_window
+ * @returns Validator execution rewards response
+ */
 export const getValidatorExecutionRewards: BeaconchainEndpoints['getValidatorExecutionRewards'] =
 	async (ctx, input) => {
 		const parsed = GetValidatorExecutionRewardsInputSchema.parse(input);
@@ -218,9 +281,17 @@ export const getValidatorExecutionRewards: BeaconchainEndpoints['getValidatorExe
 			{ indexOrPubkey: parsed.indexOrPubkey },
 			'completed',
 		);
-		return BeaconchainV2ResponseSchema.parse(res);
+		const parsedRes = BeaconchainV2ResponseSchema.parse(res);
+		const data = parsedRes.data as Record<string, unknown> | undefined;
+		return { ...parsedRes, data: data?.execution ?? parsedRes.data };
 	};
 
+/**
+ * Retrieves income history for a validator via Beaconchain V2 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including indexOrPubkey, chain, cursor, page_size, epoch
+ * @returns Validator income history response
+ */
 export const getValidatorIncomeHistory: BeaconchainEndpoints['getValidatorIncomeHistory'] =
 	async (ctx, input) => {
 		const parsed = GetValidatorIncomeHistoryInputSchema.parse(input);
@@ -229,7 +300,9 @@ export const getValidatorIncomeHistory: BeaconchainEndpoints['getValidatorIncome
 			requireBeaconchainKey(ctx.key),
 			{
 				method: 'POST',
-				body: validatorBody(parsed, parsed.indexOrPubkey),
+				body: validatorBody(parsed, parsed.indexOrPubkey, {
+					...(parsed.epoch !== undefined ? { epoch: parsed.epoch } : {}),
+				}),
 			},
 		);
 		await logEventFromContext(
@@ -241,6 +314,12 @@ export const getValidatorIncomeHistory: BeaconchainEndpoints['getValidatorIncome
 		return BeaconchainV2ResponseSchema.parse(res);
 	};
 
+/**
+ * Retrieves validator leaderboard via Beaconchain V1 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including optional chain
+ * @returns Validator leaderboard response
+ */
 export const getValidatorLeaderboard: BeaconchainEndpoints['getValidatorLeaderboard'] =
 	async (ctx, input) => {
 		const parsed = GetValidatorLeaderboardInputSchema.parse(input);
@@ -258,6 +337,12 @@ export const getValidatorLeaderboard: BeaconchainEndpoints['getValidatorLeaderbo
 		return BeaconchainV1ResponseSchema.parse(res);
 	};
 
+/**
+ * Retrieves block proposals for a validator via Beaconchain V2 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including indexOrPubkey, chain, cursor, page_size
+ * @returns Validator proposals response
+ */
 export const getValidatorProposals: BeaconchainEndpoints['getValidatorProposals'] =
 	async (ctx, input) => {
 		const parsed = GetValidatorProposalsInputSchema.parse(input);
@@ -278,6 +363,12 @@ export const getValidatorProposals: BeaconchainEndpoints['getValidatorProposals'
 		return BeaconchainV2ResponseSchema.parse(res);
 	};
 
+/**
+ * Retrieves withdrawals for a validator via Beaconchain V1 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including indexOrPubkey and optional chain
+ * @returns Validator withdrawals response
+ */
 export const getValidatorWithdrawals: BeaconchainEndpoints['getValidatorWithdrawals'] =
 	async (ctx, input) => {
 		const parsed = GetValidatorWithdrawalsInputSchema.parse(input);

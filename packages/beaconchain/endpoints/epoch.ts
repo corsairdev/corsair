@@ -7,6 +7,12 @@ import {
 import type { BeaconchainEndpoints } from '../index';
 import { BeaconchainV1ResponseSchema, GetEpochInputSchema } from './types';
 
+/**
+ * Retrieves epoch details by epoch ID via Beaconchain V1 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including epochId and optional chain
+ * @returns Epoch details response
+ */
 export const getEpoch: BeaconchainEndpoints['getEpoch'] = async (
 	ctx,
 	input,

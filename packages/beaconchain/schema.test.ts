@@ -63,12 +63,12 @@ describe('Beaconchain schema', () => {
 
 		expect(
 			beaconchainEndpointSchemas['validators.post'].input.safeParse({
-				indicesOrPubkeys: ['1', '2'],
+				validator: { validator_identifiers: ['1', '2'] },
 			}).success,
 		).toBe(true);
 		expect(
 			beaconchainEndpointSchemas['validators.post'].input.safeParse({
-				indicesOrPubkeys: [],
+				validator: { validator_identifiers: [] },
 			}).success,
 		).toBe(false);
 	});

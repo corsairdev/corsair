@@ -15,6 +15,12 @@ import {
 	GetExecutionProducedBlocksInputSchema,
 } from './types';
 
+/**
+ * Retrieves ERC20 tokens for an execution address via Beaconchain V1 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including address and optional chain
+ * @returns ERC20 tokens response
+ */
 export const getExecutionAddressErc20Tokens: BeaconchainEndpoints['getExecutionAddressErc20Tokens'] =
 	async (ctx, input) => {
 		const parsed = GetExecutionAddressErc20TokensInputSchema.parse(input);
@@ -32,6 +38,12 @@ export const getExecutionAddressErc20Tokens: BeaconchainEndpoints['getExecutionA
 		return BeaconchainV1ResponseSchema.parse(res);
 	};
 
+/**
+ * Retrieves execution block information by block ID via Beaconchain V2 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including blockId, chain, cursor, page_size
+ * @returns Execution block response
+ */
 export const getExecutionBlock: BeaconchainEndpoints['getExecutionBlock'] =
 	async (ctx, input) => {
 		const parsed = GetExecutionBlockInputSchema.parse(input);
@@ -52,6 +64,12 @@ export const getExecutionBlock: BeaconchainEndpoints['getExecutionBlock'] =
 		return BeaconchainV2ResponseSchema.parse(res);
 	};
 
+/**
+ * Retrieves execution blocks produced by an address via Beaconchain V1 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including address and optional chain
+ * @returns Produced blocks response
+ */
 export const getExecutionProducedBlocks: BeaconchainEndpoints['getExecutionProducedBlocks'] =
 	async (ctx, input) => {
 		const parsed = GetExecutionProducedBlocksInputSchema.parse(input);

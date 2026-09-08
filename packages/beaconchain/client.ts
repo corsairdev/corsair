@@ -2,6 +2,10 @@ import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
+/**
+ * Error class for Beaconchain API errors.
+ * Wraps API errors with additional context like status, statusText, body, and retryAfter.
+ */
 export class BeaconchainAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
@@ -34,6 +38,12 @@ const ORIGIN = {
 
 const V2_BASE = 'https://beaconcha.in/api/v2';
 
+/**
+ * Validates and returns the Beaconchain API key.
+ * @param key - The API key to validate
+ * @returns The validated API key
+ * @throws AuthMissingError if key is undefined or empty
+ */
 export function requireBeaconchainKey(key: string | undefined): string {
 	if (!key) {
 		throw new AuthMissingError('beaconchain', 'api_key');
@@ -41,6 +51,12 @@ export function requireBeaconchainKey(key: string | undefined): string {
 	return key;
 }
 
+/**
+ * Builds the request body for Beaconchain V2 API calls.
+ * @param input - Input parameters including chain, cursor, and page_size
+ * @param extra - Additional properties to include in the body
+ * @returns Formatted request body with chain, pagination, and extra fields
+ */
 export function v2Body(
 	input: { chain?: BeaconchainChain; cursor?: string; page_size?: number },
 	extra: Record<string, unknown> = {},
@@ -53,6 +69,12 @@ export function v2Body(
 	};
 }
 
+/**
+ * Builds request options for Beaconchain V1 API GET calls.
+ * @param chain - Optional chain (mainnet or hoodi)
+ * @param extra - Additional options including query parameters
+ * @returns Request options with GET method and optional chain/query
+ */
 export function v1GetOptions(
 	chain?: BeaconchainChain,
 	extra: { query?: Record<string, string | number | boolean | undefined> } = {},
@@ -124,6 +146,14 @@ async function makeRequest<T>(
 	}
 }
 
+/**
+ * Makes a request to the Beaconchain V1 API.
+ * @param endpoint - API endpoint path (e.g., 'validator/123')
+ * @param apiKey - API key for authentication (sent as apikey header)
+ * @param options - Request options (method, body, query, chain)
+ * @returns Parsed API response
+ * @throws BeaconchainAPIError on API errors
+ */
 export async function makeBeaconchainV1Request<T>(
 	endpoint: string,
 	apiKey: string,
@@ -136,6 +166,14 @@ export async function makeBeaconchainV1Request<T>(
 	});
 }
 
+/**
+ * Makes a request to the Beaconchain V2 API.
+ * @param endpoint - API endpoint path (e.g., 'ethereum/validators')
+ * @param apiKey - API key for authentication (sent as Bearer token)
+ * @param options - Request options (method, body, query, chain)
+ * @returns Parsed API response
+ * @throws BeaconchainAPIError on API errors
+ */
 export async function makeBeaconchainV2Request<T>(
 	endpoint: string,
 	apiKey: string,
@@ -148,6 +186,13 @@ export async function makeBeaconchainV2Request<T>(
 	});
 }
 
+/**
+ * Makes a health check request to the Beaconchain API.
+ * @param apiKey - API key for authentication
+ * @param chain - Chain to check (mainnet or hoodi), defaults to mainnet
+ * @returns Health check response as string
+ * @throws BeaconchainAPIError on API errors
+ */
 export async function makeBeaconchainHealthRequest(
 	apiKey: string,
 	chain: BeaconchainChain = 'mainnet',

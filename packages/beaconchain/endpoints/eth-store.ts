@@ -10,6 +10,12 @@ import {
 	GetEthStoreDailyInputSchema,
 } from './types';
 
+/**
+ * Retrieves EthStore daily stats via Beaconchain V2 API.
+ * @param ctx - Plugin context with authentication
+ * @param input - Input parameters including chain, cursor, page_size, evaluation_window
+ * @returns EthStore daily stats response
+ */
 export const getEthStoreDaily: BeaconchainEndpoints['getEthStoreDaily'] =
 	async (ctx, input) => {
 		const parsed = GetEthStoreDailyInputSchema.parse(input);

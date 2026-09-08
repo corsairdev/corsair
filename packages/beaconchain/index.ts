@@ -507,6 +507,11 @@ export type InternalBeaconchainPlugin =
 export type ExternalBeaconchainPlugin<T extends BeaconchainPluginOptions> =
 	BaseBeaconchainPlugin<T>;
 
+/**
+ * Creates a Beaconchain plugin for Corsair.
+ * @param incomingOptions - Plugin configuration options (authType, key, hooks, errorHandlers, permissions)
+ * @returns Configured Beaconchain plugin instance
+ */
 export function beaconchain<const T extends BeaconchainPluginOptions>(
 	incomingOptions: BeaconchainPluginOptions &
 		T = {} as BeaconchainPluginOptions & T,

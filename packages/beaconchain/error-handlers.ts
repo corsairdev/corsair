@@ -2,11 +2,20 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import type { BeaconchainAPIError } from './client';
 
+/**
+ * Extracts HTTP status code from an error.
+ * @param error - Error to extract status from
+ * @returns Status code if available, undefined otherwise
+ */
 function getStatus(error: Error): number | undefined {
 	if (error instanceof ApiError) return error.status;
 	return (error as Partial<BeaconchainAPIError>).status;
 }
 
+/**
+ * Error handlers for Beaconchain API errors.
+ * Provides retry logic for rate limits, auth errors, and server errors.
+ */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
