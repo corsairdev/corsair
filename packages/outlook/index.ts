@@ -402,7 +402,7 @@ const outlookEndpointMeta = {
 	},
 	'messages.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete an email message [DESTRUCTIVE]',
+		description: 'Delete an email message',
 	},
 	'messages.move': {
 		riskLevel: 'write',
@@ -443,7 +443,7 @@ const outlookEndpointMeta = {
 	},
 	'events.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a calendar event [DESTRUCTIVE]',
+		description: 'Delete a calendar event',
 	},
 	'events.cancel': {
 		riskLevel: 'write',
@@ -469,7 +469,7 @@ const outlookEndpointMeta = {
 	'calendars.list': { riskLevel: 'read', description: 'List all calendars' },
 	'calendars.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a calendar [DESTRUCTIVE]',
+		description: 'Delete a calendar',
 	},
 	'contacts.create': {
 		riskLevel: 'write',
@@ -479,7 +479,7 @@ const outlookEndpointMeta = {
 	'contacts.update': { riskLevel: 'write', description: 'Update a contact' },
 	'contacts.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a contact [DESTRUCTIVE]',
+		description: 'Delete a contact',
 	},
 	'folders.create': {
 		riskLevel: 'write',
@@ -490,7 +490,7 @@ const outlookEndpointMeta = {
 	'folders.update': { riskLevel: 'write', description: 'Rename a mail folder' },
 	'folders.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a mail folder [DESTRUCTIVE]',
+		description: 'Delete a mail folder',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof outlookEndpointsNested>;
 

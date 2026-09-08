@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Asana plugin for Corsair"
+description: "Work management platform for tasks, projects, teams, and cross-functional collaboration."
 ---
 
 Use **Asana** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -48,8 +48,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```
@@ -100,8 +100,6 @@ asana({
 })
 ```
 
-Store credentials with `pnpm corsair Setup --plugin=asana` (see [Get Credentials](/plugins/asana/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
-
 More: [OAuth 2.0](/concepts/oauth)
 
 </Tab>
@@ -126,20 +124,20 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Read-style (read):** `tasks.list`
+**List tasks**
 
 ```ts
-await corsair.asana.api.tasks.list({});
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.list({});
 ```
 
 
-**Write-style (write):** `tasks.create`
+**Create a task**
 
 ```ts
-await corsair.asana.api.tasks.create({
-  data: {
-    name: "Follow up from Corsair",
-  },
+const tenant = corsair.withTenant('acme');
+await tenant.asana.api.tasks.create({
+	data: { name: 'Follow up from Corsair' },
 });
 ```
 
@@ -148,15 +146,37 @@ See the full list on the [API](/plugins/asana/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.asana.db.<entity>.search()` and `.list()`: `projects`, `sections`, `stories`, `tags`, `tasks`, `teams`, `users`.
+Search synced tasks without hitting Asana.
 
-See [Database](/plugins/asana/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.asana.db.tasks.search({
+	data: { completed: false },
+	limit: 50,
+});
+```
+
+Synced entities: `projects`, `sections`, `stories`, `tags`, `tasks`, `teams`, `users`. See [Database](/plugins/asana/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **2** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires on Asana task create/update events. Do not use challenge.challenge.
 
-See [Webhooks](/plugins/asana/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+asana({
+    webhookHooks: {
+        tasks: {
+            taskEvent: {
+                after: async (ctx, result) => {
+                    console.log('Asana task event:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/asana/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 

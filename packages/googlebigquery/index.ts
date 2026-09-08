@@ -515,11 +515,11 @@ const googleBigqueryEndpointMeta = {
 	},
 	'queries.cancelJob': {
 		riskLevel: 'destructive',
-		description: 'Request cancellation of a running job [DESTRUCTIVE]',
+		description: 'Request cancellation of a running job',
 	},
 	'queries.deleteJobMetadata': {
 		riskLevel: 'destructive',
-		description: "Delete a job's metadata [DESTRUCTIVE]",
+		description: "Delete a job's metadata",
 	},
 	'datasets.list': {
 		riskLevel: 'read',

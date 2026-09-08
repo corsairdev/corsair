@@ -1,0 +1,1905 @@
+{
+  "id": "zoom",
+  "displayName": "Zoom",
+  "description": "Video conferencing platform for meetings, webinars, recordings, and calendar scheduling.",
+  "npmPackageName": "@corsair-dev/zoom",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 17,
+    "webhooks": 8,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "account_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "zoom.api.archiveFiles.list",
+      "shortPath": "archiveFiles.list",
+      "description": "List all archived meeting or webinar files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query_date_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_records",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meetings",
+            "optional": true,
+            "type": "{ id?: string, meeting_id?: string, topic?: string, type?: number, start_time?: string, file_count?: number, file_size?: number, status?: string, archive_files?: {}[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoom.api.devices.list",
+      "shortPath": "devices.list",
+      "description": "List all Zoom devices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform_os",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device_vendor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device_model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device_status",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_records",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "devices",
+            "optional": true,
+            "type": "{ id?: string, device_name?: string, manufacturer?: string, model?: string, platform_os?: string, device_status?: number, mac_address?: string, serial_number?: string, last_online?: string, tag?: string, enrollment_token?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoom.api.meetings.addRegistrant",
+      "shortPath": "meetings.addRegistrant",
+      "description": "Add a registrant to a meeting",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "auto_approve",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "registrant_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoom.api.meetings.create",
+      "shortPath": "meetings.create",
+      "description": "Create a new meeting for the authenticated user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agenda",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ host_video?: boolean, participant_video?: boolean, cn_meeting?: boolean, in_meeting?: boolean, join_before_host?: boolean, mute_upon_entry?: boolean, watermark?: boolean, use_pmi?: boolean, approval_type?: number, audio?: string, auto_recording?: string, waiting_room?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "host_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agenda",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ host_video?: boolean, participant_video?: boolean, cn_meeting?: boolean, in_meeting?: boolean, join_before_host?: boolean, mute_upon_entry?: boolean, watermark?: boolean, use_pmi?: boolean, approval_type?: number, audio?: string, auto_recording?: string, waiting_room?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoom.api.meetings.get",
+      "shortPath": "meetings.get",
+      "description": "Get details of a specific meeting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "host_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agenda",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ host_video?: boolean, participant_video?: boolean, cn_meeting?: boolean, in_meeting?: boolean, join_before_host?: boolean, mute_upon_entry?: boolean, watermark?: boolean, use_pmi?: boolean, approval_type?: number, audio?: string, auto_recording?: string, waiting_room?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoom.api.meetings.getSummary",
+      "shortPath": "meetings.getSummary",
+      "description": "Get the AI-generated summary of a meeting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meeting_host_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meeting_host_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meeting_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meeting_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "meeting_topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meeting_start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meeting_end_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary_start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary_end_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary_created_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary_last_modified_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary_overview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary_details",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "next_steps",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "edited_summary",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoom.api.meetings.list",
+      "shortPath": "meetings.list",
+      "description": "List all meetings for the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_records",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meetings",
+            "optional": true,
+            "type": "{ id?: number, uuid?: string, host_id?: string, topic?: string, type?: number, status?: string, start_time?: string, duration?: number, timezone?: string, agenda?: string, created_at?: string, join_url?: string, password?: string, settings?: { host_video?: boolean, participant_video?: boolean, cn_meeting?: boolean, in_meeting?: boolean, join_before_host?: boolean, mute_upon_entry?: boolean, watermark?: boolean, use_pmi?: boolean, approval_type?: number, audio?: string, auto_recording?: string, waiting_room?: boolean } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoom.api.meetings.update",
+      "shortPath": "meetings.update",
+      "description": "Update a meeting",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agenda",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ host_video?: boolean, participant_video?: boolean, cn_meeting?: boolean, in_meeting?: boolean, join_before_host?: boolean, mute_upon_entry?: boolean, watermark?: boolean, use_pmi?: boolean, approval_type?: number, audio?: string, auto_recording?: string, waiting_room?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "zoom.api.participants.getPastMeeting",
+      "shortPath": "participants.getPastMeeting",
+      "description": "Get participants of a past meeting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_records",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "participants",
+            "optional": true,
+            "type": "{ id?: string, user_id?: string, user_name?: string, device?: string, ip_address?: string, location?: string, network_type?: string, microphone?: string, speaker?: string, camera?: string, data_center?: string, connection_type?: string, join_time?: string, leave_time?: string, share_application?: boolean, share_desktop?: boolean, share_whiteboard?: boolean, recording?: boolean, status?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoom.api.recordings.deleteMeeting",
+      "shortPath": "recordings.deleteMeeting",
+      "description": "Delete cloud recordings for a meeting",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "zoom.api.recordings.getMeeting",
+      "shortPath": "recordings.getMeeting",
+      "description": "Get cloud recordings for a specific meeting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "host_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "recording_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "recording_files",
+            "optional": true,
+            "type": "{ id?: string, meeting_id?: string, recording_type?: string, file_type?: string, file_size?: number, play_url?: string, download_url?: string, status?: string, recording_start?: string, recording_end?: string }[]"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "share_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoom.api.recordings.listAll",
+      "shortPath": "recordings.listAll",
+      "description": "List all cloud recordings for the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trash",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_records",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meetings",
+            "optional": true,
+            "type": "{ uuid?: string, id?: number, account_id?: string, host_id?: string, topic?: string, type?: number, start_time?: string, timezone?: string, duration?: number, total_size?: number, recording_count?: number, recording_files?: { id?: string, meeting_id?: string, recording_type?: string, file_type?: string, file_size?: number, play_url?: string, download_url?: string, status?: string, recording_start?: string, recording_end?: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoom.api.reports.dailyUsage",
+      "shortPath": "reports.dailyUsage",
+      "description": "Get the daily usage report for a given month",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "month",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "month",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dates",
+            "optional": true,
+            "type": "{ date?: string, new_user?: number, meetings?: number, participants?: number, meeting_minutes?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoom.api.webinars.addRegistrant",
+      "shortPath": "webinars.addRegistrant",
+      "description": "Add a registrant to a webinar",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webinarId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "auto_approve",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "registrant_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoom.api.webinars.get",
+      "shortPath": "webinars.get",
+      "description": "Get details of a specific webinar",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webinarId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "host_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agenda",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ host_video?: boolean, panelists_video?: boolean, practice_session?: boolean, hd_video?: boolean, approval_type?: number, audio?: string, auto_recording?: string, enforce_login?: boolean, registrants_restrict_number?: number, meeting_authentication?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoom.api.webinars.list",
+      "shortPath": "webinars.list",
+      "description": "List all webinars for the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_records",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webinars",
+            "optional": true,
+            "type": "{ id?: number, uuid?: string, host_id?: string, topic?: string, type?: number, status?: string, start_time?: string, duration?: number, timezone?: string, agenda?: string, created_at?: string, join_url?: string, password?: string, settings?: { host_video?: boolean, panelists_video?: boolean, practice_session?: boolean, hd_video?: boolean, approval_type?: number, audio?: string, auto_recording?: string, enforce_login?: boolean, registrants_restrict_number?: number, meeting_authentication?: boolean } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoom.api.webinars.listParticipants",
+      "shortPath": "webinars.listParticipants",
+      "description": "List participants of a past webinar",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webinarId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_records",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "participants",
+            "optional": true,
+            "type": "{ id?: string, user_id?: string, user_name?: string, device?: string, ip_address?: string, location?: string, network_type?: string, microphone?: string, speaker?: string, camera?: string, data_center?: string, connection_type?: string, join_time?: string, leave_time?: string, share_application?: boolean, share_desktop?: boolean, share_whiteboard?: boolean, recording?: boolean, status?: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "zoom.webhooks.meetings.cancelled",
+      "shortPath": "meetings.cancelled",
+      "description": "A meeting has been cancelled or deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "meeting.deleted"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ account_id?: string, object: { uuid?: string, id?: string, host_id?: string, topic?: string, type?: number, start_time?: string, duration?: number, timezone?: string }, operator?: string, operator_id?: string }"
+          }
+        ]
+      },
+      "responseType": "{ event: meeting.deleted, event_ts?: number, payload: { account_id?: string, object: { uuid?: string, id?: string, host_id?: string, topic?: string, type?: number, start_time?: string, duration?: number, timezone?: string }, operator?: string, operator_id?: string } }",
+      "usageExample": "zoom({\n    webhookHooks: {\n        meetings: {\n            cancelled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "zoom.webhooks.meetings.created",
+      "shortPath": "meetings.created",
+      "description": "A meeting has been created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "meeting.created"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ account_id?: string, object: { uuid?: string, id?: string, host_id?: string, topic?: string, type?: number, start_time?: string, duration?: number, timezone?: string }, operator?: string, operator_id?: string }"
+          }
+        ]
+      },
+      "responseType": "{ event: meeting.created, event_ts?: number, payload: { account_id?: string, object: { uuid?: string, id?: string, host_id?: string, topic?: string, type?: number, start_time?: string, duration?: number, timezone?: string }, operator?: string, operator_id?: string } }",
+      "usageExample": "zoom({\n    webhookHooks: {\n        meetings: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "zoom.webhooks.meetings.ended",
+      "shortPath": "meetings.ended",
+      "description": "A meeting has ended",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "meeting.ended"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ account_id?: string, object: { uuid?: string, id?: string, host_id?: string, topic?: string, type?: number, start_time?: string, duration?: number, timezone?: string } }"
+          }
+        ]
+      },
+      "responseType": "{ event: meeting.ended, event_ts?: number, payload: { account_id?: string, object: { uuid?: string, id?: string, host_id?: string, topic?: string, type?: number, start_time?: string, duration?: number, timezone?: string } } }",
+      "usageExample": "zoom({\n    webhookHooks: {\n        meetings: {\n            ended: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "zoom.webhooks.meetings.participantJoined",
+      "shortPath": "meetings.participantJoined",
+      "description": "A participant joined a meeting",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "meeting.participant_joined"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ account_id?: string, object: { uuid?: string, id?: string, host_id?: string, topic?: string, type?: number, start_time?: string, duration?: number, timezone?: string, participant?: { user_id?: string, user_name?: string, id?: string, join_time?: string, leave_time?: string, leave_reason?: string } } }"
+          }
+        ]
+      },
+      "responseType": "{ event: meeting.participant_joined, event_ts?: number, payload: { account_id?: string, object: { uuid?: string, id?: string, host_id?: string, topic?: string, type?: number, start_time?: string, duration?: number, timezone?: string, participant?: { user_id?: string, user_name?: string, id?: string, join_time?: string, leave_time?: string, leave_reason?: string } } } }",
+      "usageExample": "zoom({\n    webhookHooks: {\n        meetings: {\n            participantJoined: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "zoom.webhooks.meetings.participantLeft",
+      "shortPath": "meetings.participantLeft",
+      "description": "A participant left a meeting",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "meeting.participant_left"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ account_id?: string, object: { uuid?: string, id?: string, host_id?: string, topic?: string, type?: number, start_time?: string, duration?: number, timezone?: string, participant?: { user_id?: string, user_name?: string, id?: string, join_time?: string, leave_time?: string, leave_reason?: string } } }"
+          }
+        ]
+      },
+      "responseType": "{ event: meeting.participant_left, event_ts?: number, payload: { account_id?: string, object: { uuid?: string, id?: string, host_id?: string, topic?: string, type?: number, start_time?: string, duration?: number, timezone?: string, participant?: { user_id?: string, user_name?: string, id?: string, join_time?: string, leave_time?: string, leave_reason?: string } } } }",
+      "usageExample": "zoom({\n    webhookHooks: {\n        meetings: {\n            participantLeft: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "zoom.webhooks.meetings.started",
+      "shortPath": "meetings.started",
+      "description": "A meeting has started",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "meeting.started"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ account_id?: string, object: { uuid?: string, id?: string, host_id?: string, topic?: string, type?: number, start_time?: string, duration?: number, timezone?: string } }"
+          }
+        ]
+      },
+      "responseType": "{ event: meeting.started, event_ts?: number, payload: { account_id?: string, object: { uuid?: string, id?: string, host_id?: string, topic?: string, type?: number, start_time?: string, duration?: number, timezone?: string } } }",
+      "usageExample": "zoom({\n    webhookHooks: {\n        meetings: {\n            started: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "zoom.webhooks.recordings.completed",
+      "shortPath": "recordings.completed",
+      "description": "A cloud recording has completed processing",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "recording.completed"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ account_id?: string, object: { uuid?: string, id?: number, host_id?: string, topic?: string, type?: number, start_time?: string, timezone?: string, duration?: number, total_size?: number, recording_count?: number, share_url?: string, password?: string, recording_files?: { id?: string, meeting_id?: string, recording_start?: string, recording_end?: string, file_type?: string, file_size?: number, play_url?: string, download_url?: string, status?: string, recording_type?: string }[] } }"
+          }
+        ]
+      },
+      "responseType": "{ event: recording.completed, event_ts?: number, payload: { account_id?: string, object: { uuid?: string, id?: number, host_id?: string, topic?: string, type?: number, start_time?: string, timezone?: string, duration?: number, total_size?: number, recording_count?: number, share_url?: string, password?: string, recording_files?: { id?: string, meeting_id?: string, recording_start?: string, recording_end?: string, file_type?: string, file_size?: number, play_url?: string, download_url?: string, status?: string, recording_type?: string }[] } } }",
+      "usageExample": "zoom({\n    webhookHooks: {\n        recordings: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "zoom.webhooks.webinars.started",
+      "shortPath": "webinars.started",
+      "description": "A webinar has started",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "webinar.started"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ account_id?: string, object: { uuid?: string, id?: string, host_id?: string, topic?: string, type?: number, start_time?: string, duration?: number, timezone?: string } }"
+          }
+        ]
+      },
+      "responseType": "{ event: webinar.started, event_ts?: number, payload: { account_id?: string, object: { uuid?: string, id?: string, host_id?: string, topic?: string, type?: number, start_time?: string, duration?: number, timezone?: string } } }",
+      "usageExample": "zoom({\n    webhookHooks: {\n        webinars: {\n            started: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "zoom.db.archiveFiles.search",
+      "entityName": "archiveFiles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "meeting_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "topic",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "start_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "file_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "file_size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "zoom.db.devices.search",
+      "entityName": "devices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "device_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "manufacturer",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "platform_os",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "device_status",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "mac_address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "serial_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_online",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "enrollment_token",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "zoom.db.meetings.search",
+      "entityName": "meetings",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "host_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "topic",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "agenda",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "join_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "password",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "zoom.db.participants.search",
+      "entityName": "participants",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "device",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ip_address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "network_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "microphone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "speaker",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "camera",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "data_center",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "connection_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "join_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "leave_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "share_application",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "share_desktop",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "share_whiteboard",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "recording",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "zoom.db.recordings.search",
+      "entityName": "recordings",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "meeting_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recording_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "file_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "file_size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "play_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "download_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recording_start",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recording_end",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "zoom.db.webinars.search",
+      "entityName": "webinars",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "host_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "topic",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "agenda",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "join_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "password",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

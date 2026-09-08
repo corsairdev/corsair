@@ -1,4 +1,9 @@
 export type {
+	BuildCorsairToolsOptions,
+	CorsairOperationTool,
+} from './adapters';
+export { buildCorsairTools, formFieldToZod } from './adapters';
+export type {
 	CorsairClientOptions,
 	CorsairManagementClient,
 } from './client';
@@ -6,9 +11,11 @@ export { CorsairClientError, createCorsairClient } from './client';
 export type { ResolveConnectLinkResult } from './core';
 export {
 	AuthMissingError,
+	CorsairKekMissingError,
 	createCorsair,
 	PermissionRequiredError,
 	ReadonlyForbiddenError,
+	ReconnectRequiredError,
 	resolveConnectLink,
 	runReadonly,
 } from './core';
@@ -77,6 +84,7 @@ export {
 	type AnyCorsairInstance,
 	type FormFieldSchema,
 	formatDocSchemaShape,
+	getInputSchema,
 	getSchema,
 	getStructuredSchema,
 	type ListOperationsOptions,

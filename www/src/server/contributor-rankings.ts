@@ -108,11 +108,3 @@ export async function buildContributorRankings(
 		})
 		.sort((left, right) => right.totalPoints - left.totalPoints);
 }
-
-export function getContributorRank(
-	rankings: ContributorRankingEntry[],
-	userId: string,
-): number | null {
-	const index = rankings.findIndex((entry) => entry.userId === userId);
-	return index === -1 ? null : index + 1;
-}

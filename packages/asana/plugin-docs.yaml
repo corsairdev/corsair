@@ -1,5 +1,6 @@
 displayName: Asana
-description: "Asana plugin for Corsair - tasks, projects, and task events."
+description: Work management platform for tasks, projects, teams, and cross-functional collaboration.
+
 examples:
   read:
     path: tasks.list
@@ -10,3 +11,16 @@ examples:
     args:
       data:
         name: Follow up from Corsair
+
+dbExample:
+  entity: tasks
+  note: 'Search synced tasks without hitting Asana.'
+  data:
+    completed: false
+  limit: 50
+
+exampleWebhook:
+  path: tasks.taskEvent
+  note: 'Fires on Asana task create/update events. Do not use challenge.challenge.'
+  after: |
+    console.log('Asana task event:', result.data);

@@ -1,0 +1,198 @@
+{
+  "id": "tisane",
+  "displayName": "Tisane",
+  "description": "Text moderation API for detecting toxicity, spam, and policy violations in user content.",
+  "npmPackageName": "@corsair-dev/tisane",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "tisane.api.text.extractEntities",
+      "shortPath": "text.extractEntities",
+      "description": "Extract named entities and topics from text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "Text to extract named entities and topics from"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entities",
+            "optional": false,
+            "type": "{ name: string, type?: any, subtypes?: any[], wikidata?: string, mentions?: any[] }[]"
+          },
+          {
+            "key": "topics",
+            "optional": false,
+            "type": "{ topic: string, coverage?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tisane.api.text.moderate",
+      "shortPath": "text.moderate",
+      "description": "Content moderation for abuse, hate speech, and harassment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "Text to check for abusive language, hate speech, or harassment"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "abuse",
+            "optional": false,
+            "type": "{ type: string, severity?: string, text?: string, offset?: number, length?: number, sentence_index?: number, explanation?: string }[]"
+          },
+          {
+            "key": "flagged",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tisane.api.text.parse",
+      "shortPath": "text.parse",
+      "description": "Comprehensive natural language parsing and text analysis",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "The text content to analyze"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 639-1 language code"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ snippets?: boolean, sentiment?: boolean, entities?: boolean, topics?: boolean, abuse?: boolean, format?: string, explain?: boolean, topic_stats?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topics",
+            "optional": true,
+            "type": "(string | { topic: string, coverage?: number })[]"
+          },
+          {
+            "key": "abuse",
+            "optional": true,
+            "type": "{ type: string, severity?: string, text?: string, offset?: number, length?: number, sentence_index?: number, explanation?: string }[]"
+          },
+          {
+            "key": "entities_summary",
+            "optional": true,
+            "type": "{ name: string, type?: any, subtypes?: any[], wikidata?: string, mentions?: any[] }[]"
+          },
+          {
+            "key": "sentiment_expressions",
+            "optional": true,
+            "type": "{ polarity: positive | negative | mixed | neutral, offset?: number, length?: number, sentence_index?: number, targets?: any[], reasons?: any[], text?: string, explanation?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tisane.api.text.sentiment",
+      "shortPath": "text.sentiment",
+      "description": "Aspect-based sentiment analysis and tone evaluation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "Text to analyze for aspect-based sentiment"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sentiment",
+            "optional": false,
+            "type": "{ polarity: positive | negative | mixed | neutral, offset?: number, length?: number, sentence_index?: number, targets?: any[], reasons?: any[], text?: string, explanation?: string }[]"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
