@@ -115,6 +115,9 @@ async function seedConnection(
 function internalFor(
 	db: ReturnType<typeof createTestDatabase>['db'],
 ): CorsairInternalConfig {
+	// Safe: disconnect only reads `plugins`, `database`, and `kek`; building a
+	// full CorsairInternalConfig (key managers, hub config, …) is impractical and
+	// irrelevant for a unit test. Cast is scoped to this one test double.
 	return {
 		plugins: [{ id: 'slack' }],
 		database: { db },
@@ -236,6 +239,9 @@ describe('manage.disconnect', () => {
 	it('rejects a non-string plugin with a 400, not a TypeError', async () => {
 		const { db, destroy } = createTestDatabase();
 		try {
+			// Deliberately mistyped to exercise the runtime type-guard that the
+			// static signature forbids; the cast is the only way to pass a bad
+			// value past the compiler, and it's scoped to this one assertion.
 			const badInput = { plugin: 1 } as unknown as Parameters<
 				typeof disconnectConnection
 			>[1];
