@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import type { AnyCorsairInstance } from 'corsair';
 import type { CorsairToolProviderConfig } from './corsair-tool-provider.js';
 import {
 	CorsairToolProvider,
@@ -63,7 +64,10 @@ function providerWith(
 			},
 		},
 	};
-	return new CorsairToolProvider({ corsair, tenantId });
+	return new CorsairToolProvider({
+		corsair: corsair as unknown as AnyCorsairInstance,
+		tenantId,
+	});
 }
 
 // A pinned tenant wins: a connectionId claiming another tenant cannot override it.

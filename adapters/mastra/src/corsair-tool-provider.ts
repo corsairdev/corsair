@@ -78,7 +78,7 @@ export type TenantResolveInput = {
  */
 export interface CorsairToolProviderConfig extends BaseToolProviderOptions {
 	/** The value returned by `createCorsair()` (or `corsair.withTenant(...)`). */
-	corsair: { [key: string]: unknown };
+	corsair: AnyCorsairInstance;
 	/**
 	 * How a Mastra request maps to a Corsair **tenant** — Corsair's multi-tenancy
 	 * primitive, where each tenant owns its own connections and credentials.
@@ -195,10 +195,13 @@ async function invokeOperation(
 	const segments = path.split('.');
 	const method = segments.pop();
 	if (!method) throw new Error(`Invalid operation path: ${path}`);
-	let target: any = instance;
+	// The Corsair instance is an opaque namespace tree; narrowing to
+	// Record<string, unknown> lets us traverse it without `any`.
+	let target: Record<string, unknown> = instance as Record<string, unknown>;
 	for (const segment of segments) {
-		target = target?.[segment];
-		if (target == null) throw new Error(`Unknown operation path: ${path}`);
+		const next = target?.[segment];
+		if (next == null) throw new Error(`Unknown operation path: ${path}`);
+		target = next as Record<string, unknown>;
 	}
 	const fn = target[method];
 	if (typeof fn !== 'function')
@@ -247,7 +250,7 @@ export class CorsairToolProvider extends BaseToolProvider {
 		supportsRevoke: true,
 	};
 
-	private readonly corsair: { [key: string]: unknown };
+	private readonly corsair: AnyCorsairInstance;
 	private readonly tenantConfig: CorsairToolProviderConfig['tenantId'];
 
 	/**
@@ -265,13 +268,15 @@ export class CorsairToolProvider extends BaseToolProvider {
 		this.tenantConfig = config.tenantId;
 	}
 
-	/** The Corsair instance re-typed as the inspect-helper union. */
+	/** Returns the Corsair instance for use with inspect helpers. */
 	private asInstance(): AnyCorsairInstance {
-		return this.corsair as unknown as AnyCorsairInstance;
+		return this.corsair;
 	}
 
 	/** Corsair's management namespace (plugins / connection status / connect). */
 	private get manage(): CorsairManage {
+		// AnyCorsairInstance always carries a `manage` namespace at runtime; the
+		// type union doesn't surface it statically, so a narrow cast is required.
 		return (this.corsair as unknown as { manage: CorsairManage }).manage;
 	}
 
@@ -329,6 +334,8 @@ export class CorsairToolProvider extends BaseToolProvider {
 
 	/** Scopes the Corsair instance to a tenant (multi-tenant), else returns it as-is. */
 	private scopedInstance(tenantId: string): AnyCorsairInstance {
+		// `withTenant` exists only on the multi-tenant variant; the union type doesn't
+		// expose it, so we probe for it at runtime with a narrow cast.
 		const withTenant = (
 			this.corsair as unknown as {
 				withTenant?: (id: string) => AnyCorsairInstance;
