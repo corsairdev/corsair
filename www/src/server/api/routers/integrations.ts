@@ -1114,6 +1114,14 @@ export const integrationsRouter = createTRPCRouter({
 				});
 			}
 
+			const urls = await fetchIntegrationUrls(ctx.db, input.integrationId);
+			if (urls.prUrl) {
+				throw new TRPCError({
+					code: 'BAD_REQUEST',
+					message: 'You cannot unclaim an integration after linking a PR',
+				});
+			}
+
 			await releaseIntegrationClaim(ctx.db, {
 				integrationId: input.integrationId,
 				userId: ctx.user.id,
