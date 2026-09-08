@@ -1082,55 +1082,63 @@ export const integrationsRouter = createTRPCRouter({
 	unclaim: protectedProcedure
 		.input(z.object({ integrationId: z.string().min(1) }))
 		.mutation(async ({ ctx, input }) => {
-			const [integration] = await ctx.db
-				.select({ slug: integrations.slug })
-				.from(integrations)
-				.where(eq(integrations.id, input.integrationId))
-				.limit(1);
+			return ctx.db.transaction(async (tx) => {
+				const db = tx as unknown as DB;
 
-			if (!integration) {
-				throw new TRPCError({
-					code: 'NOT_FOUND',
-					message: 'Integration not found',
+				const [integration] = await tx
+					.select({ slug: integrations.slug })
+					.from(integrations)
+					.where(eq(integrations.id, input.integrationId))
+					.for('update')
+					.limit(1);
+
+				if (!integration) {
+					throw new TRPCError({
+						code: 'NOT_FOUND',
+						message: 'Integration not found',
+					});
+				}
+
+				const latestStatus = await getLatestStatusForIntegration(
+					db,
+					input.integrationId,
+				);
+
+				if (
+					!latestStatus ||
+					!isIntegrationActivelyClaimed(latestStatus.phase)
+				) {
+					throw new TRPCError({
+						code: 'NOT_FOUND',
+						message: 'This integration is not claimed',
+					});
+				}
+
+				if (latestStatus.userId !== ctx.user.id) {
+					throw new TRPCError({
+						code: 'FORBIDDEN',
+						message: 'You can only unclaim integrations you have claimed',
+					});
+				}
+
+				const urls = await fetchIntegrationUrls(db, input.integrationId);
+				if (urls.prUrl) {
+					throw new TRPCError({
+						code: 'BAD_REQUEST',
+						message: 'You cannot unclaim an integration after linking a PR',
+					});
+				}
+
+				await releaseIntegrationClaim(db, {
+					integrationId: input.integrationId,
+					userId: ctx.user.id,
+					reason: 'manual',
 				});
-			}
 
-			const latestStatus = await getLatestStatusForIntegration(
-				ctx.db,
-				input.integrationId,
-			);
+				await clearContributorIntegrationUrls(db, input.integrationId);
 
-			if (!latestStatus || !isIntegrationActivelyClaimed(latestStatus.phase)) {
-				throw new TRPCError({
-					code: 'NOT_FOUND',
-					message: 'This integration is not claimed',
-				});
-			}
-
-			if (latestStatus.userId !== ctx.user.id) {
-				throw new TRPCError({
-					code: 'FORBIDDEN',
-					message: 'You can only unclaim integrations you have claimed',
-				});
-			}
-
-			const urls = await fetchIntegrationUrls(ctx.db, input.integrationId);
-			if (urls.prUrl) {
-				throw new TRPCError({
-					code: 'BAD_REQUEST',
-					message: 'You cannot unclaim an integration after linking a PR',
-				});
-			}
-
-			await releaseIntegrationClaim(ctx.db, {
-				integrationId: input.integrationId,
-				userId: ctx.user.id,
-				reason: 'manual',
+				return { integrationId: input.integrationId, slug: integration.slug };
 			});
-
-			await clearContributorIntegrationUrls(ctx.db, input.integrationId);
-
-			return { integrationId: input.integrationId, slug: integration.slug };
 		}),
 
 	updateUrls: protectedProcedure
@@ -1141,63 +1149,68 @@ export const integrationsRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const [integration] = await ctx.db
-				.select({ id: integrations.id, slug: integrations.slug })
-				.from(integrations)
-				.where(eq(integrations.id, input.integrationId))
-				.limit(1);
+			return ctx.db.transaction(async (tx) => {
+				const db = tx as unknown as DB;
 
-			if (!integration) {
-				throw new TRPCError({
-					code: 'NOT_FOUND',
-					message: 'Integration not found',
+				const [integration] = await tx
+					.select({ id: integrations.id, slug: integrations.slug })
+					.from(integrations)
+					.where(eq(integrations.id, input.integrationId))
+					.for('update')
+					.limit(1);
+
+				if (!integration) {
+					throw new TRPCError({
+						code: 'NOT_FOUND',
+						message: 'Integration not found',
+					});
+				}
+
+				const latestStatus = await getLatestStatusForIntegration(
+					db,
+					input.integrationId,
+				);
+
+				if (
+					!latestStatus ||
+					latestStatus.userId !== ctx.user.id ||
+					!isIntegrationActivelyClaimed(latestStatus.phase)
+				) {
+					throw new TRPCError({
+						code: 'FORBIDDEN',
+						message: 'Only the integration owner can update URLs',
+					});
+				}
+
+				const previousUrls = normalizeIntegrationUrls(
+					await fetchIntegrationUrls(db, input.integrationId),
+				);
+				const urls = normalizeIntegrationUrls(input.urls);
+
+				await upsertIntegrationUrls(db, input.integrationId, urls);
+
+				await maybeAdvancePhaseAfterUrlUpdate(db, {
+					integrationId: input.integrationId,
+					userId: ctx.user.id,
+					slug: integration.slug,
+					previousUrls,
+					nextUrls: urls,
 				});
-			}
 
-			const latestStatus = await getLatestStatusForIntegration(
-				ctx.db,
-				input.integrationId,
-			);
+				const updatedStatus = await getLatestStatusForIntegration(
+					db,
+					input.integrationId,
+				);
 
-			if (
-				!latestStatus ||
-				latestStatus.userId !== ctx.user.id ||
-				!isIntegrationActivelyClaimed(latestStatus.phase)
-			) {
-				throw new TRPCError({
-					code: 'FORBIDDEN',
-					message: 'Only the integration owner can update URLs',
-				});
-			}
-
-			const previousUrls = normalizeIntegrationUrls(
-				await fetchIntegrationUrls(ctx.db, input.integrationId),
-			);
-			const urls = normalizeIntegrationUrls(input.urls);
-
-			await upsertIntegrationUrls(ctx.db, input.integrationId, urls);
-
-			await maybeAdvancePhaseAfterUrlUpdate(ctx.db, {
-				integrationId: input.integrationId,
-				userId: ctx.user.id,
-				slug: integration.slug,
-				previousUrls,
-				nextUrls: urls,
+				return {
+					integrationId: input.integrationId,
+					slug: integration.slug,
+					urls,
+					phase: updatedStatus?.phase ?? latestStatus.phase,
+					issueDeadlineAt: updatedStatus?.issueDeadlineAt ?? null,
+					prDeadlineAt: updatedStatus?.prDeadlineAt ?? null,
+				};
 			});
-
-			const updatedStatus = await getLatestStatusForIntegration(
-				ctx.db,
-				input.integrationId,
-			);
-
-			return {
-				integrationId: input.integrationId,
-				slug: integration.slug,
-				urls,
-				phase: updatedStatus?.phase ?? latestStatus.phase,
-				issueDeadlineAt: updatedStatus?.issueDeadlineAt ?? null,
-				prDeadlineAt: updatedStatus?.prDeadlineAt ?? null,
-			};
 		}),
 
 	markReadyToReview: protectedProcedure
