@@ -1,0 +1,785 @@
+{
+  "id": "alttextai",
+  "displayName": "AltText.ai",
+  "description": "AI service that generates accessible alt text descriptions for images automatically.",
+  "npmPackageName": "@corsair-dev/alttextai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "alttextai.api.account.get",
+      "shortPath": "account.get",
+      "description": "Get AltText.ai account settings and usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "usage_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "whitelabel",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default_lang",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ending_period",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "no_quotes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "remove_symbols",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "gpt_prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_chars",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subscription",
+            "optional": true,
+            "type": "{ plan_name?: string, usage_quota?: number, status?: string, expires_at?: string }"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alttextai.api.account.update",
+      "shortPath": "account.update",
+      "description": "Update AltText.ai account settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "{ name?: string, webhook_url?: string, notification_email?: string, max_chars?: number, gpt_prompt?: string | null, remove_symbols?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "usage_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "whitelabel",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default_lang",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ending_period",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "no_quotes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "remove_symbols",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "gpt_prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_chars",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subscription",
+            "optional": true,
+            "type": "{ plan_name?: string, usage_quota?: number, status?: string, expires_at?: string }"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alttextai.api.images.bulkCreate",
+      "shortPath": "images.bulkCreate",
+      "description": "Upload a CSV of image URLs for batch alt text generation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "custom",
+            "description": "CSV file with image URLs to process"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Optional email for bulk upload results"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "row_errors",
+            "optional": true,
+            "type": "tuple[]"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alttextai.api.images.create",
+      "shortPath": "images.create",
+      "description": "Add an image and generate AI alt text from URL or base64 data",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image",
+            "optional": false,
+            "type": "{ url?: string, raw?: string, asset_id?: string, metadata?: {} }"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_chars",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "model_name",
+            "optional": true,
+            "type": "describe-detailed | describe-regular | describe-factual | succinct-describe-factual | describe-terse"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "negative_keywords",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "keyword_source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gpt_prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "overwrite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timeout_secs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ecomm",
+            "optional": true,
+            "type": "{ product?: string, brand?: string, color?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alt_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alt_texts",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "credits_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alttextai.api.images.delete",
+      "shortPath": "images.delete",
+      "description": "Delete an image from the AltText.ai library",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assetId",
+            "optional": false,
+            "type": "string",
+            "description": "Asset ID of the image to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alt_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alt_texts",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "credits_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alttextai.api.images.get",
+      "shortPath": "images.get",
+      "description": "Retrieve image metadata and alt text by asset ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assetId",
+            "optional": false,
+            "type": "string",
+            "description": "Asset ID of the image"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alt_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alt_texts",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "credits_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alttextai.api.images.list",
+      "shortPath": "images.list",
+      "description": "List images in the AltText.ai library with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "Exact image URL filter (no wildcards)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ asset_id?: string, url?: string, alt_text?: string | null, alt_texts?: {}, tags?: string[], metadata?: {}, created_at?: number, credits_used?: number, errors?: {}, error_code?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alttextai.api.images.pageScrape",
+      "shortPath": "images.pageScrape",
+      "description": "Scrape a web page and queue alt text for all images found",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_scrape",
+            "optional": false,
+            "type": "{ url?: string, html?: string }"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "negative_keywords",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_existing",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_processed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "scraped_images",
+            "optional": true,
+            "type": "{ src?: string, alt?: string | null, width?: number | null, height?: number | null, skip_reason?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alttextai.api.images.search",
+      "shortPath": "images.search",
+      "description": "Search images by alt text, asset ID, or URL substring",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Search query (alt text, asset ID, or URL substring)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ asset_id?: string, url?: string, alt_text?: string | null, alt_texts?: {}, tags?: string[], metadata?: {}, created_at?: number, credits_used?: number, errors?: {}, error_code?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alttextai.api.images.update",
+      "shortPath": "images.update",
+      "description": "Update alt text or metadata for an existing image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assetId",
+            "optional": false,
+            "type": "string",
+            "description": "Asset ID of the image to update"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language code(s), comma-separated"
+          },
+          {
+            "key": "overwrite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "image",
+            "optional": false,
+            "type": "{ alt_text?: string, asset_id?: string, metadata?: {} }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alt_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alt_texts",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "credits_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "alttextai.db.images.search",
+      "entityName": "images",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "altText",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "creditsUsed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

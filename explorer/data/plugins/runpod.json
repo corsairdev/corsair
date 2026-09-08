@@ -1,0 +1,1123 @@
+{
+  "id": "runpod",
+  "displayName": "Runpod",
+  "description": "Runpod plugin for Corsair",
+  "npmPackageName": "@corsair-dev/runpod",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 14,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "runpod.api.account.myself",
+      "shortPath": "account.myself",
+      "description": "Get the authenticated RunPod user id, email, MFA, and SSH public key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "multiFactorEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pubKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "runpod.api.account.updateSettings",
+      "shortPath": "account.updateSettings",
+      "description": "Update the account SSH public key used for Pod access",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pubKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pubKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "keys",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "runpod.api.catalog.cpuTypes",
+      "shortPath": "catalog.cpuTypes",
+      "description": "List CPU types with vCPU range, RAM, and pricing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include",
+            "optional": true,
+            "type": "AVAILABILITY"
+          },
+          {
+            "key": "product",
+            "optional": true,
+            "type": "POD | SERVERLESS"
+          },
+          {
+            "key": "vcpuCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cpus",
+            "optional": false,
+            "type": "{ id: string, name: string, group: string, vcpu: { min: number, max: number }, ramGbPerVcpu: number, price: { securePerVcpu: number, serverlessPerVcpu: number }, availability?: NONE | LOW | MEDIUM | HIGH }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "runpod.api.catalog.gpuTypes",
+      "shortPath": "catalog.gpuTypes",
+      "description": "List GPU types with memory, cloud availability, pricing, and stock",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gpuCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, displayName?: string, memoryInGb?: number, secureCloud?: boolean, communityCloud?: boolean, lowestPrice?: { uninterruptablePrice?: number | null, stockStatus?: string | null, availableGpuCounts?: number[] | null } | null }[]"
+      }
+    },
+    {
+      "path": "runpod.api.clusters.create",
+      "shortPath": "clusters.create",
+      "description": "Create a multi-node GPU cluster for distributed workloads",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "APPLICATION | TRAINING | SLURM | RAY"
+          },
+          {
+            "key": "compute",
+            "optional": false,
+            "type": "{ gpuTypeId: string, gpuCountPerPod: number, podCount: number }"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "disk",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "env",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "ports",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "args",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataCenterIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "startJupyter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "startSsh",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "APPLICATION | TRAINING | SLURM | RAY"
+          },
+          {
+            "key": "compute",
+            "optional": false,
+            "type": "{ gpuTypeId: string, gpuCountPerPod: number, podCount: number }"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "runpod.api.endpoints.save",
+      "shortPath": "endpoints.save",
+      "description": "Create or update a Serverless endpoint and scaling settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gpuIds",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "QB | LB"
+          },
+          {
+            "key": "idleTimeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "flashBootType",
+            "optional": true,
+            "type": "FLASHBOOT"
+          },
+          {
+            "key": "scalerType",
+            "optional": true,
+            "type": "QUEUE_DELAY | REQUEST_COUNT"
+          },
+          {
+            "key": "scalerValue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workersMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workersMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "networkVolumeId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gpuIds",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idleTimeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "flashBootType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scalerType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scalerValue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workersMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workersMax",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "runpod.api.pods.get",
+      "shortPath": "pods.get",
+      "description": "Get a Pod by id including status, cost, GPU, and memory",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "podId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeMachine",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeNetworkVolume",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeSavingsPlans",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeTemplate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeWorkers",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desiredStatus",
+            "optional": true,
+            "type": "RUNNING | EXITED | TERMINATED"
+          },
+          {
+            "key": "costPerHr",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "memoryInGb",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vcpuCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "gpu",
+            "optional": true,
+            "type": "{ id?: string, count?: number, displayName?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "runpod.api.pods.list",
+      "shortPath": "pods.list",
+      "description": "List Pods with optional status, GPU, image, and location filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "computeType",
+            "optional": true,
+            "type": "GPU | CPU"
+          },
+          {
+            "key": "cpuFlavorId",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "dataCenterId",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "desiredStatus",
+            "optional": true,
+            "type": "RUNNING | EXITED | TERMINATED"
+          },
+          {
+            "key": "endpointId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gpuTypeId",
+            "optional": true,
+            "type": "string | string[]"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "imageName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeMachine",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeNetworkVolume",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeSavingsPlans",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeTemplate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeWorkers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "networkVolumeId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string, image?: string, desiredStatus?: RUNNING | EXITED | TERMINATED, costPerHr?: number, memoryInGb?: number, vcpuCount?: number, gpu?: { id?: string, count?: number, displayName?: string } }[]"
+      }
+    },
+    {
+      "path": "runpod.api.registries.delete",
+      "shortPath": "registries.delete",
+      "description": "Delete stored container registry credentials",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "containerRegistryAuthId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "runpod.api.registries.save",
+      "shortPath": "registries.save",
+      "description": "Store credentials for a private container registry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "runpod.api.registries.update",
+      "shortPath": "registries.update",
+      "description": "Update username or password for a saved registry auth",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "runpod.api.secrets.create",
+      "shortPath": "secrets.create",
+      "description": "Create an encrypted secret referenced as RUNPOD_SECRET_<name>",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "runpod.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a template that is not in use by pods or endpoints",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "runpod.api.templates.save",
+      "shortPath": "templates.save",
+      "description": "Create or update a reusable Pod or Serverless template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "imageName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "containerDiskInGb",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "volumeInGb",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "dockerArgs",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "env",
+            "optional": true,
+            "type": "{ key: string, value: string }[]"
+          },
+          {
+            "key": "ports",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "readme",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "volumeMountPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isServerless",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "containerRegistryAuthId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "imageName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "containerDiskInGb",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "volumeInGb",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isServerless",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dockerArgs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ports",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "readme",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "volumeMountPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "env",
+            "optional": true,
+            "type": "{ key: string, value: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "runpod.db.clusters.search",
+      "entityName": "clusters",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "runpod.db.endpoints.search",
+      "entityName": "endpoints",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "templateId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gpuIds",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "runpod.db.pods.search",
+      "entityName": "pods",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "image",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "costPerHr",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "memoryInGb",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "vcpuCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "runpod.db.registryAuths.search",
+      "entityName": "registryAuths",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "runpod.db.secrets.search",
+      "entityName": "secrets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "runpod.db.templates.search",
+      "entityName": "templates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "imageName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isServerless",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "runpod.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "multiFactorEnabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "pubKey",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

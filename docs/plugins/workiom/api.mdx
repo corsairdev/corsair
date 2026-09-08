@@ -1,0 +1,355 @@
+---
+title: API
+description: "API reference for Workiom: every `workiom.api.*` operation with input and output types."
+---
+
+Every `workiom.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Apps
+
+### getAll
+
+`apps.getAll`
+
+List Workiom apps via GET /api/services/app/Apps/GetAll
+
+**Risk:** `read`
+
+```ts
+await corsair.workiom.api.apps.getAll({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lists
+
+### get
+
+`lists.get`
+
+Get a list's fields, views, and filters via GET /api/services/app/Lists/Get
+
+**Risk:** `read`
+
+```ts
+await corsair.workiom.api.lists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `expand` | `Fields \| Views \| Filters[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `appId` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+| `views` | `object[]` | No | — |
+| `filters` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  description?: string,
+  dataType?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="views full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  listId?: string,
+  isDefault?: boolean,
+  viewType?: number,
+  filters?: {
+    fieldId: number,
+    operator: number,
+    value?: any
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+{
+  fieldId: number,
+  operator: number,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAll
+
+`lists.getAll`
+
+Get all lists in a Workiom app via GET /api/services/app/Lists/GetAll
+
+**Risk:** `read`
+
+```ts
+await corsair.workiom.api.lists.getAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appId` | `string` | Yes | Workiom app UUID from the app URL or Apps/GetAll |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  appId?: string,
+  name: string,
+  description?: string,
+  fields?: {
+    id: number,
+    name: string,
+    description?: string,
+    dataType?: number
+  }[],
+  views?: {
+    id?: number,
+    name?: string,
+    listId?: string,
+    isDefault?: boolean,
+    viewType?: number,
+    filters?: {
+      fieldId: number,
+      operator: number,
+      value?: any
+    }[]
+  }[],
+  filters?: {
+    fieldId: number,
+    operator: number,
+    value?: any
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Records
+
+### create
+
+`records.create`
+
+Create a list record via POST /api/services/app/Data/Create?listId=
+
+**Risk:** `write`
+
+```ts
+await corsair.workiom.api.records.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string` | Yes | — |
+| `record` | `object` | Yes | Field ID keys to values, per list metadata |
+
+<AccordionGroup>
+<Accordion title="record full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+
+
+
+---
+
+### getAll
+
+`records.getAll`
+
+Get list records with sort, pagination, and filters via POST /api/services/app/Data/All
+
+**Risk:** `read`
+
+```ts
+await corsair.workiom.api.records.getAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string` | Yes | — |
+| `sorting` | `string` | No | Official sort string, e.g. '11284 ASC' or '11284 DESC' |
+| `maxResultCount` | `number` | No | — |
+| `skipCount` | `number` | No | — |
+| `filters` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  fieldId: number,
+  operator: number,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+| `summary` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  _id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`records.update`
+
+Replace a list record via PUT /api/services/app/Data/Update?listId=&id=
+
+**Risk:** `write`
+
+```ts
+await corsair.workiom.api.records.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `record` | `object` | Yes | Full record body; PUT replaces the record |
+
+<AccordionGroup>
+<Accordion title="record full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+
+
+
+---
+

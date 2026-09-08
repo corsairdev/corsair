@@ -1,0 +1,3860 @@
+{
+  "id": "datarobot",
+  "displayName": "DataRobot",
+  "description": "Enterprise AI platform for automated machine learning model building and deployment.",
+  "npmPackageName": "@corsair-dev/datarobot",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 107,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "datarobot.api.batchPredictions.batchPredictionsCreate",
+      "shortPath": "batchPredictions.batchPredictionsCreate",
+      "description": "Creates a new Batch Prediction job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.batchPredictions.batchPredictionsDelete",
+      "shortPath": "batchPredictions.batchPredictionsDelete",
+      "description": "Cancel a Batch Prediction job by prediction job ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "predictionJobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "partNumber",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.batchPredictions.batchPredictionsFromExistingCreate",
+      "shortPath": "batchPredictions.batchPredictionsFromExistingCreate",
+      "description": "Create a new a Batch Prediction job based",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.batchPredictions.batchPredictionsFromJobDefinitionCreate",
+      "shortPath": "batchPredictions.batchPredictionsFromJobDefinitionCreate",
+      "description": "Launch a Batch Prediction job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.batchPredictions.batchPredictionsList",
+      "shortPath": "batchPredictions.batchPredictionsList",
+      "description": "List batch prediction jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deploymentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "created | -created | status | -status"
+          },
+          {
+            "key": "allJobs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cutoffHours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batchPredictionJobDefinitionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hostname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "intakeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datarobot.api.batchPredictions.batchPredictionsRetrieve",
+      "shortPath": "batchPredictions.batchPredictionsRetrieve",
+      "description": "Retrieve Batch Prediction job by prediction job ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "predictionJobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "partNumber",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.catalogItems.catalogItemsList",
+      "shortPath": "catalogItems.catalogItemsList",
+      "description": "List all catalog items accessible by the user.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "initialCacheSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "useCache",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "originalName | -originalName | catalogName | -catalogName | description | -description | created | -created | relevance | -relevance"
+          },
+          {
+            "key": "searchFor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accessType",
+            "optional": true,
+            "type": "owner | shared | any | created"
+          },
+          {
+            "key": "datasourceType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filterFailed",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "ownerUserId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ownerUsername",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "dataset | snapshot_dataset | remote_dataset | user_blueprint | files"
+          },
+          {
+            "key": "isUxrPreviewable",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datarobot.api.catalogItems.catalogItemsRetrieve",
+      "shortPath": "catalogItems.catalogItemsRetrieve",
+      "description": "Retrieves latest version information, by ID by catalog ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "catalogId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.credentials.credentialsCreate",
+      "shortPath": "credentials.credentialsCreate",
+      "description": "Store a new set of credentials which can be used",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.credentials.credentialsDelete",
+      "shortPath": "credentials.credentialsDelete",
+      "description": "Delete the credentials set by credential ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credentialId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.credentials.credentialsList",
+      "shortPath": "credentials.credentialsList",
+      "description": "List credentials.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "creationDate | -creationDate"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datarobot.api.credentials.credentialsRetrieve",
+      "shortPath": "credentials.credentialsRetrieve",
+      "description": "Retrieve the credentials set by credential ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credentialId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.customModels.customModelsCreate",
+      "shortPath": "customModels.customModelsCreate",
+      "description": "Create custom model.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.customModels.customModelsDelete",
+      "shortPath": "customModels.customModelsDelete",
+      "description": "Delete custom model by custom model ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customModelId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.customModels.customModelsList",
+      "shortPath": "customModels.customModelsList",
+      "description": "List custom models.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customModelType",
+            "optional": true,
+            "type": "training | inference"
+          },
+          {
+            "key": "targetType",
+            "optional": true,
+            "type": "Binary | Regression | Multiclass | Anomaly | Transform | TextGeneration | GeoPoint | Unstructured | VectorDatabase | AgenticWorkflow | MCP | Multilabel"
+          },
+          {
+            "key": "isDeployed",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "created | -created | updated | -updated"
+          },
+          {
+            "key": "searchFor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagKeys",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagValues",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datarobot.api.customModels.customModelsRetrieve",
+      "shortPath": "customModels.customModelsRetrieve",
+      "description": "Get custom model by custom model ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customModelId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.customModels.customModelsVersionsCreate",
+      "shortPath": "customModels.customModelsVersionsCreate",
+      "description": "Create custom model version by custom model ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customModelId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.customModels.customModelsVersionsList",
+      "shortPath": "customModels.customModelsVersionsList",
+      "description": "List custom model versions by custom model ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customModelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mainBranchCommitSha",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsAllFeaturesDetailsList",
+      "shortPath": "datasets.datasetsAllFeaturesDetailsList",
+      "description": "Get dataset features by dataset ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "featureType | name | id | unique | missing | stddev | mean | median | min | max | dataQualityIssues | -featureType | -name | -id | -unique | -missing | -stddev | -mean | -median | -min | -max | -dataQualityIssues"
+          },
+          {
+            "key": "includePlot",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "searchFor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "featurelistId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeDataQuality",
+            "optional": true,
+            "type": "false | False | true | True"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsDelete",
+      "shortPath": "datasets.datasetsDelete",
+      "description": "Delete dataset by dataset ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsFeaturelistsList",
+      "shortPath": "datasets.datasetsFeaturelistsList",
+      "description": "Retrieve dataset featurelists by dataset ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "name | description | featuresNumber | creationDate | userCreated | -name | -description | -featuresNumber | -creationDate | -userCreated"
+          },
+          {
+            "key": "searchFor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsFileList",
+      "shortPath": "datasets.datasetsFileList",
+      "description": "Retrieve original dataset data by dataset ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsFromDataSourceCreate",
+      "shortPath": "datasets.datasetsFromDataSourceCreate",
+      "description": "Create a dataset from a data source",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsFromFileCreate",
+      "shortPath": "datasets.datasetsFromFileCreate",
+      "description": "Create a dataset from a file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsFromURLCreate",
+      "shortPath": "datasets.datasetsFromURLCreate",
+      "description": "Create a dataset from an URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsList",
+      "shortPath": "datasets.datasetsList",
+      "description": "List datasets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category",
+            "optional": true,
+            "type": "TRAINING | PREDICTION | SAMPLE"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "created | -created"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filterFailed",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "datasetVersionIds",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "useCaseIds",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vectorDatabaseEligibleOnly",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "vectorDatabaseMetadataEligibleOnly",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "isDeleted",
+            "optional": true,
+            "type": "false | False | true | True"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsPatch",
+      "shortPath": "datasets.datasetsPatch",
+      "description": "Modify dataset by dataset ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsProjectsList",
+      "shortPath": "datasets.datasetsProjectsList",
+      "description": "Get dataset projects by dataset ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsRetrieve",
+      "shortPath": "datasets.datasetsRetrieve",
+      "description": "Get dataset details by dataset ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsVersionsDelete",
+      "shortPath": "datasets.datasetsVersionsDelete",
+      "description": "Delete dataset version by dataset ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetVersionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsVersionsFromFileCreate",
+      "shortPath": "datasets.datasetsVersionsFromFileCreate",
+      "description": "Create a version from a file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsVersionsFromURLCreate",
+      "shortPath": "datasets.datasetsVersionsFromURLCreate",
+      "description": "Create a version from an URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsVersionsList",
+      "shortPath": "datasets.datasetsVersionsList",
+      "description": "List dataset versions by dataset ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "TRAINING | PREDICTION | SAMPLE"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "created | -created"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filterFailed",
+            "optional": true,
+            "type": "false | False | true | True"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.datasets.datasetsVersionsRetrieve",
+      "shortPath": "datasets.datasetsVersionsRetrieve",
+      "description": "Get dataset details by version by dataset ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetVersionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsAccuracyList",
+      "shortPath": "deployments.deploymentsAccuracyList",
+      "description": "Retrieve accuracy metric by deployment ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batchId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "segmentAttribute",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "segmentValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetClass",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "AUC | Accuracy | Balanced Accuracy | F1 | FPR | FVE Binomial | FVE Gamma | FVE Multinomial | FVE Poisson | FVE Tweedie | Gamma Deviance | Gini Norm | Kolmogorov-Smirnov | LogLoss | MAE | MAPE | MCC | NPV | PPV | Poisson Deviance | R Squared | RMSE | RMSLE | Rate@Top10% | Rate@Top5% | TNR | TPR | Tweedie Deviance | WGS84 MAE | WGS84 RMSE"
+          },
+          {
+            "key": "baselineModelId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsAccuracyOverTimeList",
+      "shortPath": "deployments.deploymentsAccuracyOverTimeList",
+      "description": "Retrieve accuracy over time by deployment ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bucketSize",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "AUC | Accuracy | Balanced Accuracy | F1 | FPR | FVE Binomial | FVE Gamma | FVE Multinomial | FVE Poisson | FVE Tweedie | Gamma Deviance | Gini Norm | Kolmogorov-Smirnov | LogLoss | MAD | MAE | MAPE | MCC | NPV | PPV | Poisson Deviance | R Squared | RMSE | RMSLE | Rate@Top10% | Rate@Top5% | TNR | TPR | Tweedie Deviance | WGS84 MAE | WGS84 RMSE"
+          },
+          {
+            "key": "segmentAttribute",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "segmentValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetClass",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsCapabilitiesList",
+      "shortPath": "deployments.deploymentsCapabilitiesList",
+      "description": "Retrieve capabilities by deployment ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsDelete",
+      "shortPath": "deployments.deploymentsDelete",
+      "description": "Delete deployment by deployment ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ignoreManagementAgent",
+            "optional": true,
+            "type": "false | False | true | True"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsFeaturesList",
+      "shortPath": "deployments.deploymentsFeaturesList",
+      "description": "Get deployment features by deployment ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "includeNonPredictionFeatures",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "forSegmentedAnalysis",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "name | -name | importance | -importance"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsFromLearningModelCreate",
+      "shortPath": "deployments.deploymentsFromLearningModelCreate",
+      "description": "Create deployment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsFromModelPackageCreate",
+      "shortPath": "deployments.deploymentsFromModelPackageCreate",
+      "description": "Create a deployment from a model package",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsList",
+      "shortPath": "deployments.deploymentsList",
+      "description": "List deployments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "label | -label | serviceHealth | -serviceHealth | modelHealth | -modelHealth | accuracyHealth | -accuracyHealth | recentPredictions | -recentPredictions | lastPredictionTimestamp | -lastPredictionTimestamp | currentModelDeployedTimestamp | -currentModelDeployedTimestamp | createdAtTimestamp | -createdAtTimestamp | importance | -importance | fairnessHealth | -fairnessHealth | customMetricsHealth | -customMetricsHealth | actualsTimelinessHealth | -actualsTimelinessHealth | predictionsTimelinessHealth | -predictionsTimelinessHealth"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serviceHealth",
+            "optional": true,
+            "type": "(string | number)[]"
+          },
+          {
+            "key": "modelHealth",
+            "optional": true,
+            "type": "(string | number)[]"
+          },
+          {
+            "key": "accuracyHealth",
+            "optional": true,
+            "type": "(string | number)[]"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "OWNER | USER"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "(string | number)[]"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "(string | number)[]"
+          },
+          {
+            "key": "lastPredictionTimestampStart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastPredictionTimestampEnd",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "predictionUsageDailyAvgGreaterThan",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "predictionUsageDailyAvgLessThan",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "defaultPredictionServerId",
+            "optional": true,
+            "type": "(string | number)[]"
+          },
+          {
+            "key": "buildEnvironmentType",
+            "optional": true,
+            "type": "(string | number)[]"
+          },
+          {
+            "key": "executionEnvironmentType",
+            "optional": true,
+            "type": "(string | number)[]"
+          },
+          {
+            "key": "predictionEnvironmentPlatform",
+            "optional": true,
+            "type": "(string | number)[]"
+          },
+          {
+            "key": "createdByMe",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "championModelExecutionType",
+            "optional": true,
+            "type": "custom_inference_model | external | dedicated"
+          },
+          {
+            "key": "championModelTargetType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagKeys",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagValues",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isA2AAgent",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "predictionEnvironmentTagKeys",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "predictionEnvironmentTagValues",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsModelHistoryList",
+      "shortPath": "deployments.deploymentsModelHistoryList",
+      "description": "Retrieve champion model history of deployment by deployment ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsModelPatchMany",
+      "shortPath": "deployments.deploymentsModelPatchMany",
+      "description": "Model Replacement by deployment ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsPatch",
+      "shortPath": "deployments.deploymentsPatch",
+      "description": "Update deployment by deployment ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsPredictionsOverTimeList",
+      "shortPath": "deployments.deploymentsPredictionsOverTimeList",
+      "description": "Retrieve metrics about predictions over time by deployment ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bucketSize",
+            "optional": true,
+            "type": "PT1H | P1D | P7D | P1M"
+          },
+          {
+            "key": "segmentAttribute",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "segmentValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetClass",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includePercentiles",
+            "optional": true,
+            "type": "false | False | true | True"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsRetrieve",
+      "shortPath": "deployments.deploymentsRetrieve",
+      "description": "Retrieve deployment by deployment ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsServiceStatsList",
+      "shortPath": "deployments.deploymentsServiceStatsList",
+      "description": "Retrieve service stats by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "executionTimeQuantile",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "responseTimeQuantile",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "slowRequestsThreshold",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "segmentAttribute",
+            "optional": true,
+            "type": "DataRobot-Consumer | DataRobot-Remote-IP | DataRobot-Host-IP"
+          },
+          {
+            "key": "segmentValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsSettingsList",
+      "shortPath": "deployments.deploymentsSettingsList",
+      "description": "Retrieve deployment settings by deployment ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsSettingsPatchMany",
+      "shortPath": "deployments.deploymentsSettingsPatchMany",
+      "description": "Update deployment settings by deployment ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.deployments.deploymentsSharedRolesList",
+      "shortPath": "deployments.deploymentsSharedRolesList",
+      "description": "Get the model deployment access control list by deployment ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shareRecipientType",
+            "optional": true,
+            "type": "user | group | organization | externalApplication"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.modelPackages.modelPackagesFeaturesList",
+      "shortPath": "modelPackages.modelPackagesFeaturesList",
+      "description": "Retrieve feature list by model package ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modelPackageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "includeNonPredictionFeatures",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "forSegmentedAnalysis",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "name | importance | -name | -importance"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.modelPackages.modelPackagesFromLeaderboardCreate",
+      "shortPath": "modelPackages.modelPackagesFromLeaderboardCreate",
+      "description": "Create model package",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.modelPackages.modelPackagesList",
+      "shortPath": "modelPackages.modelPackagesList",
+      "description": "List model packages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "similarTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "forChallenger",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "predictionThreshold",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "imported",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "predictionEnvironmentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modelKind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "buildStatus",
+            "optional": true,
+            "type": "inProgress | complete | failed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datarobot.api.modelPackages.modelPackagesRetrieve",
+      "shortPath": "modelPackages.modelPackagesRetrieve",
+      "description": "Retrieve info about a model package by model package ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modelPackageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.predictionServers.predictionServersList",
+      "shortPath": "predictionServers.predictionServersList",
+      "description": "List prediction servers.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datarobot.api.projects.configureAndStartAutopilot",
+      "shortPath": "projects.configureAndStartAutopilot",
+      "description": "Start modeling by project ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsAccessControlList",
+      "shortPath": "projects.projectsAccessControlList",
+      "description": "Get the project access control list by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsAutopilotCreate",
+      "shortPath": "projects.projectsAutopilotCreate",
+      "description": "Pause by project ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsAutopilotsCreate",
+      "shortPath": "projects.projectsAutopilotsCreate",
+      "description": "Start autopilot by project ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsBlueprintsList",
+      "shortPath": "projects.projectsBlueprintsList",
+      "description": "List blueprints by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsBlueprintsRetrieve",
+      "shortPath": "projects.projectsBlueprintsRetrieve",
+      "description": "Retrieve a blueprint by its ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "blueprintId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsCreate",
+      "shortPath": "projects.projectsCreate",
+      "description": "Create a project.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsDatetimeModelsList",
+      "shortPath": "projects.projectsDatetimeModelsList",
+      "description": "List datetime partitioned project models by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bulkOperationId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsDelete",
+      "shortPath": "projects.projectsDelete",
+      "description": "Delete a project by project ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsDeploymentReadyModelsCreate",
+      "shortPath": "projects.projectsDeploymentReadyModelsCreate",
+      "description": "Prepare a model by project ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsFeaturelistsCreate",
+      "shortPath": "projects.projectsFeaturelistsCreate",
+      "description": "Create a new featurelist by project ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsFeaturelistsDelete",
+      "shortPath": "projects.projectsFeaturelistsDelete",
+      "description": "Delete a specified featurelist by project ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "featurelistId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "deleteDependencies",
+            "optional": true,
+            "type": "false | False | true | True"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsFeaturelistsList",
+      "shortPath": "projects.projectsFeaturelistsList",
+      "description": "List featurelists by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "name | description | features | numModels | created | isUserCreated | -name | -description | -features | -numModels | -created | -isUserCreated"
+          },
+          {
+            "key": "searchFor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsFeaturelistsPatch",
+      "shortPath": "projects.projectsFeaturelistsPatch",
+      "description": "Update an existing featurelist by project ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "featurelistId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsFeaturelistsRetrieve",
+      "shortPath": "projects.projectsFeaturelistsRetrieve",
+      "description": "Retrieve a feature list by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "featurelistId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsFeaturesList",
+      "shortPath": "projects.projectsFeaturesList",
+      "description": "List project features by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "name | id | importance | featureType | uniqueCount | naCount | mean | stdDev | median | min | max | -name | -id | -importance | -featureType | -uniqueCount | -naCount | -mean | -stdDev | -median | -min | -max"
+          },
+          {
+            "key": "searchFor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "featurelistId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "forSegmentedAnalysis",
+            "optional": true,
+            "type": "false | False | true | True"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsFeaturesRetrieve",
+      "shortPath": "projects.projectsFeaturesRetrieve",
+      "description": "Get a project feature by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "featureName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsJobsDelete",
+      "shortPath": "projects.projectsJobsDelete",
+      "description": "Cancel a job by project ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsJobsList",
+      "shortPath": "projects.projectsJobsList",
+      "description": "List project jobs by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "queue | inprogress | error"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsJobsRetrieve",
+      "shortPath": "projects.projectsJobsRetrieve",
+      "description": "Get a job by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsList",
+      "shortPath": "projects.projectsList",
+      "description": "List projects.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "projectName | -projectName"
+          },
+          {
+            "key": "featureDiscovery",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsModelingFeaturelistsCreate",
+      "shortPath": "projects.projectsModelingFeaturelistsCreate",
+      "description": "Create a new modeling featurelist by project ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsModelingFeaturelistsList",
+      "shortPath": "projects.projectsModelingFeaturelistsList",
+      "description": "List all modeling featurelists by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "name | description | features | numModels | created | isUserCreated | -name | -description | -features | -numModels | -created | -isUserCreated"
+          },
+          {
+            "key": "searchFor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsModelsCreate",
+      "shortPath": "projects.projectsModelsCreate",
+      "description": "Train a new model by project ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsModelsDelete",
+      "shortPath": "projects.projectsModelsDelete",
+      "description": "Delete a model by project ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "modelId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsModelsFromModelCreate",
+      "shortPath": "projects.projectsModelsFromModelCreate",
+      "description": "Retrain a model by project ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsModelsList",
+      "shortPath": "projects.projectsModelsList",
+      "description": "List project models by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "withMetric",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showInSampleScores",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "samplePct",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isStarred",
+            "optional": true,
+            "type": "false | False | true | True"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "metric | -metric | samplePct | -samplePct"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsModelsRetrieve",
+      "shortPath": "projects.projectsModelsRetrieve",
+      "description": "Get model by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "modelId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsPatch",
+      "shortPath": "projects.projectsPatch",
+      "description": "Update a project by project ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsPredictionDatasetsDelete",
+      "shortPath": "projects.projectsPredictionDatasetsDelete",
+      "description": "Delete a dataset that was uploaded by project ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsPredictionDatasetsList",
+      "shortPath": "projects.projectsPredictionDatasetsList",
+      "description": "List prediction datasets uploaded by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsPredictionDatasetsRetrieve",
+      "shortPath": "projects.projectsPredictionDatasetsRetrieve",
+      "description": "Get the metadata of a specific dataset by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsPredictionsCreate",
+      "shortPath": "projects.projectsPredictionsCreate",
+      "description": "Make new predictions by project ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsPredictionsList",
+      "shortPath": "projects.projectsPredictionsList",
+      "description": "Get the list of prediction records by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "datasetId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsPredictionsRetrieve",
+      "shortPath": "projects.projectsPredictionsRetrieve",
+      "description": "Get a completed set of predictions by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "predictionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsRecommendedModelsList",
+      "shortPath": "projects.projectsRecommendedModelsList",
+      "description": "List recommended models by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsRetrieve",
+      "shortPath": "projects.projectsRetrieve",
+      "description": "Get project by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsStatusList",
+      "shortPath": "projects.projectsStatusList",
+      "description": "Check project status by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.projectsTrainingPredictionsCreate",
+      "shortPath": "projects.projectsTrainingPredictionsCreate",
+      "description": "Submits a job by project ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.projects.trainingPredictionsList",
+      "shortPath": "projects.trainingPredictionsList",
+      "description": "List training prediction jobs by project ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.status.statusList",
+      "shortPath": "status.statusList",
+      "description": "List tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datarobot.api.status.statusRetrieve",
+      "shortPath": "status.statusRetrieve",
+      "description": "Get task status by status ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statusId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.useCases.useCasesCreate",
+      "shortPath": "useCases.useCasesCreate",
+      "description": "Get a use case.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.useCases.useCasesDatasetsList",
+      "shortPath": "useCases.useCasesDatasetsList",
+      "description": "Get the list of the datasets associated by use case ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "useCaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "-columnCount | -createdAt | -createdBy | -dataSourceType | -datasetSize | -datasetSourceType | -lastActivity | -modifiedAt | -modifiedBy | -name | -rowCount | columnCount | createdAt | createdBy | dataSourceType | datasetSize | datasetSourceType | lastActivity | modifiedAt | modifiedBy | name | rowCount"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "-columnCount | -createdAt | -createdBy | -dataSourceType | -datasetSize | -datasetSourceType | -lastActivity | -modifiedAt | -modifiedBy | -name | -rowCount | columnCount | createdAt | createdBy | dataSourceType | datasetSize | datasetSourceType | lastActivity | modifiedAt | modifiedBy | name | rowCount"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.useCases.useCasesDelete",
+      "shortPath": "useCases.useCasesDelete",
+      "description": "Delete a Use Case by use case ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "useCaseId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.useCases.useCasesDeploymentsList",
+      "shortPath": "useCases.useCasesDeploymentsList",
+      "description": "Get the deployments associated by use case ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "useCaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "-createdAt | -createdBy | -lastActivity | -name | -updatedAt | -updatedBy | createdAt | createdBy | lastActivity | name | updatedAt | updatedBy"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.useCases.useCasesList",
+      "shortPath": "useCases.useCasesList",
+      "description": "Retrieve the list of use cases.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "applicationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entityType",
+            "optional": true,
+            "type": "project | dataset | file | notebook | application | recipe | playground | vectorDatabase | syftrSearchInstance | embeddingModelValidation | customModelVersion | registeredModelVersion | deployment | customApplication | customJob"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "-applicationsCount | -createdAt | -createdBy | -customApplicationsCount | -datasetsCount | -description | -filesCount | -id | -name | -notebooksCount | -playgroundsCount | -potentialValue | -projectsCount | -riskLevel | -stage | -updatedAt | -updatedBy | -vectorDatabasesCount | applicationsCount | createdAt | createdBy | customApplicationsCount | datasetsCount | description | filesCount | id | name | notebooksCount | playgroundsCount | potentialValue | projectsCount | riskLevel | stage | updatedAt | updatedBy | vectorDatabasesCount"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "-applicationsCount | -createdAt | -createdBy | -customApplicationsCount | -datasetsCount | -description | -filesCount | -id | -name | -notebooksCount | -playgroundsCount | -potentialValue | -projectsCount | -riskLevel | -stage | -updatedAt | -updatedBy | -vectorDatabasesCount | applicationsCount | createdAt | createdBy | customApplicationsCount | datasetsCount | description | filesCount | id | name | notebooksCount | playgroundsCount | potentialValue | projectsCount | riskLevel | stage | updatedAt | updatedBy | vectorDatabasesCount"
+          },
+          {
+            "key": "usecaseType",
+            "optional": true,
+            "type": "all | general | walkthrough"
+          },
+          {
+            "key": "riskLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showOrgUseCases",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datarobot.api.useCases.useCasesPatch",
+      "shortPath": "useCases.useCasesPatch",
+      "description": "Update a Use Case by use case ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "useCaseId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.useCases.useCasesProjectsList",
+      "shortPath": "useCases.useCasesProjectsList",
+      "description": "Get the list of the projects associated by use case ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "useCaseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "-createdAt | -createdBy | -dataset | -featureCount | -fullName | -lastActivity | -models | -name | -projectId | -rowCount | -target | -targetType | -timeAware | -updatedAt | -updatedBy | createdAt | createdBy | dataset | featureCount | fullName | lastActivity | models | name | projectId | rowCount | target | targetType | timeAware | updatedAt | updatedBy"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "-createdAt | -createdBy | -dataset | -featureCount | -fullName | -lastActivity | -models | -name | -projectId | -rowCount | -target | -targetType | -timeAware | -updatedAt | -updatedBy | createdAt | createdBy | dataset | featureCount | fullName | lastActivity | models | name | projectId | rowCount | target | targetType | timeAware | updatedAt | updatedBy"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.useCases.useCasesRetrieve",
+      "shortPath": "useCases.useCasesRetrieve",
+      "description": "Get a use case by use case ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "useCaseId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "datarobot.api.version.versionList",
+      "shortPath": "version.versionList",
+      "description": "Retrieve version information.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "datarobot.db.dataset.search",
+      "entityName": "dataset",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "datasetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "versionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "columnCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "rowCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "datasetSize",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdBy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creationDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "processingState",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dataPersisted",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isSnapshot",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isLatestVersion",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "datarobot.db.deployment.search",
+      "entityName": "deployment",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "importance",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "datarobot.db.project.search",
+      "entityName": "project",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fileName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "stage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "target",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "targetType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "metric",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "catalogId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "catalogVersionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "holdoutUnlocked",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "unsupervisedMode",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "useFeatureDiscovery",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "datarobot.db.useCase.search",
+      "entityName": "useCase",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tenantId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectsCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "datasetsCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "deploymentsCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "notebooksCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "datarobot.db.user.search",
+      "entityName": "user",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userhash",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

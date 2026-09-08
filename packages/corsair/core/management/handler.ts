@@ -1,5 +1,9 @@
 import { respondToHubDeliveryFromRequest } from '../../hub/delivery';
 import type { CorsairInternalConfig } from '..';
+import {
+	clearConnectRequest,
+	readConnectRequest,
+} from '../connect-request/store';
 import { getCorsairInternal } from '../utils/corsair-instance';
 import type { CappedReadOptions } from './body-limit';
 import {
@@ -60,6 +64,15 @@ export type ManagementHandlerOptions = {
 		err: unknown,
 		req: Request,
 	) => Response | Promise<Response> | undefined;
+	/**
+	 * Resolve the tenant for an incoming request from your own auth (cookies /
+	 * session). When set, the tenant-scoped routes (/connect/links and
+	 * /connection-status) use the returned id and IGNORE any client-sent
+	 * tenantId — so a browser can't act for another tenant. Return null to reject
+	 * the request as unauthenticated. Omit in single-tenant apps, or when your own
+	 * backend already scopes the tenant server-side.
+	 */
+	resolveTenant?: (req: Request) => string | null | Promise<string | null>;
 };
 
 type RouteCtx = {
@@ -69,7 +82,43 @@ type RouteCtx = {
 	params: Record<string, string>;
 	query: Record<string, string>;
 	body: unknown;
+	// The resolved tenant — see resolveScopedTenant for the tri-state.
+	scopedTenant: string | null | undefined;
 };
+
+// The resolver's result is authoritative for the two routes that take a raw
+// tenantId. A string scopes the request; null means the caller isn't
+// authenticated for any tenant; undefined means no resolver, so trust the
+// client value (single-tenant, or a server-fronted handler).
+export function resolveScopedTenant(
+	scoped: string | null | undefined,
+	fromClient: string | undefined,
+): string | undefined {
+	if (scoped === undefined) return fromClient;
+	if (scoped === null) {
+		throw new ManagementApiError(
+			401,
+			'unauthenticated',
+			'Could not determine the tenant for this request. Sign in and retry.',
+		);
+	}
+	return scoped;
+}
+
+// End-user mode (resolveTenant configured): the cross-tenant admin routes are
+// off so a user can't enumerate tenants or read another's records. `undefined`
+// means no resolver, i.e. admin/server mode.
+export function assertAdminRouteAllowed(
+	scoped: string | null | undefined,
+): void {
+	if (scoped !== undefined) {
+		throw new ManagementApiError(
+			403,
+			'forbidden',
+			'This route is disabled when resolveTenant is configured (end-user mode). Use a handler without resolveTenant, behind your own admin auth.',
+		);
+	}
+}
 
 type Route = {
 	method: 'GET' | 'POST';
@@ -90,19 +139,26 @@ const ROUTES: Route[] = [
 	{
 		method: 'GET',
 		pattern: '/tenants',
-		handler: async ({ internal }) => json(200, await listTenants(internal)),
+		handler: async ({ internal, scopedTenant }) => {
+			assertAdminRouteAllowed(scopedTenant);
+			return json(200, await listTenants(internal));
+		},
 	},
 	{
 		method: 'POST',
 		pattern: '/tenants',
-		handler: async ({ internal, body }) =>
-			json(201, await createTenant(internal, body as { id: string })),
+		handler: async ({ internal, body, scopedTenant }) => {
+			assertAdminRouteAllowed(scopedTenant);
+			return json(201, await createTenant(internal, body as { id: string }));
+		},
 	},
 	{
 		method: 'GET',
 		pattern: '/tenants/:id',
-		handler: async ({ internal, params }) =>
-			json(200, await getTenant(internal, params.id!)),
+		handler: async ({ internal, params, scopedTenant }) => {
+			assertAdminRouteAllowed(scopedTenant);
+			return json(200, await getTenant(internal, params.id!));
+		},
 	},
 	{
 		method: 'GET',
@@ -118,14 +174,22 @@ const ROUTES: Route[] = [
 	{
 		method: 'GET',
 		pattern: '/connection-status',
-		handler: async ({ internal, query }) =>
-			json(200, await getConnectionStatus(internal, query.tenantId)),
+		handler: async ({ internal, query, scopedTenant }) =>
+			json(
+				200,
+				await getConnectionStatus(
+					internal,
+					resolveScopedTenant(scopedTenant, query.tenantId),
+				),
+			),
 	},
 	{
 		method: 'GET',
 		pattern: '/permissions/:id',
-		handler: async ({ internal, params }) =>
-			json(200, await getPermission(internal, params.id!)),
+		handler: async ({ internal, params, scopedTenant }) => {
+			assertAdminRouteAllowed(scopedTenant);
+			return json(200, await getPermission(internal, params.id!));
+		},
 	},
 	{
 		// POST + body, not GET + path. Tokens are short-lived authorization
@@ -148,15 +212,14 @@ const ROUTES: Route[] = [
 	{
 		method: 'POST',
 		pattern: '/connect/links',
-		handler: async ({ corsair, internal, body }) =>
-			json(
+		handler: async ({ corsair, internal, body, scopedTenant }) => {
+			const input = body as CreateConnectLinkInput;
+			const tenantId = resolveScopedTenant(scopedTenant, input.tenantId);
+			return json(
 				200,
-				await createConnectLink(
-					corsair,
-					internal,
-					body as CreateConnectLinkInput,
-				),
-			),
+				await createConnectLink(corsair, internal, { ...input, tenantId }),
+			);
+		},
 	},
 	{
 		method: 'GET',
@@ -176,6 +239,38 @@ const ROUTES: Route[] = [
 					body as OAuthCallbackInput,
 				),
 			),
+	},
+	{
+		// Read on-demand when a failure surfaces (read boundary / `call`), not polled.
+		method: 'GET',
+		pattern: '/connect/request',
+		handler: async ({ internal, query, scopedTenant }) => {
+			const tenantId =
+				resolveScopedTenant(scopedTenant, query.tenantId) ?? 'default';
+			const request = internal.database
+				? await readConnectRequest(internal.database, tenantId)
+				: null;
+			// Tenant-scoped connect link — never let a shared cache reuse it.
+			return json(200, { request }, { 'cache-control': 'no-store' });
+		},
+	},
+	{
+		method: 'POST',
+		pattern: '/connect/request/clear',
+		handler: async ({ internal, body, scopedTenant }) => {
+			const parsed = body as { tenantId?: string; plugin?: string } | undefined;
+			const tenantId =
+				resolveScopedTenant(scopedTenant, parsed?.tenantId) ?? 'default';
+			if (internal.database) {
+				await clearConnectRequest(
+					internal.database,
+					tenantId,
+					undefined,
+					parsed?.plugin,
+				);
+			}
+			return json(200, { ok: true });
+		},
 	},
 ];
 
@@ -318,6 +413,9 @@ export function managementHandler(
 				const params = matchPattern(route.pattern, pathname);
 				if (!params) continue;
 				const body = await parseBody(req, bodyLimits);
+				const scopedTenant = opts.resolveTenant
+					? await opts.resolveTenant(req)
+					: undefined;
 				return await route.handler({
 					corsair,
 					internal,
@@ -325,6 +423,7 @@ export function managementHandler(
 					params,
 					query,
 					body,
+					scopedTenant,
 				});
 			}
 

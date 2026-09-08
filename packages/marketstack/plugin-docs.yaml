@@ -1,0 +1,7 @@
+displayName: Marketstack
+overviewNote: |
+  This plugin calls Marketstack's v2 API over HTTPS
+  (`https://api.marketstack.com/v2`), since every request carries your
+  `access_key` as a query parameter. HTTPS is available on every Marketstack
+  plan, including free — no paid plan is required.
+description: Stock market data API for real-time and historical end-of-day exchange prices worldwide.

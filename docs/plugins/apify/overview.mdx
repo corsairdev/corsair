@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Apify plugin for Corsair (MCP + REST API)"
+description: "Web scraping and automation platform for running actors and extracting structured data."
 ---
 
 Use **Apify** through Corsair: one client, typed API calls, local DB sync.
@@ -45,8 +45,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```

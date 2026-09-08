@@ -1,0 +1,397 @@
+---
+title: API
+description: "API reference for World News API: every `worldnewsapi.api.*` operation with input and output types."
+---
+
+Every `worldnewsapi.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## News
+
+### extractNews
+
+`news.extractNews`
+
+Extract a news article from a website to a well-structured JSON object, including title, text, images, videos, publish date, authors, language, and sentiment.
+
+**Risk:** `read`
+
+```ts
+await corsair.worldnewsapi.api.news.extractNews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL of the news article to extract into structured data. |
+| `analyze` | `boolean` | No | Whether to analyze the extracted news (extract named entities, detect sentiment, etc.). Defaults to false. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `text` | `string` | No | — |
+| `url` | `string` | No | — |
+| `image` | `string` | No | — |
+| `images` | `object[]` | No | — |
+| `video` | `string` | No | — |
+| `videos` | `object[]` | No | — |
+| `publish_date` | `string` | No | — |
+| `author` | `string` | No | — |
+| `authors` | `string \| null[]` | No | — |
+| `language` | `string` | No | — |
+| `source_country` | `string` | No | — |
+| `sentiment` | `number` | No | — |
+| `entities` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  title?: string,
+  url: string,
+  width?: number,
+  height?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="videos full type">
+
+```ts
+{
+  title?: string,
+  url: string,
+  summary?: string,
+  duration?: number,
+  thumbnail?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="entities full type">
+
+```ts
+{
+  name: string,
+  type: string,
+  sentiment?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### extractNewsLinks
+
+`news.extractNewsLinks`
+
+Extract news article links from a website or webpage, with optional filtering by URL prefix and subdomain inclusion.
+
+**Risk:** `read`
+
+```ts
+await corsair.worldnewsapi.api.news.extractNewsLinks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The webpage or site URL from which news article links should be extracted. |
+| `analyze` | `boolean` | No | Whether to analyze extracted links. Defaults to false. |
+| `prefix` | `string` | No | The prefix that discovered news links must start with. |
+| `subDomain` | `boolean` | No | Whether to include links to news articles on sub-domains. Defaults to true. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `news_links` | `string[]` | Yes | — |
+
+
+
+---
+
+### getGeoCoordinates
+
+`news.getGeoCoordinates`
+
+Retrieve latitude and longitude of a location name to fill the location-filter parameter in news search operations.
+
+**Risk:** `read`
+
+```ts
+await corsair.worldnewsapi.api.news.getGeoCoordinates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | Yes | The address or location name to geocode (e.g., "Tokyo, Japan" or "Mumbai, India"). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `latitude` | `number` | Yes | — |
+| `longitude` | `number` | Yes | — |
+| `city` | `string` | No | — |
+
+
+
+---
+
+### newsWebsiteToRssFeed
+
+`news.newsWebsiteToRssFeed`
+
+Convert any news website page into an RSS feed with the latest news from that page.
+
+**Risk:** `read`
+
+```ts
+await corsair.worldnewsapi.api.news.newsWebsiteToRssFeed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL of the news website/page to convert into an RSS 2.0 feed. |
+| `extractNews` | `boolean` | No | Whether to extract full article text/data for each item in the feed (costs additional quota). Defaults to false. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `link` | `string` | No | — |
+| `description` | `string` | No | — |
+| `pubDate` | `string` | No | — |
+| `lastBuildDate` | `string` | No | — |
+| `language` | `string` | No | — |
+| `items` | `object[]` | Yes | — |
+| `rawXml` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  title?: string,
+  link?: string,
+  guid?: string,
+  pubDate?: string,
+  description?: string,
+  author?: string,
+  category?: string,
+  enclosureUrl?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchNews
+
+`news.searchNews`
+
+Search and filter news by text, date, location, category, language, and more.
+
+**Risk:** `read`
+
+```ts
+await corsair.worldnewsapi.api.news.searchNews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | No | Search query text. Supports implicit AND, OR, negation with -, parentheses, and quotes for exact phrases. |
+| `textMatchIndexes` | `string` | No | Where to search for text: "title", "content", or "title,content". |
+| `sourceCountry` | `string` | No | Filter by 2-letter ISO 3166 country code. |
+| `language` | `string` | No | Filter by 2-letter ISO 639-1 language code. |
+| `minSentiment` | `number` | No | Minimum sentiment score between -1.0 (very negative) and 1.0 (very positive). |
+| `maxSentiment` | `number` | No | Maximum sentiment score between -1.0 and 1.0. |
+| `earliestPublishDate` | `string` | No | Filter for news published on or after this timestamp (YYYY-MM-DD HH:MM:SS or YYYY-MM-DD). |
+| `latestPublishDate` | `string` | No | Filter for news published on or before this timestamp (YYYY-MM-DD HH:MM:SS or YYYY-MM-DD). |
+| `newsSources` | `string` | No | Comma-separated list of up to 10 news sources (e.g., "bbc.co.uk,nytimes.com"). |
+| `authors` | `string` | No | Comma-separated list of author names. |
+| `categories` | `string` | No | Comma-separated categories (politics, sports, business, technology, entertainment, health, science, etc.). |
+| `entities` | `string` | No | Filter by semantic entities (e.g., "ORG:Tesla,PER:Elon Musk"). |
+| `locationFilter` | `string` | No | Filter by geographic radius in the format "latitude,longitude,radius in km" (radius: 1-100). |
+| `sort` | `string` | No | Sort criteria, typically "publish-time". |
+| `sortDirection` | `ASC \| DESC` | No | Sort direction: "ASC" or "DESC". Defaults to DESC for publish-time. |
+| `offset` | `number` | No | Number of results to skip for pagination. |
+| `number` | `number` | No | Number of results to return (1-100). Defaults to 10. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | Yes | — |
+| `number` | `number` | Yes | — |
+| `available` | `number` | Yes | — |
+| `news` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="news full type">
+
+```ts
+{
+  id: number,
+  title: string,
+  text?: string,
+  summary?: string | null,
+  url: string,
+  image?: string | null,
+  video?: string | null,
+  publish_date?: string,
+  author?: string | null,
+  authors?: string | null[],
+  category?: string,
+  language?: string,
+  source_country?: string,
+  sentiment?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchNewsSources
+
+`news.searchNewsSources`
+
+Search whether a news source is being monitored by the World News API.
+
+**Risk:** `read`
+
+```ts
+await corsair.worldnewsapi.api.news.searchNewsSources({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The (partial) name of the news source to search for (e.g. "bbc", "reuters", "times"). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `available` | `number` | Yes | — |
+| `sources` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  name: string,
+  url: string,
+  language?: string,
+  country?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### topNews
+
+`news.topNews`
+
+Get the top news from a country in a specific language for a given date. The top news are clustered from multiple sources in the specified country.
+
+**Risk:** `read`
+
+```ts
+await corsair.worldnewsapi.api.news.topNews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceCountry` | `string` | Yes | The 2-letter ISO 3166 country code for which top news should be retrieved (e.g., "us", "in", "gb"). |
+| `language` | `string` | Yes | The 2-letter ISO 639-1 language code of the top news (e.g., "en", "es", "fr"). |
+| `date` | `string` | No | The date for which the top news should be retrieved (YYYY-MM-DD). Defaults to today. |
+| `headlinesOnly` | `boolean` | No | Whether to only return basic headline fields (id, title, url). Defaults to false. |
+| `maxNewsPerCluster` | `number` | No | How many news articles to return per story cluster. Default is 1. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `top_news` | `object[]` | Yes | — |
+| `language` | `string` | No | — |
+| `country` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="top_news full type">
+
+```ts
+{
+  news: {
+    id: number,
+    title: string,
+    text?: string,
+    summary?: string | null,
+    url: string,
+    image?: string | null,
+    video?: string | null,
+    publish_date?: string,
+    author?: string | null,
+    authors?: string | null[],
+    category?: string,
+    language?: string,
+    source_country?: string,
+    sentiment?: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
