@@ -296,12 +296,17 @@ export async function disconnectConnection(
 	internal: CorsairInternalConfig,
 	input: DisconnectInput,
 ): Promise<DisconnectResult> {
-	const plugin = input?.plugin?.trim();
-	if (!plugin) {
+	const rawPlugin = input?.plugin;
+	if (typeof rawPlugin !== 'string' || !rawPlugin.trim()) {
 		throw badRequest('plugin is required', { missingFields: ['plugin'] });
 	}
+	const plugin = rawPlugin.trim();
 	findPlugin(internal, plugin); // 404 for an unknown plugin
-	const tenantId = input.tenantId?.trim() || 'default';
+	const rawTenantId = input?.tenantId;
+	if (rawTenantId != null && typeof rawTenantId !== 'string') {
+		throw badRequest('tenantId must be a string');
+	}
+	const tenantId = rawTenantId?.trim() || 'default';
 	if (!internal.database) return { ok: true, disconnected: false };
 
 	const db = internal.database.db;

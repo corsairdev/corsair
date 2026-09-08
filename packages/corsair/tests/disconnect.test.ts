@@ -232,4 +232,17 @@ describe('manage.disconnect', () => {
 			await destroy();
 		}
 	});
+
+	it('rejects a non-string plugin with a 400, not a TypeError', async () => {
+		const { db, destroy } = createTestDatabase();
+		try {
+			await expect(
+				disconnectConnection(internalFor(db), {
+					plugin: 1 as unknown as string,
+				}),
+			).rejects.toMatchObject({ status: 400, code: 'bad_request' });
+		} finally {
+			await destroy();
+		}
+	});
 });
