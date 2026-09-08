@@ -24,6 +24,38 @@ function collectingKeys() {
 	};
 }
 
+describe('isAccessTokenFresh', () => {
+	it('treats a non-expiring token (access token, no expiry) as fresh', () => {
+		expect(
+			isAccessTokenFresh({ accessToken: 'notion-token', expiresAt: null }),
+		).toBe(true);
+	});
+	it('forceRefresh overrides a non-expiring token', () => {
+		expect(
+			isAccessTokenFresh({
+				accessToken: 'notion-token',
+				expiresAt: null,
+				forceRefresh: true,
+			}),
+		).toBe(false);
+	});
+	it('a missing access token is never fresh', () => {
+		expect(isAccessTokenFresh({ accessToken: null, expiresAt: null })).toBe(
+			false,
+		);
+	});
+	it('an expired token with a known expiry is stale', () => {
+		const now = Math.floor(Date.now() / 1000);
+		expect(
+			isAccessTokenFresh({
+				accessToken: 'x',
+				expiresAt: String(now - 10),
+				now,
+			}),
+		).toBe(false);
+	});
+});
+
 describe('cacheRefreshedTokens expiry fallback', () => {
 	it('a refresh with no expires_in yields a future expiry, not the stale previous one', async () => {
 		const { store, keys } = collectingKeys();

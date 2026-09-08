@@ -351,7 +351,7 @@ const gmailEndpointMeta = {
 	},
 	'labels.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a label [DESTRUCTIVE]',
+		description: 'Delete a label',
 	},
 	'drafts.list': {
 		riskLevel: 'read',
@@ -365,7 +365,7 @@ const gmailEndpointMeta = {
 	},
 	'drafts.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a draft [DESTRUCTIVE]',
+		description: 'Delete a draft',
 	},
 	'drafts.send': {
 		riskLevel: 'write',

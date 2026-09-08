@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { Suspense } from 'react';
 
 import {
@@ -38,13 +37,6 @@ export default async function OssIntegrationPage({ params }: PageProps) {
 
 	return (
 		<main className="pb-16">
-			<Link
-				href="/oss"
-				className="mb-4 inline-flex items-center gap-1.5 font-[family-name:var(--font-landing-mono)] text-[12px] text-[#1c1c1c66] no-underline transition-colors hover:text-[#1c1c1c]"
-			>
-				← All integrations
-			</Link>
-
 			<Suspense fallback={<IntegrationHeaderSkeleton />}>
 				<IntegrationHeaderSection
 					slug={slug}

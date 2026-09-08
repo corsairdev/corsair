@@ -1,5 +1,5 @@
 displayName: Twilio
-description: "Twilio plugin for Corsair — SMS, calls, and message events."
+description: Communications API for SMS, voice calls, WhatsApp messaging, and programmable telephony.
 examples:
   read:
     path: messages.list
@@ -8,15 +8,15 @@ examples:
     path: messages.send
     title: Send a message
     args:
-      To: "+15555550100"
-      From: "+15555550101"
+      To: '+15555550100'
+      From: '+15555550101'
       Body: Hello from Corsair
 dbExample:
   entity: messages
-  note: "Search synced messages without hitting Twilio."
+  note: Search synced messages without hitting Twilio.
   limit: 50
 exampleWebhook:
   path: message.received
-  note: "Fires when an inbound SMS arrives."
+  note: Fires when an inbound SMS arrives.
   after: |
     console.log('Twilio message:', result.data);

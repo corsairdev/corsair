@@ -1,0 +1,14 @@
+displayName: Zoho Inventory
+description: Track stock, manage orders, and sync inventory across sales channels
+overviewNote: |
+  Zoho Inventory uses regional datacenters. Pass `region` (`us` default, plus `eu`,
+  `in`, `au`, `jp`, `ca`, `cn`, `sa`). API hosts are `www.zohoapis.*`. OAuth hosts
+  are `accounts.zoho.*` except Canada, which uses `accounts.zohocloud.ca`.
+
+  ```ts
+  zohoinventory({ region: 'eu' })
+  ```
+
+  Org-scoped calls send `organization_id` as a query parameter. Discover orgs with
+  `organizations.list`, or use post-OAuth tenant linking (`tenant_external_id`).
+  Optional `apiDomain` must be an HTTPS `zohoapis.*` origin.
