@@ -1,7 +1,7 @@
 {
   "id": "wiza",
   "displayName": "Wiza",
-  "description": "Wiza plugin for Corsair",
+  "description": "LinkedIn prospecting tool for finding verified emails and exporting lead contact lists.",
   "npmPackageName": "@corsair-dev/wiza",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

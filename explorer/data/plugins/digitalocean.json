@@ -1,7 +1,7 @@
 {
   "id": "digitalocean",
   "displayName": "DigitalOcean",
-  "description": "DigitalOcean plugin for Corsair",
+  "description": "Cloud infrastructure provider for droplets, Kubernetes, databases, and developer hosting.",
   "npmPackageName": "@corsair-dev/digitalocean",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

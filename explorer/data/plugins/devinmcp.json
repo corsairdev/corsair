@@ -1,7 +1,7 @@
 {
   "id": "devinmcp",
-  "displayName": "DevinMcp",
-  "description": "DevinMcp plugin for Corsair",
+  "displayName": "Devin MCP",
+  "description": "MCP integration for Devin AI software engineering agent capabilities and tooling.",
   "npmPackageName": "@corsair-dev/devinmcp",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

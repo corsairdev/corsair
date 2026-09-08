@@ -1,7 +1,7 @@
 {
   "id": "securitytrails",
-  "displayName": "Securitytrails",
-  "description": "Securitytrails plugin for Corsair",
+  "displayName": "SecurityTrails",
+  "description": "DNS and domain intelligence API for historical records, subdomains, and security research.",
   "npmPackageName": "@corsair-dev/securitytrails",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

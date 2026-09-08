@@ -1,7 +1,7 @@
 {
   "id": "datadog",
   "displayName": "Datadog",
-  "description": "Datadog plugin for Corsair",
+  "description": "Monitoring and observability platform for metrics, logs, traces, and infrastructure alerts.",
   "npmPackageName": "@corsair-dev/datadog",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

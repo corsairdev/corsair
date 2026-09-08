@@ -1,7 +1,7 @@
 {
   "id": "asticaai",
-  "displayName": "AsticaAi",
-  "description": "AsticaAi plugin for Corsair",
+  "displayName": "Astica AI",
+  "description": "Computer vision API for image analysis, object detection, and visual understanding.",
   "npmPackageName": "@corsair-dev/asticaai",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

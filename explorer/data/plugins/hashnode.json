@@ -1,7 +1,7 @@
 {
   "id": "hashnode",
   "displayName": "Hashnode",
-  "description": "Hashnode plugin for Corsair",
+  "description": "Developer blogging platform for publishing articles, newsletters, and technical content.",
   "npmPackageName": "@corsair-dev/hashnode",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "timecamp",
-  "displayName": "Timecamp",
-  "description": "Timecamp plugin for Corsair",
+  "displayName": "TimeCamp",
+  "description": "Automatic time tracking software for projects, attendance, invoicing, and team productivity.",
   "npmPackageName": "@corsair-dev/timecamp",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "deepseek",
-  "displayName": "Deepseek",
-  "description": "Deepseek plugin for Corsair",
+  "displayName": "DeepSeek",
+  "description": "AI model provider API for chat completions, reasoning, and code generation tasks.",
   "npmPackageName": "@corsair-dev/deepseek",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

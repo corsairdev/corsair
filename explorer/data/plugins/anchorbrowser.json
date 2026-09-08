@@ -1,7 +1,7 @@
 {
   "id": "anchorbrowser",
   "displayName": "Anchor Browser",
-  "description": "Anchor Browser plugin for Corsair",
+  "description": "Cloud browser automation API for running headless web sessions and scraping tasks.",
   "npmPackageName": "@corsair-dev/anchorbrowser",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

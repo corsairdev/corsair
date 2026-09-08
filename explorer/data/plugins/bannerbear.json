@@ -1,7 +1,7 @@
 {
   "id": "bannerbear",
   "displayName": "Bannerbear",
-  "description": "Bannerbear plugin for Corsair",
+  "description": "Automated image and video generation API for social posts and marketing templates.",
   "npmPackageName": "@corsair-dev/bannerbear",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

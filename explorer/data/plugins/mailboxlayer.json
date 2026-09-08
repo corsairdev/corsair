@@ -1,7 +1,7 @@
 {
   "id": "mailboxlayer",
-  "displayName": "mailboxlayer email validation",
-  "description": "mailboxlayer email validation plugin for Corsair",
+  "displayName": "MailboxLayer",
+  "description": "Email verification API for checking address validity, format, and deliverability scores.",
   "npmPackageName": "@corsair-dev/mailboxlayer",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

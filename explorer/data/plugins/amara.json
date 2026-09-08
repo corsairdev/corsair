@@ -1,7 +1,7 @@
 {
   "id": "amara",
-  "displayName": "Amara (subtitling platform)",
-  "description": "Amara (subtitling platform) plugin for Corsair",
+  "displayName": "Amara",
+  "description": "Collaborative subtitling and captioning platform for video accessibility and translation.",
   "npmPackageName": "@corsair-dev/amara",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
