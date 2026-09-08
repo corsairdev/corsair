@@ -4,10 +4,9 @@ import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
 
-// Spec paths verified in Kibana OpenAPI spec (kibana.json):
-// POST /api/cases (opId createCaseDefaultSpace, body required),
-// GET /api/cases/_find (opId findCasesDefaultSpace).
-// The create-case body varies by connector — accepted as a validated record.
+// POST /api/cases, GET /api/cases/_find (kibana.json). _find uses camelCase
+// page/perPage/sortField/sortOrder (live-verified 2026-09-09); connector
+// bodies vary, so accepted as validated records.
 
 export const CasesCreateInputSchema = z.object({
 	title: z.string(),
@@ -42,8 +41,8 @@ export const CasesListInputSchema = z.object({
 	severity: z.string().optional(),
 	assignees: z.union([z.string(), z.array(z.string())]).optional(),
 	tags: z.union([z.string(), z.array(z.string())]).optional(),
-	sort_field: z.string().optional(),
-	sort_order: z.string().optional(),
+	sortField: z.string().optional(),
+	sortOrder: z.string().optional(),
 });
 export type CasesListInput = z.infer<typeof CasesListInputSchema>;
 
@@ -103,8 +102,8 @@ export const list: KibanaEndpoints['casesList'] = async (ctx, input) => {
 	if (assignees !== undefined) query.assignees = assignees;
 	const tags = join(input.tags);
 	if (tags !== undefined) query.tags = tags;
-	if (input.sort_field !== undefined) query.sort_field = input.sort_field;
-	if (input.sort_order !== undefined) query.sort_order = input.sort_order;
+	if (input.sortField !== undefined) query.sortField = input.sortField;
+	if (input.sortOrder !== undefined) query.sortOrder = input.sortOrder;
 	const response = await makeKibanaRequest<KibanaEndpointOutputs['casesList']>(
 		'api/cases/_find',
 		baseUrl,

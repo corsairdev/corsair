@@ -4,12 +4,8 @@ import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
 
-// Spec: https://www.elastic.co/docs/api/doc/kibana (opIds: search-dashboards,
-// create-dashboard, get-dashboard, upsert-dashboard, delete-dashboard).
-// Paths verified in the Kibana OpenAPI spec (kibana.json):
-// GET+POST /api/dashboards, GET+PUT+DELETE /api/dashboards/{id}.
-// Request/response shapes are not detailed in the spec — outputs are
-// passthrough-validated and inputs carry the documented fields.
+// GET+POST /api/dashboards, GET+PUT+DELETE /api/dashboards/{id} (kibana.json).
+// Shapes are undocumented in the spec, so outputs are passthrough-validated.
 
 export const DashboardsSearchInputSchema = z.object({
 	page: z.number().optional(),

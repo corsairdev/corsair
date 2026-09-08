@@ -1,4 +1,8 @@
 import { z } from 'zod';
+
+// Saved-object attributes/references and data-view/status fields are
+// provider-defined per object type, so values use z.unknown() with known
+// keys validated and the rest passed through instead of invented shapes.
 import type {
 	AlertingRuleCreateInput,
 	AlertingRuleCreateResponse,

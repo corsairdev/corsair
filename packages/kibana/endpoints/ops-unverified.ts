@@ -4,22 +4,10 @@ import type { KibanaEndpoints } from '..';
 import { KibanaAPIError, makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
 
-// HONESTY NOTE on path verification (live-tested 2026-09-05 against
-// Elastic Cloud serverless 9.6.0):
-// - reporting jobs (GET api/reporting/jobs): PARTIALLY verified — the
-//   /api/reporting/jobs/* family is the long-documented reporting API
-//   (Elastic history; reporting plugin reports "available" on this
-//   deployment), but every list variant (GET api/reporting/jobs,
-//   GET/POST .../jobs/list, /internal/... equivalents) returns 404 on
-//   serverless. The jobs listing API is not exposed on serverless; verify
-//   on a stateful stack before relying on it.
-// - node metrics (_nodes/stats): path VERIFIED real (serverless answers 410
-//   "exists but is not available when running in serverless mode"), but it
-//   only returns data on stateful/self-hosted Elasticsearch.
-// - index management indices (GET api/index_management/indices): path
-//   VERIFIED real (serverless answers 400 "exists but is not available with
-//   the current configuration"), but disabled on serverless. Works where the
-//   Index Management UI is enabled.
+// Live-tested 2026-09-09 on Elastic Cloud serverless:
+// - reporting jobs: not in kibana.json; 404 on serverless (stateful-only).
+// - _nodes/stats: Elasticsearch API via elasticsearchBaseUrl (stateful-only).
+// - index_management/indices: real path, 400 "not available" on serverless.
 // Outputs are passthrough-validated.
 
 export const ReportingJobsListInputSchema = z.object({
@@ -95,10 +83,8 @@ export const nodeMetrics: KibanaEndpoints['nodeMetricsGet'] = async (
 	ctx,
 	input,
 ) => {
-	// Node stats is an Elasticsearch API, not a Kibana one — it must go to
-	// the Elasticsearch host (plugin option `elasticsearchBaseUrl`).
-	// Fail closed when it is missing: falling back to the Kibana host would
-	// silently call the wrong service.
+	// Node stats is an Elasticsearch API — must use elasticsearchBaseUrl.
+	// Fail closed when missing instead of calling the wrong service.
 	const esBase = ctx.options.elasticsearchBaseUrl;
 	if (!esBase) {
 		throw new KibanaAPIError(

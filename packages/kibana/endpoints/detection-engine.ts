@@ -4,11 +4,9 @@ import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
 
-// Spec paths verified in Kibana OpenAPI spec (kibana.json):
-// GET /api/detection_engine/rules/_find (opId FindRules),
-// POST /api/detection_engine/signals/search (opId SearchAlerts).
-// The alerts search body is an Elasticsearch query — accepted as a validated
-// record instead of an invented fixed shape.
+// GET /api/detection_engine/rules/_find, POST /api/detection_engine/signals/search
+// (kibana.json). The alerts body is an Elasticsearch query, so accepted as a
+// validated record.
 
 export const DetectionRulesFindInputSchema = z.object({
 	page: z.number().optional(),

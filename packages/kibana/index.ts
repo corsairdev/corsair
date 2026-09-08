@@ -489,7 +489,8 @@ const kibanaEndpointMeta = {
 	},
 	'security.entityStoreEngines': {
 		riskLevel: 'read',
-		description: 'Retrieve Entity Store engines',
+		description:
+			'Retrieve Entity Store engines (derived from the entity-store status response; no separate engines endpoint exists in the spec)',
 	},
 	'security.entitiesList': {
 		riskLevel: 'read',
@@ -505,7 +506,8 @@ const kibanaEndpointMeta = {
 	},
 	'reporting.listJobs': {
 		riskLevel: 'read',
-		description: 'List Kibana reporting jobs',
+		description:
+			'List Kibana reporting jobs (legacy stateful-only API; not in the official OpenAPI spec, 404 on serverless)',
 	},
 	'metrics.get': {
 		riskLevel: 'read',
@@ -513,7 +515,8 @@ const kibanaEndpointMeta = {
 	},
 	'index.listIndices': {
 		riskLevel: 'read',
-		description: 'List indices via Index Management',
+		description:
+			'List indices via Index Management (not in the official OpenAPI spec; disabled on serverless, works where Index Management UI is enabled)',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof kibanaEndpointsNested>;
 

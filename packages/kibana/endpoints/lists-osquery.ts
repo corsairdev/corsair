@@ -4,11 +4,9 @@ import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
 
-// Spec path verified in Kibana OpenAPI spec (kibana.json):
-// DELETE /api/lists?query:id (opId DeleteList). The id is a query param,
-// not a path segment.
-// Spec path verified: DELETE /api/osquery/saved_queries/{id}
-// (opId OsqueryDeleteSavedQuery).
+// DELETE /api/lists?id= (query param, not path), DELETE
+// /api/osquery/saved_queries/{id} (kibana.json). Empty bodies, so responses
+// are open records.
 
 export const ListsDeleteInputSchema = z.object({
 	id: z.string(),

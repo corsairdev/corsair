@@ -48,6 +48,8 @@ const ctx = {
 			.fn()
 			.mockResolvedValue('https://kibana.example.com:5601'),
 	},
+	// Minimal test double: narrowed to the endpoint context type because the
+	// mock only implements the fields endpoints actually read (key/options/keys).
 } as unknown as Parameters<typeof SavedObjects.find>[0];
 
 const BASE = 'https://kibana.example.com:5601';
@@ -455,7 +457,12 @@ describe('Kibana Endpoints', () => {
 		it('lists cases with filters', async () => {
 			mockedRequest.mockResolvedValueOnce({ total: 1, cases: [] });
 
-			const res = await Cases.list(ctx, { status: 'open', perPage: 5 });
+			const res = await Cases.list(ctx, {
+				status: 'open',
+				perPage: 5,
+				sortField: 'createdAt',
+				sortOrder: 'desc',
+			});
 
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'api/cases/_find',
@@ -463,7 +470,12 @@ describe('Kibana Endpoints', () => {
 				ctx.key,
 				{
 					method: 'GET',
-					query: { status: 'open', perPage: 5 },
+					query: {
+						status: 'open',
+						perPage: 5,
+						sortField: 'createdAt',
+						sortOrder: 'desc',
+					},
 				},
 			);
 			expect(res.total).toBe(1);

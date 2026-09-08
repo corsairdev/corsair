@@ -4,11 +4,9 @@ import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
 
-// Spec paths verified in Kibana OpenAPI spec (kibana.json):
-// POST|PUT|GET|DELETE /api/actions/connector/{id},
-// GET /api/actions/connectors, GET /api/actions/connector_types.
-// Connector config/secrets vary by connector type — accepted as validated
-// records instead of invented fixed shapes.
+// POST|PUT|GET|DELETE /api/actions/connector/{id}, GET /api/actions/connectors,
+// GET /api/actions/connector_types (kibana.json). Config/secrets vary by
+// connector type, so accepted as validated records.
 
 export const ConnectorsCreateInputSchema = z.object({
 	id: z.string(),

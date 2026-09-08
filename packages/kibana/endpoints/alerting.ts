@@ -4,11 +4,9 @@ import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
 
-// Spec paths verified in Kibana OpenAPI spec (kibana.json):
-// POST|PUT|GET|DELETE /api/alerting/rule/{id},
-// GET /api/alerting/rules/_find, GET /api/alerting/rule_types.
-// Rule create/update bodies vary by rule type — accepted as a validated
-// record instead of an invented fixed shape.
+// POST|PUT|GET|DELETE /api/alerting/rule/{id}, GET /api/alerting/rules/_find,
+// GET /api/alerting/rule_types (kibana.json). Rule bodies vary by rule type,
+// so accepted as validated records.
 
 export const AlertingRuleCreateInputSchema = z.object({
 	id: z.string(),

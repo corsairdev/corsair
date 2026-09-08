@@ -17,6 +17,8 @@ export async function makeKibanaRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Payloads vary per endpoint (validated by zod schemas upstream),
+		// so the transport stays generic.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
@@ -31,8 +33,7 @@ export async function makeKibanaRequest<T>(
 		'kbn-xsrf': 'true', // Required for many Kibana API endpoints
 	};
 
-	// Try basic auth if it looks like a base64 string, otherwise default to ApiKey
-	// Note: To be safe, users should supply 'Basic <base64>' or 'ApiKey <token>'
+	// Pass through prefixed credentials, else default to ApiKey.
 	if (
 		apiKey.startsWith('Basic ') ||
 		apiKey.startsWith('ApiKey ') ||
@@ -40,7 +41,6 @@ export async function makeKibanaRequest<T>(
 	) {
 		headers.Authorization = apiKey;
 	} else {
-		// Default to ApiKey if not prefixed
 		headers.Authorization = `ApiKey ${apiKey}`;
 	}
 
@@ -49,10 +49,8 @@ export async function makeKibanaRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		// NOTE: do NOT set TOKEN here. The shared HTTP layer unconditionally
-		// rewrites Authorization to `Bearer ${TOKEN}` (see
-		// packages/corsair/async-core/request.ts getHeaders), which would
-		// clobber the ApiKey/Basic scheme set in HEADERS below.
+		// Do NOT set TOKEN: the shared HTTP layer would rewrite Authorization
+		// to Bearer and clobber the ApiKey/Basic scheme in HEADERS.
 		HEADERS: headers,
 	};
 

@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+// attributes/sourceFilters/fields differ per saved-object and data-view
+// type, so values use z.unknown() rather than an invented fixed shape.
 export const KibanaSavedObject = z.object({
 	id: z.string(),
 	type: z.string(),

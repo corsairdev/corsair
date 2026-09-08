@@ -4,12 +4,10 @@ import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
 
-// Spec paths verified in Kibana OpenAPI spec (kibana.json):
-// GET /api/endpoint_list/items/_find (opId FindEndpointListItems),
-// GET /api/security/entity_store/status (response contains engines[] + status),
-// GET /api/security/entity_store/entities.
-// The engines list is the `engines` array inside the entity-store status
-// response — no separate engines endpoint exists in the spec.
+// GET /api/endpoint_list/items/_find, GET /api/security/entity_store/status,
+// GET /api/security/entity_store/entities (kibana.json). No separate engines
+// endpoint exists — engines come from the status response. Payloads are
+// provider-defined, so record values use z.unknown() with passthrough.
 
 export const EndpointListItemsInputSchema = z.object({
 	page: z.number().optional(),
@@ -168,11 +166,8 @@ export const entitiesList: KibanaEndpoints['entityStoreEntitiesList'] = async (
 	input,
 ) => {
 	const baseUrl = await baseUrlOf(ctx);
-	// The API has two pagination modes (per spec param descriptions):
-	// - page mode: page, per_page, filterQuery, sort_field, sort_order
-	// - search-after mode: filter (KQL), size, searchAfter
-	// Mixing them returns unfiltered results or is rejected, so only send
-	// the params of the selected mode.
+	// Two pagination modes (per spec): page mode (page/per_page/filterQuery) or
+	// search-after mode (filter/size/searchAfter) — never mix them.
 	const query: Record<string, string | number | boolean | undefined> = {};
 	const joinList = (v: string | string[] | undefined) =>
 		Array.isArray(v) ? v.join(',') : v;

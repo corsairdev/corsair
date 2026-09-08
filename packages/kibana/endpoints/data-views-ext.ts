@@ -4,10 +4,8 @@ import type { KibanaEndpoints } from '..';
 import { makeKibanaRequest } from '../client';
 import type { KibanaEndpointOutputs } from './types';
 
-// Spec paths verified in Kibana OpenAPI spec (kibana.json):
-// GET /api/data_views (opId getAllDataViewsDefault),
-// POST /api/data_views/data_view (opId createDataViewDefaultw, body required
-// with data_view.title).
+// GET /api/data_views, POST /api/data_views/data_view (kibana.json; body needs
+// data_view.title). Entries vary by index pattern, so values use z.unknown().
 
 export const DataViewsListInputSchema = z.object({});
 export type DataViewsListInput = z.infer<typeof DataViewsListInputSchema>;
