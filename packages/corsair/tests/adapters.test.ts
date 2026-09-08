@@ -27,8 +27,14 @@ function makeInstance(overrides?: {
 		endpointSchemas: {
 			'channels.list': {
 				input: z.object({
-					channel: z.string().describe('Channel id'),
-					limit: z.number().optional().describe('Max results'),
+					channel: z.string().min(1).describe('Channel id'),
+					limit: z
+						.number()
+						.int()
+						.min(1)
+						.max(1000)
+						.optional()
+						.describe('Max results'),
 				}),
 				output: z.object({ ok: z.boolean() }),
 			},
@@ -139,6 +145,23 @@ describe('buildCorsairTools', () => {
 		const result = await list.execute({ channel: 'C1', limit: 2 });
 		expect(calls).toEqual([{ channel: 'C1', limit: 2 }]);
 		expect(result).toEqual({ ok: true, args: { channel: 'C1', limit: 2 } });
+	});
+
+	it('preserves endpoint validation constraints from the raw Zod schema', () => {
+		const [list] = buildCorsairTools(makeInstance(), {
+			operations: ['demo.api.channels.list'],
+		});
+		// min(1) on channel — empty string must fail
+		expect(() => list.schema.parse({ channel: '' })).toThrow();
+		// limit has int + min(1) + max(1000) constraints
+		expect(() => list.schema.parse({ channel: 'C1', limit: 0 })).toThrow();
+		expect(() => list.schema.parse({ channel: 'C1', limit: 1001 })).toThrow();
+		expect(() => list.schema.parse({ channel: 'C1', limit: 1.5 })).toThrow();
+		// valid values pass
+		expect(list.schema.parse({ channel: 'C1', limit: 10 })).toEqual({
+			channel: 'C1',
+			limit: 10,
+		});
 	});
 
 	it('scopes to a tenant via withTenant when tenantId is given', async () => {

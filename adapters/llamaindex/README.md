@@ -35,7 +35,16 @@ const corsair = createCorsair({
 // One tool per Slack operation:
 const tools = await corsairTools({ corsair, plugin: 'slack' });
 
-const slackAgent = agent({ tools, llm: openai({ model: 'gpt-4.1-mini' }) });
+// Route model calls through the Corsair LLM gateway (llm.corsair.dev).
+const llm = openai({
+	model: 'gpt-4.1-mini',
+	additionalChatOptions: {
+		baseURL: 'https://llm.corsair.dev/v1',
+		apiKey: process.env.LITELLM_API_KEY,
+	},
+});
+
+const slackAgent = agent({ tools, llm });
 const response = await slackAgent.run('List the Slack channels.');
 console.log(response.data);
 ```
@@ -72,6 +81,10 @@ ignore `tenantId`.
   model's function-name constraint.
 - Corsair is on Zod v4, which current `@llamaindex/core` accepts directly for a
   tool's `parameters` — no JSON Schema conversion.
+- `@llamaindex/core` is npm-deprecated as a standalone package, but it remains
+  the correct peer for LlamaIndex.TS tooling — the `llamaindex` meta-package
+  itself depends on `@llamaindex/core@0.6.x`. There is no non-deprecated
+  successor that exposes the same tool API.
 
 ## License
 

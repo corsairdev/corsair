@@ -48,13 +48,21 @@ export async function corsairTools(
 			description: op.description,
 			// Corsair is on Zod v4, which @llamaindex/core accepts directly.
 			parameters: op.schema,
-			execute: async (args: unknown) =>
-				toContent(await op.execute((args ?? {}) as Record<string, unknown>)),
+			// args is typed as unknown by the LlamaIndex tool callback signature;
+			// parse through op.schema so invalid model-generated inputs are rejected
+			// before reaching the Corsair operation.
+			execute: async (args: unknown) => {
+				const parsed = op.schema.parse(args ?? {}) as Record<string, unknown>;
+				return toContent(await op.execute(parsed));
+			},
 		}),
 	);
 }
 
-/** LlamaIndex tool output is model-visible; non-string results are JSON-encoded. */
+/**
+ * LlamaIndex tool output is model-visible; non-string results are JSON-encoded.
+ * `result` is `unknown` because Corsair operation return shapes vary per plugin.
+ */
 function toContent(result: unknown): string {
 	if (typeof result === 'string') return result;
 	return JSON.stringify(result) ?? String(result); // JSON.stringify(undefined) is undefined

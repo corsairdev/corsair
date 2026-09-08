@@ -54,7 +54,10 @@ export async function corsairTools(
 	) as DynamicStructuredTool[];
 }
 
-/** LangChain tool content is model-visible text; non-string results are JSON-encoded. */
+/**
+ * LangChain tool content is model-visible text; non-string results are JSON-encoded.
+ * `result` is `unknown` because Corsair operation return shapes vary per plugin.
+ */
 function toContent(result: unknown): string {
 	if (typeof result === 'string') return result;
 	return JSON.stringify(result) ?? String(result); // JSON.stringify(undefined) is undefined

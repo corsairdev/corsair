@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { AnyCorsairInstance, FormFieldSchema } from './inspect';
-import { getStructuredSchema, listOperations } from './inspect';
+import { getInputSchema, getStructuredSchema, listOperations } from './inspect';
 
 /**
  * Converts the machine-readable schema from {@link getStructuredSchema} into a
@@ -63,7 +63,11 @@ export interface CorsairOperationTool {
 	description: string;
 	/** Zod schema for the operation input; an empty object when it takes none. */
 	schema: z.ZodTypeAny;
-	/** Runs the operation with the given (already parsed) args, returning its raw result. */
+	/**
+	 * Runs the operation with the given (already parsed) args, returning its raw result.
+	 * The result type is `unknown` because each Corsair plugin returns a distinct shape;
+	 * adapters serialize it to string for model consumption.
+	 */
 	execute: (args: Record<string, unknown>) => Promise<unknown>;
 }
 
@@ -103,12 +107,18 @@ export function buildCorsairTools(
 		);
 
 	return operations.map((operation) => {
-		const schema = getStructuredSchema(instance, operation);
+		const structured = getStructuredSchema(instance, operation);
+		// Prefer the raw Zod schema (preserves min/max, regex, refinements, etc.).
+		// Fall back to formFieldToZod only when the endpoint has no schema entry.
+		const rawInput = getInputSchema(instance, operation);
+		const inputSchema =
+			rawInput ??
+			(structured?.input ? formFieldToZod(structured.input) : z.object({}));
 		return {
 			name: sanitizeToolName(operation),
 			operation,
-			description: schema?.description ?? operation,
-			schema: schema?.input ? formFieldToZod(schema.input) : z.object({}),
+			description: structured?.description ?? operation,
+			schema: inputSchema,
 			execute: (args) => invokeOperation(instance, operation, args ?? {}),
 		};
 	});
@@ -122,8 +132,6 @@ function parseOperationPaths(listing: string): string[] {
 		.filter(Boolean);
 }
 
-// ponytail: no 64-char cap. OpenAI also bounds names at 64; add truncation with a
-// collision-safe suffix if a plugin ever ships an operation path that long.
 function sanitizeToolName(operation: string): string {
 	return operation.replace(/[^a-zA-Z0-9_-]/g, '_');
 }
@@ -144,6 +152,9 @@ function scopeInstance(
 /**
  * Invokes a Corsair operation by its dotted path (e.g. `slack.api.channels.list`),
  * preserving the `this` binding of the namespace that owns the method.
+ * Both `instance` and the return type are `unknown` because the Corsair plugin
+ * namespace is not statically typed at this call site — callers receive the result
+ * through `CorsairOperationTool.execute` which documents the opaque shape.
  */
 async function invokeOperation(
 	instance: unknown,

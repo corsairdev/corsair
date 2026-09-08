@@ -10,6 +10,8 @@ Each Corsair operation becomes a LangChain tool. Pass them straight to `createAg
 npm install @corsair-dev/langchain @langchain/core corsair
 # plus a plugin per integration you use, e.g. Slack:
 npm install @corsair-dev/slack
+# and your LangChain model package, e.g.:
+npm install @langchain/openai @langchain/langgraph
 ```
 
 `@langchain/core` is a peer dependency.
@@ -20,7 +22,8 @@ npm install @corsair-dev/slack
 import { createCorsair } from 'corsair';
 import { corsairTools } from '@corsair-dev/langchain';
 import { slack } from '@corsair-dev/slack';
-import { createAgent } from 'langchain';
+import { ChatOpenAI } from '@langchain/openai';
+import { createReactAgent } from '@langchain/langgraph/prebuilt';
 
 const corsair = createCorsair({
 	plugins: [slack({ authType: 'managed' })],
@@ -32,7 +35,16 @@ const corsair = createCorsair({
 // One tool per Slack operation:
 const tools = await corsairTools({ corsair, plugin: 'slack' });
 
-const agent = createAgent({ model: 'openai:gpt-5.4-mini', tools });
+// Route model calls through the Corsair LLM gateway (llm.corsair.dev).
+const llm = new ChatOpenAI({
+	model: 'gpt-4.1-mini',
+	configuration: {
+		baseURL: 'https://llm.corsair.dev/v1',
+		apiKey: process.env.LITELLM_API_KEY,
+	},
+});
+
+const agent = createReactAgent({ llm, tools });
 const result = await agent.invoke({
 	messages: [{ role: 'user', content: 'List the Slack channels.' }],
 });

@@ -84,6 +84,7 @@ export {
 	type AnyCorsairInstance,
 	type FormFieldSchema,
 	formatDocSchemaShape,
+	getInputSchema,
 	getSchema,
 	getStructuredSchema,
 	type ListOperationsOptions,
