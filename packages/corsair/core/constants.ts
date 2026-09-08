@@ -80,6 +80,7 @@ export const BaseProviders = [
 	'bigdatacloud',
 	'bigmailer',
 	'bigml',
+	'bigpictureio',
 	'bitbucket',
 	'bitwarden',
 	'blazemeter',
@@ -357,6 +358,7 @@ export const ProviderDisplayNames = {
 	bigdatacloud: 'BigDataCloud',
 	bigmailer: 'BigMailer',
 	bigml: 'BigML',
+	bigpictureio: 'BigPicture.io',
 	bitbucket: 'Bitbucket',
 	bitwarden: 'Bitwarden',
 	blazemeter: 'BlazeMeter',
@@ -641,6 +643,7 @@ export type AllProviders =
 	| 'bigdatacloud'
 	| 'bigmailer'
 	| 'bigml'
+	| 'bigpictureio'
 	| 'bitbucket'
 	| 'bitwarden'
 	| 'blazemeter'
