@@ -183,66 +183,76 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 const campaynEndpointMeta = {
 	'lists.getLists': {
 		riskLevel: 'read',
-		description: 'List all contact lists visible to the authenticated user.',
+		description:
+			'Tool to retrieve all contact lists. Use when you need to fetch available lists before performing list-specific actions. Example prompt: "List all my contact lists".',
 	},
 	'lists.updateList': {
 		riskLevel: 'write',
-		description: 'Update a contact list name or tags by list ID.',
+		description:
+			'Tool to update a contact list. Use after confirming list ID and desired changes. Example: Update list 123 name to "Newsletter Subscribers".',
 	},
 	'lists.deleteList': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a contact list by list ID.',
+		description:
+			'Tool to delete a specific contact list. Use when cleaning up unused lists after confirming they are no longer needed. Example: "Delete list 123".',
 	},
 	'contacts.getContacts': {
 		riskLevel: 'read',
 		description:
-			'List contacts for a contact list, with optional contact keyword filtering.',
+			'Retrieves all contacts from a specific contact list in Campayn. Returns contact details including email, name, address, and confirmation status. Use "Get Lists" action first to obtain the list_id. Supports optional filtering by contact name/email/company.',
 	},
 	'contacts.getContact': {
 		riskLevel: 'read',
-		description: 'Get full contact details by contact ID.',
+		description:
+			'Tool to retrieve a specific contact by ID. Use when you need to fetch full contact details after confirming the contact ID.',
 	},
 	'contacts.createContact': {
 		riskLevel: 'write',
-		description: 'Create a new contact in a contact list.',
+		description:
+			'Tool to create a new contact in a specific list. Use when you need to add a contact after gathering details.',
 	},
 	'contacts.deleteContact': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a contact by contact ID.',
+		description:
+			'Tool to delete a specific contact. Use when you need to remove a contact permanently after confirming it should be deleted. Example: "Delete contact 123".',
 	},
 	'contacts.unsubscribeContact': {
 		riskLevel: 'write',
 		description:
-			'Unsubscribe contacts from a list by contact ID or by email address.',
+			'Tool to unsubscribe contacts from a list by contact id or email address. Use when you need to remove contacts from a mailing list. If id is provided, only that specific contact will be unsubscribed. If email is provided, all contacts on that list with that email will be unsubscribed.',
 	},
 	'messages.getMessages': {
 		riskLevel: 'read',
-		description: 'List messages visible to the authenticated user.',
+		description:
+			'Tool to retrieve all email messages. Use when you need to list all messages visible to the authenticated user.',
 	},
 	'messages.getMessageStatistics': {
 		riskLevel: 'read',
-		description: 'Get message statistics for a specific message ID.',
+		description:
+			'Tool to retrieve engagement statistics for a specific email message by ID. Returns views, positive responses (clicks), and negative responses (unsubscribes/bounces). Use GET_MESSAGES first to get the list of available message IDs.',
 	},
 	'reports.getReports': {
 		riskLevel: 'read',
 		description:
-			'Get report calendar entries for sent and scheduled emails, optionally filtered by Unix timestamp range.',
+			'Tool to retrieve report URLs and metadata for sent and scheduled emails. Use when you need to fetch email delivery data, optionally filtered by a date range (Unix timestamp in seconds, UTC). Note: scheduled emails will have report_url set to null.',
 	},
 	'webforms.getWebforms': {
 		riskLevel: 'read',
 		description:
-			'List webforms for a contact list, with optional form type filter.',
+			'Tool to retrieve all webforms for a specific contact list. Use when you need to list forms after confirming the list ID. Example prompt: "List all webforms in list 123".',
 	},
 	'webforms.getWebform': {
 		riskLevel: 'read',
-		description: 'Get a webform by list ID and webform ID.',
+		description:
+			'Tool to retrieve details of a specific webform by ID. Use after confirming the webform ID when you need to fetch form details like title, type, HTML, and signup count. Example: "Get webform 1550".',
 	},
 	'webforms.deleteWebform': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a webform by list ID and webform ID.',
+		description:
+			'Delete a specific webform from a contact list. Use this to permanently remove a webform that is no longer needed. Requires both the list_id and webform_id - use Get Webforms action first to find these values. Note: The API returns success even for non-existent webform IDs (idempotent delete behavior).',
 	},
 	'signup.signup': {
 		riskLevel: 'write',
