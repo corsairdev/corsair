@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import type { AnyCorsairInstance } from 'corsair';
 import type { CorsairToolProviderConfig } from './corsair-tool-provider.js';
 import {
 	CorsairToolProvider,
@@ -65,10 +64,8 @@ function providerWith(
 		},
 	};
 	return new CorsairToolProvider({
-		// Test double: implements only the `manage` methods this precedence check
-		// exercises, so it can't satisfy the full instance shape; a real instance
-		// isn't practical for a unit check.
-		corsair: corsair as unknown as AnyCorsairInstance,
+		// Test double implementing only the `manage` methods this check exercises.
+		corsair: corsair as unknown as CorsairToolProviderConfig['corsair'],
 		tenantId,
 	});
 }

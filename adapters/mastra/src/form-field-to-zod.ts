@@ -37,8 +37,7 @@ function baseType(field: FormFieldSchema): z.ZodTypeAny {
 		case 'array':
 			return z.array(formFieldToZod(field.items));
 		case 'unknown':
-			// Corsair marks fields with no introspectable type as 'unknown'; pass
-			// them through as z.unknown() so tools can still be constructed.
+			// no introspectable type; a tool still needs a schema
 			return z.unknown();
 	}
 }

@@ -71,14 +71,22 @@ export type TenantResolveInput = {
 	requestContext?: unknown;
 };
 
+// The provider drives Corsair's `manage` control plane, which only a root
+// instance exposes — a pre-scoped `withTenant()` client does not.
+type CorsairRootInstance = Extract<AnyCorsairInstance, { manage: unknown }>;
+
 /**
  * Configuration for {@link CorsairToolProvider}. Extends
  * {@link BaseToolProviderOptions} so `allowedToolkits` / `allowedTools` /
  * `defaultScope` are accepted alongside the Corsair-specific fields.
  */
 export interface CorsairToolProviderConfig extends BaseToolProviderOptions {
-	/** The value returned by `createCorsair()` (or `corsair.withTenant(...)`). */
-	corsair: AnyCorsairInstance;
+	/**
+	 * A root Corsair instance from `createCorsair()`, single- or multi-tenant.
+	 * The provider scopes to a tenant itself, so pass the root, not a
+	 * `withTenant()` client.
+	 */
+	corsair: CorsairRootInstance;
 	/**
 	 * How a Mastra request maps to a Corsair **tenant** — Corsair's multi-tenancy
 	 * primitive, where each tenant owns its own connections and credentials.
@@ -195,8 +203,6 @@ async function invokeOperation(
 	const segments = path.split('.');
 	const method = segments.pop();
 	if (!method) throw new Error(`Invalid operation path: ${path}`);
-	// The Corsair instance is an opaque namespace tree; narrowing to
-	// Record<string, unknown> lets us traverse it without `any`.
 	let target: Record<string, unknown> = instance as Record<string, unknown>;
 	for (const segment of segments) {
 		const next = target?.[segment];
@@ -250,7 +256,7 @@ export class CorsairToolProvider extends BaseToolProvider {
 		supportsRevoke: true,
 	};
 
-	private readonly corsair: AnyCorsairInstance;
+	private readonly corsair: CorsairRootInstance;
 	private readonly tenantConfig: CorsairToolProviderConfig['tenantId'];
 
 	/**
@@ -275,9 +281,7 @@ export class CorsairToolProvider extends BaseToolProvider {
 
 	/** Corsair's management namespace (plugins / connection status / connect). */
 	private get manage(): CorsairManage {
-		// AnyCorsairInstance always carries a `manage` namespace at runtime; the
-		// type union doesn't surface it statically, so a narrow cast is required.
-		return (this.corsair as unknown as { manage: CorsairManage }).manage;
+		return this.corsair.manage as CorsairManage;
 	}
 
 	/**

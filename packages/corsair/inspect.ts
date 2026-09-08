@@ -24,10 +24,9 @@ export { formatDocSchemaShape };
  * multi-tenant wrapper (`createCorsair({ multiTenancy: true })`), or tenant-scoped
  * client (`corsair.withTenant()`).
  *
- * Helpers read the instance via the CORSAIR_INTERNAL symbol, not its static shape,
- * so this only needs to accept any client. The two clients match structurally, so
- * an empty plugin set is their common supertype; the wrapper matches on its plugin
- * tuple, so it needs the open array — an empty tuple rejects a real wrapper.
+ * Mixed type arguments are deliberate: the two clients are matched structurally
+ * (empty plugin set is their common supertype), while the wrapper is matched by
+ * its plugin tuple and so needs the open array — an empty tuple rejects a real one.
  */
 export type AnyCorsairInstance =
 	| CorsairSingleTenantClient<readonly []>
