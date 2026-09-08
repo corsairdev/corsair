@@ -1,0 +1,3327 @@
+{
+  "id": "doppler",
+  "displayName": "Doppler",
+  "description": "Secrets management platform for syncing environment variables across teams and deployments.",
+  "npmPackageName": "@corsair-dev/doppler",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 62,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "doppler.api.activityLogs.list",
+      "shortPath": "activityLogs.list",
+      "description": "List workplace activity log entries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logs",
+            "optional": false,
+            "type": "{ id?: string | null, text?: string | null, html?: string | null, created_at?: string | null, config?: string | null, environment?: string | null, project?: string | null, enclave_project?: string | null, enclave_environment?: string | null, enclave_config?: string | null, user?: {} | null, diff?: {} | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.activityLogs.retrieve",
+      "shortPath": "activityLogs.retrieve",
+      "description": "Retrieve a single activity log entry",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "log",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enclave_project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enclave_environment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enclave_config",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "diff",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.auth.me",
+      "shortPath": "auth.me",
+      "description": "Read information about the authenticated token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_seen_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "token_preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workplace",
+            "optional": true,
+            "type": "{ slug?: string | null, name?: string | null }"
+          },
+          {
+            "key": "principal",
+            "optional": true,
+            "type": "{ type?: string | null, slug?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.changeRequests.list",
+      "shortPath": "changeRequests.list",
+      "description": "List change requests (Team/Enterprise plans only)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "doppler.api.configLogs.get",
+      "shortPath": "configLogs.get",
+      "description": "Retrieve a config log entry, including its secret diff",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "log",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "diff",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.configLogs.list",
+      "shortPath": "configLogs.list",
+      "description": "List a config's change-log entries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logs",
+            "optional": false,
+            "type": "{ id?: string | null, text?: string | null, html?: string | null, created_at?: string | null, user?: {} | null, diff?: {} | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.configLogs.rollback",
+      "shortPath": "configLogs.rollback",
+      "description": "Roll a config back to a prior log entry's state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "log",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "diff",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.configs.clone",
+      "shortPath": "configs.clone",
+      "description": "Clone a config into a new branch config",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "root",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inheritable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inheriting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inherits",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "inheritedBy",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "initial_fetch_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_fetch_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.configs.create",
+      "shortPath": "configs.create",
+      "description": "Create a branch config within an environment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "root",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inheritable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inheriting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inherits",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "inheritedBy",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "initial_fetch_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_fetch_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.configs.delete",
+      "shortPath": "configs.delete",
+      "description": "Permanently delete a config and its secrets",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.configs.get",
+      "shortPath": "configs.get",
+      "description": "Retrieve a config",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "root",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inheritable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inheriting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inherits",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "inheritedBy",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "initial_fetch_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_fetch_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.configs.list",
+      "shortPath": "configs.list",
+      "description": "List a project's configs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "configs",
+            "optional": false,
+            "type": "{ name: string, slug?: string | null, project?: string | null, environment?: string | null, root?: boolean | null, inheritable?: boolean | null, inheriting?: boolean | null, inherits?: any[] | null, inheritedBy?: any[] | null, locked?: boolean | null, initial_fetch_at?: string | null, last_fetch_at?: string | null, created_at?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.configs.lock",
+      "shortPath": "configs.lock",
+      "description": "Lock a config so it cannot be renamed or deleted",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "root",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inheritable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inheriting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inherits",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "inheritedBy",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "initial_fetch_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_fetch_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.configs.unlock",
+      "shortPath": "configs.unlock",
+      "description": "Unlock a config so it can be renamed or deleted",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "root",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inheritable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inheriting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inherits",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "inheritedBy",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "initial_fetch_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_fetch_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.configs.update",
+      "shortPath": "configs.update",
+      "description": "Rename a config",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "root",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inheritable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inheriting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inherits",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "inheritedBy",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "initial_fetch_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_fetch_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.dynamicSecrets.revokeLease",
+      "shortPath": "dynamicSecrets.revokeLease",
+      "description": "Revoke a leased dynamic secret credential",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dynamicSecret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.environments.create",
+      "shortPath": "environments.create",
+      "description": "Create an environment within a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "personalConfigs",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "initial_fetch_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "personal_configs",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.environments.delete",
+      "shortPath": "environments.delete",
+      "description": "Permanently delete an environment and its configs",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.environments.get",
+      "shortPath": "environments.get",
+      "description": "Retrieve an environment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "initial_fetch_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "personal_configs",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.environments.list",
+      "shortPath": "environments.list",
+      "description": "List a project's environments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, slug?: string | null, name?: string | null, project?: string | null, initial_fetch_at?: string | null, created_at?: string | null, personal_configs?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "doppler.api.environments.rename",
+      "shortPath": "environments.rename",
+      "description": "Rename an environment's display name or slug",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "personalConfigs",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "initial_fetch_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "personal_configs",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.groups.deleteMember",
+      "shortPath": "groups.deleteMember",
+      "description": "Remove a member from a workplace group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "workplace_user | group | invite | service_account"
+          },
+          {
+            "key": "memberSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.integrations.list",
+      "shortPath": "integrations.list",
+      "description": "List third-party integrations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "doppler.api.invites.list",
+      "shortPath": "invites.list",
+      "description": "List pending workplace invites",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invites",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.projectMembers.delete",
+      "shortPath": "projectMembers.delete",
+      "description": "Remove a member from a project",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "workplace_user | group | invite | service_account"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.projectMembers.get",
+      "shortPath": "projectMembers.get",
+      "description": "Retrieve a project member",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "workplace_user | group | invite | service_account"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "environments",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.projectMembers.list",
+      "shortPath": "projectMembers.list",
+      "description": "List a project's members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ type?: string | null, slug?: string | null, role?: {} | null, environments?: any[] | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.projectRoles.get",
+      "shortPath": "projectRoles.get",
+      "description": "Retrieve a project-level role",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "role",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_custom_role",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.projectRoles.list",
+      "shortPath": "projectRoles.list",
+      "description": "List project-level roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ identifier?: string | null, name?: string | null, permissions?: string[] | null, created_at?: string | null, is_custom_role?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "doppler.api.projectRoles.listPermissions",
+      "shortPath": "projectRoles.listPermissions",
+      "description": "List permissions grantable to a project-level role",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "doppler.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Permanently delete a project and everything in it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Retrieve a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id: string, slug?: string | null, name?: string | null, description?: string | null, created_at?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update a project's name or description",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.secrets.delete",
+      "shortPath": "secrets.delete",
+      "description": "Delete a secret",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.secrets.download",
+      "shortPath": "secrets.download",
+      "description": "Download a config's secrets in a given format",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | env | yaml | docker | env-no-quotes"
+          },
+          {
+            "key": "nameTransformer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeDynamicSecrets",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dynamicSecretsTtlSec",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "secrets",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "doppler.api.secrets.get",
+      "shortPath": "secrets.get",
+      "description": "Retrieve a single secret's value",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "raw",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "computed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rawVisibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "computedVisibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rawValueType",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "computedValueType",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.secrets.list",
+      "shortPath": "secrets.list",
+      "description": "List a config's secrets, values included",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeDynamicSecrets",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeManagedSecrets",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "doppler.api.secrets.names",
+      "shortPath": "secrets.names",
+      "description": "List a config's secret names, without values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeDynamicSecrets",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeManagedSecrets",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "doppler.api.secrets.update",
+      "shortPath": "secrets.update",
+      "description": "Bulk-set (or delete, via null) secrets in a config",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secrets",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "doppler.api.secrets.updateNote",
+      "shortPath": "secrets.updateNote",
+      "description": "Set a secret's note (project-scoped route)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.secrets.updateNoteViaConfig",
+      "shortPath": "secrets.updateNoteViaConfig",
+      "description": "Set a secret's note (config-scoped route)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.serviceTokens.create",
+      "shortPath": "serviceTokens.create",
+      "description": "Create a service token for a config",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "read | read/write"
+          },
+          {
+            "key": "expireAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_seen_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "token_preview",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.serviceTokens.delete",
+      "shortPath": "serviceTokens.delete",
+      "description": "Revoke a service token",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.serviceTokens.list",
+      "shortPath": "serviceTokens.list",
+      "description": "List a config's service tokens",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string | null, slug?: string | null, access?: string | null, created_at?: string | null, key?: string | null, project?: string | null, environment?: string | null, config?: string | null, expires_at?: string | null, last_seen_at?: string | null, token_preview?: string | null }[]"
+      }
+    },
+    {
+      "path": "doppler.api.share.createEncrypted",
+      "shortPath": "share.createEncrypted",
+      "description": "Create a Doppler Share link from a caller-encrypted payload (zero-knowledge)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "encryptedSecret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hashedPassword",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "encryptionKdf",
+            "optional": true,
+            "type": "pbkdf2"
+          },
+          {
+            "key": "encryptionSaltRounds",
+            "optional": true,
+            "type": "1000000"
+          },
+          {
+            "key": "expireViews",
+            "optional": true,
+            "type": "number | -1"
+          },
+          {
+            "key": "expireDays",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authenticated_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.share.createPlain",
+      "shortPath": "share.createPlain",
+      "description": "Create a Doppler Share link from a plaintext secret",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expireViews",
+            "optional": true,
+            "type": "number | -1"
+          },
+          {
+            "key": "expireDays",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authenticated_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.webhooks.add",
+      "shortPath": "webhooks.add",
+      "description": "Create a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authentication",
+            "optional": true,
+            "type": "{ type: None | Bearer | Basic, token?: string, username?: string, password?: string }"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enableConfigs",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasSecret",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "authentication",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "enabledConfigs",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "canManage",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Permanently delete a webhook",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.webhooks.disable",
+      "shortPath": "webhooks.disable",
+      "description": "Disable a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasSecret",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "authentication",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "enabledConfigs",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "canManage",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.webhooks.enable",
+      "shortPath": "webhooks.enable",
+      "description": "Enable a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasSecret",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "authentication",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "enabledConfigs",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "canManage",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Retrieve a webhook",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasSecret",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "authentication",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "enabledConfigs",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "canManage",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, url?: string | null, enabled?: boolean | null, hasSecret?: boolean | null, authentication?: any | null, enabledConfigs?: any[] | null, canManage?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "doppler.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authentication",
+            "optional": true,
+            "type": "{ type: None | Bearer | Basic, token?: string, username?: string, password?: string }"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enableConfigs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "disableConfigs",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hasSecret",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "authentication",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "enabledConfigs",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "canManage",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.workplace.get",
+      "shortPath": "workplace.get",
+      "description": "Retrieve the workplace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billing_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "security_email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.workplace.update",
+      "shortPath": "workplace.update",
+      "description": "Update the workplace's name, billing email, or security email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billingEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "securityEmail",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billing_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "security_email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.workplaceRoles.get",
+      "shortPath": "workplaceRoles.get",
+      "description": "Retrieve a workplace role",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "role",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.workplaceRoles.list",
+      "shortPath": "workplaceRoles.list",
+      "description": "List workplace roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string | null, permissions?: string[] | null }[]"
+      }
+    },
+    {
+      "path": "doppler.api.workplaceRoles.listPermissions",
+      "shortPath": "workplaceRoles.listPermissions",
+      "description": "List permissions grantable to a workplace role",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "doppler.api.workplaceUsers.get",
+      "shortPath": "workplaceUsers.get",
+      "description": "Retrieve a workplace user by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "access",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: string | null, email?: string | null, name?: string | null, username?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "doppler.api.workplaceUsers.list",
+      "shortPath": "workplaceUsers.list",
+      "description": "List users in the workplace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workplace_users",
+            "optional": false,
+            "type": "{ access?: string | null, created_at?: string | null, user?: { id?: string | null, email?: string | null, name?: string | null, username?: string | null } | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "doppler.db.configs.search",
+      "entityName": "configs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "environment",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "root",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "inheritable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "inheriting",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "locked",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "initial_fetch_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_fetch_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "doppler.db.environments.search",
+      "entityName": "environments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "initial_fetch_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "personal_configs",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "doppler.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "doppler.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasSecret",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "canManage",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "doppler.db.workplace.search",
+      "entityName": "workplace",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "billing_email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "security_email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

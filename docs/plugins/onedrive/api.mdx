@@ -1,6 +1,6 @@
 ---
 title: API
-description: "API reference for Onedrive: every `onedrive.api.*` operation with input and output types."
+description: "API reference for OneDrive: every `onedrive.api.*` operation with input and output types."
 ---
 
 Every `onedrive.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
@@ -2154,7 +2154,7 @@ await corsair.onedrive.api.items.copy({});
 
 `items.delete`
 
-Delete a drive item [DESTRUCTIVE]
+Delete a drive item
 
 **Risk:** `destructive`
 
@@ -2185,7 +2185,7 @@ await corsair.onedrive.api.items.delete({});
 
 `items.deletePermanently`
 
-Permanently delete a drive item [DESTRUCTIVE]
+Permanently delete a drive item
 
 **Risk:** `destructive`
 
@@ -3905,7 +3905,7 @@ await corsair.onedrive.api.permissions.createLink({});
 
 `permissions.deleteFromItem`
 
-Delete a permission from a drive item [DESTRUCTIVE]
+Delete a permission from a drive item
 
 **Risk:** `destructive`
 
@@ -3940,7 +3940,7 @@ await corsair.onedrive.api.permissions.deleteFromItem({});
 
 `permissions.deleteSharePermission`
 
-Delete a share permission [DESTRUCTIVE]
+Delete a share permission
 
 **Risk:** `destructive`
 

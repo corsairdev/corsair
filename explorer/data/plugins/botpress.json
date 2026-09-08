@@ -1,0 +1,3650 @@
+{
+  "id": "botpress",
+  "displayName": "Botpress",
+  "description": "Conversational AI platform for building, deploying, and managing chatbots and agents.",
+  "npmPackageName": "@corsair-dev/botpress",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 53,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "workspace_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "botpress.api.account.get",
+      "shortPath": "account.get",
+      "description": "Get the authenticated account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailVerified",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.account.getPreference",
+      "shortPath": "account.getPreference",
+      "description": "Get an account preference by key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.account.setPreference",
+      "shortPath": "account.setPreference",
+      "description": "Set an account preference by key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "botpress.api.account.update",
+      "shortPath": "account.update",
+      "description": "Update the authenticated account profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profilePicture",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailVerified",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.billing.chargeUnpaidInvoices",
+      "shortPath": "billing.chargeUnpaidInvoices",
+      "description": "Charge outstanding invoices for a workspace [DESTRUCTIVE - real financial action]",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "invoiceIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chargedInvoices",
+            "optional": true,
+            "type": "{ id: string, amount: number }[]"
+          },
+          {
+            "key": "failedInvoices",
+            "optional": true,
+            "type": "{ id: string, amount: number, failedReason: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.billing.getUpcomingInvoice",
+      "shortPath": "billing.getUpcomingInvoice",
+      "description": "Preview the upcoming invoice for a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lineItems",
+            "optional": true,
+            "type": "{ id: string, description?: string | null, totalInCents?: number | null, currency?: string | null, pricePerUnitInCents?: number | null, quantity?: number | null, type?: invoiceitem | subscription | null, periodStart?: string | null, periodEnd?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.billing.listInvoices",
+      "shortPath": "billing.listInvoices",
+      "description": "List invoices billed to a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, period: { month: number, year: number }, date?: string | null, amount?: number | null, currency?: string | null, paymentStatus?: deleted | draft | open | paid | uncollectible | void | null, dueDate?: string | null, paymentAttemptCount?: number | null, nextPaymentAttemptDate?: string | null, pdfUrl?: string | null }[]"
+      }
+    },
+    {
+      "path": "botpress.api.billing.listUsageHistory",
+      "shortPath": "billing.listUsageHistory",
+      "description": "List usage history for a workspace or bot",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "invocation_timeout | invocation_calls | storage_count | bot_count | knowledgebase_vector_storage | workspace_ratelimit | table_row_count | workspace_member_count | integrations_owned_count | ai_spend | openai_spend | bing_search_spend | always_alive | indexed_file_count | file_max_size_bytes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, period?: string | null, value?: number | null, quota?: number | null, type?: invocation_timeout | invocation_calls | storage_count | bot_count | knowledgebase_vector_storage | workspace_ratelimit | table_row_count | workspace_member_count | integrations_owned_count | ai_spend | openai_spend | bing_search_spend | always_alive | indexed_file_count | file_max_size_bytes | null }[]"
+      }
+    },
+    {
+      "path": "botpress.api.bots.create",
+      "shortPath": "bots.create",
+      "description": "Create a bot in a workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "dev",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "states",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "recurringEvents",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "conversation",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "subscriptions",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "maxExecutionTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "medias",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "secrets",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "studio | adk"
+          },
+          {
+            "key": "moduleFormat",
+            "optional": true,
+            "type": "cjs | esm"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dev",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "alwaysAlive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signingSecret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.bots.listActionRuns",
+      "shortPath": "bots.listActionRuns",
+      "description": "List a bot's action-run history",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integrationName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timestampFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timestampUntil",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ timestamp?: string | null, integrationName?: string | null, actionType?: string | null, input?: {} | null, inputTruncated?: boolean | null, output?: {} | null, outputTruncated?: boolean | null, status?: SUCCESS | FAILURE | null, durationMs?: number | null, cached?: boolean | null, errorMessage?: string | null }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.bots.listIssues",
+      "shortPath": "bots.listIssues",
+      "description": "List configuration and runtime issues for a bot",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issues",
+            "optional": false,
+            "type": "{ id: string, code?: string | null, createdAt?: string | null, lastSeenAt?: string | null, title?: string | null, description?: string | null, eventsCount?: number | null, category?: user_code | limits | configuration | other | null, resolutionLink?: string | null }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.bots.update",
+      "shortPath": "bots.update",
+      "description": "Update a bot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "alwaysAlive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "maxExecutionTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authentication",
+            "optional": true,
+            "type": "iam | hmac-sha256"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "conversation",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "states",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "recurringEvents",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "integrations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "plugins",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "subscriptions",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "medias",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "secrets",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "studio | adk"
+          },
+          {
+            "key": "moduleFormat",
+            "optional": true,
+            "type": "cjs | esm"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dev",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "alwaysAlive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signingSecret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.chat.createConversation",
+      "shortPath": "chat.createConversation",
+      "description": "Create a conversation on a channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "integration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "messageCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.chat.listConversations",
+      "shortPath": "chat.listConversations",
+      "description": "List a bot's conversations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "sortField",
+            "optional": true,
+            "type": "createdAt | updatedAt"
+          },
+          {
+            "key": "sortDirection",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "participantIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "integrationName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "afterDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "beforeDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "minMessageCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxMessageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversations",
+            "optional": false,
+            "type": "{ id: string, createdAt?: string | null, updatedAt?: string | null, channel?: string | null, integration?: string | null, tags?: {} | null, messageCount?: number | null, properties?: {} | null }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.chat.sendMessage",
+      "shortPath": "chat.sendMessage",
+      "description": "Send a message into a conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "{ dateTime?: string, delay?: number }"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "synthetic"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "incoming | outgoing"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conversationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "synthetic"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.chat.updateWorkflow",
+      "shortPath": "chat.updateWorkflow",
+      "description": "Update a workflow's status, output or failure reason",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "completed | cancelled | listening | paused | failed | in_progress"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "timeoutAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "failureReason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "pending | in_progress | failed | completed | listening | paused | timedout | cancelled"
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "parentWorkflowId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "conversationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "failureReason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeoutAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Delete a file from a bot's storage",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "botpress.api.files.listTags",
+      "shortPath": "files.listTags",
+      "description": "List tags used across a bot's files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.files.listTagValues",
+      "shortPath": "files.listTagValues",
+      "description": "List all values seen for a given file tag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "values",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.hub.getDereferencedPluginById",
+      "shortPath": "hub.getDereferencedPluginById",
+      "description": "Get a public plugin with interface entity references resolved",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interfaces",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "botpress.api.hub.getIntegration",
+      "shortPath": "hub.getIntegration",
+      "description": "Get a public integration by name and version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verificationStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lifecycleStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ownerWorkspace",
+            "optional": true,
+            "type": "{ id?: string | null, handle?: string | null, name?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.hub.getIntegrationById",
+      "shortPath": "hub.getIntegrationById",
+      "description": "Get a public integration by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verificationStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lifecycleStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ownerWorkspace",
+            "optional": true,
+            "type": "{ id?: string | null, handle?: string | null, name?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.hub.getInterface",
+      "shortPath": "hub.getInterface",
+      "description": "Get a public interface by name and version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "readmeUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.hub.getInterfaceById",
+      "shortPath": "hub.getInterfaceById",
+      "description": "Get a public interface by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "readmeUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.hub.getPlugin",
+      "shortPath": "hub.getPlugin",
+      "description": "Get a public plugin by name and version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lifecycleStatus",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.hub.getPluginById",
+      "shortPath": "hub.getPluginById",
+      "description": "Get a public plugin by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lifecycleStatus",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.hub.getPluginCode",
+      "shortPath": "hub.getPluginCode",
+      "description": "Get a public plugin's source code for a platform",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": false,
+            "type": "node | browser"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.hub.listIntegrations",
+      "shortPath": "hub.listIntegrations",
+      "description": "List public integrations in the hub",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interfaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interfaceName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "installedByBotId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verificationStatus",
+            "optional": true,
+            "type": "unapproved | pending | approved | rejected"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "popularity | name | createdAt | updatedAt | installCount"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrations",
+            "optional": false,
+            "type": "{ id: string, name: string, version: string, title?: string | null, description?: string | null, iconUrl?: string | null, createdAt?: string | null, updatedAt?: string | null, public?: boolean | null, visibility?: string | null, verificationStatus?: string | null, lifecycleStatus?: string | null, ownerWorkspace?: { id?: string | null, handle?: string | null, name?: string | null } | null }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.hub.listInterfaces",
+      "shortPath": "hub.listInterfaces",
+      "description": "List public interfaces in the hub",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interfaces",
+            "optional": false,
+            "type": "{ id: string, name: string, version: string, title?: string | null, description?: string | null, iconUrl?: string | null, readmeUrl?: string | null, createdAt?: string | null, updatedAt?: string | null, public?: boolean | null }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.hub.listPlugins",
+      "shortPath": "hub.listPlugins",
+      "description": "List public plugins in the hub",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "plugins",
+            "optional": false,
+            "type": "{ id: string, name: string, version: string, title?: string | null, description?: string | null, iconUrl?: string | null, createdAt?: string | null, updatedAt?: string | null, public?: boolean | null, visibility?: string | null, lifecycleStatus?: string | null }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.integrations.create",
+      "shortPath": "integrations.create",
+      "description": "Create an integration in a workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "configurations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "states",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "entities",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "interfaces",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "{ fallbackHandlerScript?: string, extractScript?: string }"
+          },
+          {
+            "key": "extraOperations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "sdkVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secrets",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "readme",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | private | unlisted"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | private | unlisted"
+          },
+          {
+            "key": "verificationStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dev",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "readmeUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signingSecret",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.integrations.deleteShareableId",
+      "shortPath": "integrations.deleteShareableId",
+      "description": "Delete the shareable id for a bot-integration pair",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integrationInstanceAlias",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "botpress.api.integrations.get",
+      "shortPath": "integrations.get",
+      "description": "Get an integration by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | private | unlisted"
+          },
+          {
+            "key": "verificationStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dev",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "iconUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "readmeUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signingSecret",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.integrations.list",
+      "shortPath": "integrations.list",
+      "description": "List integrations owned by the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interfaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interfaceName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "installedByBotId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verificationStatus",
+            "optional": true,
+            "type": "unapproved | pending | approved | rejected"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "popularity | name | createdAt | updatedAt | installCount"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | private"
+          },
+          {
+            "key": "dev",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrations",
+            "optional": false,
+            "type": "{ id: string, name: string, version: string, title?: string | null, description?: string | null, createdAt?: string | null, updatedAt?: string | null, visibility?: public | private | unlisted | null, verificationStatus?: string | null, dev?: boolean | null, url?: string | null, iconUrl?: string | null, readmeUrl?: string | null, signingSecret?: string | null }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.integrations.listApiKeys",
+      "shortPath": "integrations.listApiKeys",
+      "description": "List Integration API Keys (IAKs) for an integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, createdAt?: string | null, note?: string | null }[]"
+      }
+    },
+    {
+      "path": "botpress.api.integrations.requestVerification",
+      "shortPath": "integrations.requestVerification",
+      "description": "Submit an integration for verification",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "botpress.api.integrations.validateUpdate",
+      "shortPath": "integrations.validateUpdate",
+      "description": "Validate that an integration update would succeed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "configurations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "states",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "entities",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "interfaces",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "{ fallbackHandlerScript?: string, extractScript?: string }"
+          },
+          {
+            "key": "extraOperations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "sdkVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxExecutionTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "secrets",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "readme",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | private | unlisted"
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "botpress.api.knowledgeBases.delete",
+      "shortPath": "knowledgeBases.delete",
+      "description": "Permanently delete a knowledge base",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "botpress.api.knowledgeBases.list",
+      "shortPath": "knowledgeBases.list",
+      "description": "List a bot's knowledge bases",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledgeBases",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, createdAt?: string | null, tags?: {} | null }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.plugins.list",
+      "shortPath": "plugins.list",
+      "description": "List plugins installed in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "plugins",
+            "optional": false,
+            "type": "{ id: string, name: string, version: string, title?: string | null, description?: string | null, iconUrl?: string | null, createdAt?: string | null, updatedAt?: string | null, public?: boolean | null, visibility?: string | null, lifecycleStatus?: string | null }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.tools.getTableRow",
+      "shortPath": "tools.getTableRow",
+      "description": "Fetch a single row from a table by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "botId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.tools.runVrl",
+      "shortPath": "tools.runVrl",
+      "description": "Execute a VRL script against input data",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "script",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "any"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.workspaces.breakDownUsageByBot",
+      "shortPath": "workspaces.breakDownUsageByBot",
+      "description": "Break down a workspace's usage of a quota type by bot",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "invocation_timeout | invocation_calls | storage_count | bot_count | knowledgebase_vector_storage | workspace_ratelimit | table_row_count | workspace_member_count | integrations_owned_count | ai_spend | openai_spend | bing_search_spend | always_alive | indexed_file_count | file_max_size_bytes"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ botId?: string | null, value?: number | null }[]"
+      }
+    },
+    {
+      "path": "botpress.api.workspaces.checkHandleAvailability",
+      "shortPath": "workspaces.checkHandleAvailability",
+      "description": "Check whether a workspace handle is available",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "available",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "suggestions",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "usedBy",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.workspaces.create",
+      "shortPath": "workspaces.create",
+      "description": "Create a workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "billingVersion",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billingVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "spendingLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "botCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "about",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profilePicture",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "socialAccounts",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "isPublic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activeTrialId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.workspaces.delete",
+      "shortPath": "workspaces.delete",
+      "description": "Permanently delete a workspace",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "botpress.api.workspaces.get",
+      "shortPath": "workspaces.get",
+      "description": "Get a workspace by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billingVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "spendingLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "botCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "about",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profilePicture",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "socialAccounts",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "isPublic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activeTrialId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.workspaces.getAllQuotaCompletion",
+      "shortPath": "workspaces.getAllQuotaCompletion",
+      "description": "Get the highest quota completion rate for every workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "botpress.api.workspaces.getQuota",
+      "shortPath": "workspaces.getQuota",
+      "description": "Get a workspace's usage against a quota type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "invocation_timeout | invocation_calls | storage_count | bot_count | knowledgebase_vector_storage | workspace_ratelimit | table_row_count | workspace_member_count | integrations_owned_count | ai_spend | openai_spend | bing_search_spend | always_alive | indexed_file_count | file_max_size_bytes"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "period",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "invocation_timeout | invocation_calls | storage_count | bot_count | knowledgebase_vector_storage | workspace_ratelimit | table_row_count | workspace_member_count | integrations_owned_count | ai_spend | openai_spend | bing_search_spend | always_alive | indexed_file_count | file_max_size_bytes"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.workspaces.list",
+      "shortPath": "workspaces.list",
+      "description": "List workspaces owned by the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaces",
+            "optional": false,
+            "type": "{ id: string, name: string, ownerId?: string | null, createdAt?: string | null, updatedAt?: string | null, blocked?: boolean | null, plan?: string | null, billingVersion?: string | null, spendingLimit?: number | null, botCount?: number | null, about?: string | null, profilePicture?: string | null, contactEmail?: string | null, website?: string | null, socialAccounts?: any[] | null, isPublic?: boolean | null, handle?: string | null, activeTrialId?: string | null }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.workspaces.listPublic",
+      "shortPath": "workspaces.listPublic",
+      "description": "List public workspaces",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspaceIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaces",
+            "optional": false,
+            "type": "{ id: string, name: string, ownerId?: string | null, createdAt?: string | null, updatedAt?: string | null, blocked?: boolean | null, plan?: string | null, billingVersion?: string | null, spendingLimit?: number | null, botCount?: number | null, about?: string | null, profilePicture?: string | null, contactEmail?: string | null, website?: string | null, socialAccounts?: any[] | null, isPublic?: boolean | null, handle?: string | null, activeTrialId?: string | null }[]"
+          },
+          {
+            "key": "nextToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "botpress.api.workspaces.setPreference",
+      "shortPath": "workspaces.setPreference",
+      "description": "Set a workspace preference by key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "botpress.api.workspaces.update",
+      "shortPath": "workspaces.update",
+      "description": "Update workspace settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "spendingLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "about",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profilePicture",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "socialAccounts",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "isPublic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billingVersion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "spendingLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "botCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "about",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profilePicture",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "socialAccounts",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "isPublic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activeTrialId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "botpress.db.bots.search",
+      "entityName": "bots",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "createdBy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dev",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "alwaysAlive",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "botpress.db.integrations.search",
+      "entityName": "integrations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dev",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "iconUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "readmeUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "botpress.db.workspaces.search",
+      "entityName": "workspaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ownerId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "blocked",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "plan",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "billingVersion",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "spendingLimit",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "botCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "about",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profilePicture",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contactEmail",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "website",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isPublic",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "handle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "activeTrialId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

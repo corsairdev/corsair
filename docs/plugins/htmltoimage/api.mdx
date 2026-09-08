@@ -1,0 +1,126 @@
+---
+title: API
+description: "API reference for HTML to Image: every `htmltoimage.api.*` operation with input and output types."
+---
+
+Every `htmltoimage.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### checkUsage
+
+`account.checkUsage`
+
+Check account usage and remaining credits
+
+**Risk:** `read`
+
+```ts
+await corsair.htmltoimage.api.account.checkUsage({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `plan` | `string` | No | — |
+| `plan_name` | `string` | No | — |
+| `active` | `boolean` | Yes | — |
+| `free_plan` | `boolean` | Yes | — |
+| `credits_remaining` | `number` | Yes | — |
+| `credits_reset_at` | `string` | No | — |
+
+
+
+---
+
+## Html
+
+### convertToImage
+
+`html.convertToImage`
+
+Convert HTML or a public URL into an image
+
+**Risk:** `write`
+
+```ts
+await corsair.htmltoimage.api.html.convertToImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `css` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `fullpage` | `boolean` | No | — |
+| `dpi` | `number` | No | — |
+| `format` | `png \| pdf` | No | — |
+| `scale_to_fit` | `boolean` | No | — |
+| `ms_delay` | `number` | No | — |
+| `webhook_url` | `string` | No | — |
+| `wait_for_selector` | `string` | No | — |
+| `html` | `string` | No | — |
+| `url` | `string` | No | — |
+| `selector` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `credits_remaining` | `number` | No | — |
+| `expires_at` | `string` | No | — |
+| `status` | `processing` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+## Image
+
+### getImage
+
+`image.getImage`
+
+Retrieve a generated image
+
+**Risk:** `read`
+
+```ts
+await corsair.htmltoimage.api.image.getImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+---
+

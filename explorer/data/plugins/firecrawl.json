@@ -1,0 +1,1412 @@
+{
+  "id": "firecrawl",
+  "displayName": "Firecrawl",
+  "description": "Web scraping API that crawls sites and returns clean markdown or structured page data.",
+  "npmPackageName": "@corsair-dev/firecrawl",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 14,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "firecrawl.api.agent.cancel",
+      "shortPath": "agent.cancel",
+      "description": "Cancel an in-flight agent job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "firecrawl.api.agent.get",
+      "shortPath": "agent.get",
+      "description": "Get status for an agent job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "processing | completed | failed"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "spark-1-pro | spark-1-mini"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creditsUsed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "firecrawl.api.agent.start",
+      "shortPath": "agent.start",
+      "description": "Start an agentic extraction job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "maxCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "strictConstrainToURLs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "spark-1-mini | spark-1-pro"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "firecrawl.api.crawl.cancel",
+      "shortPath": "crawl.cancel",
+      "description": "Cancel an in-flight crawl job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "cancelled"
+          }
+        ]
+      }
+    },
+    {
+      "path": "firecrawl.api.crawl.get",
+      "shortPath": "crawl.get",
+      "description": "Get status and results for a crawl job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creditsUsed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ markdown?: string, html?: string | null, rawHtml?: string | null, links?: string[], screenshot?: string | null, metadata?: { title?: string | string[], description?: string | string[], language?: string | string[] | null, keywords?: string | string[], sourceURL?: string, url?: string, scrapeId?: string, statusCode?: number, contentType?: string, error?: string | null, ogLocaleAlternate?: string[], concurrencyLimited?: boolean, concurrencyQueueDurationMs?: number } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "firecrawl.api.crawl.start",
+      "shortPath": "crawl.start",
+      "description": "Start a recursive crawl from a base URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludePaths",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "includePaths",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "maxDiscoveryDepth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sitemap",
+            "optional": true,
+            "type": "skip | include | only"
+          },
+          {
+            "key": "ignoreQueryParameters",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "regexOnFullURL",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "crawlEntireDomain",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowExternalLinks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowSubdomains",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxConcurrency",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "{ url: string, headers?: {}, metadata?: {}, events?: completed | page | failed | started[] }"
+          },
+          {
+            "key": "scrapeOptions",
+            "optional": true,
+            "type": "{ formats?: (markdown | summary | html | rawHtml | links | images | audio | { type: markdown } | { type: summary } | { type: html } | { type: rawHtml } | { type: links } | { type: images } | { type: audio } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: json, schema?: {}, prompt?: string } | { type: changeTracking, modes?: git-diff | json[], schema?: {}, prompt?: string, tag?: string | null } | { type: branding })[], onlyMainContent?: boolean, includeTags?: string[], excludeTags?: string[], maxAge?: number, minAge?: number, headers?: {}, waitFor?: number, mobile?: boolean, skipTlsVerification?: boolean, timeout?: number, parsers?: { type: pdf, mode?: fast | auto | ocr, maxPages?: number }[], actions?: ({ type: wait, milliseconds: number } | { type: wait, selector: string } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: click, selector: string, all?: boolean } | { type: write, text: string } | { type: press, key: string } | { type: scroll, direction?: up | down, selector?: string } | { type: scrape } | { type: executeJavascript, script: string } | { type: pdf, format?: A0 | A1 | A2 | A3 | A4 | A5 | A6 | Letter | Legal | Tabloid | Ledger, landscape?: boolean, scale?: number })[], location?: { country?: string, languages?: string[] }, removeBase64Images?: boolean, blockAds?: boolean, proxy?: basic | enhanced | auto, storeInCache?: boolean, profile?: { name: string, saveChanges?: boolean } }"
+          },
+          {
+            "key": "zeroDataRetention",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "firecrawl.api.map.run",
+      "shortPath": "map.run",
+      "description": "Map all URLs discovered from a site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sitemap",
+            "optional": true,
+            "type": "skip | include | only"
+          },
+          {
+            "key": "includeSubdomains",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ignoreQueryParameters",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ignoreCache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ country?: string, languages?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ url: string, title?: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "firecrawl.api.scrape.run",
+      "shortPath": "scrape.run",
+      "description": "Scrape a single URL (markdown, JSON, etc.)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "formats",
+            "optional": true,
+            "type": "(markdown | summary | html | rawHtml | links | images | audio | { type: markdown } | { type: summary } | { type: html } | { type: rawHtml } | { type: links } | { type: images } | { type: audio } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: json, schema?: {}, prompt?: string } | { type: changeTracking, modes?: git-diff | json[], schema?: {}, prompt?: string, tag?: string | null } | { type: branding })[]"
+          },
+          {
+            "key": "onlyMainContent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeTags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excludeTags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "maxAge",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minAge",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "waitFor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "skipTlsVerification",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parsers",
+            "optional": true,
+            "type": "{ type: pdf, mode?: fast | auto | ocr, maxPages?: number }[]"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "({ type: wait, milliseconds: number } | { type: wait, selector: string } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: click, selector: string, all?: boolean } | { type: write, text: string } | { type: press, key: string } | { type: scroll, direction?: up | down, selector?: string } | { type: scrape } | { type: executeJavascript, script: string } | { type: pdf, format?: A0 | A1 | A2 | A3 | A4 | A5 | A6 | Letter | Legal | Tabloid | Ledger, landscape?: boolean, scale?: number })[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ country?: string, languages?: string[] }"
+          },
+          {
+            "key": "removeBase64Images",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "blockAds",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "basic | enhanced | auto"
+          },
+          {
+            "key": "storeInCache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "{ name: string, saveChanges?: boolean }"
+          },
+          {
+            "key": "zeroDataRetention",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ markdown?: string, summary?: string | null, html?: string | null, rawHtml?: string | null, screenshot?: string | null, audio?: string | null, links?: string[], actions?: { screenshots?: string[], scrapes?: { url?: string, html?: string }[], javascriptReturns?: { type?: string, value?: any }[], pdfs?: string[] } | null, metadata?: { title?: string | string[], description?: string | string[], language?: string | string[] | null, keywords?: string | string[], sourceURL?: string, url?: string, scrapeId?: string, statusCode?: number, contentType?: string, error?: string | null, ogLocaleAlternate?: string[], concurrencyLimited?: boolean, concurrencyQueueDurationMs?: number }, warning?: string | null, changeTracking?: { previousScrapeAt?: string | null, changeStatus?: new | same | changed | removed, visibility?: visible | hidden, diff?: string | null, json?: {} | null } | null, branding?: {} | null, json?: any, images?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "firecrawl.api.search.run",
+      "shortPath": "search.run",
+      "description": "Search the web and retrieve page content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "({ type: web, tbs?: string, location?: string } | { type: images } | { type: news })[]"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "({ type: github } | { type: research } | { type: pdf })[]"
+          },
+          {
+            "key": "tbs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ignoreInvalidURLs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enterprise",
+            "optional": true,
+            "type": "anon | zdr[]"
+          },
+          {
+            "key": "scrapeOptions",
+            "optional": true,
+            "type": "{ formats?: (markdown | summary | html | rawHtml | links | images | audio | { type: markdown } | { type: summary } | { type: html } | { type: rawHtml } | { type: links } | { type: images } | { type: audio } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: json, schema?: {}, prompt?: string } | { type: changeTracking, modes?: git-diff | json[], schema?: {}, prompt?: string, tag?: string | null } | { type: branding })[], onlyMainContent?: boolean, includeTags?: string[], excludeTags?: string[], maxAge?: number, minAge?: number, headers?: {}, waitFor?: number, mobile?: boolean, skipTlsVerification?: boolean, timeout?: number, parsers?: { type: pdf, mode?: fast | auto | ocr, maxPages?: number }[], actions?: ({ type: wait, milliseconds: number } | { type: wait, selector: string } | { type: screenshot, fullPage?: boolean, quality?: number, viewport?: { width: number, height: number } } | { type: click, selector: string, all?: boolean } | { type: write, text: string } | { type: press, key: string } | { type: scroll, direction?: up | down, selector?: string } | { type: scrape } | { type: executeJavascript, script: string } | { type: pdf, format?: A0 | A1 | A2 | A3 | A4 | A5 | A6 | Letter | Legal | Tabloid | Ledger, landscape?: boolean, scale?: number })[], location?: { country?: string, languages?: string[] }, removeBase64Images?: boolean, blockAds?: boolean, proxy?: basic | enhanced | auto, storeInCache?: boolean, profile?: { name: string, saveChanges?: boolean } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ web?: { title?: string, description?: string, url?: string, markdown?: string | null, html?: string | null, rawHtml?: string | null, links?: string[], screenshot?: string | null, audio?: string | null, category?: string, metadata?: { title?: string | string[], description?: string | string[], language?: string | string[] | null, keywords?: string | string[], sourceURL?: string, url?: string, scrapeId?: string, statusCode?: number, contentType?: string, error?: string | null, ogLocaleAlternate?: string[], concurrencyLimited?: boolean, concurrencyQueueDurationMs?: number } }[], images?: { title?: string, imageUrl?: string, imageWidth?: number, imageHeight?: number, url?: string, position?: number }[], news?: { title?: string, snippet?: string, url?: string, date?: string, imageUrl?: string, position?: number, markdown?: string | null, html?: string | null, rawHtml?: string | null, links?: string[], screenshot?: string | null, audio?: string | null, metadata?: { title?: string | string[], description?: string | string[], language?: string | string[] | null, keywords?: string | string[], sourceURL?: string, url?: string, scrapeId?: string, statusCode?: number, contentType?: string, error?: string | null, ogLocaleAlternate?: string[], concurrencyLimited?: boolean, concurrencyQueueDurationMs?: number } }[] }"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creditsUsed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "firecrawl.webhooks.agent.action",
+      "shortPath": "agent.action",
+      "description": "The agent executed a tool action",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "agent.action"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ creditsUsed?: number, action?: string, input?: {} }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean, type: agent.action, id: string, data: { creditsUsed?: number, action?: string, input?: {} }[], metadata?: {}, error?: string }",
+      "usageExample": "firecrawl({\n    webhookHooks: {\n        agent: {\n            action: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "firecrawl.webhooks.agent.cancelled",
+      "shortPath": "agent.cancelled",
+      "description": "An agent job was cancelled",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "agent.cancelled"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ creditsUsed?: number }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean, type: agent.cancelled, id: string, data: { creditsUsed?: number }[], metadata?: {}, error?: string }",
+      "usageExample": "firecrawl({\n    webhookHooks: {\n        agent: {\n            cancelled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "firecrawl.webhooks.agent.completed",
+      "shortPath": "agent.completed",
+      "description": "An agent job completed successfully",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "agent.completed"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ creditsUsed?: number, data?: {} }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean, type: agent.completed, id: string, data: { creditsUsed?: number, data?: {} }[], metadata?: {}, error?: string }",
+      "usageExample": "firecrawl({\n    webhookHooks: {\n        agent: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "firecrawl.webhooks.agent.failed",
+      "shortPath": "agent.failed",
+      "description": "An agent job failed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "agent.failed"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ creditsUsed?: number }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean, type: agent.failed, id: string, data: { creditsUsed?: number }[], metadata?: {}, error?: string }",
+      "usageExample": "firecrawl({\n    webhookHooks: {\n        agent: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "firecrawl.webhooks.agent.started",
+      "shortPath": "agent.started",
+      "description": "An agent job started",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "agent.started"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "never[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean, type: agent.started, id: string, data: never[], metadata?: {}, error?: string }",
+      "usageExample": "firecrawl({\n    webhookHooks: {\n        agent: {\n            started: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "firecrawl.webhooks.batchScrape.completed",
+      "shortPath": "batchScrape.completed",
+      "description": "A batch scrape job completed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "batch_scrape.completed"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "never[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean, type: batch_scrape.completed, id: string, data: never[], metadata?: {}, error?: string }",
+      "usageExample": "firecrawl({\n    webhookHooks: {\n        batchScrape: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "firecrawl.webhooks.batchScrape.page",
+      "shortPath": "batchScrape.page",
+      "description": "A URL was scraped in a batch job",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "batch_scrape.page"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ markdown?: string, html?: string | null, rawHtml?: string | null, links?: string[], screenshot?: string | null, metadata?: { title?: string | string[], description?: string | string[], language?: string | string[] | null, keywords?: string | string[], sourceURL?: string, url?: string, scrapeId?: string, statusCode?: number, contentType?: string, error?: string | null, ogLocaleAlternate?: string[], concurrencyLimited?: boolean, concurrencyQueueDurationMs?: number } }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean, type: batch_scrape.page, id: string, data: { markdown?: string, html?: string | null, rawHtml?: string | null, links?: string[], screenshot?: string | null, metadata?: { title?: string | string[], description?: string | string[], language?: string | string[] | null, keywords?: string | string[], sourceURL?: string, url?: string, scrapeId?: string, statusCode?: number, contentType?: string, error?: string | null, ogLocaleAlternate?: string[], concurrencyLimited?: boolean, concurrencyQueueDurationMs?: number } }[], metadata?: {}, error?: string }",
+      "usageExample": "firecrawl({\n    webhookHooks: {\n        batchScrape: {\n            page: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "firecrawl.webhooks.batchScrape.started",
+      "shortPath": "batchScrape.started",
+      "description": "A batch scrape job started",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "batch_scrape.started"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "never[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean, type: batch_scrape.started, id: string, data: never[], metadata?: {}, error?: string }",
+      "usageExample": "firecrawl({\n    webhookHooks: {\n        batchScrape: {\n            started: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "firecrawl.webhooks.crawl.completed",
+      "shortPath": "crawl.completed",
+      "description": "A crawl job finished",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "crawl.completed"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "never[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean, type: crawl.completed, id: string, data: never[], metadata?: {}, error?: string }",
+      "usageExample": "firecrawl({\n    webhookHooks: {\n        crawl: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "firecrawl.webhooks.crawl.page",
+      "shortPath": "crawl.page",
+      "description": "A page was scraped during a crawl",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "crawl.page"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ markdown?: string, html?: string | null, rawHtml?: string | null, links?: string[], screenshot?: string | null, metadata?: { title?: string | string[], description?: string | string[], language?: string | string[] | null, keywords?: string | string[], sourceURL?: string, url?: string, scrapeId?: string, statusCode?: number, contentType?: string, error?: string | null, ogLocaleAlternate?: string[], concurrencyLimited?: boolean, concurrencyQueueDurationMs?: number } }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean, type: crawl.page, id: string, data: { markdown?: string, html?: string | null, rawHtml?: string | null, links?: string[], screenshot?: string | null, metadata?: { title?: string | string[], description?: string | string[], language?: string | string[] | null, keywords?: string | string[], sourceURL?: string, url?: string, scrapeId?: string, statusCode?: number, contentType?: string, error?: string | null, ogLocaleAlternate?: string[], concurrencyLimited?: boolean, concurrencyQueueDurationMs?: number } }[], metadata?: {}, error?: string }",
+      "usageExample": "firecrawl({\n    webhookHooks: {\n        crawl: {\n            page: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "firecrawl.webhooks.crawl.started",
+      "shortPath": "crawl.started",
+      "description": "A crawl job started processing",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "crawl.started"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "never[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean, type: crawl.started, id: string, data: never[], metadata?: {}, error?: string }",
+      "usageExample": "firecrawl({\n    webhookHooks: {\n        crawl: {\n            started: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "firecrawl.webhooks.extract.completed",
+      "shortPath": "extract.completed",
+      "description": "An extract job completed successfully",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "extract.completed"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ success: boolean, data: {}, extractId: string, llmUsage?: number, totalUrlsScraped?: number, sources?: {} }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean, type: extract.completed, id: string, data: { success: boolean, data: {}, extractId: string, llmUsage?: number, totalUrlsScraped?: number, sources?: {} }[], metadata?: {}, error?: string }",
+      "usageExample": "firecrawl({\n    webhookHooks: {\n        extract: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "firecrawl.webhooks.extract.failed",
+      "shortPath": "extract.failed",
+      "description": "An extract job failed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "extract.failed"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "never[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean, type: extract.failed, id: string, data: never[], metadata?: {}, error?: string }",
+      "usageExample": "firecrawl({\n    webhookHooks: {\n        extract: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "firecrawl.webhooks.extract.started",
+      "shortPath": "extract.started",
+      "description": "An extract job started",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "extract.started"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "never[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ success: boolean, type: extract.started, id: string, data: never[], metadata?: {}, error?: string }",
+      "usageExample": "firecrawl({\n    webhookHooks: {\n        extract: {\n            started: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "firecrawl.db.jobs.search",
+      "entityName": "jobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "success",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "firecrawl.db.scrapes.search",
+      "entityName": "scrapes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sourceURL",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "success",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "markdown",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "summary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "html",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rawHtml",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "screenshot",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "audio",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "warning",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "firecrawl.db.searches.search",
+      "entityName": "searches",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "success",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "firecrawl.db.siteMaps.search",
+      "entityName": "siteMaps",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "baseUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "success",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}
