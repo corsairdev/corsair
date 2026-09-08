@@ -1,13 +1,85 @@
+import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
+import { makeXeroRequest, XeroAPIError } from './client';
+import {
+	Accounts,
+	Assets,
+	Attachments,
+	BankTransactions,
+	Budgets,
+	Connections,
+	Contacts,
+	CreditNotes,
+	Files,
+	Invoices,
+	Items,
+	Journals,
+	ManualJournals,
+	Organisations,
+	Payments,
+	Projects,
+	PurchaseOrders,
+	Quotes,
+	Reports,
+	TaxRates,
+	TrackingCategories,
+} from './endpoints';
 import {
 	XeroEndpointInputSchemas,
 	XeroEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { xero } from './index';
 import { XeroSchema } from './schema';
 import {
 	createXeroEventMatch,
 	verifyXeroWebhookSignature,
 } from './webhooks/types';
+
+jest.mock('./client', () => {
+	const original = jest.requireActual('./client');
+	return {
+		...original,
+		makeXeroRequest: jest.fn(),
+	};
+});
+
+jest.mock('corsair/core', () => {
+	const original = jest.requireActual('corsair/core');
+	return {
+		...original,
+		logEventFromContext: jest.fn(),
+	};
+});
+
+const mockMakeXeroRequest = makeXeroRequest as jest.MockedFunction<
+	typeof makeXeroRequest
+>;
+const mockLogEvent = logEventFromContext as jest.MockedFunction<
+	typeof logEventFromContext
+>;
+
+function createMockContext(apiKey = 'test-token', tenantId = 'tenant-123') {
+	const upsertByEntityId = jest.fn().mockResolvedValue({ id: 'db-entity-1' });
+	return {
+		key: apiKey,
+		pluginId: 'xero',
+		authType: 'oauth_2' as const,
+		options: { tenantId },
+		schema: XeroSchema,
+		db: {
+			contacts: { upsertByEntityId },
+			invoices: { upsertByEntityId },
+			bankTransactions: { upsertByEntityId },
+			accounts: { upsertByEntityId },
+			items: { upsertByEntityId },
+			payments: { upsertByEntityId },
+			purchaseOrders: { upsertByEntityId },
+			creditNotes: { upsertByEntityId },
+			quotes: { upsertByEntityId },
+		},
+	} as any;
+}
 
 describe('Xero Schema Tests', () => {
 	it('declares a semver version', () => {
@@ -637,5 +709,840 @@ describe('Xero Webhooks & Matchers', () => {
 		};
 		expect(verifyXeroWebhookSignature(req, 'my-secret').valid).toBe(false);
 		expect(verifyXeroWebhookSignature(req, '').valid).toBe(false);
+	});
+});
+
+describe('Xero Endpoint Behavioral Execution Tests (All 39 Endpoints)', () => {
+	let ctx: any;
+
+	beforeEach(() => {
+		jest.clearAllMocks();
+		ctx = createMockContext('test-key', 'tenant-xyz');
+	});
+
+	// 1. BankTransactions.create
+	it('executes BankTransactions.create and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			BankTransactions: [
+				{
+					BankTransactionID: 'bt-1',
+					Type: 'SPEND',
+					BankAccount: { AccountID: 'acc-1' },
+				},
+			],
+		});
+		const res = await BankTransactions.create(ctx, {
+			Type: 'SPEND',
+			Contact: { Name: 'Stationery World' },
+			BankAccount: { AccountID: 'acc-1' },
+			LineItems: [{ Description: 'Paper', UnitAmount: 20 }],
+		});
+		expect(res.BankTransactions?.[0]?.BankTransactionID).toBe('bt-1');
+		expect(ctx.db.bankTransactions.upsertByEntityId).toHaveBeenCalledWith(
+			'bt-1',
+			expect.objectContaining({ BankTransactionID: 'bt-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.bankTransactions.create',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 2. BankTransactions.list
+	it('executes BankTransactions.list and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			BankTransactions: [
+				{
+					BankTransactionID: 'bt-1',
+					Type: 'SPEND',
+					BankAccount: { AccountID: 'acc-1' },
+				},
+			],
+		});
+		const res = await BankTransactions.list(ctx, { page: 1 });
+		expect(res.BankTransactions).toHaveLength(1);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.bankTransactions.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 3. Contacts.create
+	it('executes Contacts.create and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Contacts: [{ ContactID: 'c-1', Name: 'Supplier Inc' }],
+		});
+		const res = await Contacts.create(ctx, {
+			Name: 'Supplier Inc',
+			IsSupplier: true,
+		});
+		expect(res.Contacts?.[0]?.ContactID).toBe('c-1');
+		expect(ctx.db.contacts.upsertByEntityId).toHaveBeenCalledWith(
+			'c-1',
+			expect.objectContaining({ ContactID: 'c-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.contacts.create',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 4. Contacts.list
+	it('executes Contacts.list and upserts contacts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Contacts: [{ ContactID: 'c-1', Name: 'Supplier Inc' }],
+		});
+		const res = await Contacts.list(ctx, { searchTerm: 'Supplier' });
+		expect(res.Contacts).toHaveLength(1);
+		expect(ctx.db.contacts.upsertByEntityId).toHaveBeenCalledWith(
+			'c-1',
+			expect.objectContaining({ ContactID: 'c-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.contacts.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 5. Contacts.update
+	it('executes Contacts.update and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Contacts: [{ ContactID: 'c-1', Name: 'Supplier Updated Ltd' }],
+		});
+		const res = await Contacts.update(ctx, {
+			contactId: 'c-1',
+			Name: 'Supplier Updated Ltd',
+		});
+		expect(res.Contacts?.[0]?.Name).toBe('Supplier Updated Ltd');
+		expect(ctx.db.contacts.upsertByEntityId).toHaveBeenCalledWith(
+			'c-1',
+			expect.objectContaining({ ContactID: 'c-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.contacts.update',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 6. Invoices.create
+	it('executes Invoices.create and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Invoices: [{ InvoiceID: 'inv-1', Type: 'ACCREC' }],
+		});
+		const res = await Invoices.create(ctx, {
+			Type: 'ACCREC',
+			Contact: { ContactID: 'c-1' },
+			LineItems: [{ Description: 'Services', UnitAmount: 500 }],
+		});
+		expect(res.Invoices?.[0]?.InvoiceID).toBe('inv-1');
+		expect(ctx.db.invoices.upsertByEntityId).toHaveBeenCalledWith(
+			'inv-1',
+			expect.objectContaining({ InvoiceID: 'inv-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.invoices.create',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 7. Invoices.get
+	it('executes Invoices.get and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Invoices: [{ InvoiceID: 'inv-1', Type: 'ACCREC' }],
+		});
+		const res = await Invoices.get(ctx, { invoiceId: 'inv-1' });
+		expect(res.Invoices?.[0]?.InvoiceID).toBe('inv-1');
+		expect(ctx.db.invoices.upsertByEntityId).toHaveBeenCalledWith(
+			'inv-1',
+			expect.objectContaining({ InvoiceID: 'inv-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.invoices.get',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 8. Invoices.list
+	it('executes Invoices.list and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Invoices: [{ InvoiceID: 'inv-1', Type: 'ACCREC' }],
+		});
+		const res = await Invoices.list(ctx, { page: 1 });
+		expect(res.Invoices).toHaveLength(1);
+		expect(ctx.db.invoices.upsertByEntityId).toHaveBeenCalledWith(
+			'inv-1',
+			expect.objectContaining({ InvoiceID: 'inv-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.invoices.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 9. Invoices.update
+	it('executes Invoices.update and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Invoices: [{ InvoiceID: 'inv-1', Type: 'ACCREC' }],
+		});
+		const res = await Invoices.update(ctx, {
+			invoiceId: 'inv-1',
+			Status: 'AUTHORISED',
+		});
+		expect(res.Invoices?.[0]?.InvoiceID).toBe('inv-1');
+		expect(ctx.db.invoices.upsertByEntityId).toHaveBeenCalledWith(
+			'inv-1',
+			expect.objectContaining({ InvoiceID: 'inv-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.invoices.update',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 10. Items.create
+	it('executes Items.create and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Items: [{ ItemID: 'it-1', Code: 'ITEM-01' }],
+		});
+		const res = await Items.create(ctx, { Code: 'ITEM-01', Name: 'Widget' });
+		expect(res.Items?.[0]?.ItemID).toBe('it-1');
+		expect(ctx.db.items.upsertByEntityId).toHaveBeenCalledWith(
+			'it-1',
+			expect.objectContaining({ ItemID: 'it-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.items.create',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 11. Items.get
+	it('executes Items.get and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Items: [{ ItemID: 'it-1', Code: 'ITEM-01' }],
+		});
+		const res = await Items.get(ctx, { itemId: 'it-1' });
+		expect(res.Items?.[0]?.ItemID).toBe('it-1');
+		expect(ctx.db.items.upsertByEntityId).toHaveBeenCalledWith(
+			'it-1',
+			expect.objectContaining({ ItemID: 'it-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.items.get',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 12. Items.list
+	it('executes Items.list and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Items: [{ ItemID: 'it-1', Code: 'ITEM-01' }],
+		});
+		const res = await Items.list(ctx, { page: 1 });
+		expect(res.Items).toHaveLength(1);
+		expect(ctx.db.items.upsertByEntityId).toHaveBeenCalledWith(
+			'it-1',
+			expect.objectContaining({ ItemID: 'it-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.items.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 13. Payments.create
+	it('executes Payments.create and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Payments: [{ PaymentID: 'pay-1', Amount: 100 }],
+		});
+		const res = await Payments.create(ctx, {
+			Invoice: { InvoiceID: 'inv-1' },
+			Account: { AccountID: 'acc-1' },
+			Amount: 100,
+		});
+		expect(res.Payments?.[0]?.PaymentID).toBe('pay-1');
+		expect(ctx.db.payments.upsertByEntityId).toHaveBeenCalledWith(
+			'pay-1',
+			expect.objectContaining({ PaymentID: 'pay-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.payments.create',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 14. Payments.list
+	it('executes Payments.list and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Payments: [{ PaymentID: 'pay-1', Amount: 100 }],
+		});
+		const res = await Payments.list(ctx, { page: 1 });
+		expect(res.Payments).toHaveLength(1);
+		expect(ctx.db.payments.upsertByEntityId).toHaveBeenCalledWith(
+			'pay-1',
+			expect.objectContaining({ PaymentID: 'pay-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.payments.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 15. PurchaseOrders.create
+	it('executes PurchaseOrders.create and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			PurchaseOrders: [{ PurchaseOrderID: 'po-1' }],
+		});
+		const res = await PurchaseOrders.create(ctx, {
+			Contact: { ContactID: 'c-1' },
+			LineItems: [{ Description: 'Stock delivery', UnitAmount: 1200 }],
+		});
+		expect(res.PurchaseOrders?.[0]?.PurchaseOrderID).toBe('po-1');
+		expect(ctx.db.purchaseOrders.upsertByEntityId).toHaveBeenCalledWith(
+			'po-1',
+			expect.objectContaining({ PurchaseOrderID: 'po-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.purchaseOrders.create',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 16. PurchaseOrders.get
+	it('executes PurchaseOrders.get and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			PurchaseOrders: [{ PurchaseOrderID: 'po-1' }],
+		});
+		const res = await PurchaseOrders.get(ctx, { purchaseOrderId: 'po-1' });
+		expect(res.PurchaseOrders?.[0]?.PurchaseOrderID).toBe('po-1');
+		expect(ctx.db.purchaseOrders.upsertByEntityId).toHaveBeenCalledWith(
+			'po-1',
+			expect.objectContaining({ PurchaseOrderID: 'po-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.purchaseOrders.get',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 17. PurchaseOrders.list
+	it('executes PurchaseOrders.list and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			PurchaseOrders: [{ PurchaseOrderID: 'po-1' }],
+		});
+		const res = await PurchaseOrders.list(ctx, { status: 'AUTHORISED' });
+		expect(res.PurchaseOrders).toHaveLength(1);
+		expect(ctx.db.purchaseOrders.upsertByEntityId).toHaveBeenCalledWith(
+			'po-1',
+			expect.objectContaining({ PurchaseOrderID: 'po-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.purchaseOrders.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 18. Accounts.get
+	it('executes Accounts.get and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Accounts: [{ AccountID: 'acc-1', Name: 'Sales', Type: 'REVENUE' }],
+		});
+		const res = await Accounts.get(ctx, { accountId: 'acc-1' });
+		expect(res.Accounts?.[0]?.AccountID).toBe('acc-1');
+		expect(ctx.db.accounts.upsertByEntityId).toHaveBeenCalledWith(
+			'acc-1',
+			expect.objectContaining({ AccountID: 'acc-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.accounts.get',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 19. Accounts.list
+	it('executes Accounts.list and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Accounts: [{ AccountID: 'acc-1', Name: 'Sales', Type: 'REVENUE' }],
+		});
+		const res = await Accounts.list(ctx, { page: 1 });
+		expect(res.Accounts).toHaveLength(1);
+		expect(ctx.db.accounts.upsertByEntityId).toHaveBeenCalledWith(
+			'acc-1',
+			expect.objectContaining({ AccountID: 'acc-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.accounts.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 20. Assets.get
+	it('executes Assets.get and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			assetId: 'ast-1',
+			assetName: 'MacBook Pro',
+		});
+		const res = await Assets.get(ctx, { assetId: 'ast-1' });
+		expect(res.assetId).toBe('ast-1');
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.assets.get',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 21. Assets.list
+	it('executes Assets.list and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			items: [{ assetId: 'ast-1' }],
+		});
+		const res = await Assets.list(ctx, { page: 1 });
+		expect(res.items).toHaveLength(1);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.assets.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 22. Reports.getBalanceSheet
+	it('executes Reports.getBalanceSheet and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Reports: [{ ReportID: 'BalanceSheet' }],
+		});
+		const res = await Reports.getBalanceSheet(ctx, { date: '2026-09-08' });
+		expect(res.Reports?.[0]?.ReportID).toBe('BalanceSheet');
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.reports.getBalanceSheet',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 23. Reports.getProfitLoss
+	it('executes Reports.getProfitLoss and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Reports: [{ ReportID: 'ProfitAndLoss' }],
+		});
+		const res = await Reports.getProfitLoss(ctx, {
+			fromDate: '2026-01-01',
+			toDate: '2026-09-08',
+		});
+		expect(res.Reports?.[0]?.ReportID).toBe('ProfitAndLoss');
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.reports.getProfitLoss',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 24. Budgets.get
+	it('executes Budgets.get and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Budgets: [{ BudgetID: 'b-1' }],
+		});
+		const res = await Budgets.get(ctx, { budgetId: 'b-1' });
+		expect(res.Budgets?.[0]?.BudgetID).toBe('b-1');
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.budgets.get',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 25. Connections.get
+	it('executes Connections.get with raw URL and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce([
+			{ id: 'conn-1', tenantId: 't-1', tenantType: 'ORGANISATION' },
+		]);
+		const res = await Connections.get(ctx, {});
+		expect(res).toHaveLength(1);
+		expect(mockMakeXeroRequest).toHaveBeenCalledWith(
+			'https://api.xero.com/connections',
+			ctx.key,
+			expect.objectContaining({ isRawUrl: true }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.connections.get',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 26. ManualJournals.get
+	it('executes ManualJournals.get and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			ManualJournals: [{ ManualJournalID: 'mj-1', Narration: 'Adjust' }],
+		});
+		const res = await ManualJournals.get(ctx, { manualJournalId: 'mj-1' });
+		expect(res.ManualJournals?.[0]?.ManualJournalID).toBe('mj-1');
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.manualJournals.get',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 27. ManualJournals.list
+	it('executes ManualJournals.list and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			ManualJournals: [{ ManualJournalID: 'mj-1' }],
+		});
+		const res = await ManualJournals.list(ctx, { page: 1 });
+		expect(res.ManualJournals).toHaveLength(1);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.manualJournals.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 28. Organisations.get
+	it('executes Organisations.get and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Organisations: [{ Name: 'Xero Demo Company' }],
+		});
+		const res = await Organisations.get(ctx, {});
+		expect(res.Organisations?.[0]?.Name).toBe('Xero Demo Company');
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.organisations.get',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 29. Projects.get
+	it('executes Projects.get with raw projects URL and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			projectId: 'p-1',
+			name: 'Website',
+		});
+		const res = await Projects.get(ctx, { projectId: 'p-1' });
+		expect(res.projectId).toBe('p-1');
+		expect(mockMakeXeroRequest).toHaveBeenCalledWith(
+			'https://api.xero.com/projects.xro/2.0/Projects/p-1',
+			ctx.key,
+			expect.objectContaining({ isRawUrl: true }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.projects.get',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 30. Projects.list
+	it('executes Projects.list with raw projects URL and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			items: [{ projectId: 'p-1', name: 'Website' }],
+		});
+		const res = await Projects.list(ctx, { states: 'INPROGRESS' });
+		expect(res.items).toHaveLength(1);
+		expect(mockMakeXeroRequest).toHaveBeenCalledWith(
+			'https://api.xero.com/projects.xro/2.0/Projects',
+			ctx.key,
+			expect.objectContaining({ isRawUrl: true }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.projects.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 31. Quotes.list
+	it('executes Quotes.list and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Quotes: [{ QuoteID: 'q-1' }],
+		});
+		const res = await Quotes.list(ctx, { status: 'SENT' });
+		expect(res.Quotes).toHaveLength(1);
+		expect(ctx.db.quotes.upsertByEntityId).toHaveBeenCalledWith(
+			'q-1',
+			expect.objectContaining({ QuoteID: 'q-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.quotes.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 32. Attachments.list
+	it('executes Attachments.list and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Attachments: [{ AttachmentID: 'att-1', FileName: 'invoice.pdf' }],
+		});
+		const res = await Attachments.list(ctx, {
+			endpoint: 'Invoices',
+			entityId: 'inv-1',
+		});
+		expect(res.Attachments).toHaveLength(1);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.attachments.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 33. Attachments.upload
+	it('executes Attachments.upload redacting fileContent from event log and wrapping raw body in Blob', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Attachments: [{ AttachmentID: 'att-1', FileName: 'data.json' }],
+		});
+		const res = await Attachments.upload(ctx, {
+			endpoint: 'Invoices',
+			entityId: 'inv-1',
+			fileName: 'data.json',
+			mimeType: 'application/json',
+			fileContent: '{"key":"value"}',
+		});
+		expect(res.Attachments).toHaveLength(1);
+
+		// Verify Blob payload passed to makeXeroRequest
+		expect(mockMakeXeroRequest).toHaveBeenCalledWith(
+			'Invoices/inv-1/Attachments/data.json',
+			ctx.key,
+			expect.objectContaining({
+				method: 'POST',
+				mediaType: 'application/json',
+				body: expect.any(Blob),
+			}),
+		);
+
+		// Verify fileContent is NOT in logged event
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.attachments.upload',
+			{
+				endpoint: 'Invoices',
+				entityId: 'inv-1',
+				fileName: 'data.json',
+				mimeType: 'application/json',
+				contentLength: '{"key":"value"}'.length,
+			},
+			'completed',
+		);
+		const loggedPayload = mockLogEvent.mock.calls[0]?.[2] as any;
+		expect(loggedPayload.fileContent).toBeUndefined();
+	});
+
+	// 34. CreditNotes.list
+	it('executes CreditNotes.list and upserts into database', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			CreditNotes: [{ CreditNoteID: 'cn-1' }],
+		});
+		const res = await CreditNotes.list(ctx, { page: 1 });
+		expect(res.CreditNotes).toHaveLength(1);
+		expect(ctx.db.creditNotes.upsertByEntityId).toHaveBeenCalledWith(
+			'cn-1',
+			expect.objectContaining({ CreditNoteID: 'cn-1' }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.creditNotes.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 35. Files.list
+	it('executes Files.list with raw files URL and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Items: [{ Id: 'f-1', Name: 'doc.pdf' }],
+		});
+		const res = await Files.list(ctx, { page: 1 });
+		expect(res.Items).toHaveLength(1);
+		expect(mockMakeXeroRequest).toHaveBeenCalledWith(
+			'https://api.xero.com/files.xro/1.0/Files',
+			ctx.key,
+			expect.objectContaining({ isRawUrl: true }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.files.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 36. Files.listFolders
+	it('executes Files.listFolders with raw files URL and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce([
+			{ Id: 'fol-1', Name: 'Receipts' },
+		]);
+		const res = await Files.listFolders(ctx, {});
+		expect(res).toHaveLength(1);
+		expect(mockMakeXeroRequest).toHaveBeenCalledWith(
+			'https://api.xero.com/files.xro/1.0/Folders',
+			ctx.key,
+			expect.objectContaining({ isRawUrl: true }),
+		);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.files.listFolders',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 37. Journals.list
+	it('executes Journals.list and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			Journals: [
+				{
+					JournalID: 'j-1',
+					JournalDate: '2026-09-08',
+					JournalNumber: 1,
+					CreatedDateUTC: '2026-09-08T00:00:00Z',
+				},
+			],
+		});
+		const res = await Journals.list(ctx, { offset: 0 });
+		expect(res.Journals).toHaveLength(1);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.journals.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 38. TaxRates.list
+	it('executes TaxRates.list and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			TaxRates: [{ Name: 'GST', TaxType: 'OUTPUT' }],
+		});
+		const res = await TaxRates.list(ctx, { page: 1 });
+		expect(res.TaxRates).toHaveLength(1);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.taxRates.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+
+	// 39. TrackingCategories.list
+	it('executes TrackingCategories.list and logs completion', async () => {
+		mockMakeXeroRequest.mockResolvedValueOnce({
+			TrackingCategories: [{ TrackingCategoryID: 'tc-1', Name: 'Region' }],
+		});
+		const res = await TrackingCategories.list(ctx, { includeArchived: false });
+		expect(res.TrackingCategories).toHaveLength(1);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'xero.trackingCategories.list',
+			expect.any(Object),
+			'completed',
+		);
+	});
+});
+
+describe('Xero Error Handlers & Rate Limiting Metadata Preservation', () => {
+	it('RATE_LIMIT_ERROR matches 429 status on ApiError and extracts retryAfter', async () => {
+		const apiErr = new ApiError(
+			{ method: 'GET', url: '/Invoices' },
+			{
+				url: 'https://api.xero.com/api.xro/2.0/Invoices',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { Message: 'Rate limit exceeded' },
+			},
+			'Too Many Requests',
+			{ retryAfter: 3500 },
+		);
+
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(apiErr)).toBe(true);
+		const res = await errorHandlers.RATE_LIMIT_ERROR.handler(apiErr);
+		expect(res.maxRetries).toBe(5);
+		expect(res.headersRetryAfterMs).toBe(3500);
+	});
+
+	it('RATE_LIMIT_ERROR matches 429 status and preserves retryAfter on XeroAPIError', async () => {
+		const xeroErr = new XeroAPIError('Too Many Requests', 429, {
+			status: 429,
+			retryAfter: 4500,
+		});
+
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(xeroErr)).toBe(true);
+		const res = await errorHandlers.RATE_LIMIT_ERROR.handler(xeroErr);
+		expect(res.maxRetries).toBe(5);
+		expect(res.headersRetryAfterMs).toBe(4500);
+	});
+
+	it('RATE_LIMIT_ERROR matches rate limit messages', async () => {
+		const msgErr = new Error('rate_limited error occurred');
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(msgErr)).toBe(true);
+	});
+
+	it('AUTH_ERROR matches 401 status on ApiError and XeroAPIError', () => {
+		const apiErr = new ApiError(
+			{ method: 'GET', url: '/Invoices' },
+			{
+				url: 'https://api.xero.com/api.xro/2.0/Invoices',
+				ok: false,
+				status: 401,
+				statusText: 'Unauthorized',
+				body: {},
+			},
+			'Unauthorized',
+		);
+		expect(errorHandlers.AUTH_ERROR.match(apiErr)).toBe(true);
+
+		const xeroErr = new XeroAPIError('Token expired', 401, { status: 401 });
+		expect(errorHandlers.AUTH_ERROR.match(xeroErr)).toBe(true);
 	});
 });

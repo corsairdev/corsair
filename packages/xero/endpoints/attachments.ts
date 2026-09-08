@@ -34,6 +34,13 @@ export const upload: XeroEndpoints['attachmentsUpload'] = async (
 		fileContent,
 	} = input;
 
+	// Use Blob so the HTTP request serializer treats it as raw bytes/stream
+	// instead of calling JSON.stringify when mimeType includes '/json'.
+	const bodyPayload =
+		typeof Blob !== 'undefined'
+			? new Blob([fileContent], { type: mimeType })
+			: fileContent;
+
 	const response = await makeXeroRequest<
 		XeroEndpointOutputs['attachmentsUpload']
 	>(
@@ -41,16 +48,23 @@ export const upload: XeroEndpoints['attachmentsUpload'] = async (
 		ctx.key,
 		{
 			method: 'POST',
-			body: fileContent,
+			body: bodyPayload,
 			mediaType: mimeType,
 			tenantId,
 		},
 	);
 
+	// Redact raw fileContent to avoid persisting sensitive accounting documents in event logs
 	await logEventFromContext(
 		ctx,
 		'xero.attachments.upload',
-		{ ...input },
+		{
+			endpoint,
+			entityId,
+			fileName,
+			mimeType,
+			contentLength: fileContent.length,
+		},
 		'completed',
 	);
 	return response;
