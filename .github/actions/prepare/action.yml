@@ -31,7 +31,7 @@ runs:
     - name: Install package dependencies
       if: inputs.lane == 'full'
       shell: bash
-      run: pnpm install --frozen-lockfile --filter . --filter "./packages/**" ${{ inputs.www_install_filter }}
+      run: pnpm install --frozen-lockfile --filter . --filter "./packages/**" --filter "./adapters/**" ${{ inputs.www_install_filter }}
 
     - name: Install www dependencies
       if: inputs.lane == 'www'
