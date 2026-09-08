@@ -284,6 +284,7 @@ export const BaseProviders = [
 	'youtube',
 	'zendesk',
 	'zohoinventory',
+	'zohoinvoice',
 	'zohomail',
 	'zoom',
 	'zoominfo',
@@ -561,6 +562,7 @@ export const ProviderDisplayNames = {
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
 	zohoinventory: 'Zoho Inventory',
+	zohoinvoice: 'ZohoInvoice',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
 	zoominfo: 'ZoomInfo',
@@ -845,6 +847,7 @@ export type AllProviders =
 	| 'youtube'
 	| 'zendesk'
 	| 'zohoinventory'
+	| 'zohoinvoice'
 	| 'zohomail'
 	| 'zoom'
 	| 'zoominfo'
