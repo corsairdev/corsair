@@ -1,9 +1,9 @@
 ---
 title: Authentication
-description: OAuth, API keys, and bot tokens — handled automatically.
+description: OAuth, API keys, and bot tokens, handled automatically.
 ---
 
-Corsair handles authentication for production-grade applications. Whether you need OAuth flows, API keys, or bot tokens, Corsair manages credentials across all your tenants.
+OAuth flows, API keys, and bot tokens all go through the same credential handling. Corsair stores them encrypted and manages them across every tenant.
 
 ```ts corsair.ts
 import { createCorsair } from "corsair";
@@ -28,11 +28,11 @@ export const corsair = createCorsair({
 });
 ```
 
-## Auth Types
+## Auth types
 
 Choose the auth type for each integration:
 
-### API Key
+### API key
 
 For integrations that use static API keys or bot tokens.
 
@@ -57,7 +57,17 @@ linear({
 })
 ```
 
-## Automatic Token Refresh
+### Managed
+
+Corsair hosts the OAuth app, so you register nothing in the provider console. Enable it per plugin with `authType: "managed"`. Available for managed plugins on [Hub](/hub/overview).
+
+```ts
+github({
+    authType: "managed",
+})
+```
+
+## Automatic token refresh
 
 When using OAuth, tokens expire. Corsair handles this automatically:
 
@@ -67,7 +77,7 @@ When using OAuth, tokens expire. Corsair handles this automatically:
 
 You never have to think about token rotation.
 
-## Envelope Encryption
+## Envelope encryption
 
 Corsair uses envelope encryption to protect credentials:
 
@@ -83,7 +93,7 @@ CORSAIR_KEK=your-key-encryption-key
 Each connection has a different DEK, so compromising one connection's key doesn't expose others.
 
 <Note>
-This holds whether you self-host or use [Hub](/hub/overview). Hub is a relay for connect, approval, and webhook surfaces — it stores none of your credentials. Encrypted tokens are persisted only in your database in both modes.
+This holds whether you self-host or use [Hub](/hub/overview). Hub is a relay for connect, approval, and webhook surfaces; it stores none of your credentials. Encrypted tokens are persisted only in your database in both modes.
 </Note>
 
 ## Bring Your Own KMS
@@ -104,7 +114,7 @@ export const corsair = createCorsair({
 });
 ```
 
-## Multi-Tenant Credentials
+## Multi-tenant credentials
 
 With multi-tenancy, each tenant has their own credentials stored securely.
 

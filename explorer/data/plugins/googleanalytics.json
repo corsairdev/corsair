@@ -1,0 +1,2797 @@
+{
+  "id": "googleanalytics",
+  "displayName": "Google Analytics",
+  "description": "Google Analytics 4 plugin for Corsair",
+  "npmPackageName": "@corsair-dev/googleanalytics",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 69,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googleanalytics.api.accounts.get",
+      "shortPath": "accounts.get",
+      "description": "Lookup a single Google Analytics account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regionCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.accounts.getDataSharingSettings",
+      "shortPath": "accounts.getDataSharingSettings",
+      "description": "Get data sharing settings for an account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.accounts.list",
+      "shortPath": "accounts.list",
+      "description": "List accounts accessible to the caller [DEPRECATED: use accounts.listV1Beta]",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accounts",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.accounts.listSummaries",
+      "shortPath": "accounts.listSummaries",
+      "description": "List summaries of all accessible accounts and their properties",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountSummaries",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.accounts.listV1Beta",
+      "shortPath": "accounts.listV1Beta",
+      "description": "List accounts accessible to the caller (v1beta)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accounts",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.accounts.provisionAccountTicket",
+      "shortPath": "accounts.provisionAccountTicket",
+      "description": "Request a ticket for creating a Google Analytics account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "redirectUri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.audienceExports.create",
+      "shortPath": "audienceExports.create",
+      "description": "Create an audience export for later retrieval of users",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "audienceExport",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.audienceExports.get",
+      "shortPath": "audienceExports.get",
+      "description": "Get metadata about an audience export",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.audienceExports.list",
+      "shortPath": "audienceExports.list",
+      "description": "List audience exports on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audienceExports",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.audienceExports.query",
+      "shortPath": "audienceExports.query",
+      "description": "Retrieve user rows from an audience export",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.audienceLists.create",
+      "shortPath": "audienceLists.create",
+      "description": "Create an audience list for later retrieval of users",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "audienceList",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.audienceLists.get",
+      "shortPath": "audienceLists.get",
+      "description": "Get metadata about an audience list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.audienceLists.list",
+      "shortPath": "audienceLists.list",
+      "description": "List audience lists on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audienceLists",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.audienceLists.query",
+      "shortPath": "audienceLists.query",
+      "description": "Retrieve user rows from an audience list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "returnAllRows",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.audiences.get",
+      "shortPath": "audiences.get",
+      "description": "Lookup a single audience configuration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.audiences.list",
+      "shortPath": "audiences.list",
+      "description": "List audiences on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audiences",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.calculatedMetrics.list",
+      "shortPath": "calculatedMetrics.list",
+      "description": "List calculated metrics on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calculatedMetrics",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.channelGroups.list",
+      "shortPath": "channelGroups.list",
+      "description": "List channel groups on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channelGroups",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.conversionEvents.list",
+      "shortPath": "conversionEvents.list",
+      "description": "List conversion events [DEPRECATED: use keyEvents.list]",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversionEvents",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.customDimensions.archive",
+      "shortPath": "customDimensions.archive",
+      "description": "Archive a custom dimension on a property [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.customDimensions.create",
+      "shortPath": "customDimensions.create",
+      "description": "Create a custom dimension on a property",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customDimension",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.customDimensions.get",
+      "shortPath": "customDimensions.get",
+      "description": "Lookup a single custom dimension",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.customDimensions.list",
+      "shortPath": "customDimensions.list",
+      "description": "List custom dimensions on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customDimensions",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.customMetrics.create",
+      "shortPath": "customMetrics.create",
+      "description": "Create a custom metric on a property",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customMetric",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.customMetrics.list",
+      "shortPath": "customMetrics.list",
+      "description": "List custom metrics on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customMetrics",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.dataStreams.list",
+      "shortPath": "dataStreams.list",
+      "description": "List data streams on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataStreams",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.dataStreams.listEventCreateRules",
+      "shortPath": "dataStreams.listEventCreateRules",
+      "description": "List event create rules on a web data stream",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventCreateRules",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.dataStreams.listMeasurementProtocolSecrets",
+      "shortPath": "dataStreams.listMeasurementProtocolSecrets",
+      "description": "List measurement protocol secrets under a data stream",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "measurementProtocolSecrets",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.dataStreams.listSKAdNetworkConversionValueSchemas",
+      "shortPath": "dataStreams.listSKAdNetworkConversionValueSchemas",
+      "description": "List SKAdNetwork conversion value schemas on an iOS data stream",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sKAdNetworkConversionValueSchemas",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.expandedDataSets.create",
+      "shortPath": "expandedDataSets.create",
+      "description": "Create an expanded data set on a property",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expandedDataSet",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.expandedDataSets.list",
+      "shortPath": "expandedDataSets.list",
+      "description": "List expanded data sets on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expandedDataSets",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.keyEvents.get",
+      "shortPath": "keyEvents.get",
+      "description": "Lookup a single key event (conversion)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.keyEvents.list",
+      "shortPath": "keyEvents.list",
+      "description": "List key events on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyEvents",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.links.listAdSense",
+      "shortPath": "links.listAdSense",
+      "description": "List AdSense links on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "adSenseLinks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.links.listBigQuery",
+      "shortPath": "links.listBigQuery",
+      "description": "List BigQuery links on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bigqueryLinks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.links.listDV360Advertiser",
+      "shortPath": "links.listDV360Advertiser",
+      "description": "List Display & Video 360 advertiser links on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "displayVideo360AdvertiserLinks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.links.listDV360Proposals",
+      "shortPath": "links.listDV360Proposals",
+      "description": "List Display & Video 360 advertiser link proposals on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "displayVideo360AdvertiserLinkProposals",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.links.listFirebase",
+      "shortPath": "links.listFirebase",
+      "description": "List Firebase links on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firebaseLinks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.links.listGoogleAds",
+      "shortPath": "links.listGoogleAds",
+      "description": "List Google Ads links on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "googleAdsLinks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.links.listSearchAds360",
+      "shortPath": "links.listSearchAds360",
+      "description": "List Search Ads 360 links on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchAds360Links",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.measurementProtocol.sendEvents",
+      "shortPath": "measurementProtocol.sendEvents",
+      "description": "Send events to GA4 via the Measurement Protocol. Requires the stream api_secret (not the OAuth token) plus measurementId (web) or firebaseAppId (app)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiSecret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "measurementId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firebaseAppId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appInstanceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timestampMicros",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "userProperties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "consent",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ name: string, params?: any }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.measurementProtocol.validateEvents",
+      "shortPath": "measurementProtocol.validateEvents",
+      "description": "Validate Measurement Protocol events against the debug endpoint before sending. Requires the stream api_secret",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiSecret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "measurementId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firebaseAppId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appInstanceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timestampMicros",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "userProperties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "consent",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ name: string, params?: any }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.properties.createRollup",
+      "shortPath": "properties.createRollup",
+      "description": "Create a roll-up property aggregating multiple properties",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rollupProperty",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "sourceProperties",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.properties.get",
+      "shortPath": "properties.get",
+      "description": "Lookup a single GA4 property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "propertyType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currencyCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industryCategory",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.properties.getAttributionSettings",
+      "shortPath": "properties.getAttributionSettings",
+      "description": "Get attribution settings for a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.properties.getDataRetentionSettings",
+      "shortPath": "properties.getDataRetentionSettings",
+      "description": "Get data retention settings for a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.properties.getGoogleSignalsSettings",
+      "shortPath": "properties.getGoogleSignalsSettings",
+      "description": "Get Google Signals settings for a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.properties.getPropertyQuotasSnapshot",
+      "shortPath": "properties.getPropertyQuotasSnapshot",
+      "description": "Get a snapshot of property quota usage by category",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.properties.list",
+      "shortPath": "properties.list",
+      "description": "List child properties under an account [DEPRECATED: use properties.listFiltered]",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.properties.listFiltered",
+      "shortPath": "properties.listFiltered",
+      "description": "List GA4 properties matching a filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.properties.update",
+      "shortPath": "properties.update",
+      "description": "Update a GA4 property",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "property",
+            "optional": false,
+            "type": "{ name: string }"
+          },
+          {
+            "key": "updateMask",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.recurringAudienceLists.create",
+      "shortPath": "recurringAudienceLists.create",
+      "description": "Create a recurring audience list that refreshes daily",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recurringAudienceList",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.recurringAudienceLists.get",
+      "shortPath": "recurringAudienceLists.get",
+      "description": "Get metadata about a recurring audience list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.recurringAudienceLists.list",
+      "shortPath": "recurringAudienceLists.list",
+      "description": "List recurring audience lists on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recurringAudienceLists",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.reportingData.listAnnotations",
+      "shortPath": "reportingData.listAnnotations",
+      "description": "List reporting data annotations on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reportingDataAnnotations",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.reportingData.listSubpropertyEventFilters",
+      "shortPath": "reportingData.listSubpropertyEventFilters",
+      "description": "List subproperty event filters on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subpropertyEventFilters",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.reportingData.listSubpropertySyncConfigs",
+      "shortPath": "reportingData.listSubpropertySyncConfigs",
+      "description": "List subproperty sync configs on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subpropertySyncConfigs",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.reports.batchRun",
+      "shortPath": "reports.batchRun",
+      "description": "Run multiple reports in a single batch request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "property",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requests",
+            "optional": true,
+            "type": "{ dateRanges?: { startDate?: string, endDate?: string, name?: string }[], dimensions?: { name: string, dimensionExpression?: any }[], metrics?: { name?: string, expression?: string, invisible?: boolean }[], dimensionFilter?: any, metricFilter?: any, orderBys?: any[], limit?: number, offset?: number, metricAggregations?: string[], currencyCode?: string, keepEmptyRows?: boolean, returnPropertyQuota?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.reports.batchRunPivot",
+      "shortPath": "reports.batchRunPivot",
+      "description": "Run multiple pivot reports in a single batch request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "property",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requests",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.reports.checkCompatibility",
+      "shortPath": "reports.checkCompatibility",
+      "description": "List dimensions and metrics compatible with a report request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "property",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateRanges",
+            "optional": true,
+            "type": "{ startDate?: string, endDate?: string, name?: string }[]"
+          },
+          {
+            "key": "dimensions",
+            "optional": true,
+            "type": "{ name: string, dimensionExpression?: any }[]"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{ name?: string, expression?: string, invisible?: boolean }[]"
+          },
+          {
+            "key": "dimensionFilter",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "metricFilter",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBys",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "returnPropertyQuota",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.reports.getMetadata",
+      "shortPath": "reports.getMetadata",
+      "description": "Get metadata for available dimensions and metrics. Use apiNames from here in report requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.reports.run",
+      "shortPath": "reports.run",
+      "description": "Run a customized GA4 report. Derive dimension/metric apiNames from reports.getMetadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dateRanges",
+            "optional": true,
+            "type": "{ startDate?: string, endDate?: string, name?: string }[]"
+          },
+          {
+            "key": "dimensions",
+            "optional": true,
+            "type": "{ name: string, dimensionExpression?: any }[]"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{ name?: string, expression?: string, invisible?: boolean }[]"
+          },
+          {
+            "key": "dimensionFilter",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "metricFilter",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "orderBys",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metricAggregations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "currencyCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "keepEmptyRows",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "returnPropertyQuota",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "property",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.reports.runFunnel",
+      "shortPath": "reports.runFunnel",
+      "description": "Run a customized funnel report",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "property",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "funnel",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.reports.runPivot",
+      "shortPath": "reports.runPivot",
+      "description": "Run a customized pivot report",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "property",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dateRanges",
+            "optional": true,
+            "type": "{ startDate?: string, endDate?: string, name?: string }[]"
+          },
+          {
+            "key": "dimensions",
+            "optional": true,
+            "type": "{ name: string, dimensionExpression?: any }[]"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{ name?: string, expression?: string, invisible?: boolean }[]"
+          },
+          {
+            "key": "pivots",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "dimensionFilter",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "metricFilter",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "orderBys",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "returnPropertyQuota",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.reports.runRealtime",
+      "shortPath": "reports.runRealtime",
+      "description": "Run a realtime report (last 30-60 minutes)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "property",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dimensions",
+            "optional": true,
+            "type": "{ name: string, dimensionExpression?: any }[]"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{ name?: string, expression?: string, invisible?: boolean }[]"
+          },
+          {
+            "key": "dimensionFilter",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "metricFilter",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "orderBys",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metricAggregations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "returnPropertyQuota",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "minuteRanges",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.reportTasks.create",
+      "shortPath": "reportTasks.create",
+      "description": "Create an asynchronous report task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reportTask",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.reportTasks.get",
+      "shortPath": "reportTasks.get",
+      "description": "Get metadata about a report task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googleanalytics.api.reportTasks.list",
+      "shortPath": "reportTasks.list",
+      "description": "List report tasks on a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reportTasks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleanalytics.api.reportTasks.query",
+      "shortPath": "reportTasks.query",
+      "description": "Retrieve a report task content (only when ACTIVE)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "googleanalytics.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "regionCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googleanalytics.db.properties.search",
+      "entityName": "properties",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "propertyType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timeZone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currencyCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "industryCategory",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "account",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updateTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

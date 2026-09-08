@@ -1,0 +1,110 @@
+---
+title: Database
+description: "Anchor Browser local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Anchor Browser plugin syncs data locally. Use `corsair.anchorbrowser.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Profiles
+
+Path: `anchorbrowser.db.profiles.search`
+
+```ts
+const rows = await corsair.anchorbrowser.db.profiles.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `source` | `string` | equals, contains, startsWith, endsWith, in |
+| `session_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Sessions
+
+Path: `anchorbrowser.db.sessions.search`
+
+```ts
+const rows = await corsair.anchorbrowser.db.sessions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `session_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `team_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `cdp_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `live_view_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `duration` | `number` | equals, gt, gte, lt, lte, in |
+| `credits_used` | `number` | equals, gt, gte, lt, lte, in |
+| `playground` | `boolean` | equals |
+| `proxy_bytes` | `number` | equals, gt, gte, lt, lte, in |
+| `steps` | `number` | equals, gt, gte, lt, lte, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tasks
+
+Path: `anchorbrowser.db.tasks.search`
+
+```ts
+const rows = await corsair.anchorbrowser.db.tasks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `teamId` | `string` | equals, contains, startsWith, endsWith, in |
+| `applicationId` | `string` | equals, contains, startsWith, endsWith, in |
+| `taskVersionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `selectedTaskVersion` | `string` | equals, contains, startsWith, endsWith, in |
+| `latestVersion` | `string` | equals, contains, startsWith, endsWith, in |
+| `isDraft` | `boolean` | equals |
+| `outputFileOnly` | `boolean` | equals |
+| `humanIntervention` | `boolean` | equals |
+| `aiFallbackEnabled` | `boolean` | equals |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

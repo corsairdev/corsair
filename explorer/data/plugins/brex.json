@@ -1,0 +1,3485 @@
+{
+  "id": "brex",
+  "displayName": "Brex",
+  "description": "Corporate card and spend management platform for startups and growing businesses.",
+  "npmPackageName": "@corsair-dev/brex",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 86,
+    "webhooks": 0,
+    "db": 18
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "company_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "company_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "brex.api.accounts.getCash",
+      "shortPath": "accounts.getCash",
+      "description": "Get a cash account by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.accounts.getCashPrimary",
+      "shortPath": "accounts.getCashPrimary",
+      "description": "Get the primary cash account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.accounts.listCard",
+      "shortPath": "accounts.listCard",
+      "description": "List card accounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.accounts.listCardStatements",
+      "shortPath": "accounts.listCardStatements",
+      "description": "List finalized primary card statements",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.accounts.listCash",
+      "shortPath": "accounts.listCash",
+      "description": "List cash deposit accounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.accounts.listCashStatements",
+      "shortPath": "accounts.listCashStatements",
+      "description": "List finalized cash account statements",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.budgetPrograms.list",
+      "shortPath": "budgetPrograms.list",
+      "description": "List budget programs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.budgets.archive",
+      "shortPath": "budgets.archive",
+      "description": "Archive a budget",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.budgets.create",
+      "shortPath": "budgets.create",
+      "description": "Create a budget",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.budgets.get",
+      "shortPath": "budgets.get",
+      "description": "Get a budget by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.budgets.list",
+      "shortPath": "budgets.list",
+      "description": "List budgets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.budgets.update",
+      "shortPath": "budgets.update",
+      "description": "Update a budget",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.cards.create",
+      "shortPath": "cards.create",
+      "description": "Create a card and assign it to a user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "card_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "card_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idempotency_key",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.cards.get",
+      "shortPath": "cards.get",
+      "description": "Get a card by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.cards.getPan",
+      "shortPath": "cards.getPan",
+      "description": "Get card number, CVV, and expiration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.cards.list",
+      "shortPath": "cards.list",
+      "description": "List cards, optionally by user_id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.cards.update",
+      "shortPath": "cards.update",
+      "description": "Update card spend_controls for limit_type=CARD",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.cards.updateStatus",
+      "shortPath": "cards.updateStatus",
+      "description": "Lock, unlock, or terminate a card",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "lock | unlock | terminate | LOCK | UNLOCK | TERMINATE"
+          },
+          {
+            "key": "lock_reason",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.company.get",
+      "shortPath": "company.get",
+      "description": "Get the company for the current token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.departments.create",
+      "shortPath": "departments.create",
+      "description": "Create a department",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.departments.get",
+      "shortPath": "departments.get",
+      "description": "Get a department by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.departments.list",
+      "shortPath": "departments.list",
+      "description": "List departments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.expenses.get",
+      "shortPath": "expenses.get",
+      "description": "Get an expense by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand[]",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.expenses.getCard",
+      "shortPath": "expenses.getCard",
+      "description": "Get a card expense (deprecated official path)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expense_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand[]",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.expenses.list",
+      "shortPath": "expenses.list",
+      "description": "List expenses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "budget_id",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "purchased_at_start",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "purchased_at_end",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "payment_posted_at_start",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "payment_posted_at_end",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.expenses.listByBudget",
+      "shortPath": "expenses.listByBudget",
+      "description": "List expenses for a budget_id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payment_posted_at_start",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "payment_posted_at_end",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "budget_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.expenses.update",
+      "shortPath": "expenses.update",
+      "description": "Update a card expense",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expense_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.fields.create",
+      "shortPath": "fields.create",
+      "description": "Create a custom field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.fields.delete",
+      "shortPath": "fields.delete",
+      "description": "Delete a custom field",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.fields.get",
+      "shortPath": "fields.get",
+      "description": "Get a custom field by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.fields.list",
+      "shortPath": "fields.list",
+      "description": "List custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.fields.update",
+      "shortPath": "fields.update",
+      "description": "Update a custom field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.fieldValues.create",
+      "shortPath": "fieldValues.create",
+      "description": "Create custom field values (up to 1000)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.fieldValues.delete",
+      "shortPath": "fieldValues.delete",
+      "description": "Delete custom field values (up to 1000)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.fieldValues.get",
+      "shortPath": "fieldValues.get",
+      "description": "Get a field value by field ID and value ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "brex_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.fieldValues.list",
+      "shortPath": "fieldValues.list",
+      "description": "List values for a custom field",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "brex_id",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "value_id",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "remote_id",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.fieldValues.update",
+      "shortPath": "fieldValues.update",
+      "description": "Update custom field values (up to 1000)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.legalEntities.get",
+      "shortPath": "legalEntities.get",
+      "description": "Get a legal entity by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.legalEntities.list",
+      "shortPath": "legalEntities.list",
+      "description": "List legal entities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.locations.create",
+      "shortPath": "locations.create",
+      "description": "Create a location",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.locations.get",
+      "shortPath": "locations.get",
+      "description": "Get a location by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.locations.list",
+      "shortPath": "locations.list",
+      "description": "List locations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.receipts.match",
+      "shortPath": "receipts.match",
+      "description": "Create a receipt-match upload URI",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receipt_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.receipts.upload",
+      "shortPath": "receipts.upload",
+      "description": "Create a receipt upload URI for a card expense",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expense_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "receipt_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.referrals.create",
+      "shortPath": "referrals.create",
+      "description": "Create a referral and application link",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.referrals.createDocument",
+      "shortPath": "referrals.createDocument",
+      "description": "Create a referral document upload URI",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.referrals.get",
+      "shortPath": "referrals.get",
+      "description": "Get a referral by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.referrals.list",
+      "shortPath": "referrals.list",
+      "description": "List active referrals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.spendLimits.archive",
+      "shortPath": "spendLimits.archive",
+      "description": "Archive a spend limit",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.spendLimits.create",
+      "shortPath": "spendLimits.create",
+      "description": "Create a spend limit",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expense_policy_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "authorization_settings",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.spendLimits.get",
+      "shortPath": "spendLimits.get",
+      "description": "Get a spend limit by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.spendLimits.list",
+      "shortPath": "spendLimits.list",
+      "description": "List spend limits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.spendLimits.update",
+      "shortPath": "spendLimits.update",
+      "description": "Update a spend limit",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.spendLimitsV1.create",
+      "shortPath": "spendLimitsV1.create",
+      "description": "Create a v1 spend limit (legacy /v1/budgets)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.spendLimitsV1.update",
+      "shortPath": "spendLimitsV1.update",
+      "description": "Update a v1 spend limit (legacy /v1/budgets)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.titles.create",
+      "shortPath": "titles.create",
+      "description": "Create a job title",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.titles.get",
+      "shortPath": "titles.get",
+      "description": "Get a job title by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.titles.list",
+      "shortPath": "titles.list",
+      "description": "List job titles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.transactions.byAmountRange",
+      "shortPath": "transactions.byAmountRange",
+      "description": "Filter settled card transactions by USD amount after official paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "max_amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "posted_at_start",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "posted_at_end",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.transactions.byDescription",
+      "shortPath": "transactions.byDescription",
+      "description": "Filter settled card transactions by description after official paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "posted_at_start",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "posted_at_end",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.transactions.getById",
+      "shortPath": "transactions.getById",
+      "description": "Find a settled card transaction by ID by paging official list results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.transactions.list",
+      "shortPath": "transactions.list",
+      "description": "List settled card transactions. Date filters are client-side after paging.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.transfers.list",
+      "shortPath": "transfers.list",
+      "description": "List transfers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.trips.list",
+      "shortPath": "trips.list",
+      "description": "List trips",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "starts_at_start",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "starts_at_end",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.users.create",
+      "shortPath": "users.create",
+      "description": "Invite a user as an employee",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a user by ID, or /me when id is \"me\"",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.users.getLimit",
+      "shortPath": "users.getLimit",
+      "description": "Get the monthly spend limit for a user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.users.getMe",
+      "shortPath": "users.getMe",
+      "description": "Get the user for the current access token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users in the Brex account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.users.setLimit",
+      "shortPath": "users.setLimit",
+      "description": "Set monthly_limit in cents, or null to remove it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "monthly_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update a user; omitted fields stay unchanged",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.vendors.create",
+      "shortPath": "vendors.create",
+      "description": "Create a vendor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.vendors.delete",
+      "shortPath": "vendors.delete",
+      "description": "Delete a vendor",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.vendors.get",
+      "shortPath": "vendors.get",
+      "description": "Get a vendor by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.vendors.list",
+      "shortPath": "vendors.list",
+      "description": "List vendors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.vendors.update",
+      "shortPath": "vendors.update",
+      "description": "Update a vendor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.webhookGroups.addMembers",
+      "shortPath": "webhookGroups.addMembers",
+      "description": "Add webhook subscriptions to a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_ids",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.webhookGroups.create",
+      "shortPath": "webhookGroups.create",
+      "description": "Create a webhook group (partners)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.webhookGroups.get",
+      "shortPath": "webhookGroups.get",
+      "description": "Get a webhook group (partners)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.webhookGroups.list",
+      "shortPath": "webhookGroups.list",
+      "description": "List webhook groups (partners)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.webhookGroups.listMembers",
+      "shortPath": "webhookGroups.listMembers",
+      "description": "List webhook group members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Register a webhook subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_types",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Get a webhook subscription",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhook subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number | boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.webhooks.listSecrets",
+      "shortPath": "webhooks.listSecrets",
+      "description": "List webhook signing secrets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "brex.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a webhook subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "brex.db.budgets.search",
+      "entityName": "budgets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.cards.search",
+      "entityName": "cards",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "card_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "card_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "limit_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.cashAccounts.search",
+      "entityName": "cashAccounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.company.search",
+      "entityName": "company",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "legal_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "account_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.departments.search",
+      "entityName": "departments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.expenses.search",
+      "entityName": "expenses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "memo",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "budget_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.fields.search",
+      "entityName": "fields",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "group",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "disabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.legalEntities.search",
+      "entityName": "legalEntities",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.locations.search",
+      "entityName": "locations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.referrals.search",
+      "entityName": "referrals",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "referral_signup_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.spendLimits.search",
+      "entityName": "spendLimits",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_budget_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.titles.search",
+      "entityName": "titles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.transactions.search",
+      "entityName": "transactions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "posted_at_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.transfers.search",
+      "entityName": "transfers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.trips.search",
+      "entityName": "trips",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.vendors.search",
+      "entityName": "vendors",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "company_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "brex.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

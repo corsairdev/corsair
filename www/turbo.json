@@ -1,0 +1,15 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "env": [
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "DATABASE_URL",
+        "RESEND_API_KEY",
+        "RESEND_FROM_EMAIL",
+        "CORSAIR_KEK"
+      ]
+    }
+  }
+}

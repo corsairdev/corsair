@@ -1,0 +1,679 @@
+---
+title: API
+description: "API reference for AltText.ai: every `alttextai.api.*` operation with input and output types."
+---
+
+Every `alttextai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Get AltText.ai account settings and usage
+
+**Risk:** `read`
+
+```ts
+await corsair.alttextai.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `webhook_url` | `string` | No | — |
+| `notification_email` | `string` | No | — |
+| `usage` | `number` | No | — |
+| `usage_limit` | `number` | No | — |
+| `whitelabel` | `boolean` | No | — |
+| `default_lang` | `string` | No | — |
+| `ending_period` | `boolean` | No | — |
+| `no_quotes` | `boolean` | No | — |
+| `remove_symbols` | `string[]` | No | — |
+| `gpt_prompt` | `string` | No | — |
+| `max_chars` | `number` | No | — |
+| `subscription` | `object` | No | — |
+| `errors` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="subscription full type">
+
+```ts
+{
+  plan_name?: string,
+  usage_quota?: number,
+  status?: string,
+  expires_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`account.update`
+
+Update AltText.ai account settings
+
+**Risk:** `write`
+
+```ts
+await corsair.alttextai.api.account.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  name?: string,
+  webhook_url?: string,
+  notification_email?: string,
+  max_chars?: number,
+  gpt_prompt?: string | null,
+  remove_symbols?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `webhook_url` | `string` | No | — |
+| `notification_email` | `string` | No | — |
+| `usage` | `number` | No | — |
+| `usage_limit` | `number` | No | — |
+| `whitelabel` | `boolean` | No | — |
+| `default_lang` | `string` | No | — |
+| `ending_period` | `boolean` | No | — |
+| `no_quotes` | `boolean` | No | — |
+| `remove_symbols` | `string[]` | No | — |
+| `gpt_prompt` | `string` | No | — |
+| `max_chars` | `number` | No | — |
+| `subscription` | `object` | No | — |
+| `errors` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="subscription full type">
+
+```ts
+{
+  plan_name?: string,
+  usage_quota?: number,
+  status?: string,
+  expires_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### bulkCreate
+
+`images.bulkCreate`
+
+Upload a CSV of image URLs for batch alt text generation
+
+**Risk:** `write`
+
+```ts
+await corsair.alttextai.api.images.bulkCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `custom` | Yes | CSV file with image URLs to process |
+| `email` | `string` | No | Optional email for bulk upload results |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `rows` | `number` | No | — |
+| `row_errors` | `tuple[]` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`images.create`
+
+Add an image and generate AI alt text from URL or base64 data
+
+**Risk:** `write`
+
+```ts
+await corsair.alttextai.api.images.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image` | `object` | Yes | — |
+| `async` | `boolean` | No | — |
+| `lang` | `string` | No | — |
+| `max_chars` | `number` | No | — |
+| `model_name` | `describe-detailed \| describe-regular \| describe-factual \| succinct-describe-factual \| describe-terse` | No | — |
+| `keywords` | `string[]` | No | — |
+| `negative_keywords` | `string[]` | No | — |
+| `keyword_source` | `string` | No | — |
+| `gpt_prompt` | `string` | No | — |
+| `overwrite` | `boolean` | No | — |
+| `timeout_secs` | `number` | No | — |
+| `webhook_url` | `string` | No | — |
+| `ecomm` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="image full type">
+
+```ts
+{
+  url?: string,
+  raw?: string,
+  asset_id?: string,
+  metadata?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="ecomm full type">
+
+```ts
+{
+  product?: string,
+  brand?: string,
+  color?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | No | — |
+| `url` | `string` | No | — |
+| `alt_text` | `string` | No | — |
+| `alt_texts` | `object` | No | — |
+| `tags` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+| `created_at` | `number` | No | — |
+| `credits_used` | `number` | No | — |
+| `errors` | `object` | No | — |
+| `error_code` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="alt_texts full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`images.delete`
+
+Delete an image from the AltText.ai library
+
+**Risk:** `destructive`
+
+```ts
+await corsair.alttextai.api.images.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assetId` | `string` | Yes | Asset ID of the image to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | No | — |
+| `url` | `string` | No | — |
+| `alt_text` | `string` | No | — |
+| `alt_texts` | `object` | No | — |
+| `tags` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+| `created_at` | `number` | No | — |
+| `credits_used` | `number` | No | — |
+| `errors` | `object` | No | — |
+| `error_code` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="alt_texts full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`images.get`
+
+Retrieve image metadata and alt text by asset ID
+
+**Risk:** `read`
+
+```ts
+await corsair.alttextai.api.images.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assetId` | `string` | Yes | Asset ID of the image |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | No | — |
+| `url` | `string` | No | — |
+| `alt_text` | `string` | No | — |
+| `alt_texts` | `object` | No | — |
+| `tags` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+| `created_at` | `number` | No | — |
+| `credits_used` | `number` | No | — |
+| `errors` | `object` | No | — |
+| `error_code` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="alt_texts full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`images.list`
+
+List images in the AltText.ai library with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.alttextai.api.images.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number (starts at 1) |
+| `limit` | `number` | No | Results per page (max 100) |
+| `url` | `string` | No | Exact image URL filter (no wildcards) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  asset_id?: string,
+  url?: string,
+  alt_text?: string | null,
+  alt_texts?: {
+  },
+  tags?: string[],
+  metadata?: {
+  },
+  created_at?: number,
+  credits_used?: number,
+  errors?: {
+  },
+  error_code?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pageScrape
+
+`images.pageScrape`
+
+Scrape a web page and queue alt text for all images found
+
+**Risk:** `write`
+
+```ts
+await corsair.alttextai.api.images.pageScrape({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_scrape` | `object` | Yes | — |
+| `keywords` | `string[]` | No | — |
+| `negative_keywords` | `string[]` | No | — |
+| `lang` | `string` | No | — |
+| `include_existing` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="page_scrape full type">
+
+```ts
+{
+  url?: string,
+  html?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `total_processed` | `number` | No | — |
+| `errors` | `any` | No | — |
+| `scraped_images` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="scraped_images full type">
+
+```ts
+{
+  src?: string,
+  alt?: string | null,
+  width?: number | null,
+  height?: number | null,
+  skip_reason?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`images.search`
+
+Search images by alt text, asset ID, or URL substring
+
+**Risk:** `read`
+
+```ts
+await corsair.alttextai.api.images.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Search query (alt text, asset ID, or URL substring) |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  asset_id?: string,
+  url?: string,
+  alt_text?: string | null,
+  alt_texts?: {
+  },
+  tags?: string[],
+  metadata?: {
+  },
+  created_at?: number,
+  credits_used?: number,
+  errors?: {
+  },
+  error_code?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`images.update`
+
+Update alt text or metadata for an existing image
+
+**Risk:** `write`
+
+```ts
+await corsair.alttextai.api.images.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assetId` | `string` | Yes | Asset ID of the image to update |
+| `lang` | `string` | No | Language code(s), comma-separated |
+| `overwrite` | `boolean` | No | — |
+| `image` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="image full type">
+
+```ts
+{
+  alt_text?: string,
+  asset_id?: string,
+  metadata?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_id` | `string` | No | — |
+| `url` | `string` | No | — |
+| `alt_text` | `string` | No | — |
+| `alt_texts` | `object` | No | — |
+| `tags` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+| `created_at` | `number` | No | — |
+| `credits_used` | `number` | No | — |
+| `errors` | `object` | No | — |
+| `error_code` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="alt_texts full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

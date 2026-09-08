@@ -201,7 +201,7 @@ export function verifyHubSpotWebhookSignature(
 	webhookSecret?: string,
 ): { valid: boolean; error?: string } {
 	if (!webhookSecret) {
-		return { valid: false };
+		return { valid: false, error: 'Missing webhook secret' };
 	}
 
 	const rawBody = request.rawBody;

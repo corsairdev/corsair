@@ -1,0 +1,425 @@
+---
+title: Database
+description: "BigMailer local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The BigMailer plugin syncs data locally. Use `corsair.bigmailer.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Brand Properties
+
+Path: `bigmailer.db.brandProperties.search`
+
+```ts
+const rows = await corsair.bigmailer.db.brandProperties.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `merge_tag_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_html` | `boolean` | equals |
+| `string_value` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Brands
+
+Path: `bigmailer.db.brands.search`
+
+```ts
+const rows = await corsair.bigmailer.db.brands.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `from_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `from_email` | `string` | equals, contains, startsWith, endsWith, in |
+| `filter_soft_bounces` | `boolean` | equals |
+| `max_soft_bounces` | `number` | equals, gt, gte, lt, lte, in |
+| `bounce_danger_percent` | `number` | equals, gt, gte, lt, lte, in |
+| `unsubscribe_text` | `string` | equals, contains, startsWith, endsWith, in |
+| `connection_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `contact_limit` | `number` | equals, gt, gte, lt, lte, in |
+| `num_contacts` | `number` | equals, gt, gte, lt, lte, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Bulk Campaigns
+
+Path: `bigmailer.db.bulkCampaigns.search`
+
+```ts
+const rows = await corsair.bigmailer.db.bulkCampaigns.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `recipient_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `html` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `preview` | `string` | equals, contains, startsWith, endsWith, in |
+| `auto_text` | `boolean` | equals |
+| `link_params` | `string` | equals, contains, startsWith, endsWith, in |
+| `track_opens` | `boolean` | equals |
+| `track_clicks` | `boolean` | equals |
+| `track_text_clicks` | `boolean` | equals |
+| `segment_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `message_type_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `suppression_list_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `scheduled_for` | `number` | equals, gt, gte, lt, lte, in |
+| `throttling_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `throttling_amount` | `number` | equals, gt, gte, lt, lte, in |
+| `throttling_period` | `number` | equals, gt, gte, lt, lte, in |
+| `num_sent` | `number` | equals, gt, gte, lt, lte, in |
+| `num_rejected` | `number` | equals, gt, gte, lt, lte, in |
+| `num_clicks` | `number` | equals, gt, gte, lt, lte, in |
+| `num_total_clicks` | `number` | equals, gt, gte, lt, lte, in |
+| `num_opens` | `number` | equals, gt, gte, lt, lte, in |
+| `num_total_opens` | `number` | equals, gt, gte, lt, lte, in |
+| `num_hard_bounces` | `number` | equals, gt, gte, lt, lte, in |
+| `num_soft_bounces` | `number` | equals, gt, gte, lt, lte, in |
+| `num_complaints` | `number` | equals, gt, gte, lt, lte, in |
+| `num_unsubscribes` | `number` | equals, gt, gte, lt, lte, in |
+| `started` | `number` | equals, gt, gte, lt, lte, in |
+| `sent` | `number` | equals, gt, gte, lt, lte, in |
+| `delayed_until` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Connections
+
+Path: `bigmailer.db.connections.search`
+
+```ts
+const rows = await corsair.bigmailer.db.connections.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Contacts
+
+Path: `bigmailer.db.contacts.search`
+
+```ts
+const rows = await corsair.bigmailer.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `brand_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `unsubscribe_all` | `boolean` | equals |
+| `num_soft_bounces` | `number` | equals, gt, gte, lt, lte, in |
+| `num_hard_bounces` | `number` | equals, gt, gte, lt, lte, in |
+| `num_complaints` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Fields
+
+Path: `bigmailer.db.fields.search`
+
+```ts
+const rows = await corsair.bigmailer.db.fields.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `merge_tag_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `sample_value` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Lists
+
+Path: `bigmailer.db.lists.search`
+
+```ts
+const rows = await corsair.bigmailer.db.lists.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `all` | `boolean` | equals |
+| `num_contacts` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Message Types
+
+Path: `bigmailer.db.messageTypes.search`
+
+```ts
+const rows = await corsair.bigmailer.db.messageTypes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Segments
+
+Path: `bigmailer.db.segments.search`
+
+```ts
+const rows = await corsair.bigmailer.db.segments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `operator` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Senders
+
+Path: `bigmailer.db.senders.search`
+
+```ts
+const rows = await corsair.bigmailer.db.senders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `identity_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `Identity` | `string` | equals, contains, startsWith, endsWith, in |
+| `BounceDomain` | `string` | equals, contains, startsWith, endsWith, in |
+| `share_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `verified` | `boolean` | equals |
+| `bounce_verified` | `boolean` | equals |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Suppression Lists
+
+Path: `bigmailer.db.suppressionLists.search`
+
+```ts
+const rows = await corsair.bigmailer.db.suppressionLists.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `file_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `file_size` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Templates
+
+Path: `bigmailer.db.templates.search`
+
+```ts
+const rows = await corsair.bigmailer.db.templates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared_with_account` | `boolean` | equals |
+| `html` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Transactional Campaigns
+
+Path: `bigmailer.db.transactionalCampaigns.search`
+
+```ts
+const rows = await corsair.bigmailer.db.transactionalCampaigns.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `recipient_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `html` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `preview` | `string` | equals, contains, startsWith, endsWith, in |
+| `auto_text` | `boolean` | equals |
+| `link_params` | `string` | equals, contains, startsWith, endsWith, in |
+| `track_opens` | `boolean` | equals |
+| `track_clicks` | `boolean` | equals |
+| `track_text_clicks` | `boolean` | equals |
+| `message_type_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `list_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `num_sent` | `number` | equals, gt, gte, lt, lte, in |
+| `num_rejected` | `number` | equals, gt, gte, lt, lte, in |
+| `num_clicks` | `number` | equals, gt, gte, lt, lte, in |
+| `num_opens` | `number` | equals, gt, gte, lt, lte, in |
+| `num_hard_bounces` | `number` | equals, gt, gte, lt, lte, in |
+| `num_soft_bounces` | `number` | equals, gt, gte, lt, lte, in |
+| `num_complaints` | `number` | equals, gt, gte, lt, lte, in |
+| `num_unsubscribes` | `number` | equals, gt, gte, lt, lte, in |
+| `started` | `number` | equals, gt, gte, lt, lte, in |
+| `sent` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

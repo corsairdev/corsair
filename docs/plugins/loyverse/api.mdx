@@ -1,0 +1,3472 @@
+---
+title: API
+description: "API reference for Loyverse: every `loyverse.api.*` operation with input and output types."
+---
+
+Every `loyverse.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Categories
+
+### delete
+
+`categories.delete`
+
+Delete a category
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loyverse.api.categories.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted_object_ids` | `string[]` | No | — |
+
+
+
+---
+
+### get
+
+`categories.get`
+
+Get a single category
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.categories.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`categories.list`
+
+List categories
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.categories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `show_deleted` | `boolean` | No | — |
+| `created_at_min` | `string` | No | — |
+| `created_at_max` | `string` | No | — |
+| `updated_at_min` | `string` | No | — |
+| `updated_at_max` | `string` | No | — |
+| `categories_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  color?: string | null,
+  created_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`categories.upsert`
+
+Create or update a category
+
+**Risk:** `write`
+
+```ts
+await corsair.loyverse.api.categories.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+## Customers
+
+### delete
+
+`customers.delete`
+
+Delete a customer permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loyverse.api.customers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted_object_ids` | `string[]` | No | — |
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Get a single customer
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.customers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `address` | `string` | No | — |
+| `city` | `string` | No | — |
+| `region` | `string` | No | — |
+| `postal_code` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `customer_code` | `string` | No | — |
+| `note` | `string` | No | — |
+| `first_visit` | `string` | No | — |
+| `last_visit` | `string` | No | — |
+| `total_visits` | `number` | No | — |
+| `total_spent` | `number` | No | — |
+| `total_points` | `number` | No | — |
+| `permanent_deletion_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.customers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `show_deleted` | `boolean` | No | — |
+| `created_at_min` | `string` | No | — |
+| `created_at_max` | `string` | No | — |
+| `updated_at_min` | `string` | No | — |
+| `updated_at_max` | `string` | No | — |
+| `customer_ids` | `string[]` | No | — |
+| `email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customers` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="customers full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  email?: string | null,
+  phone_number?: string | null,
+  address?: string | null,
+  city?: string | null,
+  region?: string | null,
+  postal_code?: string | null,
+  country_code?: string | null,
+  customer_code?: string | null,
+  note?: string | null,
+  first_visit?: string | null,
+  last_visit?: string | null,
+  total_visits?: number | null,
+  total_spent?: number | null,
+  total_points?: number | null,
+  permanent_deletion_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`customers.upsert`
+
+Create or update a customer
+
+**Risk:** `write`
+
+```ts
+await corsair.loyverse.api.customers.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `address` | `string` | No | — |
+| `city` | `string` | No | — |
+| `region` | `string` | No | — |
+| `postal_code` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `customer_code` | `string` | No | — |
+| `note` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `address` | `string` | No | — |
+| `city` | `string` | No | — |
+| `region` | `string` | No | — |
+| `postal_code` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `customer_code` | `string` | No | — |
+| `note` | `string` | No | — |
+| `first_visit` | `string` | No | — |
+| `last_visit` | `string` | No | — |
+| `total_visits` | `number` | No | — |
+| `total_spent` | `number` | No | — |
+| `total_points` | `number` | No | — |
+| `permanent_deletion_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+## Discounts
+
+### delete
+
+`discounts.delete`
+
+Delete a discount
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loyverse.api.discounts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discount_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted_object_ids` | `string[]` | No | — |
+
+
+
+---
+
+### get
+
+`discounts.get`
+
+Get a single discount
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.discounts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discount_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `name` | `string` | No | — |
+| `discount_amount` | `number` | No | — |
+| `discount_percent` | `number` | No | — |
+| `stores` | `string[]` | No | — |
+| `restricted_access` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`discounts.list`
+
+List discounts
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.discounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discounts` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="discounts full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  name?: string | null,
+  discount_amount?: number | null,
+  discount_percent?: number | null,
+  stores?: string[] | null,
+  restricted_access?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFiltered
+
+`discounts.listFiltered`
+
+List discounts filtered by id, timestamp range or deleted status
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.discounts.listFiltered({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `show_deleted` | `boolean` | No | — |
+| `created_at_min` | `string` | No | — |
+| `created_at_max` | `string` | No | — |
+| `updated_at_min` | `string` | No | — |
+| `updated_at_max` | `string` | No | — |
+| `discount_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discounts` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="discounts full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  name?: string | null,
+  discount_amount?: number | null,
+  discount_percent?: number | null,
+  stores?: string[] | null,
+  restricted_access?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`discounts.upsert`
+
+Create or update a discount
+
+**Risk:** `write`
+
+```ts
+await corsair.loyverse.api.discounts.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `type` | `FIXED_PERCENT \| FIXED_AMOUNT \| VARIABLE_PERCENT \| VARIABLE_AMOUNT \| DISCOUNT_BY_POINTS` | Yes | — |
+| `discount_amount` | `number` | No | — |
+| `discount_percent` | `number` | No | — |
+| `stores` | `string[]` | No | — |
+| `restricted_access` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `name` | `string` | No | — |
+| `discount_amount` | `number` | No | — |
+| `discount_percent` | `number` | No | — |
+| `stores` | `string[]` | No | — |
+| `restricted_access` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+## Employees
+
+### get
+
+`employees.get`
+
+Get a single employee
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.employees.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employee_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `stores` | `string[]` | No | — |
+| `is_owner` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`employees.list`
+
+List employees
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.employees.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `show_deleted` | `boolean` | No | — |
+| `created_at_min` | `string` | No | — |
+| `created_at_max` | `string` | No | — |
+| `updated_at_min` | `string` | No | — |
+| `updated_at_max` | `string` | No | — |
+| `employee_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employees` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="employees full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  email?: string | null,
+  phone_number?: string | null,
+  stores?: string[] | null,
+  is_owner?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Inventory
+
+### list
+
+`inventory.list`
+
+List inventory levels
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.inventory.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `store_ids` | `string[]` | No | — |
+| `variant_ids` | `string[]` | No | — |
+| `updated_at_min` | `string` | No | — |
+| `updated_at_max` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventory_levels` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="inventory_levels full type">
+
+```ts
+{
+  variant_id?: string | null,
+  store_id?: string | null,
+  in_stock?: number | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`inventory.update`
+
+Set inventory levels for item variants
+
+**Risk:** `write`
+
+```ts
+await corsair.loyverse.api.inventory.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventory_levels` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="inventory_levels full type">
+
+```ts
+{
+  variant_id: string,
+  store_id: string,
+  stock_after: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventory_levels` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="inventory_levels full type">
+
+```ts
+{
+  variant_id?: string | null,
+  store_id?: string | null,
+  in_stock?: number | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Items
+
+### delete
+
+`items.delete`
+
+Delete an item
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loyverse.api.items.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted_object_ids` | `string[]` | No | — |
+
+
+
+---
+
+### deleteImage
+
+`items.deleteImage`
+
+Delete an item's image
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loyverse.api.items.deleteImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `item_id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`items.get`
+
+Get a single item
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.items.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | No | — |
+| `item_name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `reference_id` | `string` | No | — |
+| `category_id` | `string` | No | — |
+| `track_stock` | `boolean` | No | — |
+| `sold_by_weight` | `boolean` | No | — |
+| `is_composite` | `boolean` | No | — |
+| `use_production` | `boolean` | No | — |
+| `components` | `object[]` | No | — |
+| `primary_supplier_id` | `string` | No | — |
+| `tax_ids` | `string[]` | No | — |
+| `modifier_ids` | `string[]` | No | — |
+| `form` | `string` | No | — |
+| `color` | `string` | No | — |
+| `image_url` | `string` | No | — |
+| `option1_name` | `string` | No | — |
+| `option2_name` | `string` | No | — |
+| `option3_name` | `string` | No | — |
+| `variants` | `object[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="components full type">
+
+```ts
+{
+  variant_id?: string | null,
+  quantity?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="variants full type">
+
+```ts
+{
+  variant_id: string,
+  item_id?: string | null,
+  sku?: string | null,
+  reference_variant_id?: string | null,
+  option1_value?: string | null,
+  option2_value?: string | null,
+  option3_value?: string | null,
+  barcode?: string | null,
+  cost?: number | null,
+  purchase_cost?: number | null,
+  default_pricing_type?: string | null,
+  default_price?: number | null,
+  stores?: {
+    store_id?: string | null,
+    pricing_type?: string | null,
+    price?: number | null,
+    available_for_sale?: boolean | null,
+    optimal_stock?: number | null,
+    low_stock?: number | null
+  }[] | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`items.list`
+
+List items
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.items.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `show_deleted` | `boolean` | No | — |
+| `created_at_min` | `string` | No | — |
+| `created_at_max` | `string` | No | — |
+| `updated_at_min` | `string` | No | — |
+| `updated_at_max` | `string` | No | — |
+| `items_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  handle?: string | null,
+  item_name?: string | null,
+  description?: string | null,
+  reference_id?: string | null,
+  category_id?: string | null,
+  track_stock?: boolean | null,
+  sold_by_weight?: boolean | null,
+  is_composite?: boolean | null,
+  use_production?: boolean | null,
+  components?: {
+    variant_id?: string | null,
+    quantity?: number | null
+  }[] | null,
+  primary_supplier_id?: string | null,
+  tax_ids?: string[] | null,
+  modifier_ids?: string[] | null,
+  form?: string | null,
+  color?: string | null,
+  image_url?: string | null,
+  option1_name?: string | null,
+  option2_name?: string | null,
+  option3_name?: string | null,
+  variants?: {
+    variant_id: string,
+    item_id?: string | null,
+    sku?: string | null,
+    reference_variant_id?: string | null,
+    option1_value?: string | null,
+    option2_value?: string | null,
+    option3_value?: string | null,
+    barcode?: string | null,
+    cost?: number | null,
+    purchase_cost?: number | null,
+    default_pricing_type?: string | null,
+    default_price?: number | null,
+    stores?: {
+      store_id?: string | null,
+      pricing_type?: string | null,
+      price?: number | null,
+      available_for_sale?: boolean | null,
+      optimal_stock?: number | null,
+      low_stock?: number | null
+    }[] | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    deleted_at?: string | null
+  }[] | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadImage
+
+`items.uploadImage`
+
+Upload an item's image
+
+**Risk:** `write`
+
+```ts
+await corsair.loyverse.api.items.uploadImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `string` | Yes | — |
+| `image_base64` | `string` | Yes | — |
+| `media_type` | `image/png \| image/jpeg` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `item_id` | `string` | Yes | — |
+
+
+
+---
+
+### upsert
+
+`items.upsert`
+
+Create or update an item
+
+**Risk:** `write`
+
+```ts
+await corsair.loyverse.api.items.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `item_name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `reference_id` | `string` | No | — |
+| `category_id` | `string` | No | — |
+| `track_stock` | `boolean` | No | — |
+| `sold_by_weight` | `boolean` | No | — |
+| `is_composite` | `boolean` | No | — |
+| `use_production` | `boolean` | No | — |
+| `components` | `object[]` | No | — |
+| `primary_supplier_id` | `string` | No | — |
+| `tax_ids` | `string[]` | No | — |
+| `modifier_ids` | `string[]` | No | — |
+| `form` | `SQUARE \| CIRCLE \| SUN \| OCTAGON` | No | — |
+| `color` | `GREY \| RED \| PINK \| ORANGE \| YELLOW \| GREEN \| BLUE \| PURPLE` | No | — |
+| `option1_name` | `string` | No | — |
+| `option2_name` | `string` | No | — |
+| `option3_name` | `string` | No | — |
+| `variants` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="components full type">
+
+```ts
+{
+  variant_id: string,
+  quantity: number
+}[]
+```
+</Accordion>
+
+<Accordion title="variants full type">
+
+```ts
+{
+  variant_id?: string,
+  sku?: string,
+  reference_variant_id?: string | null,
+  option1_value?: string | null,
+  option2_value?: string | null,
+  option3_value?: string | null,
+  barcode?: string | null,
+  cost?: number,
+  purchase_cost?: number | null,
+  default_pricing_type?: FIXED | VARIABLE,
+  default_price?: number | null,
+  stores?: {
+    store_id: string,
+    pricing_type?: FIXED | VARIABLE,
+    price?: number,
+    available_for_sale?: boolean,
+    optimal_stock?: number | null,
+    low_stock?: number | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `handle` | `string` | No | — |
+| `item_name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `reference_id` | `string` | No | — |
+| `category_id` | `string` | No | — |
+| `track_stock` | `boolean` | No | — |
+| `sold_by_weight` | `boolean` | No | — |
+| `is_composite` | `boolean` | No | — |
+| `use_production` | `boolean` | No | — |
+| `components` | `object[]` | No | — |
+| `primary_supplier_id` | `string` | No | — |
+| `tax_ids` | `string[]` | No | — |
+| `modifier_ids` | `string[]` | No | — |
+| `form` | `string` | No | — |
+| `color` | `string` | No | — |
+| `image_url` | `string` | No | — |
+| `option1_name` | `string` | No | — |
+| `option2_name` | `string` | No | — |
+| `option3_name` | `string` | No | — |
+| `variants` | `object[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="components full type">
+
+```ts
+{
+  variant_id?: string | null,
+  quantity?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="variants full type">
+
+```ts
+{
+  variant_id: string,
+  item_id?: string | null,
+  sku?: string | null,
+  reference_variant_id?: string | null,
+  option1_value?: string | null,
+  option2_value?: string | null,
+  option3_value?: string | null,
+  barcode?: string | null,
+  cost?: number | null,
+  purchase_cost?: number | null,
+  default_pricing_type?: string | null,
+  default_price?: number | null,
+  stores?: {
+    store_id?: string | null,
+    pricing_type?: string | null,
+    price?: number | null,
+    available_for_sale?: boolean | null,
+    optimal_stock?: number | null,
+    low_stock?: number | null
+  }[] | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Merchant
+
+### get
+
+`merchant.get`
+
+Get merchant information
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.merchant.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `business_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `country` | `string` | No | — |
+| `currency` | `object` | No | — |
+| `created_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="currency full type">
+
+```ts
+{
+  code?: string | null,
+  decimal_places?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Modifiers
+
+### delete
+
+`modifiers.delete`
+
+Delete a modifier
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loyverse.api.modifiers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modifier_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted_object_ids` | `string[]` | No | — |
+
+
+
+---
+
+### get
+
+`modifiers.get`
+
+Get a single modifier
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.modifiers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modifier_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `position` | `number` | No | — |
+| `stores` | `string[]` | No | — |
+| `modifier_options` | `object[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="modifier_options full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  price?: number | null,
+  position?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`modifiers.list`
+
+List modifiers
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.modifiers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `show_deleted` | `boolean` | No | — |
+| `created_at_min` | `string` | No | — |
+| `created_at_max` | `string` | No | — |
+| `updated_at_min` | `string` | No | — |
+| `updated_at_max` | `string` | No | — |
+| `modifier_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modifiers` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="modifiers full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  position?: number | null,
+  stores?: string[] | null,
+  modifier_options?: {
+    id?: string | null,
+    name?: string | null,
+    price?: number | null,
+    position?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    deleted_at?: string | null
+  }[] | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`modifiers.upsert`
+
+Create or update a modifier
+
+**Risk:** `write`
+
+```ts
+await corsair.loyverse.api.modifiers.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `position` | `number` | No | — |
+| `stores` | `string[]` | No | — |
+| `modifier_options` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="modifier_options full type">
+
+```ts
+{
+  id?: string,
+  name: string,
+  price?: number,
+  position?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `position` | `number` | No | — |
+| `stores` | `string[]` | No | — |
+| `modifier_options` | `object[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="modifier_options full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  price?: number | null,
+  position?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Oidc
+
+### discovery
+
+`oidc.discovery`
+
+Get the OpenID Connect discovery document
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.oidc.discovery({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issuer` | `string` | No | — |
+| `authorization_endpoint` | `string` | No | — |
+| `token_endpoint` | `string` | No | — |
+| `userinfo_endpoint` | `string` | No | — |
+| `jwks_uri` | `string` | No | — |
+| `scopes_supported` | `string[]` | No | — |
+| `response_types_supported` | `string[]` | No | — |
+
+
+
+---
+
+### jwks
+
+`oidc.jwks`
+
+Get the JSON Web Key Set
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.oidc.jwks({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keys` | `any[]` | Yes | — |
+
+
+
+---
+
+## Payment Types
+
+### get
+
+`paymentTypes.get`
+
+Get a single payment type
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.paymentTypes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payment_type_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `stores` | `string[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`paymentTypes.list`
+
+List payment types
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.paymentTypes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `show_deleted` | `boolean` | No | — |
+| `created_at_min` | `string` | No | — |
+| `created_at_max` | `string` | No | — |
+| `updated_at_min` | `string` | No | — |
+| `updated_at_max` | `string` | No | — |
+| `payment_type_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `payment_types` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payment_types full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  stores?: string[] | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pos Devices
+
+### delete
+
+`posDevices.delete`
+
+Delete a POS device
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loyverse.api.posDevices.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pos_device_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted_object_ids` | `string[]` | No | — |
+
+
+
+---
+
+### get
+
+`posDevices.get`
+
+Get a single POS device
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.posDevices.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pos_device_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `store_id` | `string` | No | — |
+| `activated` | `boolean` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`posDevices.list`
+
+List POS devices
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.posDevices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `show_deleted` | `boolean` | No | — |
+| `created_at_min` | `string` | No | — |
+| `created_at_max` | `string` | No | — |
+| `updated_at_min` | `string` | No | — |
+| `updated_at_max` | `string` | No | — |
+| `store_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pos_devices` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="pos_devices full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  store_id?: string | null,
+  activated?: boolean | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`posDevices.upsert`
+
+Create or update a POS device
+
+**Risk:** `write`
+
+```ts
+await corsair.loyverse.api.posDevices.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `store_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `store_id` | `string` | No | — |
+| `activated` | `boolean` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+## Receipts
+
+### create
+
+`receipts.create`
+
+Record a sale, which cannot be withdrawn once created
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loyverse.api.receipts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `store_id` | `string` | Yes | — |
+| `employee_id` | `string` | No | — |
+| `customer_id` | `string` | No | — |
+| `order` | `string` | No | — |
+| `source` | `string` | No | — |
+| `receipt_date` | `string` | No | — |
+| `note` | `string` | No | — |
+| `dining_option` | `string` | No | — |
+| `total_discounts` | `object[]` | No | — |
+| `line_items` | `object[]` | Yes | — |
+| `payments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="total_discounts full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: string,
+  variant_id: string,
+  quantity: number,
+  price?: number,
+  cost?: number,
+  line_note?: string,
+  line_taxes?: {
+    id: string
+  }[],
+  line_discounts?: {
+    id: string
+  }[],
+  line_modifiers?: {
+    modifier_option_id: string,
+    price?: number
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="payments full type">
+
+```ts
+{
+  payment_type_id: string,
+  money_amount: number,
+  paid_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_number` | `string` | No | — |
+| `receipt_type` | `string` | No | — |
+| `refund_for` | `string` | No | — |
+| `order` | `string` | No | — |
+| `note` | `string` | No | — |
+| `receipt_date` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `cancelled_at` | `string` | No | — |
+| `source` | `string` | No | — |
+| `total_money` | `number` | No | — |
+| `total_tax` | `number` | No | — |
+| `total_discount` | `number` | No | — |
+| `points_earned` | `number` | No | — |
+| `points_deducted` | `number` | No | — |
+| `points_balance` | `number` | No | — |
+| `tip` | `number` | No | — |
+| `surcharge` | `number` | No | — |
+| `customer_id` | `string` | No | — |
+| `employee_id` | `string` | No | — |
+| `store_id` | `string` | No | — |
+| `pos_device_id` | `string` | No | — |
+| `dining_option` | `string` | No | — |
+| `total_discounts` | `object[]` | No | — |
+| `total_taxes` | `object[]` | No | — |
+| `line_items` | `object[]` | No | — |
+| `payments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="total_discounts full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  percentage?: number | null,
+  rate?: number | null,
+  money_amount?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="total_taxes full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  percentage?: number | null,
+  rate?: number | null,
+  money_amount?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: string | null,
+  item_id?: string | null,
+  variant_id?: string | null,
+  item_name?: string | null,
+  variant_name?: string | null,
+  sku?: string | null,
+  quantity?: number | null,
+  price?: number | null,
+  gross_total_money?: number | null,
+  total_money?: number | null,
+  cost?: number | null,
+  cost_total?: number | null,
+  line_note?: string | null,
+  total_discount?: number | null,
+  line_taxes?: {
+    id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    rate?: number | null,
+    money_amount?: number | null
+  }[] | null,
+  line_discounts?: {
+    id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    percentage?: number | null,
+    money_amount?: number | null
+  }[] | null,
+  line_modifiers?: {
+    id?: string | null,
+    modifier_option_id?: string | null,
+    name?: string | null,
+    option?: string | null,
+    price?: number | null,
+    money_amount?: number | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="payments full type">
+
+```ts
+{
+  payment_type_id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  money_amount?: number | null,
+  paid_at?: string | null,
+  payment_details?: {
+    authorization_code?: string | null,
+    reference_id?: string | null,
+    entry_method?: string | null,
+    card_company?: string | null,
+    card_number?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`receipts.get`
+
+Get a single receipt
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.receipts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_number` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_number` | `string` | No | — |
+| `receipt_type` | `string` | No | — |
+| `refund_for` | `string` | No | — |
+| `order` | `string` | No | — |
+| `note` | `string` | No | — |
+| `receipt_date` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `cancelled_at` | `string` | No | — |
+| `source` | `string` | No | — |
+| `total_money` | `number` | No | — |
+| `total_tax` | `number` | No | — |
+| `total_discount` | `number` | No | — |
+| `points_earned` | `number` | No | — |
+| `points_deducted` | `number` | No | — |
+| `points_balance` | `number` | No | — |
+| `tip` | `number` | No | — |
+| `surcharge` | `number` | No | — |
+| `customer_id` | `string` | No | — |
+| `employee_id` | `string` | No | — |
+| `store_id` | `string` | No | — |
+| `pos_device_id` | `string` | No | — |
+| `dining_option` | `string` | No | — |
+| `total_discounts` | `object[]` | No | — |
+| `total_taxes` | `object[]` | No | — |
+| `line_items` | `object[]` | No | — |
+| `payments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="total_discounts full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  percentage?: number | null,
+  rate?: number | null,
+  money_amount?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="total_taxes full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  percentage?: number | null,
+  rate?: number | null,
+  money_amount?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: string | null,
+  item_id?: string | null,
+  variant_id?: string | null,
+  item_name?: string | null,
+  variant_name?: string | null,
+  sku?: string | null,
+  quantity?: number | null,
+  price?: number | null,
+  gross_total_money?: number | null,
+  total_money?: number | null,
+  cost?: number | null,
+  cost_total?: number | null,
+  line_note?: string | null,
+  total_discount?: number | null,
+  line_taxes?: {
+    id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    rate?: number | null,
+    money_amount?: number | null
+  }[] | null,
+  line_discounts?: {
+    id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    percentage?: number | null,
+    money_amount?: number | null
+  }[] | null,
+  line_modifiers?: {
+    id?: string | null,
+    modifier_option_id?: string | null,
+    name?: string | null,
+    option?: string | null,
+    price?: number | null,
+    money_amount?: number | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="payments full type">
+
+```ts
+{
+  payment_type_id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  money_amount?: number | null,
+  paid_at?: string | null,
+  payment_details?: {
+    authorization_code?: string | null,
+    reference_id?: string | null,
+    entry_method?: string | null,
+    card_company?: string | null,
+    card_number?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`receipts.list`
+
+List receipts
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.receipts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `receipt_numbers` | `string[]` | No | — |
+| `since_receipt_number` | `string` | No | — |
+| `before_receipt_number` | `string` | No | — |
+| `store_id` | `string` | No | — |
+| `order` | `string` | No | — |
+| `source` | `string` | No | — |
+| `created_at_min` | `string` | No | — |
+| `created_at_max` | `string` | No | — |
+| `updated_at_min` | `string` | No | — |
+| `updated_at_max` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipts` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="receipts full type">
+
+```ts
+{
+  receipt_number?: string | null,
+  receipt_type?: string | null,
+  refund_for?: string | null,
+  order?: string | null,
+  note?: string | null,
+  receipt_date?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  cancelled_at?: string | null,
+  source?: string | null,
+  total_money?: number | null,
+  total_tax?: number | null,
+  total_discount?: number | null,
+  points_earned?: number | null,
+  points_deducted?: number | null,
+  points_balance?: number | null,
+  tip?: number | null,
+  surcharge?: number | null,
+  customer_id?: string | null,
+  employee_id?: string | null,
+  store_id?: string | null,
+  pos_device_id?: string | null,
+  dining_option?: string | null,
+  total_discounts?: {
+    id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    percentage?: number | null,
+    rate?: number | null,
+    money_amount?: number | null
+  }[] | null,
+  total_taxes?: {
+    id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    percentage?: number | null,
+    rate?: number | null,
+    money_amount?: number | null
+  }[] | null,
+  line_items?: {
+    id?: string | null,
+    item_id?: string | null,
+    variant_id?: string | null,
+    item_name?: string | null,
+    variant_name?: string | null,
+    sku?: string | null,
+    quantity?: number | null,
+    price?: number | null,
+    gross_total_money?: number | null,
+    total_money?: number | null,
+    cost?: number | null,
+    cost_total?: number | null,
+    line_note?: string | null,
+    total_discount?: number | null,
+    line_taxes?: {
+      id?: string | null,
+      name?: string | null,
+      type?: string | null,
+      rate?: number | null,
+      money_amount?: number | null
+    }[] | null,
+    line_discounts?: {
+      id?: string | null,
+      name?: string | null,
+      type?: string | null,
+      percentage?: number | null,
+      money_amount?: number | null
+    }[] | null,
+    line_modifiers?: {
+      id?: string | null,
+      modifier_option_id?: string | null,
+      name?: string | null,
+      option?: string | null,
+      price?: number | null,
+      money_amount?: number | null
+    }[] | null
+  }[] | null,
+  payments?: {
+    payment_type_id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    money_amount?: number | null,
+    paid_at?: string | null,
+    payment_details?: {
+      authorization_code?: string | null,
+      reference_id?: string | null,
+      entry_method?: string | null,
+      card_company?: string | null,
+      card_number?: string | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### refund
+
+`receipts.refund`
+
+Refund a receipt, which returns money to the customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loyverse.api.receipts.refund({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_number` | `string` | Yes | — |
+| `store_id` | `string` | Yes | — |
+| `employee_id` | `string` | No | — |
+| `note` | `string` | No | — |
+| `line_items` | `object[]` | Yes | — |
+| `payments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  id: string,
+  variant_id?: string,
+  quantity: number,
+  price?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="payments full type">
+
+```ts
+{
+  payment_type_id: string,
+  money_amount: number,
+  paid_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_number` | `string` | No | — |
+| `receipt_type` | `string` | No | — |
+| `refund_for` | `string` | No | — |
+| `order` | `string` | No | — |
+| `note` | `string` | No | — |
+| `receipt_date` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `cancelled_at` | `string` | No | — |
+| `source` | `string` | No | — |
+| `total_money` | `number` | No | — |
+| `total_tax` | `number` | No | — |
+| `total_discount` | `number` | No | — |
+| `points_earned` | `number` | No | — |
+| `points_deducted` | `number` | No | — |
+| `points_balance` | `number` | No | — |
+| `tip` | `number` | No | — |
+| `surcharge` | `number` | No | — |
+| `customer_id` | `string` | No | — |
+| `employee_id` | `string` | No | — |
+| `store_id` | `string` | No | — |
+| `pos_device_id` | `string` | No | — |
+| `dining_option` | `string` | No | — |
+| `total_discounts` | `object[]` | No | — |
+| `total_taxes` | `object[]` | No | — |
+| `line_items` | `object[]` | No | — |
+| `payments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="total_discounts full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  percentage?: number | null,
+  rate?: number | null,
+  money_amount?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="total_taxes full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  percentage?: number | null,
+  rate?: number | null,
+  money_amount?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: string | null,
+  item_id?: string | null,
+  variant_id?: string | null,
+  item_name?: string | null,
+  variant_name?: string | null,
+  sku?: string | null,
+  quantity?: number | null,
+  price?: number | null,
+  gross_total_money?: number | null,
+  total_money?: number | null,
+  cost?: number | null,
+  cost_total?: number | null,
+  line_note?: string | null,
+  total_discount?: number | null,
+  line_taxes?: {
+    id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    rate?: number | null,
+    money_amount?: number | null
+  }[] | null,
+  line_discounts?: {
+    id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    percentage?: number | null,
+    money_amount?: number | null
+  }[] | null,
+  line_modifiers?: {
+    id?: string | null,
+    modifier_option_id?: string | null,
+    name?: string | null,
+    option?: string | null,
+    price?: number | null,
+    money_amount?: number | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="payments full type">
+
+```ts
+{
+  payment_type_id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  money_amount?: number | null,
+  paid_at?: string | null,
+  payment_details?: {
+    authorization_code?: string | null,
+    reference_id?: string | null,
+    entry_method?: string | null,
+    card_company?: string | null,
+    card_number?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Shifts
+
+### list
+
+`shifts.list`
+
+List shifts
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.shifts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `store_ids` | `string[]` | No | — |
+| `created_at_min` | `string` | No | — |
+| `created_at_max` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shifts` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="shifts full type">
+
+```ts
+{
+  id?: string | null,
+  store_id?: string | null,
+  pos_device_id?: string | null,
+  opened_at?: string | null,
+  closed_at?: string | null,
+  opened_by_employee_id?: string | null,
+  closed_by_employee_id?: string | null,
+  starting_cash?: number | null,
+  cash_payments?: number | null,
+  cash_refunds?: number | null,
+  paid_in?: number | null,
+  paid_out?: number | null,
+  expected_cash?: number | null,
+  actual_cash?: number | null,
+  gross_sales?: number | null,
+  refunds?: number | null,
+  discounts?: number | null,
+  net_sales?: number | null,
+  tip?: number | null,
+  surcharge?: number | null,
+  taxes?: {
+    id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    percentage?: number | null,
+    rate?: number | null,
+    money_amount?: number | null
+  }[] | null,
+  payments?: {
+    payment_type_id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    money_amount?: number | null,
+    paid_at?: string | null,
+    payment_details?: {
+      authorization_code?: string | null,
+      reference_id?: string | null,
+      entry_method?: string | null,
+      card_company?: string | null,
+      card_number?: string | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stores
+
+### get
+
+`stores.get`
+
+Get a single store
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.stores.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `store_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `address` | `string` | No | — |
+| `city` | `string` | No | — |
+| `region` | `string` | No | — |
+| `state` | `string` | No | — |
+| `postal_code` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `country` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `description` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`stores.list`
+
+List stores
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.stores.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `show_deleted` | `boolean` | No | — |
+| `created_at_min` | `string` | No | — |
+| `created_at_max` | `string` | No | — |
+| `updated_at_min` | `string` | No | — |
+| `updated_at_max` | `string` | No | — |
+| `store_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stores` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="stores full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  address?: string | null,
+  city?: string | null,
+  region?: string | null,
+  state?: string | null,
+  postal_code?: string | null,
+  country_code?: string | null,
+  country?: string | null,
+  phone_number?: string | null,
+  description?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Suppliers
+
+### delete
+
+`suppliers.delete`
+
+Delete a supplier
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loyverse.api.suppliers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `supplier_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted_object_ids` | `string[]` | No | — |
+
+
+
+---
+
+### get
+
+`suppliers.get`
+
+Get a single supplier
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.suppliers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `supplier_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `contact` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `address_1` | `string` | No | — |
+| `address_2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `region` | `string` | No | — |
+| `postal_code` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `website` | `string` | No | — |
+| `note` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`suppliers.list`
+
+List suppliers
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.suppliers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `show_deleted` | `boolean` | No | — |
+| `created_at_min` | `string` | No | — |
+| `created_at_max` | `string` | No | — |
+| `updated_at_min` | `string` | No | — |
+| `updated_at_max` | `string` | No | — |
+| `suppliers_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suppliers` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="suppliers full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  contact?: string | null,
+  email?: string | null,
+  phone_number?: string | null,
+  address_1?: string | null,
+  address_2?: string | null,
+  city?: string | null,
+  region?: string | null,
+  postal_code?: string | null,
+  country_code?: string | null,
+  website?: string | null,
+  note?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`suppliers.upsert`
+
+Create or update a supplier
+
+**Risk:** `write`
+
+```ts
+await corsair.loyverse.api.suppliers.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `contact` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `address_1` | `string` | No | — |
+| `address_2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `region` | `string` | No | — |
+| `postal_code` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `website` | `string` | No | — |
+| `note` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `contact` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `address_1` | `string` | No | — |
+| `address_2` | `string` | No | — |
+| `city` | `string` | No | — |
+| `region` | `string` | No | — |
+| `postal_code` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `website` | `string` | No | — |
+| `note` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+## Taxes
+
+### delete
+
+`taxes.delete`
+
+Delete a tax
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loyverse.api.taxes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tax_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted_object_ids` | `string[]` | No | — |
+
+
+
+---
+
+### get
+
+`taxes.get`
+
+Get a single tax
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.taxes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tax_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `rate` | `number` | No | — |
+| `stores` | `string[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`taxes.list`
+
+List taxes
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.taxes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `show_deleted` | `boolean` | No | — |
+| `created_at_min` | `string` | No | — |
+| `created_at_max` | `string` | No | — |
+| `updated_at_min` | `string` | No | — |
+| `updated_at_max` | `string` | No | — |
+| `tax_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taxes` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="taxes full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  rate?: number | null,
+  stores?: string[] | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`taxes.upsert`
+
+Create or update a tax
+
+**Risk:** `write`
+
+```ts
+await corsair.loyverse.api.taxes.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `type` | `INCLUDED \| ADDED` | Yes | — |
+| `rate` | `number` | Yes | — |
+| `stores` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `rate` | `number` | No | — |
+| `stores` | `string[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+## Variants
+
+### delete
+
+`variants.delete`
+
+Delete an item variant
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loyverse.api.variants.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variant_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted_object_ids` | `string[]` | No | — |
+
+
+
+---
+
+### get
+
+`variants.get`
+
+Get a single variant
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.variants.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variant_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variant_id` | `string` | Yes | — |
+| `item_id` | `string` | No | — |
+| `sku` | `string` | No | — |
+| `reference_variant_id` | `string` | No | — |
+| `option1_value` | `string` | No | — |
+| `option2_value` | `string` | No | — |
+| `option3_value` | `string` | No | — |
+| `barcode` | `string` | No | — |
+| `cost` | `number` | No | — |
+| `purchase_cost` | `number` | No | — |
+| `default_pricing_type` | `string` | No | — |
+| `default_price` | `number` | No | — |
+| `stores` | `object[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="stores full type">
+
+```ts
+{
+  store_id?: string | null,
+  pricing_type?: string | null,
+  price?: number | null,
+  available_for_sale?: boolean | null,
+  optimal_stock?: number | null,
+  low_stock?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`variants.list`
+
+List item variants
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.variants.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `show_deleted` | `boolean` | No | — |
+| `created_at_min` | `string` | No | — |
+| `created_at_max` | `string` | No | — |
+| `updated_at_min` | `string` | No | — |
+| `updated_at_max` | `string` | No | — |
+| `variants_ids` | `string[]` | No | — |
+| `items_ids` | `string[]` | No | — |
+| `sku` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variants` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="variants full type">
+
+```ts
+{
+  variant_id: string,
+  item_id?: string | null,
+  sku?: string | null,
+  reference_variant_id?: string | null,
+  option1_value?: string | null,
+  option2_value?: string | null,
+  option3_value?: string | null,
+  barcode?: string | null,
+  cost?: number | null,
+  purchase_cost?: number | null,
+  default_pricing_type?: string | null,
+  default_price?: number | null,
+  stores?: {
+    store_id?: string | null,
+    pricing_type?: string | null,
+    price?: number | null,
+    available_for_sale?: boolean | null,
+    optimal_stock?: number | null,
+    low_stock?: number | null
+  }[] | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`variants.upsert`
+
+Create or update an item variant
+
+**Risk:** `write`
+
+```ts
+await corsair.loyverse.api.variants.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variant_id` | `string` | No | — |
+| `item_id` | `string` | No | — |
+| `sku` | `string` | No | — |
+| `reference_variant_id` | `string` | No | — |
+| `option1_value` | `string` | No | — |
+| `option2_value` | `string` | No | — |
+| `option3_value` | `string` | No | — |
+| `barcode` | `string` | No | — |
+| `cost` | `number` | No | — |
+| `purchase_cost` | `number` | No | — |
+| `default_pricing_type` | `FIXED \| VARIABLE` | No | — |
+| `default_price` | `number` | No | — |
+| `stores` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="stores full type">
+
+```ts
+{
+  store_id: string,
+  pricing_type?: FIXED | VARIABLE,
+  price?: number,
+  available_for_sale?: boolean,
+  optimal_stock?: number | null,
+  low_stock?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variant_id` | `string` | Yes | — |
+| `item_id` | `string` | No | — |
+| `sku` | `string` | No | — |
+| `reference_variant_id` | `string` | No | — |
+| `option1_value` | `string` | No | — |
+| `option2_value` | `string` | No | — |
+| `option3_value` | `string` | No | — |
+| `barcode` | `string` | No | — |
+| `cost` | `number` | No | — |
+| `purchase_cost` | `number` | No | — |
+| `default_pricing_type` | `string` | No | — |
+| `default_price` | `number` | No | — |
+| `stores` | `object[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="stores full type">
+
+```ts
+{
+  store_id?: string | null,
+  pricing_type?: string | null,
+  price?: number | null,
+  available_for_sale?: boolean | null,
+  optimal_stock?: number | null,
+  low_stock?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook subscription
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loyverse.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted_object_ids` | `string[]` | No | — |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get a single webhook subscription
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.webhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `merchant_id` | `string` | No | — |
+| `url` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhook subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.loyverse.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id?: string | null,
+  merchant_id?: string | null,
+  url?: string | null,
+  type?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`webhooks.upsert`
+
+Create or update a webhook subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.loyverse.api.webhooks.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `url` | `string` | Yes | — |
+| `type` | `inventory_levels.update \| items.update \| customers.update \| receipts.update \| shifts.create` | Yes | — |
+| `status` | `ENABLED \| DISABLED` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `merchant_id` | `string` | No | — |
+| `url` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string` | No | — |
+
+
+
+---
+

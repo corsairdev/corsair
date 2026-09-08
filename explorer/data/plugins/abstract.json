@@ -1,0 +1,412 @@
+{
+  "id": "abstract",
+  "displayName": "Abstract",
+  "description": "Validation APIs for emails, phones, VAT numbers, and other business data checks.",
+  "npmPackageName": "@corsair-dev/abstract",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "email_reputation_api_key",
+        "vat_api_key",
+        "iban_api_key"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "abstract.api.email.reputation",
+      "shortPath": "email.reputation",
+      "description": "Assess email deliverability and quality: format, disposable/free/role detection, MX and SMTP validation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The email address to check the reputation of"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email_address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "suggested_correction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_deliverability",
+            "optional": false,
+            "type": "{ status: string, status_detail: string, is_format_valid: boolean, is_smtp_valid: boolean, is_mx_valid: boolean, mx_records?: string[] | null }"
+          },
+          {
+            "key": "email_quality",
+            "optional": false,
+            "type": "{ score: number, is_free_email: boolean, is_username_suspicious: boolean, is_disposable: boolean, is_catchall: boolean, is_subaddress: boolean, is_role?: boolean, is_dmarc_enforced?: boolean, is_spf_strict?: boolean, minimum_age?: number | null }"
+          },
+          {
+            "key": "email_sender",
+            "optional": false,
+            "type": "{ first_name?: string | null, last_name?: string | null, email_provider_name?: string | null, organization_name?: string | null, organization_type?: string | null }"
+          },
+          {
+            "key": "email_domain",
+            "optional": false,
+            "type": "{ domain?: string | null, domain_age?: number | null, is_live_site?: boolean | null, registrar?: string | null, registrar_url?: string | null, date_registered?: string | null, date_last_renewed?: string | null, date_expires?: string | null, is_risky_tld?: boolean | null }"
+          },
+          {
+            "key": "email_risk",
+            "optional": false,
+            "type": "{ address_risk_status?: string | null, domain_risk_status?: string | null }"
+          },
+          {
+            "key": "email_breaches",
+            "optional": true,
+            "type": "{ total_breaches?: number | null, date_first_breached?: string | null, date_last_breached?: string | null, breached_domains?: { domain: string, breach_date?: string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "abstract.api.email.validate",
+      "shortPath": "email.validate",
+      "description": "Validate whether an email address is real, correctly formatted, and deliverable",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The email address to validate"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "autocorrect",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deliverability",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quality_score",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "is_valid_format",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "is_free_email",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "is_disposable_email",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "is_role_email",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "is_catchall_email",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "is_mx_found",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "is_smtp_valid",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "abstract.api.iban.validate",
+      "shortPath": "iban.validate",
+      "description": "Validate the format and country code of an IBAN number",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iban",
+            "optional": false,
+            "type": "string",
+            "description": "The IBAN to validate"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iban",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_valid",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "abstract.api.vat.getCategories",
+      "shortPath": "vat.getCategories",
+      "description": "Get VAT rate categories (standard, reduced, special) for a country",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "countryCode",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code, e.g. \"DE\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ country_code: string, rate: string, category: string, description: string }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "abstract.db.emailReputations.search",
+      "entityName": "emailReputations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "emailAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deliverabilityStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "qualityScore",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isFreeEmail",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isDisposable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isCatchall",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "addressRiskStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domainRiskStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "abstract.db.emailValidations.search",
+      "entityName": "emailValidations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "autocorrect",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deliverability",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "qualityScore",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isValidFormat",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isFreeEmail",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isDisposableEmail",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isRoleEmail",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isCatchallEmail",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isMxFound",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isSmtpValid",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "abstract.db.ibanValidations.search",
+      "entityName": "ibanValidations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "iban",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isValid",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "abstract.db.vatCategories.search",
+      "entityName": "vatCategories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}
