@@ -131,6 +131,7 @@ export const BaseProviders = [
 	'connecteam',
 	'contentfulgraphql',
 	'contextsevenmcp',
+	'convoloai',
 	'countdownapi',
 	'crowterminal',
 	'cursor',
@@ -412,6 +413,7 @@ export const ProviderDisplayNames = {
 	connecteam: 'Connecteam',
 	contentfulgraphql: 'Contentful GraphQL',
 	contextsevenmcp: 'Context7',
+	convoloai: 'ConvoloAi',
 	countdownapi: 'Countdown API',
 	crowterminal: 'CrowTerminal',
 	cursor: 'Cursor',
@@ -700,6 +702,7 @@ export type AllProviders =
 	| 'connecteam'
 	| 'contentfulgraphql'
 	| 'contextsevenmcp'
+	| 'convoloai'
 	| 'countdownapi'
 	| 'crowterminal'
 	| 'cursor'
