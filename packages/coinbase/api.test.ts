@@ -103,7 +103,7 @@ describe('Coinbase plugin', () => {
 	it('creates plugin instance with 12 endpoints and api_key plus oauth_2', () => {
 		const plugin = coinbase({ key: 'test-access-token' });
 		expect(plugin.id).toBe('coinbase');
-		expect(plugin.authConfig?.api_key?.account).toEqual(['one']);
+		expect(plugin.authConfig?.api_key?.account).toEqual(['user_id']);
 		expect(plugin.authConfig?.oauth_2?.account).toEqual(['user_id']);
 		expect(Object.keys(plugin.endpointSchemas ?? {})).toHaveLength(12);
 		expect(Object.keys(plugin.webhookSchemas ?? {})).toEqual([
@@ -125,7 +125,7 @@ describe('Coinbase plugin', () => {
 		).rejects.toThrow(AuthMissingError);
 	});
 
-	it('allows public market-data calls without an API key', async () => {
+	it('throws AuthMissingError when the api key is absent', async () => {
 		const plugin = coinbase();
 		await expect(
 			plugin.keyBuilder?.(
@@ -135,7 +135,7 @@ describe('Coinbase plugin', () => {
 				} as never,
 				'endpoint',
 			),
-		).resolves.toBe('');
+		).rejects.toThrow(AuthMissingError);
 	});
 
 	it('sends Bearer auth and CB-VERSION on authenticated calls', async () => {

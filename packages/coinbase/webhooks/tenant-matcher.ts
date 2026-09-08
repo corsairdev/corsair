@@ -8,14 +8,10 @@ export function matchCoinbaseTenantWebhook(
 	if (!body) return null;
 
 	const user = asRecord(body.user);
-	const account = asRecord(body.account);
-	const externalId = firstString([
-		user?.id,
-		account?.id,
-		asRecord(body.data)?.user_id,
-	]);
+	const userId = firstString([user?.id, asRecord(body.data)?.user_id]);
+	if (userId) {
+		return { linkType: 'user_id', externalId: userId };
+	}
 
-	if (!externalId) return null;
-
-	return { linkType: 'user_id', externalId };
+	return null;
 }
