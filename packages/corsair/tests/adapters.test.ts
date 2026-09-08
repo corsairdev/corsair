@@ -8,6 +8,9 @@ import type { AnyCorsairInstance, FormFieldSchema } from '../inspect';
 // CORSAIR_INTERNAL symbol, and invocation walks `instance[id].api.<path>`. So a
 // plain object with both wired up exercises the real discovery/schema/invoke
 // path with no database or network.
+// Stub operations receive args the tool's own Zod schema has already validated;
+// their shape is arbitrary per operation, so Record<string, unknown> is the
+// honest boundary type (and the return is likewise opaque `unknown`).
 function makeInstance(overrides?: {
 	listStub?: (args: Record<string, unknown>) => unknown;
 	withTenant?: (id: string) => AnyCorsairInstance;

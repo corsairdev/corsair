@@ -6,6 +6,8 @@ import { corsairTools } from './index.js';
 // global CORSAIR_INTERNAL symbol, and invocation walks `instance[id].api.<path>`.
 // (Mirrors packages/corsair/tests/adapters.test.ts — no database or network.)
 const CORSAIR_INTERNAL = Symbol.for('corsair:internal');
+// Recorded tool args: already validated by each tool's Zod schema, shape is
+// arbitrary per operation, so Record<string, unknown> is the honest type here.
 const calls: Record<string, unknown>[] = [];
 const plugin = {
 	id: 'demo',
