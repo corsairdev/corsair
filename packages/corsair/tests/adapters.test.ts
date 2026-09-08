@@ -9,11 +9,12 @@ import type { AnyCorsairInstance, FormFieldSchema } from '../inspect';
 // plain object with both wired up exercises the real discovery/schema/invoke
 // path with no database or network.
 function makeInstance(overrides?: {
-	listStub?: (...args: unknown[]) => unknown;
+	listStub?: (args: Record<string, unknown>) => unknown;
 	withTenant?: (id: string) => AnyCorsairInstance;
 }): AnyCorsairInstance {
 	const listStub =
-		overrides?.listStub ?? (async (args: unknown) => ({ ok: true, args }));
+		overrides?.listStub ??
+		(async (args: Record<string, unknown>) => ({ ok: true, args }));
 	const plugin = {
 		id: 'demo',
 		// Discovery walks this tree; a function leaf is an operation.
@@ -40,6 +41,7 @@ function makeInstance(overrides?: {
 			},
 			// channels.history: no schemas entry → no-input tool
 		},
+		// Minimal fake: only the fields inspect helpers actually read are present.
 	} as unknown as CorsairPlugin;
 
 	return {
@@ -48,6 +50,7 @@ function makeInstance(overrides?: {
 			api: { channels: { list: listStub, history: async () => ({ h: true }) } },
 		},
 		...(overrides?.withTenant ? { withTenant: overrides.withTenant } : {}),
+		// Minimal fake: satisfies only what buildCorsairTools reads at runtime.
 	} as unknown as AnyCorsairInstance;
 }
 
@@ -132,7 +135,7 @@ describe('buildCorsairTools', () => {
 	});
 
 	it('execute routes to the dotted method and returns the raw result', async () => {
-		const calls: unknown[] = [];
+		const calls: Record<string, unknown>[] = [];
 		const [list] = buildCorsairTools(
 			makeInstance({
 				listStub: async (args) => {
@@ -165,13 +168,13 @@ describe('buildCorsairTools', () => {
 	});
 
 	it('scopes to a tenant via withTenant when tenantId is given', async () => {
-		const scopedCalls: unknown[] = [];
+		const scopedCalls: Record<string, unknown>[] = [];
 		const scoped = {
 			[CORSAIR_INTERNAL]: (makeInstance() as never)[CORSAIR_INTERNAL],
 			demo: {
 				api: {
 					channels: {
-						list: async (args: unknown) => {
+						list: async (args: Record<string, unknown>) => {
 							scopedCalls.push(args);
 							return { scoped: true };
 						},
@@ -179,6 +182,7 @@ describe('buildCorsairTools', () => {
 					},
 				},
 			},
+			// Minimal fake: satisfies only what buildCorsairTools reads at runtime.
 		} as unknown as AnyCorsairInstance;
 		const base = makeInstance({ withTenant: () => scoped });
 		const [list] = buildCorsairTools(base, {

@@ -43,6 +43,8 @@ export async function corsairTools(
 	});
 	return buildCorsairTools(corsair, build).map((op) =>
 		tool(
+			// args: LangChain validates against op.schema before this callback;
+			// Record<string,unknown> is as narrow as possible given ZodTypeAny.
 			async (args: Record<string, unknown>) =>
 				toContent(await op.execute(args)),
 			{
@@ -51,7 +53,7 @@ export async function corsairTools(
 				schema: op.schema,
 			},
 		),
-	) as DynamicStructuredTool[];
+	) as DynamicStructuredTool[]; // op.schema is ZodTypeAny; inference can't resolve DynamicStructuredTool
 }
 
 /**

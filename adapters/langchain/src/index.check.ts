@@ -6,7 +6,7 @@ import { corsairTools } from './index.js';
 // global CORSAIR_INTERNAL symbol, and invocation walks `instance[id].api.<path>`.
 // (Mirrors packages/corsair/tests/adapters.test.ts — no database or network.)
 const CORSAIR_INTERNAL = Symbol.for('corsair:internal');
-const calls: unknown[] = [];
+const calls: Record<string, unknown>[] = [];
 const plugin = {
 	id: 'demo',
 	endpoints: { channels: { list: () => {} } },
@@ -25,7 +25,7 @@ const instance = {
 	demo: {
 		api: {
 			channels: {
-				list: async (args: unknown) => {
+				list: async (args: Record<string, unknown>) => {
 					calls.push(args);
 					return { ok: true, args };
 				},

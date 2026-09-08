@@ -52,6 +52,8 @@ export async function corsairTools(
 			// parse through op.schema so invalid model-generated inputs are rejected
 			// before reaching the Corsair operation.
 			execute: async (args: unknown) => {
+				// ZodTypeAny.parse() returns unknown; safe to cast because all op
+				// schemas are z.object(...) at the top level.
 				const parsed = op.schema.parse(args ?? {}) as Record<string, unknown>;
 				return toContent(await op.execute(parsed));
 			},
