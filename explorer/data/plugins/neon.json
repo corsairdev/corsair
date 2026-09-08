@@ -1,7 +1,7 @@
 {
   "id": "neon",
   "displayName": "Neon",
-  "description": "Neon plugin for Corsair",
+  "description": "Serverless Postgres platform for branching databases, scaling, and modern app backends.",
   "npmPackageName": "@corsair-dev/neon",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

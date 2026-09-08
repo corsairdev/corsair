@@ -1,7 +1,7 @@
 {
   "id": "here",
-  "displayName": "HERE Technologies",
-  "description": "HERE Technologies plugin for Corsair",
+  "displayName": "HERE",
+  "description": "Location platform for maps, routing, geocoding, and fleet tracking services worldwide.",
   "npmPackageName": "@corsair-dev/here",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

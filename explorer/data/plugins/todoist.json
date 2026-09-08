@@ -1,7 +1,7 @@
 {
   "id": "todoist",
   "displayName": "Todoist",
-  "description": "Todoist plugin for Corsair",
+  "description": "Task management app for projects, due dates, priorities, and personal or team to-do lists.",
   "npmPackageName": "@corsair-dev/todoist",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

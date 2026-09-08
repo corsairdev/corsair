@@ -1,7 +1,7 @@
 {
   "id": "nextdns",
   "displayName": "NextDNS",
-  "description": "NextDNS plugin for Corsair",
+  "description": "DNS security service for blocking ads, trackers, and malware at the network level.",
   "npmPackageName": "@corsair-dev/nextdns",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

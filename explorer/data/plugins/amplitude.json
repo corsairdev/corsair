@@ -1,7 +1,7 @@
 {
   "id": "amplitude",
   "displayName": "Amplitude",
-  "description": "Amplitude plugin for Corsair",
+  "description": "Product analytics platform for tracking user behavior, funnels, and retention metrics.",
   "npmPackageName": "@corsair-dev/amplitude",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

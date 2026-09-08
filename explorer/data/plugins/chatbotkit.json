@@ -1,7 +1,7 @@
 {
   "id": "chatbotkit",
-  "displayName": "Chatbotkit",
-  "description": "Chatbotkit plugin for Corsair",
+  "displayName": "ChatBotKit",
+  "description": "AI chatbot platform for building conversational agents with custom knowledge bases.",
   "npmPackageName": "@corsair-dev/chatbotkit",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
