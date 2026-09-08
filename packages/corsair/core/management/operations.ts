@@ -317,18 +317,22 @@ export async function disconnectConnection(
 		.executeTakeFirst();
 	if (!integration) return { ok: true, disconnected: false };
 
-	// Account creation is check-then-insert, so a (tenant, integration) pair can
-	// hold more than one row after a concurrent connect. Resolve and delete inside
-	// one transaction, matching accounts by predicate (not a pre-snapshotted id
-	// list) so a row a racing connect commits before the delete is cleared too —
-	// otherwise live creds could survive the revoke.
-	//
-	// Known limit: a connect that commits *after* this delete still leaves a live
-	// row — the account writers do check-then-insert with no (tenant, integration)
-	// unique constraint. Fully closing it needs a unique constraint + upsert on
-	// those writers; tracked as a separate change.
+	// Serialize with the account writers (ensureAccount / ensureIntegrationAccountRow)
+	// by locking the integration row first inside the transaction. All three
+	// operations take the same lock before they read-then-write accounts, so a
+	// connect and a disconnect cannot interleave and leave live credentials behind.
+	// On SQLite the single-writer model provides the same guarantee without a lock.
 	let disconnected = false;
 	await db.transaction().execute(async (trx) => {
+		if (internal.database?.isPg === true) {
+			await trx
+				.selectFrom('corsair_integrations')
+				.select('id')
+				.where('name', '=', plugin)
+				.forUpdate()
+				.execute();
+		}
+
 		const accountsForPair = trx
 			.selectFrom('corsair_accounts')
 			.select('id')
