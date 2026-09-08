@@ -97,6 +97,29 @@ test('uses the www lane when www changes include root docs', () => {
 	});
 });
 
+test('uses the www lane when www changes include github and scripts', () => {
+	assert.deepEqual(
+		classifyPrScope([
+			'www/src/app/oss/how-it-works.tsx',
+			'.github/workflows/first-issue-assign.yml',
+			'scripts/first-issue/policy.ts',
+			'CONTRIBUTING.md',
+		]),
+		{ lane: 'www' },
+	);
+});
+
+test('skips heavy checks for github and script-only changes', () => {
+	assert.deepEqual(
+		classifyPrScope([
+			'.github/workflows/first-issue-assign.yml',
+			'scripts/first-issue/policy.ts',
+			'README.md',
+		]),
+		{ lane: 'skip-heavy' },
+	);
+});
+
 test('uses the full lane and includes www when www and packages both change', () => {
 	assert.deepEqual(
 		classifyPrScope(['www/src/app/page.tsx', 'packages/slack/index.ts']),
