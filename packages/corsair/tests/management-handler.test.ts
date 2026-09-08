@@ -19,6 +19,11 @@ import { createTestDatabase } from './setup-db';
 // a stable shape from the cast-down plugin array. Using `any` at the call
 // site is local and only used to build a corsair instance — runtime behavior
 // is the same.
+//
+// The `config: {} as any` / `... as any` on the raw seed inserts bypass
+// Kysely's insert types for the JSON `config` column: the tests write rows
+// directly to set up state, and `{}` is a valid empty JSON value the strict
+// insert type would otherwise reject. The cast is confined to test seeding.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const slackOAuth = {
