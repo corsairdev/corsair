@@ -379,6 +379,21 @@ describe('BoldSign endpoint requests', () => {
 			base64Content: 'data:application/pdf;base64,cGRm',
 		});
 		expect(ok.file.base64).toBe('data:application/pdf;base64,cGRm');
+		// Uppercase data URI with matching MIME must also succeed (case-insensitive)
+		const okUpper = await Helpers.uploadFile(ctx, {
+			fileName: 'a.pdf',
+			mimeType: 'application/pdf',
+			base64Content: 'DATA:APPLICATION/PDF;BASE64,cGRm',
+		});
+		expect(okUpper.file.base64).toBe('DATA:APPLICATION/PDF;BASE64,cGRm');
+		// Uppercase mismatched MIME must still be rejected — previous bypass
+		await expect(
+			Helpers.uploadFile(ctx, {
+				fileName: 'a.pdf',
+				mimeType: 'application/pdf',
+				base64Content: 'DATA:TEXT/HTML;BASE64,PGh0bWw+',
+			}),
+		).rejects.toThrow(/MIME type mismatch/);
 		// Ensure no HTTP call was made for helper — still local validation
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
