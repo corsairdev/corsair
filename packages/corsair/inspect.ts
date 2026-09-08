@@ -20,22 +20,18 @@ export type { ListOperationsOptions, FormFieldSchema };
 export { formatDocSchemaShape };
 
 /**
- * Any form of Corsair instance:
- * - single-tenant client (`createCorsair({ ... })`)
- * - multi-tenant wrapper (`createCorsair({ multiTenancy: true, ... })`)
- * - tenant-scoped client (`corsair.withTenant("tenant-id")`)
+ * Any form of Corsair instance: single-tenant client (`createCorsair()`),
+ * multi-tenant wrapper (`createCorsair({ multiTenancy: true })`), or tenant-scoped
+ * client (`corsair.withTenant()`).
  *
- * Parameterized with an empty plugin set on purpose: that yields the shape
- * common to every instance (the non-plugin namespaces), so a client built from
- * any concrete plugin set is a structural superset and stays assignable. Inspect
- * helpers read the instance through the runtime `CORSAIR_INTERNAL` symbol, never
- * the static plugin shape, so the per-plugin namespaces are irrelevant here — and
- * a non-empty element type would expand the per-plugin mapped types to a shape no
- * real `createCorsair()` result matches, rejecting every actual instance.
+ * Helpers read the instance via the CORSAIR_INTERNAL symbol, not its static shape,
+ * so this only needs to accept any client. The two clients match structurally, so
+ * an empty plugin set is their common supertype; the wrapper matches on its plugin
+ * tuple, so it needs the open array — an empty tuple rejects a real wrapper.
  */
 export type AnyCorsairInstance =
 	| CorsairSingleTenantClient<readonly []>
-	| CorsairTenantWrapper<readonly []>
+	| CorsairTenantWrapper<readonly CorsairPlugin[]>
 	| CorsairClient<readonly []>;
 
 function getPlugins(corsair: AnyCorsairInstance): readonly CorsairPlugin[] {
