@@ -771,7 +771,11 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 	permissions?: CorsairPermissionsOptions;
 	/** Self-hosted connect and/or permission review configuration. Can coexist with `hub`. */
 	manual?: CorsairManualConfig;
-	/** Corsair Hub configuration for hosted OAuth connect flows. */
+	/**
+	 * Corsair Hub configuration for hosted OAuth connect flows.
+	 * Omit entirely to disable Hub. When provided, `projectApiKey` and
+	 * `signingSecret` are required and validated at init.
+	 */
 	hub?: HubConfigInput;
 } & CorsairDeprecatedApprovalConfig;
 

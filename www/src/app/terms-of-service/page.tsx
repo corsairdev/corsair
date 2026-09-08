@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 const CONTACT_EMAIL = 'dev@corsair.dev';
-const LAST_UPDATED = 'July 21, 2026';
+const LAST_UPDATED = 'September 7, 2026';
 const LIABILITY_LOOKBACK_MONTHS = 12;
 
 export default function TermsOfServicePage() {

@@ -1,5 +1,5 @@
 displayName: Zoom
-description: "Zoom plugin for Corsair — meetings, recordings, and meeting events."
+description: Video conferencing platform for meetings, webinars, recordings, and calendar scheduling.
 examples:
   read:
     path: meetings.list
@@ -12,10 +12,10 @@ examples:
       duration: 30
 dbExample:
   entity: meetings
-  note: "Search synced meetings without hitting Zoom."
+  note: Search synced meetings without hitting Zoom.
   limit: 50
 exampleWebhook:
   path: meetings.created
-  note: "Fires when a Zoom meeting is created."
+  note: Fires when a Zoom meeting is created.
   after: |
     console.log('Zoom meeting created:', result.data);
