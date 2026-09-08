@@ -32,8 +32,8 @@ const webhookCtx = {
 } as never;
 
 describe('Coinbase keyBuilder auth policy', () => {
-	it('throws AuthMissingError when api_key is required but missing', async () => {
-		const plugin = coinbase({ authType: 'api_key', requireApiKey: true });
+	it('throws AuthMissingError when api_key auth is selected and missing', async () => {
+		const plugin = coinbase({ authType: 'api_key' });
 		await expect(
 			plugin.keyBuilder?.(
 				{
@@ -45,7 +45,7 @@ describe('Coinbase keyBuilder auth policy', () => {
 		).rejects.toThrow(AuthMissingError);
 	});
 
-	it('allows unauthenticated plugin defaults for public market data', async () => {
+	it('throws when the api key is missing even without requireApiKey', async () => {
 		const plugin = coinbase();
 		await expect(
 			plugin.keyBuilder?.(
@@ -55,7 +55,7 @@ describe('Coinbase keyBuilder auth policy', () => {
 				} as never,
 				'endpoint',
 			),
-		).resolves.toBe('');
+		).rejects.toThrow(AuthMissingError);
 	});
 });
 

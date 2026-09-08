@@ -101,6 +101,11 @@ export async function makeCoinbaseRequest<T>(
 			? endpoint
 			: `${COINBASE_API_BASE}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`,
 	);
+	if (url.origin !== new URL(COINBASE_API_BASE).origin) {
+		throw new CoinbaseAPIError(
+			`Refusing to send credentials to non-Coinbase origin: ${url.origin}`,
+		);
+	}
 	if (query) {
 		for (const [key, value] of Object.entries(query)) {
 			if (value === undefined) continue;

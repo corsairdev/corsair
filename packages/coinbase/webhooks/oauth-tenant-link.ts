@@ -24,9 +24,11 @@ export async function resolveCoinbaseOAuthWebhookTenantLink(
 		});
 		if (!response.ok) return null;
 		const payload = (await response.json()) as {
-			data?: { id?: string };
+			data?: { id?: unknown };
 		};
-		const fetchedId = toExternalId(payload.data?.id);
+		const rawId = payload.data?.id;
+		if (typeof rawId !== 'string' || rawId.length === 0) return null;
+		const fetchedId = toExternalId(rawId);
 		return fetchedId ? { linkType: 'user_id', externalId: fetchedId } : null;
 	} catch {
 		return null;
