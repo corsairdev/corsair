@@ -322,6 +322,11 @@ export async function disconnectConnection(
 	// one transaction, matching accounts by predicate (not a pre-snapshotted id
 	// list) so a row a racing connect commits before the delete is cleared too —
 	// otherwise live creds could survive the revoke.
+	//
+	// Known limit: a connect that commits *after* this delete still leaves a live
+	// row — the account writers do check-then-insert with no (tenant, integration)
+	// unique constraint. Fully closing it needs a unique constraint + upsert on
+	// those writers; tracked as a separate change.
 	let disconnected = false;
 	await db.transaction().execute(async (trx) => {
 		const accountsForPair = trx
