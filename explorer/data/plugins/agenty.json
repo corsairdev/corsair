@@ -1,7 +1,7 @@
 {
   "id": "agenty",
   "displayName": "Agenty",
-  "description": "Agenty plugin for Corsair",
+  "description": "Web scraping and data extraction platform for monitoring and harvesting online data.",
   "npmPackageName": "@corsair-dev/agenty",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

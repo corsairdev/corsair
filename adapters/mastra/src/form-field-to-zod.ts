@@ -37,6 +37,7 @@ function baseType(field: FormFieldSchema): z.ZodTypeAny {
 		case 'array':
 			return z.array(formFieldToZod(field.items));
 		case 'unknown':
+			// no introspectable type; a tool still needs a schema
 			return z.unknown();
 	}
 }

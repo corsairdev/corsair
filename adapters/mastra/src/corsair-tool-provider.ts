@@ -71,14 +71,22 @@ export type TenantResolveInput = {
 	requestContext?: unknown;
 };
 
+// The provider drives Corsair's `manage` control plane, which only a root
+// instance exposes — a pre-scoped `withTenant()` client does not.
+type CorsairRootInstance = Extract<AnyCorsairInstance, { manage: unknown }>;
+
 /**
  * Configuration for {@link CorsairToolProvider}. Extends
  * {@link BaseToolProviderOptions} so `allowedToolkits` / `allowedTools` /
  * `defaultScope` are accepted alongside the Corsair-specific fields.
  */
 export interface CorsairToolProviderConfig extends BaseToolProviderOptions {
-	/** The value returned by `createCorsair()` (or `corsair.withTenant(...)`). */
-	corsair: { [key: string]: unknown };
+	/**
+	 * A root Corsair instance from `createCorsair()`, single- or multi-tenant.
+	 * The provider scopes to a tenant itself, so pass the root, not a
+	 * `withTenant()` client.
+	 */
+	corsair: CorsairRootInstance;
 	/**
 	 * How a Mastra request maps to a Corsair **tenant** — Corsair's multi-tenancy
 	 * primitive, where each tenant owns its own connections and credentials.
@@ -195,10 +203,11 @@ async function invokeOperation(
 	const segments = path.split('.');
 	const method = segments.pop();
 	if (!method) throw new Error(`Invalid operation path: ${path}`);
-	let target: any = instance;
+	let target: Record<string, unknown> = instance as Record<string, unknown>;
 	for (const segment of segments) {
-		target = target?.[segment];
-		if (target == null) throw new Error(`Unknown operation path: ${path}`);
+		const next = target?.[segment];
+		if (next == null) throw new Error(`Unknown operation path: ${path}`);
+		target = next as Record<string, unknown>;
 	}
 	const fn = target[method];
 	if (typeof fn !== 'function')
@@ -247,7 +256,7 @@ export class CorsairToolProvider extends BaseToolProvider {
 		supportsRevoke: true,
 	};
 
-	private readonly corsair: { [key: string]: unknown };
+	private readonly corsair: CorsairRootInstance;
 	private readonly tenantConfig: CorsairToolProviderConfig['tenantId'];
 
 	/**
@@ -265,14 +274,14 @@ export class CorsairToolProvider extends BaseToolProvider {
 		this.tenantConfig = config.tenantId;
 	}
 
-	/** The Corsair instance re-typed as the inspect-helper union. */
+	/** Returns the Corsair instance for use with inspect helpers. */
 	private asInstance(): AnyCorsairInstance {
-		return this.corsair as unknown as AnyCorsairInstance;
+		return this.corsair;
 	}
 
 	/** Corsair's management namespace (plugins / connection status / connect). */
 	private get manage(): CorsairManage {
-		return (this.corsair as unknown as { manage: CorsairManage }).manage;
+		return this.corsair.manage as CorsairManage;
 	}
 
 	/**
@@ -329,6 +338,8 @@ export class CorsairToolProvider extends BaseToolProvider {
 
 	/** Scopes the Corsair instance to a tenant (multi-tenant), else returns it as-is. */
 	private scopedInstance(tenantId: string): AnyCorsairInstance {
+		// `withTenant` exists only on the multi-tenant variant; the union type doesn't
+		// expose it, so we probe for it at runtime with a narrow cast.
 		const withTenant = (
 			this.corsair as unknown as {
 				withTenant?: (id: string) => AnyCorsairInstance;
@@ -406,6 +417,10 @@ export class CorsairToolProvider extends BaseToolProvider {
 	 * resolved tenant's Corsair credentials. The runtime calls this once per
 	 * connection; each tool's `execute` runs the Corsair operation with the
 	 * managed token from your database.
+	 *
+	 * `ToolAction<any, any, any>` matches the abstract base class signature from
+	 * `@mastra/core` — the input/output schemas are dynamically derived per plugin
+	 * at runtime and cannot be statically parameterised.
 	 */
 	async resolveToolsVNext(
 		opts: ResolveToolsOpts,

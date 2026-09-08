@@ -16,7 +16,10 @@ const corsair = createCorsair({
 	database: testDb.db,
 	kek: 'test-kek-12345678901234567890123456789012',
 });
-const provider = new CorsairToolProvider({ corsair, tenantId: 'dev' });
+const provider = new CorsairToolProvider({
+	corsair,
+	tenantId: 'dev',
+});
 
 const cid = encodeConnectionId('dev', 'github');
 

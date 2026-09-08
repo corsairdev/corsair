@@ -1,7 +1,7 @@
 {
   "id": "twilio",
   "displayName": "Twilio",
-  "description": "Twilio plugin for Corsair",
+  "description": "Communications API for SMS, voice calls, WhatsApp messaging, and programmable telephony.",
   "npmPackageName": "@corsair-dev/twilio",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

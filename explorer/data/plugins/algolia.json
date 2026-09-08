@@ -1,12 +1,12 @@
 {
   "id": "algolia",
   "displayName": "Algolia",
-  "description": "Algolia plugin for Corsair",
+  "description": "Search and discovery API for fast, relevant site search and product recommendations.",
   "npmPackageName": "@corsair-dev/algolia",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
   "counts": {
-    "api": 133,
+    "api": 132,
     "webhooks": 0,
     "db": 3
   },
@@ -3464,51 +3464,6 @@
             "optional": false,
             "type": "number"
           },
-          {
-            "key": "index_name",
-            "optional": false,
-            "type": "string"
-          },
-          {
-            "key": "body",
-            "optional": true,
-            "type": "any"
-          },
-          {
-            "key": "query",
-            "optional": true,
-            "type": "{}"
-          },
-          {
-            "key": "headers",
-            "optional": true,
-            "type": "{}"
-          },
-          {
-            "key": "region",
-            "optional": true,
-            "type": "string"
-          },
-          {
-            "key": "baseUrl",
-            "optional": true,
-            "type": "string"
-          }
-        ]
-      },
-      "output": {
-        "kind": "inline",
-        "type": "any"
-      }
-    },
-    {
-      "path": "algolia.api.indices.indexExists",
-      "shortPath": "indices.indexExists",
-      "description": "Tool to check if an Algolia index exists. Use before performing index operations to prevent accidental index creation. Results are scoped to the Algolia app ID configured in the Composio connection. Example: IndexExists(index_name='products').",
-      "riskLevel": "read",
-      "input": {
-        "kind": "object",
-        "fields": [
           {
             "key": "index_name",
             "optional": false,

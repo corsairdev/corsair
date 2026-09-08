@@ -63,7 +63,11 @@ function providerWith(
 			},
 		},
 	};
-	return new CorsairToolProvider({ corsair, tenantId });
+	return new CorsairToolProvider({
+		// Test double implementing only the `manage` methods this check exercises.
+		corsair: corsair as unknown as CorsairToolProviderConfig['corsair'],
+		tenantId,
+	});
 }
 
 // A pinned tenant wins: a connectionId claiming another tenant cannot override it.

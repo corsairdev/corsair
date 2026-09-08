@@ -1,7 +1,7 @@
 {
   "id": "agentmail",
   "displayName": "AgentMail",
-  "description": "AgentMail plugin for Corsair",
+  "description": "Email infrastructure for AI agents with programmatic inboxes and message handling.",
   "npmPackageName": "@corsair-dev/agentmail",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
