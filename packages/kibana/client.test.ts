@@ -9,7 +9,7 @@ jest.mock('corsair/http', () => {
 	};
 });
 
-const mockRequest = request as jest.Mock;
+const mockRequest = jest.mocked(request);
 
 const BASE = 'https://kibana.example.com:5601';
 
@@ -35,56 +35,51 @@ describe('Kibana API client', () => {
 		await makeKibanaRequest('api/status', BASE, 'raw-key-value');
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
-		const [config] = mockRequest.mock.calls[0] as [
-			{ BASE: string; HEADERS: Record<string, string> },
-			unknown,
-		];
-		expect(config.BASE).toBe(BASE);
-		expect(config.HEADERS.Authorization).toBe('ApiKey raw-key-value');
-		expect(config.HEADERS['kbn-xsrf']).toBe('true');
+		expect(mockRequest.mock.calls[0]?.[0]).toMatchObject({
+			BASE,
+			HEADERS: {
+				Authorization: 'ApiKey raw-key-value',
+				'kbn-xsrf': 'true',
+			},
+		});
 	});
 
 	it('does not set TOKEN so the shared layer keeps our auth scheme', async () => {
 		await makeKibanaRequest('api/status', BASE, 'raw-key-value');
 
-		const [config] = mockRequest.mock.calls[0] as [
-			{ TOKEN?: unknown; HEADERS: Record<string, string> },
-			unknown,
-		];
-		expect(config.TOKEN).toBeUndefined();
-		expect(config.HEADERS.Authorization).toBe('ApiKey raw-key-value');
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const received = mockRequest.mock.calls[0]?.[0];
+		expect(received).not.toHaveProperty('TOKEN');
+		expect(received).toMatchObject({
+			HEADERS: { Authorization: 'ApiKey raw-key-value' },
+		});
 	});
 
 	it('passes through Basic credentials unchanged', async () => {
 		await makeKibanaRequest('api/status', BASE, 'Basic dXNlcjpwYXNz');
 
-		const [config] = mockRequest.mock.calls[0] as [
-			{ HEADERS: Record<string, string> },
-			unknown,
-		];
-		expect(config.HEADERS.Authorization).toBe('Basic dXNlcjpwYXNz');
+		expect(mockRequest.mock.calls[0]?.[0]).toMatchObject({
+			HEADERS: { Authorization: 'Basic dXNlcjpwYXNz' },
+		});
 	});
 
 	it('passes through ApiKey and Bearer prefixes unchanged', async () => {
 		await makeKibanaRequest('api/status', BASE, 'ApiKey abc123');
-		expect(
-			(mockRequest.mock.calls[0][0] as { HEADERS: Record<string, string> })
-				.HEADERS.Authorization,
-		).toBe('ApiKey abc123');
+		expect(mockRequest.mock.calls[0]?.[0]).toMatchObject({
+			HEADERS: { Authorization: 'ApiKey abc123' },
+		});
 
 		jest.clearAllMocks();
 		await makeKibanaRequest('api/status', BASE, 'Bearer xyz');
-		expect(
-			(mockRequest.mock.calls[0][0] as { HEADERS: Record<string, string> })
-				.HEADERS.Authorization,
-		).toBe('Bearer xyz');
+		expect(mockRequest.mock.calls[0]?.[0]).toMatchObject({
+			HEADERS: { Authorization: 'Bearer xyz' },
+		});
 	});
 
 	it('strips a trailing slash from BASE', async () => {
 		await makeKibanaRequest('api/status', `${BASE}/`, 'k');
 
-		const [config] = mockRequest.mock.calls[0] as [{ BASE: string }, unknown];
-		expect(config.BASE).toBe(BASE);
+		expect(mockRequest.mock.calls[0]?.[0]).toMatchObject({ BASE });
 	});
 
 	it('forwards query on POST (overwrite must not be dropped)', async () => {
@@ -157,7 +152,7 @@ describe('Kibana API client', () => {
 			(e: unknown) => e,
 		);
 		expect(caught).toBeInstanceOf(KibanaAPIError);
-		expect((caught as Error).message).toBe('boom');
+		expect(caught).toMatchObject({ message: 'boom' });
 	});
 
 	it('returns the typed payload on success', async () => {

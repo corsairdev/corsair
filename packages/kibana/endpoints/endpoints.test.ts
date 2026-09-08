@@ -34,9 +34,7 @@ jest.mock('../client', () => {
 	};
 });
 
-const mockedRequest = client.makeKibanaRequest as jest.MockedFunction<
-	typeof client.makeKibanaRequest
->;
+const mockedRequest = jest.mocked(client.makeKibanaRequest);
 
 const ctx = {
 	key: 'test-api-key',
@@ -57,7 +55,7 @@ const BASE = 'https://kibana.example.com:5601';
 describe('Kibana Endpoints', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
-		mockedRequest.mockResolvedValue({} as never);
+		mockedRequest.mockResolvedValue({});
 	});
 
 	describe('savedObjects', () => {
