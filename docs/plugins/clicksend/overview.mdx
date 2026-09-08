@@ -1,0 +1,165 @@
+---
+title: Overview
+description: "Multi-channel communications platform for SMS, Voice text-to-speech, and contact management."
+---
+
+Use **ClickSend** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 11 typed API operations
+- 2 synced entities (`contacts`, `messages`) for fast `.search()` / `.list()`
+- 2 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/clicksend
+```
+```bash yarn
+yarn add corsair @corsair-dev/clicksend
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/clicksend
+```
+```bash bun
+bun add corsair @corsair-dev/clicksend
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { clicksend } from '@corsair-dev/clicksend';
+
+export const corsair = createCorsair({
+	plugins: [
+		clicksend(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+clicksend()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'clicksend',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List SMS history**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.clicksend.api.sms.history({});
+```
+
+
+**Send an SMS message**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.clicksend.api.sms.send({
+	messages: [{ to: '+15555550100', body: 'Hello from Corsair!' }],
+});
+```
+
+
+See the full list on the [API](/plugins/clicksend/api) page.
+
+## Query synced data
+
+Search synced SMS messages without hitting ClickSend API.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.clicksend.db.messages.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `contacts`, `messages`. See [Database](/plugins/clicksend/database) for filters and operators.
+
+## Webhooks
+
+Fires when an inbound SMS reply is received.
+
+```ts
+clicksend({
+    webhookHooks: {
+        sms: {
+            inbound: {
+                after: async (ctx, result) => {
+                    console.log('ClickSend SMS received:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/clicksend/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/clicksend/api">
+    Every `clicksend.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/clicksend/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/clicksend/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
