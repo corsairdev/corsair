@@ -1,11 +1,28 @@
 import { logEventFromContext } from 'corsair/core';
 import type { StartonEndpoints } from '..';
 import { encodeStartonPathSegment, makeStartonRequest } from '../client';
-import { StartonEndpointOutputSchemas } from './types';
+import {
+	StartonEndpointInputSchemas,
+	StartonEndpointOutputSchemas,
+} from './types';
 
+/**
+ * Deploy a smart contract from a Starton Library template (ERC20, ERC721, ...).
+ * Returns the created contract together with the deployment transaction; the
+ * transaction is asynchronous — poll `transaction.get` for its final state.
+ *
+ * Pass `simulate: true` to estimate gas without broadcasting.
+ *
+ * API: POST /v3/smart-contract/from-template?simulate=  (body:
+ * DeployFromTemplateDto) -> { smartContract, transaction }
+ */
 export const deployFromTemplate: StartonEndpoints['smartContractDeployFromTemplate'] =
 	async (ctx, input) => {
-		const { simulate, ...body } = input;
+		// Validate before the request: this rejects bad input without a network
+		// round trip, applies the documented `params` default, and strips unknown
+		// keys so only DeployFromTemplateDto fields reach Starton.
+		const { simulate, ...body } =
+			StartonEndpointInputSchemas.smartContractDeployFromTemplate.parse(input);
 		const response = await makeStartonRequest<unknown>(
 			'v3/smart-contract/from-template',
 			ctx.key,
@@ -21,20 +38,29 @@ export const deployFromTemplate: StartonEndpoints['smartContractDeployFromTempla
 			ctx,
 			'starton.smartContract.deployFromTemplate',
 			{
-				network: input.network,
-				templateId: input.templateId,
-				name: input.name,
+				network: body.network,
+				templateId: body.templateId,
+				name: body.name,
 			},
 			'completed',
 		);
 		return deployment;
 	};
 
+/**
+ * Execute a state-changing function on a deployed contract. Returns the relayer
+ * Transaction; it is asynchronous, so poll `transaction.get` for the final
+ * state. Pass `simulate: true` to estimate gas without broadcasting.
+ *
+ * API: POST /v3/smart-contract/{network}/{address}/call?simulate=
+ * (body: CallDto) -> Transaction
+ */
 export const call: StartonEndpoints['smartContractCall'] = async (
 	ctx,
 	input,
 ) => {
-	const { network, address, simulate, ...body } = input;
+	const { network, address, simulate, ...body } =
+		StartonEndpointInputSchemas.smartContractCall.parse(input);
 	const response = await makeStartonRequest<unknown>(
 		`v3/smart-contract/${encodeStartonPathSegment(network)}/${encodeStartonPathSegment(address)}/call`,
 		ctx.key,
@@ -46,17 +72,25 @@ export const call: StartonEndpoints['smartContractCall'] = async (
 	await logEventFromContext(
 		ctx,
 		'starton.smartContract.call',
-		{ network, address, functionName: input.functionName },
+		{ network, address, functionName: body.functionName },
 		'completed',
 	);
 	return transaction;
 };
 
+/**
+ * Call a read-only (view) function on a deployed contract. Returns the decoded
+ * value immediately; nothing is broadcast and no gas is spent.
+ *
+ * API: POST /v3/smart-contract/{network}/{address}/read
+ * (body: ReadDto) -> ReadSmartContractResponse
+ */
 export const read: StartonEndpoints['smartContractRead'] = async (
 	ctx,
 	input,
 ) => {
-	const { network, address, ...body } = input;
+	const { network, address, ...body } =
+		StartonEndpointInputSchemas.smartContractRead.parse(input);
 	const response = await makeStartonRequest<unknown>(
 		`v3/smart-contract/${encodeStartonPathSegment(network)}/${encodeStartonPathSegment(address)}/read`,
 		ctx.key,
@@ -68,7 +102,7 @@ export const read: StartonEndpoints['smartContractRead'] = async (
 	await logEventFromContext(
 		ctx,
 		'starton.smartContract.read',
-		{ network, address, functionName: input.functionName },
+		{ network, address, functionName: body.functionName },
 		'completed',
 	);
 	return result;

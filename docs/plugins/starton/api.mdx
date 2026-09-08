@@ -1,0 +1,585 @@
+---
+title: API
+description: "API reference for Starton: every `starton.api.*` operation with input and output types."
+---
+
+Every `starton.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Smart Contract
+
+### call
+
+`smartContract.call`
+
+Execute a state-changing function on a deployed smart contract
+
+**Risk:** `write`
+
+```ts
+await corsair.starton.api.smartContract.call({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `string` | Yes | Network of the smart contract, e.g. `polygon-mumbai`. List via GET /v3/network. |
+| `address` | `string` | Yes | Address of the deployed smart contract. |
+| `functionName` | `string` | Yes | Name of the contract function to execute. Must be state-changing; use smartContract.read for view functions. |
+| `params` | `object[]` | Yes | Function arguments, in the order the ABI declares them. |
+| `signerWallet` | `string` | Yes | Address of the KMS wallet that signs and pays for the transaction. |
+| `speed` | `low \| average \| fast \| fastest \| custom` | No | Gas speed. Defaults to `average`; use `custom` to supply customGas. |
+| `customGas` | `object` | No | Custom gas settings. Only used when speed is set to `custom`. |
+| `gasLimit` | `string` | No | Optional gas limit. |
+| `nonce` | `number` | No | Manual nonce. If set, the Starton relayer will not assign one automatically. |
+| `value` | `string` | No | Native-currency value sent with the call, in wei. |
+| `simulate` | `boolean` | No | Simulate only: estimates gas and does NOT broadcast a transaction. |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+(
+  string | number | boolean | {
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="customGas full type">
+
+```ts
+{
+  gasPrice?: string,
+  maxFeePerGas?: string,
+  maxPriorityFeePerGas?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `blockHash` | `string` | No | — |
+| `blockNumber` | `number` | No | — |
+| `chainId` | `number` | Yes | — |
+| `network` | `string` | Yes | — |
+| `data` | `string` | No | — |
+| `from` | `string` | Yes | — |
+| `gasLimit` | `string` | No | — |
+| `gasPrice` | `string` | No | — |
+| `maxFeePerGas` | `string` | No | — |
+| `maxPriorityFeePerGas` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `nonce` | `number` | No | — |
+| `type` | `number` | No | — |
+| `signerWallet` | `string` | Yes | — |
+| `publishedDate` | `string` | No | — |
+| `minedDate` | `string` | No | — |
+| `signedTransaction` | `string` | No | — |
+| `status` | `UNSIGNED \| ERROR_TX \| ERROR_PUBLISH \| PUBLISHED \| RECEIVED_BY_STARTON \| CREATED_BY_STARTON \| COULD_NOT_ESTIMATE_GAS_PRICE \| COULD_NOT_INCREASE_GAS_PRICE \| GAS_PRICE_ESTIMATED \| INVALID_GAS_PRICE \| REPLACEMENT_GAS_PRICE_UNDERPRICED \| COULD_NOT_ESTIMATE_GAS_LIMIT \| GAS_LIMIT_ESTIMATED \| EXECUTION_WILL_FAIL \| INVALID_ARGUMENT \| INSUFFICIENT_FUNDS \| INSUFFICIENT_FUNDS_AFTER_BROADCAST \| COULD_NOT_ASSIGN_NONCE \| COULD_NOT_UNSTUCK_NONCE \| NONCE_ASSIGNED \| NONCE_EXPIRED \| COULD_NOT_SIGN \| SIGNED \| SENT_TO_MEMPOOL \| COULD_NOT_BROADCAST \| ALREADY_KNOWN \| MINED \| CONFIRMED \| REPLACED \| FAILED \| MONITORING_IN_PROGRESS \| STUCK_BY_PREVIOUS_TRANSACTION \| MAX_GAS_PRICE_REACH \| GAS_PRICE_INCREASED \| NEW_TRANSACTION_HASH \| UNKNOWN \| MONITORING_INTERRUPTED` | Yes | — |
+| `state` | `SUCCESS \| PENDING \| MANUAL_ACTION_REQUIRED \| ERROR` | Yes | — |
+| `speed` | `low \| average \| fast \| fastest \| custom` | No | — |
+| `logs` | `object[]` | Yes | — |
+| `to` | `string` | No | — |
+| `transactionHash` | `string` | No | — |
+| `value` | `string` | Yes | — |
+| `automaticNonce` | `boolean` | Yes | — |
+| `isDeployTransaction` | `boolean` | Yes | — |
+| `projectId` | `string` | Yes | — |
+| `parentTransaction` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="logs full type">
+
+```ts
+{
+  message: string,
+  type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
+  context?: {
+  },
+  createdAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deployFromTemplate
+
+`smartContract.deployFromTemplate`
+
+Deploy a smart contract from a Starton-audited template (e.g. ERC20, ERC721)
+
+**Risk:** `write`
+
+```ts
+await corsair.starton.api.smartContract.deployFromTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `string` | Yes | Network of the smart contract, e.g. `polygon-mumbai`. List via GET /v3/network. |
+| `signerWallet` | `string` | Yes | Address of the KMS wallet that signs and pays for the transaction. |
+| `templateId` | `string` | Yes | Starton Library template to deploy, e.g. `ERC20_META_TRANSACTION`. List via GET /v3/smart-contract-template. |
+| `name` | `string` | Yes | Contract name on Starton (off-chain). Max 255 characters. |
+| `params` | `object[]` | Yes | Smart contract constructor parameters, in the order the template declares them. |
+| `description` | `string` | No | Contract description on Starton (off-chain). |
+| `gasLimit` | `string` | No | Optional gas limit. |
+| `speed` | `low \| average \| fast \| fastest \| custom` | No | Gas speed. Defaults to `average`; use `custom` to supply customGas. |
+| `customGas` | `object` | No | Custom gas settings. Only used when speed is set to `custom`. |
+| `nonce` | `number` | No | Manual nonce. If set, the Starton relayer will not assign one automatically. |
+| `value` | `string` | No | Native-currency value sent with the deployment, in wei. For payable constructors. |
+| `metadata` | `object` | No | Arbitrary JSON stored alongside the contract. |
+| `uiData` | `object` | No | Dashboard display metadata Starton stores with the contract. |
+| `simulate` | `boolean` | No | Simulate only: estimates gas and does NOT broadcast a transaction. |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+(
+  string | number | boolean | {
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="customGas full type">
+
+```ts
+{
+  gasPrice?: string,
+  maxFeePerGas?: string,
+  maxPriorityFeePerGas?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="uiData full type">
+
+```ts
+{
+  version: 1,
+  deployMethod: web3 | kms,
+  imported: boolean,
+  deployType?: string,
+  chainId?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `smartContract` | `object` | Yes | — |
+| `transaction` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="smartContract full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  network: string,
+  abi?: {
+  }[],
+  address: string,
+  params?: string[] | null,
+  compilationDetails?: {
+  } | null,
+  creationHash?: string | null,
+  status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
+  state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR,
+  minedDate?: string | null,
+  blockNumber?: number | null,
+  templateId?: string | null,
+  projectId: string,
+  metadata?: {
+  } | null,
+  uiData?: {
+    version: 1,
+    deployMethod: web3 | kms,
+    imported: boolean,
+    deployType?: string,
+    chainId?: number
+  } | null,
+  createdAt: string,
+  updatedAt: string
+}
+```
+</Accordion>
+
+<Accordion title="transaction full type">
+
+```ts
+{
+  id: string,
+  blockHash?: string | null,
+  blockNumber?: number | null,
+  chainId: number,
+  network: string,
+  data?: string | null,
+  from: string,
+  gasLimit?: string | null,
+  gasPrice?: string | null,
+  maxFeePerGas?: string | null,
+  maxPriorityFeePerGas?: string | null,
+  metadata?: {
+  } | null,
+  nonce?: number | null,
+  type?: number | null,
+  signerWallet: string,
+  publishedDate?: string | null,
+  minedDate?: string | null,
+  signedTransaction?: string | null,
+  status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
+  state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR,
+  speed?: low | average | fast | fastest | custom | null,
+  logs: {
+    message: string,
+    type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
+    context?: {
+    },
+    createdAt: string
+  }[],
+  to?: string | null,
+  transactionHash?: string | null,
+  value: string,
+  automaticNonce: boolean,
+  isDeployTransaction: boolean,
+  projectId: string,
+  parentTransaction?: string | null,
+  createdAt: string,
+  updatedAt: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### read
+
+`smartContract.read`
+
+Call a read-only function on a deployed smart contract without broadcasting a transaction
+
+**Risk:** `read`
+
+```ts
+await corsair.starton.api.smartContract.read({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `string` | Yes | Network of the smart contract, e.g. `polygon-mumbai`. List via GET /v3/network. |
+| `address` | `string` | Yes | Address of the deployed smart contract. |
+| `functionName` | `string` | Yes | Name of the read-only (view) contract function to call. |
+| `params` | `object[]` | Yes | Function arguments, in the order the ABI declares them. |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+(
+  string | number | boolean | {
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response` | `object[]` | Yes | — |
+| `params` | `object[]` | Yes | — |
+| `functionName` | `string` | Yes | — |
+| `address` | `string` | Yes | — |
+| `network` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+string | number | boolean | {
+} | any[]
+```
+</Accordion>
+
+<Accordion title="params full type">
+
+```ts
+(
+  string | number | boolean | {
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transaction
+
+### get
+
+`transaction.get`
+
+Retrieve a blockchain transaction by its Starton id
+
+**Risk:** `read`
+
+```ts
+await corsair.starton.api.transaction.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Starton transaction id, as returned by smartContract.call or smartContract.deployFromTemplate. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `blockHash` | `string` | No | — |
+| `blockNumber` | `number` | No | — |
+| `chainId` | `number` | Yes | — |
+| `network` | `string` | Yes | — |
+| `data` | `string` | No | — |
+| `from` | `string` | Yes | — |
+| `gasLimit` | `string` | No | — |
+| `gasPrice` | `string` | No | — |
+| `maxFeePerGas` | `string` | No | — |
+| `maxPriorityFeePerGas` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `nonce` | `number` | No | — |
+| `type` | `number` | No | — |
+| `signerWallet` | `string` | Yes | — |
+| `publishedDate` | `string` | No | — |
+| `minedDate` | `string` | No | — |
+| `signedTransaction` | `string` | No | — |
+| `status` | `UNSIGNED \| ERROR_TX \| ERROR_PUBLISH \| PUBLISHED \| RECEIVED_BY_STARTON \| CREATED_BY_STARTON \| COULD_NOT_ESTIMATE_GAS_PRICE \| COULD_NOT_INCREASE_GAS_PRICE \| GAS_PRICE_ESTIMATED \| INVALID_GAS_PRICE \| REPLACEMENT_GAS_PRICE_UNDERPRICED \| COULD_NOT_ESTIMATE_GAS_LIMIT \| GAS_LIMIT_ESTIMATED \| EXECUTION_WILL_FAIL \| INVALID_ARGUMENT \| INSUFFICIENT_FUNDS \| INSUFFICIENT_FUNDS_AFTER_BROADCAST \| COULD_NOT_ASSIGN_NONCE \| COULD_NOT_UNSTUCK_NONCE \| NONCE_ASSIGNED \| NONCE_EXPIRED \| COULD_NOT_SIGN \| SIGNED \| SENT_TO_MEMPOOL \| COULD_NOT_BROADCAST \| ALREADY_KNOWN \| MINED \| CONFIRMED \| REPLACED \| FAILED \| MONITORING_IN_PROGRESS \| STUCK_BY_PREVIOUS_TRANSACTION \| MAX_GAS_PRICE_REACH \| GAS_PRICE_INCREASED \| NEW_TRANSACTION_HASH \| UNKNOWN \| MONITORING_INTERRUPTED` | Yes | — |
+| `state` | `SUCCESS \| PENDING \| MANUAL_ACTION_REQUIRED \| ERROR` | Yes | — |
+| `speed` | `low \| average \| fast \| fastest \| custom` | No | — |
+| `logs` | `object[]` | Yes | — |
+| `to` | `string` | No | — |
+| `transactionHash` | `string` | No | — |
+| `value` | `string` | Yes | — |
+| `automaticNonce` | `boolean` | Yes | — |
+| `isDeployTransaction` | `boolean` | Yes | — |
+| `projectId` | `string` | Yes | — |
+| `parentTransaction` | `string` | No | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="logs full type">
+
+```ts
+{
+  message: string,
+  type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
+  context?: {
+  },
+  createdAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Wallet
+
+### create
+
+`wallet.create`
+
+Create a new KMS-managed blockchain wallet for the project
+
+**Risk:** `write`
+
+```ts
+await corsair.starton.api.wallet.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kmsId` | `string` | Yes | Id of the Key Management System the wallet key is stored under. Required. List available KMS via GET /v3/kms. |
+| `name` | `string` | No | Wallet name on Starton (off-chain). |
+| `description` | `string` | No | Wallet description on Starton (off-chain). |
+| `metadata` | `object` | No | Arbitrary JSON stored alongside the wallet. |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `providerKeyId` | `string` | Yes | — |
+| `kmsId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `projectId` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`wallet.list`
+
+List the KMS-managed wallets for the project (paginated)
+
+**Risk:** `read`
+
+```ts
+await corsair.starton.api.wallet.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Number of returned page. By default the returned page is the first. |
+| `limit` | `number` | No | Number of entities returned on each page. Defaults to 100, maximum 2500. |
+| `name` | `string` | No | Filter by wallet name. Letters, digits, -, _ and spaces only. |
+| `kmsId` | `string` | No | Filter by Key Management System id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  address: string,
+  providerKeyId: string,
+  kmsId: string,
+  name?: string | null,
+  description?: string | null,
+  metadata?: {
+  } | null,
+  projectId: string,
+  createdAt: string,
+  updatedAt: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  itemCount: number,
+  totalItems?: number,
+  itemsPerPage: number,
+  totalPages?: number,
+  currentPage: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

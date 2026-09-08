@@ -34,10 +34,19 @@ const ContractParam = z.union([
  * under. Retrieve available KMS ids via the Starton dashboard or `GET /v3/kms`.
  */
 const WalletCreateInputSchema = z.object({
-	kmsId: z.string(),
-	name: z.string().optional(),
-	description: z.string().optional(),
-	metadata: JsonObject.optional(),
+	kmsId: z
+		.string()
+		.describe(
+			'Id of the Key Management System the wallet key is stored under. Required. List available KMS via GET /v3/kms.',
+		),
+	name: z.string().optional().describe('Wallet name on Starton (off-chain).'),
+	description: z
+		.string()
+		.optional()
+		.describe('Wallet description on Starton (off-chain).'),
+	metadata: JsonObject.optional().describe(
+		'Arbitrary JSON stored alongside the wallet.',
+	),
 });
 export type WalletCreateInput = z.infer<typeof WalletCreateInputSchema>;
 
@@ -45,14 +54,30 @@ export type WalletCreateInput = z.infer<typeof WalletCreateInputSchema>;
  * Official: GET /v3/kms/wallet query parameters.
  */
 const WalletListInputSchema = z.object({
-	page: z.number().int().min(0).optional(),
-	limit: z.number().int().min(1).max(2500).optional(),
+	page: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe(
+			'Number of returned page. By default the returned page is the first.',
+		),
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.max(2500)
+		.optional()
+		.describe(
+			'Number of entities returned on each page. Defaults to 100, maximum 2500.',
+		),
 	/** Spec pattern: `^[\w\-\s]+$` — the API rejects other characters with a 400. */
 	name: z
 		.string()
 		.regex(/^[\w\-\s]+$/)
-		.optional(),
-	kmsId: z.string().optional(),
+		.optional()
+		.describe('Filter by wallet name. Letters, digits, -, _ and spaces only.'),
+	kmsId: z.string().optional().describe('Filter by Key Management System id.'),
 });
 export type WalletListInput = z.infer<typeof WalletListInputSchema>;
 
@@ -72,21 +97,66 @@ export type WalletListResponse = z.infer<typeof WalletListResponseSchema>;
  * Official: components.schemas.DeployFromTemplateDto
  */
 const SmartContractDeployFromTemplateInputSchema = z.object({
-	network: z.string(),
-	signerWallet: z.string(),
-	templateId: z.string(),
-	name: z.string().max(255),
-	params: z.array(ContractParam).default([]),
-	description: z.string().optional(),
-	gasLimit: z.string().optional(),
-	speed: StartonSpeed.optional(),
-	customGas: StartonCustomGas.optional(),
-	nonce: z.number().optional(),
-	value: z.string().optional(),
-	metadata: JsonObject.optional(),
-	uiData: StartonSmartContractUI.nullish(),
-	/** Estimate gas instead of broadcasting. */
-	simulate: z.boolean().optional(),
+	network: z
+		.string()
+		.describe(
+			'Network of the smart contract, e.g. `polygon-mumbai`. List via GET /v3/network.',
+		),
+	signerWallet: z
+		.string()
+		.describe(
+			'Address of the KMS wallet that signs and pays for the transaction.',
+		),
+	templateId: z
+		.string()
+		.describe(
+			'Starton Library template to deploy, e.g. `ERC20_META_TRANSACTION`. List via GET /v3/smart-contract-template.',
+		),
+	name: z
+		.string()
+		.max(255)
+		.describe('Contract name on Starton (off-chain). Max 255 characters.'),
+	params: z
+		.array(ContractParam)
+		.default([])
+		.describe(
+			'Smart contract constructor parameters, in the order the template declares them.',
+		),
+	description: z
+		.string()
+		.optional()
+		.describe('Contract description on Starton (off-chain).'),
+	gasLimit: z.string().optional().describe('Optional gas limit.'),
+	speed: StartonSpeed.optional().describe(
+		'Gas speed. Defaults to `average`; use `custom` to supply customGas.',
+	),
+	customGas: StartonCustomGas.optional().describe(
+		'Custom gas settings. Only used when speed is set to `custom`.',
+	),
+	nonce: z
+		.number()
+		.optional()
+		.describe(
+			'Manual nonce. If set, the Starton relayer will not assign one automatically.',
+		),
+	value: z
+		.string()
+		.optional()
+		.describe(
+			'Native-currency value sent with the deployment, in wei. For payable constructors.',
+		),
+	metadata: JsonObject.optional().describe(
+		'Arbitrary JSON stored alongside the contract.',
+	),
+	uiData: StartonSmartContractUI.nullish().describe(
+		'Dashboard display metadata Starton stores with the contract.',
+	),
+	simulate: z
+		.boolean()
+		.optional()
+		.describe(
+			'Simulate only: estimates gas and does NOT broadcast a transaction.',
+		),
 });
 export type SmartContractDeployFromTemplateInput = z.infer<
 	typeof SmartContractDeployFromTemplateInputSchema
@@ -104,18 +174,49 @@ export type SmartContractDeployFromTemplateResponse = z.infer<
  * Official: components.schemas.CallDto
  */
 const SmartContractCallInputSchema = z.object({
-	network: z.string(),
-	address: z.string(),
-	functionName: z.string(),
-	params: z.array(ContractParam).default([]),
-	signerWallet: z.string(),
-	speed: StartonSpeed.optional(),
-	customGas: StartonCustomGas.optional(),
-	gasLimit: z.string().optional(),
-	nonce: z.number().optional(),
-	value: z.string().optional(),
-	/** Estimate gas instead of broadcasting. */
-	simulate: z.boolean().optional(),
+	network: z
+		.string()
+		.describe(
+			'Network of the smart contract, e.g. `polygon-mumbai`. List via GET /v3/network.',
+		),
+	address: z.string().describe('Address of the deployed smart contract.'),
+	functionName: z
+		.string()
+		.describe(
+			'Name of the contract function to execute. Must be state-changing; use smartContract.read for view functions.',
+		),
+	params: z
+		.array(ContractParam)
+		.default([])
+		.describe('Function arguments, in the order the ABI declares them.'),
+	signerWallet: z
+		.string()
+		.describe(
+			'Address of the KMS wallet that signs and pays for the transaction.',
+		),
+	speed: StartonSpeed.optional().describe(
+		'Gas speed. Defaults to `average`; use `custom` to supply customGas.',
+	),
+	customGas: StartonCustomGas.optional().describe(
+		'Custom gas settings. Only used when speed is set to `custom`.',
+	),
+	gasLimit: z.string().optional().describe('Optional gas limit.'),
+	nonce: z
+		.number()
+		.optional()
+		.describe(
+			'Manual nonce. If set, the Starton relayer will not assign one automatically.',
+		),
+	value: z
+		.string()
+		.optional()
+		.describe('Native-currency value sent with the call, in wei.'),
+	simulate: z
+		.boolean()
+		.optional()
+		.describe(
+			'Simulate only: estimates gas and does NOT broadcast a transaction.',
+		),
 });
 export type SmartContractCallInput = z.infer<
 	typeof SmartContractCallInputSchema
@@ -125,10 +226,19 @@ export type SmartContractCallInput = z.infer<
  * Official: components.schemas.ReadDto
  */
 const SmartContractReadInputSchema = z.object({
-	network: z.string(),
-	address: z.string(),
-	functionName: z.string(),
-	params: z.array(ContractParam).default([]),
+	network: z
+		.string()
+		.describe(
+			'Network of the smart contract, e.g. `polygon-mumbai`. List via GET /v3/network.',
+		),
+	address: z.string().describe('Address of the deployed smart contract.'),
+	functionName: z
+		.string()
+		.describe('Name of the read-only (view) contract function to call.'),
+	params: z
+		.array(ContractParam)
+		.default([])
+		.describe('Function arguments, in the order the ABI declares them.'),
 });
 export type SmartContractReadInput = z.infer<
 	typeof SmartContractReadInputSchema
@@ -159,7 +269,11 @@ export type SmartContractReadResponse = z.infer<
 // ─────────────────────────────────────────────────────────────────────────────
 
 const TransactionGetInputSchema = z.object({
-	id: z.string(),
+	id: z
+		.string()
+		.describe(
+			'Starton transaction id, as returned by smartContract.call or smartContract.deployFromTemplate.',
+		),
 });
 export type TransactionGetInput = z.infer<typeof TransactionGetInputSchema>;
 

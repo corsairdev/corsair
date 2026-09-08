@@ -1471,3 +1471,134 @@ describe('retry decision fails closed without a verified operation', () => {
 		expect(isRetryableOperation(undefined)).toBe(false);
 	});
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Runtime input validation
+//
+// Corsair's binder does not validate against `endpointSchemas` (they feed
+// introspection only), so each endpoint parses its own input. That rejects bad
+// arguments before any network call, applies the schema defaults, and — because
+// `z.object()` strips unknown keys — keeps caller-supplied extras out of the
+// request body and query string.
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('runtime input validation', () => {
+	it('rejects a missing required field without issuing a request', async () => {
+		const attempts = countingFetch(200);
+
+		await expect(
+			Wallet.create(ctx, {} as unknown as Parameters<typeof Wallet.create>[1]),
+		).rejects.toThrow();
+		expect(attempts()).toBe(0);
+	});
+
+	it('rejects a wrong-typed field without issuing a request', async () => {
+		const attempts = countingFetch(200);
+
+		await expect(
+			Wallet.list(ctx, {
+				limit: 'twenty',
+			} as unknown as Parameters<typeof Wallet.list>[1]),
+		).rejects.toThrow();
+		expect(attempts()).toBe(0);
+	});
+
+	it('enforces the spec pagination ceiling before the request', async () => {
+		const attempts = countingFetch(200);
+
+		await expect(Wallet.list(ctx, { limit: 2501 })).rejects.toThrow();
+		expect(attempts()).toBe(0);
+	});
+
+	it('strips unknown keys out of a POST body', async () => {
+		nextResponseBody = {
+			address: '0xabc',
+			providerKeyId: 'pk_1',
+			kmsId: 'kms_1',
+			projectId: 'p',
+			createdAt: 'x',
+			updatedAt: 'x',
+		};
+
+		await Wallet.create(ctx, {
+			kmsId: 'kms_1',
+			name: 'Treasury',
+			// Not part of CreateWalletDto — must not be forwarded to Starton.
+			internalNote: 'do not send me',
+		} as unknown as Parameters<typeof Wallet.create>[1]);
+
+		const body = JSON.parse(captured?.body ?? '{}');
+		expect(body).toEqual({ kmsId: 'kms_1', name: 'Treasury' });
+		expect(captured?.body).not.toContain('do not send me');
+	});
+
+	it('strips unknown keys out of a query string', async () => {
+		nextResponseBody = {
+			items: [],
+			meta: { itemCount: 0, itemsPerPage: 100, currentPage: 0 },
+		};
+
+		await Wallet.list(ctx, {
+			limit: 5,
+			secretFilter: 'leak',
+		} as unknown as Parameters<typeof Wallet.list>[1]);
+
+		expect(captured?.url).toContain('limit=5');
+		expect(captured?.url).not.toContain('secretFilter');
+		expect(captured?.url).not.toContain('leak');
+	});
+
+	it('applies the schema default for `params` rather than omitting it', async () => {
+		nextResponseBody = {
+			response: '1',
+			params: [],
+			functionName: 'totalSupply',
+			address: '0xabc',
+			network: 'polygon-mumbai',
+		};
+
+		await SmartContract.read(ctx, {
+			network: 'polygon-mumbai',
+			address: '0xabc',
+			functionName: 'totalSupply',
+		} as unknown as Parameters<typeof SmartContract.read>[1]);
+
+		expect(JSON.parse(captured?.body ?? '{}')).toEqual({
+			functionName: 'totalSupply',
+			params: [],
+		});
+	});
+
+	it('keeps path/query fields out of the smartContract.call body after parsing', async () => {
+		nextResponseBody = TX_FIXTURE;
+
+		await SmartContract.call(ctx, {
+			network: 'polygon-mumbai',
+			address: '0xabc',
+			functionName: 'mint',
+			params: ['1'],
+			signerWallet: '0x298',
+			simulate: true,
+			bogus: 'nope',
+		} as unknown as Parameters<typeof SmartContract.call>[1]);
+
+		const body = JSON.parse(captured?.body ?? '{}');
+		expect(body).toEqual({
+			functionName: 'mint',
+			params: ['1'],
+			signerWallet: '0x298',
+		});
+		expect(captured?.url).toContain('simulate=true');
+		expect(captured?.body).not.toContain('bogus');
+	});
+
+	it('a validation failure is not retried (no side-effect replay)', async () => {
+		const zodish = new Error('Invalid input');
+
+		expect(errorHandlers.SERVER_ERROR.match(zodish)).toBe(false);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(zodish)).toBe(false);
+		await expect(errorHandlers.DEFAULT.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
+	});
+});
