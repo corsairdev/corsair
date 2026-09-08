@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import type { AnyCorsairInstance } from 'corsair';
 import { createCorsair } from 'corsair/core';
 import { createTestDatabase } from 'corsair/tests';
 import {
@@ -18,7 +17,7 @@ const corsair = createCorsair({
 	kek: 'test-kek-12345678901234567890123456789012',
 });
 const provider = new CorsairToolProvider({
-	corsair: corsair as AnyCorsairInstance,
+	corsair,
 	tenantId: 'dev',
 });
 
@@ -51,7 +50,7 @@ assert.equal(conns.items.length, 0);
 // (authorize and resolveToolsVNext cannot diverge). The throwing resolver would
 // run only if connectionId precedence were lost.
 const fnProvider = new CorsairToolProvider({
-	corsair: corsair as AnyCorsairInstance,
+	corsair,
 	tenantId: () => {
 		throw new Error('resolver must not run when a connectionId is present');
 	},

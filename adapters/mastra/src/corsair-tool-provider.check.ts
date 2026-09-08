@@ -65,6 +65,9 @@ function providerWith(
 		},
 	};
 	return new CorsairToolProvider({
+		// Test double: implements only the `manage` methods this precedence check
+		// exercises, so it can't satisfy the full instance shape; a real instance
+		// isn't practical for a unit check.
 		corsair: corsair as unknown as AnyCorsairInstance,
 		tenantId,
 	});
