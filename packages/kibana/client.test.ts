@@ -13,6 +13,10 @@ const mockRequest = jest.mocked(request);
 
 const BASE = 'https://kibana.example.com:5601';
 
+// Identity handler keeps caught values typed as unknown so the assertions
+// below narrow them via matchers instead of type assertions.
+const capture = (e: unknown) => e;
+
 describe('Kibana API client', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
@@ -138,7 +142,7 @@ describe('Kibana API client', () => {
 		mockRequest.mockRejectedValueOnce(apiErr);
 
 		const caught = await makeKibanaRequest('api/status', BASE, 'k').catch(
-			(e: unknown) => e,
+			capture,
 		);
 		expect(caught).toBeInstanceOf(ApiError);
 		expect(caught).toBe(apiErr);
@@ -149,7 +153,7 @@ describe('Kibana API client', () => {
 		mockRequest.mockRejectedValueOnce(new Error('boom'));
 
 		const caught = await makeKibanaRequest('api/status', BASE, 'k').catch(
-			(e: unknown) => e,
+			capture,
 		);
 		expect(caught).toBeInstanceOf(KibanaAPIError);
 		expect(caught).toMatchObject({ message: 'boom' });

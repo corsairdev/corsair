@@ -46,8 +46,10 @@ const ctx = {
 			.fn()
 			.mockResolvedValue('https://kibana.example.com:5601'),
 	},
-	// Minimal test double: narrowed to the endpoint context type because the
-	// mock only implements the fields endpoints actually read (key/options/keys).
+	// Narrow test double: only key/options/keys are implemented because those
+	// are the sole context fields endpoints read, so the cast cannot mask a
+	// missing dependency. A full KibanaContext (bound endpoint tree, key
+	// managers, entity services) is impractical to construct for unit doubles.
 } as unknown as Parameters<typeof SavedObjects.find>[0];
 
 const BASE = 'https://kibana.example.com:5601';
