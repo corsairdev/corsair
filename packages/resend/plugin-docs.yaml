@@ -1,5 +1,5 @@
 displayName: Resend
-description: "Resend plugin for Corsair — transactional email send, list, and delivery events."
+description: Developer email API for sending transactional messages, broadcasts, and deliverability tools.
 examples:
   read:
     path: emails.list
@@ -14,10 +14,10 @@ examples:
       text: Hello from Corsair
 dbExample:
   entity: emails
-  note: "Search synced emails without hitting Resend."
+  note: 'Search synced emails without hitting Resend.'
   limit: 50
 exampleWebhook:
   path: emails.sent
-  note: "Fires when Resend accepts an outbound email."
+  note: 'Fires when Resend accepts an outbound email.'
   after: |
     console.log('Email sent:', result.data);
