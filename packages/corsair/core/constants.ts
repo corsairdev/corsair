@@ -124,6 +124,7 @@ export const BaseProviders = [
 	'chmeetings',
 	'circleci',
 	'clickhouse',
+	'clicksend',
 	'clientary',
 	'clockify',
 	'cloudflare',
@@ -414,6 +415,7 @@ export const ProviderDisplayNames = {
 	chmeetings: 'ChMeetings',
 	circleci: 'CircleCI',
 	clickhouse: 'Clickhouse',
+	clicksend: 'ClickSend',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
 	cloudflare: 'Cloudflare',
@@ -711,6 +713,7 @@ export type AllProviders =
 	| 'chmeetings'
 	| 'circleci'
 	| 'clickhouse'
+	| 'clicksend'
 	| 'clientary'
 	| 'clockify'
 	| 'cloudflare'
