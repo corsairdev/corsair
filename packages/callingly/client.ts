@@ -9,8 +9,8 @@ export class CallinglyAPIError extends Error {
 		message: string,
 		public readonly status?: number,
 		/**
-		 * Raw response payload returned from the Callingly API for debugging.
 		 * Typed as unknown because error payloads can be arbitrary JSON objects or error strings.
+		 * z.unknown() is used because Callingly error bodies are not a fixed schema.
 		 */
 		public readonly responseData?: unknown,
 		public readonly method?: string,
@@ -27,6 +27,7 @@ export const CALLINGLY_API_BASE = 'https://api.callingly.com/v1';
  */
 export type MakeCallinglyRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	// unknown is used because Callingly write bodies are arbitrary JSON objects or arrays.
 	body?: Record<string, unknown> | unknown[];
 	query?: Record<string, string | number | boolean | undefined>;
 	accountId?: string | number;
