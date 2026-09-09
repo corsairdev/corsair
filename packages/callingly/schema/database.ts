@@ -1,147 +1,224 @@
 import { z } from 'zod';
 
+const Id = z.union([z.string(), z.number()]);
+
 /**
- * Callingly Lead entity schema
+ * Lead fields from GET/LIST /v1/leads in the Callingly API docs.
  */
 export const CallinglyLead = z
 	.object({
-		id: z.union([z.string(), z.number()]),
+		id: Id,
+		account_id: Id.optional(),
+		lead_owner_id: Id.optional(),
 		name: z.string().optional(),
-		first_name: z.string().optional(),
-		last_name: z.string().optional(),
-		phone: z.string().optional(),
-		phone_number: z.string().optional(),
+		label: z.string().optional(),
+		fname: z.string().optional(),
+		lname: z.string().optional(),
 		email: z.string().optional(),
-		status: z.string().optional(),
-		team_id: z.union([z.string(), z.number()]).optional(),
-		user_id: z.union([z.string(), z.number()]).optional(),
-		agent_id: z.union([z.string(), z.number()]).optional(),
-		scheduled_at: z.string().optional(),
-		notes: z.string().optional(),
-		tags: z.array(z.string()).optional(),
-		// Arbitrary user-defined custom field key-values configured on the Callingly lead
-		custom_fields: z.record(z.string(), z.unknown()).optional(),
+		phone_number: z.string().optional(),
+		phone_number_formatted: z.string().optional(),
+		source: z.string().nullable().optional(),
+		crm: z.string().nullable().optional(),
+		source_id: z.union([z.string(), z.number()]).nullable().optional(),
+		company: z.string().nullable().optional(),
+		category: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		result: z.string().nullable().optional(),
+		stage: z.unknown().nullable().optional(),
+		tags: z.array(z.unknown()).optional(),
+		team: z
+			.object({
+				id: Id.optional(),
+				name: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+		lead_owner: z
+			.object({
+				name: z.string().optional(),
+				phone_number: z.string().optional(),
+				custom_id: z.unknown().nullable().optional(),
+			})
+			.passthrough()
+			.optional(),
+		calls: z.array(z.unknown()).optional(),
+		scheduled_call_at: z.string().nullable().optional(),
+		is_stopped: z.number().optional(),
+		is_blocked: z.number().optional(),
 		created_at: z.string().optional(),
-		updated_at: z.string().optional(),
+		deleted_at: z.string().nullable().optional(),
 	})
 	.passthrough();
 
 /**
- * Callingly Call entity schema
+ * Call fields from GET /v1/calls/{id} and LIST /v1/calls in the Callingly API docs.
  */
 export const CallinglyCall = z
 	.object({
-		id: z.union([z.string(), z.number()]),
-		lead_id: z.union([z.string(), z.number()]).optional(),
-		team_id: z.union([z.string(), z.number()]).optional(),
-		user_id: z.union([z.string(), z.number()]).optional(),
-		agent_id: z.union([z.string(), z.number()]).optional(),
-		phone_number: z.string().optional(),
-		status: z.string().optional(),
+		id: Id,
+		started_at: z.string().optional(),
+		direction: z.string().optional(),
+		status: z.string().nullable().optional(),
+		status_formatted: z.string().optional(),
+		lead_status: z.string().nullable().optional(),
+		lead_status_formatted: z.string().optional(),
+		ring_status: z.string().optional(),
 		seconds: z.number().optional(),
 		duration: z.union([z.number(), z.string()]).optional(),
-		outcome: z.string().optional(),
-		recording_url: z.string().optional(),
-		scheduled_at: z.string().optional(),
-		started_at: z.string().optional(),
-		ended_at: z.string().optional(),
-		created_at: z.string().optional(),
+		retry: z.number().optional(),
+		lead_retry: z.number().optional(),
+		time_formatted: z.string().optional(),
+		from_formatted: z.string().optional(),
+		source: z.string().nullable().optional(),
+		recording_url: z.string().nullable().optional(),
+		waveform_url: z.string().optional(),
+		error_message: z.unknown().nullable().optional(),
+		phone_number_formatted: z.string().optional(),
+		human_result: z.string().optional(),
+		transcript: z.string().nullable().optional(),
+		sales_advice: z.unknown().nullable().optional(),
+		is_voicemail: z.number().optional(),
+		is_queue: z.number().optional(),
+		is_team_offline: z.number().optional(),
+		is_error: z.number().optional(),
+		error_code: z.string().optional(),
+		user: z.unknown().optional(),
+		lead: z.unknown().optional(),
+		member: z.unknown().optional(),
+		number: z.unknown().nullable().optional(),
+		tag: z.unknown().nullable().optional(),
+		notes: z.array(z.unknown()).optional(),
+		profile: z.unknown().optional(),
 	})
 	.passthrough();
 
 /**
- * Callingly Agent / User entity schema
+ * Agent fields from GET /v1/agents in the Callingly API docs.
  */
 export const CallinglyUser = z
 	.object({
-		id: z.union([z.string(), z.number()]),
+		id: Id,
+		account_id: Id.optional(),
+		fname: z.string().optional(),
+		lname: z.string().optional(),
 		name: z.string().optional(),
-		first_name: z.string().optional(),
-		last_name: z.string().optional(),
 		email: z.string().optional(),
 		phone_number: z.string().optional(),
-		role: z.string().optional(),
-		status: z.string().optional(),
-		active: z.boolean().optional(),
-		account_id: z.string().optional(),
-		created_at: z.string().optional(),
+		ext: z.string().optional(),
+		donotdisturb: z.number().optional(),
+		priority: z.number().optional(),
+		timezone: z.string().optional(),
+		is_available: z.boolean().optional(),
 	})
 	.passthrough();
 
 export const CallinglyAgent = CallinglyUser;
 
 /**
- * Callingly Team entity schema
+ * Team fields from GET /v1/teams and GET /v1/teams/{id} in the Callingly API docs.
  */
 export const CallinglyTeam = z
 	.object({
-		id: z.union([z.string(), z.number()]),
+		id: Id,
+		account_id: Id.optional(),
 		name: z.string(),
-		description: z.string().optional(),
-		user_ids: z.array(z.union([z.string(), z.number()])).optional(),
-		created_at: z.string().optional(),
+		is_record: z.number().optional(),
+		call_mode: z.string().optional(),
+		whispertext: z.string().optional(),
+		post_whispertext: z.string().optional(),
+		language: z.string().optional(),
+		delay: z.number().optional(),
+		is_retry: z.number().optional(),
+		retries: z.number().optional(),
+		retry_schedule: z.array(z.number()).optional(),
+		is_reschedule: z.number().optional(),
+		is_retry_lead: z.number().optional(),
+		lead_retries: z.number().optional(),
+		lead_retry_schedule: z.array(z.number()).optional(),
+		is_sms: z.number().optional(),
+		sms_body: z.string().optional(),
+		whispertext_voice: z.string().optional(),
+		is_users_available_for_call: z.boolean().optional(),
 	})
 	.passthrough();
 
 /**
- * Callingly Team User Assignment
+ * Team agent fields from GET /v1/teams/{id}/agents in the Callingly API docs.
  */
 export const CallinglyTeamUser = z
 	.object({
-		id: z.union([z.string(), z.number()]),
-		team_id: z.union([z.string(), z.number()]).optional(),
+		id: Id,
+		team_id: Id.optional(),
 		name: z.string().optional(),
 		priority: z.number().optional(),
-		call_cap: z.number().optional(),
-		integration_id: z.string().optional(),
+		cap: z.number().nullable().optional(),
+	})
+	.passthrough();
+
+export const CallinglyScheduleDay = z
+	.object({
+		label: z.string().optional(),
+		day: z.union([z.string(), z.number()]).optional(),
+		is_available: z.boolean().optional(),
+		times: z
+			.array(
+				z
+					.object({
+						start: z.string().optional(),
+						end: z.string().optional(),
+					})
+					.passthrough(),
+			)
+			.optional(),
 	})
 	.passthrough();
 
 /**
- * Callingly Agent Schedule
+ * GET /v1/agents/{id}/schedule returns an array of day records.
+ * Local sync wraps that array with the agent id.
  */
 export const CallinglySchedule = z
 	.object({
-		agent_id: z.union([z.string(), z.number()]).optional(),
-		user_id: z.union([z.string(), z.number()]).optional(),
-		timezone: z.string().optional(),
-		// Arbitrary day and time mapping defining agent working shifts
-		schedule: z.record(z.string(), z.unknown()).optional(),
-		days: z.array(z.string()).optional(),
+		id: Id.optional(),
+		agent_id: Id.optional(),
+		days: z.array(CallinglyScheduleDay).optional(),
 	})
 	.passthrough();
 
 /**
- * Callingly Client entity schema (Agency sub-accounts)
+ * Client fields from GET /v1/clients in the Callingly API docs.
  */
 export const CallinglyClient = z
 	.object({
-		id: z.union([z.string(), z.number()]),
-		name: z.string(),
+		id: Id,
+		name: z.string().optional(),
 		email: z.string().optional(),
+		billed_users: z.number().optional(),
+		billed_numbers: z.number().optional(),
+		fname: z.string().optional(),
+		lname: z.string().optional(),
 		company: z.string().optional(),
-		active: z.boolean().optional(),
-		created_at: z.string().optional(),
+		phone_number: z.string().optional(),
 	})
 	.passthrough();
 
 /**
- * Callingly Webhook Configuration
+ * Webhook fields from GET /v1/webhooks in the Callingly API docs.
  */
 export const CallinglyWebhookConfig = z
 	.object({
-		id: z.union([z.string(), z.number()]),
+		id: Id,
+		account_id: Id.optional(),
 		name: z.string().optional(),
-		url: z.string().optional(),
-		target_url: z.string().optional(),
 		event: z.string().optional(),
-		events: z.array(z.string()).optional(),
-		call_status: z.string().optional(),
-		call_lead_status: z.string().optional(),
-		field: z.string().optional(),
-		filter: z.string().optional(),
-		active: z.boolean().optional(),
-		created_at: z.string().optional(),
+		target_url: z.string().optional(),
+		call_status: z.string().nullable().optional(),
+		call_lead_status: z.string().nullable().optional(),
+		team_id: Id.nullable().optional(),
+		number_id: Id.nullable().optional(),
+		field: z.string().nullable().optional(),
+		filter: z.string().nullable().optional(),
+		call_direction: z.string().nullable().optional(),
 	})
 	.passthrough();
 
