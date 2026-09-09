@@ -19,6 +19,7 @@ export const Account = {
 
 		return makeCodacyRequest<CreateApiTokenResponse>(route, apiKey, {
 			method: 'POST',
+			body: { name: input.name },
 		});
 	},
 	deleteApiToken: async (

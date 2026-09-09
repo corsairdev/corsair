@@ -1,5 +1,6 @@
 import { FILLOUT_AUTH_URL } from '../client';
 import type { FilloutFormsEndpoints } from '../index';
+import type { FilloutFormsEndpointOutputs } from './types';
 
 export const authorizeOAuth: FilloutFormsEndpoints['authorizeOAuth'] = async (
 	_ctx,

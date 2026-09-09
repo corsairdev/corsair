@@ -81,6 +81,7 @@ export const Tools = {
 		route = route.replace('{toolUuid}', input.toolUuid);
 		return makeCodacyRequest<ListToolsPatternsResponse>(route, apiKey, {
 			method: 'GET',
+			query: { cursor: input.cursor, limit: input.limit },
 		});
 	},
 };

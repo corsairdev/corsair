@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 import { logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
-import { makeChMeetingsRequest } from './client';
+import { ChMeetingsAPIError, makeChMeetingsRequest } from './client';
 import {
 	Events,
 	Families,

@@ -28,7 +28,7 @@ export async function generateMetadata({
 export default async function ContributorProfilePage({ params }: PageProps) {
 	const { username } = await params;
 
-	let profile: Awaited<ReturnType<typeof getCachedContributorProfile>>;
+	let profile;
 	try {
 		profile = await getCachedContributorProfile(username.toLowerCase());
 	} catch (error) {

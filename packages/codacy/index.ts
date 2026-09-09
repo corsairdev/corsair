@@ -1,4 +1,5 @@
 import type {
+	AuthMissingError,
 	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
@@ -344,15 +345,17 @@ export function codacy<const T extends CodacyPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) throw new AuthMissingError('codacy');
+				return res;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				if (!res) throw new AuthMissingError('codacy');
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('codacy');
 		},
 	} satisfies InternalCodacyPlugin;
 }

@@ -48,7 +48,7 @@ export const Organizations = {
 		return makeCodacyRequest<ListAnalysisOrganizationsRepositoriesResponse>(
 			route,
 			apiKey,
-			{ method: 'GET' },
+			{ method: 'GET', query: { cursor: input.cursor } },
 		);
 	},
 };

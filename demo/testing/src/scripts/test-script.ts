@@ -4,30 +4,25 @@ dotenv.config({ path: '../.env' });
 
 import { corsair } from '@/server/corsair';
 
+async function setInstagramCredentials() {
+	const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, IG_ACCESS_TOKEN } = process.env;
+
+	if (FACEBOOK_APP_ID) {
+		await corsair.keys.instagram.set_client_id(FACEBOOK_APP_ID);
+	}
+	if (FACEBOOK_APP_SECRET) {
+		await corsair.keys.instagram.set_client_secret(FACEBOOK_APP_SECRET);
+	}
+	if (IG_ACCESS_TOKEN) {
+		await corsair.instagram.keys.set_access_token(IG_ACCESS_TOKEN);
+	}
+}
+
 const main = async () => {
-	console.log('Testing Codacy Plugin...');
-
-	try {
-		console.log('Attempting to fetch Codacy API Health...');
-		const healthRes = await corsair.codacy.api.system.getHealth({});
-		console.log('Health response:', healthRes);
-	} catch (e) {
-		console.error(
-			'Expected error if unauthorized or misconfigured (Health):',
-			e.message,
-		);
-	}
-
-	try {
-		console.log('Attempting to fetch Codacy Account Details...');
-		const accountRes = await corsair.codacy.api.account.getAccountDetails({});
-		console.log('Account response:', accountRes);
-	} catch (e) {
-		console.error(
-			'Expected error if unauthorized or misconfigured (Account):',
-			e.message,
-		);
-	}
+	const res = await corsair.slack.api.messages.post({
+		channel: 'general',
+		text: 'hello',
+	});
 };
 
 main().catch((err) => {
