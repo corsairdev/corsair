@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import {
 	CommentsEndpoints,
 	ConversationsEndpoints,
@@ -36,7 +37,7 @@ import { errorHandlers } from './error-handlers';
 import { FacebookSchema } from './schema';
 
 export type FacebookPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalFacebookPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -558,6 +559,10 @@ export const facebookAuthConfig = {
 		integration: [] as const,
 		account: ['tenant_external_id'] as const,
 	},
+	managed: {
+		integration: [] as const,
+		account: ['tenant_external_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseFacebookPlugin<T extends FacebookPluginOptions> = CorsairPlugin<
@@ -620,6 +625,25 @@ export function facebook<const T extends FacebookPluginOptions>(
 		keyBuilder: async (ctx: FacebookKeyBuilderContext) => {
 			if (options.key) {
 				return options.key;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:facebook:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'facebook',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			if (ctx.authType !== 'oauth_2') {

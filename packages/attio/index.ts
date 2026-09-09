@@ -14,6 +14,7 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import {
 	ATTIO_OAUTH_AUTH_URL,
 	ATTIO_OAUTH_TOKEN_URL,
@@ -59,7 +60,7 @@ export type AttioCredentials = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type AttioPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	credentials?: AttioCredentials;
 	webhookSecret?: string;
@@ -849,6 +850,9 @@ export const attioAuthConfig = {
 	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
+	managed: {
+		account: ['tenant_external_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -962,6 +966,25 @@ export function attio<const T extends AttioPluginOptions>(
 				} catch {
 					throw new AuthMissingError('attio', 'oauth_2');
 				}
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:attio:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'attio',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('attio', ctx.authType);

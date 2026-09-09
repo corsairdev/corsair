@@ -1,3 +1,4 @@
+import type { AccountKeyManagerFor } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import type { InstagramWebhooks } from '../index';
 import {
@@ -9,7 +10,9 @@ import {
 export const messageReceived: InstagramWebhooks['messageReceived'] = {
 	match: createInstagramWebhookMatcher('messageReceived'),
 	handler: async (ctx, request) => {
-		const credentials = await ctx.keys.get_integration_credentials();
+		const credentials = await (
+			ctx.keys as AccountKeyManagerFor<'oauth_2'>
+		).get_integration_credentials();
 		const appSecret = credentials.client_secret;
 
 		const verification = verifyInstagramWebhookSignature(request, appSecret);

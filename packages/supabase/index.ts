@@ -11,6 +11,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import {
 	supabaseEndpointMeta as generatedSupabaseEndpointMeta,
 	supabaseEndpointSchemas,
@@ -25,7 +26,7 @@ export const supabaseEndpointMeta =
 	>;
 
 export type SupabasePluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	projectApiKey?: string;
 	hooks?: InternalSupabasePlugin['hooks'];
@@ -52,6 +53,7 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 export const supabaseAuthConfig = {
 	api_key: {},
 	oauth_2: {},
+	managed: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseSupabasePlugin<T extends SupabasePluginOptions> = CorsairPlugin<
@@ -118,6 +120,25 @@ export function supabase<const T extends SupabasePluginOptions>(
 					throw new AuthMissingError('supabase', 'oauth_2');
 				}
 				return res;
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:supabase:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'supabase',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('supabase', ctx.authType);

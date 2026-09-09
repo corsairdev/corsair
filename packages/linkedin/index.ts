@@ -11,6 +11,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 
 import {
 	AdsEndpoints,
@@ -35,6 +36,11 @@ import { LinkedInSchema } from './schema';
 
 export const linkedinAuthConfig = {
 	oauth_2: {
+		// client_id and client_secret are provided by the base framework and must not
+		// be declared in the integration array.
+		integration: [] as const,
+	},
+	managed: {
 		// client_id and client_secret are provided by the base framework and must not
 		// be declared in the integration array.
 		integration: [] as const,
@@ -311,7 +317,7 @@ const linkedinEndpointMeta = {
 } satisfies RequiredPluginEndpointMeta<typeof LinkedInEndpointsNested>;
 
 export type LinkedInPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalLinkedInPlugin['hooks'];
 	permissions?: PluginPermissionsConfig<typeof LinkedInEndpointsNested>;
@@ -399,15 +405,34 @@ export function linkedin<const T extends LinkedInPluginOptions>(
 				return options.key;
 			}
 
-			if (ctx.authType !== 'oauth_2') {
-				throw new AuthMissingError('linkedin', 'oauth_2');
+			if (ctx.authType === 'oauth_2') {
+				return getOAuthAccessToken(ctx, {
+					plugin: 'linkedin',
+					tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
+					tokenAuthMethod: 'body',
+				});
 			}
 
-			return getOAuthAccessToken(ctx, {
-				plugin: 'linkedin',
-				tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
-				tokenAuthMethod: 'body',
-			});
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:linkedin:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'linkedin',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
+			}
+
+			throw new AuthMissingError('linkedin', 'oauth_2');
 		},
 	} satisfies InternalLinkedInPlugin;
 }

@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import {
 	normalizeConfluenceCloudUrl,
 	resolveConfluenceCloudResource,
@@ -30,7 +31,7 @@ import { errorHandlers } from './error-handlers';
 import { ConfluenceSchema } from './schema';
 
 export type ConfluencePluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	/** Atlassian account email used with a Confluence Cloud API token. */
 	email?: string;
@@ -121,6 +122,9 @@ export const confluenceAuthConfig = {
 		account: ['email', 'cloud_url'] as const,
 	},
 	oauth_2: {
+		account: ['cloud_id', 'cloud_url'] as const,
+	},
+	managed: {
 		account: ['cloud_id', 'cloud_url'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -239,6 +243,25 @@ export function confluence<const T extends ConfluencePluginOptions>(
 				}
 
 				return accessToken;
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:confluence:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'confluence',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('confluence', 'api_key');

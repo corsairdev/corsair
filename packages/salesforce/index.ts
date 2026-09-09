@@ -15,6 +15,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { z } from 'zod';
 import { SALESFORCE_LOGIN_HOST } from './client';
 import {
@@ -61,7 +62,7 @@ import type {
 import { SalesforceWebhookPayloadSchema } from './webhooks/types';
 
 export type SalesforcePluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	instanceUrl?: string;
 	loginUrl?: string;
@@ -2568,6 +2569,9 @@ export const salesforceAuthConfig = {
 	oauth_2: {
 		account: ['tenant_external_id', 'instance_url'] as const,
 	},
+	managed: {
+		account: ['tenant_external_id', 'instance_url'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseSalesforcePlugin<T extends SalesforcePluginOptions> =
@@ -2659,6 +2663,25 @@ export function salesforce<const T extends SalesforcePluginOptions>(
 				const res = await ctx.keys.get_access_token();
 				if (!res) throw new AuthMissingError('salesforce', 'oauth_2');
 				return res;
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:salesforce:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'salesforce',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('salesforce', ctx.authType ?? 'oauth_2');

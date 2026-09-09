@@ -1,3 +1,4 @@
+import type { AccountKeyManagerFor } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import { EXIST_OAUTH_AUTHORIZE_URL } from '../client';
 import type { ExistEndpoints } from '../index';
@@ -19,7 +20,9 @@ export const authorize: ExistEndpoints['oauthAuthorize'] = async (
 	rawInput,
 ) => {
 	const input = parseExistInput('oauthAuthorize', rawInput);
-	const credentials = await ctx.keys.get_integration_credentials();
+	const credentials = await (
+		ctx.keys as AccountKeyManagerFor<'oauth_2'>
+	).get_integration_credentials();
 
 	if (!credentials.client_id) {
 		throw new Error(

@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { getValidAccessToken, TickTickAPIError } from './client';
 import { OAuth, Projects, Tasks } from './endpoints';
 import type {
@@ -27,7 +28,7 @@ import { errorHandlers } from './error-handlers';
 import { TickTickSchema } from './schema';
 
 export type TickTickPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalTickTickPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -209,6 +210,9 @@ export const tickTickAuthConfig = {
 	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
+	managed: {
+		account: ['tenant_external_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseTickTickPlugin<T extends TickTickPluginOptions> = CorsairPlugin<
@@ -361,6 +365,25 @@ export function ticktick<const T extends TickTickPluginOptions>(
 					return freshResult.accessToken;
 				};
 
+				return result.accessToken;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:ticktick:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'ticktick',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
 				return result.accessToken;
 			}
 

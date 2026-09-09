@@ -1,3 +1,4 @@
+import type { AccountKeyManagerFor } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import type { TickTickEndpoints } from '../index';
 
@@ -5,7 +6,9 @@ export const generateAuthUrl: TickTickEndpoints['generateAuthUrl'] = async (
 	ctx,
 	input,
 ) => {
-	const creds = await ctx.keys.get_integration_credentials();
+	const creds = await (
+		ctx.keys as AccountKeyManagerFor<'oauth_2'>
+	).get_integration_credentials();
 	if (!creds.client_id) {
 		throw new Error('TickTick client_id is not configured');
 	}

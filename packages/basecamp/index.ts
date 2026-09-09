@@ -11,6 +11,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { BasecampEndpoints } from './endpoints';
 import {
 	BasecampEndpointInputSchemas,
@@ -25,10 +26,13 @@ export const basecampAuthConfig = {
 	oauth_2: {
 		account: ['account_id'] as const,
 	},
+	managed: {
+		account: ['account_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BasecampPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	/** Access-token override for scripts and opt-in live tests. */
 	key?: string;
 	/** Required when an OAuth identity can access more than one account. */
@@ -1561,6 +1565,25 @@ export function basecamp<const T extends BasecampPluginOptions>(
 		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
 		keyBuilder: async (ctx: BasecampKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) return options.key;
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:basecamp:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'basecamp',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
+			}
+
 			if (source !== 'endpoint' || ctx.authType !== 'oauth_2') {
 				throw new AuthMissingError('basecamp', 'oauth_2');
 			}

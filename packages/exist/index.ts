@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { EXIST_OAUTH_AUTHORIZE_URL, EXIST_OAUTH_TOKEN_URL } from './client';
 import {
 	Attributes,
@@ -102,10 +103,13 @@ export const existAuthConfig = {
 	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
+	managed: {
+		account: ['tenant_external_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type ExistPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	/**
 	 * OAuth2 scopes to request. Defaults to every read and write scope; narrow
 	 * it to the groups the integration actually uses.
@@ -324,6 +328,25 @@ export function exist<const T extends ExistPluginOptions>(
 					tokenUrl: EXIST_OAUTH_TOKEN_URL,
 					tokenAuthMethod: 'body',
 				});
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:exist:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'exist',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('exist', 'oauth_2');
