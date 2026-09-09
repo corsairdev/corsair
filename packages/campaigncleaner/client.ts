@@ -102,7 +102,10 @@ export async function makeCampaignCleanerRequest<T>(
 
 	try {
 		return await request<T>(config(apiKey), requestOptions);
-	} catch (error: unknown) {
+	} catch (
+		// unknown is necessary because the transport can throw any value; a closed error union is infeasible because fetch-level failures are untyped
+		error: unknown
+	) {
 		throw normalizeCampaignCleanerError(error);
 	}
 }
@@ -170,7 +173,10 @@ async function makeCampaignCleanerBinaryRequest(
 			content_type: contentType,
 			content_base64: bytes.toString('base64'),
 		};
-	} catch (error: unknown) {
+	} catch (
+		// unknown is necessary because the transport can throw any value; a closed error union is infeasible because fetch-level failures are untyped
+		error: unknown
+	) {
 		throw normalizeCampaignCleanerError(error);
 	}
 }
