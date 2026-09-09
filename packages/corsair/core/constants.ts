@@ -124,6 +124,7 @@ export const BaseProviders = [
 	'clockify',
 	'cloudflare',
 	'cloudinary',
+	'codeinterpreter',
 	'collegefootballdata',
 	'confluence',
 	'connecteam',
@@ -401,6 +402,7 @@ export const ProviderDisplayNames = {
 	clockify: 'Clockify',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
+	codeinterpreter: 'CodeInterpreter',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
@@ -685,6 +687,7 @@ export type AllProviders =
 	| 'clockify'
 	| 'cloudflare'
 	| 'cloudinary'
+	| 'codeinterpreter'
 	| 'collegefootballdata'
 	| 'confluence'
 	| 'connecteam'
