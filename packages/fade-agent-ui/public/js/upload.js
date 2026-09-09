@@ -16,9 +16,15 @@ async function uploadFile(file) {
 	try {
 		const res = await fetch('/api/assets/upload', { method: 'POST', body: fd });
 		const data = await res.json();
+
+		if (!res.ok) throw new Error(data.error ?? res.statusText);
+
 		toast.textContent = `✅ ${file.name} imported`;
 		setTimeout(() => toast.remove(), 2500);
+
+		// Immediately reload asset list — don't wait for SSE
 		await loadAssets();
+
 		if (data.assetId) {
 			msgInput.value = `Asset "${file.name}" (assetId: ${data.assetId}) was just imported. Add it to the timeline.`;
 		}

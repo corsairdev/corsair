@@ -6,25 +6,29 @@ const TYPE_ICONS = { video: '🎬', image: '🖼', audio: '🎙' };
 export async function loadAssets() {
 	try {
 		const res = await fetch('/api/assets');
-		const data = await res.json();
-		const list = Array.isArray(data) ? data : (data.assets ?? []);
+		if (!res.ok) throw new Error(res.statusText);
+		const list = await res.json();
+
 		assetList.innerHTML = '';
 
-		if (!list.length) {
+		if (!Array.isArray(list) || list.length === 0) {
 			assetList.innerHTML = '<div class="asset-empty">No assets yet</div>';
 			return;
 		}
 
-		list.forEach((a) => {
+		for (const a of list) {
 			const type = a.mediaType ?? a.type ?? 'video';
 			const dur = a.duration ? `${Number(a.duration).toFixed(1)}s` : '';
+			const dim = a.width ? `${a.width}×${a.height}` : '';
+			const meta = [dur, dim].filter(Boolean).join(' · ');
+
 			const item = document.createElement('div');
 			item.className = 'asset-item';
 			item.innerHTML = `
 				<div class="asset-thumb">${TYPE_ICONS[type] ?? '📁'}</div>
 				<div class="asset-info">
 					<div class="asset-name" title="${a.name ?? a.filename ?? ''}">${a.name ?? a.filename ?? 'Asset'}</div>
-					<div class="asset-meta">${[dur, a.width ? `${a.width}×${a.height}` : ''].filter(Boolean).join(' · ')}</div>
+					${meta ? `<div class="asset-meta">${meta}</div>` : ''}
 				</div>
 				<span class="asset-tag tag-${type}">${type.toUpperCase()}</span>
 			`;
@@ -33,9 +37,21 @@ export async function loadAssets() {
 				msgInput.focus();
 			});
 			assetList.appendChild(item);
-		});
+		}
 	} catch {
 		assetList.innerHTML =
-			'<div class="asset-empty">Could not load assets</div>';
+			'<div class="asset-empty">Could not reach Fade backend</div>';
 	}
 }
+
+// Auto-refresh: subscribe to server-sent events for asset changes
+function subscribeToAssetChanges() {
+	const es = new EventSource('/api/events');
+	es.addEventListener('asset:changed', () => loadAssets());
+	es.onerror = () => {
+		es.close();
+		setTimeout(subscribeToAssetChanges, 5_000);
+	};
+}
+
+subscribeToAssetChanges();

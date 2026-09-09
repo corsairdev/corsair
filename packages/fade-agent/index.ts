@@ -1,7 +1,9 @@
 export {
+	agentConfig,
 	buildAgent,
 	getAgent,
 	getAgentLlm,
+	resetAgent,
 	setFadePort,
 	setPhantomBusterKey,
 } from './agent.js';

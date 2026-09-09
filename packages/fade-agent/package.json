@@ -16,11 +16,14 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@langchain/core": "^0.3.0",
-    "@langchain/langgraph": "^0.2.0",
-    "@langchain/google-genai": "^0.1.0",
-    "@corsair-dev/phantombuster": "workspace:*",
     "@corsair-dev/fade": "workspace:*",
+    "@corsair-dev/phantombuster": "workspace:*",
+    "@langchain/anthropic": "^0.3.34",
+    "@langchain/core": "^0.3.0",
+    "@langchain/google-genai": "^0.1.0",
+    "@langchain/groq": "^0.1.3",
+    "@langchain/langgraph": "^0.2.0",
+    "@langchain/openai": "^0.3.17",
     "zod": "^3.23.0"
   },
   "devDependencies": {

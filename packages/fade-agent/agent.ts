@@ -1,5 +1,5 @@
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { SystemMessage } from '@langchain/core/messages';
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import {
 	END,
 	MessagesAnnotation,
@@ -41,15 +41,82 @@ Workflow:
 
 Always call get_timeline_state before making edits to understand the current state.`;
 
-function buildLlm() {
+/** Runtime-mutable config — updated by /api/settings without restart */
+export const agentConfig = {
+	provider: (process.env['FADE_AI_PROVIDER'] ?? '').toLowerCase(),
+	model: process.env['FADE_AI_MODEL'] ?? '',
+	googleApiKey: process.env['GOOGLE_API_KEY'] ?? '',
+	openaiApiKey: process.env['OPENAI_API_KEY'] ?? '',
+	anthropicApiKey: process.env['ANTHROPIC_API_KEY'] ?? '',
+	groqApiKey: process.env['GROQ_API_KEY'] ?? '',
+	tabiApiKey: process.env['TABI_API_KEY'] ?? '',
+	tabiBaseUrl: process.env['TABI_BASE_URL'] ?? '',
+};
+
+export async function buildLlm(): Promise<BaseChatModel> {
+	const p = agentConfig.provider || 'google';
+	const model = agentConfig.model;
+	if (!model)
+		throw new Error(
+			'No AI model set. Open Settings (⚙) and enter your provider + model name.',
+		);
+
+	if (p === 'openai') {
+		if (!agentConfig.openaiApiKey)
+			throw new Error('OPENAI_API_KEY not set. Add it in Settings (⚙).');
+		const { ChatOpenAI } = await import('@langchain/openai');
+		return new ChatOpenAI({
+			model,
+			temperature: 0,
+			apiKey: agentConfig.openaiApiKey,
+		});
+	}
+	if (p === 'anthropic') {
+		if (!agentConfig.anthropicApiKey)
+			throw new Error('ANTHROPIC_API_KEY not set. Add it in Settings (⚙).');
+		const { ChatAnthropic } = await import('@langchain/anthropic');
+		return new ChatAnthropic({
+			model,
+			temperature: 0,
+			apiKey: agentConfig.anthropicApiKey,
+		});
+	}
+	if (p === 'groq') {
+		if (!agentConfig.groqApiKey)
+			throw new Error('GROQ_API_KEY not set. Add it in Settings (⚙).');
+		const { ChatGroq } = await import('@langchain/groq');
+		return new ChatGroq({
+			model,
+			temperature: 0,
+			apiKey: agentConfig.groqApiKey,
+		});
+	}
+	if (p === 'tabi') {
+		if (!agentConfig.tabiApiKey)
+			throw new Error('TABI_API_KEY not set. Add it in Settings (⚙).');
+		if (!agentConfig.tabiBaseUrl)
+			throw new Error('TABI_BASE_URL not set. Add it in Settings (⚙).');
+		const { ChatOpenAI } = await import('@langchain/openai');
+		return new ChatOpenAI({
+			model,
+			temperature: 1,
+			apiKey: agentConfig.tabiApiKey,
+			configuration: { baseURL: agentConfig.tabiBaseUrl },
+		});
+	}
+	// Default: Google
+	if (!agentConfig.googleApiKey)
+		throw new Error('GOOGLE_API_KEY not set. Add it in Settings (⚙).');
+	const { ChatGoogleGenerativeAI } = await import('@langchain/google-genai');
 	return new ChatGoogleGenerativeAI({
-		model: process.env['GEMINI_MODEL'] ?? 'gemini-2.0-flash',
+		model,
 		temperature: 0,
+		apiKey: agentConfig.googleApiKey,
 	});
 }
 
-export function buildAgent() {
-	const llm = buildLlm();
+export async function buildAgent() {
+	const llm = await buildLlm();
 	const llmWithTools = llm.bindTools(ALL_TOOLS);
 	const toolNode = new ToolNode(ALL_TOOLS);
 
@@ -72,7 +139,7 @@ export function buildAgent() {
 		return END;
 	};
 
-	const graph = new StateGraph(MessagesAnnotation)
+	return new StateGraph(MessagesAnnotation)
 		.addNode('agent', callModel)
 		.addNode('tools', toolNode)
 		.addEdge(START, 'agent')
@@ -80,23 +147,22 @@ export function buildAgent() {
 			tools: 'tools',
 			[END]: END,
 		})
-		.addEdge('tools', 'agent');
-
-	return graph.compile();
+		.addEdge('tools', 'agent')
+		.compile();
 }
 
-/** Singleton agent instance */
-let _agent: ReturnType<typeof buildAgent> | null = null;
+let _agent: Awaited<ReturnType<typeof buildAgent>> | null = null;
 
-export function getAgent(fadePort = 8000) {
+export async function getAgent(fadePort = 8000) {
 	setFadePort(fadePort);
-	if (!_agent) {
-		_agent = buildAgent();
-	}
+	if (!_agent) _agent = await buildAgent();
 	return _agent;
 }
 
-/** Bare LLM without tools — for pipeline use */
-export function getAgentLlm() {
+export function resetAgent() {
+	_agent = null;
+}
+
+export async function getAgentLlm() {
 	return buildLlm();
 }

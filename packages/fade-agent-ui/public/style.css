@@ -662,3 +662,179 @@ body {
 	cursor: not-allowed;
 	transform: none;
 }
+
+/* -- Settings modal ------------------------------------------------- */
+#settings-overlay {
+	display: none;
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.6);
+	backdrop-filter: blur(4px);
+	z-index: 999;
+	align-items: center;
+	justify-content: center;
+}
+#settings-overlay.open {
+	display: flex;
+}
+
+#settings-modal {
+	background: #141420;
+	border: 1px solid rgba(167, 139, 250, 0.25);
+	border-radius: 16px;
+	padding: 28px 32px;
+	width: min(480px, 92vw);
+	box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+.s-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.s-header h3 {
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 600;
+	color: #e2e8f0;
+}
+
+.s-group {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+.s-group label {
+	font-size: 0.75rem;
+	font-weight: 500;
+	color: #94a3b8;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+.s-group input,
+.s-group select {
+	background: #0d0d1a;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 8px;
+	color: #e2e8f0;
+	font-family: inherit;
+	font-size: 0.9rem;
+	padding: 10px 14px;
+	outline: none;
+	transition: border-color 0.2s;
+}
+.s-group input:focus,
+.s-group select:focus {
+	border-color: #a78bfa;
+}
+.s-group select option {
+	background: #141420;
+}
+
+.s-hint {
+	margin: 0;
+	font-size: 0.78rem;
+	color: #64748b;
+}
+.s-hint code {
+	background: rgba(167, 139, 250, 0.12);
+	border-radius: 4px;
+	padding: 1px 5px;
+	color: #a78bfa;
+}
+
+#settings-status {
+	margin: 0;
+	font-size: 0.85rem;
+	min-height: 20px;
+}
+#settings-save {
+	align-self: flex-end;
+}
+
+/* -- Offline banner ------------------------------------------------- */
+#offline-banner {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 990;
+	background: rgba(251, 191, 36, 0.12);
+	border-bottom: 1px solid rgba(251, 191, 36, 0.3);
+	color: #fbbf24;
+	font-size: 0.8rem;
+	padding: 8px 20px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	justify-content: center;
+}
+
+/* -- Webhook / PhantomBuster panel --------------------------------- */
+#webhook-panel {
+	border-top: 1px solid rgba(255, 255, 255, 0.06);
+	padding: 14px 12px 16px;
+}
+.webhook-header {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: #94a3b8;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	margin-bottom: 10px;
+}
+.job-status {
+	font-size: 0.78rem;
+	padding: 5px 10px;
+	border-radius: 6px;
+	font-weight: 500;
+	text-align: center;
+}
+.job-status.idle {
+	background: rgba(52, 211, 153, 0.1);
+	color: #34d399;
+}
+.job-status.running {
+	background: rgba(251, 191, 36, 0.12);
+	color: #fbbf24;
+}
+.job-status.waiting {
+	background: rgba(167, 139, 250, 0.1);
+	color: #a78bfa;
+}
+
+/* -- Settings modal scroll + sections -------------------------- */
+#settings-modal {
+	max-height: 85vh;
+	overflow-y: auto;
+}
+#settings-body {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.s-section {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin-bottom: 8px;
+}
+.s-section-title {
+	margin: 0;
+	font-size: 0.7rem;
+	font-weight: 700;
+	color: #a78bfa;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	padding: 8px 0 4px;
+	border-top: 1px solid rgba(167, 139, 250, 0.15);
+}
+.s-section:first-child .s-section-title {
+	border-top: none;
+	padding-top: 0;
+}
