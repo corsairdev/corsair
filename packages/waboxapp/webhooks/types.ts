@@ -2,7 +2,9 @@ import { timingSafeEqual } from 'node:crypto';
 import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
 import { z } from 'zod';
 
-const UNSAFE_BRACKET_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+function isUnsafeBracketKey(key: string): boolean {
+	return key === '__proto__' || key === 'constructor' || key === 'prototype';
+}
 
 function assignBracketPath(
 	target: Record<string, unknown>,
@@ -11,7 +13,7 @@ function assignBracketPath(
 ): void {
 	const firstBracket = rawKey.indexOf('[');
 	if (firstBracket === -1) {
-		if (UNSAFE_BRACKET_KEYS.has(rawKey)) return;
+		if (isUnsafeBracketKey(rawKey)) return;
 		target[rawKey] = value;
 		return;
 	}
@@ -26,10 +28,11 @@ function assignBracketPath(
 		i = end + 1;
 	}
 
-	if (segments.some((s) => UNSAFE_BRACKET_KEYS.has(s))) return;
+	if (segments.some((s) => isUnsafeBracketKey(s))) return;
 
 	let cursor: Record<string, unknown> = target;
 	for (const key of segments.slice(0, -1)) {
+		if (isUnsafeBracketKey(key)) return;
 		const existing = cursor[key];
 		if (existing === null || typeof existing !== 'object') {
 			cursor[key] = {};
@@ -39,6 +42,7 @@ function assignBracketPath(
 
 	const lastKey = segments[segments.length - 1];
 	if (lastKey !== undefined) {
+		if (isUnsafeBracketKey(lastKey)) return;
 		cursor[lastKey] = value;
 	}
 }
@@ -50,7 +54,7 @@ function nestBracketKeys(
 	for (const [key, value] of Object.entries(record)) {
 		if (key.includes('[')) {
 			assignBracketPath(result, key, String(value ?? ''));
-		} else if (!UNSAFE_BRACKET_KEYS.has(key)) {
+		} else if (!isUnsafeBracketKey(key)) {
 			result[key] = value;
 		}
 	}
@@ -168,10 +172,15 @@ export function verifyWaboxappWebhookToken(
 		return { valid: false, error: 'Missing webhook secret' };
 	}
 	const provided = request.payload.token;
-	if (typeof provided !== 'string' || provided.length !== secret.length) {
+	if (typeof provided !== 'string') {
 		return { valid: false, error: 'Invalid webhook token' };
 	}
-	const valid = timingSafeEqual(Buffer.from(provided), Buffer.from(secret));
+	const providedBuf = Buffer.from(provided);
+	const secretBuf = Buffer.from(secret);
+	if (providedBuf.length !== secretBuf.length) {
+		return { valid: false, error: 'Invalid webhook token' };
+	}
+	const valid = timingSafeEqual(providedBuf, secretBuf);
 	return valid
 		? { valid: true }
 		: { valid: false, error: 'Invalid webhook token' };

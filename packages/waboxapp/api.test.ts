@@ -26,19 +26,17 @@ describe('Waboxapp plugin', () => {
 		});
 		await createIntegrationAndAccount(testDb.db, 'waboxapp');
 
-		const parsedBody = parseWaboxappWebhookBody(MESSAGE_BODY);
-		expect(parsedBody).not.toBeNull();
-
 		const result = await processWebhook(
 			corsair,
 			{ 'content-type': 'application/x-www-form-urlencoded' },
-			parsedBody as Record<string, unknown>,
+			MESSAGE_BODY,
 		);
 
 		expect(result.plugin).toBe('waboxapp');
 		expect(result.action).toBe('message.received');
 		expect(result.response?.success).toBe(true);
-		expect(result.body).toMatchObject({
+		const parsed = parseWaboxappWebhookBody(result.body);
+		expect(parsed).toMatchObject({
 			event: 'message',
 			uid: '34666123456',
 			token: 'tok12345',

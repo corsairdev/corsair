@@ -58,7 +58,9 @@ export async function makeWaboxappRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body: method === 'POST' ? form : undefined,
+		// getRequestBody JSON-stringifies plain objects even with a form
+		// mediaType, so pre-encode to a string like abuseipdb/stripe do.
+		body: method === 'POST' ? new URLSearchParams(form).toString() : undefined,
 		mediaType:
 			method === 'POST' ? 'application/x-www-form-urlencoded' : undefined,
 		query: method === 'GET' ? form : undefined,

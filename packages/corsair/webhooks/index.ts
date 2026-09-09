@@ -195,8 +195,18 @@ export async function processWebhook(
 	},
 ): Promise<WebhookFilterResult> {
 	const normalizedHeaders = normalizeHeaders(headers);
-	let parsedBody =
-		typeof body === 'string' ? (JSON.parse(body) satisfies WebhookBody) : body;
+	let parsedBody: WebhookBody | string;
+	if (typeof body === 'string') {
+		try {
+			parsedBody = JSON.parse(body) as WebhookBody;
+		} catch {
+			// Non-JSON bodies (e.g. application/x-www-form-urlencoded from
+			// Waboxapp/Twilio/Mailchimp) are preserved for plugin matchers.
+			parsedBody = body;
+		}
+	} else {
+		parsedBody = body;
+	}
 
 	const isEmptyBody =
 		!parsedBody ||

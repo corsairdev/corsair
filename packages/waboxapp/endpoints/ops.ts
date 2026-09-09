@@ -29,7 +29,11 @@ async function resolveUid(
 	if (ctx.options.uid) return ctx.options.uid;
 	const stored = await ctx.keys.get_uid();
 	if (stored) return stored;
-	throw new AuthMissingError('waboxapp', 'api_key');
+	throw new AuthMissingError(
+		'waboxapp',
+		'api_key',
+		'[auth-missing:waboxapp:api_key] Waboxapp uid is missing',
+	);
 }
 
 async function send(
@@ -57,7 +61,7 @@ async function send(
 		ctx,
 		event,
 		{ to: input.to, uid: fields.uid, custom_uid: fields.custom_uid },
-		'completed',
+		response.success === false ? 'failed' : 'completed',
 	);
 	return response;
 }
@@ -111,7 +115,7 @@ export const getStatus: WaboxappEndpoints['accountsGetStatus'] = (ctx, input) =>
 				ctx,
 				'waboxapp.accounts.getStatus',
 				{ uid },
-				'completed',
+				response.success === false ? 'failed' : 'completed',
 			);
 			return response;
 		},

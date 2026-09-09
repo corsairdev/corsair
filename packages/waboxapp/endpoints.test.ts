@@ -50,15 +50,17 @@ describe('messages.sendChat', () => {
 			expect.objectContaining({
 				method: 'POST',
 				url: 'send/chat',
-				body: expect.objectContaining({
-					token: 'tok12345',
-					uid: '34666123456',
-					to: '34666789123',
-					text: 'Hello from Corsair',
-					custom_uid: 'msg-1',
-				}),
+				mediaType: 'application/x-www-form-urlencoded',
 			}),
 		);
+		const body = mockRequest.mock.calls[0]?.[1]?.body as string;
+		expect(typeof body).toBe('string');
+		const params = new URLSearchParams(body);
+		expect(params.get('token')).toBe('tok12345');
+		expect(params.get('uid')).toBe('34666123456');
+		expect(params.get('to')).toBe('34666789123');
+		expect(params.get('text')).toBe('Hello from Corsair');
+		expect(params.get('custom_uid')).toBe('msg-1');
 	});
 });
 
