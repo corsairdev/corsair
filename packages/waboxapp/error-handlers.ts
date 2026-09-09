@@ -1,31 +1,42 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { WaboxappAPIError } from './client';
+
+function getStatus(error: Error): number | undefined {
+	if (error instanceof ApiError) return error.status;
+	if (error instanceof WaboxappAPIError) return error.status;
+	return undefined;
+}
+
+function getRetryAfter(error: Error): number | undefined {
+	if (error instanceof ApiError) return error.retryAfter;
+	if (error instanceof WaboxappAPIError) return error.retryAfter;
+	return undefined;
+}
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			const status = getStatus(error);
+			if (status !== undefined) return status === 429;
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		handler: async (error: Error) => ({
+			maxRetries: 5,
+			headersRetryAfterMs: getRetryAfter(error),
+		}),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (
-				error instanceof ApiError &&
-				(error.status === 401 || error.status === 403)
-			) {
-				return true;
-			}
+			const status = getStatus(error);
+			if (status !== undefined) return status === 401 || status === 403;
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('invalid_auth') ||
+				msg.includes('forbidden')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

@@ -1,11 +1,11 @@
 import type { RawWebhookRequest } from 'corsair/core';
-import { waboxapp } from '../index';
-import { matchWaboxappTenantWebhook } from './tenant-matcher';
+import { waboxapp } from './index';
+import { matchWaboxappTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	createWaboxappMatch,
 	parseWaboxappWebhookBody,
 	verifyWaboxappWebhookToken,
-} from './types';
+} from './webhooks/types';
 
 const MESSAGE_BODY =
 	'event=message&token=abcd1234&uid=34666123456' +

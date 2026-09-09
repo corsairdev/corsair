@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { WaboxappAccount, WaboxappMessage } from '../schema/database';
 
 const SendBaseInputSchema = z.object({
 	uid: z.string().optional(),
@@ -6,20 +7,13 @@ const SendBaseInputSchema = z.object({
 	custom_uid: z.string().optional(),
 });
 
-const MessagesSendChatInputSchema = SendBaseInputSchema.extend({
+export const MessagesSendChatInputSchema = SendBaseInputSchema.extend({
 	text: z.string(),
 });
 export type MessagesSendChatInput = z.infer<typeof MessagesSendChatInputSchema>;
+export type MessagesSendChatResponse = WaboxappMessage;
 
-const SendSuccessSchema = z.object({
-	success: z.boolean(),
-	custom_uid: z.union([z.string(), z.number()]).optional(),
-	error: z.string().optional(),
-});
-
-export type MessagesSendChatResponse = z.infer<typeof SendSuccessSchema>;
-
-const MessagesSendImageInputSchema = SendBaseInputSchema.extend({
+export const MessagesSendImageInputSchema = SendBaseInputSchema.extend({
 	url: z.string(),
 	caption: z.string().optional(),
 	description: z.string().optional(),
@@ -27,18 +21,18 @@ const MessagesSendImageInputSchema = SendBaseInputSchema.extend({
 export type MessagesSendImageInput = z.infer<
 	typeof MessagesSendImageInputSchema
 >;
-export type MessagesSendImageResponse = z.infer<typeof SendSuccessSchema>;
+export type MessagesSendImageResponse = WaboxappMessage;
 
-const MessagesSendLinkInputSchema = SendBaseInputSchema.extend({
+export const MessagesSendLinkInputSchema = SendBaseInputSchema.extend({
 	url: z.string(),
 	caption: z.string().optional(),
 	description: z.string().optional(),
 	url_thumb: z.string().optional(),
 });
 export type MessagesSendLinkInput = z.infer<typeof MessagesSendLinkInputSchema>;
-export type MessagesSendLinkResponse = z.infer<typeof SendSuccessSchema>;
+export type MessagesSendLinkResponse = WaboxappMessage;
 
-const MessagesSendMediaInputSchema = SendBaseInputSchema.extend({
+export const MessagesSendMediaInputSchema = SendBaseInputSchema.extend({
 	url: z.string(),
 	caption: z.string().optional(),
 	description: z.string().optional(),
@@ -47,29 +41,15 @@ const MessagesSendMediaInputSchema = SendBaseInputSchema.extend({
 export type MessagesSendMediaInput = z.infer<
 	typeof MessagesSendMediaInputSchema
 >;
-export type MessagesSendMediaResponse = z.infer<typeof SendSuccessSchema>;
+export type MessagesSendMediaResponse = WaboxappMessage;
 
-const AccountsGetStatusInputSchema = z.object({
+export const AccountsGetStatusInputSchema = z.object({
 	uid: z.string().optional(),
 });
 export type AccountsGetStatusInput = z.infer<
 	typeof AccountsGetStatusInputSchema
 >;
-
-const AccountsGetStatusResponseSchema = z.object({
-	success: z.boolean(),
-	uid: z.string().optional(),
-	hook_url: z.string().optional(),
-	alias: z.string().optional(),
-	platform: z.string().optional(),
-	battery: z.string().optional(),
-	plugged: z.string().optional(),
-	locale: z.string().optional(),
-	error: z.string().optional(),
-});
-export type AccountsGetStatusResponse = z.infer<
-	typeof AccountsGetStatusResponseSchema
->;
+export type AccountsGetStatusResponse = WaboxappAccount;
 
 export type WaboxappEndpointInputs = {
 	messagesSendChat: MessagesSendChatInput;
@@ -96,9 +76,9 @@ export const WaboxappEndpointInputSchemas = {
 } as const;
 
 export const WaboxappEndpointOutputSchemas = {
-	messagesSendChat: SendSuccessSchema,
-	messagesSendImage: SendSuccessSchema,
-	messagesSendLink: SendSuccessSchema,
-	messagesSendMedia: SendSuccessSchema,
-	accountsGetStatus: AccountsGetStatusResponseSchema,
+	messagesSendChat: WaboxappMessage,
+	messagesSendImage: WaboxappMessage,
+	messagesSendLink: WaboxappMessage,
+	messagesSendMedia: WaboxappMessage,
+	accountsGetStatus: WaboxappAccount,
 } as const;

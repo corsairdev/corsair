@@ -136,10 +136,7 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": [
-              "guides/plugins",
-              "guides/create-your-own-plugin"
-            ]
+            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
           },
           {
             "group": "Plugins",
@@ -2362,15 +2359,6 @@
                   "plugins/vestaboard/overview",
                   "plugins/vestaboard/api",
                   "plugins/vestaboard/database"
-                ]
-              },
-              {
-                "group": "Waboxapp",
-                "pages": [
-                  "plugins/waboxapp/overview",
-                  "plugins/waboxapp/api",
-                  "plugins/waboxapp/database",
-                  "plugins/waboxapp/webhooks"
                 ]
               },
               {

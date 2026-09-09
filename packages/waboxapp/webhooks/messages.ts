@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { WaboxappWebhooks } from '..';
+import type { WaboxappContext, WaboxappWebhooks } from '..';
 import {
 	AckEventSchema,
 	createWaboxappMatch,
@@ -8,91 +8,79 @@ import {
 	verifyWaboxappWebhookToken,
 } from './types';
 
+async function handleWebhook<T>(
+	ctx: WaboxappContext,
+	payload: unknown,
+	schema: {
+		safeParse: (
+			data: unknown,
+		) => { success: true; data: T } | { success: false };
+	},
+	eventName: string,
+	logFields: (data: T) => Record<string, unknown>,
+	invalidMessage: string,
+) {
+	const parsed = parseWaboxappWebhookBody(payload);
+	const token =
+		parsed && typeof parsed.token === 'string' ? parsed.token : undefined;
+	const verification = verifyWaboxappWebhookToken(
+		{ payload: { token } },
+		ctx.key,
+	);
+	if (!verification.valid) {
+		return {
+			success: false as const,
+			statusCode: 401,
+			error: verification.error || 'Webhook token verification failed',
+		};
+	}
+
+	const event = schema.safeParse(parsed);
+	if (!event.success) {
+		return {
+			success: false as const,
+			statusCode: 400,
+			error: invalidMessage,
+		};
+	}
+
+	await logEventFromContext(ctx, eventName, logFields(event.data), 'completed');
+	return { success: true as const, data: event.data };
+}
+
 export const received: WaboxappWebhooks['message'] = {
 	match: createWaboxappMatch('message'),
-
-	handler: async (ctx, request) => {
-		const parsed = parseWaboxappWebhookBody(request.payload);
-		const token =
-			parsed && typeof parsed.token === 'string' ? parsed.token : undefined;
-		const verification = verifyWaboxappWebhookToken(
-			{ payload: { token } },
-			ctx.key,
-		);
-		if (!verification.valid) {
-			return {
-				success: false,
-				statusCode: 401,
-				error: verification.error || 'Webhook token verification failed',
-			};
-		}
-
-		const event = MessageEventSchema.safeParse(parsed);
-		if (!event.success) {
-			return {
-				success: false,
-				statusCode: 400,
-				error: 'Invalid Waboxapp message payload',
-			};
-		}
-
-		await logEventFromContext(
+	handler: async (ctx, request) =>
+		handleWebhook(
 			ctx,
+			request.payload,
+			MessageEventSchema,
 			'waboxapp.webhook.message',
-			{
-				event: event.data.event,
-				uid: event.data.uid,
-				contactUid: event.data.contact?.uid,
-				messageUid: event.data.message?.uid,
-				messageType: event.data.message?.type,
-			},
-			'completed',
-		);
-
-		return { success: true, data: event.data };
-	},
+			(data) => ({
+				event: data.event,
+				uid: data.uid,
+				contactUid: data.contact?.uid,
+				messageUid: data.message?.uid,
+				messageType: data.message?.type,
+			}),
+			'Invalid Waboxapp message payload',
+		),
 };
 
 export const ack: WaboxappWebhooks['ack'] = {
 	match: createWaboxappMatch('ack'),
-
-	handler: async (ctx, request) => {
-		const parsed = parseWaboxappWebhookBody(request.payload);
-		const token =
-			parsed && typeof parsed.token === 'string' ? parsed.token : undefined;
-		const verification = verifyWaboxappWebhookToken(
-			{ payload: { token } },
-			ctx.key,
-		);
-		if (!verification.valid) {
-			return {
-				success: false,
-				statusCode: 401,
-				error: verification.error || 'Webhook token verification failed',
-			};
-		}
-
-		const event = AckEventSchema.safeParse(parsed);
-		if (!event.success) {
-			return {
-				success: false,
-				statusCode: 400,
-				error: 'Invalid Waboxapp ack payload',
-			};
-		}
-
-		await logEventFromContext(
+	handler: async (ctx, request) =>
+		handleWebhook(
 			ctx,
+			request.payload,
+			AckEventSchema,
 			'waboxapp.webhook.ack',
-			{
-				event: event.data.event,
-				uid: event.data.uid,
-				muid: event.data.muid,
-				ack: event.data.ack,
-			},
-			'completed',
-		);
-
-		return { success: true, data: event.data };
-	},
+			(data) => ({
+				event: data.event,
+				uid: data.uid,
+				muid: data.muid,
+				ack: data.ack,
+			}),
+			'Invalid Waboxapp ack payload',
+		),
 };

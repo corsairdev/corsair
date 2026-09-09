@@ -1,17 +1,17 @@
 import { WaboxappSchema } from './schema';
+import { WaboxappAccount, WaboxappMessage } from './schema/database';
 
 describe('Waboxapp schema', () => {
 	it('declares a semver version', () => {
-		expect(WaboxappSchema.version).toBeDefined();
 		expect(WaboxappSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof WaboxappSchema.entities).toBe('object');
-		expect(WaboxappSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(WaboxappSchema.entities))).toBe(true);
-		for (const entity of Object.values(WaboxappSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('declares labeled entities from the REST API', () => {
+		expect(Object.keys(WaboxappSchema.entities)).toEqual([
+			'accounts',
+			'messages',
+		]);
+		expect(WaboxappSchema.entities.accounts).toBe(WaboxappAccount);
+		expect(WaboxappSchema.entities.messages).toBe(WaboxappMessage);
 	});
 });

@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -15,7 +16,13 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Accounts, Messages } from './endpoints';
+import {
+	getStatus,
+	sendChat,
+	sendImage,
+	sendLink,
+	sendMedia,
+} from './endpoints';
 import type {
 	WaboxappEndpointInputs,
 	WaboxappEndpointOutputs,
@@ -50,7 +57,6 @@ export type WaboxappPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
 	uid?: string;
-	webhookSecret?: string;
 	hooks?: InternalWaboxappPlugin['hooks'];
 	webhookHooks?: InternalWaboxappPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -102,13 +108,13 @@ export type WaboxappBoundWebhooks = BindWebhooks<WaboxappWebhooks>;
 
 const waboxappEndpointsNested = {
 	messages: {
-		sendChat: Messages.sendChat,
-		sendImage: Messages.sendImage,
-		sendLink: Messages.sendLink,
-		sendMedia: Messages.sendMedia,
+		sendChat,
+		sendImage,
+		sendLink,
+		sendMedia,
 	},
 	accounts: {
-		getStatus: Accounts.getStatus,
+		getStatus,
 	},
 } as const;
 
@@ -182,7 +188,7 @@ const waboxappEndpointMeta = {
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof waboxappEndpointsNested>;
 
-const defaultAuthType = 'api_key' as const;
+const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export type BaseWaboxappPlugin<T extends WaboxappPluginOptions> = CorsairPlugin<
 	'waboxapp',
@@ -210,7 +216,7 @@ export function waboxapp<const T extends WaboxappPluginOptions>(
 		id: 'waboxapp',
 		authConfig: waboxappAuthConfig,
 		schema: WaboxappSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: waboxappEndpointsNested,
@@ -228,27 +234,19 @@ export function waboxapp<const T extends WaboxappPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: WaboxappKeyBuilderContext, source) => {
-			if (source === 'webhook') {
-				if (options.webhookSecret) return options.webhookSecret;
-				if (options.key) return options.key;
-				const webhookSig = await ctx.keys.get_webhook_signature();
-				if (webhookSig) return webhookSig;
-				const apiKey = await ctx.keys.get_api_key();
-				if (apiKey) return apiKey;
-				throw new AuthMissingError('waboxapp', 'api_key');
-			}
-
-			if (source === 'endpoint' && options.key) {
+			if ((source === 'endpoint' || source === 'webhook') && options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (res) return res;
-				throw new AuthMissingError('waboxapp', 'api_key');
+			if (source === 'endpoint' || source === 'webhook') {
+				const key = await ctx.keys.get_api_key();
+				if (!key) {
+					throw new AuthMissingError('waboxapp', 'api_key');
+				}
+				return key;
 			}
 
-			throw new AuthMissingError('waboxapp', String(ctx.authType));
+			throw new AuthMissingError('waboxapp', 'api_key');
 		},
 	} satisfies InternalWaboxappPlugin;
 }

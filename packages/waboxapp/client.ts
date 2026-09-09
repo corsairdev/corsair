@@ -5,6 +5,8 @@ export class WaboxappAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
+		public readonly status?: number,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'WaboxappAPIError';
@@ -12,6 +14,21 @@ export class WaboxappAPIError extends Error {
 }
 
 export const WABOXAPP_API_BASE = 'https://www.waboxapp.com/api';
+
+function wrapTransportError(error: ApiError | Error | object): never {
+	if (error instanceof ApiError) {
+		throw new WaboxappAPIError(
+			error.message,
+			undefined,
+			error.status,
+			error.retryAfter,
+		);
+	}
+	if (error instanceof Error) {
+		throw new WaboxappAPIError(error.message);
+	}
+	throw new WaboxappAPIError('Unknown Waboxapp API error');
+}
 
 export async function makeWaboxappRequest<T>(
 	endpoint: string,
@@ -50,12 +67,9 @@ export async function makeWaboxappRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw error;
+		if (error instanceof ApiError || error instanceof Error) {
+			wrapTransportError(error);
 		}
-		if (error instanceof Error) {
-			throw new WaboxappAPIError(error.message);
-		}
-		throw new WaboxappAPIError('Unknown error');
+		throw new WaboxappAPIError('Unknown Waboxapp API error');
 	}
 }
