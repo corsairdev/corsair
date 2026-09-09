@@ -12,6 +12,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { Users } from './endpoints';
 import type {
 	WakaTimeEndpointInputs,
@@ -25,7 +27,7 @@ import { errorHandlers } from './error-handlers';
 import { WakaTimeSchema } from './schema';
 
 export type WakaTimePluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalWakaTimePlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -81,6 +83,8 @@ const wakaTimeEndpointMeta = {
 
 export const wakaTimeAuthConfig = {
 	api_key: {},
+	oauth_2: {},
+	managed: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseWakaTimePlugin<T extends WakaTimePluginOptions> = CorsairPlugin<
@@ -108,6 +112,20 @@ export function wakatime<const T extends WakaTimePluginOptions>(
 	return {
 		id: 'wakatime',
 		authConfig: wakaTimeAuthConfig,
+		oauthConfig: {
+			providerName: 'WakaTime',
+			authUrl: 'https://wakatime.com/oauth/authorize',
+			tokenUrl: 'https://wakatime.com/oauth/token',
+			scopes: [
+				'email',
+				'read_stats',
+				'read_summaries',
+				'read_heartbeats',
+				'write_heartbeats',
+				'read_goals',
+			],
+			tokenAuthMethod: 'body',
+		},
 		schema: WakaTimeSchema,
 		options: options,
 		hooks: options.hooks,
@@ -128,7 +146,33 @@ export function wakatime<const T extends WakaTimePluginOptions>(
 				return res ?? '';
 			}
 
-			return '';
+			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+				return getOAuthAccessToken(ctx, {
+					plugin: 'wakatime',
+					tokenUrl: 'https://wakatime.com/oauth/token',
+				});
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:wakatime:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'wakatime',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
+			}
+
+			throw new AuthMissingError('wakatime', 'oauth_2');
 		},
 	} satisfies InternalWakaTimePlugin;
 }
