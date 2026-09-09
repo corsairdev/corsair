@@ -11,15 +11,19 @@ import { setFadePort } from './client.js';
 import { AUDIO_TOOLS } from './tools/audio.js';
 import { EXPORT_TOOLS } from './tools/export.js';
 import { LIBRARY_TOOLS } from './tools/library.js';
+import { MEDIA_TOOLS } from './tools/media.js';
 import { PUBLISH_TOOLS } from './tools/publish.js';
 import { TIMELINE_TOOLS } from './tools/timeline.js';
+import { TIMELINE_EXTRA_TOOLS } from './tools/timeline_extra.js';
 
 export { setFadePort };
 export { setPhantomBusterKey } from './tools/publish.js';
 
 const ALL_TOOLS = [
 	...TIMELINE_TOOLS,
+	...TIMELINE_EXTRA_TOOLS,
 	...LIBRARY_TOOLS,
+	...MEDIA_TOOLS,
 	...AUDIO_TOOLS,
 	...EXPORT_TOOLS,
 	...PUBLISH_TOOLS,
