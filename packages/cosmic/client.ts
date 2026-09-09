@@ -15,6 +15,7 @@ export function compactQuery(
 	);
 }
 
+// unknown is necessary because read filters are provider-defined per resource; a closed filter union is infeasible because Cosmic accepts arbitrary field matchers
 export function encodeQueryFilter(filter: Record<string, unknown>): string {
 	return JSON.stringify(filter);
 }
@@ -50,6 +51,7 @@ export async function makeCosmicWriteRequest<T>(
 	writeKey: string,
 	options: {
 		method: 'POST' | 'PATCH' | 'DELETE';
+		// unknown is necessary because write bodies are operation-specific JSON bags; a closed body union is infeasible because the transport is shared across endpoints
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = { method: 'POST' },
@@ -83,6 +85,7 @@ export async function makeCosmicUploadRequest<T>(
 		media: CosmicUploadMedia;
 		folder?: string;
 		alt_text?: string;
+		// unknown is necessary because media metadata is caller-defined per upload; a closed value union is infeasible because keys vary by bucket
 		metadata?: Record<string, unknown>;
 		trigger_webhook?: boolean;
 	},

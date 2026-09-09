@@ -62,7 +62,7 @@ describeLive('Cosmic live API', () => {
 		);
 		const parsedObjects =
 			CosmicEndpointOutputSchemas.objectsFind.parse(objects);
-		expect(parsedObjects.total).toBeGreaterThanOrEqual(0);
+		expect(Number.isInteger(parsedObjects.total)).toBe(true);
 
 		const media = await makeCosmicReadRequest(
 			`/v3/buckets/${BUCKET_SLUG}/media`,

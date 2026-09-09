@@ -2,6 +2,15 @@ import { z } from 'zod';
 
 export const BucketSlugSchema = z.string().min(1).optional();
 
+// unknown is necessary because Metafield values are caller-defined per Object type; a closed value union is infeasible because keys and value shapes vary by bucket
+const MetadataSchema = z.record(z.string(), z.unknown());
+
+// unknown is necessary because read filters are provider-defined per resource; a closed filter union is infeasible because Cosmic accepts arbitrary field matchers
+const QueryFilterSchema = z.record(z.string(), z.unknown());
+
+// unknown is necessary because batch operation payloads mirror the per-operation create/update shapes; a closed payload union is infeasible because add and edit accept different fields
+const BatchObjectSchema = z.record(z.string(), z.unknown());
+
 const StatusSchema = z.enum(['published', 'draft', 'any']);
 
 const CosmicObjectSchema = z
@@ -11,7 +20,7 @@ const CosmicObjectSchema = z
 		title: z.string(),
 		type: z.string(),
 		status: z.string().optional(),
-		metadata: z.record(z.string(), z.unknown()).optional(),
+		metadata: MetadataSchema.optional(),
 		created_at: z.string().optional(),
 		modified_at: z.string().optional(),
 		published_at: z.string().optional(),
@@ -26,7 +35,7 @@ const ProjectedObjectSchema = z
 		title: z.string().optional(),
 		type: z.string().optional(),
 		status: z.string().optional(),
-		metadata: z.record(z.string(), z.unknown()).optional(),
+		metadata: MetadataSchema.optional(),
 		created_at: z.string().optional(),
 		modified_at: z.string().optional(),
 		published_at: z.string().optional(),
@@ -63,7 +72,7 @@ const MessageEnvelopeSchema = z
 const ObjectsFindInputSchema = z.object({
 	bucketSlug: BucketSlugSchema,
 	type: z.string().min(1).optional(),
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: QueryFilterSchema.optional(),
 	props: z.string().min(1).optional(),
 	status: StatusSchema.optional(),
 	sort: z.string().min(1).optional(),
@@ -96,7 +105,7 @@ const ObjectInsertInputSchema = z.object({
 	type: z.string().min(1),
 	slug: z.string().min(1).optional(),
 	status: z.enum(['published', 'draft']).optional(),
-	metadata: z.record(z.string(), z.unknown()).optional(),
+	metadata: MetadataSchema.optional(),
 	trigger_webhook: z.boolean().optional(),
 });
 
@@ -107,7 +116,7 @@ const ObjectUpdateInputSchema = z
 		title: z.string().min(1).optional(),
 		slug: z.string().min(1).optional(),
 		status: z.enum(['published', 'draft']).optional(),
-		metadata: z.record(z.string(), z.unknown()).optional(),
+		metadata: MetadataSchema.optional(),
 		trigger_webhook: z.boolean().optional(),
 	})
 	.superRefine((value, ctx) => {
@@ -134,7 +143,7 @@ const BatchOperationSchema = z
 	.object({
 		method: z.enum(['add', 'edit', 'delete']),
 		object_id: z.string().min(1).optional(),
-		object: z.record(z.string(), z.unknown()).optional(),
+		object: BatchObjectSchema.optional(),
 		trigger_webhook: z.boolean().optional(),
 	})
 	.superRefine((value, ctx) => {
@@ -164,7 +173,7 @@ const BatchResultSchema = z
 	.object({
 		method: z.string(),
 		status: z.string(),
-		object: z.record(z.string(), z.unknown()).optional(),
+		object: BatchObjectSchema.optional(),
 		message: z.string().optional(),
 	})
 	.passthrough();
@@ -182,7 +191,7 @@ const RevisionSchema = z
 		title: z.string(),
 		slug: z.string(),
 		status: z.string().optional(),
-		metadata: z.record(z.string(), z.unknown()).optional(),
+		metadata: MetadataSchema.optional(),
 		created_at: z.string().optional(),
 	})
 	.passthrough();
@@ -222,7 +231,7 @@ const RevisionInsertInputSchema = z.object({
 	objectId: z.string().min(1),
 	title: z.string().min(1).optional(),
 	slug: z.string().min(1).optional(),
-	metadata: z.record(z.string(), z.unknown()).optional(),
+	metadata: MetadataSchema.optional(),
 	trigger_webhook: z.boolean().optional(),
 });
 
@@ -241,7 +250,7 @@ const MediaSchema = z
 		type: z.string().optional(),
 		bucket: z.string().optional(),
 		created_at: z.string().optional(),
-		metadata: z.record(z.string(), z.unknown()).optional(),
+		metadata: MetadataSchema.optional(),
 	})
 	.passthrough();
 
@@ -261,7 +270,7 @@ const SingleMediaEnvelopeSchema = z
 
 const MediaFindInputSchema = z.object({
 	bucketSlug: BucketSlugSchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: QueryFilterSchema.optional(),
 	props: z.string().min(1).optional(),
 	sort: z.string().min(1).optional(),
 	limit: z.number().int().positive().optional(),
@@ -289,7 +298,7 @@ const MediaInsertInputSchema = z.object({
 	data: Base64Schema,
 	folder: z.string().min(1).optional(),
 	alt_text: z.string().optional(),
-	metadata: z.record(z.string(), z.unknown()).optional(),
+	metadata: MetadataSchema.optional(),
 	trigger_webhook: z.boolean().optional(),
 });
 
@@ -299,7 +308,7 @@ const MediaUpdateInputSchema = z
 		id: z.string().min(1),
 		folder: z.string().min(1).optional(),
 		alt_text: z.string().optional(),
-		metadata: z.record(z.string(), z.unknown()).optional(),
+		metadata: MetadataSchema.optional(),
 		trigger_webhook: z.boolean().optional(),
 	})
 	.superRefine((value, ctx) => {
