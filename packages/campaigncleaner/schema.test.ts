@@ -209,6 +209,18 @@ describe('PDF analysis', () => {
 				result,
 			),
 		).toEqual(result);
+
+		const fromHandler = await CampaignCleanerEndpoints.getCampaignPdfAnalysis(
+			ctx,
+			{ campaignId: campaign.id },
+		);
+		expect(fromHandler.content_base64).toBe(pdf.toString('base64'));
+		expect(mockLog).toHaveBeenCalledWith(
+			ctx,
+			'campaign_cleaner.campaign.pdfAnalysis',
+			{ campaignId: campaign.id },
+			'completed',
+		);
 	});
 
 	it('treats numeric Retry-After as seconds', async () => {
