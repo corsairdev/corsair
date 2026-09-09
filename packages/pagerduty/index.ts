@@ -12,7 +12,8 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { IncidentNotes, Incidents, LogEntries, Users } from './endpoints';
 import type {
 	PagerdutyEndpointInputs,
@@ -227,6 +228,12 @@ export const pagerdutyAuthConfig = {
 	api_key: {
 		account: ['subdomain'] as const,
 	},
+	oauth_2: {
+		account: ['subdomain'] as const,
+	},
+	managed: {
+		account: ['subdomain'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 type PagerdutyEndpoint<
@@ -249,7 +256,7 @@ export type PagerdutyBoundEndpoints = BindEndpoints<
 export type PagerdutyBoundWebhooks = BindWebhooks<PagerdutyWebhooks>;
 
 export type PagerdutyPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalPagerdutyPlugin['hooks'];
@@ -293,6 +300,12 @@ export function pagerduty<const T extends PagerdutyPluginOptions>(
 	return {
 		id: 'pagerduty',
 		authConfig: pagerdutyAuthConfig,
+		oauthConfig: {
+			providerName: 'PagerDuty',
+			authUrl: 'https://app.pagerduty.com/oauth/authorize',
+			tokenUrl: 'https://app.pagerduty.com/oauth/token',
+			scopes: ['read', 'write'],
+		},
 		schema: PagerdutySchema,
 		options: options,
 		hooks: options.hooks,
@@ -342,6 +355,32 @@ export function pagerduty<const T extends PagerdutyPluginOptions>(
 				}
 
 				return res;
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+				return getOAuthAccessToken(ctx, {
+					plugin: 'pagerduty',
+					tokenUrl: 'https://app.pagerduty.com/oauth/token',
+				});
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:pagerduty:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'pagerduty',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('pagerduty', 'api_key');
