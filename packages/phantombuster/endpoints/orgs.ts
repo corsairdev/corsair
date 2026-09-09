@@ -1,9 +1,17 @@
 import { logEventFromContext } from 'corsair/core';
 import { makePhantomBusterRequest } from '../client';
-import type { PhantomBusterEndpoints } from '../index';
-import type { FetchOrgResourcesResponse, FetchOrgResponse } from './types';
+import type { PhantomBusterContext } from '../index';
+import type {
+	FetchOrgInput,
+	FetchOrgResourcesInput,
+	FetchOrgResourcesResponse,
+	FetchOrgResponse,
+} from './types';
 
-export const fetch: PhantomBusterEndpoints['fetchOrg'] = async (ctx) => {
+export const fetch = async (
+	ctx: PhantomBusterContext,
+	_input: FetchOrgInput,
+): Promise<FetchOrgResponse> => {
 	const response = await makePhantomBusterRequest<FetchOrgResponse>(
 		'/orgs/fetch',
 		ctx.key,
@@ -15,21 +23,22 @@ export const fetch: PhantomBusterEndpoints['fetchOrg'] = async (ctx) => {
 	return response;
 };
 
-export const fetchResources: PhantomBusterEndpoints['fetchOrgResources'] =
-	async (ctx) => {
-		const response =
-			await makePhantomBusterRequest<FetchOrgResourcesResponse>(
-				'/orgs/fetch-resources',
-				ctx.key,
-				{ method: 'GET' },
-			);
+export const fetchResources = async (
+	ctx: PhantomBusterContext,
+	_input: FetchOrgResourcesInput,
+): Promise<FetchOrgResourcesResponse> => {
+	const response = await makePhantomBusterRequest<FetchOrgResourcesResponse>(
+		'/orgs/fetch-resources',
+		ctx.key,
+		{ method: 'GET' },
+	);
 
-		await logEventFromContext(
-			ctx,
-			'phantombuster.orgs.fetchResources',
-			{},
-			'completed',
-		);
+	await logEventFromContext(
+		ctx,
+		'phantombuster.orgs.fetchResources',
+		{},
+		'completed',
+	);
 
-		return response;
-	};
+	return response;
+};

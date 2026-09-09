@@ -1,9 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import { makePhantomBusterRequest } from '../client';
-import type { PhantomBusterEndpoints } from '../index';
-import type { FetchMeResponse } from './types';
+import type { PhantomBusterContext } from '../index';
+import type { FetchMeInput, FetchMeResponse } from './types';
 
-export const fetchMe: PhantomBusterEndpoints['fetchMe'] = async (ctx) => {
+export const fetchMe = async (
+	ctx: PhantomBusterContext,
+	_input: FetchMeInput,
+): Promise<FetchMeResponse> => {
 	const response = await makePhantomBusterRequest<FetchMeResponse>(
 		'/users/fetch-me',
 		ctx.key,

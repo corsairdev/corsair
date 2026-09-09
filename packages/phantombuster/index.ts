@@ -34,7 +34,7 @@ import { PhantomBusterSchema } from './schema';
 
 export type PhantomBusterPluginOptions = {
 	authType?: PickAuth<'api_key'>;
-	/** Hard-code an API key instead of pulling from Corsair key storage. */
+ 
 	key?: string;
 	hooks?: InternalPhantomBusterPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;

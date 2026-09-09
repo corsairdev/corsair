@@ -1,17 +1,21 @@
 import { logEventFromContext } from 'corsair/core';
 import { makePhantomBusterRequest } from '../client';
-import type { PhantomBusterEndpoints } from '../index';
+import type { PhantomBusterContext } from '../index';
 import type {
+	FetchAllContainersInput,
 	FetchAllContainersResponse,
+	FetchContainerInput,
+	FetchContainerOutputInput,
 	FetchContainerOutputResponse,
 	FetchContainerResponse,
+	FetchContainerResultObjectInput,
 	FetchContainerResultObjectResponse,
 } from './types';
 
-export const fetchAll: PhantomBusterEndpoints['fetchAllContainers'] = async (
-	ctx,
-	input,
-) => {
+export const fetchAll = async (
+	ctx: PhantomBusterContext,
+	input: FetchAllContainersInput,
+): Promise<FetchAllContainersResponse> => {
 	const { agentId, limit } = input;
 
 	const query: Record<string, string | number | boolean | undefined> = {
@@ -19,15 +23,14 @@ export const fetchAll: PhantomBusterEndpoints['fetchAllContainers'] = async (
 	};
 	if (limit !== undefined) query.limit = limit;
 
-	const response =
-		await makePhantomBusterRequest<FetchAllContainersResponse>(
-			'/containers/fetch-all',
-			ctx.key,
-			{
-				method: 'GET',
-				query,
-			},
-		);
+	const response = await makePhantomBusterRequest<FetchAllContainersResponse>(
+		'/containers/fetch-all',
+		ctx.key,
+		{
+			method: 'GET',
+			query,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -39,7 +42,10 @@ export const fetchAll: PhantomBusterEndpoints['fetchAllContainers'] = async (
 	return response;
 };
 
-export const fetch: PhantomBusterEndpoints['fetchContainer'] = async (ctx, input) => {
+export const fetch = async (
+	ctx: PhantomBusterContext,
+	input: FetchContainerInput,
+): Promise<FetchContainerResponse> => {
 	const { id } = input;
 
 	const response = await makePhantomBusterRequest<FetchContainerResponse>(
@@ -61,50 +67,53 @@ export const fetch: PhantomBusterEndpoints['fetchContainer'] = async (ctx, input
 	return response;
 };
 
-export const fetchOutput: PhantomBusterEndpoints['fetchContainerOutput'] =
-	async (ctx, input) => {
-		const { id } = input;
+export const fetchOutput = async (
+	ctx: PhantomBusterContext,
+	input: FetchContainerOutputInput,
+): Promise<FetchContainerOutputResponse> => {
+	const { id } = input;
 
-		const response =
-			await makePhantomBusterRequest<FetchContainerOutputResponse>(
-				'/containers/fetch-output',
-				ctx.key,
-				{
-					method: 'GET',
-					query: { id },
-				},
-			);
+	const response = await makePhantomBusterRequest<FetchContainerOutputResponse>(
+		'/containers/fetch-output',
+		ctx.key,
+		{
+			method: 'GET',
+			query: { id },
+		},
+	);
 
-		await logEventFromContext(
-			ctx,
-			'phantombuster.containers.fetchOutput',
-			{ id },
-			'completed',
+	await logEventFromContext(
+		ctx,
+		'phantombuster.containers.fetchOutput',
+		{ id },
+		'completed',
+	);
+
+	return response;
+};
+
+export const fetchResultObject = async (
+	ctx: PhantomBusterContext,
+	input: FetchContainerResultObjectInput,
+): Promise<FetchContainerResultObjectResponse> => {
+	const { id } = input;
+
+	const response =
+		await makePhantomBusterRequest<FetchContainerResultObjectResponse>(
+			'/containers/fetch-result-object',
+			ctx.key,
+			{
+				method: 'GET',
+				query: { id },
+			},
 		);
 
-		return response;
-	};
+	await logEventFromContext(
+		ctx,
+		'phantombuster.containers.fetchResultObject',
+		{ id },
+		'completed',
+	);
 
-export const fetchResultObject: PhantomBusterEndpoints['fetchContainerResultObject'] =
-	async (ctx, input) => {
-		const { id } = input;
-
-		const response =
-			await makePhantomBusterRequest<FetchContainerResultObjectResponse>(
-				'/containers/fetch-result-object',
-				ctx.key,
-				{
-					method: 'GET',
-					query: { id },
-				},
-			);
-
-		await logEventFromContext(
-			ctx,
-			'phantombuster.containers.fetchResultObject',
-			{ id },
-			'completed',
-		);
-
-		return response;
-	};
+	return response;
+};

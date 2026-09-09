@@ -1,20 +1,27 @@
 import { logEventFromContext } from 'corsair/core';
 import { makePhantomBusterRequest } from '../client';
-import type { PhantomBusterEndpoints } from '../index';
+import type { PhantomBusterContext } from '../index';
 import type {
+	DeleteAgentInput,
 	DeleteAgentResponse,
+	FetchAgentInput,
+	FetchAgentOutputInput,
 	FetchAgentOutputResponse,
 	FetchAgentResponse,
+	FetchAllAgentsInput,
 	FetchAllAgentsResponse,
+	LaunchAgentInput,
 	LaunchAgentResponse,
+	SaveAgentInput,
 	SaveAgentResponse,
+	StopAgentInput,
 	StopAgentResponse,
 } from './types';
 
-export const fetchAll: PhantomBusterEndpoints['fetchAllAgents'] = async (
-	ctx,
-	input,
-) => {
+export const fetchAll = async (
+	ctx: PhantomBusterContext,
+	input: FetchAllAgentsInput,
+): Promise<FetchAllAgentsResponse> => {
 	const { search } = input ?? {};
 
 	const response = await makePhantomBusterRequest<FetchAllAgentsResponse>(
@@ -31,7 +38,10 @@ export const fetchAll: PhantomBusterEndpoints['fetchAllAgents'] = async (
 	return response;
 };
 
-export const fetch: PhantomBusterEndpoints['fetchAgent'] = async (ctx, input) => {
+export const fetch = async (
+	ctx: PhantomBusterContext,
+	input: FetchAgentInput,
+): Promise<FetchAgentResponse> => {
 	const { id } = input;
 
 	const response = await makePhantomBusterRequest<FetchAgentResponse>(
@@ -48,7 +58,10 @@ export const fetch: PhantomBusterEndpoints['fetchAgent'] = async (ctx, input) =>
 	return response;
 };
 
-export const save: PhantomBusterEndpoints['saveAgent'] = async (ctx, input) => {
+export const save = async (
+	ctx: PhantomBusterContext,
+	input: SaveAgentInput,
+): Promise<SaveAgentResponse> => {
 	const response = await makePhantomBusterRequest<SaveAgentResponse>(
 		'/agents/save',
 		ctx.key,
@@ -69,7 +82,10 @@ export const save: PhantomBusterEndpoints['saveAgent'] = async (ctx, input) => {
 	return response;
 };
 
-export const remove: PhantomBusterEndpoints['deleteAgent'] = async (ctx, input) => {
+export const remove = async (
+	ctx: PhantomBusterContext,
+	input: DeleteAgentInput,
+): Promise<DeleteAgentResponse> => {
 	const { id } = input;
 
 	const response = await makePhantomBusterRequest<DeleteAgentResponse>(
@@ -91,7 +107,10 @@ export const remove: PhantomBusterEndpoints['deleteAgent'] = async (ctx, input) 
 	return response;
 };
 
-export const launch: PhantomBusterEndpoints['launchAgent'] = async (ctx, input) => {
+export const launch = async (
+	ctx: PhantomBusterContext,
+	input: LaunchAgentInput,
+): Promise<LaunchAgentResponse> => {
 	const { id, argument, manualCookieSession } = input;
 
 	const body: Record<string, unknown> = { id };
@@ -118,7 +137,10 @@ export const launch: PhantomBusterEndpoints['launchAgent'] = async (ctx, input) 
 	return response;
 };
 
-export const stop: PhantomBusterEndpoints['stopAgent'] = async (ctx, input) => {
+export const stop = async (
+	ctx: PhantomBusterContext,
+	input: StopAgentInput,
+): Promise<StopAgentResponse> => {
 	const { id } = input;
 
 	const response = await makePhantomBusterRequest<StopAgentResponse>(
@@ -140,10 +162,10 @@ export const stop: PhantomBusterEndpoints['stopAgent'] = async (ctx, input) => {
 	return response;
 };
 
-export const fetchOutput: PhantomBusterEndpoints['fetchAgentOutput'] = async (
-	ctx,
-	input,
-) => {
+export const fetchOutput = async (
+	ctx: PhantomBusterContext,
+	input: FetchAgentOutputInput,
+): Promise<FetchAgentOutputResponse> => {
 	const { id, status, mode, since } = input;
 
 	const query: Record<string, string | number | boolean | undefined> = { id };
@@ -151,15 +173,14 @@ export const fetchOutput: PhantomBusterEndpoints['fetchAgentOutput'] = async (
 	if (mode !== undefined) query.mode = mode;
 	if (since !== undefined) query.since = since;
 
-	const response =
-		await makePhantomBusterRequest<FetchAgentOutputResponse>(
-			'/agents/fetch-output',
-			ctx.key,
-			{
-				method: 'GET',
-				query,
-			},
-		);
+	const response = await makePhantomBusterRequest<FetchAgentOutputResponse>(
+		'/agents/fetch-output',
+		ctx.key,
+		{
+			method: 'GET',
+			query,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,

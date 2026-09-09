@@ -1,31 +1,36 @@
 import { logEventFromContext } from 'corsair/core';
 import { makePhantomBusterRequest } from '../client';
-import type { PhantomBusterEndpoints } from '../index';
+import type { PhantomBusterContext } from '../index';
 import type {
+	DeleteListInput,
 	DeleteListResponse,
+	FetchAllListsInput,
 	FetchAllListsResponse,
+	FetchListInput,
 	FetchListResponse,
+	SaveListInput,
 	SaveListResponse,
 } from './types';
 
-export const fetchAll: PhantomBusterEndpoints['fetchAllLists'] = async (ctx) => {
+export const fetchAll = async (
+	ctx: PhantomBusterContext,
+	_input: FetchAllListsInput,
+): Promise<FetchAllListsResponse> => {
 	const response = await makePhantomBusterRequest<FetchAllListsResponse>(
 		'/org-storage/lists/fetch-all',
 		ctx.key,
 		{ method: 'GET' },
 	);
 
-	await logEventFromContext(
-		ctx,
-		'phantombuster.lists.fetchAll',
-		{},
-		'completed',
-	);
+	await logEventFromContext(ctx, 'phantombuster.lists.fetchAll', {}, 'completed');
 
 	return response;
 };
 
-export const fetch: PhantomBusterEndpoints['fetchList'] = async (ctx, input) => {
+export const fetch = async (
+	ctx: PhantomBusterContext,
+	input: FetchListInput,
+): Promise<FetchListResponse> => {
 	const { id } = input;
 
 	const response = await makePhantomBusterRequest<FetchListResponse>(
@@ -47,7 +52,10 @@ export const fetch: PhantomBusterEndpoints['fetchList'] = async (ctx, input) => 
 	return response;
 };
 
-export const save: PhantomBusterEndpoints['saveList'] = async (ctx, input) => {
+export const save = async (
+	ctx: PhantomBusterContext,
+	input: SaveListInput,
+): Promise<SaveListResponse> => {
 	const response = await makePhantomBusterRequest<SaveListResponse>(
 		'/org-storage/lists/save',
 		ctx.key,
@@ -62,7 +70,10 @@ export const save: PhantomBusterEndpoints['saveList'] = async (ctx, input) => {
 	return response;
 };
 
-export const remove: PhantomBusterEndpoints['deleteList'] = async (ctx, input) => {
+export const remove = async (
+	ctx: PhantomBusterContext,
+	input: DeleteListInput,
+): Promise<DeleteListResponse> => {
 	const { id } = input;
 
 	const response = await makePhantomBusterRequest<DeleteListResponse>(
