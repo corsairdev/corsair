@@ -961,6 +961,15 @@
                 ]
               },
               {
+                "group": "Callingly",
+                "pages": [
+                  "plugins/callingly/overview",
+                  "plugins/callingly/api",
+                  "plugins/callingly/database",
+                  "plugins/callingly/webhooks"
+                ]
+              },
+              {
                 "group": "Campayn",
                 "pages": [
                   "plugins/campayn/overview",

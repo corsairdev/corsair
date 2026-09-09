@@ -1,0 +1,242 @@
+import { createHmac, timingSafeEqual } from 'node:crypto';
+import type { WebhookRequest } from 'corsair/core';
+import { z } from 'zod';
+
+export const CallCompletedWebhookEventSchema = z
+	.object({
+		event: z.string().optional(),
+		id: z.union([z.string(), z.number()]).optional(),
+		call_id: z.union([z.string(), z.number()]).optional(),
+		lead_id: z.union([z.string(), z.number()]).optional(),
+		team_id: z.union([z.string(), z.number()]).optional(),
+		user_id: z.union([z.string(), z.number()]).optional(),
+		phone_number: z.string().optional(),
+		status: z.string().optional(),
+		duration: z.number().optional(),
+		recording_url: z.string().optional(),
+		outcome: z.string().optional(),
+		timestamp: z.string().optional(),
+		account_id: z.string().optional(),
+	})
+	.passthrough();
+
+export const LeadCreatedWebhookEventSchema = z
+	.object({
+		event: z.string().optional(),
+		id: z.union([z.string(), z.number()]).optional(),
+		lead_id: z.union([z.string(), z.number()]).optional(),
+		name: z.string().optional(),
+		first_name: z.string().optional(),
+		last_name: z.string().optional(),
+		phone_number: z.string().optional(),
+		email: z.string().optional(),
+		team_id: z.union([z.string(), z.number()]).optional(),
+		timestamp: z.string().optional(),
+		account_id: z.string().optional(),
+	})
+	.passthrough();
+
+export type CallCompletedWebhookEvent = z.infer<
+	typeof CallCompletedWebhookEventSchema
+>;
+export type LeadCreatedWebhookEvent = z.infer<
+	typeof LeadCreatedWebhookEventSchema
+>;
+
+export type CallinglyWebhookOutputs = {
+	callCompleted: CallCompletedWebhookEvent;
+	leadCreated: LeadCreatedWebhookEvent;
+};
+
+export const CallinglyWebhookEventSchemas = {
+	callCompleted: CallCompletedWebhookEventSchema,
+	leadCreated: LeadCreatedWebhookEventSchema,
+} as const;
+
+function webhookBodiesToVerify(request: WebhookRequest<unknown>): string[] {
+	const bodies: string[] = [];
+	if (typeof request.rawBody === 'string' && request.rawBody.length > 0) {
+		bodies.push(request.rawBody);
+	}
+	if (request.payload !== undefined) {
+		const reconstructed = JSON.stringify(request.payload);
+		if (!bodies.includes(reconstructed)) {
+			bodies.push(reconstructed);
+		}
+	}
+	return bodies;
+}
+
+function signaturesMatch(
+	signature: string,
+	signedPayload: string,
+	key: string,
+) {
+	const expectedHex = createHmac('sha256', key)
+		.update(signedPayload)
+		.digest('hex');
+	const expectedBase64 = createHmac('sha256', key)
+		.update(signedPayload)
+		.digest('base64');
+	const sigHexBuf = Buffer.from(signature, 'hex');
+	const expHexBuf = Buffer.from(expectedHex, 'hex');
+	if (
+		sigHexBuf.length === expHexBuf.length &&
+		sigHexBuf.length > 0 &&
+		timingSafeEqual(sigHexBuf, expHexBuf)
+	) {
+		return true;
+	}
+	const sigB64Buf = Buffer.from(signature, 'utf8');
+	const expB64Buf = Buffer.from(expectedBase64, 'utf8');
+	return (
+		sigB64Buf.length === expB64Buf.length &&
+		sigB64Buf.length > 0 &&
+		timingSafeEqual(sigB64Buf, expB64Buf)
+	);
+}
+
+function timestampFromValue(value: unknown): number | undefined {
+	if (value === undefined || value === null || value === '') return undefined;
+	const num = Number(value);
+	if (!Number.isNaN(num)) {
+		return num < 1e11 ? num * 1000 : num;
+	}
+	const parsed = Date.parse(String(value));
+	return Number.isNaN(parsed) ? undefined : parsed;
+}
+
+/**
+ * Verifies Callingly webhook HMAC signatures with 5-minute replay attack prevention.
+ * Callingly webhook requests deliver signatures in `x-callingly-signature`,
+ * `callingly-signature`, or `x-callingly-webhook` headers.
+ * Supported signature schemes:
+ * - Timestamped format: `t=<timestamp>,v1=<signature>` with replay protection (5 min window).
+ * - Direct HMAC-SHA256 hex/base64 digest with timestamp in `x-callingly-timestamp` header or payload `timestamp`/`created_at`.
+ */
+export function verifyCallinglyWebhookSignature(
+	// Explicit WebhookRequest<unknown> type: signature verification operates on raw headers and body bytes,
+	// so the typed payload shape is intentionally unconstrained.
+	request: WebhookRequest<unknown>,
+	signingKey: string,
+): { valid: boolean; error?: string } {
+	try {
+		if (!signingKey) {
+			return { valid: false, error: 'Missing webhook signing key or secret' };
+		}
+
+		// Core can rebuild rawBody via JSON.stringify after parsing JSON, so
+		// try the delivered bytes and the reconstructed payload text.
+		const candidateBodies = webhookBodiesToVerify(request);
+		if (candidateBodies.length === 0) {
+			return {
+				valid: false,
+				error: 'Missing or non-string raw body for webhook verification',
+			};
+		}
+
+		const headers = request.headers;
+		// Header lookup checks standard Callingly signature headers (case-insensitive)
+		const rawHeader =
+			headers['x-callingly-signature'] ??
+			headers['callingly-signature'] ??
+			headers['x-callingly-webhook'];
+
+		const signatureHeader = Array.isArray(rawHeader)
+			? rawHeader[0]
+			: typeof rawHeader === 'string'
+				? rawHeader
+				: undefined;
+
+		if (!signatureHeader) {
+			return {
+				valid: false,
+				error: 'Missing Callingly webhook signature header',
+			};
+		}
+
+		const signatureHeaderValue = signatureHeader.trim();
+		const now = Date.now();
+		const TOLERANCE_MS = 5 * 60 * 1000;
+
+		for (const rawBody of candidateBodies) {
+			let signature = signatureHeaderValue;
+			let signedPayload = rawBody;
+			let timestampMs: number | undefined;
+
+			if (signature.includes('t=') && signature.includes('v1=')) {
+				const parts = signature.split(',');
+				let timestampStr: string | undefined;
+				let v1Sig: string | undefined;
+
+				for (const part of parts) {
+					const trimmed = part.trim();
+					if (trimmed.startsWith('t=')) {
+						timestampStr = trimmed.slice(2);
+					} else if (trimmed.startsWith('v1=')) {
+						v1Sig = trimmed.slice(3);
+					}
+				}
+
+				if (timestampStr && v1Sig) {
+					const parsedSec = Number.parseInt(timestampStr, 10);
+					timestampMs = Number.isNaN(parsedSec) ? undefined : parsedSec * 1000;
+					signature = v1Sig;
+					signedPayload = `${timestampStr}.${rawBody}`;
+				}
+			} else {
+				if (signature.startsWith('sha256=')) {
+					signature = signature.slice(7);
+				}
+
+				let payloadTimestamp: unknown;
+				try {
+					const parsed = JSON.parse(rawBody) as Record<string, unknown>;
+					if (parsed && typeof parsed === 'object') {
+						payloadTimestamp =
+							parsed.timestamp ?? parsed.created_at ?? parsed.event_time;
+					}
+				} catch {
+					// Raw body is not JSON
+				}
+
+				timestampMs = timestampFromValue(payloadTimestamp);
+				if (timestampMs === undefined) {
+					const rawTimestampHeader =
+						headers['x-callingly-timestamp'] ??
+						headers['callingly-timestamp'] ??
+						headers['x-timestamp'] ??
+						headers['timestamp'];
+					const timestampHeaderVal = Array.isArray(rawTimestampHeader)
+						? rawTimestampHeader[0]
+						: typeof rawTimestampHeader === 'string'
+							? rawTimestampHeader
+							: undefined;
+					timestampMs = timestampFromValue(timestampHeaderVal);
+					if (timestampHeaderVal && timestampMs !== undefined) {
+						signedPayload = `${timestampHeaderVal}.${rawBody}`;
+					}
+				}
+			}
+
+			if (timestampMs === undefined || Number.isNaN(timestampMs)) {
+				continue;
+			}
+			if (Math.abs(now - timestampMs) > TOLERANCE_MS) {
+				continue;
+			}
+			if (signaturesMatch(signature, signedPayload, signingKey)) {
+				return { valid: true };
+			}
+		}
+
+		return {
+			valid: false,
+			error:
+				'Invalid webhook signature or missing timestamp for replay attack prevention',
+		};
+	} catch (error) {
+		console.error('Callingly signature verification error:', error);
+		return { valid: false, error: 'Signature verification processing error' };
+	}
+}

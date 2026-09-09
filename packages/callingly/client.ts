@@ -27,9 +27,12 @@ export const CALLINGLY_API_BASE = 'https://api.callingly.com/v1';
  */
 export type MakeCallinglyRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-	body?: Record<string, unknown> | unknown[];
+	/**
+	 * JSON request body payload. Keys and values are serializable properties sent to the Callingly API.
+	 */
+	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
-	accountId?: string | number;
+	accountId?: string;
 };
 
 export async function makeCallinglyRequest<T>(
@@ -48,15 +51,12 @@ export async function makeCallinglyRequest<T>(
 	let finalQuery = query;
 	let finalBody = body;
 
-	if (accountId !== undefined && accountId !== '') {
-		headers['X-Account-Id'] = String(accountId);
-		if (method === 'GET' || method === 'DELETE' || Array.isArray(body)) {
+	if (accountId) {
+		headers['X-Account-Id'] = accountId;
+		if (method === 'GET' || method === 'DELETE') {
 			finalQuery = { account_id: accountId, ...query };
 		} else if (method === 'POST' || method === 'PUT' || method === 'PATCH') {
-			finalBody = {
-				account_id: accountId,
-				...(body as Record<string, unknown> | undefined),
-			};
+			finalBody = { account_id: accountId, ...body };
 		}
 	}
 
