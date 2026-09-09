@@ -264,6 +264,14 @@
                 ]
               },
               {
+                "group": "Agiled",
+                "pages": [
+                  "plugins/agiled/overview",
+                  "plugins/agiled/api",
+                  "plugins/agiled/database"
+                ]
+              },
+              {
                 "group": "Agility CMS",
                 "pages": [
                   "plugins/agilitycms/overview",
@@ -485,6 +493,14 @@
                 ]
               },
               {
+                "group": "Appointo",
+                "pages": [
+                  "plugins/appointo/overview",
+                  "plugins/appointo/api",
+                  "plugins/appointo/database"
+                ]
+              },
+              {
                 "group": "Asana",
                 "pages": [
                   "plugins/asana/overview",
@@ -500,6 +516,15 @@
                   "plugins/ascora/overview",
                   "plugins/ascora/api",
                   "plugins/ascora/database"
+                ]
+              },
+              {
+                "group": "Ashby",
+                "pages": [
+                  "plugins/ashby/overview",
+                  "plugins/ashby/api",
+                  "plugins/ashby/database",
+                  "plugins/ashby/webhooks"
                 ]
               },
               {
@@ -618,6 +643,22 @@
                 ]
               },
               {
+                "group": "BenchmarkEmail",
+                "pages": [
+                  "plugins/benchmarkemail/overview",
+                  "plugins/benchmarkemail/api",
+                  "plugins/benchmarkemail/database"
+                ]
+              },
+              {
+                "group": "Best Buy Remix API",
+                "pages": [
+                  "plugins/bestbuy/overview",
+                  "plugins/bestbuy/api",
+                  "plugins/bestbuy/database"
+                ]
+              },
+              {
                 "group": "Better Proposals",
                 "pages": [
                   "plugins/betterproposals/overview",
@@ -706,6 +747,14 @@
                 ]
               },
               {
+                "group": "Boldsign",
+                "pages": [
+                  "plugins/boldsign/overview",
+                  "plugins/boldsign/api",
+                  "plugins/boldsign/database"
+                ]
+              },
+              {
                 "group": "BoloForms",
                 "pages": [
                   "plugins/boloforms/overview",
@@ -735,6 +784,14 @@
                   "plugins/bookingmood/overview",
                   "plugins/bookingmood/api",
                   "plugins/bookingmood/database"
+                ]
+              },
+              {
+                "group": "Borneo",
+                "pages": [
+                  "plugins/borneo/overview",
+                  "plugins/borneo/api",
+                  "plugins/borneo/database"
                 ]
               },
               {
@@ -804,6 +861,14 @@
                 ]
               },
               {
+                "group": "Brevo",
+                "pages": [
+                  "plugins/brevo/overview",
+                  "plugins/brevo/api",
+                  "plugins/brevo/database"
+                ]
+              },
+              {
                 "group": "Brex",
                 "pages": [
                   "plugins/brex/overview",
@@ -836,6 +901,14 @@
                 ]
               },
               {
+                "group": "BrowserTool",
+                "pages": [
+                  "plugins/browsertool/overview",
+                  "plugins/browsertool/api",
+                  "plugins/browsertool/database"
+                ]
+              },
+              {
                 "group": "Bubble",
                 "pages": [
                   "plugins/bubble/overview",
@@ -860,6 +933,14 @@
                 ]
               },
               {
+                "group": "Bunnycdn",
+                "pages": [
+                  "plugins/bunnycdn/overview",
+                  "plugins/bunnycdn/api",
+                  "plugins/bunnycdn/database"
+                ]
+              },
+              {
                 "group": "Cal.com",
                 "pages": [
                   "plugins/cal/overview",
@@ -877,6 +958,14 @@
                   "plugins/calendly/api",
                   "plugins/calendly/database",
                   "plugins/calendly/webhooks"
+                ]
+              },
+              {
+                "group": "Campayn",
+                "pages": [
+                  "plugins/campayn/overview",
+                  "plugins/campayn/api",
+                  "plugins/campayn/database"
                 ]
               },
               {
@@ -905,6 +994,22 @@
                 ]
               },
               {
+                "group": "Castingwords",
+                "pages": [
+                  "plugins/castingwords/overview",
+                  "plugins/castingwords/api",
+                  "plugins/castingwords/database"
+                ]
+              },
+              {
+                "group": "CDR Platform",
+                "pages": [
+                  "plugins/cdrplatform/overview",
+                  "plugins/cdrplatform/api",
+                  "plugins/cdrplatform/database"
+                ]
+              },
+              {
                 "group": "Certifier",
                 "pages": [
                   "plugins/certifier/overview",
@@ -926,6 +1031,14 @@
                   "plugins/chatfai/overview",
                   "plugins/chatfai/api",
                   "plugins/chatfai/database"
+                ]
+              },
+              {
+                "group": "ChMeetings",
+                "pages": [
+                  "plugins/chmeetings/overview",
+                  "plugins/chmeetings/api",
+                  "plugins/chmeetings/database"
                 ]
               },
               {
@@ -1027,6 +1140,22 @@
                 ]
               },
               {
+                "group": "ConvoloAi",
+                "pages": [
+                  "plugins/convoloai/overview",
+                  "plugins/convoloai/api",
+                  "plugins/convoloai/database"
+                ]
+              },
+              {
+                "group": "CountdownApi",
+                "pages": [
+                  "plugins/countdownapi/overview",
+                  "plugins/countdownapi/api",
+                  "plugins/countdownapi/database"
+                ]
+              },
+              {
                 "group": "Crow Terminal",
                 "pages": [
                   "plugins/crowterminal/overview",
@@ -1050,6 +1179,14 @@
                   "plugins/customgpt/overview",
                   "plugins/customgpt/api",
                   "plugins/customgpt/database"
+                ]
+              },
+              {
+                "group": "Dadataru",
+                "pages": [
+                  "plugins/dadataru/overview",
+                  "plugins/dadataru/api",
+                  "plugins/dadataru/database"
                 ]
               },
               {
@@ -1212,6 +1349,14 @@
                 ]
               },
               {
+                "group": "Exist",
+                "pages": [
+                  "plugins/exist/overview",
+                  "plugins/exist/api",
+                  "plugins/exist/database"
+                ]
+              },
+              {
                 "group": "Facebook",
                 "pages": [
                   "plugins/facebook/overview",
@@ -1265,6 +1410,14 @@
                 ]
               },
               {
+                "group": "Flexisign",
+                "pages": [
+                  "plugins/flexisign/overview",
+                  "plugins/flexisign/api",
+                  "plugins/flexisign/database"
+                ]
+              },
+              {
                 "group": "Formbricks",
                 "pages": [
                   "plugins/formbricks/overview",
@@ -1300,6 +1453,14 @@
                 ]
               },
               {
+                "group": "Gladia",
+                "pages": [
+                  "plugins/gladia/overview",
+                  "plugins/gladia/api",
+                  "plugins/gladia/database"
+                ]
+              },
+              {
                 "group": "Gmail",
                 "pages": [
                   "plugins/gmail/overview",
@@ -1315,6 +1476,14 @@
                   "plugins/googleaddressvalidation/overview",
                   "plugins/googleaddressvalidation/api",
                   "plugins/googleaddressvalidation/database"
+                ]
+              },
+              {
+                "group": "Google Analytics",
+                "pages": [
+                  "plugins/googleanalytics/overview",
+                  "plugins/googleanalytics/api",
+                  "plugins/googleanalytics/database"
                 ]
               },
               {
@@ -1394,6 +1563,14 @@
                   "plugins/grafana/overview",
                   "plugins/grafana/api",
                   "plugins/grafana/database"
+                ]
+              },
+              {
+                "group": "Griptape",
+                "pages": [
+                  "plugins/griptape/overview",
+                  "plugins/griptape/api",
+                  "plugins/griptape/database"
                 ]
               },
               {
@@ -1828,6 +2005,14 @@
                 ]
               },
               {
+                "group": "Runpod",
+                "pages": [
+                  "plugins/runpod/overview",
+                  "plugins/runpod/api",
+                  "plugins/runpod/database"
+                ]
+              },
+              {
                 "group": "Salesforce",
                 "pages": [
                   "plugins/salesforce/overview",
@@ -1842,6 +2027,14 @@
                   "plugins/sapsuccessfactors/overview",
                   "plugins/sapsuccessfactors/api",
                   "plugins/sapsuccessfactors/database"
+                ]
+              },
+              {
+                "group": "Scale AI",
+                "pages": [
+                  "plugins/scaleai/overview",
+                  "plugins/scaleai/api",
+                  "plugins/scaleai/database"
                 ]
               },
               {
@@ -2141,6 +2334,14 @@
                 ]
               },
               {
+                "group": "Uploadcare",
+                "pages": [
+                  "plugins/uploadcare/overview",
+                  "plugins/uploadcare/api",
+                  "plugins/uploadcare/database"
+                ]
+              },
+              {
                 "group": "Vapi",
                 "pages": [
                   "plugins/vapi/overview",
@@ -2207,6 +2408,14 @@
                   "plugins/witai/overview",
                   "plugins/witai/api",
                   "plugins/witai/database"
+                ]
+              },
+              {
+                "group": "Wix",
+                "pages": [
+                  "plugins/wix/overview",
+                  "plugins/wix/api",
+                  "plugins/wix/database"
                 ]
               },
               {
@@ -2283,6 +2492,14 @@
                   "plugins/zendesk/overview",
                   "plugins/zendesk/api",
                   "plugins/zendesk/database"
+                ]
+              },
+              {
+                "group": "Zoho Inventory",
+                "pages": [
+                  "plugins/zohoinventory/overview",
+                  "plugins/zohoinventory/api",
+                  "plugins/zohoinventory/database"
                 ]
               },
               {
