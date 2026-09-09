@@ -45,6 +45,7 @@ export const UpdateLeadInputSchema = z.object({
 	company: z.string().optional(),
 	status: z.string().optional(),
 	result: z.string().nullable().optional(),
+	// Same unstructured stage field as GET /v1/leads.
 	stage: z.unknown().nullable().optional(),
 	is_stopped: z.number().optional(),
 	is_blocked: z.number().optional(),
