@@ -7,7 +7,7 @@ Use **Callingly** through Corsair: one client, typed API calls, local DB sync, a
 
 **What you get:**
 
-- 32 typed API operations
+- 29 typed API operations
 - 8 synced entities (`calls`, `clients`, `leads`, `schedules`, `teams`, `teamUsers`, and 2 more) for fast `.search()` / `.list()`
 - 2 incoming webhook event types
 
@@ -111,11 +111,16 @@ await tenant.callingly.api.leads.list({});
 ```
 
 
-**Create lead**
+**Create outbound call**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.callingly.api.leads.create({ name: 'John Doe', phone_number: '+15551234567' });
+await tenant.callingly.api.calls.create({
+	phone_number: '555-555-5555',
+	team_id: 123,
+	first_name: 'John',
+	last_name: 'Doe',
+});
 ```
 
 
@@ -128,7 +133,7 @@ Search synced leads without hitting Callingly's API.
 ```ts
 const tenant = corsair.withTenant('acme');
 const rows = await tenant.callingly.db.leads.search({
-	data: { status: 'new' },
+	data: { status: 'missed' },
 	limit: 50,
 });
 ```

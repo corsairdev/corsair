@@ -6,16 +6,18 @@ examples:
     path: leads.list
     title: List leads
   write:
-    path: leads.create
-    title: Create lead
+    path: calls.create
+    title: Create outbound call
     args:
-      name: John Doe
-      phone_number: '+15551234567'
+      phone_number: '555-555-5555'
+      team_id: 123
+      first_name: John
+      last_name: Doe
 dbExample:
   entity: leads
   note: Search synced leads without hitting Callingly's API.
   data:
-    status: new
+    status: missed
   limit: 50
 exampleWebhook:
   path: calls.completed
