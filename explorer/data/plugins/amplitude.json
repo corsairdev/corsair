@@ -1,0 +1,1272 @@
+{
+  "id": "amplitude",
+  "displayName": "Amplitude",
+  "description": "Product analytics platform for tracking user behavior, funnels, and retention metrics.",
+  "npmPackageName": "@corsair-dev/amplitude",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 17,
+    "webhooks": 7,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "amplitude.api.annotations.create",
+      "shortPath": "annotations.create",
+      "description": "Create a new chart annotation on a specific date",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: number, date: string, label: string, details?: string, app_id?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.annotations.list",
+      "shortPath": "annotations.list",
+      "description": "List all chart annotations for the project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: number, date: string, label: string, details?: string, app_id?: number, source?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.charts.get",
+      "shortPath": "charts.get",
+      "description": "Get the data results for a specific chart by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chart_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ series?: { type?: string, values?: any[] }[], xValues?: string[] }"
+          },
+          {
+            "key": "seriesLabels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.cohorts.create",
+      "shortPath": "cohorts.create",
+      "description": "Create a new static cohort from a list of user or device IDs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "id_type",
+            "optional": false,
+            "type": "BY_AMP_ID | BY_USER_ID | BY_DEVICE_ID"
+          },
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cohort",
+            "optional": true,
+            "type": "{ id: string, name: string, size?: number, last_computed?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.cohorts.get",
+      "shortPath": "cohorts.get",
+      "description": "Get details for a specific cohort by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cohort_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cohort",
+            "optional": true,
+            "type": "{ id: string, name: string, owners?: string[], description?: string | null, published?: boolean, archived?: boolean, app_id?: number, size?: number, last_computed?: number, last_modified?: number, is_predefined?: boolean, type?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.cohorts.getMembers",
+      "shortPath": "cohorts.getMembers",
+      "description": "Retrieve the member download for a cohort export request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.cohorts.list",
+      "shortPath": "cohorts.list",
+      "description": "List all cohorts in the project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cohorts",
+            "optional": true,
+            "type": "{ id: string, name: string, owners?: string[], description?: string | null, published?: boolean, archived?: boolean, app_id?: number, size?: number | null, last_computed?: number, last_modified?: number, is_predefined?: boolean, type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.dashboards.get",
+      "shortPath": "dashboards.get",
+      "description": "Get details and chart list for a specific dashboard",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dashboard_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dashboard",
+            "optional": true,
+            "type": "{ id: number, name: string, description?: string, created?: string, lastUpdated?: string, createdBy?: string, published?: boolean, charts?: { id: string, name?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.dashboards.list",
+      "shortPath": "dashboards.list",
+      "description": "List all dashboards in the project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dashboards",
+            "optional": true,
+            "type": "{ id: number, name: string, description?: string, created?: string, lastUpdated?: string, createdBy?: string, published?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.events.getList",
+      "shortPath": "events.getList",
+      "description": "List all event types tracked in the project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ event_type?: string, display_name?: string, totals?: number, totals_delta?: number, hidden?: boolean, deleted?: boolean, non_active?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.events.identifyUser",
+      "shortPath": "events.identifyUser",
+      "description": "Set or update user properties via the Identify API",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "identification",
+            "optional": false,
+            "type": "{ user_id?: string, device_id?: string, user_properties: {} }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.events.upload",
+      "shortPath": "events.upload",
+      "description": "Upload one or more events to Amplitude via HTTP API v2",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ event_type: string, user_id?: string, device_id?: string, time?: number, event_properties?: {}, user_properties?: {}, app_version?: string, platform?: string, os_name?: string, os_version?: string, device_brand?: string, device_manufacturer?: string, device_model?: string, carrier?: string, country?: string, region?: string, city?: string, language?: string, ip?: string, insert_id?: string, session_id?: number }[]"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ min_id_length?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "events_ingested",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payload_size_bytes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "server_upload_time",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.events.uploadBatch",
+      "shortPath": "events.uploadBatch",
+      "description": "Batch upload events to Amplitude",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ event_type: string, user_id?: string, device_id?: string, time?: number, event_properties?: {}, user_properties?: {}, app_version?: string, platform?: string, os_name?: string, os_version?: string, device_brand?: string, device_manufacturer?: string, device_model?: string, carrier?: string, country?: string, region?: string, city?: string, language?: string, ip?: string, insert_id?: string, session_id?: number }[]"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ min_id_length?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "events_ingested",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payload_size_bytes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "server_upload_time",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.exports.getData",
+      "shortPath": "exports.getData",
+      "description": "Export raw event data for a given time range as a zip archive",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.users.getActivity",
+      "shortPath": "users.getActivity",
+      "description": "Get recent event activity for a specific user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ event_type?: string, event_time?: string, event_properties?: {}, session_id?: number, amplitude_id?: number }[]"
+          },
+          {
+            "key": "userData",
+            "optional": true,
+            "type": "{ num_events?: number, num_sessions?: number, first_used?: string, last_used?: string, canonical_amplitude_id?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.users.getProfile",
+      "shortPath": "users.getProfile",
+      "description": "Get the profile and properties for a specific user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amplitude_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userData",
+            "optional": true,
+            "type": "{ user_id?: string, amplitude_id?: number, canonical_amplitude_id?: number, merged_amplitude_ids?: number[], is_identified?: boolean, user_properties?: {}, country?: string, region?: string, city?: string, language?: string, platform?: string, os?: string, device?: string, last_seen?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amplitude.api.users.search",
+      "shortPath": "users.search",
+      "description": "Search for users by user ID or device ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "matches",
+            "optional": true,
+            "type": "{ amplitude_id: number, user_id?: string, last_seen?: number, is_identified?: boolean, country?: string, city?: string, platform?: string, os?: string, device?: string }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "amplitude.webhooks.annotations.created",
+      "shortPath": "annotations.created",
+      "description": "A new chart annotation was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "annotation.created"
+          },
+          {
+            "key": "annotation_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ type: annotation.created, annotation_id: number, date: string, label: string, details?: string, app_id?: number, source?: string, created_at: string }",
+      "usageExample": "amplitude({\n    webhookHooks: {\n        annotations: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "amplitude.webhooks.annotations.updated",
+      "shortPath": "annotations.updated",
+      "description": "A chart annotation was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "annotation.updated"
+          },
+          {
+            "key": "annotation_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ type: annotation.updated, annotation_id: number, date: string, label: string, details?: string, app_id?: number, source?: string, updated_at: string }",
+      "usageExample": "amplitude({\n    webhookHooks: {\n        annotations: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "amplitude.webhooks.cohorts.computed",
+      "shortPath": "cohorts.computed",
+      "description": "A cohort finished computing",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "cohort.computed"
+          },
+          {
+            "key": "cohort_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cohort_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "computed_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "responseType": "{ type: cohort.computed, cohort_id: string, cohort_name: string, app_id?: number, size: number, computed_at: string, published?: boolean }",
+      "usageExample": "amplitude({\n    webhookHooks: {\n        cohorts: {\n            computed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "amplitude.webhooks.events.identify",
+      "shortPath": "events.identify",
+      "description": "A user identify call was received by Amplitude",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "event.identify"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "app_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "insert_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ type: event.identify, user_id?: string, device_id?: string, time: number, user_properties?: {}, app_version?: string, platform?: string, insert_id?: string }",
+      "usageExample": "amplitude({\n    webhookHooks: {\n        events: {\n            identify: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "amplitude.webhooks.events.track",
+      "shortPath": "events.track",
+      "description": "An event was tracked by Amplitude",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "event.track"
+          },
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "event_properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "user_properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "app_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "insert_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ type: event.track, event_id: string, event_type: string, user_id?: string, device_id?: string, time: number, event_properties?: {}, user_properties?: {}, app_version?: string, platform?: string, session_id?: number, insert_id?: string }",
+      "usageExample": "amplitude({\n    webhookHooks: {\n        events: {\n            track: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "amplitude.webhooks.experiments.exposure",
+      "shortPath": "experiments.exposure",
+      "description": "An experiment exposure was tracked for a user",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "experiment.exposure"
+          },
+          {
+            "key": "flag_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variant",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ user_id?: string, device_id?: string, user_properties?: {}, country?: string, city?: string, region?: string, language?: string, platform?: string, os?: string }"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "experiment_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ deployment_name?: string, flag_version?: number }"
+          }
+        ]
+      },
+      "responseType": "{ type: experiment.exposure, flag_key: string, variant: string, user: { user_id?: string, device_id?: string, user_properties?: {}, country?: string, city?: string, region?: string, language?: string, platform?: string, os?: string }, time: number, experiment_key?: string, metadata?: { deployment_name?: string, flag_version?: number } }",
+      "usageExample": "amplitude({\n    webhookHooks: {\n        experiments: {\n            exposure: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "amplitude.webhooks.monitors.alert",
+      "shortPath": "monitors.alert",
+      "description": "An alert monitor threshold was triggered",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "monitor.alert"
+          },
+          {
+            "key": "monitor_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "monitor_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "alert_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "condition",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "threshold",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "triggered_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chart_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dashboard_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "responseType": "{ type: monitor.alert, monitor_id: string, monitor_name: string, alert_type: string, condition?: string, value?: number, threshold?: number, triggered_at: string, chart_id?: string, dashboard_id?: number, recipients?: string[] }",
+      "usageExample": "amplitude({\n    webhookHooks: {\n        monitors: {\n            alert: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "amplitude.db.cohorts.search",
+      "entityName": "cohorts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "app_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "published",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "last_computed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "last_modified",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_predefined",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "amplitude.db.events.search",
+      "entityName": "events",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "event_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "device_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "app_version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "platform",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "os_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "os_version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "device_brand",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "device_manufacturer",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "device_model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "carrier",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dma",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "insert_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "session_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "amplitude.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "canonical_amplitude_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "last_seen",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_identified",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "platform",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "os",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "device",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

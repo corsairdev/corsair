@@ -1,0 +1,1451 @@
+---
+title: API
+description: "API reference for Fillout: every `filloutforms.api.*` operation with input and output types."
+---
+
+Every `filloutforms.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Databases
+
+### create
+
+`databases.create`
+
+Create a Zite database with tables and fields
+
+**Risk:** `write`
+
+```ts
+await corsair.filloutforms.api.databases.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `tables` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tables full type">
+
+```ts
+{
+  name: string,
+  fields: {
+    type: single_line_text | long_text | email | url | phone_number | number | currency | percent | rating | duration | single_select | multiple_select | checkbox | date | datetime | attachments | linked_record | lookup | autonumber | source,
+    name: string,
+    template: {
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `tables` | `object[]` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `workspaceId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="tables full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  order: number,
+  primaryFieldId: string,
+  fields: {
+    id: string,
+    name: string,
+    type: string,
+    template: {
+    },
+    order: number
+  }[],
+  views: {
+    id: string,
+    name: string,
+    type: string,
+    config?: {
+    }
+  }[],
+  url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`databases.delete`
+
+Permanently delete a Zite database
+
+**Risk:** `destructive`
+
+```ts
+await corsair.filloutforms.api.databases.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`databases.get`
+
+List Zite databases for the organization
+
+**Risk:** `read`
+
+```ts
+await corsair.filloutforms.api.databases.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getById
+
+`databases.getById`
+
+Get a Zite database with tables, fields, and views
+
+**Risk:** `read`
+
+```ts
+await corsair.filloutforms.api.databases.getById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `tables` | `object[]` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `workspaceId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="tables full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  order: number,
+  primaryFieldId: string,
+  fields: {
+    id: string,
+    name: string,
+    type: string,
+    template: {
+    },
+    order: number
+  }[],
+  views: {
+    id: string,
+    name: string,
+    type: string,
+    config?: {
+    }
+  }[],
+  url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fields
+
+### create
+
+`fields.create`
+
+Add a field to a Zite table
+
+**Risk:** `write`
+
+```ts
+await corsair.filloutforms.api.fields.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `single_line_text \| long_text \| email \| url \| phone_number \| number \| currency \| percent \| rating \| duration \| single_select \| multiple_select \| checkbox \| date \| datetime \| attachments \| linked_record \| lookup \| autonumber \| source` | Yes | — |
+| `template` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `template` | `object` | Yes | — |
+| `order` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`fields.delete`
+
+Permanently delete a Zite field
+
+**Risk:** `destructive`
+
+```ts
+await corsair.filloutforms.api.fields.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `fieldId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`fields.update`
+
+Update a Zite field name or template
+
+**Risk:** `write`
+
+```ts
+await corsair.filloutforms.api.fields.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `fieldId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `template` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `template` | `object` | Yes | — |
+| `order` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Forms
+
+### getFormMetadata
+
+`forms.getFormMetadata`
+
+Get form metadata including questions and configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.filloutforms.api.forms.getFormMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `questions` | `object[]` | Yes | — |
+| `calculations` | `object[]` | No | — |
+| `urlParameters` | `object[]` | No | — |
+| `scheduling` | `object[]` | No | — |
+| `payments` | `object[]` | No | — |
+| `quiz` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="calculations full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="urlParameters full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="scheduling full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="payments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="quiz full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getForms
+
+`forms.getForms`
+
+List all Fillout forms
+
+**Risk:** `read`
+
+```ts
+await corsair.filloutforms.api.forms.getForms({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  formId: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Oauth
+
+### authorize
+
+`oauth.authorize`
+
+Generate the Fillout OAuth authorization URL
+
+**Risk:** `read`
+
+```ts
+await corsair.filloutforms.api.oauth.authorize({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clientId` | `string` | Yes | — |
+| `redirectUri` | `string` | Yes | — |
+| `state` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `authorizationUrl` | `string` | Yes | — |
+
+
+
+---
+
+## Records
+
+### create
+
+`records.create`
+
+Create a Zite record
+
+**Risk:** `write`
+
+```ts
+await corsair.filloutforms.api.records.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `record` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="record full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `fields` | `object` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`records.delete`
+
+Permanently delete a Zite record
+
+**Risk:** `destructive`
+
+```ts
+await corsair.filloutforms.api.records.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getById
+
+`records.getById`
+
+Get a Zite record by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.filloutforms.api.records.getById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `fields` | `object` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`records.list`
+
+List Zite records with filter, sort, and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.filloutforms.api.records.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `filter` | `object` | No | — |
+| `sort` | `object[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  id: string,
+  data: {
+  },
+  fields: {
+  },
+  createdAt: string,
+  updatedAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`records.update`
+
+Update fields on a Zite record
+
+**Risk:** `write`
+
+```ts
+await corsair.filloutforms.api.records.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `record` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="record full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `fields` | `object` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Submissions
+
+### create
+
+`submissions.create`
+
+Create new form submissions
+
+**Risk:** `write`
+
+```ts
+await corsair.filloutforms.api.submissions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+| `submissions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="submissions full type">
+
+```ts
+{
+  questions: {
+    id: string,
+    value: any
+  }[],
+  urlParameters?: {
+    id: string,
+    name: string,
+    value: string
+  }[],
+  submissionTime?: string,
+  lastUpdatedAt?: string,
+  scheduling?: {
+  }[],
+  payments?: {
+  }[],
+  login?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `submissions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="submissions full type">
+
+```ts
+{
+  submissionId: string,
+  submissionTime: string,
+  lastUpdatedAt?: string,
+  questions: {
+    id: string,
+    name: string,
+    type: string,
+    value: any
+  }[],
+  calculations?: {
+    id: string,
+    name: string,
+    type: number | text | duration,
+    value: string
+  }[],
+  urlParameters?: {
+    id: string,
+    name: string,
+    value: string
+  }[],
+  scheduling?: {
+  }[],
+  payments?: {
+  }[],
+  quiz?: {
+  },
+  login?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`submissions.delete`
+
+Delete a form submission by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.filloutforms.api.submissions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+| `submissionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### getById
+
+`submissions.getById`
+
+Get a single submission by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.filloutforms.api.submissions.getById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+| `submissionId` | `string` | Yes | — |
+| `includeEditLink` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `submission` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="submission full type">
+
+```ts
+{
+  submissionId: string,
+  submissionTime: string,
+  lastUpdatedAt?: string,
+  questions: {
+    id: string,
+    name: string,
+    type: string,
+    value: any
+  }[],
+  calculations?: {
+    id: string,
+    name: string,
+    type: number | text | duration,
+    value: string
+  }[],
+  urlParameters?: {
+    id: string,
+    name: string,
+    value: string
+  }[],
+  scheduling?: {
+  }[],
+  payments?: {
+  }[],
+  quiz?: {
+  },
+  login?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`submissions.list`
+
+List form submissions with filtering and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.filloutforms.api.submissions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `afterDate` | `string` | No | — |
+| `beforeDate` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `status` | `finished \| in_progress` | No | — |
+| `includeEditLink` | `boolean` | No | — |
+| `includePreview` | `boolean` | No | — |
+| `sort` | `asc \| desc` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responses` | `object[]` | Yes | — |
+| `totalResponses` | `number` | Yes | — |
+| `pageCount` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="responses full type">
+
+```ts
+{
+  submissionId: string,
+  submissionTime: string,
+  lastUpdatedAt?: string,
+  questions: {
+    id: string,
+    name: string,
+    type: string,
+    value: any
+  }[],
+  calculations?: {
+    id: string,
+    name: string,
+    type: number | text | duration,
+    value: string
+  }[],
+  urlParameters?: {
+    id: string,
+    name: string,
+    value: string
+  }[],
+  scheduling?: {
+  }[],
+  payments?: {
+  }[],
+  quiz?: {
+  },
+  login?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tables
+
+### create
+
+`tables.create`
+
+Create a table in a Zite database
+
+**Risk:** `write`
+
+```ts
+await corsair.filloutforms.api.tables.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `fields` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  type: single_line_text | long_text | email | url | phone_number | number | currency | percent | rating | duration | single_select | multiple_select | checkbox | date | datetime | attachments | linked_record | lookup | autonumber | source,
+  name: string,
+  template: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `order` | `number` | Yes | — |
+| `primaryFieldId` | `string` | Yes | — |
+| `fields` | `object[]` | Yes | — |
+| `views` | `object[]` | Yes | — |
+| `url` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: string,
+  template: {
+  },
+  order: number
+}[]
+```
+</Accordion>
+
+<Accordion title="views full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: string,
+  config?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tables.delete`
+
+Permanently delete a Zite table
+
+**Risk:** `destructive`
+
+```ts
+await corsair.filloutforms.api.tables.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`tables.update`
+
+Update Zite table properties such as name
+
+**Risk:** `write`
+
+```ts
+await corsair.filloutforms.api.tables.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `order` | `number` | Yes | — |
+| `primaryFieldId` | `string` | Yes | — |
+| `fields` | `object[]` | Yes | — |
+| `views` | `object[]` | Yes | — |
+| `url` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: string,
+  template: {
+  },
+  order: number
+}[]
+```
+</Accordion>
+
+<Accordion title="views full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: string,
+  config?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Token
+
+### invalidate
+
+`token.invalidate`
+
+Invalidate/revoke an OAuth access token
+
+**Risk:** `destructive`
+
+```ts
+await corsair.filloutforms.api.token.invalidate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Webhooks
+
+### createDatabase
+
+`webhooks.createDatabase`
+
+Create a Zite database webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.filloutforms.api.webhooks.createDatabase({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `events` | `record.created \| record.updated \| record.deleted \| table.created \| table.updated \| table.deleted \| field.created \| field.updated \| field.deleted[]` | Yes | — |
+| `tableId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `secret` | `string` | Yes | — |
+
+
+
+---
+
+### createForm
+
+`webhooks.createForm`
+
+Create a Fillout form submission webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.filloutforms.api.webhooks.createForm({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+---
+
+### deleteDatabase
+
+`webhooks.deleteDatabase`
+
+Delete a Zite database webhook
+
+**Risk:** `destructive`
+
+```ts
+await corsair.filloutforms.api.webhooks.deleteDatabase({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+| `webhookId` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listDatabase
+
+`webhooks.listDatabase`
+
+List Zite database webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.filloutforms.api.webhooks.listDatabase({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databaseId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id: number,
+  url: string,
+  events: string[],
+  active: boolean,
+  tableIds?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeForm
+
+`webhooks.removeForm`
+
+Remove a Fillout form webhook
+
+**Risk:** `destructive`
+
+```ts
+await corsair.filloutforms.api.webhooks.removeForm({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+

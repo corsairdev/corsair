@@ -36,8 +36,8 @@ export const corsair = createCorsair({
     kek: process.env.CORSAIR_KEK!,
     database: db,
     hub: {
-        projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-        signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+        projectApiKey: process.env.CORSAIR_API_KEY!,
+        signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
     },
     plugins: [github()],
 });
@@ -58,12 +58,12 @@ You do not put the delivery URL in your `hub` config; it is resolved per environ
 Copy the values from your project's **Keys** tab. Never commit them.
 
 ```bash .env
-CORSAIR_DEV_API_KEY=ck_dev_...
-CORSAIR_DEV_SIGNING_SECRET=...
+CORSAIR_API_KEY=ck_dev_...
+CORSAIR_SIGNING_SECRET=...
 CORSAIR_KEK=...
 ```
 
-The env var names are your choice. The dashboard uses `CORSAIR_DEV_*` for development and `CORSAIR_PROD_*` for production so both can coexist. Match whatever you reference in `corsair.ts`.
+The env var names are your choice. The dashboard uses `CORSAIR_API_KEY` and `CORSAIR_SIGNING_SECRET` for both environments — the key value itself (`ck_dev_…` / `ck_prod_…`) tells the SDK which one you're in. Match whatever you reference in `corsair.ts`.
 
 ## 5. Start your app
 

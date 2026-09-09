@@ -1,0 +1,122 @@
+---
+title: Database
+description: "ConvoloAi local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The ConvoloAi plugin syncs data locally. Use `corsair.convoloai.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Agents
+
+Path: `convoloai.db.agents.search`
+
+```ts
+const rows = await corsair.convoloai.db.agents.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Calls
+
+Path: `convoloai.db.calls.search`
+
+```ts
+const rows = await corsair.convoloai.db.calls.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `callId` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `widgetId` | `string` | equals, contains, startsWith, endsWith, in |
+| `leadNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Leads
+
+Path: `convoloai.db.leads.search`
+
+```ts
+const rows = await corsair.convoloai.db.leads.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `rating` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Widgets
+
+Path: `convoloai.db.widgets.search`
+
+```ts
+const rows = await corsair.convoloai.db.widgets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `siteName` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

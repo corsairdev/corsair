@@ -6,6 +6,7 @@ import { getApi } from '@/server/api/caller';
 import { getGithubUserAvatar } from '@/server/github-users';
 
 import { ActiveClaimDeadlineBanner } from './active-claim-deadline-banner';
+import { CorsairHubBanner } from './corsair-hub-banner';
 import { OssIntegrationsBar } from './oss-integrations-bar';
 
 export default async function OssIntegrationsLayout({
@@ -51,6 +52,7 @@ export default async function OssIntegrationsLayout({
 				githubUsername={githubUsername}
 				githubAvatarUrl={githubAvatarUrl}
 			/>
+			<CorsairHubBanner />
 			{activeDeadlineClaim ? (
 				<ActiveClaimDeadlineBanner claim={activeDeadlineClaim} />
 			) : null}

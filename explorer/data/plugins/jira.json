@@ -1,0 +1,1965 @@
+{
+  "id": "jira",
+  "displayName": "Jira",
+  "description": "Issue and project tracking tool for agile sprints, bugs, epics, and team workflows.",
+  "npmPackageName": "@corsair-dev/jira",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 32,
+    "webhooks": 3,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "cloud_url"]
+    }
+  ],
+  "api": [
+    {
+      "path": "jira.api.comments.add",
+      "shortPath": "comments.add",
+      "description": "Add a comment to a Jira issue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id_or_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "visibility_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility_value",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ accountId?: string, displayName?: string, emailAddress?: string, active?: boolean, avatarUrls?: {} }"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.comments.delete",
+      "shortPath": "comments.delete",
+      "description": "Delete a comment from a Jira issue",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id_or_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.comments.get",
+      "shortPath": "comments.get",
+      "description": "Get a specific comment on a Jira issue",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id_or_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ accountId?: string, displayName?: string, emailAddress?: string, active?: boolean, avatarUrls?: {} }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "renderedBody",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List all comments on a Jira issue",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id_or_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "{ id?: string, self?: string, author?: { accountId?: string, displayName?: string, emailAddress?: string, active?: boolean, avatarUrls?: {} }, body?: any, renderedBody?: string, created?: string, updated?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.comments.update",
+      "shortPath": "comments.update",
+      "description": "Update a comment on a Jira issue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id_or_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ accountId?: string, displayName?: string, emailAddress?: string, active?: boolean, avatarUrls?: {} }"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "renderedBody",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create a new Jira group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.groups.getAll",
+      "shortPath": "groups.getAll",
+      "description": "Get all Jira groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "header",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ groupId?: string, name?: string, html?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.issues.addAttachment",
+      "shortPath": "issues.addAttachment",
+      "description": "Add an attachment to a Jira issue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id_or_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mime_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, self?: string, filename?: string, mimeType?: string, size?: number, content?: string, created?: string }[]"
+      }
+    },
+    {
+      "path": "jira.api.issues.addWatcher",
+      "shortPath": "issues.addWatcher",
+      "description": "Add a watcher to a Jira issue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id_or_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.issues.assign",
+      "shortPath": "issues.assign",
+      "description": "Assign a Jira issue to a user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id_or_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.issues.bulkCreate",
+      "shortPath": "issues.bulkCreate",
+      "description": "Bulk create multiple Jira issues",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issues",
+            "optional": false,
+            "type": "{ project_key: string, summary: string, issue_type?: string, description?: string, assignee?: string, priority?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issues",
+            "optional": true,
+            "type": "{ id?: string, key?: string, self?: string }[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.issues.bulkFetch",
+      "shortPath": "issues.bulkFetch",
+      "description": "Bulk fetch multiple Jira issues by ID or key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_ids_or_keys",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issues",
+            "optional": true,
+            "type": "{ id: string, key?: string, self?: string, fields?: { summary?: string, description?: any, status?: { id?: string, name?: string, statusCategory?: { id?: number, key?: string, name?: string } }, assignee?: { accountId?: string, displayName?: string, emailAddress?: string, active?: boolean, avatarUrls?: {} } | null, reporter?: { accountId?: string, displayName?: string, emailAddress?: string, active?: boolean, avatarUrls?: {} }, priority?: { id?: string, name?: string, iconUrl?: string } | null, issuetype?: { id?: string, name?: string, description?: string, subtask?: boolean }, project?: { id?: string, key?: string, name?: string }, labels?: string[], created?: string, updated?: string, comment?: { total?: number, comments?: any[] } } }[]"
+          },
+          {
+            "key": "issueErrors",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.issues.create",
+      "shortPath": "issues.create",
+      "description": "Create a new Jira issue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "issue_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.issues.delete",
+      "shortPath": "issues.delete",
+      "description": "Delete a Jira issue",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id_or_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "delete_subtasks",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.issues.edit",
+      "shortPath": "issues.edit",
+      "description": "Edit an existing Jira issue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id_or_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notify_users",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "issue_key",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.issues.get",
+      "shortPath": "issues.get",
+      "description": "Get a Jira issue by ID or key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id_or_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ summary?: string, description?: any, status?: { id?: string, name?: string, statusCategory?: { id?: number, key?: string, name?: string } }, assignee?: { accountId?: string, displayName?: string, emailAddress?: string, active?: boolean, avatarUrls?: {} } | null, reporter?: { accountId?: string, displayName?: string, emailAddress?: string, active?: boolean, avatarUrls?: {} }, priority?: { id?: string, name?: string, iconUrl?: string } | null, issuetype?: { id?: string, name?: string, description?: string, subtask?: boolean }, project?: { id?: string, key?: string, name?: string }, labels?: string[], created?: string, updated?: string, comment?: { total?: number, comments?: any[] } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.issues.getTransitions",
+      "shortPath": "issues.getTransitions",
+      "description": "Get available transitions for a Jira issue",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id_or_key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transitions",
+            "optional": true,
+            "type": "{ id?: string, name?: string, to?: { id?: string, name?: string, statusCategory?: { id?: number, key?: string, name?: string } } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.issues.linkIssues",
+      "shortPath": "issues.linkIssues",
+      "description": "Link two Jira issues together",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "inward_issue_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "outward_issue_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.issues.removeWatcher",
+      "shortPath": "issues.removeWatcher",
+      "description": "Remove a watcher from a Jira issue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id_or_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.issues.search",
+      "shortPath": "issues.search",
+      "description": "Search issues using JQL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jql",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "issues",
+            "optional": true,
+            "type": "{ id: string, key?: string, self?: string, fields?: { summary?: string, description?: any, status?: { id?: string, name?: string, statusCategory?: { id?: number, key?: string, name?: string } }, assignee?: { accountId?: string, displayName?: string, emailAddress?: string, active?: boolean, avatarUrls?: {} } | null, reporter?: { accountId?: string, displayName?: string, emailAddress?: string, active?: boolean, avatarUrls?: {} }, priority?: { id?: string, name?: string, iconUrl?: string } | null, issuetype?: { id?: string, name?: string, description?: string, subtask?: boolean }, project?: { id?: string, key?: string, name?: string }, labels?: string[], created?: string, updated?: string, comment?: { total?: number, comments?: any[] } } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.issues.transition",
+      "shortPath": "issues.transition",
+      "description": "Transition a Jira issue to a new status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issue_id_or_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "transition_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a new Jira project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_type_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lead_account_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a Jira project by ID or key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id_or_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectTypeKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lead",
+            "optional": true,
+            "type": "{ accountId?: string, displayName?: string, emailAddress?: string, active?: boolean, avatarUrls?: {} }"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.projects.getRoles",
+      "shortPath": "projects.getRoles",
+      "description": "Get project roles for a Jira project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id_or_key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "jira.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List Jira projects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isLast",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "{ id?: string, key?: string, name?: string, description?: string, projectTypeKey?: string, lead?: { accountId?: string, displayName?: string, emailAddress?: string, active?: boolean, avatarUrls?: {} }, self?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.sprints.create",
+      "shortPath": "sprints.create",
+      "description": "Create a new sprint on a Jira board",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin_board_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "goal",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "goal",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completeDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "originBoardId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.sprints.list",
+      "shortPath": "sprints.list",
+      "description": "List sprints for a Jira board",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "board_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isLast",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "{ id?: number, name?: string, state?: string, goal?: string, startDate?: string, endDate?: string, completeDate?: string, createdDate?: string, originBoardId?: number, self?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.sprints.listBoards",
+      "shortPath": "sprints.listBoards",
+      "description": "List Jira boards",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_key_or_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isLast",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "{ id?: number, name?: string, type?: string, self?: string, location?: { projectId?: number, projectKey?: string, projectName?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.sprints.moveIssues",
+      "shortPath": "sprints.moveIssues",
+      "description": "Move issues to a sprint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sprint_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "issue_keys",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jira.api.users.find",
+      "shortPath": "users.find",
+      "description": "Search for Jira users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ accountId?: string, displayName?: string, emailAddress?: string, active?: boolean, avatarUrls?: {} }[]"
+      }
+    },
+    {
+      "path": "jira.api.users.getAll",
+      "shortPath": "users.getAll",
+      "description": "Get all Jira users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ accountId?: string, displayName?: string, emailAddress?: string, active?: boolean, avatarUrls?: {} }[]"
+      }
+    },
+    {
+      "path": "jira.api.users.getCurrent",
+      "shortPath": "users.getCurrent",
+      "description": "Get the currently authenticated Jira user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "avatarUrls",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "jira.webhooks.issues.newIssue",
+      "shortPath": "issues.newIssue",
+      "description": "Triggered when a new issue is created in Jira",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookEvent",
+            "optional": false,
+            "type": "jira:issue_created"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "issue",
+            "optional": true,
+            "type": "{ id?: string, key?: string, self?: string, fields?: { summary?: string, status?: { id?: string, name?: string, statusCategory?: { key?: string, name?: string } }, assignee?: { accountId?: string, displayName?: string, emailAddress?: string } | null, reporter?: { accountId?: string, displayName?: string, emailAddress?: string }, priority?: { id?: string, name?: string } | null, issuetype?: { id?: string, name?: string, subtask?: boolean }, project?: { id?: string, key?: string, name?: string }, labels?: string[], created?: string, updated?: string } }"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ accountId?: string, displayName?: string, emailAddress?: string }"
+          }
+        ]
+      },
+      "responseType": "{ webhookEvent: jira:issue_created, timestamp?: number, issue?: { id?: string, key?: string, self?: string, fields?: { summary?: string, status?: { id?: string, name?: string, statusCategory?: { key?: string, name?: string } }, assignee?: { accountId?: string, displayName?: string, emailAddress?: string } | null, reporter?: { accountId?: string, displayName?: string, emailAddress?: string }, priority?: { id?: string, name?: string } | null, issuetype?: { id?: string, name?: string, subtask?: boolean }, project?: { id?: string, key?: string, name?: string }, labels?: string[], created?: string, updated?: string } }, user?: { accountId?: string, displayName?: string, emailAddress?: string } }",
+      "usageExample": "jira({\n    webhookHooks: {\n        issues: {\n            newIssue: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "jira.webhooks.issues.updatedIssue",
+      "shortPath": "issues.updatedIssue",
+      "description": "Triggered when an issue is updated in Jira",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookEvent",
+            "optional": false,
+            "type": "jira:issue_updated"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "issue",
+            "optional": true,
+            "type": "{ id?: string, key?: string, self?: string, fields?: { summary?: string, status?: { id?: string, name?: string, statusCategory?: { key?: string, name?: string } }, assignee?: { accountId?: string, displayName?: string, emailAddress?: string } | null, reporter?: { accountId?: string, displayName?: string, emailAddress?: string }, priority?: { id?: string, name?: string } | null, issuetype?: { id?: string, name?: string, subtask?: boolean }, project?: { id?: string, key?: string, name?: string }, labels?: string[], updated?: string } }"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ accountId?: string, displayName?: string, emailAddress?: string }"
+          },
+          {
+            "key": "changelog",
+            "optional": true,
+            "type": "{ id?: string, items?: { field?: string, fieldtype?: string, from?: string | null, fromString?: string | null, to?: string | null, toString?: string | null }[] }"
+          }
+        ]
+      },
+      "responseType": "{ webhookEvent: jira:issue_updated, timestamp?: number, issue?: { id?: string, key?: string, self?: string, fields?: { summary?: string, status?: { id?: string, name?: string, statusCategory?: { key?: string, name?: string } }, assignee?: { accountId?: string, displayName?: string, emailAddress?: string } | null, reporter?: { accountId?: string, displayName?: string, emailAddress?: string }, priority?: { id?: string, name?: string } | null, issuetype?: { id?: string, name?: string, subtask?: boolean }, project?: { id?: string, key?: string, name?: string }, labels?: string[], updated?: string } }, user?: { accountId?: string, displayName?: string, emailAddress?: string }, changelog?: { id?: string, items?: { field?: string, fieldtype?: string, from?: string | null, fromString?: string | null, to?: string | null, toString?: string | null }[] } }",
+      "usageExample": "jira({\n    webhookHooks: {\n        issues: {\n            updatedIssue: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "jira.webhooks.projects.newProject",
+      "shortPath": "projects.newProject",
+      "description": "Triggered when a new project is created in Jira",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookEvent",
+            "optional": false,
+            "type": "project_created"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id?: string, key?: string, name?: string, description?: string, projectTypeKey?: string, lead?: { accountId?: string, displayName?: string, emailAddress?: string }, self?: string }"
+          }
+        ]
+      },
+      "responseType": "{ webhookEvent: project_created, timestamp?: number, project?: { id?: string, key?: string, name?: string, description?: string, projectTypeKey?: string, lead?: { accountId?: string, displayName?: string, emailAddress?: string }, self?: string } }",
+      "usageExample": "jira({\n    webhookHooks: {\n        projects: {\n            newProject: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "jira.db.boards.search",
+      "entityName": "boards",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "projectKey",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "jira.db.comments.search",
+      "entityName": "comments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "issueKey",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorAccountId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorDisplayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "jira.db.issues.search",
+      "entityName": "issues",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "summary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assigneeAccountId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assigneeDisplayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reporterAccountId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reporterDisplayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "issueType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectKey",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "jira.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectTypeKey",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "leadAccountId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "leadDisplayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "jira.db.sprints.search",
+      "entityName": "sprints",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "goal",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "originBoardId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "jira.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "accountId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "emailAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "timeZone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "locale",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

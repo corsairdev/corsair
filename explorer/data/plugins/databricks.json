@@ -1,0 +1,4176 @@
+{
+  "id": "databricks",
+  "displayName": "Databricks",
+  "description": "Unified data and AI platform for lakehouse analytics, notebooks, and machine learning.",
+  "npmPackageName": "@corsair-dev/databricks",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 130,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "databricks.api.apps.createDatabricksApp",
+      "shortPath": "apps.createDatabricksApp",
+      "description": "Create app",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "spec",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.apps.deleteDatabricksApp",
+      "shortPath": "apps.deleteDatabricksApp",
+      "description": "Delete app",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.apps.deployDatabricksApp",
+      "shortPath": "apps.deployDatabricksApp",
+      "description": "Deploy app",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source_code_path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deployment_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.assignMetastoreToWorkspace",
+      "shortPath": "catalog.assignMetastoreToWorkspace",
+      "description": "Assign metastore to workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metastore_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "default_catalog_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.batchCreateAccessRequests",
+      "shortPath": "catalog.batchCreateAccessRequests",
+      "description": "Batch create access requests",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ securable_type: string, securable_full_name: string, privileges: string[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responses",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.checkTableExists",
+      "shortPath": "catalog.checkTableExists",
+      "description": "Check table existence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "catalog_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schema_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "table_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exists",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.createCatalogConnection",
+      "shortPath": "catalog.createCatalogConnection",
+      "description": "Create catalog connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connection_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "options",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.createCatalogCredential",
+      "shortPath": "catalog.createCatalogCredential",
+      "description": "Create catalog credential",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credential_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aws_iam_role",
+            "optional": true,
+            "type": "{ role_arn: string }"
+          },
+          {
+            "key": "azure_service_principal",
+            "optional": true,
+            "type": "{ directory_id: string, application_id: string, client_secret: string }"
+          },
+          {
+            "key": "gcp_service_account_key",
+            "optional": true,
+            "type": "{ email: string, private_key: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.createExternalLocation",
+      "shortPath": "catalog.createExternalLocation",
+      "description": "Create external location",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credential_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.createMetastore",
+      "shortPath": "catalog.createMetastore",
+      "description": "Create Unity Catalog metastore",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "storage_root",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metastore_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.createStorageCredential",
+      "shortPath": "catalog.createStorageCredential",
+      "description": "Create storage credential",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "aws_iam_role",
+            "optional": true,
+            "type": "{ role_arn: string }"
+          },
+          {
+            "key": "azure_service_principal",
+            "optional": true,
+            "type": "{ directory_id: string, application_id: string, client_secret: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.deleteCatalog",
+      "shortPath": "catalog.deleteCatalog",
+      "description": "Delete catalog",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.deleteCatalogConnection",
+      "shortPath": "catalog.deleteCatalogConnection",
+      "description": "Delete catalog connection",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.deleteCatalogCredential",
+      "shortPath": "catalog.deleteCatalogCredential",
+      "description": "Delete catalog credential",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.deleteCatalogTable",
+      "shortPath": "catalog.deleteCatalogTable",
+      "description": "Delete catalog table",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "full_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.deleteExternalLocation",
+      "shortPath": "catalog.deleteExternalLocation",
+      "description": "Delete external location",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.deleteMetastore",
+      "shortPath": "catalog.deleteMetastore",
+      "description": "Delete metastore",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.deleteOnlineTable",
+      "shortPath": "catalog.deleteOnlineTable",
+      "description": "Delete online table",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.deleteStorageCredential",
+      "shortPath": "catalog.deleteStorageCredential",
+      "description": "Delete storage credential",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.catalog.disableSystemSchema",
+      "shortPath": "catalog.disableSystemSchema",
+      "description": "Disable system schema",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metastore_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schema_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.cleanrooms.createCleanRoom",
+      "shortPath": "cleanrooms.createCleanRoom",
+      "description": "Create clean room",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collaborators",
+            "optional": false,
+            "type": "{ collaborator_alias: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.cleanrooms.createCleanRoomAutoApprovalRule",
+      "shortPath": "cleanrooms.createCleanRoomAutoApprovalRule",
+      "description": "Create clean room auto approval rule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "clean_room_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "author_collaborator_alias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author_scope",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rule_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.compute.addComputeInstanceProfile",
+      "shortPath": "compute.addComputeInstanceProfile",
+      "description": "Add compute instance profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "instance_profile_arn",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "iam_role_arn",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_meta_instance_profile",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.compute.createComputeClusterPolicy",
+      "shortPath": "compute.createComputeClusterPolicy",
+      "description": "Create cluster policy",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "definition",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "policy_family_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "policy_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.compute.createComputeInstancePool",
+      "shortPath": "compute.createComputeInstancePool",
+      "description": "Create instance pool",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "instance_pool_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "node_type_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "min_idle_instances",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_capacity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "idle_instance_autotermination_minutes",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "instance_pool_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.compute.createDatabricksCluster",
+      "shortPath": "compute.createDatabricksCluster",
+      "description": "Create Spark cluster",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cluster_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "spark_version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "node_type_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "num_workers",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "autoscale",
+            "optional": true,
+            "type": "{ min_workers: number, max_workers: number }"
+          },
+          {
+            "key": "autotermination_minutes",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cluster_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.compute.createGlobalInitScript",
+      "shortPath": "compute.createGlobalInitScript",
+      "description": "Create global init script",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "script",
+            "optional": false,
+            "type": "string",
+            "description": "Base64 encoded script"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "script_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.compute.deleteComputeClusterPolicy",
+      "shortPath": "compute.deleteComputeClusterPolicy",
+      "description": "Delete cluster policy",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "policy_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.compute.deleteComputeInstancePool",
+      "shortPath": "compute.deleteComputeInstancePool",
+      "description": "Delete instance pool",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "instance_pool_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.compute.deleteDatabricksCluster",
+      "shortPath": "compute.deleteDatabricksCluster",
+      "description": "Terminate Spark cluster",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cluster_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.compute.deleteGlobalInitScript",
+      "shortPath": "compute.deleteGlobalInitScript",
+      "description": "Delete global init script",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "script_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.dashboards.createGenieMessage",
+      "shortPath": "dashboards.createGenieMessage",
+      "description": "Create Genie message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "conversation_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.dashboards.createGenieSpace",
+      "shortPath": "dashboards.createGenieSpace",
+      "description": "Create Genie space",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "warehouse_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "serialized_space",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.dashboards.createLakeviewDashboard",
+      "shortPath": "dashboards.createLakeviewDashboard",
+      "description": "Create Lakeview dashboard",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "display_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "serialized_dashboard",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dashboard_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.dashboards.deleteGenieConversation",
+      "shortPath": "dashboards.deleteGenieConversation",
+      "description": "Delete Genie conversation",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "conversation_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.dashboards.deleteGenieConversationMessage",
+      "shortPath": "dashboards.deleteGenieConversationMessage",
+      "description": "Delete Genie message",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "conversation_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.dashboards.deleteLakeviewDashboardSchedule",
+      "shortPath": "dashboards.deleteLakeviewDashboardSchedule",
+      "description": "Delete Lakeview schedule",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dashboard_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schedule_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.database.createDatabaseInstance",
+      "shortPath": "database.createDatabaseInstance",
+      "description": "Create database instance",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "capacity",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.database.deleteDatabaseInstance",
+      "shortPath": "database.deleteDatabaseInstance",
+      "description": "Delete database instance",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.database.deleteSyncedDatabaseTable",
+      "shortPath": "database.deleteSyncedDatabaseTable",
+      "description": "Delete synced database table",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.dataquality.createDataQualityMonitor",
+      "shortPath": "dataquality.createDataQualityMonitor",
+      "description": "Create data quality monitor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "table_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assets_dir",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "output_schema_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitor_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.dataquality.createQualityMonitorV2",
+      "shortPath": "dataquality.createQualityMonitorV2",
+      "description": "Create quality monitor V2",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "table_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assets_dir",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "output_schema_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitor_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.dbfs.addBlockToDbfsStream",
+      "shortPath": "dbfs.addBlockToDbfsStream",
+      "description": "Add block to DBFS stream",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string",
+            "description": "Base64-encoded string block (max 1MB)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.dbfs.createDbfsFileStream",
+      "shortPath": "dbfs.createDbfsFileStream",
+      "description": "Create DBFS file stream",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "overwrite",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.dbfs.deleteDbfsFileOrDirectory",
+      "shortPath": "dbfs.deleteDbfsFileOrDirectory",
+      "description": "Delete file or directory from DBFS",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recursive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.iam.addMemberToSecurityGroup",
+      "shortPath": "iam.addMemberToSecurityGroup",
+      "description": "Add member to security group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "member_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.iam.createIamGroupV2",
+      "shortPath": "iam.createIamGroupV2",
+      "description": "Create IAM group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ value: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.iam.createIamServicePrincipalV2",
+      "shortPath": "iam.createIamServicePrincipalV2",
+      "description": "Create IAM service principal",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "applicationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "applicationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.iam.createIamUserV2",
+      "shortPath": "iam.createIamUserV2",
+      "description": "Create IAM user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.iam.createIpAccessList",
+      "shortPath": "iam.createIpAccessList",
+      "description": "Create IP access list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "list_type",
+            "optional": false,
+            "type": "ALLOW | BLOCK"
+          },
+          {
+            "key": "ip_addresses",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip_access_list",
+            "optional": false,
+            "type": "{ list_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.iam.deleteIamGroupV2",
+      "shortPath": "iam.deleteIamGroupV2",
+      "description": "Delete IAM group",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.iam.deleteIamServicePrincipalV2",
+      "shortPath": "iam.deleteIamServicePrincipalV2",
+      "description": "Delete service principal",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.iam.deleteIamUserV2",
+      "shortPath": "iam.deleteIamUserV2",
+      "description": "Delete user",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.jobs.cancelAllJobRuns",
+      "shortPath": "jobs.cancelAllJobRuns",
+      "description": "Cancel all job runs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "all_queued_runs",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.jobs.cancelJobRun",
+      "shortPath": "jobs.cancelJobRun",
+      "description": "Cancel job run",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.jobs.deleteDatabricksJobRun",
+      "shortPath": "jobs.deleteDatabricksJobRun",
+      "description": "Delete job run",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.marketplace.batchGetMarketplaceConsumerListings",
+      "shortPath": "marketplace.batchGetMarketplaceConsumerListings",
+      "description": "Batch get consumer listings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listings",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.marketplace.batchGetMarketplaceConsumerProviders",
+      "shortPath": "marketplace.batchGetMarketplaceConsumerProviders",
+      "description": "Batch get consumer providers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "providers",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.marketplace.createMarketplaceConsumerInstallation",
+      "shortPath": "marketplace.createMarketplaceConsumerInstallation",
+      "description": "Create marketplace consumer installation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listing_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "catalog_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.marketplace.createMarketplaceProviderListing",
+      "shortPath": "marketplace.createMarketplaceProviderListing",
+      "description": "Create marketplace provider listing",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "listing_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.marketplace.createProviderAnalyticsDashboard",
+      "shortPath": "marketplace.createProviderAnalyticsDashboard",
+      "description": "Create provider analytics dashboard",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dashboard_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.marketplace.deleteListingFromExchange",
+      "shortPath": "marketplace.deleteListingFromExchange",
+      "description": "Delete listing from exchange",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exchange_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "listing_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.marketplace.deleteMarketplaceConsumerInstallation",
+      "shortPath": "marketplace.deleteMarketplaceConsumerInstallation",
+      "description": "Delete marketplace consumer installation",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.ml.createLoggedModel",
+      "shortPath": "ml.createLoggedModel",
+      "description": "Create logged model",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "experiment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.ml.createMlExperiment",
+      "shortPath": "ml.createMlExperiment",
+      "description": "Create ML experiment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifact_location",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "experiment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.ml.createMlFeatureStoreOnlineStore",
+      "shortPath": "ml.createMlFeatureStoreOnlineStore",
+      "description": "Create ML online feature store",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "store_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.ml.createMlflowExperimentRun",
+      "shortPath": "ml.createMlflowExperimentRun",
+      "description": "Create MLflow experiment run",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "experiment_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.ml.createMlForecastingExperiment",
+      "shortPath": "ml.createMlForecastingExperiment",
+      "description": "Create ML forecasting experiment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "target_col",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "experiment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.ml.deleteLoggedModel",
+      "shortPath": "ml.deleteLoggedModel",
+      "description": "Delete logged model",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.ml.deleteLoggedModelTag",
+      "shortPath": "ml.deleteLoggedModelTag",
+      "description": "Delete logged model tag",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.ml.deleteMlExperiment",
+      "shortPath": "ml.deleteMlExperiment",
+      "description": "Delete ML experiment",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "experiment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.ml.deleteMlExperimentRun",
+      "shortPath": "ml.deleteMlExperimentRun",
+      "description": "Delete ML run",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.ml.deleteMlExperimentRuns",
+      "shortPath": "ml.deleteMlExperimentRuns",
+      "description": "Delete ML runs",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "experiment_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "max_timestamp_millis",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.ml.deleteMlExperimentRunTag",
+      "shortPath": "ml.deleteMlExperimentRunTag",
+      "description": "Delete ML run tag",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.ml.deleteMlFeatureEngKafkaConfig",
+      "shortPath": "ml.deleteMlFeatureEngKafkaConfig",
+      "description": "Delete Kafka config",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "config_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.ml.deleteMlFeatureStoreOnlineStore",
+      "shortPath": "ml.deleteMlFeatureStoreOnlineStore",
+      "description": "Delete ML online store",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.ml.deleteMlFeatureTag",
+      "shortPath": "ml.deleteMlFeatureTag",
+      "description": "Delete ML feature tag",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "feature_table_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "feature_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag_key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.security.createNotificationDestination",
+      "shortPath": "security.createNotificationDestination",
+      "description": "Create notification destination",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "display_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.security.createOAuthServicePrincipalSecret",
+      "shortPath": "security.createOAuthServicePrincipalSecret",
+      "description": "Create OAuth SP secret",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "service_principal_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secret_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secret_value",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.security.createPersonalAccessToken",
+      "shortPath": "security.createPersonalAccessToken",
+      "description": "Create personal access token",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lifetime_seconds",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "token_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.security.deleteNotificationDestination",
+      "shortPath": "security.deleteNotificationDestination",
+      "description": "Delete notification destination",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.security.deleteOAuth2ServicePrincipalSecret",
+      "shortPath": "security.deleteOAuth2ServicePrincipalSecret",
+      "description": "Delete OAuth SP secret",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "service_principal_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secret_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.security.deleteTokenManagement",
+      "shortPath": "security.deleteTokenManagement",
+      "description": "Delete token management",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.serving.createProvisionedThroughputEndpoint",
+      "shortPath": "serving.createProvisionedThroughputEndpoint",
+      "description": "Create provisioned throughput endpoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.serving.createVectorSearchEndpoint",
+      "shortPath": "serving.createVectorSearchEndpoint",
+      "description": "Create vector search endpoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endpoint_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.serving.deleteServingEndpoint",
+      "shortPath": "serving.deleteServingEndpoint",
+      "description": "Delete serving endpoint",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.serving.deleteVectorSearchIndex",
+      "shortPath": "serving.deleteVectorSearchIndex",
+      "description": "Delete vector search index",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sharing.createShare",
+      "shortPath": "sharing.createShare",
+      "description": "Create share",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sharing.createSharingProvider",
+      "shortPath": "sharing.createSharingProvider",
+      "description": "Create sharing provider",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "authentication_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sharing.createSharingRecipient",
+      "shortPath": "sharing.createSharingRecipient",
+      "description": "Create sharing recipient",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "authentication_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sharing.deleteShare",
+      "shortPath": "sharing.deleteShare",
+      "description": "Delete share",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sharing.deleteSharingRecipient",
+      "shortPath": "sharing.deleteSharingRecipient",
+      "description": "Delete sharing recipient",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sql.cancelSqlStatementExecution",
+      "shortPath": "sql.cancelSqlStatementExecution",
+      "description": "Cancel SQL statement execution",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statement_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sql.createLegacySqlAlert",
+      "shortPath": "sql.createLegacySqlAlert",
+      "description": "Create legacy SQL alert",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sql.createLegacySqlQuery",
+      "shortPath": "sql.createLegacySqlQuery",
+      "description": "Create legacy SQL query",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data_source_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sql.createLegacySqlQueryVisualization",
+      "shortPath": "sql.createLegacySqlQueryVisualization",
+      "description": "Create legacy SQL visualization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sql.createSqlAlert",
+      "shortPath": "sql.createSqlAlert",
+      "description": "Create SQL alert",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sql.createSqlQuery",
+      "shortPath": "sql.createSqlQuery",
+      "description": "Create SQL query",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "warehouse_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sql.createSqlQueryVisualization",
+      "shortPath": "sql.createSqlQueryVisualization",
+      "description": "Create SQL query visualization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sql.deleteLegacySqlAlert",
+      "shortPath": "sql.deleteLegacySqlAlert",
+      "description": "Delete legacy SQL alert",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sql.deleteLegacySqlQuery",
+      "shortPath": "sql.deleteLegacySqlQuery",
+      "description": "Delete legacy SQL query",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sql.deleteLegacySqlQueryVisualization",
+      "shortPath": "sql.deleteLegacySqlQueryVisualization",
+      "description": "Delete legacy SQL visualization",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sql.deleteSqlAlert",
+      "shortPath": "sql.deleteSqlAlert",
+      "description": "Delete SQL alert",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sql.deleteSqlDashboard",
+      "shortPath": "sql.deleteSqlDashboard",
+      "description": "Delete SQL dashboard",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sql.deleteSqlQuery",
+      "shortPath": "sql.deleteSqlQuery",
+      "description": "Delete SQL query",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.sql.deleteSqlWarehouse",
+      "shortPath": "sql.deleteSqlWarehouse",
+      "description": "Delete SQL warehouse",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.createSecretScope",
+      "shortPath": "workspace.createSecretScope",
+      "description": "Create secret scope",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scope",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "initial_manage_principal",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.createTagPolicy",
+      "shortPath": "workspace.createTagPolicy",
+      "description": "Create tag policy",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.createWorkspaceDirectory",
+      "shortPath": "workspace.createWorkspaceDirectory",
+      "description": "Create workspace directory",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.createWorkspaceGitCredentials",
+      "shortPath": "workspace.createWorkspaceGitCredentials",
+      "description": "Create workspace git credentials",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "git_username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "git_provider",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "personal_access_token",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credential_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.createWorkspaceRepo",
+      "shortPath": "workspace.createWorkspaceRepo",
+      "description": "Create workspace repo",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteAibiDashboardEmbeddingAccessPolicy",
+      "shortPath": "workspace.deleteAibiDashboardEmbeddingAccessPolicy",
+      "description": "Delete AI/BI dashboard embedding access policy",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteAibiDashboardEmbeddingApprovedDomains",
+      "shortPath": "workspace.deleteAibiDashboardEmbeddingApprovedDomains",
+      "description": "Delete AI/BI embedding approved domains",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteCustomLlmAgent",
+      "shortPath": "workspace.deleteCustomLlmAgent",
+      "description": "Delete custom LLM agent",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteDashboardEmailSubscriptionsSetting",
+      "shortPath": "workspace.deleteDashboardEmailSubscriptionsSetting",
+      "description": "Delete dashboard email subscriptions setting",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteDatabricksPipeline",
+      "shortPath": "workspace.deleteDatabricksPipeline",
+      "description": "Delete Databricks pipeline",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pipeline_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteDefaultNamespaceSetting",
+      "shortPath": "workspace.deleteDefaultNamespaceSetting",
+      "description": "Delete default namespace setting",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteDefaultWarehouseIdSetting",
+      "shortPath": "workspace.deleteDefaultWarehouseIdSetting",
+      "description": "Delete default warehouse ID setting",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteDisableLegacyAccessSetting",
+      "shortPath": "workspace.deleteDisableLegacyAccessSetting",
+      "description": "Delete disable legacy access setting",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteDisableLegacyDbfsSetting",
+      "shortPath": "workspace.deleteDisableLegacyDbfsSetting",
+      "description": "Delete disable legacy DBFS setting",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteLlmProxyPartnerSetting",
+      "shortPath": "workspace.deleteLlmProxyPartnerSetting",
+      "description": "Delete LLM proxy partner setting",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteRestrictWorkspaceAdminsSetting",
+      "shortPath": "workspace.deleteRestrictWorkspaceAdminsSetting",
+      "description": "Delete restrict workspace admins setting",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteSecretsAcl",
+      "shortPath": "workspace.deleteSecretsAcl",
+      "description": "Delete secrets ACL",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scope",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "principal",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteSecretScope",
+      "shortPath": "workspace.deleteSecretScope",
+      "description": "Delete secret scope",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scope",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteSqlResultsDownloadSetting",
+      "shortPath": "workspace.deleteSqlResultsDownloadSetting",
+      "description": "Delete SQL results download setting",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteTagPolicy",
+      "shortPath": "workspace.deleteTagPolicy",
+      "description": "Delete tag policy",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteWorkspaceGitCredentials",
+      "shortPath": "workspace.deleteWorkspaceGitCredentials",
+      "description": "Delete workspace git credentials",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credential_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteWorkspaceObject",
+      "shortPath": "workspace.deleteWorkspaceObject",
+      "description": "Delete workspace object",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recursive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteWorkspaceRepo",
+      "shortPath": "workspace.deleteWorkspaceRepo",
+      "description": "Delete workspace repo",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "repo_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databricks.api.workspace.deleteWorkspaceSecret",
+      "shortPath": "workspace.deleteWorkspaceSecret",
+      "description": "Delete workspace secret",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scope",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "databricks.db.catalog.search",
+      "entityName": "catalog",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "metastore_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "owner",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "comment",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "databricks.db.cluster.search",
+      "entityName": "cluster",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cluster_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cluster_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "spark_version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "node_type_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "num_workers",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "databricks.db.job.search",
+      "entityName": "job",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creator_user_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "databricks.db.warehouse.search",
+      "entityName": "warehouse",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cluster_size",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creator_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}
