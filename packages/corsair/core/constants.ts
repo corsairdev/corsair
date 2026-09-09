@@ -414,7 +414,6 @@ export const ProviderDisplayNames = {
 	convoloai: 'ConvoloAi',
 	countdownapi: 'Countdown API',
 	crowterminal: 'CrowTerminal',
-	cursor: 'Cursor',
 	customgpt: 'CustomGPT',
 	dadataru: 'Dadataru',
  
@@ -446,7 +445,6 @@ export const ProviderDisplayNames = {
 	flexisign: 'Flexisign',
  
 	formbricks: 'Formbricks',
-	fireflies: 'Fireflies',
 	gemini: 'Gemini',
 	github: 'GitHub',
 	gitlab: 'GitLab',
@@ -563,8 +561,6 @@ export const ProviderDisplayNames = {
 	unione: 'Unione',
 	uniswapapi: 'Uniswap',
 	uploadcare: 'Uploadcare',
-	vapi: 'Vapi',
-	vercel: 'Vercel',
 	vestaboard: 'Vestaboard',
 	wakatime: 'WakaTime',
  
