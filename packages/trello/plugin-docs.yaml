@@ -25,4 +25,4 @@ exampleWebhook:
   path: cards.cardCreated
   note: "Fires when a Trello card is created."
   after: |
-    console.log('Trello card created:', result.data);
+    console.log('Trello card created:', result.data?.action.data.card?.id);
