@@ -1,18 +1,15 @@
 import type {
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { Handlers } from './endpoints';
@@ -26,22 +23,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { CallinglySchema } from './schema';
-import * as WebhookHandlers from './webhooks/handlers';
-import { resolveCallinglyOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchCallinglyTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	CallCompletedWebhookEvent,
-	CallinglyWebhookOutputs,
-	LeadCreatedWebhookEvent,
-} from './webhooks/types';
-import { CallinglyWebhookEventSchemas } from './webhooks/types';
 
 export type CallinglyPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalCallinglyPlugin['hooks'];
-	webhookHooks?: InternalCallinglyPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof callinglyEndpointsNested>;
 };
@@ -102,18 +88,6 @@ export type CallinglyEndpoints = {
 	deleteWebhook: CallinglyEndpoint<'deleteWebhook'>;
 };
 
-type CallinglyWebhook<
-	K extends keyof CallinglyWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<CallinglyContext, TEvent, CallinglyWebhookOutputs[K]>;
-
-export type CallinglyWebhooks = {
-	callCompleted: CallinglyWebhook<'callCompleted', CallCompletedWebhookEvent>;
-	leadCreated: CallinglyWebhook<'leadCreated', LeadCreatedWebhookEvent>;
-};
-
-export type CallinglyBoundWebhooks = BindWebhooks<CallinglyWebhooks>;
-
 const callinglyEndpointsNested = {
 	leads: {
 		get: Handlers.getLead,
@@ -155,15 +129,6 @@ const callinglyEndpointsNested = {
 		create: Handlers.createWebhook,
 		update: Handlers.updateWebhook,
 		delete: Handlers.deleteWebhook,
-	},
-} as const;
-
-const callinglyWebhooksNested = {
-	calls: {
-		completed: WebhookHandlers.callCompleted,
-	},
-	leads: {
-		created: WebhookHandlers.leadCreated,
 	},
 } as const;
 
@@ -286,21 +251,6 @@ export const callinglyEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof callinglyEndpointsNested
->;
-
-const callinglyWebhookSchemas = {
-	'calls.completed': {
-		description: 'Triggered when a call completes and results are logged',
-		payload: CallinglyWebhookEventSchemas.callCompleted,
-		response: CallinglyWebhookEventSchemas.callCompleted,
-	},
-	'leads.created': {
-		description: 'Triggered when a new lead is created',
-		payload: CallinglyWebhookEventSchemas.leadCreated,
-		response: CallinglyWebhookEventSchemas.leadCreated,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof callinglyWebhooksNested
 >;
 
 const defaultAuthType = 'api_key' as const;
@@ -442,7 +392,7 @@ export type BaseCallinglyPlugin<T extends CallinglyPluginOptions> =
 		'callingly',
 		typeof CallinglySchema,
 		typeof callinglyEndpointsNested,
-		typeof callinglyWebhooksNested,
+		Record<string, never>,
 		T,
 		typeof defaultAuthType
 	>;
@@ -466,36 +416,16 @@ export function callingly(
 		schema: CallinglySchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: callinglyEndpointsNested,
-		webhooks: callinglyWebhooksNested,
+		webhooks: {},
 		endpointMeta: callinglyEndpointMeta,
 		endpointSchemas: callinglyEndpointSchemas,
-		webhookSchemas: callinglyWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return (
-				'x-callingly-signature' in headers ||
-				'x-callingly-webhook' in headers ||
-				'callingly-signature' in headers
-			);
-		},
-		pluginTenantWebhookMatcher: matchCallinglyTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveCallinglyOAuthWebhookTenantLink,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CallinglyKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys?.get_webhook_signature?.();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -516,7 +446,7 @@ export function callingly(
 				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('callingly', 'api_key');
 		},
 	} satisfies InternalCallinglyPlugin;
 }
@@ -524,4 +454,3 @@ export function callingly(
 export { CALLINGLY_API_BASE, CallinglyAPIError } from './client';
 export * from './endpoints/types';
 export * from './schema';
-export * from './webhooks/types';
