@@ -136,6 +136,7 @@ export const BaseProviders = [
 	'convoloai',
 	'countdownapi',
 	'crowterminal',
+	'currentsapi',
 	'cursor',
 	'customgpt',
 	'dadataru',
@@ -422,6 +423,7 @@ export const ProviderDisplayNames = {
 	convoloai: 'ConvoloAi',
 	countdownapi: 'Countdown API',
 	crowterminal: 'CrowTerminal',
+	currentsapi: 'CurrentsApi',
 	cursor: 'Cursor',
 	customgpt: 'CustomGPT',
 	dadataru: 'Dadataru',
@@ -715,6 +717,7 @@ export type AllProviders =
 	| 'convoloai'
 	| 'countdownapi'
 	| 'crowterminal'
+	| 'currentsapi'
 	| 'cursor'
 	| 'customgpt'
 	| 'dadataru'
