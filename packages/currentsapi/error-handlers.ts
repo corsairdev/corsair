@@ -8,13 +8,7 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		handler: async (error?: Error) => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
@@ -22,10 +16,10 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (error?: Error) => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
-		match: () => true,
-		handler: async () => ({ maxRetries: 0 }),
+		match: (error?: Error) => true,
+		handler: async (error?: Error) => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;
