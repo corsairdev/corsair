@@ -261,6 +261,18 @@ describe('Cody input schemas', () => {
 	});
 });
 
+describe('Cody plugin', () => {
+	it('exposes a Sourcegraph oauthConfig for the oauth_2 flow', () => {
+		const plugin = cody();
+		expect(plugin.oauthConfig).toMatchObject({
+			providerName: 'Sourcegraph',
+			authUrl: 'https://sourcegraph.com/.auth/idp/oauth/authorize',
+			tokenUrl: 'https://sourcegraph.com/.auth/idp/oauth/token',
+			scopes: ['user:all'],
+		});
+	});
+});
+
 describe('Cody keyBuilder', () => {
 	it('throws AuthMissingError when no api key is configured', async () => {
 		const plugin = cody();

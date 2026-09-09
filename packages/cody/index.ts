@@ -135,6 +135,12 @@ export function cody<const T extends CodyPluginOptions>(
 		authConfig: codyAuthConfig,
 		schema: CodySchema,
 		options,
+		oauthConfig: {
+			providerName: 'Sourcegraph',
+			authUrl: 'https://sourcegraph.com/.auth/idp/oauth/authorize',
+			tokenUrl: 'https://sourcegraph.com/.auth/idp/oauth/token',
+			scopes: ['user:all'],
+		},
 		hooks: options.hooks,
 		endpoints: codyEndpointsNested,
 		webhooks: codyWebhooksNested,
