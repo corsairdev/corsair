@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class WaboxappAPIError extends Error {
 	constructor(
@@ -11,47 +11,48 @@ export class WaboxappAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
-const WABOXAPP_API_BASE = 'https://api.example.com';
+export const WABOXAPP_API_BASE = 'https://www.waboxapp.com/api';
 
 export async function makeWaboxappRequest<T>(
 	endpoint: string,
-	apiKey: string,
 	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+		method?: 'GET' | 'POST';
+		fields: Record<string, string | number | boolean | undefined>;
+	},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'POST', fields } = options;
+	const form: Record<string, string> = {};
+	for (const [key, value] of Object.entries(fields)) {
+		if (value === undefined) continue;
+		form[key] = String(value);
+	}
 
 	const config: OpenAPIConfig = {
 		BASE: WABOXAPP_API_BASE,
-		VERSION: '1.0.0',
+		VERSION: '3.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: undefined,
 		HEADERS: {
-			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			'Content-Type': 'application/x-www-form-urlencoded',
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		body: method === 'POST' ? form : undefined,
+		mediaType:
+			method === 'POST' ? 'application/x-www-form-urlencoded' : undefined,
+		query: method === 'GET' ? form : undefined,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new WaboxappAPIError(error.message);
 		}

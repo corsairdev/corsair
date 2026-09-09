@@ -18,7 +18,12 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			if (
+				error instanceof ApiError &&
+				(error.status === 401 || error.status === 403)
+			) {
+				return true;
+			}
 			const msg = error.message.toLowerCase();
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
 		},

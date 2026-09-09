@@ -1,9 +1,9 @@
-import { example } from './example';
+import { ack, received } from './messages';
 
-export const ExampleWebhooks = {
-	example: example,
+export const MessageWebhooks = {
+	received,
+	ack,
 };
 
-export * from './oauth-tenant-link';
 export * from './tenant-matcher';
 export * from './types';

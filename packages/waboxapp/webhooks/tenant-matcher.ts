@@ -1,17 +1,15 @@
 import type { RawWebhookRequest, WebhookTenantMatch } from 'corsair/core';
-import { firstString, readBodyRecord } from 'corsair/core';
+import { firstString } from 'corsair/core';
+import { parseWaboxappWebhookBody } from './types';
 
-// Waboxapp has no signature header, so we match tenants by the `token`
-// field in the body — that's the account's API token, unique per connected
-// Waboxapp/WhatsApp session.
 export function matchWaboxappTenantWebhook(
 	request: RawWebhookRequest,
 ): WebhookTenantMatch | null {
-	const body = readBodyRecord(request);
+	const body = parseWaboxappWebhookBody(request.body);
 	if (!body) return null;
 
-	const externalId = firstString([body.token]);
+	const externalId = firstString([body.uid]);
 	if (!externalId) return null;
 
-	return { linkType: 'tenant_external_id', externalId };
+	return { linkType: 'uid', externalId };
 }
