@@ -24,8 +24,9 @@ export const CallinglyLead = z
 		category: z.string().nullable().optional(),
 		status: z.string().nullable().optional(),
 		result: z.string().nullable().optional(),
-		// Official docs show stage/tags as unstructured JSON, not a fixed object.
+		// z.unknown() is used because Callingly documents stage as mixed JSON with no stable object shape.
 		stage: z.unknown().nullable().optional(),
+		// z.unknown() is used because tag items are mixed scalars/objects depending on the lead source.
 		tags: z.array(z.unknown()).optional(),
 		team: z
 			.object({
@@ -38,12 +39,12 @@ export const CallinglyLead = z
 			.object({
 				name: z.string().optional(),
 				phone_number: z.string().optional(),
-				// custom_id is documented as mixed scalar/object depending on CRM source.
+				// z.unknown() is used because custom_id is a scalar or CRM object depending on source.
 				custom_id: z.unknown().nullable().optional(),
 			})
 			.passthrough()
 			.optional(),
-		// Nested call summaries on a lead omit the full call schema.
+		// z.unknown() is used because nested lead.calls omit the full call schema.
 		calls: z.array(z.unknown()).optional(),
 		scheduled_call_at: z.string().nullable().optional(),
 		is_stopped: z.number().optional(),
@@ -75,25 +76,31 @@ export const CallinglyCall = z
 		source: z.string().nullable().optional(),
 		recording_url: z.string().nullable().optional(),
 		waveform_url: z.string().optional(),
-		// error_message is a string or structured object in list vs get responses.
+		// z.unknown() is used because error_message is a string or structured object across list/get.
 		error_message: z.unknown().nullable().optional(),
 		phone_number_formatted: z.string().optional(),
 		human_result: z.string().optional(),
 		transcript: z.string().nullable().optional(),
-		// sales_advice is omitted or a free-form object when AI notes exist.
+		// z.unknown() is used because sales_advice is omitted or a free-form AI notes object.
 		sales_advice: z.unknown().nullable().optional(),
 		is_voicemail: z.number().optional(),
 		is_queue: z.number().optional(),
 		is_team_offline: z.number().optional(),
 		is_error: z.number().optional(),
 		error_code: z.string().optional(),
-		// Nested user/lead/member/number/tag/notes/profile objects vary by call type.
+		// z.unknown() is used because nested user objects vary by call type.
 		user: z.unknown().optional(),
+		// z.unknown() is used because nested lead objects vary by call type.
 		lead: z.unknown().optional(),
+		// z.unknown() is used because nested member objects vary by call type.
 		member: z.unknown().optional(),
+		// z.unknown() is used because nested number objects vary by call type.
 		number: z.unknown().nullable().optional(),
+		// z.unknown() is used because nested tag objects vary by call type.
 		tag: z.unknown().nullable().optional(),
+		// z.unknown() is used because note items are mixed scalars/objects.
 		notes: z.array(z.unknown()).optional(),
+		// z.unknown() is used because profile objects have no public schema.
 		profile: z.unknown().optional(),
 	})
 	.passthrough();
