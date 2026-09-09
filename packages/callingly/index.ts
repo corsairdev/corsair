@@ -1,15 +1,18 @@
 import type {
 	BindEndpoints,
+	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
+	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { Handlers } from './endpoints';
@@ -23,11 +26,22 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { CallinglySchema } from './schema';
+import * as WebhookHandlers from './webhooks/handlers';
+import { resolveCallinglyOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchCallinglyTenantWebhook } from './webhooks/tenant-matcher';
+import type {
+	CallCompletedWebhookEvent,
+	CallinglyWebhookOutputs,
+	LeadCreatedWebhookEvent,
+} from './webhooks/types';
+import { CallinglyWebhookEventSchemas } from './webhooks/types';
 
 export type CallinglyPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
+	webhookSecret?: string;
 	hooks?: InternalCallinglyPlugin['hooks'];
+	webhookHooks?: InternalCallinglyPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof callinglyEndpointsNested>;
 };
@@ -52,6 +66,7 @@ type CallinglyEndpoint<K extends keyof CallinglyEndpointOutputs> =
 	>;
 
 export type CallinglyEndpoints = {
+	createLead: CallinglyEndpoint<'createLead'>;
 	getLead: CallinglyEndpoint<'getLead'>;
 	listLeads: CallinglyEndpoint<'listLeads'>;
 	updateLead: CallinglyEndpoint<'updateLead'>;
@@ -63,6 +78,7 @@ export type CallinglyEndpoints = {
 
 	createAgent: CallinglyEndpoint<'createAgent'>;
 	listUsers: CallinglyEndpoint<'listUsers'>;
+	getUser: CallinglyEndpoint<'getUser'>;
 	updateAgent: CallinglyEndpoint<'updateAgent'>;
 	deleteAgent: CallinglyEndpoint<'deleteAgent'>;
 	getAgentSchedule: CallinglyEndpoint<'getAgentSchedule'>;
@@ -77,6 +93,7 @@ export type CallinglyEndpoints = {
 	removeTeamAgent: CallinglyEndpoint<'removeTeamAgent'>;
 
 	listClients: CallinglyEndpoint<'listClients'>;
+	getClient: CallinglyEndpoint<'getClient'>;
 	createClient: CallinglyEndpoint<'createClient'>;
 	deleteClient: CallinglyEndpoint<'deleteClient'>;
 	setClientActive: CallinglyEndpoint<'setClientActive'>;
@@ -88,8 +105,21 @@ export type CallinglyEndpoints = {
 	deleteWebhook: CallinglyEndpoint<'deleteWebhook'>;
 };
 
+type CallinglyWebhook<
+	K extends keyof CallinglyWebhookOutputs,
+	TEvent,
+> = CorsairWebhook<CallinglyContext, TEvent, CallinglyWebhookOutputs[K]>;
+
+export type CallinglyWebhooks = {
+	callCompleted: CallinglyWebhook<'callCompleted', CallCompletedWebhookEvent>;
+	leadCreated: CallinglyWebhook<'leadCreated', LeadCreatedWebhookEvent>;
+};
+
+export type CallinglyBoundWebhooks = BindWebhooks<CallinglyWebhooks>;
+
 const callinglyEndpointsNested = {
 	leads: {
+		create: Handlers.createLead,
 		get: Handlers.getLead,
 		list: Handlers.listLeads,
 		update: Handlers.updateLead,
@@ -103,6 +133,7 @@ const callinglyEndpointsNested = {
 	agents: {
 		create: Handlers.createAgent,
 		list: Handlers.listUsers,
+		get: Handlers.getUser,
 		update: Handlers.updateAgent,
 		delete: Handlers.deleteAgent,
 		getSchedule: Handlers.getAgentSchedule,
@@ -119,6 +150,7 @@ const callinglyEndpointsNested = {
 	},
 	clients: {
 		list: Handlers.listClients,
+		get: Handlers.getClient,
 		create: Handlers.createClient,
 		delete: Handlers.deleteClient,
 		activateDeactivate: Handlers.setClientActive,
@@ -132,7 +164,20 @@ const callinglyEndpointsNested = {
 	},
 } as const;
 
+const callinglyWebhooksNested = {
+	calls: {
+		completed: WebhookHandlers.callCompleted,
+	},
+	leads: {
+		created: WebhookHandlers.leadCreated,
+	},
+} as const;
+
 export const callinglyEndpointSchemas = {
+	'leads.create': {
+		input: CallinglyEndpointInputSchemas.createLead,
+		output: CallinglyEndpointOutputSchemas.createLead,
+	},
 	'leads.get': {
 		input: CallinglyEndpointInputSchemas.getLead,
 		output: CallinglyEndpointOutputSchemas.getLead,
@@ -168,6 +213,10 @@ export const callinglyEndpointSchemas = {
 	'agents.list': {
 		input: CallinglyEndpointInputSchemas.listUsers,
 		output: CallinglyEndpointOutputSchemas.listUsers,
+	},
+	'agents.get': {
+		input: CallinglyEndpointInputSchemas.getUser,
+		output: CallinglyEndpointOutputSchemas.getUser,
 	},
 	'agents.update': {
 		input: CallinglyEndpointInputSchemas.updateAgent,
@@ -217,6 +266,10 @@ export const callinglyEndpointSchemas = {
 		input: CallinglyEndpointInputSchemas.listClients,
 		output: CallinglyEndpointOutputSchemas.listClients,
 	},
+	'clients.get': {
+		input: CallinglyEndpointInputSchemas.getClient,
+		output: CallinglyEndpointOutputSchemas.getClient,
+	},
 	'clients.create': {
 		input: CallinglyEndpointInputSchemas.createClient,
 		output: CallinglyEndpointOutputSchemas.createClient,
@@ -253,9 +306,28 @@ export const callinglyEndpointSchemas = {
 	typeof callinglyEndpointsNested
 >;
 
+const callinglyWebhookSchemas = {
+	'calls.completed': {
+		description: 'Triggered when a call completes and results are logged',
+		payload: CallinglyWebhookEventSchemas.callCompleted,
+		response: CallinglyWebhookEventSchemas.callCompleted,
+	},
+	'leads.created': {
+		description: 'Triggered when a new lead is created',
+		payload: CallinglyWebhookEventSchemas.leadCreated,
+		response: CallinglyWebhookEventSchemas.leadCreated,
+	},
+} as const satisfies RequiredPluginWebhookSchemas<
+	typeof callinglyWebhooksNested
+>;
+
 const defaultAuthType = 'api_key' as const;
 
 const callinglyEndpointMeta = {
+	'leads.create': {
+		riskLevel: 'write',
+		description: 'Create a new lead to trigger an immediate call or SMS',
+	},
 	'leads.get': {
 		riskLevel: 'read',
 		description: 'Retrieve lead details by ID',
@@ -293,6 +365,10 @@ const callinglyEndpointMeta = {
 	'agents.list': {
 		riskLevel: 'read',
 		description: 'List all agents and users under the account',
+	},
+	'agents.get': {
+		riskLevel: 'read',
+		description: 'Retrieve user details by ID',
 	},
 	'agents.update': {
 		riskLevel: 'write',
@@ -341,6 +417,10 @@ const callinglyEndpointMeta = {
 	'clients.list': {
 		riskLevel: 'read',
 		description: 'List agency client accounts',
+	},
+	'clients.get': {
+		riskLevel: 'read',
+		description: 'Retrieve agency client account details by ID',
 	},
 	'clients.create': {
 		riskLevel: 'write',
@@ -392,7 +472,7 @@ export type BaseCallinglyPlugin<T extends CallinglyPluginOptions> =
 		'callingly',
 		typeof CallinglySchema,
 		typeof callinglyEndpointsNested,
-		Record<string, never>,
+		typeof callinglyWebhooksNested,
 		T,
 		typeof defaultAuthType
 	>;
@@ -416,16 +496,36 @@ export function callingly(
 		schema: CallinglySchema,
 		options: options,
 		hooks: options.hooks,
+		webhookHooks: options.webhookHooks,
 		endpoints: callinglyEndpointsNested,
-		webhooks: {},
+		webhooks: callinglyWebhooksNested,
 		endpointMeta: callinglyEndpointMeta,
 		endpointSchemas: callinglyEndpointSchemas,
-		pluginWebhookMatcher: undefined,
+		webhookSchemas: callinglyWebhookSchemas,
+		pluginWebhookMatcher: (request) => {
+			const headers = request.headers;
+			return (
+				'x-callingly-signature' in headers ||
+				'x-callingly-webhook' in headers ||
+				'callingly-signature' in headers
+			);
+		},
+		pluginTenantWebhookMatcher: matchCallinglyTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveCallinglyOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CallinglyKeyBuilderContext, source) => {
+			if (source === 'webhook' && options.webhookSecret) {
+				return options.webhookSecret;
+			}
+
+			if (source === 'webhook') {
+				const res = await ctx.keys?.get_webhook_signature?.();
+				return res ?? '';
+			}
+
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -446,7 +546,7 @@ export function callingly(
 				return res;
 			}
 
-			throw new AuthMissingError('callingly', 'api_key');
+			return '';
 		},
 	} satisfies InternalCallinglyPlugin;
 }
@@ -454,3 +554,4 @@ export function callingly(
 export { CALLINGLY_API_BASE, CallinglyAPIError } from './client';
 export * from './endpoints/types';
 export * from './schema';
+export * from './webhooks/types';
