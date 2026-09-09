@@ -26,6 +26,8 @@ export const LeadCreatedWebhookEventSchema = z
 		id: z.union([z.string(), z.number()]).optional(),
 		lead_id: z.union([z.string(), z.number()]).optional(),
 		name: z.string().optional(),
+		fname: z.string().optional(),
+		lname: z.string().optional(),
 		first_name: z.string().optional(),
 		last_name: z.string().optional(),
 		phone_number: z.string().optional(),
@@ -151,29 +153,9 @@ export function verifyCallinglyWebhookSignature(
 				} else {
 					timestampMs = Date.parse(String(payloadTimestamp));
 				}
-			} else {
-				// Look for timestamp in HTTP headers if not present in body
-				const rawTimestampHeader =
-					headers['x-callingly-timestamp'] ??
-					headers['callingly-timestamp'] ??
-					headers['x-timestamp'] ??
-					headers['timestamp'];
-
-				const timestampHeaderVal = Array.isArray(rawTimestampHeader)
-					? rawTimestampHeader[0]
-					: typeof rawTimestampHeader === 'string'
-						? rawTimestampHeader
-						: undefined;
-
-				if (timestampHeaderVal) {
-					const num = Number(timestampHeaderVal);
-					if (!Number.isNaN(num)) {
-						timestampMs = num < 1e11 ? num * 1000 : num;
-					} else {
-						timestampMs = Date.parse(timestampHeaderVal);
-					}
-				}
 			}
+			// Unsigned timestamp headers are ignored so a captured body+signature
+			// cannot be replayed with a fresh x-callingly-timestamp.
 		}
 
 		// Enforce replay prevention window across ALL signature schemes

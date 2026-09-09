@@ -227,7 +227,7 @@ describe('callingly webhooks', () => {
 			expect.objectContaining({
 				id: 'lead_77',
 				name: 'Bob',
-				phone: '+15551234567',
+				phone_number: '+15551234567',
 			}),
 		);
 	});

@@ -66,7 +66,6 @@ type CallinglyEndpoint<K extends keyof CallinglyEndpointOutputs> =
 	>;
 
 export type CallinglyEndpoints = {
-	createLead: CallinglyEndpoint<'createLead'>;
 	getLead: CallinglyEndpoint<'getLead'>;
 	listLeads: CallinglyEndpoint<'listLeads'>;
 	updateLead: CallinglyEndpoint<'updateLead'>;
@@ -78,7 +77,6 @@ export type CallinglyEndpoints = {
 
 	createAgent: CallinglyEndpoint<'createAgent'>;
 	listUsers: CallinglyEndpoint<'listUsers'>;
-	getUser: CallinglyEndpoint<'getUser'>;
 	updateAgent: CallinglyEndpoint<'updateAgent'>;
 	deleteAgent: CallinglyEndpoint<'deleteAgent'>;
 	getAgentSchedule: CallinglyEndpoint<'getAgentSchedule'>;
@@ -93,7 +91,6 @@ export type CallinglyEndpoints = {
 	removeTeamAgent: CallinglyEndpoint<'removeTeamAgent'>;
 
 	listClients: CallinglyEndpoint<'listClients'>;
-	getClient: CallinglyEndpoint<'getClient'>;
 	createClient: CallinglyEndpoint<'createClient'>;
 	deleteClient: CallinglyEndpoint<'deleteClient'>;
 	setClientActive: CallinglyEndpoint<'setClientActive'>;
@@ -119,7 +116,6 @@ export type CallinglyBoundWebhooks = BindWebhooks<CallinglyWebhooks>;
 
 const callinglyEndpointsNested = {
 	leads: {
-		create: Handlers.createLead,
 		get: Handlers.getLead,
 		list: Handlers.listLeads,
 		update: Handlers.updateLead,
@@ -133,7 +129,6 @@ const callinglyEndpointsNested = {
 	agents: {
 		create: Handlers.createAgent,
 		list: Handlers.listUsers,
-		get: Handlers.getUser,
 		update: Handlers.updateAgent,
 		delete: Handlers.deleteAgent,
 		getSchedule: Handlers.getAgentSchedule,
@@ -150,7 +145,6 @@ const callinglyEndpointsNested = {
 	},
 	clients: {
 		list: Handlers.listClients,
-		get: Handlers.getClient,
 		create: Handlers.createClient,
 		delete: Handlers.deleteClient,
 		activateDeactivate: Handlers.setClientActive,
@@ -174,10 +168,6 @@ const callinglyWebhooksNested = {
 } as const;
 
 export const callinglyEndpointSchemas = {
-	'leads.create': {
-		input: CallinglyEndpointInputSchemas.createLead,
-		output: CallinglyEndpointOutputSchemas.createLead,
-	},
 	'leads.get': {
 		input: CallinglyEndpointInputSchemas.getLead,
 		output: CallinglyEndpointOutputSchemas.getLead,
@@ -213,10 +203,6 @@ export const callinglyEndpointSchemas = {
 	'agents.list': {
 		input: CallinglyEndpointInputSchemas.listUsers,
 		output: CallinglyEndpointOutputSchemas.listUsers,
-	},
-	'agents.get': {
-		input: CallinglyEndpointInputSchemas.getUser,
-		output: CallinglyEndpointOutputSchemas.getUser,
 	},
 	'agents.update': {
 		input: CallinglyEndpointInputSchemas.updateAgent,
@@ -265,10 +251,6 @@ export const callinglyEndpointSchemas = {
 	'clients.list': {
 		input: CallinglyEndpointInputSchemas.listClients,
 		output: CallinglyEndpointOutputSchemas.listClients,
-	},
-	'clients.get': {
-		input: CallinglyEndpointInputSchemas.getClient,
-		output: CallinglyEndpointOutputSchemas.getClient,
 	},
 	'clients.create': {
 		input: CallinglyEndpointInputSchemas.createClient,
@@ -324,10 +306,6 @@ const callinglyWebhookSchemas = {
 const defaultAuthType = 'api_key' as const;
 
 const callinglyEndpointMeta = {
-	'leads.create': {
-		riskLevel: 'write',
-		description: 'Create a new lead to trigger an immediate call or SMS',
-	},
 	'leads.get': {
 		riskLevel: 'read',
 		description: 'Retrieve lead details by ID',
@@ -365,10 +343,6 @@ const callinglyEndpointMeta = {
 	'agents.list': {
 		riskLevel: 'read',
 		description: 'List all agents and users under the account',
-	},
-	'agents.get': {
-		riskLevel: 'read',
-		description: 'Retrieve user details by ID',
 	},
 	'agents.update': {
 		riskLevel: 'write',
@@ -417,10 +391,6 @@ const callinglyEndpointMeta = {
 	'clients.list': {
 		riskLevel: 'read',
 		description: 'List agency client accounts',
-	},
-	'clients.get': {
-		riskLevel: 'read',
-		description: 'Retrieve agency client account details by ID',
 	},
 	'clients.create': {
 		riskLevel: 'write',

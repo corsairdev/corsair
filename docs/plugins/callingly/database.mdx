@@ -26,15 +26,29 @@ const rows = await corsair.callingly.db.calls.search({
 | Field | Type | Operators |
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
-| `phone_number` | `string` | equals, contains, startsWith, endsWith, in |
-| `status` | `string` | equals, contains, startsWith, endsWith, in |
-| `seconds` | `number` | equals, gt, gte, lt, lte, in |
-| `outcome` | `string` | equals, contains, startsWith, endsWith, in |
-| `recording_url` | `string` | equals, contains, startsWith, endsWith, in |
-| `scheduled_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `started_at` | `string` | equals, contains, startsWith, endsWith, in |
-| `ended_at` | `string` | equals, contains, startsWith, endsWith, in |
-| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `direction` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_formatted` | `string` | equals, contains, startsWith, endsWith, in |
+| `lead_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `lead_status_formatted` | `string` | equals, contains, startsWith, endsWith, in |
+| `ring_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `seconds` | `number` | equals, gt, gte, lt, lte, in |
+| `retry` | `number` | equals, gt, gte, lt, lte, in |
+| `lead_retry` | `number` | equals, gt, gte, lt, lte, in |
+| `time_formatted` | `string` | equals, contains, startsWith, endsWith, in |
+| `from_formatted` | `string` | equals, contains, startsWith, endsWith, in |
+| `source` | `string` | equals, contains, startsWith, endsWith, in |
+| `recording_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `waveform_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone_number_formatted` | `string` | equals, contains, startsWith, endsWith, in |
+| `human_result` | `string` | equals, contains, startsWith, endsWith, in |
+| `transcript` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_voicemail` | `number` | equals, gt, gte, lt, lte, in |
+| `is_queue` | `number` | equals, gt, gte, lt, lte, in |
+| `is_team_offline` | `number` | equals, gt, gte, lt, lte, in |
+| `is_error` | `number` | equals, gt, gte, lt, lte, in |
+| `error_code` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -59,9 +73,12 @@ const rows = await corsair.callingly.db.clients.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `billed_users` | `number` | equals, gt, gte, lt, lte, in |
+| `billed_numbers` | `number` | equals, gt, gte, lt, lte, in |
+| `fname` | `string` | equals, contains, startsWith, endsWith, in |
+| `lname` | `string` | equals, contains, startsWith, endsWith, in |
 | `company` | `string` | equals, contains, startsWith, endsWith, in |
-| `active` | `boolean` | equals |
-| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone_number` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -85,16 +102,23 @@ const rows = await corsair.callingly.db.leads.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
-| `first_name` | `string` | equals, contains, startsWith, endsWith, in |
-| `last_name` | `string` | equals, contains, startsWith, endsWith, in |
-| `phone` | `string` | equals, contains, startsWith, endsWith, in |
-| `phone_number` | `string` | equals, contains, startsWith, endsWith, in |
+| `label` | `string` | equals, contains, startsWith, endsWith, in |
+| `fname` | `string` | equals, contains, startsWith, endsWith, in |
+| `lname` | `string` | equals, contains, startsWith, endsWith, in |
 | `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone_number` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone_number_formatted` | `string` | equals, contains, startsWith, endsWith, in |
+| `source` | `string` | equals, contains, startsWith, endsWith, in |
+| `crm` | `string` | equals, contains, startsWith, endsWith, in |
+| `company` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `string` | equals, contains, startsWith, endsWith, in |
 | `status` | `string` | equals, contains, startsWith, endsWith, in |
-| `scheduled_at` | `string` | equals, contains, startsWith, endsWith, in |
-| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `result` | `string` | equals, contains, startsWith, endsWith, in |
+| `scheduled_call_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_stopped` | `number` | equals, gt, gte, lt, lte, in |
+| `is_blocked` | `number` | equals, gt, gte, lt, lte, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
-| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `deleted_at` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -117,7 +141,6 @@ const rows = await corsair.callingly.db.schedules.search({
 | Field | Type | Operators |
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
-| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -141,8 +164,21 @@ const rows = await corsair.callingly.db.teams.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
-| `description` | `string` | equals, contains, startsWith, endsWith, in |
-| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_record` | `number` | equals, gt, gte, lt, lte, in |
+| `call_mode` | `string` | equals, contains, startsWith, endsWith, in |
+| `whispertext` | `string` | equals, contains, startsWith, endsWith, in |
+| `post_whispertext` | `string` | equals, contains, startsWith, endsWith, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `delay` | `number` | equals, gt, gte, lt, lte, in |
+| `is_retry` | `number` | equals, gt, gte, lt, lte, in |
+| `retries` | `number` | equals, gt, gte, lt, lte, in |
+| `is_reschedule` | `number` | equals, gt, gte, lt, lte, in |
+| `is_retry_lead` | `number` | equals, gt, gte, lt, lte, in |
+| `lead_retries` | `number` | equals, gt, gte, lt, lte, in |
+| `is_sms` | `number` | equals, gt, gte, lt, lte, in |
+| `sms_body` | `string` | equals, contains, startsWith, endsWith, in |
+| `whispertext_voice` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_users_available_for_call` | `boolean` | equals |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -167,8 +203,7 @@ const rows = await corsair.callingly.db.teamUsers.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `priority` | `number` | equals, gt, gte, lt, lte, in |
-| `call_cap` | `number` | equals, gt, gte, lt, lte, in |
-| `integration_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `cap` | `number` | equals, gt, gte, lt, lte, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -191,16 +226,16 @@ const rows = await corsair.callingly.db.users.search({
 | Field | Type | Operators |
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `fname` | `string` | equals, contains, startsWith, endsWith, in |
+| `lname` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
-| `first_name` | `string` | equals, contains, startsWith, endsWith, in |
-| `last_name` | `string` | equals, contains, startsWith, endsWith, in |
 | `email` | `string` | equals, contains, startsWith, endsWith, in |
 | `phone_number` | `string` | equals, contains, startsWith, endsWith, in |
-| `role` | `string` | equals, contains, startsWith, endsWith, in |
-| `status` | `string` | equals, contains, startsWith, endsWith, in |
-| `active` | `boolean` | equals |
-| `account_id` | `string` | equals, contains, startsWith, endsWith, in |
-| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `ext` | `string` | equals, contains, startsWith, endsWith, in |
+| `donotdisturb` | `number` | equals, gt, gte, lt, lte, in |
+| `priority` | `number` | equals, gt, gte, lt, lte, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_available` | `boolean` | equals |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -224,15 +259,13 @@ const rows = await corsair.callingly.db.webhooks.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
-| `url` | `string` | equals, contains, startsWith, endsWith, in |
-| `target_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `event` | `string` | equals, contains, startsWith, endsWith, in |
+| `target_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `call_status` | `string` | equals, contains, startsWith, endsWith, in |
 | `call_lead_status` | `string` | equals, contains, startsWith, endsWith, in |
 | `field` | `string` | equals, contains, startsWith, endsWith, in |
 | `filter` | `string` | equals, contains, startsWith, endsWith, in |
-| `active` | `boolean` | equals |
-| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `call_direction` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 

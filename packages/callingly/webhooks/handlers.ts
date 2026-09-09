@@ -135,9 +135,8 @@ export const leadCreated: CallinglyWebhooks['leadCreated'] = {
 				await ctx.db.leads.upsertByEntityId(entityId, {
 					id: entityId,
 					name: event.name,
-					first_name: event.first_name,
-					last_name: event.last_name,
-					phone: event.phone_number,
+					fname: event.fname ?? event.first_name,
+					lname: event.lname ?? event.last_name,
 					phone_number: event.phone_number,
 					email: event.email,
 					team_id: event.team_id,
