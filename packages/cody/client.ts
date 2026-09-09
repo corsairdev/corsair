@@ -1,59 +1,51 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
-export class CodyAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'CodyAPIError';
-	}
-}
+const CODY_API_BASE = 'https://sourcegraph.com';
 
-// TODO: Update with your API base URL
-const CODY_API_BASE = 'https://sourcegraph.com/ .api';
+export type CodyAuthScheme = 'token' | 'Bearer';
+
+export function compactQuery(
+	query: Record<string, string | number | boolean | undefined>,
+): Record<string, string | number | boolean> {
+	return Object.fromEntries(
+		Object.entries(query).filter(
+			(entry): entry is [string, string | number | boolean] =>
+				entry[1] !== undefined,
+		),
+	);
+}
 
 export async function makeCodyRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		authScheme?: CodyAuthScheme;
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', authScheme = 'token', body, query } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: CODY_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Authorization: `token ${apiKey}`,
+			Authorization: `${authScheme} ${apiKey}`,
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		body,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query: query ? compactQuery(query) : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new CodyAPIError(error.message);
-		}
-		throw new CodyAPIError('Unknown error');
-	}
+	return await request<T>(config, requestOptions);
 }
