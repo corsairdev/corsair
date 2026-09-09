@@ -44,8 +44,12 @@ module.exports = {
 		],
 	},
 	moduleNameMapper: {
-		'^corsair/core$': '<rootDir>/../corsair/core.ts',
 		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		'^corsair/core$': '<rootDir>/../corsair/core.ts',
+		'^corsair/orm$': '<rootDir>/../corsair/orm.ts',
+		'^corsair/tests$': '<rootDir>/../corsair/tests.ts',
+		'^corsair/webhooks$': '<rootDir>/../corsair/webhooks/index.ts',
+		'^corsair$': '<rootDir>/../corsair/index.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
