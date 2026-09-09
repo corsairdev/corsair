@@ -1,0 +1,28 @@
+{
+  "name": "@corsair-dev/fade-agent-ui",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file=../../.env server.ts",
+    "start": "tsx --env-file=../../.env server.ts",
+    "typecheck": "tsc --noEmit",
+    "tunnel": "node -e \"const p=require('path'),{execFileSync:e}=require('child_process');e(p.join('..','..','node_modules','.pnpm','@corsair-dev+frpc-win32-x64@0.1.117','node_modules','@corsair-dev','frpc-win32-x64','frpc.exe'),['-c','frpc.ini'],{stdio:'inherit',cwd:__dirname})\"",
+    "webhook-test": "node -e \"fetch('http://localhost:3099/api/webhook',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({phantomId:'test-123',leads:[{name:'Alice Demo',company:'Acme Corp',topic:'AI in Sales'}]})}).then(r=>r.json()).then(console.log)\""
+  },
+  "dependencies": {
+    "@corsair-dev/fade-agent": "workspace:*",
+    "@langchain/core": "^0.3.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/multer": "^1.4.11",
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

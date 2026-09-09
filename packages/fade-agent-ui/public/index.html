@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fade Agent</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+<!--   Sidebar   -->
+<aside id="sidebar">
+  <div class="sidebar-header">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="4" stroke="#a78bfa" stroke-width="1.8"/><path d="M8 12h8M12 8v8" stroke="#a78bfa" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <span>Assets</span>
+    <button id="btn-refresh-assets" class="icon-btn" title="Refresh">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 018-8 8 8 0 016.93 4M20 12a8 8 0 01-8 8 8 8 0 01-6.93-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M18 4v4h-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+  <div id="asset-list"></div>
+
+  <div id="drop-zone">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M12 16V8m0 0l-3 3m3-3l3 3" stroke="#a78bfa" stroke-width="1.8" stroke-linecap="round"/><rect x="3" y="3" width="18" height="18" rx="4" stroke="#a78bfa" stroke-width="1.4" stroke-dasharray="4 3"/></svg>
+    <p>Drop files here<br/><span>or click to upload</span></p>
+    <input type="file" id="file-input" multiple accept="video/*,image/*,audio/*" />
+  </div>
+
+ 
+  <div id="webhook-panel">
+    <div class="webhook-header">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>PhantomBuster</span>
+    </div>
+    <div id="job-status" class="job-status idle">✅ Idle</div>
+    <div class="s-group" style="margin-top:8px">
+      <label for="poll-phantom-id">Phantom ID</label>
+      <input id="poll-phantom-id" type="text" placeholder="e.g. 1234567890" style="font-size:.8rem;padding:6px 10px" />
+    </div>
+    <button id="btn-poll" class="pill-btn" style="width:100%;margin-top:6px;font-size:.8rem;padding:7px">⬇ Pull Latest Results</button>
+    <p id="poll-status" style="font-size:.75rem;color:#94a3b8;margin:4px 0 0"></p>
+    <p class="s-hint" style="margin-top:6px">Webhook: <code>POST /api/webhook</code></p>
+  </div>
+
+</aside>
+
+ 
+<main id="main">
+  <header id="topbar">
+    <div class="logo">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 3l14 9-14 9V3z" fill="#a78bfa"/></svg>
+      <span>Fade <em>Agent</em></span>
+    </div>
+    <div class="topbar-actions">
+      <span id="status-dot" class="dot idle"></span>
+      <span id="status-text">Idle</span>
+      <button id="btn-preview" class="pill-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M10 8l6 4-6 4V8z" fill="currentColor"/></svg>
+        Preview
+      </button>
+      <button id="btn-settings" class="pill-btn ghost" title="AI Settings">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="1.8"/></svg>
+        Settings
+      </button>
+      <button id="btn-clear" class="pill-btn ghost">Clear</button>
+    </div>
+  </header>
+
+  <div id="chat-window">
+    <div class="welcome">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none"><path d="M5 3l14 9-14 9V3z" fill="url(#g1)"/><defs><linearGradient id="g1" x1="5" y1="3" x2="19" y2="21" gradientUnits="userSpaceOnUse"><stop stop-color="#a78bfa"/><stop offset="1" stop-color="#60a5fa"/></linearGradient></defs></svg>
+      <h2>Fade Agent</h2>
+      <p>Tell me what video to create, or ask me to edit the timeline.</p>
+      <div class="chips">
+        <button class="chip" data-prompt="Show me the current timeline state">📋 Timeline state</button>
+        <button class="chip" data-prompt="List all assets in the library">🎬 Library assets</button>
+        <button class="chip" data-prompt="Add a dissolve transition between all clips">✨ Add transitions</button>
+        <button class="chip" data-prompt="Show me a preview of the current project">👁 Preview</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="input-bar">
+    <textarea id="msg-input" placeholder="Ask Fade Agent anything…" rows="1"></textarea>
+    <button id="btn-send">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</main>
+
+<!--   Offline banner   -->
+<div id="offline-banner" style="display:none">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  Fade backend is offline (port 8000). Start it to use assets &amp; export.
+</div>
+
+<!-- ── Settings Modal ──────────────────────────────────────────── -->
+<div id="settings-overlay">
+  <div id="settings-modal">
+    <div class="s-header">
+      <h3>⚙ Settings</h3>
+      <button id="settings-close" class="icon-btn">✕</button>
+    </div>
+    <div id="settings-body"></div>
+    <p id="settings-status"></p>
+    <button id="settings-save" class="pill-btn">Save &amp; Apply</button>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
