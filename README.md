@@ -12,6 +12,8 @@
 
 Corsair is a fully-featured product integration platform with a seamless DX. Build anything, from an agent working across all your integrations to a multi-tenant dashboard for your users to connect to anything.
 
+Corsair gives your product a single integration layer for OAuth, webhooks, and app data access across hundreds of services. Use it for agent workflows, internal tools, or customer-facing dashboards without rebuilding the same plumbing for each integration.
+
 [![Corsair Demo](https://img.youtube.com/vi/fflIzDutxsc/maxresdefault.jpg)](https://youtu.be/fflIzDutxsc)
 
 ## Why does this exist?
