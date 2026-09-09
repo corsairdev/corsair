@@ -6,6 +6,10 @@ import type {
 	EnvironmentsListPreviewsInput,
 	EnvironmentsListPreviewsOutput,
 } from './types';
+import {
+	EnvironmentsListPreviewsInputSchema,
+	EnvironmentsListPreviewsOutputSchema,
+} from './types';
 
 export type NorthflankEndpoint<TInput, TOutput> = CorsairEndpoint<
 	NorthflankContext,
@@ -17,13 +21,17 @@ export const listPreviews: NorthflankEndpoint<
 	EnvironmentsListPreviewsInput,
 	EnvironmentsListPreviewsOutput
 > = async (ctx, input) => {
+	const validatedInput = EnvironmentsListPreviewsInputSchema.parse(input);
 	const query: Record<string, unknown> = {};
-	if (input.page !== undefined) query.page = input.page;
-	if (input.per_page !== undefined) query.per_page = input.per_page;
-	if (input.cursor !== undefined) query.cursor = input.cursor;
+	if (validatedInput.page !== undefined) query.page = validatedInput.page;
+	if (validatedInput.per_page !== undefined)
+		query.per_page = validatedInput.per_page;
+	if (validatedInput.cursor !== undefined) query.cursor = validatedInput.cursor;
 
-	const res = await makeNorthflankRequest<EnvironmentsListPreviewsOutput>(
-		`projects/${input.projectId}/preview-blueprints/${input.previewBlueprintId}/preview-environments`,
+	// Official Northflank route for previews under a preview-blueprint:
+	// GET /v1/projects/{projectId}/preview-blueprints/{previewBlueprintId}/previews
+	const res = await makeNorthflankRequest<unknown>(
+		`projects/${validatedInput.projectId}/preview-blueprints/${validatedInput.previewBlueprintId}/previews`,
 		ctx.key,
 		{ method: 'GET', query },
 	);
@@ -32,12 +40,12 @@ export const listPreviews: NorthflankEndpoint<
 		ctx,
 		'northflank.environments.listPreviews',
 		{
-			projectId: input.projectId,
-			previewBlueprintId: input.previewBlueprintId,
+			projectId: validatedInput.projectId,
+			previewBlueprintId: validatedInput.previewBlueprintId,
 		},
 		'completed',
 	);
-	return res;
+	return EnvironmentsListPreviewsOutputSchema.parse(res);
 };
 
 export const EnvironmentsEndpoints = {

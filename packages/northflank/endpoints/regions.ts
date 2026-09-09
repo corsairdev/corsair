@@ -3,6 +3,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeNorthflankRequest } from '../client';
 import type { NorthflankContext } from '../index';
 import type { RegionsListInput, RegionsListOutput } from './types';
+import { RegionsListInputSchema, RegionsListOutputSchema } from './types';
 
 export type NorthflankEndpoint<TInput, TOutput> = CorsairEndpoint<
 	NorthflankContext,
@@ -13,16 +14,14 @@ export type NorthflankEndpoint<TInput, TOutput> = CorsairEndpoint<
 export const list: NorthflankEndpoint<
 	RegionsListInput,
 	RegionsListOutput
-> = async (ctx) => {
-	const res = await makeNorthflankRequest<RegionsListOutput>(
-		'regions',
-		ctx.key,
-		{ method: 'GET' },
-	);
+> = async (ctx, input = {}) => {
+	RegionsListInputSchema.parse(input);
+	const res = await makeNorthflankRequest<unknown>('regions', ctx.key, {
+		method: 'GET',
+	});
 
 	await logEventFromContext(ctx, 'northflank.regions.list', {}, 'completed');
-
-	return res;
+	return RegionsListOutputSchema.parse(res);
 };
 
 export const RegionsEndpoints = {

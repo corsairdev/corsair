@@ -12,6 +12,16 @@ import type {
 	SecretsUpdateInput,
 	SecretsUpdateOutput,
 } from './types';
+import {
+	SecretsCreateInputSchema,
+	SecretsCreateOutputSchema,
+	SecretsGetInputSchema,
+	SecretsGetOutputSchema,
+	SecretsListInputSchema,
+	SecretsListOutputSchema,
+	SecretsUpdateInputSchema,
+	SecretsUpdateOutputSchema,
+} from './types';
 
 export type NorthflankEndpoint<TInput, TOutput> = CorsairEndpoint<
 	NorthflankContext,
@@ -23,13 +33,15 @@ export const list: NorthflankEndpoint<
 	SecretsListInput,
 	SecretsListOutput
 > = async (ctx, input) => {
+	const validatedInput = SecretsListInputSchema.parse(input);
 	const query: Record<string, unknown> = {};
-	if (input.page !== undefined) query.page = input.page;
-	if (input.per_page !== undefined) query.per_page = input.per_page;
-	if (input.cursor !== undefined) query.cursor = input.cursor;
+	if (validatedInput.page !== undefined) query.page = validatedInput.page;
+	if (validatedInput.per_page !== undefined)
+		query.per_page = validatedInput.per_page;
+	if (validatedInput.cursor !== undefined) query.cursor = validatedInput.cursor;
 
-	const res = await makeNorthflankRequest<SecretsListOutput>(
-		`projects/${input.projectId}/secrets`,
+	const res = await makeNorthflankRequest<unknown>(
+		`projects/${validatedInput.projectId}/secrets`,
 		ctx.key,
 		{ method: 'GET', query },
 	);
@@ -37,18 +49,19 @@ export const list: NorthflankEndpoint<
 	await logEventFromContext(
 		ctx,
 		'northflank.secrets.list',
-		{ projectId: input.projectId },
+		{ projectId: validatedInput.projectId },
 		'completed',
 	);
-	return res;
+	return SecretsListOutputSchema.parse(res);
 };
 
 export const get: NorthflankEndpoint<
 	SecretsGetInput,
 	SecretsGetOutput
 > = async (ctx, input) => {
-	const res = await makeNorthflankRequest<SecretsGetOutput>(
-		`projects/${input.projectId}/secrets/${input.secretId}`,
+	const validatedInput = SecretsGetInputSchema.parse(input);
+	const res = await makeNorthflankRequest<unknown>(
+		`projects/${validatedInput.projectId}/secrets/${validatedInput.secretId}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
@@ -56,18 +69,22 @@ export const get: NorthflankEndpoint<
 	await logEventFromContext(
 		ctx,
 		'northflank.secrets.get',
-		{ projectId: input.projectId, secretId: input.secretId },
+		{
+			projectId: validatedInput.projectId,
+			secretId: validatedInput.secretId,
+		},
 		'completed',
 	);
-	return res;
+	return SecretsGetOutputSchema.parse(res);
 };
 
 export const create: NorthflankEndpoint<
 	SecretsCreateInput,
 	SecretsCreateOutput
 > = async (ctx, input) => {
-	const { projectId, ...body } = input;
-	const res = await makeNorthflankRequest<SecretsCreateOutput>(
+	const validatedInput = SecretsCreateInputSchema.parse(input);
+	const { projectId, ...body } = validatedInput;
+	const res = await makeNorthflankRequest<unknown>(
 		`projects/${projectId}/secrets`,
 		ctx.key,
 		{
@@ -80,22 +97,24 @@ export const create: NorthflankEndpoint<
 	await logEventFromContext(
 		ctx,
 		'northflank.secrets.create',
-		{ projectId, name: input.name },
+		{ projectId, name: validatedInput.name },
 		'completed',
 	);
-	return res;
+	return SecretsCreateOutputSchema.parse(res);
 };
 
 export const update: NorthflankEndpoint<
 	SecretsUpdateInput,
 	SecretsUpdateOutput
 > = async (ctx, input) => {
-	const { projectId, secretId, ...body } = input;
-	const res = await makeNorthflankRequest<SecretsUpdateOutput>(
+	const validatedInput = SecretsUpdateInputSchema.parse(input);
+	const { projectId, secretId, ...body } = validatedInput;
+	// Official Northflank project-secret update uses POST /v1/projects/{projectId}/secrets/{secretId}
+	const res = await makeNorthflankRequest<unknown>(
 		`projects/${projectId}/secrets/${secretId}`,
 		ctx.key,
 		{
-			method: 'PATCH',
+			method: 'POST',
 			body,
 		},
 	);
@@ -107,7 +126,7 @@ export const update: NorthflankEndpoint<
 		{ projectId, secretId },
 		'completed',
 	);
-	return res;
+	return SecretsUpdateOutputSchema.parse(res);
 };
 
 export const SecretsEndpoints = {

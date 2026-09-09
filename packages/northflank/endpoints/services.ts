@@ -12,6 +12,16 @@ import type {
 	ServicesUpdateCombinedInput,
 	ServicesUpdateCombinedOutput,
 } from './types';
+import {
+	ServicesCreateCombinedInputSchema,
+	ServicesCreateCombinedOutputSchema,
+	ServicesGetInputSchema,
+	ServicesGetOutputSchema,
+	ServicesListInputSchema,
+	ServicesListOutputSchema,
+	ServicesUpdateCombinedInputSchema,
+	ServicesUpdateCombinedOutputSchema,
+} from './types';
 
 export type NorthflankEndpoint<TInput, TOutput> = CorsairEndpoint<
 	NorthflankContext,
@@ -23,13 +33,15 @@ export const list: NorthflankEndpoint<
 	ServicesListInput,
 	ServicesListOutput
 > = async (ctx, input) => {
+	const validatedInput = ServicesListInputSchema.parse(input);
 	const query: Record<string, unknown> = {};
-	if (input.page !== undefined) query.page = input.page;
-	if (input.per_page !== undefined) query.per_page = input.per_page;
-	if (input.cursor !== undefined) query.cursor = input.cursor;
+	if (validatedInput.page !== undefined) query.page = validatedInput.page;
+	if (validatedInput.per_page !== undefined)
+		query.per_page = validatedInput.per_page;
+	if (validatedInput.cursor !== undefined) query.cursor = validatedInput.cursor;
 
-	const res = await makeNorthflankRequest<ServicesListOutput>(
-		`projects/${input.projectId}/services`,
+	const res = await makeNorthflankRequest<unknown>(
+		`projects/${validatedInput.projectId}/services`,
 		ctx.key,
 		{ method: 'GET', query },
 	);
@@ -37,18 +49,19 @@ export const list: NorthflankEndpoint<
 	await logEventFromContext(
 		ctx,
 		'northflank.services.list',
-		{ projectId: input.projectId },
+		{ projectId: validatedInput.projectId },
 		'completed',
 	);
-	return res;
+	return ServicesListOutputSchema.parse(res);
 };
 
 export const get: NorthflankEndpoint<
 	ServicesGetInput,
 	ServicesGetOutput
 > = async (ctx, input) => {
-	const res = await makeNorthflankRequest<ServicesGetOutput>(
-		`projects/${input.projectId}/services/${input.serviceId}`,
+	const validatedInput = ServicesGetInputSchema.parse(input);
+	const res = await makeNorthflankRequest<unknown>(
+		`projects/${validatedInput.projectId}/services/${validatedInput.serviceId}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
@@ -56,18 +69,22 @@ export const get: NorthflankEndpoint<
 	await logEventFromContext(
 		ctx,
 		'northflank.services.get',
-		{ projectId: input.projectId, serviceId: input.serviceId },
+		{
+			projectId: validatedInput.projectId,
+			serviceId: validatedInput.serviceId,
+		},
 		'completed',
 	);
-	return res;
+	return ServicesGetOutputSchema.parse(res);
 };
 
 export const createCombined: NorthflankEndpoint<
 	ServicesCreateCombinedInput,
 	ServicesCreateCombinedOutput
 > = async (ctx, input) => {
-	const { projectId, ...body } = input;
-	const res = await makeNorthflankRequest<ServicesCreateCombinedOutput>(
+	const validatedInput = ServicesCreateCombinedInputSchema.parse(input);
+	const { projectId, ...body } = validatedInput;
+	const res = await makeNorthflankRequest<unknown>(
 		`projects/${projectId}/services/combined`,
 		ctx.key,
 		{
@@ -79,18 +96,19 @@ export const createCombined: NorthflankEndpoint<
 	await logEventFromContext(
 		ctx,
 		'northflank.services.createCombined',
-		{ projectId, name: input.name },
+		{ projectId, name: validatedInput.name },
 		'completed',
 	);
-	return res;
+	return ServicesCreateCombinedOutputSchema.parse(res);
 };
 
 export const updateCombined: NorthflankEndpoint<
 	ServicesUpdateCombinedInput,
 	ServicesUpdateCombinedOutput
 > = async (ctx, input) => {
-	const { projectId, serviceId, ...body } = input;
-	const res = await makeNorthflankRequest<ServicesUpdateCombinedOutput>(
+	const validatedInput = ServicesUpdateCombinedInputSchema.parse(input);
+	const { projectId, serviceId, ...body } = validatedInput;
+	const res = await makeNorthflankRequest<unknown>(
 		`projects/${projectId}/services/combined/${serviceId}`,
 		ctx.key,
 		{
@@ -105,7 +123,7 @@ export const updateCombined: NorthflankEndpoint<
 		{ projectId, serviceId },
 		'completed',
 	);
-	return res;
+	return ServicesUpdateCombinedOutputSchema.parse(res);
 };
 
 export const ServicesEndpoints = {

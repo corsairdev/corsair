@@ -12,6 +12,16 @@ import type {
 	ProjectsUpdateInput,
 	ProjectsUpdateOutput,
 } from './types';
+import {
+	ProjectsCreateInputSchema,
+	ProjectsCreateOutputSchema,
+	ProjectsGetInputSchema,
+	ProjectsGetOutputSchema,
+	ProjectsListInputSchema,
+	ProjectsListOutputSchema,
+	ProjectsUpdateInputSchema,
+	ProjectsUpdateOutputSchema,
+} from './types';
 
 export type NorthflankEndpoint<TInput, TOutput> = CorsairEndpoint<
 	NorthflankContext,
@@ -23,27 +33,30 @@ export const list: NorthflankEndpoint<
 	ProjectsListInput,
 	ProjectsListOutput
 > = async (ctx, input = {}) => {
+	const validatedInput = ProjectsListInputSchema.parse(input);
 	const query: Record<string, unknown> = {};
-	if (input?.page !== undefined) query.page = input.page;
-	if (input?.per_page !== undefined) query.per_page = input.per_page;
-	if (input?.cursor !== undefined) query.cursor = input.cursor;
+	if (validatedInput?.page !== undefined) query.page = validatedInput.page;
+	if (validatedInput?.per_page !== undefined)
+		query.per_page = validatedInput.per_page;
+	if (validatedInput?.cursor !== undefined)
+		query.cursor = validatedInput.cursor;
 
-	const res = await makeNorthflankRequest<ProjectsListOutput>(
-		'projects',
-		ctx.key,
-		{ method: 'GET', query },
-	);
+	const res = await makeNorthflankRequest<unknown>('projects', ctx.key, {
+		method: 'GET',
+		query,
+	});
 
 	await logEventFromContext(ctx, 'northflank.projects.list', {}, 'completed');
-	return res;
+	return ProjectsListOutputSchema.parse(res);
 };
 
 export const get: NorthflankEndpoint<
 	ProjectsGetInput,
 	ProjectsGetOutput
 > = async (ctx, input) => {
-	const res = await makeNorthflankRequest<ProjectsGetOutput>(
-		`projects/${input.projectId}`,
+	const validatedInput = ProjectsGetInputSchema.parse(input);
+	const res = await makeNorthflankRequest<unknown>(
+		`projects/${validatedInput.projectId}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
@@ -51,40 +64,38 @@ export const get: NorthflankEndpoint<
 	await logEventFromContext(
 		ctx,
 		'northflank.projects.get',
-		{ projectId: input.projectId },
+		{ projectId: validatedInput.projectId },
 		'completed',
 	);
-	return res;
+	return ProjectsGetOutputSchema.parse(res);
 };
 
 export const create: NorthflankEndpoint<
 	ProjectsCreateInput,
 	ProjectsCreateOutput
 > = async (ctx, input) => {
-	const res = await makeNorthflankRequest<ProjectsCreateOutput>(
-		'projects',
-		ctx.key,
-		{
-			method: 'POST',
-			body: input,
-		},
-	);
+	const validatedInput = ProjectsCreateInputSchema.parse(input);
+	const res = await makeNorthflankRequest<unknown>('projects', ctx.key, {
+		method: 'POST',
+		body: validatedInput,
+	});
 
 	await logEventFromContext(
 		ctx,
 		'northflank.projects.create',
-		{ name: input.name, region: input.region },
+		{ name: validatedInput.name, region: validatedInput.region },
 		'completed',
 	);
-	return res;
+	return ProjectsCreateOutputSchema.parse(res);
 };
 
 export const update: NorthflankEndpoint<
 	ProjectsUpdateInput,
 	ProjectsUpdateOutput
 > = async (ctx, input) => {
-	const { projectId, ...body } = input;
-	const res = await makeNorthflankRequest<ProjectsUpdateOutput>(
+	const validatedInput = ProjectsUpdateInputSchema.parse(input);
+	const { projectId, ...body } = validatedInput;
+	const res = await makeNorthflankRequest<unknown>(
 		`projects/${projectId}`,
 		ctx.key,
 		{
@@ -99,7 +110,7 @@ export const update: NorthflankEndpoint<
 		{ projectId },
 		'completed',
 	);
-	return res;
+	return ProjectsUpdateOutputSchema.parse(res);
 };
 
 export const ProjectsEndpoints = {
