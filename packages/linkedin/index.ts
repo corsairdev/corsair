@@ -41,8 +41,6 @@ export const linkedinAuthConfig = {
 		integration: [] as const,
 	},
 	managed: {
-		// client_id and client_secret are provided by the base framework and must not
-		// be declared in the integration array.
 		integration: [] as const,
 	},
 } as const satisfies PluginAuthConfig;

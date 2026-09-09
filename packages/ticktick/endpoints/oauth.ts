@@ -6,6 +6,11 @@ export const generateAuthUrl: TickTickEndpoints['generateAuthUrl'] = async (
 	ctx,
 	input,
 ) => {
+	if (ctx.options.authType === 'managed') {
+		throw new Error(
+			'generateAuthUrl is only available for oauth_2 (BYO) auth; managed connections are authorised through the Hub.',
+		);
+	}
 	const creds = await (
 		ctx.keys as AccountKeyManagerFor<'oauth_2'>
 	).get_integration_credentials();

@@ -20,6 +20,11 @@ export const authorize: ExistEndpoints['oauthAuthorize'] = async (
 	rawInput,
 ) => {
 	const input = parseExistInput('oauthAuthorize', rawInput);
+	if (ctx.options.authType === 'managed') {
+		throw new Error(
+			'oauthAuthorize is only available for oauth_2 (BYO) auth; managed connections are authorised through the Hub.',
+		);
+	}
 	const credentials = await (
 		ctx.keys as AccountKeyManagerFor<'oauth_2'>
 	).get_integration_credentials();

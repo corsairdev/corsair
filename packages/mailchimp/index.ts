@@ -790,7 +790,8 @@ export function mailchimp<const T extends MailchimpPluginOptions>(
 
 				const result = await getManagedAccessToken(managedContext);
 				await attachManagedRefreshAuth(ctx, managedContext);
-				return result.accessToken;
+				const metadata = await fetchMailchimpOAuthMetadata(result.accessToken);
+				return packMailchimpOAuthKey(result.accessToken, metadata.dc);
 			}
 
 			throw new AuthMissingError('mailchimp', 'oauth_2');

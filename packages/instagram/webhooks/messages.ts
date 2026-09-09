@@ -10,6 +10,14 @@ import {
 export const messageReceived: InstagramWebhooks['messageReceived'] = {
 	match: createInstagramWebhookMatcher('messageReceived'),
 	handler: async (ctx, request) => {
+		if (ctx.options.authType === 'managed') {
+			return {
+				success: false,
+				statusCode: 501,
+				error:
+					'Instagram webhook signature verification is not available under managed auth; the Meta app secret is held by the Hub.',
+			};
+		}
 		const credentials = await (
 			ctx.keys as AccountKeyManagerFor<'oauth_2'>
 		).get_integration_credentials();
