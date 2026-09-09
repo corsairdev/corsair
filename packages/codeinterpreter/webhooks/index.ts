@@ -1,7 +1,14 @@
-import { example } from './example';
+import { executionCompleted } from './executionCompleted';
+import { executionFailed } from './executionFailed';
+import { fileReady } from './fileReady';
 
-export const ExampleWebhooks = {
-	example: example,
+export const ExecutionWebhooks = {
+	completed: executionCompleted,
+	failed: executionFailed,
+};
+
+export const FileWebhooks = {
+	ready: fileReady,
 };
 
 export * from './types';

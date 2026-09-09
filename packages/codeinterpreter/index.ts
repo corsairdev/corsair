@@ -19,12 +19,18 @@ import type { CodeInterpreterEndpointInputs, CodeInterpreterEndpointOutputs } fr
 import { CodeInterpreterEndpointInputSchemas, CodeInterpreterEndpointOutputSchemas } from './endpoints/types';
 import type {
 	CodeInterpreterWebhookOutputs,
-	ExampleEvent,
+	ExecutionCompletedEvent,
+	ExecutionFailedEvent,
+	FileReadyEvent,
 } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
+import {
+	ExecutionCompletedEventSchema,
+	ExecutionFailedEventSchema,
+	FileReadyEventSchema,
+} from './webhooks/types';
+import { Code, File } from './endpoints';
 import { CodeInterpreterSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+import { ExecutionWebhooks, FileWebhooks } from './webhooks';
 import { errorHandlers } from './error-handlers';
 import { matchCodeInterpreterTenantWebhook } from './webhooks/tenant-matcher';
 import { resolveCodeInterpreterOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
@@ -57,7 +63,11 @@ type CodeInterpreterEndpoint<
 >;
 
 export type CodeInterpreterEndpoints = {
-	exampleGet: CodeInterpreterEndpoint<'exampleGet'>;
+	executeCode: CodeInterpreterEndpoint<'executeCode'>;
+	uploadFile: CodeInterpreterEndpoint<'uploadFile'>;
+	listFiles: CodeInterpreterEndpoint<'listFiles'>;
+	downloadFile: CodeInterpreterEndpoint<'downloadFile'>;
+	deleteFile: CodeInterpreterEndpoint<'deleteFile'>;
 };
 
 type CodeInterpreterWebhook<
@@ -66,53 +76,107 @@ type CodeInterpreterWebhook<
 > = CorsairWebhook<CodeInterpreterContext, TEvent, CodeInterpreterWebhookOutputs[K]>;
 
 export type CodeInterpreterWebhooks = {
-	example: CodeInterpreterWebhook<'example', ExampleEvent>;
+	executionCompleted: CodeInterpreterWebhook<'executionCompleted', ExecutionCompletedEvent>;
+	executionFailed: CodeInterpreterWebhook<'executionFailed', ExecutionFailedEvent>;
+	fileReady: CodeInterpreterWebhook<'fileReady', FileReadyEvent>;
 };
 
 export type CodeInterpreterBoundWebhooks = BindWebhooks<CodeInterpreterWebhooks>;
 
 const codeInterpreterEndpointsNested = {
-	example: {
-		get: Example.get,
+	code: {
+		execute: Code.execute,
+	},
+	file: {
+		upload: File.upload,
+		list: File.list,
+		download: File.download,
+		delete: File.delete,
 	},
 } as const;
 
 const codeInterpreterWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	execution: {
+		completed: ExecutionWebhooks.completed,
+		failed: ExecutionWebhooks.failed,
+	},
+	file: {
+		ready: FileWebhooks.ready,
 	},
 } as const;
 
 export const codeInterpreterEndpointSchemas = {
-	'example.get': {
-		input: CodeInterpreterEndpointInputSchemas.exampleGet,
-		output: CodeInterpreterEndpointOutputSchemas.exampleGet,
+	'code.execute': {
+		input: CodeInterpreterEndpointInputSchemas.executeCode,
+		output: CodeInterpreterEndpointOutputSchemas.executeCode,
+	},
+	'file.upload': {
+		input: CodeInterpreterEndpointInputSchemas.uploadFile,
+		output: CodeInterpreterEndpointOutputSchemas.uploadFile,
+	},
+	'file.list': {
+		input: CodeInterpreterEndpointInputSchemas.listFiles,
+		output: CodeInterpreterEndpointOutputSchemas.listFiles,
+	},
+	'file.download': {
+		input: CodeInterpreterEndpointInputSchemas.downloadFile,
+		output: CodeInterpreterEndpointOutputSchemas.downloadFile,
+	},
+	'file.delete': {
+		input: CodeInterpreterEndpointInputSchemas.deleteFile,
+		output: CodeInterpreterEndpointOutputSchemas.deleteFile,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof codeInterpreterEndpointsNested>;
 
 const codeInterpreterWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'execution.completed': {
+		description: 'Code execution completed successfully',
+		payload: ExecutionCompletedEventSchema,
+		response: ExecutionCompletedEventSchema,
+	},
+	'execution.failed': {
+		description: 'Code execution failed with an error',
+		payload: ExecutionFailedEventSchema,
+		response: ExecutionFailedEventSchema,
+	},
+	'file.ready': {
+		description: 'A file is processed and ready in the sandbox',
+		payload: FileReadyEventSchema,
+		response: FileReadyEventSchema,
 	},
 } as const satisfies RequiredPluginWebhookSchemas<typeof codeInterpreterWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const codeInterpreterEndpointMeta = {
-	'example.get': {
+	'code.execute': {
+		riskLevel: 'write',
+		description: 'Execute code in the sandbox',
+	},
+	'file.upload': {
+		riskLevel: 'write',
+		description: 'Upload a file to the sandbox',
+	},
+	'file.list': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'List files in the sandbox',
+	},
+	'file.download': {
+		riskLevel: 'read',
+		description: 'Download a file from the sandbox',
+	},
+	'file.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a file from the sandbox',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof codeInterpreterEndpointsNested>;
 
 export const codeInterpreterAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
+		account: ['session_id', 'tenant_external_id'] as const,
 	},
 	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['session_id', 'tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -151,8 +215,7 @@ export function codeinterpreter<const T extends CodeInterpreterPluginOptions>(
 		webhookSchemas: codeInterpreterWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-codeinterpreter-signature' in headers;
+			return 'x-webhook-signature' in headers || 'x-signature' in headers;
 		},
 		pluginTenantWebhookMatcher: matchCodeInterpreterTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveCodeInterpreterOAuthWebhookTenantLink,
@@ -190,13 +253,23 @@ export function codeinterpreter<const T extends CodeInterpreterPluginOptions>(
 }
 
 export type {
-	ExampleEvent,
+	ExecutionCompletedEvent,
+	ExecutionFailedEvent,
+	FileReadyEvent,
 	CodeInterpreterWebhookOutputs,
 } from './webhooks/types';
 
 export type {
 	CodeInterpreterEndpointInputs,
 	CodeInterpreterEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	ExecuteCodeInput,
+	ExecuteCodeResponse,
+	UploadFileInput,
+	UploadFileResponse,
+	ListFilesInput,
+	ListFilesResponse,
+	DownloadFileInput,
+	DownloadFileResponse,
+	DeleteFileInput,
+	DeleteFileResponse,
 } from './endpoints/types';

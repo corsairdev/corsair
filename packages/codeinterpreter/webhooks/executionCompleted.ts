@@ -2,8 +2,8 @@ import { logEventFromContext } from 'corsair/core';
 import type { CodeInterpreterWebhooks } from '..';
 import { createCodeInterpreterMatch, verifyCodeInterpreterWebhookSignature } from './types';
 
-export const example: CodeInterpreterWebhooks['example'] = {
-	match: createCodeInterpreterMatch('example'),
+export const executionCompleted: CodeInterpreterWebhooks['executionCompleted'] = {
+	match: createCodeInterpreterMatch('execution.completed'),
 
 	handler: async (ctx, request) => {
 		const verification = verifyCodeInterpreterWebhookSignature(request, ctx.key);
@@ -16,11 +16,11 @@ export const example: CodeInterpreterWebhooks['example'] = {
 		}
 
 		const event = request.payload;
-		if (event.type !== 'example') {
+		if (event.type !== 'execution.completed') {
 			return { success: true, data: undefined };
 		}
 
-		await logEventFromContext(ctx, 'codeinterpreter.webhook.example', { ...event }, 'completed');
+		await logEventFromContext(ctx, 'codeinterpreter.execution.completed', { ...event }, 'completed');
 
 		return { success: true, data: event };
 	},

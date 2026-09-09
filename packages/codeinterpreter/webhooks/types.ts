@@ -1,4 +1,5 @@
 import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 
 export const CodeInterpreterWebhookPayloadSchema = z.object({
@@ -11,20 +12,60 @@ export type CodeInterpreterWebhookPayload = z.infer<
 	typeof CodeInterpreterWebhookPayloadSchema
 >;
 
-export const ExampleEventSchema = CodeInterpreterWebhookPayloadSchema.extend({
-	type: z.literal('example'),
-	data: z
-		.object({
-			id: z.string(),
-		})
-		.loose(),
+export const ExecutionCompletedEventSchema = CodeInterpreterWebhookPayloadSchema.extend({
+	type: z.literal('execution.completed'),
+	data: z.object({
+		session_id: z.string(),
+		execution_id: z.string().optional(),
+		exit_code: z.number(),
+		stdout: z.string().optional(),
+		stderr: z.string().optional(),
+		output_files: z
+			.array(
+				z.object({
+					id: z.string(),
+					name: z.string(),
+				}),
+			)
+			.optional(),
+	}),
 });
+export type ExecutionCompletedEvent = z.infer<typeof ExecutionCompletedEventSchema>;
 
-export type ExampleEvent = z.infer<typeof ExampleEventSchema>;
+export const ExecutionFailedEventSchema = CodeInterpreterWebhookPayloadSchema.extend({
+	type: z.literal('execution.failed'),
+	data: z.object({
+		session_id: z.string(),
+		execution_id: z.string().optional(),
+		error: z.string(),
+		exit_code: z.number().optional(),
+	}),
+});
+export type ExecutionFailedEvent = z.infer<typeof ExecutionFailedEventSchema>;
+
+export const FileReadyEventSchema = CodeInterpreterWebhookPayloadSchema.extend({
+	type: z.literal('file.ready'),
+	data: z.object({
+		session_id: z.string(),
+		file_id: z.string(),
+		filename: z.string(),
+		size: z.number().optional(),
+		mime_type: z.string().optional(),
+	}),
+});
+export type FileReadyEvent = z.infer<typeof FileReadyEventSchema>;
 
 export type CodeInterpreterWebhookOutputs = {
-	example: ExampleEvent;
+	executionCompleted: ExecutionCompletedEvent;
+	executionFailed: ExecutionFailedEvent;
+	fileReady: FileReadyEvent;
 };
+
+export const CodeInterpreterWebhookEventSchemas = {
+	executionCompleted: ExecutionCompletedEventSchema,
+	executionFailed: ExecutionFailedEventSchema,
+	fileReady: FileReadyEventSchema,
+} as const;
 
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
@@ -53,6 +94,32 @@ export function verifyCodeInterpreterWebhookSignature(
 	request: WebhookRequest<CodeInterpreterWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
+	if (!secret) {
+		return { valid: true };
+	}
+
+	const headers = request.headers || {};
+	const signature =
+		(headers['x-webhook-signature'] as string | undefined) ||
+		(headers['x-signature'] as string | undefined);
+
+	if (!signature) {
+		return { valid: false, error: 'Missing webhook signature header' };
+	}
+
+	const rawBody =
+		typeof request.rawBody === 'string'
+			? request.rawBody
+			: JSON.stringify(request.payload);
+
+	const expectedSignature = createHmac('sha256', secret).update(rawBody).digest('hex');
+
+	const sigBuffer = Buffer.from(signature);
+	const expectedBuffer = Buffer.from(expectedSignature);
+
+	if (sigBuffer.length !== expectedBuffer.length || !timingSafeEqual(sigBuffer, expectedBuffer)) {
+		return { valid: false, error: 'Invalid webhook signature' };
+	}
+
 	return { valid: true };
 }
