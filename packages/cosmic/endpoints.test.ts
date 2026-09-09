@@ -677,6 +677,21 @@ describe('Cosmic output schemas', () => {
 		expect(result.success).toBe(true);
 	});
 
+	it('objects find schema accepts props-projected partial objects', () => {
+		const result = CosmicEndpointOutputSchemas.objectsFind.safeParse({
+			objects: [{ id: 'abc123', title: 'T' }],
+			total: 1,
+		});
+		expect(result.success).toBe(true);
+	});
+
+	it('objects insert schema rejects a partial object', () => {
+		const result = CosmicEndpointOutputSchemas.objectsInsert.safeParse({
+			object: { id: 'abc123', title: 'T' },
+		});
+		expect(result.success).toBe(false);
+	});
+
 	it('objects find schema rejects a missing objects array', () => {
 		const result = CosmicEndpointOutputSchemas.objectsFind.safeParse({
 			total: 0,

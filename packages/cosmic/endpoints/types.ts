@@ -7,6 +7,21 @@ const StatusSchema = z.enum(['published', 'draft', 'any']);
 const CosmicObjectSchema = z
 	.object({
 		id: z.string(),
+		slug: z.string(),
+		title: z.string(),
+		type: z.string(),
+		status: z.string().optional(),
+		metadata: z.record(z.string(), z.unknown()).optional(),
+		created_at: z.string().optional(),
+		modified_at: z.string().optional(),
+		published_at: z.string().optional(),
+		bucket: z.string().optional(),
+	})
+	.passthrough();
+
+const ProjectedObjectSchema = z
+	.object({
+		id: z.string(),
 		slug: z.string().optional(),
 		title: z.string().optional(),
 		type: z.string().optional(),
@@ -19,11 +34,17 @@ const CosmicObjectSchema = z
 	})
 	.passthrough();
 
-const ObjectsEnvelopeSchema = z
+const ProjectedObjectsEnvelopeSchema = z
 	.object({
-		objects: z.array(CosmicObjectSchema),
+		objects: z.array(ProjectedObjectSchema),
 		total: z.number(),
 		limit: z.number().optional(),
+	})
+	.passthrough();
+
+const ProjectedSingleObjectEnvelopeSchema = z
+	.object({
+		object: ProjectedObjectSchema,
 	})
 	.passthrough();
 
@@ -393,7 +414,9 @@ const ObjectTypeDeleteInputSchema = z.object({
 
 export type CosmicObject = z.infer<typeof CosmicObjectSchema>;
 export type ObjectsFindInput = z.input<typeof ObjectsFindInputSchema>;
-export type ObjectsFindResponse = z.infer<typeof ObjectsEnvelopeSchema>;
+export type ObjectsFindResponse = z.infer<
+	typeof ProjectedObjectsEnvelopeSchema
+>;
 export type ObjectInsertInput = z.input<typeof ObjectInsertInputSchema>;
 export type ObjectUpdateInput = z.input<typeof ObjectUpdateInputSchema>;
 export type ObjectsBatchInput = z.input<typeof ObjectsBatchInputSchema>;
@@ -427,9 +450,9 @@ export type CosmicEndpointInputs = {
 };
 
 export type CosmicEndpointOutputs = {
-	objectsFind: ObjectsFindResponse;
-	objectsFindOne: z.infer<typeof SingleObjectEnvelopeSchema>;
-	objectsGetById: z.infer<typeof SingleObjectEnvelopeSchema>;
+	objectsFind: z.infer<typeof ProjectedObjectsEnvelopeSchema>;
+	objectsFindOne: z.infer<typeof ProjectedSingleObjectEnvelopeSchema>;
+	objectsGetById: z.infer<typeof ProjectedSingleObjectEnvelopeSchema>;
 	objectsInsert: z.infer<typeof SingleObjectEnvelopeSchema>;
 	objectsUpdate: z.infer<typeof SingleObjectEnvelopeSchema>;
 	objectsDelete: z.infer<typeof MessageEnvelopeSchema>;
@@ -473,9 +496,9 @@ export const CosmicEndpointInputSchemas = {
 } as const;
 
 export const CosmicEndpointOutputSchemas = {
-	objectsFind: ObjectsEnvelopeSchema,
-	objectsFindOne: SingleObjectEnvelopeSchema,
-	objectsGetById: SingleObjectEnvelopeSchema,
+	objectsFind: ProjectedObjectsEnvelopeSchema,
+	objectsFindOne: ProjectedSingleObjectEnvelopeSchema,
+	objectsGetById: ProjectedSingleObjectEnvelopeSchema,
 	objectsInsert: SingleObjectEnvelopeSchema,
 	objectsUpdate: SingleObjectEnvelopeSchema,
 	objectsDelete: MessageEnvelopeSchema,
