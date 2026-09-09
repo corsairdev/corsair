@@ -186,6 +186,7 @@ Below is a **minimal outline** you can copy when adding a new plugin. Replace `<
 ```yaml
 displayName: Slack
 description: "…"                 # Mintlify frontmatter
+domain: slack.com                # Optional brand hostname for plugin icons
 overviewNote: |                  # Optional markdown after the intro
   …
 recommendedAuth: managed         # Tab labeled Recommended; used in setup snippet
