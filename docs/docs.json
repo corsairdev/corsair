@@ -1812,6 +1812,14 @@
                 ]
               },
               {
+                "group": "Northflank",
+                "pages": [
+                  "plugins/northflank/overview",
+                  "plugins/northflank/api",
+                  "plugins/northflank/database"
+                ]
+              },
+              {
                 "group": "Notion",
                 "pages": [
                   "plugins/notion/overview",
