@@ -1,4 +1,9 @@
 export type {
+	BuildCorsairToolsOptions,
+	CorsairOperationTool,
+} from './adapters';
+export { buildCorsairTools, formFieldToZod } from './adapters';
+export type {
 	CorsairClientOptions,
 	CorsairManagementClient,
 } from './client';
@@ -79,6 +84,7 @@ export {
 	type AnyCorsairInstance,
 	type FormFieldSchema,
 	formatDocSchemaShape,
+	getInputSchema,
 	getSchema,
 	getStructuredSchema,
 	type ListOperationsOptions,
