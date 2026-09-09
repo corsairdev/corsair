@@ -7,9 +7,9 @@ const StatusSchema = z.enum(['published', 'draft', 'any']);
 const CosmicObjectSchema = z
 	.object({
 		id: z.string(),
-		slug: z.string(),
-		title: z.string(),
-		type: z.string(),
+		slug: z.string().optional(),
+		title: z.string().optional(),
+		type: z.string().optional(),
 		status: z.string().optional(),
 		metadata: z.record(z.string(), z.unknown()).optional(),
 		created_at: z.string().optional(),

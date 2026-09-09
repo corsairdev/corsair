@@ -103,7 +103,7 @@ export async function makeCosmicUploadRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method: 'POST',
 		url: path,
-		body: form as unknown as Record<string, unknown>,
+		body: form,
 	};
 
 	return await request<T>(

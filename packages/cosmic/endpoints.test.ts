@@ -192,7 +192,7 @@ describe('Cosmic objects endpoints', () => {
 		expect(mockRead).toHaveBeenCalledWith(
 			'/v3/buckets/my-bucket/objects/5ff75368c2dfa81a91695cec',
 			'test-write-key',
-			expect.anything(),
+			{ props: undefined, status: undefined, depth: undefined },
 		);
 		expect(result).toEqual({ object: docObject });
 	});
@@ -361,7 +361,7 @@ describe('Cosmic revisions endpoints', () => {
 		expect(mockRead).toHaveBeenCalledWith(
 			'/v3/buckets/my-bucket/objects/obj123/revisions/rev123',
 			'test-write-key',
-			expect.anything(),
+			{ props: undefined },
 		);
 		expect(result).toEqual({ revision: docRevision });
 	});
@@ -615,7 +615,16 @@ describe('Cosmic bucket slug resolution', () => {
 		expect(mockRead).toHaveBeenCalledWith(
 			'/v3/buckets/my-bucket/objects',
 			'test-write-key',
-			expect.anything(),
+			{
+				query: '{"type":"posts"}',
+				props: undefined,
+				status: undefined,
+				sort: undefined,
+				limit: undefined,
+				skip: undefined,
+				after: undefined,
+				depth: undefined,
+			},
 		);
 	});
 
@@ -647,7 +656,16 @@ describe('Cosmic bucket slug resolution', () => {
 		expect(mockRead).toHaveBeenCalledWith(
 			'/v3/buckets/my-bucket/objects',
 			'read-key',
-			expect.anything(),
+			{
+				query: '{"type":"posts"}',
+				props: undefined,
+				status: undefined,
+				sort: undefined,
+				limit: undefined,
+				skip: undefined,
+				after: undefined,
+				depth: undefined,
+			},
 		);
 	});
 });

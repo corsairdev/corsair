@@ -31,7 +31,7 @@ export const find: CosmicEndpoints['mediaFind'] = async (ctx, input) => {
 		`/v3/buckets/${slug}/media`,
 		resolveReadKey(ctx),
 		{
-			query: parsed.query ? encodeQueryFilter(parsed.query) : undefined,
+			...(parsed.query ? { query: encodeQueryFilter(parsed.query) } : {}),
 			props: parsed.props,
 			sort: parsed.sort,
 			limit: parsed.limit,

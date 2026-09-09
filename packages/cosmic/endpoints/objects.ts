@@ -15,14 +15,17 @@ import {
 export const find: CosmicEndpoints['objectsFind'] = async (ctx, input) => {
 	const parsed = CosmicEndpointInputSchemas.objectsFind.parse(input);
 	const slug = resolveBucketSlug(parsed, ctx);
+	const filter = {
+		...(parsed.query ?? {}),
+		...(parsed.type ? { type: parsed.type } : {}),
+	};
 	const response = await makeCosmicReadRequest<ObjectsFindResponse>(
 		`/v3/buckets/${slug}/objects`,
 		resolveReadKey(ctx),
 		{
-			query: encodeQueryFilter({
-				...(parsed.query ?? {}),
-				...(parsed.type ? { type: parsed.type } : {}),
-			}),
+			...(Object.keys(filter).length > 0
+				? { query: encodeQueryFilter(filter) }
+				: {}),
 			props: parsed.props,
 			status: parsed.status,
 			sort: parsed.sort,
