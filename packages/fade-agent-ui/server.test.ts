@@ -1,15 +1,6 @@
-/**
- * fade-agent-ui — unit tests.
- *
- * Tests verify the settings logic, job-queue helpers, and webhook schema
- * without starting the Express server or making real API calls.
- */
-
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-
-// ── Settings key list (mirrors server.ts) ─────────────────────────────────────
 
 const ALL_SETTING_KEYS = [
 	'provider',
@@ -26,8 +17,6 @@ const ALL_SETTING_KEYS = [
 	'youtubeClientSecret',
 ] as const;
 type SettingKey = (typeof ALL_SETTING_KEYS)[number];
-
-// ── Inline minimal settings helpers for testability ───────────────────────────
 
 function makeRuntimeConfig(): Record<SettingKey, string> {
 	return Object.fromEntries(ALL_SETTING_KEYS.map((k) => [k, ''])) as Record<
@@ -60,7 +49,7 @@ function saveSettings(
 	fs.writeFileSync(filePath, JSON.stringify(config, null, 2), 'utf8');
 }
 
-// ── Job queue helpers ─────────────────────────────────────────────────────────
+//   Job queue helpers
 
 function makeQueue() {
 	const q: string[] = [];
@@ -72,7 +61,7 @@ function makeQueue() {
 	};
 }
 
-// ── Tests ─────────────────────────────────────────────────────────────────────
+//   Tests
 
 describe('settings key list', () => {
 	it('contains all expected keys', () => {
