@@ -1,0 +1,808 @@
+---
+title: API
+description: "API reference for Northflank: every `northflank.api.*` operation with input and output types."
+---
+
+Every `northflank.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Environments
+
+### listPreviews
+
+`environments.listPreviews`
+
+List preview environments for a preview blueprint
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.environments.listPreviews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `previewBlueprintId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  previewEnvironments: {
+  }[],
+  pagination?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Plans
+
+### list
+
+`plans.list`
+
+List available Northflank resource plans
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.plans.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  plans: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a new Northflank project
+
+**Risk:** `write`
+
+```ts
+await corsair.northflank.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `region` | `string` | Yes | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get details of a Northflank project
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List Northflank projects
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  projects: {
+  }[],
+  pagination?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update an existing Northflank project
+
+**Risk:** `write`
+
+```ts
+await corsair.northflank.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Regions
+
+### list
+
+`regions.list`
+
+List available Northflank regions
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.regions.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  regions: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Secrets
+
+### create
+
+`secrets.create`
+
+Create a new Northflank secret
+
+**Risk:** `write`
+
+```ts
+await corsair.northflank.api.secrets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `secretType` | `secret \| variable` | No | — |
+| `priority` | `number` | No | — |
+| `data` | `object` | No | — |
+| `useAsEnvironmentVariable` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`secrets.get`
+
+Get details of a Northflank secret
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.secrets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `secretId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`secrets.list`
+
+List secrets in a Northflank project
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.secrets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  secrets: {
+  }[],
+  pagination?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`secrets.update`
+
+Update an existing Northflank secret
+
+**Risk:** `write`
+
+```ts
+await corsair.northflank.api.secrets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `secretId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `data` | `object` | No | — |
+| `priority` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Services
+
+### createCombined
+
+`services.createCombined`
+
+Create a new combined service in a project
+
+**Risk:** `write`
+
+```ts
+await corsair.northflank.api.services.createCombined({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `billing` | `object` | No | — |
+| `deployment` | `object` | No | — |
+| `buildSource` | `object` | No | — |
+| `vcsData` | `object` | No | — |
+| `buildSettings` | `object` | No | — |
+| `runtimeEnvironment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="deployment full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="buildSource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="vcsData full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="buildSettings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="runtimeEnvironment full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`services.get`
+
+Get details of a Northflank service
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.services.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`services.list`
+
+List services in a Northflank project
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.services.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  services: {
+  }[],
+  pagination?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateCombined
+
+`services.updateCombined`
+
+Update an existing combined service in a project
+
+**Risk:** `write`
+
+```ts
+await corsair.northflank.api.services.updateCombined({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `serviceId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `billing` | `object` | No | — |
+| `deployment` | `object` | No | — |
+| `buildSource` | `object` | No | — |
+| `vcsData` | `object` | No | — |
+| `buildSettings` | `object` | No | — |
+| `runtimeEnvironment` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="deployment full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="buildSource full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="vcsData full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="buildSettings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="runtimeEnvironment full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
