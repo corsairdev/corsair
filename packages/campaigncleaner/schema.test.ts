@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
-import { CampaignCleanerAPIError, makeCampaignCleanerRequest } from './client';
+import {
+	CampaignCleanerAPIError,
+	makeCampaignCleanerRequest,
+	parseRetryAfterMs,
+} from './client';
 import { CampaignCleanerEndpoints } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import type { CampaignCleanerContext } from './index';
@@ -63,6 +67,15 @@ describe('Campaign Cleaner plugin shape', () => {
 				{
 					authType: 'api_key',
 					keys: { get_api_key: async () => undefined },
+				} as never,
+				'endpoint',
+			),
+		).rejects.toMatchObject({ name: 'AuthMissingError' });
+		await expect(
+			plugin.keyBuilder?.(
+				{
+					authType: 'api_key',
+					keys: { get_api_key: async () => '   ' },
 				} as never,
 				'endpoint',
 			),
@@ -223,6 +236,20 @@ describe('PDF analysis', () => {
 		);
 	});
 
+	it('logs delete failure as failed', async () => {
+		mockRequest.mockResolvedValueOnce({ status: 'failure', error: 'missing' });
+		const result = await CampaignCleanerEndpoints.deleteCampaign(ctx, {
+			campaignId: campaign.id,
+		});
+		expect(result.status).toBe('failure');
+		expect(mockLog).toHaveBeenCalledWith(
+			ctx,
+			'campaign_cleaner.campaign.delete',
+			{ campaignId: campaign.id },
+			'failed',
+		);
+	});
+
 	it('treats numeric Retry-After as seconds', async () => {
 		global.fetch = jest.fn().mockResolvedValue({
 			ok: false,
@@ -245,6 +272,15 @@ describe('PDF analysis', () => {
 			retryAfter: 45_000,
 			message: 'slow down',
 		});
+	});
+
+	it('parses Retry-After HTTP-date as a non-negative delay', () => {
+		const delay = parseRetryAfterMs(
+			new Date(Date.now() + 30_000).toUTCString(),
+		);
+		expect(delay).toBeGreaterThan(0);
+		expect(delay).toBeLessThanOrEqual(30_000);
+		expect(parseRetryAfterMs('not-a-delay')).toBeUndefined();
 	});
 });
 

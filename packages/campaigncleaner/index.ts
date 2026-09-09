@@ -161,7 +161,7 @@ export function campaigncleaner<const T extends CampaignCleanerPluginOptions>(
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const key = await ctx.keys.get_api_key();
-				if (key) return key;
+				if (key?.trim()) return key.trim();
 			}
 			throw new AuthMissingError('campaigncleaner', 'api_key');
 		},

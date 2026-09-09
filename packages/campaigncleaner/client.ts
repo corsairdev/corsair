@@ -1,24 +1,36 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { GetCampaignPdfAnalysisResponse } from './endpoints/types';
 
 const CAMPAIGNCLEANER_API_BASE = 'https://api.campaigncleaner.com';
 const REQUEST_TIMEOUT_MS = 20_000;
 
+type CampaignIdBody = { campaign: { id: string } };
+
 export class CampaignCleanerAPIError extends Error {
+	public readonly status?: number;
+	public readonly retryAfter?: number;
+	// unknown is necessary because Campaign Cleaner error payloads vary by endpoint; a closed error body union is infeasible because docs only guarantee an optional "error" string
+	public readonly body?: unknown;
+
 	constructor(
 		message: string,
-		public readonly status?: number,
-		public readonly retryAfter?: number,
-		public readonly body?: unknown,
+		status?: number,
+		retryAfter?: number,
+		// unknown is necessary because Campaign Cleaner error payloads vary by endpoint; a closed error body union is infeasible because docs only guarantee an optional "error" string
+		body?: unknown,
 	) {
 		super(message);
 		this.name = 'CampaignCleanerAPIError';
+		this.status = status;
+		this.retryAfter = retryAfter;
+		this.body = body;
 	}
 }
 
 type CampaignCleanerRequestOptions = {
 	method?: 'GET' | 'POST';
-	body?: Record<string, unknown>;
+	body?: CampaignIdBody;
 	binary?: boolean;
 };
 
@@ -37,23 +49,32 @@ function config(apiKey: string): OpenAPIConfig {
 	};
 }
 
-function errorMessageFromBody(body: unknown, fallback: string): string {
-	if (typeof body !== 'object' || body === null) return fallback;
-	const obj = body as { error?: unknown; message?: unknown; detail?: unknown };
-	if (typeof obj.error === 'string' && obj.error.length > 0) return obj.error;
-	if (typeof obj.message === 'string' && obj.message.length > 0) {
-		return obj.message;
-	}
-	if (typeof obj.detail === 'string' && obj.detail.length > 0)
-		return obj.detail;
-	return fallback;
+function stringProp(value: object, key: string): string | undefined {
+	const field = Object.getOwnPropertyDescriptor(value, key)?.value;
+	return typeof field === 'string' && field.length > 0 ? field : undefined;
 }
 
-function parseRetryAfterMs(header: string | null): number | undefined {
+function errorMessageFromBody(
+	// unknown is necessary because JSON error bodies are untyped at the HTTP boundary; a closed body union is infeasible because Campaign Cleaner documents only an optional error string
+	body: unknown,
+	fallback: string,
+): string {
+	if (typeof body !== 'object' || body === null) return fallback;
+	return (
+		stringProp(body, 'error') ??
+		stringProp(body, 'message') ??
+		stringProp(body, 'detail') ??
+		fallback
+	);
+}
+
+export function parseRetryAfterMs(header: string | null): number | undefined {
 	if (!header) return undefined;
 	const seconds = Number(header);
-	if (!Number.isNaN(seconds)) return seconds * 1000;
-	return undefined;
+	if (!Number.isNaN(seconds)) return Math.max(0, seconds * 1000);
+	const at = Date.parse(header);
+	if (Number.isNaN(at)) return undefined;
+	return Math.max(0, at - Date.now());
 }
 
 export async function makeCampaignCleanerRequest<T>(
@@ -64,7 +85,12 @@ export async function makeCampaignCleanerRequest<T>(
 	const { method = 'GET', body, binary = false } = options;
 
 	if (binary) {
-		return makeCampaignCleanerBinaryRequest<T>(endpoint, apiKey, method, body);
+		return makeCampaignCleanerBinaryRequest(
+			endpoint,
+			apiKey,
+			method,
+			body,
+		) as Promise<T>;
 	}
 
 	const requestOptions: ApiRequestOptions = {
@@ -76,17 +102,17 @@ export async function makeCampaignCleanerRequest<T>(
 
 	try {
 		return await request<T>(config(apiKey), requestOptions);
-	} catch (error) {
+	} catch (error: unknown) {
 		throw normalizeCampaignCleanerError(error);
 	}
 }
 
-async function makeCampaignCleanerBinaryRequest<T>(
+async function makeCampaignCleanerBinaryRequest(
 	endpoint: string,
 	apiKey: string,
 	method: 'GET' | 'POST',
-	body?: Record<string, unknown>,
-): Promise<T> {
+	body?: CampaignIdBody,
+): Promise<GetCampaignPdfAnalysisResponse> {
 	const path = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
 	const url = `${CAMPAIGNCLEANER_API_BASE}/${path}`;
 
@@ -105,11 +131,13 @@ async function makeCampaignCleanerBinaryRequest<T>(
 
 		if (!response.ok) {
 			const retryAfter = parseRetryAfterMs(response.headers.get('Retry-After'));
-			let parsed: unknown;
+			let parsed: object | undefined;
 			const contentType = response.headers.get('Content-Type') ?? '';
 			if (contentType.toLowerCase().includes('application/json')) {
 				try {
-					parsed = await response.json();
+					// unknown is necessary because response.json() is untyped; a closed JSON union is infeasible because error bodies are not schema-published
+					const json: unknown = await response.json();
+					parsed = typeof json === 'object' && json !== null ? json : undefined;
 				} catch {
 					parsed = undefined;
 				}
@@ -141,13 +169,14 @@ async function makeCampaignCleanerBinaryRequest<T>(
 		return {
 			content_type: contentType,
 			content_base64: bytes.toString('base64'),
-		} as T;
-	} catch (error) {
+		};
+	} catch (error: unknown) {
 		throw normalizeCampaignCleanerError(error);
 	}
 }
 
 function normalizeCampaignCleanerError(
+	// unknown is necessary because the transport can throw any value; a closed error union is infeasible because fetch-level failures are untyped
 	error: unknown,
 ): CampaignCleanerAPIError {
 	if (error instanceof CampaignCleanerAPIError) return error;
