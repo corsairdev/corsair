@@ -1,5 +1,4 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import { ApiError } from 'corsair/http';
 import type { GetCampaignPdfAnalysisResponse } from './endpoints/types';
 
 const CAMPAIGNCLEANER_API_BASE = 'https://api.campaigncleaner.com';
@@ -34,19 +33,28 @@ type CampaignCleanerRequestOptions = {
 	binary?: boolean;
 };
 
-function config(apiKey: string): OpenAPIConfig {
-	return {
-		BASE: CAMPAIGNCLEANER_API_BASE,
-		VERSION: '1.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: undefined,
-		TIMEOUT: REQUEST_TIMEOUT_MS,
-		HEADERS: {
+function campaignCleanerUrl(endpoint: string): string {
+	const path = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+	return `${CAMPAIGNCLEANER_API_BASE}/${path}`;
+}
+
+async function campaignCleanerFetch(
+	endpoint: string,
+	apiKey: string,
+	method: 'GET' | 'POST',
+	body?: CampaignIdBody,
+): Promise<Response> {
+	return fetch(campaignCleanerUrl(endpoint), {
+		method,
+		headers: {
 			'Content-Type': 'application/json',
 			'X-CC-API-Key': apiKey,
 		},
-	};
+		body: method === 'POST' ? JSON.stringify(body) : undefined,
+		credentials: 'omit',
+		redirect: 'error',
+		signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+	});
 }
 
 function stringProp(value: object, key: string): string | undefined {
@@ -93,15 +101,33 @@ export async function makeCampaignCleanerRequest<T>(
 		) as Promise<T>;
 	}
 
-	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body: method === 'POST' ? body : undefined,
-		mediaType: 'application/json',
-	};
-
 	try {
-		return await request<T>(config(apiKey), requestOptions);
+		const response = await campaignCleanerFetch(endpoint, apiKey, method, body);
+		if (!response.ok) {
+			let parsed: object | undefined;
+			const contentType = response.headers.get('Content-Type') ?? '';
+			if (contentType.toLowerCase().includes('application/json')) {
+				try {
+					// unknown is necessary because response.json() is untyped; a closed JSON union is infeasible because error bodies are not schema-published
+					const json: unknown = await response.json();
+					parsed = typeof json === 'object' && json !== null ? json : undefined;
+				} catch {
+					parsed = undefined;
+				}
+			}
+			throw new CampaignCleanerAPIError(
+				errorMessageFromBody(
+					parsed,
+					`Campaign Cleaner API request failed with status ${response.status}`,
+				),
+				response.status,
+				parseRetryAfterMs(response.headers.get('Retry-After')),
+				parsed,
+			);
+		}
+		// unknown is necessary because response.json() is untyped; a closed success union is infeasible because each endpoint has its own Zod output schema
+		const json: unknown = await response.json();
+		return json as T;
 	} catch (
 		// unknown is necessary because the transport can throw any value; a closed error union is infeasible because fetch-level failures are untyped
 		error: unknown
@@ -116,21 +142,8 @@ async function makeCampaignCleanerBinaryRequest(
 	method: 'GET' | 'POST',
 	body?: CampaignIdBody,
 ): Promise<GetCampaignPdfAnalysisResponse> {
-	const path = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-	const url = `${CAMPAIGNCLEANER_API_BASE}/${path}`;
-
 	try {
-		const response = await fetch(url, {
-			method,
-			headers: {
-				'Content-Type': 'application/json',
-				'X-CC-API-Key': apiKey,
-			},
-			body: method === 'POST' ? JSON.stringify(body) : undefined,
-			credentials: 'omit',
-			redirect: 'error',
-			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-		});
+		const response = await campaignCleanerFetch(endpoint, apiKey, method, body);
 
 		if (!response.ok) {
 			const retryAfter = parseRetryAfterMs(response.headers.get('Retry-After'));

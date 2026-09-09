@@ -1,5 +1,4 @@
 import { logEventFromContext } from 'corsair/core';
-import { ApiError, request } from 'corsair/http';
 import {
 	CampaignCleanerAPIError,
 	makeCampaignCleanerRequest,
@@ -17,13 +16,20 @@ jest.mock('corsair/core', () => ({
 	AuthMissingError: jest.requireActual('corsair/core').AuthMissingError,
 }));
 
-jest.mock('corsair/http', () => ({
-	...jest.requireActual('corsair/http'),
-	request: jest.fn(),
-}));
-
-const mockRequest = request as jest.Mock;
 const mockLog = logEventFromContext as jest.Mock;
+const fetchMock = jest.fn();
+
+function mockJson(body: object, status = 200) {
+	fetchMock.mockResolvedValueOnce({
+		ok: status >= 200 && status < 300,
+		status,
+		headers: {
+			get: (name: string) =>
+				name.toLowerCase() === 'content-type' ? 'application/json' : null,
+		},
+		json: async () => body,
+	});
+}
 
 const ctx = {
 	key: 'test-api-key',
@@ -41,6 +47,8 @@ const campaign = {
 
 beforeEach(() => {
 	jest.clearAllMocks();
+	fetchMock.mockReset();
+	global.fetch = fetchMock as unknown as typeof fetch;
 });
 
 describe('Campaign Cleaner plugin shape', () => {
@@ -81,6 +89,20 @@ describe('Campaign Cleaner plugin shape', () => {
 			),
 		).rejects.toMatchObject({ name: 'AuthMissingError' });
 	});
+
+	it('rejects whitespace-only options.key', async () => {
+		const plugin = campaigncleaner({ key: '   ' });
+		await expect(
+			plugin.keyBuilder?.({} as never, 'endpoint'),
+		).rejects.toMatchObject({ name: 'AuthMissingError' });
+	});
+
+	it('trims options.key', async () => {
+		const plugin = campaigncleaner({ key: '  abc  ' });
+		await expect(plugin.keyBuilder?.({} as never, 'endpoint')).resolves.toBe(
+			'abc',
+		);
+	});
 });
 
 describe('docs-labeled schema', () => {
@@ -100,20 +122,19 @@ describe('docs-labeled schema', () => {
 
 describe('endpoints', () => {
 	it('deleteCampaign POSTs { campaign: { id } }', async () => {
-		mockRequest.mockResolvedValueOnce({ status: 'success' });
+		mockJson({ status: 'success' });
 		const result = await CampaignCleanerEndpoints.deleteCampaign(ctx, {
 			campaignId: campaign.id,
 		});
-		expect(mockRequest).toHaveBeenCalledWith(
+		expect(fetchMock).toHaveBeenCalledWith(
+			'https://api.campaigncleaner.com/v1/delete_campaign',
 			expect.objectContaining({
-				HEADERS: expect.objectContaining({ 'X-CC-API-Key': 'test-api-key' }),
-			}),
-			{
 				method: 'POST',
-				url: '/v1/delete_campaign',
-				body: { campaign: { id: campaign.id } },
-				mediaType: 'application/json',
-			},
+				redirect: 'error',
+				credentials: 'omit',
+				body: JSON.stringify({ campaign: { id: campaign.id } }),
+				headers: expect.objectContaining({ 'X-CC-API-Key': 'test-api-key' }),
+			}),
 		);
 		expect(result.status).toBe('success');
 		expect(mockLog).toHaveBeenCalledWith(
@@ -125,36 +146,33 @@ describe('endpoints', () => {
 	});
 
 	it('getCampaignList GETs /v1/get_campaign_list', async () => {
-		mockRequest.mockResolvedValueOnce({ campaign_list: [campaign] });
+		mockJson({ campaign_list: [campaign] });
 		const result = await CampaignCleanerEndpoints.getCampaignList(ctx, {});
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.anything(),
-			expect.objectContaining({
-				method: 'GET',
-				url: '/v1/get_campaign_list',
-			}),
+		expect(fetchMock).toHaveBeenCalledWith(
+			'https://api.campaigncleaner.com/v1/get_campaign_list',
+			expect.objectContaining({ method: 'GET', redirect: 'error' }),
 		);
 		expect(result.campaign_list[0]?.id).toBe(campaign.id);
 	});
 
 	it('getCampaignStatus POSTs campaign id', async () => {
-		mockRequest.mockResolvedValueOnce({ campaign_status: campaign });
+		mockJson({ campaign_status: campaign });
 		const result = await CampaignCleanerEndpoints.getCampaignStatus(ctx, {
 			campaignId: campaign.id,
 		});
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.anything(),
+		expect(fetchMock).toHaveBeenCalledWith(
+			'https://api.campaigncleaner.com/v1/get_campaign_status',
 			expect.objectContaining({
 				method: 'POST',
-				url: '/v1/get_campaign_status',
-				body: { campaign: { id: campaign.id } },
+				redirect: 'error',
+				body: JSON.stringify({ campaign: { id: campaign.id } }),
 			}),
 		);
 		expect(result.campaign_status.status).toBe('completed');
 	});
 
 	it('getCredits GETs /v1/get_credits', async () => {
-		mockRequest.mockResolvedValueOnce({ credits: 987 });
+		mockJson({ credits: 987 });
 		const result = await CampaignCleanerEndpoints.getCredits(ctx, {});
 		expect(result.credits).toBe(987);
 	});
@@ -165,17 +183,17 @@ describe('endpoints', () => {
 				campaignId: 1 as unknown as string,
 			}),
 		).rejects.toThrow();
-		expect(mockRequest).not.toHaveBeenCalled();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects invalid list and status payloads', async () => {
-		mockRequest.mockResolvedValueOnce({
+		mockJson({
 			campaign_list: [{ ...campaign, status: 'nope' }],
 		});
 		await expect(
 			CampaignCleanerEndpoints.getCampaignList(ctx, {}),
 		).rejects.toThrow();
-		mockRequest.mockResolvedValueOnce({});
+		mockJson({});
 		await expect(
 			CampaignCleanerEndpoints.getCampaignStatus(ctx, {
 				campaignId: campaign.id,
@@ -187,14 +205,13 @@ describe('endpoints', () => {
 describe('PDF analysis', () => {
 	it('returns base64 PDF bytes', async () => {
 		const pdf = Buffer.from('%PDF-1.4 test');
-		const fetchMock = jest.fn().mockResolvedValue({
+		fetchMock.mockResolvedValue({
 			ok: true,
 			status: 200,
 			headers: { get: () => 'application/pdf' },
 			arrayBuffer: async () =>
 				pdf.buffer.slice(pdf.byteOffset, pdf.byteOffset + pdf.byteLength),
 		});
-		global.fetch = fetchMock as unknown as typeof fetch;
 
 		const result = await makeCampaignCleanerRequest(
 			'/v1/get_campaign_pdf_analysis',
@@ -237,7 +254,7 @@ describe('PDF analysis', () => {
 	});
 
 	it('logs delete failure as failed', async () => {
-		mockRequest.mockResolvedValueOnce({ status: 'failure', error: 'missing' });
+		mockJson({ status: 'failure', error: 'missing' });
 		const result = await CampaignCleanerEndpoints.deleteCampaign(ctx, {
 			campaignId: campaign.id,
 		});
@@ -251,7 +268,7 @@ describe('PDF analysis', () => {
 	});
 
 	it('treats numeric Retry-After as seconds', async () => {
-		global.fetch = jest.fn().mockResolvedValue({
+		fetchMock.mockResolvedValue({
 			ok: false,
 			status: 429,
 			headers: {
@@ -259,7 +276,7 @@ describe('PDF analysis', () => {
 					name.toLowerCase() === 'retry-after' ? '45' : 'application/json',
 			},
 			json: async () => ({ error: 'slow down' }),
-		}) as unknown as typeof fetch;
+		});
 
 		await expect(
 			makeCampaignCleanerRequest('/v1/get_campaign_pdf_analysis', 'k', {
@@ -286,19 +303,7 @@ describe('PDF analysis', () => {
 
 describe('JSON error mapping', () => {
 	it('surfaces Campaign Cleaner error bodies', async () => {
-		mockRequest.mockRejectedValueOnce(
-			new ApiError(
-				{ method: 'GET', url: '/v1/get_credits' },
-				{
-					url: 'https://api.campaigncleaner.com/v1/get_credits',
-					ok: false,
-					status: 401,
-					statusText: 'Unauthorized',
-					body: { error: 'invalid key' },
-				},
-				'Unauthorized',
-			),
-		);
+		mockJson({ error: 'invalid key' }, 401);
 		await expect(
 			makeCampaignCleanerRequest('/v1/get_credits', 'k'),
 		).rejects.toMatchObject({
@@ -306,6 +311,10 @@ describe('JSON error mapping', () => {
 			message: 'invalid key',
 			status: 401,
 		});
+		expect(fetchMock).toHaveBeenCalledWith(
+			'https://api.campaigncleaner.com/v1/get_credits',
+			expect.objectContaining({ redirect: 'error', credentials: 'omit' }),
+		);
 	});
 });
 

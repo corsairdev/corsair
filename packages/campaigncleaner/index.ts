@@ -158,7 +158,9 @@ export function campaigncleaner<const T extends CampaignCleanerPluginOptions>(
 		pluginWebhookMatcher: undefined,
 		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
 		keyBuilder: async (ctx: CampaignCleanerKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) return options.key;
+			if (source === 'endpoint' && options.key?.trim()) {
+				return options.key.trim();
+			}
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const key = await ctx.keys.get_api_key();
 				if (key?.trim()) return key.trim();
