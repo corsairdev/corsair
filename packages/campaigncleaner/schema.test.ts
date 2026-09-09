@@ -48,7 +48,7 @@ const campaign = {
 beforeEach(() => {
 	jest.clearAllMocks();
 	fetchMock.mockReset();
-	global.fetch = fetchMock as unknown as typeof fetch;
+	globalThis.fetch = fetchMock as typeof globalThis.fetch;
 });
 
 describe('Campaign Cleaner plugin shape', () => {
@@ -180,7 +180,7 @@ describe('endpoints', () => {
 	it('rejects invalid delete input before calling the API', async () => {
 		await expect(
 			CampaignCleanerEndpoints.deleteCampaign(ctx, {
-				campaignId: 1 as unknown as string,
+				campaignId: 1 as never,
 			}),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();

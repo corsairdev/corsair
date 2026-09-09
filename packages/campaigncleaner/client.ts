@@ -58,7 +58,8 @@ async function campaignCleanerFetch(
 }
 
 function stringProp(value: object, key: string): string | undefined {
-	const field = Object.getOwnPropertyDescriptor(value, key)?.value;
+	if (!(key in value)) return undefined;
+	const field = Reflect.get(value, key);
 	return typeof field === 'string' && field.length > 0 ? field : undefined;
 }
 
@@ -85,6 +86,31 @@ export function parseRetryAfterMs(header: string | null): number | undefined {
 	return Math.max(0, at - Date.now());
 }
 
+async function readJsonObject(response: Response): Promise<object | undefined> {
+	try {
+		// unknown is necessary because response.json() is untyped; a closed JSON union is infeasible because error bodies are not schema-published
+		const json: unknown = await response.json();
+		return typeof json === 'object' && json !== null ? json : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+// unknown is necessary because the transport can throw any value; a closed error union is infeasible because fetch-level failures are untyped
+function wrapError(error: unknown): never {
+	if (error instanceof CampaignCleanerAPIError) throw error;
+	if (error instanceof ApiError) {
+		throw new CampaignCleanerAPIError(
+			errorMessageFromBody(error.body, error.message),
+			error.status,
+			error.retryAfter,
+			error.body,
+		);
+	}
+	if (error instanceof Error) throw new CampaignCleanerAPIError(error.message);
+	throw new CampaignCleanerAPIError('Unknown error');
+}
+
 export async function makeCampaignCleanerRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -104,17 +130,10 @@ export async function makeCampaignCleanerRequest<T>(
 	try {
 		const response = await campaignCleanerFetch(endpoint, apiKey, method, body);
 		if (!response.ok) {
-			let parsed: object | undefined;
 			const contentType = response.headers.get('Content-Type') ?? '';
-			if (contentType.toLowerCase().includes('application/json')) {
-				try {
-					// unknown is necessary because response.json() is untyped; a closed JSON union is infeasible because error bodies are not schema-published
-					const json: unknown = await response.json();
-					parsed = typeof json === 'object' && json !== null ? json : undefined;
-				} catch {
-					parsed = undefined;
-				}
-			}
+			const parsed = contentType.toLowerCase().includes('application/json')
+				? await readJsonObject(response)
+				: undefined;
 			throw new CampaignCleanerAPIError(
 				errorMessageFromBody(
 					parsed,
@@ -128,11 +147,8 @@ export async function makeCampaignCleanerRequest<T>(
 		// unknown is necessary because response.json() is untyped; a closed success union is infeasible because each endpoint has its own Zod output schema
 		const json: unknown = await response.json();
 		return json as T;
-	} catch (
-		// unknown is necessary because the transport can throw any value; a closed error union is infeasible because fetch-level failures are untyped
-		error: unknown
-	) {
-		throw normalizeCampaignCleanerError(error);
+	} catch (error) {
+		wrapError(error);
 	}
 }
 
@@ -147,17 +163,10 @@ async function makeCampaignCleanerBinaryRequest(
 
 		if (!response.ok) {
 			const retryAfter = parseRetryAfterMs(response.headers.get('Retry-After'));
-			let parsed: object | undefined;
 			const contentType = response.headers.get('Content-Type') ?? '';
-			if (contentType.toLowerCase().includes('application/json')) {
-				try {
-					// unknown is necessary because response.json() is untyped; a closed JSON union is infeasible because error bodies are not schema-published
-					const json: unknown = await response.json();
-					parsed = typeof json === 'object' && json !== null ? json : undefined;
-				} catch {
-					parsed = undefined;
-				}
-			}
+			const parsed = contentType.toLowerCase().includes('application/json')
+				? await readJsonObject(response)
+				: undefined;
 			throw new CampaignCleanerAPIError(
 				errorMessageFromBody(
 					parsed,
@@ -186,27 +195,7 @@ async function makeCampaignCleanerBinaryRequest(
 			content_type: contentType,
 			content_base64: bytes.toString('base64'),
 		};
-	} catch (
-		// unknown is necessary because the transport can throw any value; a closed error union is infeasible because fetch-level failures are untyped
-		error: unknown
-	) {
-		throw normalizeCampaignCleanerError(error);
+	} catch (error) {
+		wrapError(error);
 	}
-}
-
-function normalizeCampaignCleanerError(
-	// unknown is necessary because the transport can throw any value; a closed error union is infeasible because fetch-level failures are untyped
-	error: unknown,
-): CampaignCleanerAPIError {
-	if (error instanceof CampaignCleanerAPIError) return error;
-	if (error instanceof ApiError) {
-		return new CampaignCleanerAPIError(
-			errorMessageFromBody(error.body, error.message),
-			error.status,
-			error.retryAfter,
-			error.body,
-		);
-	}
-	if (error instanceof Error) return new CampaignCleanerAPIError(error.message);
-	return new CampaignCleanerAPIError('Unknown error');
 }
