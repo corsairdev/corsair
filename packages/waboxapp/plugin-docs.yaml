@@ -1,0 +1,18 @@
+displayName: Waboxapp
+description: WhatsApp gateway API for sending messages and receiving inbound events.
+examples:
+  read:
+    path: accounts.getStatus
+    title: Get session status
+    args: {}
+  write:
+    path: messages.sendChat
+    title: Send a text message
+    args:
+      to: '34666789123'
+      text: Hello from Corsair
+exampleWebhook:
+  path: message.received
+  note: Fires when a WhatsApp message arrives.
+  after: |
+    console.log('Waboxapp message:', result.data?.uid, result.data?.contact?.uid);

@@ -1,20 +1,28 @@
 # Waboxapp Plugin
 
-Integrates [Waboxapp](https://www.waboxapp.com), a WhatsApp gateway API, with Corsair.
+Waboxapp WhatsApp gateway API for Corsair.
 
-## What this plugin does
+## Auth
 
-- Wraps Waboxapp's HTTP API (`https://www.waboxapp.com/api`) for sending and receiving WhatsApp messages.
-- Exposes an example endpoint (`example.get`) as a reference pattern for future message-sending endpoints.
-- Handles an incoming-message webhook. Waboxapp sends webhook payloads as `application/x-www-form-urlencoded` with no signature header, so tenant matching is done via the `token` field in the payload body rather than a signature header.
+Every request needs two values, sent as form fields (not headers):
 
-## Authentication
+- `token` from Profile → Developer → Tokens
+- `uid` for the linked WhatsApp session
 
-Waboxapp uses two credentials, both passed as query parameters on every request (not headers):
+Pass them as `waboxapp({ key: token, uid })` or store `uid` on the account.
 
-- `token` — API access token, generated from the Waboxapp dashboard under Profile → Developer → Tokens.
-- `uid` — the identifier for a connected WhatsApp session/number, obtained by linking a WhatsApp account via QR code in the Waboxapp dashboard.
+## API
 
-## Status
+- `messages.sendChat`
+- `messages.sendImage`
+- `messages.sendLink`
+- `messages.sendMedia`
+- `accounts.getStatus`
 
-This is an initial scaffold addressing #1587. It establishes the plugin structure, endpoint pattern, and webhook flow. Full message-sending endpoints (text, media, template messages) and contact/group management are not yet implemented and will follow in subsequent work.
+Waboxapp's public REST docs do not expose contact or group management, or template sends.
+
+## Webhooks
+
+Incoming POSTs are `application/x-www-form-urlencoded`. Tenant routing uses `uid`. The body `token` is checked against the stored API token and is not written to event logs.
+
+Events: `message.received`, `message.ack`.
