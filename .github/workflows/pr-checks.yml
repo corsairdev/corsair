@@ -47,6 +47,7 @@ jobs:
       skip_heavy: ${{ steps.scope.outputs.skip_heavy }}
       www_install_filter: ${{ steps.scope.outputs.www_install_filter }}
       www_test_filter: ${{ steps.scope.outputs.www_test_filter }}
+      adapters_filter: ${{ steps.scope.outputs.adapters_filter }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -103,7 +104,7 @@ jobs:
 
       - name: Build
         if: needs.scope.outputs.lane != 'www'
-        run: pnpm exec turbo build --filter="${{ needs.scope.outputs.turbo_filter }}"
+        run: pnpm exec turbo build --filter="${{ needs.scope.outputs.turbo_filter }}" ${{ needs.scope.outputs.adapters_filter }}
 
   test:
     name: Test
@@ -137,7 +138,7 @@ jobs:
       # there; www runs its node:test suite separately below, never sharded.
       - name: Run tests
         run: >-
-          pnpm exec turbo test --filter="${{ needs.scope.outputs.turbo_filter }}"
+          pnpm exec turbo test --filter="${{ needs.scope.outputs.turbo_filter }}" ${{ needs.scope.outputs.adapters_filter }}
           -- --passWithNoTests --ci
           ${{ needs.scope.outputs.lane == 'full' && format('--shard={0}/4', matrix.shard) || '' }}
           --testPathIgnorePatterns="api\.test\.ts$|(^|/)integration\.test\.ts$"
