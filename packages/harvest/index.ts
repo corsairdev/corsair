@@ -14,6 +14,8 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import {
 	Clients,
 	Company,
@@ -38,7 +40,7 @@ import { errorHandlers } from './error-handlers';
 import { HarvestSchema } from './schema';
 
 export type HarvestPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	/**
 	 * The Harvest account the token should act against.
@@ -58,6 +60,9 @@ export type HarvestPluginOptions = {
 
 export const harvestAuthConfig = {
 	oauth_2: {
+		account: ['account_id'] as const,
+	},
+	managed: {
 		account: ['account_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -737,6 +742,13 @@ export function harvest<const T extends HarvestPluginOptions>(
 		authConfig: harvestAuthConfig,
 		schema: HarvestSchema,
 		options: options,
+		oauthConfig: {
+			providerName: 'Harvest',
+			authUrl: 'https://id.getharvest.com/oauth2/authorize',
+			tokenUrl: 'https://id.getharvest.com/api/v2/oauth2/token',
+			scopes: ['harvest:all'],
+			tokenAuthMethod: 'body',
+		},
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: harvestEndpointsNested,
@@ -759,7 +771,26 @@ export function harvest<const T extends HarvestPluginOptions>(
 				return res ?? '';
 			}
 
-			return '';
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:harvest:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'harvest',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
+			}
+
+			throw new AuthMissingError('harvest', 'oauth_2');
 		},
 	} satisfies InternalHarvestPlugin;
 }

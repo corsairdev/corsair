@@ -15,6 +15,8 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { fetchMailchimpOAuthMetadata } from './client';
 import {
 	AccountEndpoints,
@@ -58,7 +60,7 @@ import {
 } from './webhooks/types';
 
 export type MailchimpPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalMailchimpPlugin['hooks'];
@@ -671,6 +673,9 @@ export const mailchimpAuthConfig = {
 	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
+	managed: {
+		account: ['tenant_external_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseMailchimpPlugin<T extends MailchimpPluginOptions> =
@@ -702,6 +707,13 @@ export function mailchimp<const T extends MailchimpPluginOptions>(
 		authConfig: mailchimpAuthConfig,
 		schema: MailchimpSchema,
 		options: options,
+		oauthConfig: {
+			providerName: 'Mailchimp',
+			authUrl: 'https://login.mailchimp.com/oauth2/authorize',
+			tokenUrl: 'https://login.mailchimp.com/oauth2/token',
+			scopes: [],
+			tokenAuthMethod: 'body',
+		},
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: mailchimpEndpointsNested,
@@ -762,7 +774,26 @@ export function mailchimp<const T extends MailchimpPluginOptions>(
 				return packMailchimpOAuthKey(accessToken, metadata.dc);
 			}
 
-			return '';
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:mailchimp:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'mailchimp',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
+			}
+
+			throw new AuthMissingError('mailchimp', 'oauth_2');
 		},
 	} satisfies InternalMailchimpPlugin;
 }
