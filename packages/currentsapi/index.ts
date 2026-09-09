@@ -1,21 +1,19 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import { Categories, Languages, Latest, Regions, Search } from './endpoints';
 import type {
 	CurrentsApiEndpointInputs,
 	CurrentsApiEndpointOutputs,
@@ -26,18 +24,31 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { CurrentsApiSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveCurrentsApiOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchCurrentsApiTenantWebhook } from './webhooks/tenant-matcher';
-import type { CurrentsApiWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
+
+const currentsApiEndpointsNested = {
+	search: {
+		get: Search.get,
+	},
+	latest: {
+		get: Latest.get,
+	},
+	languages: {
+		get: Languages.get,
+	},
+	regions: {
+		get: Regions.get,
+	},
+	categories: {
+		get: Categories.get,
+	},
+} as const;
+
+const currentsApiWebhooksNested = {} as const;
 
 export type CurrentsApiPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalCurrentsApiPlugin['hooks'];
-	webhookHooks?: InternalCurrentsApiPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof currentsApiEndpointsNested>;
 };
@@ -50,10 +61,6 @@ export type CurrentsApiContext = CorsairPluginContext<
 export type CurrentsApiKeyBuilderContext =
 	KeyBuilderContext<CurrentsApiPluginOptions>;
 
-export type CurrentsApiBoundEndpoints = BindEndpoints<
-	typeof currentsApiEndpointsNested
->;
-
 type CurrentsApiEndpoint<K extends keyof CurrentsApiEndpointOutputs> =
 	CorsairEndpoint<
 		CurrentsApiContext,
@@ -62,57 +69,64 @@ type CurrentsApiEndpoint<K extends keyof CurrentsApiEndpointOutputs> =
 	>;
 
 export type CurrentsApiEndpoints = {
-	exampleGet: CurrentsApiEndpoint<'exampleGet'>;
+	search: CurrentsApiEndpoint<'search'>;
+	latest: CurrentsApiEndpoint<'latest'>;
+	languages: CurrentsApiEndpoint<'languages'>;
+	regions: CurrentsApiEndpoint<'regions'>;
+	categories: CurrentsApiEndpoint<'categories'>;
 };
 
-type CurrentsApiWebhook<
-	K extends keyof CurrentsApiWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<CurrentsApiContext, TEvent, CurrentsApiWebhookOutputs[K]>;
-
-export type CurrentsApiWebhooks = {
-	example: CurrentsApiWebhook<'example', ExampleEvent>;
-};
-
-export type CurrentsApiBoundWebhooks = BindWebhooks<CurrentsApiWebhooks>;
-
-const currentsApiEndpointsNested = {
-	example: {
-		get: Example.get,
-	},
-} as const;
-
-const currentsApiWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+export type CurrentsApiBoundEndpoints = BindEndpoints<
+	typeof currentsApiEndpointsNested
+>;
 
 export const currentsApiEndpointSchemas = {
-	'example.get': {
-		input: CurrentsApiEndpointInputSchemas.exampleGet,
-		output: CurrentsApiEndpointOutputSchemas.exampleGet,
+	'search.get': {
+		input: CurrentsApiEndpointInputSchemas.search,
+		output: CurrentsApiEndpointOutputSchemas.search,
+	},
+	'latest.get': {
+		input: CurrentsApiEndpointInputSchemas.latest,
+		output: CurrentsApiEndpointOutputSchemas.latest,
+	},
+	'languages.get': {
+		input: CurrentsApiEndpointInputSchemas.languages,
+		output: CurrentsApiEndpointOutputSchemas.languages,
+	},
+	'regions.get': {
+		input: CurrentsApiEndpointInputSchemas.regions,
+		output: CurrentsApiEndpointOutputSchemas.regions,
+	},
+	'categories.get': {
+		input: CurrentsApiEndpointInputSchemas.categories,
+		output: CurrentsApiEndpointOutputSchemas.categories,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof currentsApiEndpointsNested
 >;
 
-const currentsApiWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof currentsApiWebhooksNested
->;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType: AuthTypes = 'api_key';
 
 const currentsApiEndpointMeta = {
-	'example.get': {
+	'search.get': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Search news articles by keywords with filters',
+	},
+	'latest.get': {
+		riskLevel: 'read',
+		description: 'Get latest news headlines',
+	},
+	'languages.get': {
+		riskLevel: 'read',
+		description: 'List valid language codes',
+	},
+	'regions.get': {
+		riskLevel: 'read',
+		description: 'List valid country region codes',
+	},
+	'categories.get': {
+		riskLevel: 'read',
+		description: 'List valid category codes',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof currentsApiEndpointsNested
@@ -120,9 +134,6 @@ const currentsApiEndpointMeta = {
 
 export const currentsApiAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -151,65 +162,50 @@ export function currentsapi<const T extends CurrentsApiPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
 	return {
 		id: 'currentsapi',
 		authConfig: currentsApiAuthConfig,
 		schema: CurrentsApiSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: currentsApiEndpointsNested,
 		webhooks: currentsApiWebhooksNested,
 		endpointMeta: currentsApiEndpointMeta,
 		endpointSchemas: currentsApiEndpointSchemas,
-		webhookSchemas: currentsApiWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-currentsapi-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchCurrentsApiTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveCurrentsApiOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CurrentsApiKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+			if (ctx.authType === 'api_key') {
+				const key = await ctx.keys.get_api_key();
+
+				if (!key) {
+					throw new AuthMissingError('currentsapi', 'api_key');
+				}
+
+				return key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('currentsapi', 'api_key');
 		},
 	} satisfies InternalCurrentsApiPlugin;
 }
 
 export type {
+	CategoriesResponse,
 	CurrentsApiEndpointInputs,
 	CurrentsApiEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	LanguagesResponse,
+	LatestInput,
+	LatestResponse,
+	NewsItem,
+	RegionsResponse,
+	SearchInput,
+	SearchResponse,
 } from './endpoints/types';
-export type {
-	CurrentsApiWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
