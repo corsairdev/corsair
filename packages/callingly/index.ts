@@ -417,6 +417,7 @@ export function callingly(
 		options: options,
 		hooks: options.hooks,
 		endpoints: callinglyEndpointsNested,
+		// REST webhook-config ops only. No inbound Callingly event handlers.
 		webhooks: {},
 		endpointMeta: callinglyEndpointMeta,
 		endpointSchemas: callinglyEndpointSchemas,

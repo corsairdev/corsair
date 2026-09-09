@@ -24,6 +24,7 @@ export const CallinglyLead = z
 		category: z.string().nullable().optional(),
 		status: z.string().nullable().optional(),
 		result: z.string().nullable().optional(),
+		// Official docs show stage/tags as unstructured JSON, not a fixed object.
 		stage: z.unknown().nullable().optional(),
 		tags: z.array(z.unknown()).optional(),
 		team: z
@@ -37,10 +38,12 @@ export const CallinglyLead = z
 			.object({
 				name: z.string().optional(),
 				phone_number: z.string().optional(),
+				// custom_id is documented as mixed scalar/object depending on CRM source.
 				custom_id: z.unknown().nullable().optional(),
 			})
 			.passthrough()
 			.optional(),
+		// Nested call summaries on a lead omit the full call schema.
 		calls: z.array(z.unknown()).optional(),
 		scheduled_call_at: z.string().nullable().optional(),
 		is_stopped: z.number().optional(),
@@ -72,16 +75,19 @@ export const CallinglyCall = z
 		source: z.string().nullable().optional(),
 		recording_url: z.string().nullable().optional(),
 		waveform_url: z.string().optional(),
+		// error_message is a string or structured object in list vs get responses.
 		error_message: z.unknown().nullable().optional(),
 		phone_number_formatted: z.string().optional(),
 		human_result: z.string().optional(),
 		transcript: z.string().nullable().optional(),
+		// sales_advice is omitted or a free-form object when AI notes exist.
 		sales_advice: z.unknown().nullable().optional(),
 		is_voicemail: z.number().optional(),
 		is_queue: z.number().optional(),
 		is_team_offline: z.number().optional(),
 		is_error: z.number().optional(),
 		error_code: z.string().optional(),
+		// Nested user/lead/member/number/tag/notes/profile objects vary by call type.
 		user: z.unknown().optional(),
 		lead: z.unknown().optional(),
 		member: z.unknown().optional(),
