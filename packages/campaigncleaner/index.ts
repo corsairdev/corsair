@@ -1,7 +1,5 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
-	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
@@ -12,13 +10,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import {
-	DeleteCampaign,
-	GetCampaignList,
-	GetCampaignPdfAnalysis,
-	GetCampaignStatus,
-	GetCredits,
-} from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import { CampaignCleanerEndpoints } from './endpoints';
 import type {
 	CampaignCleanerEndpointInputs,
 	CampaignCleanerEndpointOutputs,
@@ -42,20 +35,16 @@ export type CampaignCleanerContext = CorsairPluginContext<
 	typeof CampaignCleanerSchema,
 	CampaignCleanerPluginOptions
 >;
-
 export type CampaignCleanerKeyBuilderContext =
 	KeyBuilderContext<CampaignCleanerPluginOptions>;
-
 export type CampaignCleanerBoundEndpoints = BindEndpoints<
 	typeof campaignCleanerEndpointsNested
 >;
 
-type CampaignCleanerEndpoint<K extends keyof CampaignCleanerEndpointOutputs> =
-	CorsairEndpoint<
-		CampaignCleanerContext,
-		CampaignCleanerEndpointInputs[K],
-		CampaignCleanerEndpointOutputs[K]
-	>;
+type CampaignCleanerEndpoint<K extends keyof CampaignCleanerEndpointOutputs> = (
+	ctx: CampaignCleanerContext,
+	input: CampaignCleanerEndpointInputs[K],
+) => Promise<CampaignCleanerEndpointOutputs[K]>;
 
 export type CampaignCleanerEndpoints = {
 	deleteCampaign: CampaignCleanerEndpoint<'deleteCampaign'>;
@@ -66,41 +55,35 @@ export type CampaignCleanerEndpoints = {
 };
 
 const campaignCleanerEndpointsNested = {
-	deleteCampaign: {
-		remove: DeleteCampaign.remove,
+	campaign: {
+		delete: CampaignCleanerEndpoints.deleteCampaign,
+		list: CampaignCleanerEndpoints.getCampaignList,
+		status: CampaignCleanerEndpoints.getCampaignStatus,
+		pdfAnalysis: CampaignCleanerEndpoints.getCampaignPdfAnalysis,
 	},
-	getCampaignList: {
-		list: GetCampaignList.list,
-	},
-	getCampaignStatus: {
-		status: GetCampaignStatus.status,
-	},
-	getCampaignPdfAnalysis: {
-		pdfAnalysis: GetCampaignPdfAnalysis.pdfAnalysis,
-	},
-	getCredits: {
-		credits: GetCredits.credits,
+	credits: {
+		get: CampaignCleanerEndpoints.getCredits,
 	},
 } as const;
 
 export const campaignCleanerEndpointSchemas = {
-	'deleteCampaign.remove': {
+	'campaign.delete': {
 		input: CampaignCleanerEndpointInputSchemas.deleteCampaign,
 		output: CampaignCleanerEndpointOutputSchemas.deleteCampaign,
 	},
-	'getCampaignList.list': {
+	'campaign.list': {
 		input: CampaignCleanerEndpointInputSchemas.getCampaignList,
 		output: CampaignCleanerEndpointOutputSchemas.getCampaignList,
 	},
-	'getCampaignStatus.status': {
+	'campaign.status': {
 		input: CampaignCleanerEndpointInputSchemas.getCampaignStatus,
 		output: CampaignCleanerEndpointOutputSchemas.getCampaignStatus,
 	},
-	'getCampaignPdfAnalysis.pdfAnalysis': {
+	'campaign.pdfAnalysis': {
 		input: CampaignCleanerEndpointInputSchemas.getCampaignPdfAnalysis,
 		output: CampaignCleanerEndpointOutputSchemas.getCampaignPdfAnalysis,
 	},
-	'getCredits.credits': {
+	'credits.get': {
 		input: CampaignCleanerEndpointInputSchemas.getCredits,
 		output: CampaignCleanerEndpointOutputSchemas.getCredits,
 	},
@@ -108,37 +91,35 @@ export const campaignCleanerEndpointSchemas = {
 	typeof campaignCleanerEndpointsNested
 >;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
-
 const campaignCleanerEndpointMeta = {
-	'deleteCampaign.remove': {
+	'campaign.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a saved Campaign Cleaner campaign',
+		irreversible: true,
+		description: 'Delete a saved Campaign Cleaner campaign by ID',
 	},
-	'getCampaignList.list': {
+	'campaign.list': {
 		riskLevel: 'read',
-		description: 'Get the list of saved Campaign Cleaner campaigns',
+		description: 'List saved Campaign Cleaner campaigns',
 	},
-	'getCampaignStatus.status': {
+	'campaign.status': {
 		riskLevel: 'read',
-		description: 'Get the status of a Campaign Cleaner campaign',
+		description: 'Get processing status for a Campaign Cleaner campaign',
 	},
-	'getCampaignPdfAnalysis.pdfAnalysis': {
+	'campaign.pdfAnalysis': {
 		riskLevel: 'read',
-		description: 'Download PDF analysis for a Campaign Cleaner campaign',
+		description: 'Download PDF analysis for a processed campaign',
 	},
-	'getCredits.credits': {
+	'credits.get': {
 		riskLevel: 'read',
-		description: 'Get the remaining Campaign Cleaner credits',
+		description: 'Get remaining Campaign Cleaner credits',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof campaignCleanerEndpointsNested
 >;
 
+const defaultAuthType = 'api_key' as const;
 export const campaignCleanerAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: { account: ['tenant_external_id'] as const },
 } as const satisfies PluginAuthConfig;
 
 export type BaseCampaignCleanerPlugin<T extends CampaignCleanerPluginOptions> =
@@ -146,14 +127,12 @@ export type BaseCampaignCleanerPlugin<T extends CampaignCleanerPluginOptions> =
 		'campaigncleaner',
 		typeof CampaignCleanerSchema,
 		typeof campaignCleanerEndpointsNested,
-		{},
+		Record<string, never>,
 		T,
 		typeof defaultAuthType
 	>;
-
 export type InternalCampaignCleanerPlugin =
 	BaseCampaignCleanerPlugin<CampaignCleanerPluginOptions>;
-
 export type ExternalCampaignCleanerPlugin<
 	T extends CampaignCleanerPluginOptions,
 > = BaseCampaignCleanerPlugin<T>;
@@ -164,9 +143,8 @@ export function campaigncleaner<const T extends CampaignCleanerPluginOptions>(
 ): ExternalCampaignCleanerPlugin<T> {
 	const options = {
 		...incomingOptions,
-		authType: 'api_key' as const,
+		authType: incomingOptions.authType ?? defaultAuthType,
 	};
-
 	return {
 		id: 'campaigncleaner',
 		authConfig: campaignCleanerAuthConfig,
@@ -177,21 +155,15 @@ export function campaigncleaner<const T extends CampaignCleanerPluginOptions>(
 		webhooks: {},
 		endpointMeta: campaignCleanerEndpointMeta,
 		endpointSchemas: campaignCleanerEndpointSchemas,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		pluginWebhookMatcher: undefined,
+		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
 		keyBuilder: async (ctx: CampaignCleanerKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
-			}
-
+			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				const key = await ctx.keys.get_api_key();
+				if (key) return key;
 			}
-
-			return '';
+			throw new AuthMissingError('campaigncleaner', 'api_key');
 		},
 	} satisfies InternalCampaignCleanerPlugin;
 }
