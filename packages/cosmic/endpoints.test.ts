@@ -36,6 +36,11 @@ import {
 } from './endpoints/revisions';
 import { CosmicEndpointOutputSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import type {
+	CosmicKeyBuilderContext,
+	CosmicPluginOptions,
+	ExternalCosmicPlugin,
+} from './index';
 import { cosmic } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -67,7 +72,10 @@ const mockLogEvent = logEventFromContext as jest.MockedFunction<
 const ctx = {
 	key: 'test-write-key',
 	options: { bucketSlug: 'my-bucket', authType: 'api_key' },
-} as unknown as Parameters<typeof objectsFind>[0];
+	$getAccountId: async () => 'test-account-id',
+	database: undefined,
+	endpoints: {},
+} as Parameters<typeof objectsFind>[0];
 
 const docObject = {
 	id: '5ff75368c2dfa81a91695cec',
@@ -632,7 +640,10 @@ describe('Cosmic bucket slug resolution', () => {
 		const noSlugCtx = {
 			key: 'k',
 			options: { authType: 'api_key' },
-		} as unknown as Parameters<typeof objectsFind>[0];
+			$getAccountId: async () => 'test-account-id',
+			database: undefined,
+			endpoints: {},
+		} as Parameters<typeof objectsFind>[0];
 
 		await expect(objectsFind(noSlugCtx, { type: 'posts' })).rejects.toThrow(
 			'bucket slug is required',
@@ -649,7 +660,10 @@ describe('Cosmic bucket slug resolution', () => {
 				authType: 'api_key',
 				readKey: 'read-key',
 			},
-		} as unknown as Parameters<typeof objectsFind>[0];
+			$getAccountId: async () => 'test-account-id',
+			database: undefined,
+			endpoints: {},
+		} as Parameters<typeof objectsFind>[0];
 
 		await objectsFind(readCtx, { type: 'posts' });
 
@@ -711,14 +725,33 @@ describe('Cosmic output schemas', () => {
 });
 
 describe('Cosmic keyBuilder', () => {
+	// A single documented escape hatch: unit tests stub a partial key
+	// manager, and building a full AccountKeyManager is infeasible outside
+	// the framework, so the stub is asserted once here instead of at each site.
+	function stubKeyCtx(stub: {
+		authType: 'api_key';
+		keys: { get_api_key: () => Promise<string | null | undefined> };
+	}): CosmicKeyBuilderContext {
+		return stub as unknown as CosmicKeyBuilderContext;
+	}
+
+	// The plugin's keyBuilder parameter collapses to never once bound, so
+	// tests recover a callable signature here rather than casting arguments.
+	function testKeyBuilder(plugin: ExternalCosmicPlugin<CosmicPluginOptions>) {
+		return plugin.keyBuilder as unknown as (
+			ctx: CosmicKeyBuilderContext,
+			source: 'endpoint',
+		) => Promise<string>;
+	}
+
 	it('throws AuthMissingError when no key is configured', async () => {
 		const plugin = cosmic();
-		const keyBuilder = plugin.keyBuilder;
+		const keyBuilder = testKeyBuilder(plugin);
 		expect(keyBuilder).toBeDefined();
-		const keyCtx = {
+		const keyCtx = stubKeyCtx({
 			authType: 'api_key',
 			keys: { get_api_key: async () => undefined },
-		} as never;
+		});
 		await expect(keyBuilder?.(keyCtx, 'endpoint')).rejects.toThrow(
 			AuthMissingError,
 		);
@@ -726,11 +759,11 @@ describe('Cosmic keyBuilder', () => {
 
 	it('prefers an explicitly supplied key', async () => {
 		const plugin = cosmic({ key: 'explicit-key' });
-		const keyBuilder = plugin.keyBuilder;
-		const keyCtx = {
+		const keyBuilder = testKeyBuilder(plugin);
+		const keyCtx = stubKeyCtx({
 			authType: 'api_key',
 			keys: { get_api_key: async () => 'from-store' },
-		} as never;
+		});
 		await expect(keyBuilder?.(keyCtx, 'endpoint')).resolves.toBe(
 			'explicit-key',
 		);
@@ -738,21 +771,21 @@ describe('Cosmic keyBuilder', () => {
 
 	it('returns the stored key when present', async () => {
 		const plugin = cosmic();
-		const keyBuilder = plugin.keyBuilder;
-		const keyCtx = {
+		const keyBuilder = testKeyBuilder(plugin);
+		const keyCtx = stubKeyCtx({
 			authType: 'api_key',
 			keys: { get_api_key: async () => 'stored-key' },
-		} as never;
+		});
 		await expect(keyBuilder?.(keyCtx, 'endpoint')).resolves.toBe('stored-key');
 	});
 
 	it('resolves the readKey option when no key is stored', async () => {
 		const plugin = cosmic({ readKey: 'read-only-key' });
-		const keyBuilder = plugin.keyBuilder;
-		const keyCtx = {
+		const keyBuilder = testKeyBuilder(plugin);
+		const keyCtx = stubKeyCtx({
 			authType: 'api_key',
 			keys: { get_api_key: async () => undefined },
-		} as never;
+		});
 		await expect(keyBuilder?.(keyCtx, 'endpoint')).resolves.toBe(
 			'read-only-key',
 		);

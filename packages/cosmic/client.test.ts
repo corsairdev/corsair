@@ -109,12 +109,13 @@ describe('makeCosmicUploadRequest', () => {
 		});
 
 		expect(mockHttpRequest).toHaveBeenCalledTimes(1);
-		const [config, options] = mockHttpRequest.mock.calls[0] as unknown as [
-			{ BASE: string; HEADERS: Record<string, string> },
-			{ method: string; body: FormData },
-		];
+		const call = mockHttpRequest.mock.calls[0];
+		if (!call) throw new Error('expected request call');
+		const [config, options] = call;
 		expect(config.BASE).toBe('https://workers.cosmicjs.com');
-		expect(config.HEADERS.Authorization).toBe('Bearer test-write-key');
+		expect(config.HEADERS).toMatchObject({
+			Authorization: 'Bearer test-write-key',
+		});
 		expect(options.method).toBe('POST');
 		expect(options.body).toBeInstanceOf(FormData);
 		expect(options.body.get('folder')).toBe('album');
