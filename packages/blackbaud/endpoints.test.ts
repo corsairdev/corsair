@@ -113,7 +113,7 @@ describe('Blackbaud endpoints', () => {
 		);
 	});
 
-	it('listMemberships filters by member junction id client-side', async () => {
+	it('listMemberships filters by member junction id on one page', async () => {
 		mockRequest.mockResolvedValue({
 			count: 2,
 			value: [{ id: 'm1' }, { id: 'm2', member_junction_id: 'j2' }],
@@ -124,10 +124,69 @@ describe('Blackbaud endpoints', () => {
 			member_junction_id: 'j2',
 		});
 
+		expect(mockRequest).toHaveBeenCalledTimes(1);
 		expect(result).toEqual({
 			count: 1,
 			value: [{ id: 'm2', member_junction_id: 'j2' }],
 		});
+	});
+
+	it('listMemberships finds a junction id on a later page', async () => {
+		mockRequest
+			.mockResolvedValueOnce({ count: 3, value: [{ id: 'm1' }] })
+			.mockResolvedValueOnce({
+				count: 3,
+				value: [{ id: 'm2' }, { id: 'm3', member_junction_id: 'j3' }],
+			});
+
+		const result = await listMemberships(testCtx(), {
+			constituent_id: 'c1',
+			member_junction_id: 'j3',
+			limit: 1,
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(2);
+		expect(mockRequest).toHaveBeenNthCalledWith(
+			2,
+			'constituent/v1/constituents/c1/memberships',
+			expect.anything(),
+			expect.objectContaining({ query: { limit: 1, offset: 1 } }),
+		);
+		expect(result).toEqual({
+			count: 1,
+			value: [{ id: 'm3', member_junction_id: 'j3' }],
+		});
+	});
+
+	it('listMemberships returns empty only after all pages are scanned', async () => {
+		mockRequest
+			.mockResolvedValueOnce({ count: 2, value: [{ id: 'm1' }] })
+			.mockResolvedValueOnce({ count: 2, value: [{ id: 'm2' }] });
+
+		const result = await listMemberships(testCtx(), {
+			constituent_id: 'c1',
+			member_junction_id: 'missing',
+			limit: 1,
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(2);
+		expect(result).toEqual({ count: 0, value: [] });
+	});
+
+	it('listMemberships stops scanning after the page cap', async () => {
+		const fullPage = Array.from({ length: 500 }, (_, index) => ({
+			id: `m${index}`,
+		}));
+		mockRequest.mockResolvedValue({ count: 100000, value: fullPage });
+
+		const result = await listMemberships(testCtx(), {
+			constituent_id: 'c1',
+			member_junction_id: 'missing',
+			limit: 500,
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(20);
+		expect(result).toEqual({ count: 0, value: [] });
 	});
 
 	it('listMemberships confines the constituent id to one path segment', async () => {

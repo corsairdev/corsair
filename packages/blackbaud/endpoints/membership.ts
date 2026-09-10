@@ -1,7 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BlackbaudEndpoints } from '..';
 import { makeBlackbaudRequest } from '../client';
-import type { BlackbaudEndpointOutputs, MembershipRecord } from './types';
+import type {
+	BlackbaudEndpointOutputs,
+	ListMembershipsInput,
+	MembershipRecord,
+} from './types';
+
+// SKY API list default page size; also used for junction scans.
+const DEFAULT_PAGE_SIZE = 500;
+// Upper bound on pages scanned for one junction lookup (DOS guard).
+const MAX_SEARCH_PAGES = 20;
 
 // Constituent API list (ListConstituentMemberships). No single-membership GET
 // exists on the Membership API (bare item route 404s; only sub-resource ops
@@ -11,39 +20,86 @@ export const listMemberships: BlackbaudEndpoints['listMemberships'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeBlackbaudRequest<
-		BlackbaudEndpointOutputs['listMemberships']
-	>(
+	if (input.member_junction_id === undefined) {
+		const response = await fetchMembershipPage(ctx, input, {
+			limit: input.limit,
+			offset: input.offset,
+		});
+		await logEventFromContext(
+			ctx,
+			'blackbaud.memberships.list',
+			{ constituent_id: input.constituent_id, count: response.count },
+			'completed',
+		);
+		return response;
+	}
+
+	// Junction lookup scans pages from the start (limit sizes pages);
+	// a single page cannot prove absence.
+	const pageSize = input.limit ?? DEFAULT_PAGE_SIZE;
+	const found = await searchMembershipPages(ctx, input, pageSize);
+	await logEventFromContext(
+		ctx,
+		'blackbaud.memberships.list',
+		{ constituent_id: input.constituent_id, count: found.length },
+		'completed',
+	);
+	return {
+		count: found.length,
+		value: found,
+	};
+};
+
+function fetchMembershipPage(
+	ctx: Parameters<BlackbaudEndpoints['listMemberships']>[0],
+	input: ListMembershipsInput,
+	paging: { limit: number | undefined; offset: number | undefined },
+): Promise<BlackbaudEndpointOutputs['listMemberships']> {
+	return makeBlackbaudRequest<BlackbaudEndpointOutputs['listMemberships']>(
 		`constituent/v1/constituents/${encodeURIComponent(input.constituent_id)}/memberships`,
 		ctx.key,
 		{
 			method: 'GET',
 			query: {
-				limit: input.limit,
-				offset: input.offset,
+				limit: paging.limit,
+				offset: paging.offset,
 			},
 			subscriptionKey: ctx.options.subscriptionKey,
 		},
 	);
+}
 
-	// Junction filter: match id fields without narrowing provider shapes.
-	const filtered: MembershipRecord[] =
-		input.member_junction_id === undefined
-			? response.value
-			: response.value.filter(
-					(record) =>
-						record.id === input.member_junction_id ||
-						record.member_junction_id === input.member_junction_id,
-				);
+function matchesJunction(
+	record: MembershipRecord,
+	junctionId: string,
+): boolean {
+	return record.id === junctionId || record.member_junction_id === junctionId;
+}
 
-	await logEventFromContext(
-		ctx,
-		'blackbaud.memberships.list',
-		{ constituent_id: input.constituent_id, count: filtered.length },
-		'completed',
-	);
-	return {
-		count: filtered.length,
-		value: filtered,
-	};
-};
+async function searchMembershipPages(
+	ctx: Parameters<BlackbaudEndpoints['listMemberships']>[0],
+	input: ListMembershipsInput,
+	pageSize: number,
+): Promise<MembershipRecord[]> {
+	const junctionId = input.member_junction_id ?? '';
+	let offset = 0;
+	for (let page = 0; page < MAX_SEARCH_PAGES; page++) {
+		const response = await fetchMembershipPage(ctx, input, {
+			limit: pageSize,
+			offset,
+		});
+		const found = response.value.filter((record) =>
+			matchesJunction(record, junctionId),
+		);
+		if (found.length > 0) {
+			return found;
+		}
+		const fetched = offset + response.value.length;
+		// SKY count excludes paging; a short page or full count ends the scan.
+		if (response.value.length < pageSize || fetched >= response.count) {
+			return [];
+		}
+		offset += pageSize;
+	}
+	return [];
+}

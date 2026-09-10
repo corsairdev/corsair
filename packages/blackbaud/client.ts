@@ -36,10 +36,18 @@ export async function makeBlackbaudRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query, subscriptionKey, headers } = options;
 
-	const isAbsolute = endpoint.startsWith('http');
+	// request() always joins BASE + path, so split absolute URLs into
+	// origin + pathname (empty BASE would produce "/https://...").
+	let base = BLACKBAUD_API_BASE;
+	let path = endpoint;
+	if (endpoint.startsWith('http')) {
+		const parsed = new URL(endpoint);
+		base = parsed.origin;
+		path = parsed.pathname;
+	}
 
 	const config: OpenAPIConfig = {
-		BASE: isAbsolute ? '' : BLACKBAUD_API_BASE,
+		BASE: base,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -56,7 +64,7 @@ export async function makeBlackbaudRequest<T>(
 
 	const requestOptions: ApiRequestOptions = {
 		method,
-		url: endpoint,
+		url: path,
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
 				? body
