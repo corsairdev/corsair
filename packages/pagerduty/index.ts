@@ -302,8 +302,8 @@ export function pagerduty<const T extends PagerdutyPluginOptions>(
 		authConfig: pagerdutyAuthConfig,
 		oauthConfig: {
 			providerName: 'PagerDuty',
-			authUrl: 'https://app.pagerduty.com/oauth/authorize',
-			tokenUrl: 'https://app.pagerduty.com/oauth/token',
+			authUrl: 'https://identity.pagerduty.com/oauth/authorize',
+			tokenUrl: 'https://identity.pagerduty.com/oauth/token',
 			scopes: ['read', 'write'],
 		},
 		schema: PagerdutySchema,
@@ -360,7 +360,7 @@ export function pagerduty<const T extends PagerdutyPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				return getOAuthAccessToken(ctx, {
 					plugin: 'pagerduty',
-					tokenUrl: 'https://app.pagerduty.com/oauth/token',
+					tokenUrl: 'https://identity.pagerduty.com/oauth/token',
 				});
 			}
 

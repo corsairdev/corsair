@@ -38,9 +38,17 @@ export async function makeWakaTimeRequest<T>(
 	apiKey: string,
 	options: {
 		query?: Record<string, string | number | boolean | undefined>;
+		authType?: 'api_key' | 'oauth_2' | 'managed';
 	} = {},
 ): Promise<T> {
-	const { query } = options;
+	const { query, authType = 'api_key' } = options;
+
+	// OAuth and managed credentials are bearer tokens; the api_key is sent via
+	// WakaTime's Base64 Basic scheme.
+	const authorization =
+		authType === 'api_key'
+			? `Basic ${Buffer.from(apiKey).toString('base64')}`
+			: `Bearer ${apiKey}`;
 
 	const config: OpenAPIConfig = {
 		BASE: WAKATIME_API_BASE,
@@ -49,7 +57,7 @@ export async function makeWakaTimeRequest<T>(
 		CREDENTIALS: 'omit',
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Authorization: `Basic ${Buffer.from(apiKey).toString('base64')}`,
+			Authorization: authorization,
 		},
 	};
 

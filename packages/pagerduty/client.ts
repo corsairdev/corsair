@@ -35,9 +35,15 @@ export async function makePagerdutyRequest<T>(
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 		from?: string;
+		authType?: 'api_key' | 'oauth_2' | 'managed';
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, from } = options;
+	const { method = 'GET', body, query, from, authType = 'api_key' } = options;
+
+	// OAuth and managed credentials are bearer tokens; api_key uses PagerDuty's
+	// `Token token=` scheme.
+	const authorization =
+		authType === 'api_key' ? `Token token=${apiKey}` : `Bearer ${apiKey}`;
 
 	const config: OpenAPIConfig = {
 		BASE: PAGERDUTY_API_BASE,
@@ -48,7 +54,7 @@ export async function makePagerdutyRequest<T>(
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Accept: 'application/vnd.pagerduty+json;version=2',
-			Authorization: `Token token=${apiKey}`,
+			Authorization: authorization,
 			...(from && { From: from }),
 		},
 	};

@@ -17,6 +17,7 @@ export const add: FigmaEndpoints['commentsAdd'] = async (ctx, input) => {
 					| Record<string, unknown>
 					| undefined,
 			},
+			authType: ctx.options.authType,
 		},
 	);
 
@@ -50,7 +51,7 @@ export const deleteComment: FigmaEndpoints['commentsDelete'] = async (
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['commentsDelete']>(
 		`v1/files/${input.file_key}/comments/${input.comment_id}`,
 		ctx.key,
-		{ method: 'DELETE' },
+		{ method: 'DELETE', authType: ctx.options.authType },
 	);
 
 	if (ctx.db.comments) {
@@ -80,7 +81,11 @@ export const list: FigmaEndpoints['commentsList'] = async (ctx, input) => {
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['commentsList']>(
 		`v1/files/${input.file_key}/comments`,
 		ctx.key,
-		{ method: 'GET', query: { as_md: input.as_md } },
+		{
+			method: 'GET',
+			query: { as_md: input.as_md },
+			authType: ctx.options.authType,
+		},
 	);
 
 	if (result.comments && ctx.db.comments) {
@@ -119,7 +124,11 @@ export const getReactions: FigmaEndpoints['commentsGetReactions'] = async (
 	>(
 		`v1/files/${input.file_key}/comments/${input.comment_id}/reactions`,
 		ctx.key,
-		{ method: 'GET', query: { cursor: input.cursor } },
+		{
+			method: 'GET',
+			query: { cursor: input.cursor },
+			authType: ctx.options.authType,
+		},
 	);
 
 	await logEventFromContext(
@@ -140,7 +149,11 @@ export const addReaction: FigmaEndpoints['commentsAddReaction'] = async (
 	>(
 		`v1/files/${input.file_key}/comments/${input.comment_id}/reactions`,
 		ctx.key,
-		{ method: 'POST', body: { emoji: input.emoji } },
+		{
+			method: 'POST',
+			body: { emoji: input.emoji },
+			authType: ctx.options.authType,
+		},
 	);
 
 	await logEventFromContext(
@@ -161,7 +174,11 @@ export const deleteReaction: FigmaEndpoints['commentsDeleteReaction'] = async (
 	>(
 		`v1/files/${input.file_key}/comments/${input.comment_id}/reactions`,
 		ctx.key,
-		{ method: 'DELETE', query: { emoji: input.emoji } },
+		{
+			method: 'DELETE',
+			query: { emoji: input.emoji },
+			authType: ctx.options.authType,
+		},
 	);
 
 	await logEventFromContext(
