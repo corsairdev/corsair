@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import {
 	matchSpokiPluginWebhook,
 	matchSpokiTenantWebhook,
+	verifySpokiWebhookRequest,
 	verifySpokiWebhookSignature,
 } from './tenant-matcher';
 
@@ -92,7 +93,22 @@ describe('matchSpokiPluginWebhook', () => {
 		).toBe(true);
 	});
 
-	it('returns false for an invalid signature when a secret is set', () => {
+	it('routes by header presence so parsed bodies match too', () => {
+		expect(
+			matchSpokiPluginWebhook(
+				{
+					headers: {
+						'x-spoki-account': '13128334',
+						'x-spoki-signature': sign(RAW_BODY, Math.floor(Date.now() / 1000)),
+					},
+					body: JSON.parse(RAW_BODY),
+				},
+				SECRET,
+			),
+		).toBe(true);
+	});
+
+	it('routes even with an invalid signature; the handler rejects it', () => {
 		expect(
 			matchSpokiPluginWebhook(
 				{
@@ -104,7 +120,7 @@ describe('matchSpokiPluginWebhook', () => {
 				},
 				SECRET,
 			),
-		).toBe(false);
+		).toBe(true);
 	});
 
 	it('does not match the deprecated V1 hash header alone', () => {
@@ -177,32 +193,34 @@ describe('matchSpokiTenantWebhook', () => {
 
 	it('rejects a spoofed delivery with an invalid signature', () => {
 		expect(
-			matchSpokiTenantWebhook(
+			verifySpokiWebhookRequest(
 				{
+					payload: JSON.parse(RAW_BODY),
 					headers: {
 						'x-spoki-account': '13128334',
 						'x-spoki-signature': 't=123,v2=deadbeef',
 					},
-					body: RAW_BODY,
+					rawBody: RAW_BODY,
 				},
 				SECRET,
-			),
-		).toBeNull();
+			).valid,
+		).toBe(false);
 	});
 
 	it('rejects unsigned deliveries when a webhook secret is set', () => {
 		expect(
-			matchSpokiTenantWebhook(
+			verifySpokiWebhookRequest(
 				{
+					payload: JSON.parse(RAW_BODY),
 					headers: { 'x-spoki-account': '13128334' },
-					body: RAW_BODY,
+					rawBody: RAW_BODY,
 				},
 				SECRET,
-			),
-		).toBeNull();
+			).valid,
+		).toBe(false);
 	});
 
-	it('rejects deliveries with a parsed body that cannot be signature-verified', () => {
+	it('routes deliveries with a parsed body; verification needs rawBody', () => {
 		expect(
 			matchSpokiTenantWebhook(
 				{
@@ -214,7 +232,10 @@ describe('matchSpokiTenantWebhook', () => {
 				},
 				SECRET,
 			),
-		).toBeNull();
+		).toEqual({
+			linkType: 'spoki_account',
+			externalId: '13128334',
+		});
 	});
 
 	it('accepts a valid V2 signature over a Buffer body', () => {
@@ -235,7 +256,7 @@ describe('matchSpokiTenantWebhook', () => {
 		});
 	});
 
-	it('rejects a tampered Buffer body', () => {
+	it('routes a Buffer body by header; tampering is caught at verify time', () => {
 		expect(
 			matchSpokiTenantWebhook(
 				{
@@ -250,6 +271,65 @@ describe('matchSpokiTenantWebhook', () => {
 				},
 				SECRET,
 			),
-		).toBeNull();
+		).toEqual({
+			linkType: 'spoki_account',
+			externalId: '13128334',
+		});
+	});
+});
+
+describe('verifySpokiWebhookRequest', () => {
+	it('accepts a valid V2 signature with rawBody', () => {
+		const header = sign(RAW_BODY, Math.floor(Date.now() / 1000));
+		expect(
+			verifySpokiWebhookRequest(
+				{
+					payload: JSON.parse(RAW_BODY),
+					headers: { 'x-spoki-signature': header },
+					rawBody: RAW_BODY,
+				},
+				SECRET,
+			),
+		).toEqual({ valid: true });
+	});
+
+	it('rejects a tampered rawBody', () => {
+		const header = sign(RAW_BODY, Math.floor(Date.now() / 1000));
+		expect(
+			verifySpokiWebhookRequest(
+				{
+					payload: { version: 1, event: 'spoofed' },
+					headers: { 'x-spoki-signature': header },
+					rawBody: JSON.stringify({ version: 1, event: 'spoofed' }),
+				},
+				SECRET,
+			).valid,
+		).toBe(false);
+	});
+
+	it('rejects when rawBody is missing', () => {
+		const header = sign(RAW_BODY, Math.floor(Date.now() / 1000));
+		expect(
+			verifySpokiWebhookRequest(
+				{
+					payload: JSON.parse(RAW_BODY),
+					headers: { 'x-spoki-signature': header },
+				},
+				SECRET,
+			).valid,
+		).toBe(false);
+	});
+
+	it('accepts hubVerified deliveries without re-verifying', () => {
+		expect(
+			verifySpokiWebhookRequest(
+				{
+					payload: {},
+					headers: {},
+					hubVerified: true,
+				},
+				undefined,
+			),
+		).toEqual({ valid: true });
 	});
 });

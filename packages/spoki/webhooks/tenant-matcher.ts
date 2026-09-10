@@ -1,4 +1,8 @@
-import type { RawWebhookRequest, WebhookTenantMatch } from 'corsair/core';
+import type {
+	RawWebhookRequest,
+	WebhookRequest,
+	WebhookTenantMatch,
+} from 'corsair/core';
 import crypto from 'crypto';
 
 /*
@@ -8,8 +12,12 @@ import crypto from 'crypto';
  * `<ts>.<raw body>` keyed by the webhook secret). The deprecated V1
  * `X-SPOKI-HASH` header cannot be verified and never matches on its own.
  *
- * Matching is fail-closed: without a configured webhook secret no delivery
- * can be verified, so both matchers report nothing.
+ * Matching is header-based only so routing works whether the caller hands
+ * over a raw string body or an already-parsed object (processWebhook always
+ * passes the parsed body). Signature verification needs the exact raw bytes
+ * and happens later in the handler via verifySpokiWebhookRequest, where
+ * request.rawBody is available. Matching stays fail-closed: without a
+ * configured webhook secret no delivery routes.
  */
 
 const SIGNATURE_TOLERANCE_SECONDS = 300;
@@ -45,6 +53,14 @@ export function verifySpokiWebhookSignature(
 
 	if (!timestamp || !signature) return false;
 
+	const requestTime = Number.parseInt(timestamp, 10);
+
+	if (Number.isNaN(requestTime)) return false;
+
+	if (Math.abs(Date.now() / 1000 - requestTime) > toleranceSeconds) {
+		return false;
+	}
+
 	const signedPayload = `${timestamp}.${rawBody}`;
 	const expected = crypto
 		.createHmac('sha256', secret)
@@ -61,35 +77,50 @@ export function verifySpokiWebhookSignature(
 		return false;
 	}
 
-	const requestTime = Number.parseInt(timestamp, 10);
+	return true;
+}
 
-	if (Number.isNaN(requestTime)) return false;
+export function verifySpokiWebhookRequest(
+	request: WebhookRequest<unknown>,
+	secret: string | undefined,
+): { valid: boolean; error?: string } {
+	if (request.hubVerified === true) {
+		return { valid: true };
+	}
 
-	return Math.abs(Date.now() / 1000 - requestTime) <= toleranceSeconds;
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
+	const headers = request.headers ?? {};
+	const signature = getHeader(headers, 'x-spoki-signature');
+	if (!signature) {
+		return { valid: false, error: 'Missing x-spoki-signature header' };
+	}
+
+	const ok = verifySpokiWebhookSignature(rawBody, signature, secret);
+	if (!ok) {
+		return { valid: false, error: 'Invalid signature' };
+	}
+
+	return { valid: true };
 }
 
 // Raw-body adapters hand over either a string or binary (Buffer/Uint8Array);
-// pre-parsed objects cannot be signature-verified byte-exactly.
-function readRawBody(body: unknown): string | undefined {
-	if (typeof body === 'string') return body;
-	if (Buffer.isBuffer(body) || body instanceof Uint8Array) {
-		return Buffer.from(body).toString('utf8');
-	}
-	return undefined;
-}
-
-function hasValidSignature(
-	request: RawWebhookRequest,
-	webhookSecret: string,
-): boolean {
+// pre-parsed objects cannot be signature-verified byte-exactly, so routing
+// checks header presence only. Verification happens in the handler with
+// request.rawBody via verifySpokiWebhookRequest.
+function hasSignatureHeader(request: RawWebhookRequest): boolean {
 	const headers = request.headers ?? {};
-
-	const signature = getHeader(headers, 'x-spoki-signature');
-	const rawBody = readRawBody(request.body);
-
-	if (!signature || !rawBody) return false;
-
-	return verifySpokiWebhookSignature(rawBody, signature, webhookSecret);
+	return getHeader(headers, 'x-spoki-signature') !== undefined;
 }
 
 export function matchSpokiPluginWebhook(
@@ -98,7 +129,7 @@ export function matchSpokiPluginWebhook(
 ): boolean {
 	if (!webhookSecret) return false;
 
-	return hasValidSignature(request, webhookSecret);
+	return hasSignatureHeader(request);
 }
 
 export function matchSpokiTenantWebhook(
@@ -111,7 +142,7 @@ export function matchSpokiTenantWebhook(
 
 	if (!tenantId) return null;
 
-	if (!hasValidSignature(request, webhookSecret)) return null;
+	if (!hasSignatureHeader(request)) return null;
 
 	return {
 		linkType: 'spoki_account',
