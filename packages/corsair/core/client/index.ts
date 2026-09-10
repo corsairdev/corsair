@@ -34,7 +34,7 @@ import type {
 	EndpointMetaEntry,
 	OAuthConfig,
 	PermissionMode,
-	PermissionPolicy,
+	PermissionOverride,
 } from '../plugins';
 import { ensureTenantProvisioned } from '../tenant-provision';
 import type {
@@ -512,7 +512,7 @@ export function buildCorsairClient<
 		const pluginPermsConfig = (
 			plugin.options as Record<string, unknown> | undefined
 		)?.permissions as
-			| { mode: PermissionMode; overrides?: Record<string, PermissionPolicy> }
+			| { mode: PermissionMode; overrides?: Record<string, PermissionOverride> }
 			| undefined;
 
 		bindEndpointsRecursively({

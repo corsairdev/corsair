@@ -58,6 +58,55 @@ export type PermissionMode = 'open' | 'cautious' | 'strict' | 'readonly';
 export type PermissionPolicy = 'allow' | 'deny' | 'require_approval';
 
 /**
+ * A single condition tested against one endpoint argument.
+ *
+ * - `match`  — regex the (string) argument must match
+ * - `equals` — exact value
+ * - `in`     — allowlist; the argument must be one of these
+ * - `notIn`  — denylist; the argument must not be any of these
+ *
+ * An argument that is absent, or of the wrong type for the operator, never
+ * satisfies the constraint — rules fail closed.
+ */
+export type PermissionConstraint =
+	| { match: string }
+	| { equals: unknown }
+	| { in: unknown[] }
+	| { notIn: unknown[] };
+
+/**
+ * A per-endpoint override. Either a flat policy, or a policy that applies only
+ * when the call's arguments satisfy every listed constraint.
+ *
+ * Constraint keys are dot-notation paths into the endpoint's argument object
+ * (`'channel'`, `'message.to'`).
+ *
+ * @example
+ * ```ts
+ * // Posting to #general or #alerts runs immediately; any other channel
+ * // falls back to whatever the mode matrix says for this endpoint.
+ * 'messages.post': {
+ *   policy: 'allow',
+ *   constraints: { channel: { match: '^#(general|alerts)$' } },
+ * }
+ * ```
+ */
+export type PermissionOverride =
+	| PermissionPolicy
+	| {
+			/** Applied when every constraint is satisfied. */
+			policy: PermissionPolicy;
+			/** Dot-notation argument path → condition. All must hold. */
+			constraints: Record<string, PermissionConstraint>;
+			/**
+			 * Applied when the constraints are not satisfied. Omit to fall back to
+			 * the mode matrix, which is the usual intent: loosen the matching case
+			 * and leave everything else at the plugin default.
+			 */
+			otherwise?: PermissionPolicy;
+	  };
+
+/**
  * Metadata for a single endpoint entry. Drives permission decisions and MCP tool descriptions.
  * Plugin authors populate this on the `endpointMeta` field of their plugin definition.
  */
@@ -157,7 +206,7 @@ export type PluginPermissionsConfig<T extends EndpointTree = EndpointTree> = {
 	 * Keys are strongly-typed dot-notation paths through this plugin's endpoint tree.
 	 * Only valid paths for this specific plugin compile — typos are type errors.
 	 */
-	overrides?: Partial<Record<EndpointPathsOf<T>, PermissionPolicy>>;
+	overrides?: Partial<Record<EndpointPathsOf<T>, PermissionOverride>>;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
