@@ -60,6 +60,24 @@ describe('makeWhoisfreaksRequest', () => {
 		});
 	});
 
+	it('disables transport-level retries so the plugin error policy owns 429s', async () => {
+		mockRequest.mockResolvedValue({ status: true });
+		await makeWhoisfreaksRequest('/v2.0/whois/live', 'key-123', {
+			query: { whois: 'live', domainName: 'example.com' },
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.anything(),
+			expect.objectContaining({
+				rateLimitConfig: expect.objectContaining({
+					enabled: true,
+					maxRetries: 0,
+				}),
+			}),
+		);
+	});
+
 	it('forwards POST bodies for bulk lookups', async () => {
 		mockRequest.mockResolvedValue({ bulk_whois_response: [] });
 		await makeWhoisfreaksRequest('/v2.0/bulkwhois/live', 'key-123', {
