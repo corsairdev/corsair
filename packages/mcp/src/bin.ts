@@ -60,6 +60,12 @@ export function resolvePlugin(spec: string): {
 	return { pkg, exportName };
 }
 
+/** Minimal view of the better-sqlite3 handle — only the methods the bin calls. */
+interface SqliteDatabase {
+	exec(sql: string): void;
+	pragma(source: string): Array<{ name: string }>;
+}
+
 function required(name: string): string {
 	const value = process.env[name];
 	if (!value) {
@@ -84,27 +90,25 @@ async function main() {
 		process.exit(1);
 	}
 
-	// sqlite is an optional dependency; only the bin needs it. The `as string`
-	// keeps the specifier dynamic so it is not required to typecheck the package.
+	// optional dep, imported dynamically so uninstalled fails at runtime not build
 	const sqliteModule = await import('better-sqlite3' as string).catch(() => {
 		console.error(
 			'[corsair-mcp] needs "better-sqlite3" installed: npm i better-sqlite3',
 		);
 		process.exit(1);
 	});
-	const Database = (sqliteModule as { default: new (path: string) => unknown })
-		.default;
+	const Database = (
+		sqliteModule as { default: new (path: string) => SqliteDatabase }
+	).default;
 	const database = new Database(process.env.CORSAIR_DB_PATH ?? './corsair.db');
-	(database as { exec: (sql: string) => void }).exec(SCHEMA);
+	database.exec(SCHEMA);
 
 	// CREATE TABLE IF NOT EXISTS is a no-op against a database created by an
 	// older schema, so a reused CORSAIR_DB_PATH can lack columns the permission
 	// runtime needs. Reject an incompatible database with a clear message rather
 	// than hitting missing-column errors mid-operation.
 	const permissionCols = new Set(
-		(database as { pragma: (s: string) => Array<{ name: string }> })
-			.pragma('table_info(corsair_permissions)')
-			.map((c) => c.name),
+		database.pragma('table_info(corsair_permissions)').map((c) => c.name),
 	);
 	for (const col of ['token', 'plugin', 'args', 'tenant_id', 'expires_at']) {
 		if (!permissionCols.has(col)) {
@@ -118,6 +122,7 @@ async function main() {
 	const plugins = [];
 	for (const spec of specs) {
 		const { pkg, exportName } = resolvePlugin(spec);
+		// plugin package comes from env — no static type
 		const mod = (await import(pkg).catch(() => {
 			console.error(
 				`[corsair-mcp] plugin "${pkg}" is not installed: npm i ${pkg}`,
@@ -131,11 +136,16 @@ async function main() {
 			);
 			process.exit(1);
 		}
-		// Plugin defaults only. Per-plugin options (e.g. authType) would need a
-		// JSON config in env; add that when a listing actually needs it.
-		plugins.push((factory as () => unknown)());
+		// Hub credentials are supplied, so plugins use managed auth; their default
+		// (api_key) has no credentials here. Every plugin factory takes { authType }.
+		plugins.push(
+			(factory as (opts: { authType: 'managed' }) => unknown)({
+				authType: 'managed',
+			}),
+		);
 	}
 
+	// database handle and env-loaded plugins are dynamic — cast past the generics
 	const corsair = (createCorsair as (config: unknown) => unknown)({
 		database,
 		kek,
