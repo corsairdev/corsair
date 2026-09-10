@@ -38,10 +38,13 @@ const accountResponse = {
 const ctx = { key: 'test-api-key' } as any;
 
 function mockFetchWith(status: number, body: unknown) {
+	const payload = typeof body === 'string' ? body : JSON.stringify(body);
+	const contentType =
+		typeof body === 'string' ? 'text/plain' : 'application/json';
 	return jest.spyOn(globalThis, 'fetch').mockResolvedValue(
-		new Response(JSON.stringify(body), {
+		new Response(payload, {
 			status,
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': contentType },
 		}),
 	);
 }
@@ -155,6 +158,8 @@ describe('Spoki plugin', () => {
 		const [url, options] = mockFetch.mock.calls[0]!;
 		expect(url).toBe('https://api.spoki.com/wh/ap/auto-uuid/');
 		expect(options?.method).toBe('POST');
+		const headers = new Headers(options?.headers);
+		expect(headers.get('X-Spoki-Api-Key')).toBeNull();
 		expect(JSON.parse(options?.body as string)).toEqual({
 			secret: 'whsec-secret',
 			phone: '+3933312345678',
