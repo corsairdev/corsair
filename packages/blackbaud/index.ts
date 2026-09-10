@@ -120,7 +120,7 @@ const blackbaudEndpointMeta = {
 	'membership.listMemberships': {
 		riskLevel: 'read',
 		description:
-			"Lists memberships for a constituent from Blackbaud Raiser's Edge NXT Constituent API (ListConstituentMemberships). Junction lookups scan pages until found; plain lists use limit/offset pagination.",
+			"Lists memberships for a constituent from Blackbaud Raiser's Edge NXT Constituent API (ListConstituentMemberships). Junction lookups scan 500-record pages until found and throw past 10,000 rather than report absence; plain lists use limit/offset.",
 	},
 	'payments.getPaymentTransaction': {
 		riskLevel: 'read',

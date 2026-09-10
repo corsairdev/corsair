@@ -1,15 +1,18 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BlackbaudEndpoints } from '..';
-import { makeBlackbaudRequest } from '../client';
+import { BlackbaudAPIError, makeBlackbaudRequest } from '../client';
 import type {
 	BlackbaudEndpointOutputs,
 	ListMembershipsInput,
 	MembershipRecord,
 } from './types';
 
-// SKY API list default page size; also used for junction scans.
-const DEFAULT_PAGE_SIZE = 500;
-// Upper bound on pages scanned for one junction lookup (DOS guard).
+// SKY API returns at most 500 records per call; junction scans always use
+// full pages so a caller-provided small limit cannot shrink the range.
+// Ref: https://developer.blackbaud.com/skyapi/docs/basics#pagination
+const SEARCH_PAGE_SIZE = 500;
+// DOS guard: 20 pages cover 10,000 memberships. Exhaustion throws instead
+// of returning [] so a still-unscanned membership is never reported absent.
 const MAX_SEARCH_PAGES = 20;
 
 // Constituent API list (ListConstituentMemberships). No single-membership GET
@@ -34,10 +37,7 @@ export const listMemberships: BlackbaudEndpoints['listMemberships'] = async (
 		return response;
 	}
 
-	// Junction lookup scans pages from the start (limit sizes pages);
-	// a single page cannot prove absence.
-	const pageSize = input.limit ?? DEFAULT_PAGE_SIZE;
-	const found = await searchMembershipPages(ctx, input, pageSize);
+	const found = await searchMembershipPages(ctx, input);
 	await logEventFromContext(
 		ctx,
 		'blackbaud.memberships.list',
@@ -79,13 +79,12 @@ function matchesJunction(
 async function searchMembershipPages(
 	ctx: Parameters<BlackbaudEndpoints['listMemberships']>[0],
 	input: ListMembershipsInput,
-	pageSize: number,
 ): Promise<MembershipRecord[]> {
 	const junctionId = input.member_junction_id ?? '';
 	let offset = 0;
 	for (let page = 0; page < MAX_SEARCH_PAGES; page++) {
 		const response = await fetchMembershipPage(ctx, input, {
-			limit: pageSize,
+			limit: SEARCH_PAGE_SIZE,
 			offset,
 		});
 		const found = response.value.filter((record) =>
@@ -96,10 +95,13 @@ async function searchMembershipPages(
 		}
 		const fetched = offset + response.value.length;
 		// SKY count excludes paging; a short page or full count ends the scan.
-		if (response.value.length < pageSize || fetched >= response.count) {
+		if (response.value.length < SEARCH_PAGE_SIZE || fetched >= response.count) {
 			return [];
 		}
-		offset += pageSize;
+		offset += SEARCH_PAGE_SIZE;
 	}
-	return [];
+	throw new BlackbaudAPIError(
+		`member_junction_id '${junctionId}' not found within the first ${MAX_SEARCH_PAGES * SEARCH_PAGE_SIZE} memberships for constituent '${input.constituent_id}'; absence beyond that range is unknown`,
+		{ code: 'SEARCH_RANGE_EXCEEDED' },
+	);
 }
