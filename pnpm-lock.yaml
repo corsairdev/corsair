@@ -5447,6 +5447,10 @@ importers:
       typescript:
         specifier: ^5.8.0
         version: 5.9.3
+    optionalDependencies:
+      better-sqlite3:
+        specifier: '>=11.0.0'
+        version: 12.5.0
 
   packages/merriamwebsterdict:
     devDependencies:

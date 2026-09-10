@@ -6,6 +6,7 @@ export default defineConfig({
 		'src/mastra.ts',
 		'src/langchain.ts',
 		'src/llamaindex.ts',
+		'src/bin.ts',
 	],
 	format: ['esm'],
 	target: 'esnext',
@@ -19,6 +20,7 @@ export default defineConfig({
 		'@corsair-dev/langchain',
 		'@corsair-dev/llamaindex',
 		'@modelcontextprotocol/sdk',
+		'better-sqlite3',
 	],
 	noExternal: ['@ai-sdk/mcp'],
 });

@@ -4,15 +4,21 @@
   "description": "MCP server and framework adapters for Corsair. Expose 200+ integrations to any agent framework (Mastra, LangChain, LlamaIndex, OpenAI, Vercel AI, Claude) as tools.",
   "keywords": [
     "mcp",
+    "mcp-server",
     "model-context-protocol",
     "ai-agents",
+    "agent-tools",
     "tools",
     "tool-calling",
     "mastra",
     "langchain",
     "llamaindex",
     "openai",
+    "anthropic",
+    "claude",
     "vercel-ai",
+    "oauth",
+    "managed-oauth",
     "integrations",
     "corsair"
   ],
@@ -28,6 +34,9 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "corsair-mcp": "./dist/bin.js"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -99,6 +108,9 @@
     "openai": {
       "optional": true
     }
+  },
+  "optionalDependencies": {
+    "better-sqlite3": ">=11.0.0"
   },
   "devDependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
