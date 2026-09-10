@@ -9,6 +9,8 @@ import { z } from 'zod';
 
 const CursorPaginationShape = {
 	cursor: z.string().optional(),
+	// Pushbullet pagination maximum (docs: "The default (maximum) limit is
+	// 500, including deleted objects").
 	limit: z.number().int().min(1).max(500).optional(),
 };
 

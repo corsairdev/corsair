@@ -144,6 +144,9 @@ export const removeAll: PushbulletEndpoints['pushesDeleteAll'] = async (
 	input,
 ) => {
 	const parsed = PushbulletEndpointInputSchemas.pushesDeleteAll.parse(input);
+	// DELETE /v2/pushes takes no body or query; the empty schema only keeps
+	// the endpoint signature uniform. The server deletes asynchronously, so
+	// the local cache is evicted optimistically below (best-effort).
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['pushesDeleteAll']
 	>('pushes', ctx.key, {

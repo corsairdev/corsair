@@ -104,6 +104,8 @@ export async function makePushbulletRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
+		// Pushbullet list/delete calls take parameters via query string and
+		// path only; a JSON body is valid solely for POST creates/updates.
 		body: method === 'POST' ? body : undefined,
 		mediaType: method === 'POST' ? 'application/json' : undefined,
 		query,

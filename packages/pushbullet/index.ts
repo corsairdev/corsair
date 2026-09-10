@@ -312,6 +312,8 @@ export function pushbullet<const T extends PushbulletPluginOptions>(
 				return stored;
 			}
 
+			// Non-endpoint sources (e.g. webhook setup) never call Pushbullet,
+			// so no key is needed — the framework still requires a string.
 			return '';
 		},
 	} satisfies InternalPushbulletPlugin;
