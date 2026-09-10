@@ -1,0 +1,1589 @@
+{
+  "id": "apaleo",
+  "displayName": "Apaleo",
+  "description": "Open hospitality platform for property management, reservations, and hotel operations.",
+  "npmPackageName": "@corsair-dev/apaleo",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 29,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "one"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "apaleo.api.properties.archive",
+      "shortPath": "properties.archive",
+      "description": "Archive a live property (sets isArchived to true)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.properties.clone",
+      "shortPath": "properties.clone",
+      "description": "Clone a property, creating a new property with inventory and rate plans",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "companyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "managingDirectors",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commercialRegisterEntry",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taxId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "{ addressLine1: string, addressLine2?: string | null, postalCode: string, city: string, regionCode?: string | null, countryCode: string }"
+          },
+          {
+            "key": "bankAccount",
+            "optional": true,
+            "type": "{ iban?: string, bic?: string, bank?: string }"
+          },
+          {
+            "key": "paymentTerms",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "timeZone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "defaultCheckInTime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "defaultCheckOutTime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currencyCode",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.properties.count",
+      "shortPath": "properties.count",
+      "description": "Return total count of properties",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Test | Live[]"
+          },
+          {
+            "key": "includeArchived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.properties.countries",
+      "shortPath": "properties.countries",
+      "description": "List ISO country codes that can be used to create properties",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "countryCodes",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.properties.create",
+      "shortPath": "properties.create",
+      "description": "Create a new property",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "companyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "managingDirectors",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commercialRegisterEntry",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taxId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "{ addressLine1: string, addressLine2?: string | null, postalCode: string, city: string, regionCode?: string | null, countryCode: string }"
+          },
+          {
+            "key": "bankAccount",
+            "optional": true,
+            "type": "{ iban?: string, bic?: string, bank?: string }"
+          },
+          {
+            "key": "paymentTerms",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "timeZone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "defaultCheckInTime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "defaultCheckOutTime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currencyCode",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.properties.exists",
+      "shortPath": "properties.exists",
+      "description": "Check if a property exists by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exists",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.properties.get",
+      "shortPath": "properties.get",
+      "description": "Get a property by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "propertyTemplateId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isTemplate",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string | {}"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "companyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "managingDirectors",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commercialRegisterEntry",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taxId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "{ addressLine1?: string | null, addressLine2?: string | null, postalCode?: string | null, city?: string | null, regionCode?: string | null, countryCode?: string | null }"
+          },
+          {
+            "key": "bankAccount",
+            "optional": true,
+            "type": "{ iban?: string | null, bic?: string | null, bank?: string | null }"
+          },
+          {
+            "key": "paymentTerms",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "timeZone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currencyCode",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isArchived",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "{ action?: string | null, isAllowed?: boolean | null, reasons?: { code?: string | null, message?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.properties.list",
+      "shortPath": "properties.list",
+      "description": "Get the list of properties",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Test | Live[]"
+          },
+          {
+            "key": "includeArchived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{ id: string, code: string, propertyTemplateId?: string | null, isTemplate: boolean, name: string | {}, description?: string | {} | null, companyName: string, managingDirectors?: string | null, commercialRegisterEntry: string, taxId: string, location: { addressLine1?: string | null, addressLine2?: string | null, postalCode?: string | null, city?: string | null, regionCode?: string | null, countryCode?: string | null }, bankAccount?: { iban?: string | null, bic?: string | null, bank?: string | null } | null, paymentTerms: {}, timeZone: string, currencyCode: string, created: string, status: string, isArchived: boolean, actions?: { action?: string | null, isAllowed?: boolean | null, reasons?: { code?: string | null, message?: string | null }[] | null }[] | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.properties.reset",
+      "shortPath": "properties.reset",
+      "description": "Delete transactional data for a property in Test status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.properties.setLive",
+      "shortPath": "properties.setLive",
+      "description": "Move a test property to Live status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.unitAttributes.create",
+      "shortPath": "unitAttributes.create",
+      "description": "Create a new unit attribute",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.unitAttributes.delete",
+      "shortPath": "unitAttributes.delete",
+      "description": "Delete a unit attribute",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.unitAttributes.exists",
+      "shortPath": "unitAttributes.exists",
+      "description": "Check if a unit attribute exists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exists",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.unitAttributes.get",
+      "shortPath": "unitAttributes.get",
+      "description": "Get a unit attribute by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.unitAttributes.list",
+      "shortPath": "unitAttributes.list",
+      "description": "Get the unit attribute list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "unitAttributes",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.unitGroups.count",
+      "shortPath": "unitGroups.count",
+      "description": "Return number of unit groups matching the filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "propertyId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unitGroupTypes",
+            "optional": true,
+            "type": "BedRoom | MeetingRoom | EventSpace | ParkingLot | Other[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.unitGroups.create",
+      "shortPath": "unitGroups.create",
+      "description": "Create a new unit group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "propertyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "maxPersons",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "rank",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "BedRoom | MeetingRoom | EventSpace | ParkingLot"
+          },
+          {
+            "key": "connectedUnitGroups",
+            "optional": true,
+            "type": "{ unitGroupId: string, memberCount: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.unitGroups.delete",
+      "shortPath": "unitGroups.delete",
+      "description": "Delete a unit group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.unitGroups.exists",
+      "shortPath": "unitGroups.exists",
+      "description": "Check if a unit group exists by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exists",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.unitGroups.get",
+      "shortPath": "unitGroups.get",
+      "description": "Get a unit group by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "property",
+            "optional": false,
+            "type": "{ id?: string | null, code?: string | null, name?: string | null, description?: string | null }"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string | {}"
+          },
+          {
+            "key": "memberCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string | {}"
+          },
+          {
+            "key": "maxPersons",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "rank",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectedUnitGroups",
+            "optional": true,
+            "type": "{ id: string, name: string, description: string, memberCount: number, maxPersons?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.unitGroups.list",
+      "shortPath": "unitGroups.list",
+      "description": "Get the list of unit groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "propertyId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unitGroupTypes",
+            "optional": true,
+            "type": "BedRoom | MeetingRoom | EventSpace | ParkingLot | Other[]"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "unitGroups",
+            "optional": false,
+            "type": "{ id: string, code: string, property: { id?: string | null, code?: string | null, name?: string | null, description?: string | null }, name: string | {}, memberCount: number, description: string | {}, maxPersons: number, rank?: number | null, type: string, connectedUnitGroups?: { id: string, name: string, description: string, memberCount: number, maxPersons?: number | null }[] | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.unitGroups.replace",
+      "shortPath": "unitGroups.replace",
+      "description": "Replace a unit group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "maxPersons",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rank",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "connectedUnitGroups",
+            "optional": true,
+            "type": "{ unitGroupId: string, memberCount: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.units.count",
+      "shortPath": "units.count",
+      "description": "Return number of units matching the filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "propertyId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unitGroupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unitGroupIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unitAttributeIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "isOccupied",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "maintenanceType",
+            "optional": true,
+            "type": "OutOfService | OutOfOrder | OutOfInventory"
+          },
+          {
+            "key": "condition",
+            "optional": true,
+            "type": "Clean | CleanToBeInspected | Dirty"
+          },
+          {
+            "key": "textSearch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Active | Archived | All"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.units.create",
+      "shortPath": "units.create",
+      "description": "Create a new unit",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "propertyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "unitGroupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxPersons",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "condition",
+            "optional": true,
+            "type": "Clean | CleanToBeInspected | Dirty"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{ id: string }[]"
+          },
+          {
+            "key": "connectedUnits",
+            "optional": true,
+            "type": "{ unitId: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.units.createBulk",
+      "shortPath": "units.createBulk",
+      "description": "Create multiple units",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "units",
+            "optional": false,
+            "type": "{ propertyId: string, name: string, description: {}, unitGroupId?: string | null, maxPersons: number, condition?: Clean | CleanToBeInspected | Dirty | null, attributes?: { id: string }[] | null, connectedUnits?: { unitId: string }[] | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.units.delete",
+      "shortPath": "units.delete",
+      "description": "Delete a unit",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.units.exists",
+      "shortPath": "units.exists",
+      "description": "Check if a unit exists by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exists",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.units.get",
+      "shortPath": "units.get",
+      "description": "Get a unit by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string | {}"
+          },
+          {
+            "key": "property",
+            "optional": false,
+            "type": "{ id?: string | null, code?: string | null, name?: string | null, description?: string | null }"
+          },
+          {
+            "key": "unitGroup",
+            "optional": true,
+            "type": "{ id?: string | null, code?: string | null, name?: string | null, description?: string | null, type?: string | null }"
+          },
+          {
+            "key": "connectingUnit",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, unitGroupId?: string | null }"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ isOccupied?: boolean | null, condition?: string | null, maintenance?: { id?: string | null, from?: string | null, to?: string | null, type?: string | null, description?: string | null } | null }"
+          },
+          {
+            "key": "maxPersons",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isArchived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null }[]"
+          },
+          {
+            "key": "connectedUnits",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, unitGroupId?: string | null, condition?: string | null, maxPersons?: number | null }[]"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "{ action?: string | null, isAllowed?: boolean | null, reasons?: { code?: string | null, message?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apaleo.api.units.list",
+      "shortPath": "units.list",
+      "description": "Get the list of units",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "propertyId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unitGroupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unitGroupIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "unitAttributeIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "isOccupied",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "maintenanceType",
+            "optional": true,
+            "type": "OutOfService | OutOfOrder | OutOfInventory"
+          },
+          {
+            "key": "condition",
+            "optional": true,
+            "type": "Clean | CleanToBeInspected | Dirty"
+          },
+          {
+            "key": "textSearch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Active | Archived | All"
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "units",
+            "optional": false,
+            "type": "{ id: string, name: string, description: string | {}, property: { id?: string | null, code?: string | null, name?: string | null, description?: string | null }, unitGroup?: { id?: string | null, code?: string | null, name?: string | null, description?: string | null, type?: string | null } | null, connectingUnit?: { id?: string | null, name?: string | null, description?: string | null, unitGroupId?: string | null } | null, status: { isOccupied?: boolean | null, condition?: string | null, maintenance?: { id?: string | null, from?: string | null, to?: string | null, type?: string | null, description?: string | null } | null }, maxPersons: number, created: string, archived?: string | null, isArchived?: boolean | null, attributes?: { id?: string | null, name?: string | null, description?: string | null }[] | null, connectedUnits?: { id?: string | null, name?: string | null, description?: string | null, unitGroupId?: string | null, condition?: string | null, maxPersons?: number | null }[] | null, actions?: { action?: string | null, isAllowed?: boolean | null, reasons?: { code?: string | null, message?: string | null }[] | null }[] | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "apaleo.db.properties.search",
+      "entityName": "properties",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "propertyTemplateId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isTemplate",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "companyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "managingDirectors",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "commercialRegisterEntry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "taxId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timeZone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currencyCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isArchived",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "apaleo.db.unitAttributes.search",
+      "entityName": "unitAttributes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "apaleo.db.unitGroups.search",
+      "entityName": "unitGroups",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "memberCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "maxPersons",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "rank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "apaleo.db.units.search",
+      "entityName": "units",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "maxPersons",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "archived",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isArchived",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

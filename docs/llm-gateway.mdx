@@ -1,9 +1,9 @@
 ---
-title: LLM Gateway
+title: LLM gateway
 description: Use llm.corsair.dev as an OpenAI-compatible API with per-developer keys and budgets.
 ---
 
-`llm.corsair.dev` is Corsair's internal LLM gateway — an **OpenAI-compatible API** you can use with the Vercel AI SDK, OpenAI SDK, Cursor, or any client that accepts a custom `baseURL`.
+`llm.corsair.dev` is Corsair's internal LLM gateway, an OpenAI-compatible API you can use with the Vercel AI SDK, OpenAI SDK, Cursor, or any client that accepts a custom `baseURL`.
 
 Visiting [llm.corsair.dev](https://llm.corsair.dev) in a browser redirects here.
 
@@ -62,9 +62,9 @@ Example response:
 }
 ```
 
-- **`spend`** — dollars used so far in the current budget window
-- **`max_budget`** — your total allowance
-- **`budget_duration`** — when spend resets (e.g. `30d` = monthly)
+- **`spend`**: dollars used so far in the current budget window
+- **`max_budget`**: your total allowance
+- **`budget_duration`**: when spend resets (e.g. `30d` = monthly)
 
 Remaining budget: `max_budget - spend` (e.g. `$23.58` left in the example above).
 
@@ -106,7 +106,7 @@ const response = await client.chat.completions.create({
 ```
 
 <Warning>
-Do not use `openai('gpt-4o')` with the default OpenAI provider — that calls OpenAI directly. Always use `createOpenAI({ baseURL, apiKey })` so requests go through the gateway.
+Do not use `openai('gpt-4o')` with the default OpenAI provider, which calls OpenAI directly. Always use `createOpenAI({ baseURL, apiKey })` so requests go through the gateway.
 </Warning>
 
 ## curl
@@ -128,8 +128,8 @@ Some projects use different names. These are equivalent:
 | Preferred | Also accepted |
 | --------- | ------------- |
 | `LITELLM_API_KEY` | `OPENAI_API_KEY` (when `baseURL` points at the gateway) |
-| `LITELLM_BASE_URL` | — |
-| `LITELLM_MODEL` | — |
+| `LITELLM_BASE_URL` | none |
+| `LITELLM_MODEL` | none |
 
 ## Endpoints
 

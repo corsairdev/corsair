@@ -1,0 +1,817 @@
+---
+title: API
+description: "API reference for BoxHero: every `boxhero.api.*` operation with input and output types."
+---
+
+Every `boxhero.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Item Attributes
+
+### get
+
+`itemAttributes.get`
+
+Get an item attribute spec
+
+**Risk:** `read`
+
+```ts
+await corsair.boxhero.api.itemAttributes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attr_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: number,
+  attr_type: text | date | number | barcode,
+  attr_name: string,
+  rank: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`itemAttributes.list`
+
+List item attribute specs
+
+**Risk:** `read`
+
+```ts
+await corsair.boxhero.api.itemAttributes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  attr_type: text | date | number | barcode,
+  attr_name: string,
+  rank: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Items
+
+### delete
+
+`items.delete`
+
+Delete an inventory item
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.boxhero.api.items.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`items.get`
+
+Get an inventory item
+
+**Risk:** `read`
+
+```ts
+await corsair.boxhero.api.items.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_id` | `number` | Yes | — |
+| `location_ids` | `number \| number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  sku: string,
+  barcode: string,
+  photo_url?: string | null,
+  attrs: {
+    id: number,
+    type: text | date | number | barcode,
+    name: string,
+    value: string | number
+  }[],
+  cost: string,
+  price: string,
+  quantity: number,
+  quantities: {
+    location_id: number,
+    quantity: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`items.list`
+
+List inventory items
+
+**Risk:** `read`
+
+```ts
+await corsair.boxhero.api.items.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `item_ids` | `number \| number[]` | No | — |
+| `location_ids` | `number \| number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `cursor` | `number` | No | — |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  sku: string,
+  barcode: string,
+  photo_url?: string | null,
+  attrs: {
+    id: number,
+    type: text | date | number | barcode,
+    name: string,
+    value: string | number
+  }[],
+  cost: string,
+  price: string,
+  quantity: number,
+  quantities: {
+    location_id: number,
+    quantity: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Locations
+
+### delete
+
+`locations.delete`
+
+Delete a warehouse location
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.boxhero.api.locations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`locations.get`
+
+Get a warehouse location
+
+**Risk:** `read`
+
+```ts
+await corsair.boxhero.api.locations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  quantity: number,
+  memo: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`locations.list`
+
+List active warehouse locations
+
+**Risk:** `read`
+
+```ts
+await corsair.boxhero.api.locations.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  quantity: number,
+  memo: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Members
+
+### get
+
+`members.get`
+
+Get a team member
+
+**Risk:** `read`
+
+```ts
+await corsair.boxhero.api.members.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  role: admin | member | viewer
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`members.list`
+
+List team members
+
+**Risk:** `read`
+
+```ts
+await corsair.boxhero.api.members.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  role: admin | member | viewer
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Partners
+
+### list
+
+`partners.list`
+
+List partners (suppliers and customers)
+
+**Risk:** `read`
+
+```ts
+await corsair.boxhero.api.partners.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `0 \| 1` | No | — |
+| `cursor` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `cursor` | `number` | No | — |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  type: 0 | 1,
+  name: string,
+  phone: string,
+  email: string,
+  address: string,
+  memo: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### getInfo
+
+`teams.getInfo`
+
+Get the team linked to the API token
+
+**Risk:** `read`
+
+```ts
+await corsair.boxhero.api.teams.getInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `mode` | `0 \| 1 \| 2` | Yes | — |
+| `currency_symbol` | `string` | No | — |
+| `currency_code` | `string` | No | — |
+| `price_decimal_places` | `number` | Yes | — |
+| `memo` | `string` | No | — |
+
+
+
+---
+
+## Transactions
+
+### listBasic
+
+`transactions.listBasic`
+
+List inventory transactions without line items
+
+**Risk:** `read`
+
+```ts
+await corsair.boxhero.api.transactions.listBasic({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `type` | `in \| out \| move \| adjust` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `cursor` | `number` | No | — |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+(
+  {
+    id: number,
+    transaction_time: string,
+    created_at: string,
+    created_by: {
+      id: number,
+      name: string,
+      deleted: boolean
+    },
+    count_of_items: number,
+    total_quantity: number,
+    url: string,
+    memo: string,
+    revision: number,
+    type: in,
+    to_location: {
+      id: number,
+      name: string,
+      deleted: boolean
+    },
+    partner?: {
+      id: number,
+      name: string,
+      deleted: boolean
+    } | null
+  } | {
+    id: number,
+    transaction_time: string,
+    created_at: string,
+    created_by: {
+      id: number,
+      name: string,
+      deleted: boolean
+    },
+    count_of_items: number,
+    total_quantity: number,
+    url: string,
+    memo: string,
+    revision: number,
+    type: out,
+    to_location: {
+      id: number,
+      name: string,
+      deleted: boolean
+    },
+    partner?: {
+      id: number,
+      name: string,
+      deleted: boolean
+    } | null
+  } | {
+    id: number,
+    transaction_time: string,
+    created_at: string,
+    created_by: {
+      id: number,
+      name: string,
+      deleted: boolean
+    },
+    count_of_items: number,
+    total_quantity: number,
+    url: string,
+    memo: string,
+    revision: number,
+    type: move,
+    from_location: {
+      id: number,
+      name: string,
+      deleted: boolean
+    },
+    to_location: {
+      id: number,
+      name: string,
+      deleted: boolean
+    }
+  } | {
+    id: number,
+    transaction_time: string,
+    created_at: string,
+    created_by: {
+      id: number,
+      name: string,
+      deleted: boolean
+    },
+    count_of_items: number,
+    total_quantity: number,
+    url: string,
+    memo: string,
+    revision: number,
+    type: adjust,
+    to_location: {
+      id: number,
+      name: string,
+      deleted: boolean
+    }
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLocation
+
+`transactions.listLocation`
+
+List location-mode inventory transactions
+
+**Risk:** `read`
+
+```ts
+await corsair.boxhero.api.transactions.listLocation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `type` | `in \| out \| move \| adjust` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `cursor` | `number` | No | — |
+| `has_more` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+(
+  {
+    id: number,
+    transaction_time: string,
+    created_at: string,
+    created_by: {
+      id: number,
+      name: string,
+      deleted: boolean
+    },
+    count_of_items: number,
+    total_quantity: number,
+    url: string,
+    memo: string,
+    revision: number,
+    type: in,
+    to_location: {
+      id: number,
+      name: string,
+      deleted: boolean
+    },
+    partner?: {
+      id: number,
+      name: string,
+      deleted: boolean
+    } | null
+  } | {
+    id: number,
+    transaction_time: string,
+    created_at: string,
+    created_by: {
+      id: number,
+      name: string,
+      deleted: boolean
+    },
+    count_of_items: number,
+    total_quantity: number,
+    url: string,
+    memo: string,
+    revision: number,
+    type: out,
+    to_location: {
+      id: number,
+      name: string,
+      deleted: boolean
+    },
+    partner?: {
+      id: number,
+      name: string,
+      deleted: boolean
+    } | null
+  } | {
+    id: number,
+    transaction_time: string,
+    created_at: string,
+    created_by: {
+      id: number,
+      name: string,
+      deleted: boolean
+    },
+    count_of_items: number,
+    total_quantity: number,
+    url: string,
+    memo: string,
+    revision: number,
+    type: move,
+    from_location: {
+      id: number,
+      name: string,
+      deleted: boolean
+    },
+    to_location: {
+      id: number,
+      name: string,
+      deleted: boolean
+    }
+  } | {
+    id: number,
+    transaction_time: string,
+    created_at: string,
+    created_by: {
+      id: number,
+      name: string,
+      deleted: boolean
+    },
+    count_of_items: number,
+    total_quantity: number,
+    url: string,
+    memo: string,
+    revision: number,
+    type: adjust,
+    to_location: {
+      id: number,
+      name: string,
+      deleted: boolean
+    }
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

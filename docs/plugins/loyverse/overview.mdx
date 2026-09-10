@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "Point-of-sale system for retail stores, inventory, receipts, and customer loyalty programs."
+---
+
+Use **Loyverse** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 59 typed API operations
+- 13 synced entities (`categories`, `customers`, `discounts`, `employees`, `items`, `merchant`, and 7 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/loyverse
+```
+```bash yarn
+yarn add corsair @corsair-dev/loyverse
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/loyverse
+```
+```bash bun
+bun add corsair @corsair-dev/loyverse
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { loyverse } from '@corsair-dev/loyverse';
+
+export const corsair = createCorsair({
+	plugins: [
+		loyverse(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Loyverse OAuth app.
+
+```ts
+loyverse()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'loyverse',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`categories.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.categories.get({});
+```
+
+
+**`categories.delete`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.loyverse.api.categories.delete({});
+```
+
+
+See the full list on the [API](/plugins/loyverse/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.loyverse.db.<entity>.search()` and `.list()`: `categories`, `customers`, `discounts`, `employees`, `items`, `merchant`, `modifiers`, `paymentTypes`, `posDevices`, `stores`, `suppliers`, `taxes`, `variants`.
+
+See [Database](/plugins/loyverse/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/loyverse/api">
+    Every `loyverse.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/loyverse/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

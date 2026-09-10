@@ -1,9 +1,11 @@
 ---
 title: Authentication
-description: OAuth, API keys, and bot tokens — handled automatically.
+description: OAuth, API keys, and bot tokens, handled automatically.
 ---
 
-Corsair handles authentication for production-grade applications. Whether you need OAuth flows, API keys, or bot tokens, Corsair manages credentials across all your tenants.
+Corsair supports several authentication modes across its plugins. You choose an `authType` when registering a plugin — you do not pass tokens or secrets in your application code. Corsair stores credentials encrypted and retrieves the right ones for each tenant at request time.
+
+Check each plugin's [overview page](/plugins/slack/overview) to see which auth types it supports and follow its setup steps.
 
 ```ts corsair.ts
 import { createCorsair } from "corsair";
@@ -12,52 +14,62 @@ import { linear } from "@corsair-dev/linear";
 
 export const corsair = createCorsair({
     multiTenancy: true,
+    kek: process.env.CORSAIR_KEK!,
+    database: db,
+    hub: {
+        projectApiKey: process.env.CORSAIR_API_KEY!,
+        signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+    },
     plugins: [
-        slack({
-            authType: "api_key",
-            credentials: { botToken: "xoxb-..." },
-        }),
-        linear({
-            authType: "oauth_2",
-            credentials: {
-                clientId: process.env.LINEAR_CLIENT_ID,
-                clientSecret: process.env.LINEAR_CLIENT_SECRET,
-            },
-        }),
+        slack({ authType: "managed" }),
+        linear({ authType: "oauth_2" }),
     ],
 });
 ```
 
-## Auth Types
+## Auth types
 
-Choose the auth type for each integration:
+Not every plugin supports every mode. Open the plugin's docs — for example [Slack](/plugins/slack/overview) or [Linear](/plugins/linear/overview) — and use the **Choose authentication** section as the source of truth.
 
-### API Key
+### Managed OAuth
 
-For integrations that use static API keys or bot tokens.
+Corsair hosts the OAuth app, so you register nothing in the provider console. Set `authType: "managed"` and tenants connect through [Hub](/hub/overview).
 
 ```ts
-slack({
-    authType: "api_key",
-    credentials: { botToken: "xoxb-your-bot-token" },
+github({
+    authType: "managed",
 })
 ```
 
 ### OAuth 2.0
 
-For integrations that require user authorization.
+For integrations where you bring your own OAuth app. Set `authType: "oauth_2"` in your plugin config, then enter the **client ID** and **client secret** in the [Hub dashboard](https://hub.corsair.dev/dashboard) — not in `corsair.ts` or environment variables. Tenants authorize their accounts through Hub's connect flow.
 
 ```ts
 linear({
     authType: "oauth_2",
-    credentials: {
-        clientId: process.env.LINEAR_CLIENT_ID,
-        clientSecret: process.env.LINEAR_CLIENT_SECRET,
-    },
 })
 ```
 
-## Automatic Token Refresh
+See [OAuth 2.0](/concepts/oauth) for connect links, solo vs multi-tenant setup, and token lifecycle.
+
+### API key
+
+For integrations that use static API keys or personal access tokens. At the plugin level you only declare the auth type (or omit it when `api_key` is the default). Each tenant supplies their own key during onboarding or on first use — keys are stored encrypted per tenant, not configured once for the whole plugin.
+
+```ts
+linear({
+    authType: "api_key",
+})
+```
+
+See [API Key](/concepts/api-key) for storing and scoping keys with `withTenant`.
+
+### Bot token
+
+Some plugins accept a bot or app-user token instead of a user API key. Like API keys, bot tokens are **tenant-level**: each tenant provides their own token when connecting. Check the plugin's docs for the exact field name and setup flow.
+
+## Automatic token refresh
 
 When using OAuth, tokens expire. Corsair handles this automatically:
 
@@ -67,7 +79,7 @@ When using OAuth, tokens expire. Corsair handles this automatically:
 
 You never have to think about token rotation.
 
-## Envelope Encryption
+## Envelope encryption
 
 Corsair uses envelope encryption to protect credentials:
 
@@ -83,28 +95,10 @@ CORSAIR_KEK=your-key-encryption-key
 Each connection has a different DEK, so compromising one connection's key doesn't expose others.
 
 <Note>
-This holds whether you self-host or use [Hub](/hub/overview). Hub is a relay for connect, approval, and webhook surfaces — it stores none of your credentials. Encrypted tokens are persisted only in your database in both modes.
+This holds whether you self-host or use [Hub](/hub/overview). Hub is a relay for connect, approval, and webhook surfaces; it stores none of your tenants' tokens. Encrypted tokens are persisted only in your database in both modes.
 </Note>
 
-## Bring Your Own KMS
-
-If you're using a Key Management Service (AWS KMS, Google Cloud KMS, etc.), you can opt out of Corsair's built-in encryption.
-
-```ts corsair.ts
-export const corsair = createCorsair({
-    plugins: [
-        slack({
-            authType: "api_key",
-            credentials: {
-                // Pass your decrypted key directly
-                botToken: await kms.decrypt(encryptedToken),
-            },
-        }),
-    ],
-});
-```
-
-## Multi-Tenant Credentials
+## Multi-tenant credentials
 
 With multi-tenancy, each tenant has their own credentials stored securely.
 
@@ -119,4 +113,3 @@ await tenantB.slack.api.messages.post({ ... });
 ```
 
 Corsair retrieves the correct credentials for each tenant automatically.
-

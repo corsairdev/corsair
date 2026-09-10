@@ -1,0 +1,2541 @@
+---
+title: API
+description: "API reference for Doppler: every `doppler.api.*` operation with input and output types."
+---
+
+Every `doppler.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Activity Logs
+
+### list
+
+`activityLogs.list`
+
+List workplace activity log entries
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.activityLogs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `string` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logs` | `object[]` | Yes | — |
+| `page` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  id?: string | null,
+  text?: string | null,
+  html?: string | null,
+  created_at?: string | null,
+  config?: string | null,
+  environment?: string | null,
+  project?: string | null,
+  enclave_project?: string | null,
+  enclave_environment?: string | null,
+  enclave_config?: string | null,
+  user?: {
+  } | null,
+  diff?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`activityLogs.retrieve`
+
+Retrieve a single activity log entry
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.activityLogs.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `log` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `text` | `string` | No | — |
+| `html` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `config` | `string` | No | — |
+| `environment` | `string` | No | — |
+| `project` | `string` | No | — |
+| `enclave_project` | `string` | No | — |
+| `enclave_environment` | `string` | No | — |
+| `enclave_config` | `string` | No | — |
+| `user` | `object` | No | — |
+| `diff` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="diff full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Auth
+
+### me
+
+`auth.me`
+
+Read information about the authenticated token
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.auth.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `last_seen_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `token_preview` | `string` | No | — |
+| `workplace` | `object` | No | — |
+| `principal` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="workplace full type">
+
+```ts
+{
+  slug?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="principal full type">
+
+```ts
+{
+  type?: string | null,
+  slug?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Change Requests
+
+### list
+
+`changeRequests.list`
+
+List change requests (Team/Enterprise plans only)
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.changeRequests.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `status` | `string[]` | No | — |
+| `title` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Config Logs
+
+### get
+
+`configLogs.get`
+
+Retrieve a config log entry, including its secret diff
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.configLogs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `log` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `text` | `string` | No | — |
+| `html` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `user` | `object` | No | — |
+| `diff` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="diff full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`configLogs.list`
+
+List a config's change-log entries
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.configLogs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logs` | `object[]` | Yes | — |
+| `page` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  id?: string | null,
+  text?: string | null,
+  html?: string | null,
+  created_at?: string | null,
+  user?: {
+  } | null,
+  diff?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rollback
+
+`configLogs.rollback`
+
+Roll a config back to a prior log entry's state
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.configLogs.rollback({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `log` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `text` | `string` | No | — |
+| `html` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `user` | `object` | No | — |
+| `diff` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="diff full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Configs
+
+### clone
+
+`configs.clone`
+
+Clone a config into a new branch config
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.configs.clone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `project` | `string` | No | — |
+| `environment` | `string` | No | — |
+| `root` | `boolean` | No | — |
+| `inheritable` | `boolean` | No | — |
+| `inheriting` | `boolean` | No | — |
+| `inherits` | `any[]` | No | — |
+| `inheritedBy` | `any[]` | No | — |
+| `locked` | `boolean` | No | — |
+| `initial_fetch_at` | `string` | No | — |
+| `last_fetch_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`configs.create`
+
+Create a branch config within an environment
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.configs.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `environment` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `project` | `string` | No | — |
+| `environment` | `string` | No | — |
+| `root` | `boolean` | No | — |
+| `inheritable` | `boolean` | No | — |
+| `inheriting` | `boolean` | No | — |
+| `inherits` | `any[]` | No | — |
+| `inheritedBy` | `any[]` | No | — |
+| `locked` | `boolean` | No | — |
+| `initial_fetch_at` | `string` | No | — |
+| `last_fetch_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`configs.delete`
+
+Permanently delete a config and its secrets
+
+**Risk:** `destructive`
+
+```ts
+await corsair.doppler.api.configs.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`configs.get`
+
+Retrieve a config
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.configs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `project` | `string` | No | — |
+| `environment` | `string` | No | — |
+| `root` | `boolean` | No | — |
+| `inheritable` | `boolean` | No | — |
+| `inheriting` | `boolean` | No | — |
+| `inherits` | `any[]` | No | — |
+| `inheritedBy` | `any[]` | No | — |
+| `locked` | `boolean` | No | — |
+| `initial_fetch_at` | `string` | No | — |
+| `last_fetch_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`configs.list`
+
+List a project's configs
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.configs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `environment` | `string` | No | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `configs` | `object[]` | Yes | — |
+| `page` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="configs full type">
+
+```ts
+{
+  name: string,
+  slug?: string | null,
+  project?: string | null,
+  environment?: string | null,
+  root?: boolean | null,
+  inheritable?: boolean | null,
+  inheriting?: boolean | null,
+  inherits?: any[] | null,
+  inheritedBy?: any[] | null,
+  locked?: boolean | null,
+  initial_fetch_at?: string | null,
+  last_fetch_at?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### lock
+
+`configs.lock`
+
+Lock a config so it cannot be renamed or deleted
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.configs.lock({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `project` | `string` | No | — |
+| `environment` | `string` | No | — |
+| `root` | `boolean` | No | — |
+| `inheritable` | `boolean` | No | — |
+| `inheriting` | `boolean` | No | — |
+| `inherits` | `any[]` | No | — |
+| `inheritedBy` | `any[]` | No | — |
+| `locked` | `boolean` | No | — |
+| `initial_fetch_at` | `string` | No | — |
+| `last_fetch_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### unlock
+
+`configs.unlock`
+
+Unlock a config so it can be renamed or deleted
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.configs.unlock({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `project` | `string` | No | — |
+| `environment` | `string` | No | — |
+| `root` | `boolean` | No | — |
+| `inheritable` | `boolean` | No | — |
+| `inheriting` | `boolean` | No | — |
+| `inherits` | `any[]` | No | — |
+| `inheritedBy` | `any[]` | No | — |
+| `locked` | `boolean` | No | — |
+| `initial_fetch_at` | `string` | No | — |
+| `last_fetch_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`configs.update`
+
+Rename a config
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.configs.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `project` | `string` | No | — |
+| `environment` | `string` | No | — |
+| `root` | `boolean` | No | — |
+| `inheritable` | `boolean` | No | — |
+| `inheriting` | `boolean` | No | — |
+| `inherits` | `any[]` | No | — |
+| `inheritedBy` | `any[]` | No | — |
+| `locked` | `boolean` | No | — |
+| `initial_fetch_at` | `string` | No | — |
+| `last_fetch_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+## Dynamic Secrets
+
+### revokeLease
+
+`dynamicSecrets.revokeLease`
+
+Revoke a leased dynamic secret credential
+
+**Risk:** `destructive`
+
+```ts
+await corsair.doppler.api.dynamicSecrets.revokeLease({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `dynamicSecret` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+## Environments
+
+### create
+
+`environments.create`
+
+Create an environment within a project
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.environments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `personalConfigs` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `project` | `string` | No | — |
+| `initial_fetch_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `personal_configs` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`environments.delete`
+
+Permanently delete an environment and its configs
+
+**Risk:** `destructive`
+
+```ts
+await corsair.doppler.api.environments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `environment` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`environments.get`
+
+Retrieve an environment
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.environments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `environment` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `project` | `string` | No | — |
+| `initial_fetch_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `personal_configs` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`environments.list`
+
+List a project's environments
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.environments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  slug?: string | null,
+  name?: string | null,
+  project?: string | null,
+  initial_fetch_at?: string | null,
+  created_at?: string | null,
+  personal_configs?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### rename
+
+`environments.rename`
+
+Rename an environment's display name or slug
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.environments.rename({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `environment` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `personalConfigs` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `project` | `string` | No | — |
+| `initial_fetch_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `personal_configs` | `boolean` | No | — |
+
+
+
+---
+
+## Groups
+
+### deleteMember
+
+`groups.deleteMember`
+
+Remove a member from a workplace group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.doppler.api.groups.deleteMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `string` | Yes | — |
+| `type` | `workplace_user \| group \| invite \| service_account` | Yes | — |
+| `memberSlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+## Integrations
+
+### list
+
+`integrations.list`
+
+List third-party integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.integrations.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Invites
+
+### list
+
+`invites.list`
+
+List pending workplace invites
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.invites.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invites` | `object[]` | Yes | — |
+| `page` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="invites full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Project Members
+
+### delete
+
+`projectMembers.delete`
+
+Remove a member from a project
+
+**Risk:** `destructive`
+
+```ts
+await corsair.doppler.api.projectMembers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `type` | `workplace_user \| group \| invite \| service_account` | Yes | — |
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`projectMembers.get`
+
+Retrieve a project member
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.projectMembers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `type` | `workplace_user \| group \| invite \| service_account` | Yes | — |
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `role` | `object` | No | — |
+| `environments` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="role full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projectMembers.list`
+
+List a project's members
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.projectMembers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | Yes | — |
+| `page` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  type?: string | null,
+  slug?: string | null,
+  role?: {
+  } | null,
+  environments?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Project Roles
+
+### get
+
+`projectRoles.get`
+
+Retrieve a project-level role
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.projectRoles.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `role` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | No | — |
+| `name` | `string` | No | — |
+| `permissions` | `string[]` | No | — |
+| `created_at` | `string` | No | — |
+| `is_custom_role` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`projectRoles.list`
+
+List project-level roles
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.projectRoles.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  identifier?: string | null,
+  name?: string | null,
+  permissions?: string[] | null,
+  created_at?: string | null,
+  is_custom_role?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listPermissions
+
+`projectRoles.listPermissions`
+
+List permissions grantable to a project-level role
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.projectRoles.listPermissions({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string[]`
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a project
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Permanently delete a project and everything in it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.doppler.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Retrieve a project
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+| `page` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: string,
+  slug?: string | null,
+  name?: string | null,
+  description?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project's name or description
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+## Secrets
+
+### delete
+
+`secrets.delete`
+
+Delete a secret
+
+**Risk:** `destructive`
+
+```ts
+await corsair.doppler.api.secrets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### download
+
+`secrets.download`
+
+Download a config's secrets in a given format
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.secrets.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `format` | `json \| env \| yaml \| docker \| env-no-quotes` | No | — |
+| `nameTransformer` | `string` | No | — |
+| `includeDynamicSecrets` | `boolean` | No | — |
+| `dynamicSecretsTtlSec` | `number` | No | — |
+| `secrets` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`secrets.get`
+
+Retrieve a single secret's value
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.secrets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `raw` | `string` | No | — |
+| `computed` | `string` | No | — |
+| `note` | `string` | No | — |
+| `rawVisibility` | `string` | No | — |
+| `computedVisibility` | `string` | No | — |
+| `rawValueType` | `object` | No | — |
+| `computedValueType` | `object` | No | — |
+| `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="rawValueType full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="computedValueType full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`secrets.list`
+
+List a config's secrets, values included
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.secrets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `includeDynamicSecrets` | `boolean` | No | — |
+| `includeManagedSecrets` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### names
+
+`secrets.names`
+
+List a config's secret names, without values
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.secrets.names({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `includeDynamicSecrets` | `boolean` | No | — |
+| `includeManagedSecrets` | `boolean` | No | — |
+
+
+
+**Output:** `string[]`
+
+
+---
+
+### update
+
+`secrets.update`
+
+Bulk-set (or delete, via null) secrets in a config
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.secrets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `secrets` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="secrets full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateNote
+
+`secrets.updateNote`
+
+Set a secret's note (project-scoped route)
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.secrets.updateNote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `secret` | `string` | Yes | — |
+| `note` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secret` | `string` | No | — |
+| `note` | `string` | No | — |
+
+
+
+---
+
+### updateNoteViaConfig
+
+`secrets.updateNoteViaConfig`
+
+Set a secret's note (config-scoped route)
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.secrets.updateNoteViaConfig({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `secret` | `string` | Yes | — |
+| `note` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secret` | `string` | No | — |
+| `note` | `string` | No | — |
+
+
+
+---
+
+## Service Tokens
+
+### create
+
+`serviceTokens.create`
+
+Create a service token for a config
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.serviceTokens.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `access` | `read \| read/write` | No | — |
+| `expireAt` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `access` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `key` | `string` | No | — |
+| `project` | `string` | No | — |
+| `environment` | `string` | No | — |
+| `config` | `string` | No | — |
+| `expires_at` | `string` | No | — |
+| `last_seen_at` | `string` | No | — |
+| `token_preview` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`serviceTokens.delete`
+
+Revoke a service token
+
+**Risk:** `destructive`
+
+```ts
+await corsair.doppler.api.serviceTokens.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`serviceTokens.list`
+
+List a config's service tokens
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.serviceTokens.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | — |
+| `config` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  slug?: string | null,
+  access?: string | null,
+  created_at?: string | null,
+  key?: string | null,
+  project?: string | null,
+  environment?: string | null,
+  config?: string | null,
+  expires_at?: string | null,
+  last_seen_at?: string | null,
+  token_preview?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Share
+
+### createEncrypted
+
+`share.createEncrypted`
+
+Create a Doppler Share link from a caller-encrypted payload (zero-knowledge)
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.share.createEncrypted({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `encryptedSecret` | `string` | Yes | — |
+| `hashedPassword` | `string` | Yes | — |
+| `encryptionKdf` | `pbkdf2` | No | — |
+| `encryptionSaltRounds` | `1000000` | No | — |
+| `expireViews` | `number \| -1` | No | — |
+| `expireDays` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `authenticated_url` | `string` | No | — |
+| `password` | `string` | No | — |
+
+
+
+---
+
+### createPlain
+
+`share.createPlain`
+
+Create a Doppler Share link from a plaintext secret
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.share.createPlain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secret` | `string` | Yes | — |
+| `expireViews` | `number \| -1` | No | — |
+| `expireDays` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `authenticated_url` | `string` | No | — |
+| `password` | `string` | No | — |
+
+
+
+---
+
+## Webhooks
+
+### add
+
+`webhooks.add`
+
+Create a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.webhooks.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `url` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `secret` | `string` | No | — |
+| `authentication` | `object` | No | — |
+| `payload` | `string` | No | — |
+| `enableConfigs` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="authentication full type">
+
+```ts
+{
+  type: None | Bearer | Basic,
+  token?: string,
+  username?: string,
+  password?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `hasSecret` | `boolean` | No | — |
+| `authentication` | `any` | No | — |
+| `enabledConfigs` | `any[]` | No | — |
+| `canManage` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Permanently delete a webhook
+
+**Risk:** `destructive`
+
+```ts
+await corsair.doppler.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### disable
+
+`webhooks.disable`
+
+Disable a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.webhooks.disable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `hasSecret` | `boolean` | No | — |
+| `authentication` | `any` | No | — |
+| `enabledConfigs` | `any[]` | No | — |
+| `canManage` | `boolean` | No | — |
+
+
+
+---
+
+### enable
+
+`webhooks.enable`
+
+Enable a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.webhooks.enable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `hasSecret` | `boolean` | No | — |
+| `authentication` | `any` | No | — |
+| `enabledConfigs` | `any[]` | No | — |
+| `canManage` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Retrieve a webhook
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.webhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `hasSecret` | `boolean` | No | — |
+| `authentication` | `any` | No | — |
+| `enabledConfigs` | `any[]` | No | — |
+| `canManage` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  url?: string | null,
+  enabled?: boolean | null,
+  hasSecret?: boolean | null,
+  authentication?: any | null,
+  enabledConfigs?: any[] | null,
+  canManage?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | No | — |
+| `slug` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `name` | `string` | No | — |
+| `secret` | `string` | No | — |
+| `authentication` | `object` | No | — |
+| `payload` | `string` | No | — |
+| `enableConfigs` | `string[]` | No | — |
+| `disableConfigs` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="authentication full type">
+
+```ts
+{
+  type: None | Bearer | Basic,
+  token?: string,
+  username?: string,
+  password?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `hasSecret` | `boolean` | No | — |
+| `authentication` | `any` | No | — |
+| `enabledConfigs` | `any[]` | No | — |
+| `canManage` | `boolean` | No | — |
+
+
+
+---
+
+## Workplace
+
+### get
+
+`workplace.get`
+
+Retrieve the workplace
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.workplace.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `billing_email` | `string` | No | — |
+| `security_email` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`workplace.update`
+
+Update the workplace's name, billing email, or security email
+
+**Risk:** `write`
+
+```ts
+await corsair.doppler.api.workplace.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `billingEmail` | `string` | No | — |
+| `securityEmail` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `billing_email` | `string` | No | — |
+| `security_email` | `string` | No | — |
+
+
+
+---
+
+## Workplace Roles
+
+### get
+
+`workplaceRoles.get`
+
+Retrieve a workplace role
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.workplaceRoles.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `role` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `permissions` | `string[]` | No | — |
+
+
+
+---
+
+### list
+
+`workplaceRoles.list`
+
+List workplace roles
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.workplaceRoles.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  permissions?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listPermissions
+
+`workplaceRoles.listPermissions`
+
+List permissions grantable to a workplace role
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.workplaceRoles.listPermissions({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string[]`
+
+
+---
+
+## Workplace Users
+
+### get
+
+`workplaceUsers.get`
+
+Retrieve a workplace user by id
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.workplaceUsers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `access` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: string | null,
+  email?: string | null,
+  name?: string | null,
+  username?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`workplaceUsers.list`
+
+List users in the workplace
+
+**Risk:** `read`
+
+```ts
+await corsair.doppler.api.workplaceUsers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workplace_users` | `object[]` | Yes | — |
+| `page` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="workplace_users full type">
+
+```ts
+{
+  access?: string | null,
+  created_at?: string | null,
+  user?: {
+    id?: string | null,
+    email?: string | null,
+    name?: string | null,
+    username?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

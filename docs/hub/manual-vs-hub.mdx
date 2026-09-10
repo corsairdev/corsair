@@ -1,5 +1,5 @@
 ---
-title: Choosing Between Manual and Hub
+title: Choosing between Manual and Hub
 sidebarTitle: Manual or Hub
 description: The same Corsair instance, two ways to handle the surfaces that need a public URL. Here is exactly what each mode asks you to build.
 ---
@@ -9,8 +9,8 @@ import CreateCorsairManual from '/snippets/create-corsair-manual.mdx';
 
 Corsair only differs between modes in one place: the surfaces that need a public URL (OAuth callbacks, approval pages). Everything else (calling APIs, `withTenant`, hooks, the database layer, encryption) is identical.
 
-- **Hub** is the recommended path. Corsair hosts the connect, callback, and approval surfaces for you, and stores none of your credentials. See [Hub overview](/hub/overview).
-- **Manual** is the self-hosted alternative. You host those surfaces yourself — fully featured, no external dependency.
+- **Hub** is the recommended path. Corsair hosts the connect, callback, and approval surfaces for you, and your users' API tokens land in your database, not Hub. See [Hub overview](/hub/overview#where-your-credentials-live) for the credential split.
+- **Manual** is the self-hosted alternative. You host those surfaces yourself. It is fully featured, with no external dependency.
 
 The picker is config on `createCorsair`: pass `manual` or `hub`.
 
@@ -23,9 +23,9 @@ The picker is config on `createCorsair`: pass `manual` or `hub`.
 | OAuth callback route | You build it (`oauthCallback` exchanges the code) | Hosted by Hub, result delivered to you |
 | Approval UI | You build a review page and wire `onApprovalRequired` | Hosted approve/deny page, link auto-generated |
 | Missing-connection error | You craft the message and build the connect page | You call `createLink()` for a sign-in link; Hub hosts the connect page |
-| Credential storage | Your database | Your database (Hub stores nothing in both modes) |
+| Credential storage | Your database | Your database. Hub delivers your tenants' tokens to you and keeps zero copies; it holds only the OAuth client id/secret |
 
-The last row is the key one: **credential storage never changes.** Tokens live in your database under your KEK in both modes. Hub is a relay for the public-URL surfaces, not a vault.
+Credential storage barely changes. Your users' API tokens live in your database under your KEK in both modes. Hub relays the public-URL surfaces and hands the tokens to your app, keeping none itself. It does hold the app-level OAuth client id and secret (managed or bring-your-own) that run the flow. See [Where your credentials live](/hub/overview#where-your-credentials-live).
 
 ## Config side by side
 
@@ -43,7 +43,7 @@ You also build the connect page, the OAuth callback route, and the approval revi
 
 <CreateCorsairHub />
 
-No connect page, callback route, or approval page to build. Mount the handler once — Hub [delivers results](/hub/delivery-urls) to it (auto-detected locally, registered in the dashboard for production).
+No connect page, callback route, or approval page to build. Mount the handler once and Hub [delivers results](/hub/delivery-urls) to it (auto-detected locally, registered in the dashboard for production).
 
 </Tab>
 
@@ -78,7 +78,7 @@ sequenceDiagram
     App->>App: tokens encrypted into your DB
 ```
 
-In both lanes the tokens end up in the same place: your database. Hub removes the two pages you would otherwise build, nothing more.
+In both lanes the tokens end up in your database. Hub removes the two pages you would otherwise build, nothing more.
 
 ## Choosing a mode
 
@@ -92,12 +92,12 @@ You can also mix: connect through Hub while keeping approvals manual, or the rev
 
 <CardGroup cols={2}>
   <Card title="Hub overview" href="/hub/overview">
-    What Hub is and the relay / no-storage model.
+    What Hub is and where your credentials live.
   </Card>
   <Card title="Environments" href="/hub/environments">
     Development vs production keys and delivery.
   </Card>
-  <Card title="OAuth Process" href="/concepts/oauth-process">
+  <Card title="OAuth process" href="/concepts/oauth-process">
     The full manual-mode implementation with security best practices.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">

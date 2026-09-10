@@ -1,13 +1,11 @@
 ---
-title: Multi-Tenancy
+title: Multi-tenancy
 description: One flag. Every user gets their own credentials, their own data, zero overlap.
 ---
 
 Multi-tenancy means each user of your app connects their own accounts. User A connects their GitHub. User B connects theirs. They never see each other's data.
 
 Enable it with one flag. Then scope every operation to a user with `withTenant()`.
-
----
 
 ## Enable it
 
@@ -20,13 +18,11 @@ export const corsair = createCorsair({
 });
 ```
 
-With `multiTenancy: true`, Corsair won't let you call plugins directly — every operation must go through `withTenant()`. This is enforced at the type level, so you'll get a compile error if you forget.
-
----
+With `multiTenancy: true`, Corsair won't let you call plugins directly. Every operation must go through `withTenant()`. This is enforced at the type level, so you'll get a compile error if you forget.
 
 ## Use `withTenant()`
 
-Pass any stable user identifier — database ID, auth provider ID, anything:
+Pass any stable user identifier, such as a database ID or auth provider ID:
 
 ```ts
 const tenant = corsair.withTenant('user_abc123');
@@ -35,7 +31,7 @@ const tenant = corsair.withTenant('user_abc123');
 await tenant.github.api.repositories.list({ type: 'owner' });
 
 // Database queries return only that user's data
-const repos = await tenant.github.db.repositories.findAll();
+const repos = await tenant.github.db.repositories.search({});
 
 // Credentials are stored per-user
 await tenant.github.keys.set_api_key(userGithubToken);
@@ -43,20 +39,16 @@ await tenant.github.keys.set_api_key(userGithubToken);
 
 Every read, write, and API call is automatically scoped. There is no way to accidentally query another user's data through the normal API.
 
----
-
 ## How Corsair scopes it
 
 When you call `withTenant('user_abc123')`, Corsair:
 
-1. **Adds `tenant_id = 'user_abc123'` to every `INSERT`** — all data written is tagged
-2. **Adds `WHERE tenant_id = 'user_abc123'` to every `SELECT`** — you only ever read your own data
-3. **Retrieves credentials scoped to that tenant** — API calls use that user's token, not yours
+1. **Adds `tenant_id = 'user_abc123'` to every `INSERT`**: all data written is tagged
+2. **Adds `WHERE tenant_id = 'user_abc123'` to every `SELECT`**: you only ever read your own data
+3. **Retrieves credentials scoped to that tenant**: API calls use that user's token, not yours
 4. **Routes incoming webhooks** to the correct tenant via `?tenantId=user_abc123` in the URL
 
 No middleware, no manual filtering. Corsair handles it inside the database adapter.
-
----
 
 ## Per-user credential setup
 
@@ -72,8 +64,6 @@ export async function saveUserCredentials(userId: string, githubToken: string) {
 
 Credentials are encrypted with your KEK and stored per-tenant. One user's token can never be decrypted by another tenant's context.
 
----
-
 ## Webhooks
 
 When registering webhooks, include the user's ID in the URL:
@@ -84,15 +74,13 @@ https://your-app.com/api/webhook?tenantId=user_abc123
 
 Corsair reads `tenantId` from the query string and automatically scopes the database write to that user. No routing logic on your end.
 
----
-
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="Webhooks" href="/concepts/webhooks">
     How to scope incoming events per tenant using the ?tenantId= param.
   </Card>
-  <Card title="Vibe Code Your Dashboard" href="/guides/dashboard">
+  <Card title="Vibe code your dashboard" href="/guides/dashboard">
     Scaffold a Next.js app that uses Corsair with multi-tenancy.
   </Card>
 </CardGroup>
