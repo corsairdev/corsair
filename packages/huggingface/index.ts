@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
+import { resolveManagedAccessToken } from 'corsair/hub';
 import {
 	AccountEndpoints,
 	CollectionsEndpoints,
@@ -1571,7 +1571,6 @@ export function huggingface<const T extends HuggingFacePluginOptions>(
 				'read-collections',
 				'write-collections',
 				'inference-api',
-				'offline_access',
 			],
 			tokenAuthMethod: 'basic',
 		},
@@ -1611,22 +1610,7 @@ export function huggingface<const T extends HuggingFacePluginOptions>(
 			}
 
 			if (ctx.authType === 'managed') {
-				if (!ctx.hub) {
-					throw new Error(
-						'[auth-missing:huggingface:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
-					);
-				}
-
-				const managedContext = {
-					keys: ctx.keys,
-					hub: ctx.hub,
-					plugin: 'huggingface',
-					tenantId: ctx.tenantId,
-				};
-
-				const result = await getManagedAccessToken(managedContext);
-				await attachManagedRefreshAuth(ctx, managedContext);
-				return result.accessToken;
+				return resolveManagedAccessToken(ctx, 'huggingface');
 			}
 
 			throw new AuthMissingError('huggingface', 'oauth_2');

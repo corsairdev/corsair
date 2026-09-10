@@ -16,7 +16,7 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
+import { resolveManagedAccessToken } from 'corsair/hub';
 import { fetchMailchimpOAuthMetadata } from './client';
 import {
 	AccountEndpoints,
@@ -775,23 +775,9 @@ export function mailchimp<const T extends MailchimpPluginOptions>(
 			}
 
 			if (ctx.authType === 'managed') {
-				if (!ctx.hub) {
-					throw new Error(
-						'[auth-missing:mailchimp:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
-					);
-				}
-
-				const managedContext = {
-					keys: ctx.keys,
-					hub: ctx.hub,
-					plugin: 'mailchimp',
-					tenantId: ctx.tenantId,
-				};
-
-				const result = await getManagedAccessToken(managedContext);
-				await attachManagedRefreshAuth(ctx, managedContext);
-				const metadata = await fetchMailchimpOAuthMetadata(result.accessToken);
-				return packMailchimpOAuthKey(result.accessToken, metadata.dc);
+				const accessToken = await resolveManagedAccessToken(ctx, 'mailchimp');
+				const metadata = await fetchMailchimpOAuthMetadata(accessToken);
+				return packMailchimpOAuthKey(accessToken, metadata.dc);
 			}
 
 			throw new AuthMissingError('mailchimp', 'oauth_2');

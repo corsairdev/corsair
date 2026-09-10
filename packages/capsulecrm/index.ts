@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
+import { resolveManagedAccessToken } from 'corsair/hub';
 import {
 	activityTypesGet,
 	activityTypesList,
@@ -1414,22 +1414,7 @@ export function capsulecrm<const T extends CapsuleCrmPluginOptions>(
 				return res;
 			}
 			if (source === 'endpoint' && ctx.authType === 'managed') {
-				if (!ctx.hub) {
-					throw new Error(
-						'[auth-missing:capsulecrm:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
-					);
-				}
-
-				const managedContext = {
-					keys: ctx.keys,
-					hub: ctx.hub,
-					plugin: 'capsulecrm',
-					tenantId: ctx.tenantId,
-				};
-
-				const result = await getManagedAccessToken(managedContext);
-				await attachManagedRefreshAuth(ctx, managedContext);
-				return result.accessToken;
+				return resolveManagedAccessToken(ctx, 'capsulecrm');
 			}
 
 			throw new AuthMissingError('capsulecrm', ctx.authType ?? 'api_key');

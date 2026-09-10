@@ -11,7 +11,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
-import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
+import { resolveManagedAccessToken } from 'corsair/hub';
 import { BasecampEndpoints } from './endpoints';
 import {
 	BasecampEndpointInputSchemas,
@@ -1566,22 +1566,7 @@ export function basecamp<const T extends BasecampPluginOptions>(
 		keyBuilder: async (ctx: BasecampKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) return options.key;
 			if (ctx.authType === 'managed') {
-				if (!ctx.hub) {
-					throw new Error(
-						'[auth-missing:basecamp:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
-					);
-				}
-
-				const managedContext = {
-					keys: ctx.keys,
-					hub: ctx.hub,
-					plugin: 'basecamp',
-					tenantId: ctx.tenantId,
-				};
-
-				const result = await getManagedAccessToken(managedContext);
-				await attachManagedRefreshAuth(ctx, managedContext);
-				return result.accessToken;
+				return resolveManagedAccessToken(ctx, 'basecamp');
 			}
 
 			if (source !== 'endpoint' || ctx.authType !== 'oauth_2') {

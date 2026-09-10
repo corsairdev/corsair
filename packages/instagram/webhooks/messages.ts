@@ -10,27 +10,32 @@ import {
 export const messageReceived: InstagramWebhooks['messageReceived'] = {
 	match: createInstagramWebhookMatcher('messageReceived'),
 	handler: async (ctx, request) => {
-		if (ctx.options.authType === 'managed') {
-			return {
-				success: false,
-				statusCode: 501,
-				error:
-					'Instagram webhook signature verification is not available under managed auth; the Meta app secret is held by the Hub.',
-			};
+		// Hub-delivered webhooks are already verified at the trusted boundary, so
+		// skip local signature checks. Only non-Hub deliveries need the app secret,
+		// which managed connections don't hold locally.
+		if (request.hubVerified !== true) {
+			if (ctx.options.authType === 'managed') {
+				return {
+					success: false,
+					statusCode: 501,
+					error:
+						'Instagram webhook signature verification is not available under managed auth; the Meta app secret is held by the Hub.',
+				};
+			}
+			const credentials = await (
+				ctx.keys as AccountKeyManagerFor<'oauth_2'>
+			).get_integration_credentials();
+			const appSecret = credentials.client_secret;
+
+			const verification = verifyInstagramWebhookSignature(request, appSecret);
+
+			if (!verification.valid)
+				return {
+					success: false,
+					statusCode: 401,
+					error: verification.error || 'Signature verification failed',
+				};
 		}
-		const credentials = await (
-			ctx.keys as AccountKeyManagerFor<'oauth_2'>
-		).get_integration_credentials();
-		const appSecret = credentials.client_secret;
-
-		const verification = verifyInstagramWebhookSignature(request, appSecret);
-
-		if (!verification.valid)
-			return {
-				success: false,
-				statusCode: 401,
-				error: verification.error || 'Signature verification failed',
-			};
 
 		const body = request.payload;
 

@@ -14,7 +14,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
+import { resolveManagedAccessToken } from 'corsair/hub';
 import {
 	Forms,
 	Images,
@@ -588,22 +588,7 @@ export function typeform<const T extends TypeformPluginOptions>(
 			}
 
 			if (ctx.authType === 'managed') {
-				if (!ctx.hub) {
-					throw new Error(
-						'[auth-missing:typeform:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
-					);
-				}
-
-				const managedContext = {
-					keys: ctx.keys,
-					hub: ctx.hub,
-					plugin: 'typeform',
-					tenantId: ctx.tenantId,
-				};
-
-				const result = await getManagedAccessToken(managedContext);
-				await attachManagedRefreshAuth(ctx, managedContext);
-				return result.accessToken;
+				return resolveManagedAccessToken(ctx, 'typeform');
 			}
 
 			throw new AuthMissingError('typeform', 'oauth_2');

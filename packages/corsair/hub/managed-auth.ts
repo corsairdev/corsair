@@ -139,3 +139,35 @@ export async function attachManagedRefreshAuth(
 		return result.accessToken;
 	};
 }
+
+/** The keyBuilder context fields a managed token resolution reads from. */
+export type ManagedKeyBuilderContext = {
+	keys: AccountKeyManagerFor<'managed'>;
+	hub?: HubConfig;
+	tenantId: string;
+} & Record<string, unknown>;
+
+// Resolves a managed access token for a plugin's keyBuilder `managed` branch:
+// validates hub config, mints/refreshes via the Hub, and wires up 401 retries.
+// Shared so the flow and error text stay identical across plugins.
+export async function resolveManagedAccessToken(
+	ctx: ManagedKeyBuilderContext,
+	plugin: string,
+): Promise<string> {
+	if (!ctx.hub) {
+		throw new Error(
+			`[auth-missing:${plugin}:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().`,
+		);
+	}
+
+	const managedContext: ManagedAuthContext = {
+		keys: ctx.keys,
+		hub: ctx.hub,
+		plugin,
+		tenantId: ctx.tenantId,
+	};
+
+	const result = await getManagedAccessToken(managedContext);
+	await attachManagedRefreshAuth(ctx, managedContext);
+	return result.accessToken;
+}

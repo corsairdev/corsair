@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
-import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
+import { resolveManagedAccessToken } from 'corsair/hub';
 import {
 	normalizeConfluenceCloudUrl,
 	resolveConfluenceCloudResource,
@@ -206,15 +206,22 @@ export function confluence<const T extends ConfluencePluginOptions>(
 				return `${email}:${apiToken}`;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const accessToken = await getOAuthAccessToken(ctx, {
-					plugin: 'confluence',
-					tokenUrl: 'https://auth.atlassian.com/oauth/token',
-					bodyFormat: 'json',
-				});
+			if (
+				source === 'endpoint' &&
+				(ctx.authType === 'oauth_2' || ctx.authType === 'managed')
+			) {
+				const accessToken =
+					ctx.authType === 'managed'
+						? await resolveManagedAccessToken(ctx, 'confluence')
+						: await getOAuthAccessToken(ctx, {
+								plugin: 'confluence',
+								tokenUrl: 'https://auth.atlassian.com/oauth/token',
+								bodyFormat: 'json',
+							});
 
 				// Atlassian Cloud API calls are keyed by the site's cloud_id — resolve
-				// and persist it once, or when the configured site changes.
+				// and persist it once, or when the configured site changes. Managed
+				// delivery does not populate these fields, so both flows resolve here.
 				const [storedCloudId, storedCloudUrl] = await Promise.all([
 					ctx.keys.get_cloud_id(),
 					ctx.keys.get_cloud_url(),
@@ -243,25 +250,6 @@ export function confluence<const T extends ConfluencePluginOptions>(
 				}
 
 				return accessToken;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'managed') {
-				if (!ctx.hub) {
-					throw new Error(
-						'[auth-missing:confluence:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
-					);
-				}
-
-				const managedContext = {
-					keys: ctx.keys,
-					hub: ctx.hub,
-					plugin: 'confluence',
-					tenantId: ctx.tenantId,
-				};
-
-				const result = await getManagedAccessToken(managedContext);
-				await attachManagedRefreshAuth(ctx, managedContext);
-				return result.accessToken;
 			}
 
 			throw new AuthMissingError('confluence', 'api_key');

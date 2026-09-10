@@ -9,7 +9,7 @@ export const list: ConfluenceEndpoints['spacesList'] = async (ctx, input) => {
 	const cloudUrl =
 		ctx.options.cloudUrl ?? (await ctx.keys.get_cloud_url()) ?? '';
 	const cloudId =
-		ctx.options.authType === 'oauth_2'
+		ctx.options.authType === 'oauth_2' || ctx.options.authType === 'managed'
 			? ((await ctx.keys.get_cloud_id()) ?? undefined)
 			: undefined;
 

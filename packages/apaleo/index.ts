@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
+import { resolveManagedAccessToken } from 'corsair/hub';
 import {
 	APALEO_AUTH_URL,
 	APALEO_TOKEN_URL,
@@ -433,22 +433,7 @@ export function apaleo<const T extends ApaleoPluginOptions>(
 		keyBuilder: async (ctx: ApaleoKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) return options.key;
 			if (ctx.authType === 'managed') {
-				if (!ctx.hub) {
-					throw new Error(
-						'[auth-missing:apaleo:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
-					);
-				}
-
-				const managedContext = {
-					keys: ctx.keys,
-					hub: ctx.hub,
-					plugin: 'apaleo',
-					tenantId: ctx.tenantId,
-				};
-
-				const result = await getManagedAccessToken(managedContext);
-				await attachManagedRefreshAuth(ctx, managedContext);
-				return result.accessToken;
+				return resolveManagedAccessToken(ctx, 'apaleo');
 			}
 
 			if (source !== 'endpoint' || ctx.authType !== 'oauth_2') {
