@@ -1,0 +1,710 @@
+---
+title: Database
+description: "Salesforce local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Salesforce plugin syncs data locally. Use `corsair.salesforce.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Account
+
+Path: `salesforce.db.account.search`
+
+```ts
+const rows = await corsair.salesforce.db.account.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `AccountNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `AccountSource` | `string` | equals, contains, startsWith, endsWith, in |
+| `AnnualRevenue` | `number` | equals, gt, gte, lt, lte, in |
+| `BillingCity` | `string` | equals, contains, startsWith, endsWith, in |
+| `BillingCountry` | `string` | equals, contains, startsWith, endsWith, in |
+| `BillingGeocodeAccuracy` | `string` | equals, contains, startsWith, endsWith, in |
+| `BillingLatitude` | `number` | equals, gt, gte, lt, lte, in |
+| `BillingLongitude` | `number` | equals, gt, gte, lt, lte, in |
+| `BillingPostalCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `BillingState` | `string` | equals, contains, startsWith, endsWith, in |
+| `BillingStreet` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `Description` | `string` | equals, contains, startsWith, endsWith, in |
+| `Fax` | `string` | equals, contains, startsWith, endsWith, in |
+| `Industry` | `string` | equals, contains, startsWith, endsWith, in |
+| `IsDeleted` | `boolean` | equals |
+| `IsPersonAccount` | `boolean` | equals |
+| `LastActivityDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastReferencedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastViewedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `MasterRecordId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `NumberOfEmployees` | `number` | equals, gt, gte, lt, lte, in |
+| `OwnerId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Ownership` | `string` | equals, contains, startsWith, endsWith, in |
+| `ParentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `PhotoUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `Rating` | `string` | equals, contains, startsWith, endsWith, in |
+| `RecordTypeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `ShippingCity` | `string` | equals, contains, startsWith, endsWith, in |
+| `ShippingCountry` | `string` | equals, contains, startsWith, endsWith, in |
+| `ShippingGeocodeAccuracy` | `string` | equals, contains, startsWith, endsWith, in |
+| `ShippingLatitude` | `number` | equals, gt, gte, lt, lte, in |
+| `ShippingLongitude` | `number` | equals, gt, gte, lt, lte, in |
+| `ShippingPostalCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `ShippingState` | `string` | equals, contains, startsWith, endsWith, in |
+| `ShippingStreet` | `string` | equals, contains, startsWith, endsWith, in |
+| `Sic` | `string` | equals, contains, startsWith, endsWith, in |
+| `SicDesc` | `string` | equals, contains, startsWith, endsWith, in |
+| `Site` | `string` | equals, contains, startsWith, endsWith, in |
+| `SystemModstamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `TickerSymbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `Type` | `string` | equals, contains, startsWith, endsWith, in |
+| `Website` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Campaign
+
+Path: `salesforce.db.campaign.search`
+
+```ts
+const rows = await corsair.salesforce.db.campaign.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `ActualCost` | `number` | equals, gt, gte, lt, lte, in |
+| `AmountAllOpportunities` | `number` | equals, gt, gte, lt, lte, in |
+| `AmountWonOpportunities` | `number` | equals, gt, gte, lt, lte, in |
+| `BudgetedCost` | `number` | equals, gt, gte, lt, lte, in |
+| `CampaignMemberRecordTypeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `Description` | `string` | equals, contains, startsWith, endsWith, in |
+| `EndDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `ExpectedResponse` | `number` | equals, gt, gte, lt, lte, in |
+| `ExpectedRevenue` | `number` | equals, gt, gte, lt, lte, in |
+| `IsActive` | `boolean` | equals |
+| `IsDeleted` | `boolean` | equals |
+| `LastActivityDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastReferencedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastViewedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `NumberOfContacts` | `number` | equals, gt, gte, lt, lte, in |
+| `NumberOfConvertedLeads` | `number` | equals, gt, gte, lt, lte, in |
+| `NumberOfLeads` | `number` | equals, gt, gte, lt, lte, in |
+| `NumberOfOpportunities` | `number` | equals, gt, gte, lt, lte, in |
+| `NumberOfResponses` | `number` | equals, gt, gte, lt, lte, in |
+| `NumberOfWonOpportunities` | `number` | equals, gt, gte, lt, lte, in |
+| `NumberSent` | `number` | equals, gt, gte, lt, lte, in |
+| `OwnerId` | `string` | equals, contains, startsWith, endsWith, in |
+| `ParentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `RecordTypeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `StartDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `Status` | `string` | equals, contains, startsWith, endsWith, in |
+| `SystemModstamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `Type` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Campaign Member
+
+Path: `salesforce.db.campaignMember.search`
+
+```ts
+const rows = await corsair.salesforce.db.campaignMember.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `CampaignId` | `string` | equals, contains, startsWith, endsWith, in |
+| `ContactId` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `FirstRespondedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `HasResponded` | `boolean` | equals |
+| `IsDeleted` | `boolean` | equals |
+| `LastModifiedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LeadId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Status` | `string` | equals, contains, startsWith, endsWith, in |
+| `SystemModstamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Contact
+
+Path: `salesforce.db.contact.search`
+
+```ts
+const rows = await corsair.salesforce.db.contact.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `AccountId` | `string` | equals, contains, startsWith, endsWith, in |
+| `AssistantName` | `string` | equals, contains, startsWith, endsWith, in |
+| `AssistantPhone` | `string` | equals, contains, startsWith, endsWith, in |
+| `Birthdate` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `Department` | `string` | equals, contains, startsWith, endsWith, in |
+| `Description` | `string` | equals, contains, startsWith, endsWith, in |
+| `DoNotCall` | `boolean` | equals |
+| `Email` | `string` | equals, contains, startsWith, endsWith, in |
+| `EmailBouncedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `EmailBouncedReason` | `string` | equals, contains, startsWith, endsWith, in |
+| `Fax` | `string` | equals, contains, startsWith, endsWith, in |
+| `FirstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `HasOptedOutOfEmail` | `boolean` | equals |
+| `HasOptedOutOfFax` | `boolean` | equals |
+| `HomePhone` | `string` | equals, contains, startsWith, endsWith, in |
+| `IndividualId` | `string` | equals, contains, startsWith, endsWith, in |
+| `IsDeleted` | `boolean` | equals |
+| `IsEmailBounced` | `boolean` | equals |
+| `LastActivityDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastReferencedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastViewedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `LeadSource` | `string` | equals, contains, startsWith, endsWith, in |
+| `MailingCity` | `string` | equals, contains, startsWith, endsWith, in |
+| `MailingCountry` | `string` | equals, contains, startsWith, endsWith, in |
+| `MailingGeocodeAccuracy` | `string` | equals, contains, startsWith, endsWith, in |
+| `MailingLatitude` | `number` | equals, gt, gte, lt, lte, in |
+| `MailingLongitude` | `number` | equals, gt, gte, lt, lte, in |
+| `MailingPostalCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `MailingState` | `string` | equals, contains, startsWith, endsWith, in |
+| `MailingStreet` | `string` | equals, contains, startsWith, endsWith, in |
+| `MasterRecordId` | `string` | equals, contains, startsWith, endsWith, in |
+| `MobilePhone` | `string` | equals, contains, startsWith, endsWith, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `OtherCity` | `string` | equals, contains, startsWith, endsWith, in |
+| `OtherCountry` | `string` | equals, contains, startsWith, endsWith, in |
+| `OtherPhone` | `string` | equals, contains, startsWith, endsWith, in |
+| `OtherPostalCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `OtherState` | `string` | equals, contains, startsWith, endsWith, in |
+| `OtherStreet` | `string` | equals, contains, startsWith, endsWith, in |
+| `OwnerId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `PhotoUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `RecordTypeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `ReportsToId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Salutation` | `string` | equals, contains, startsWith, endsWith, in |
+| `SystemModstamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `Title` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Content Document
+
+Path: `salesforce.db.contentDocument.search`
+
+```ts
+const rows = await corsair.salesforce.db.contentDocument.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `ContentModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `ContentSize` | `number` | equals, gt, gte, lt, lte, in |
+| `CreatedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `Description` | `string` | equals, contains, startsWith, endsWith, in |
+| `FileExtension` | `string` | equals, contains, startsWith, endsWith, in |
+| `FileType` | `string` | equals, contains, startsWith, endsWith, in |
+| `IsDeleted` | `boolean` | equals |
+| `LastModifiedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LatestPublishedVersionId` | `string` | equals, contains, startsWith, endsWith, in |
+| `OwnerId` | `string` | equals, contains, startsWith, endsWith, in |
+| `ParentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `PublishStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `SharingOption` | `string` | equals, contains, startsWith, endsWith, in |
+| `SharingPrivacy` | `string` | equals, contains, startsWith, endsWith, in |
+| `SystemModstamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `Title` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Email Message
+
+Path: `salesforce.db.emailMessage.search`
+
+```ts
+const rows = await corsair.salesforce.db.emailMessage.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `BccAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `CcAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `FromAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `FromName` | `string` | equals, contains, startsWith, endsWith, in |
+| `HasAttachment` | `boolean` | equals |
+| `Headers` | `string` | equals, contains, startsWith, endsWith, in |
+| `HtmlBody` | `string` | equals, contains, startsWith, endsWith, in |
+| `Incoming` | `boolean` | equals |
+| `IsDeleted` | `boolean` | equals |
+| `LastModifiedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `MessageDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `ParentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `RelatedToId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Status` | `string` | equals, contains, startsWith, endsWith, in |
+| `Subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `SystemModstamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `TextBody` | `string` | equals, contains, startsWith, endsWith, in |
+| `ToAddress` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Lead
+
+Path: `salesforce.db.lead.search`
+
+```ts
+const rows = await corsair.salesforce.db.lead.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `AnnualRevenue` | `number` | equals, gt, gte, lt, lte, in |
+| `City` | `string` | equals, contains, startsWith, endsWith, in |
+| `Company` | `string` | equals, contains, startsWith, endsWith, in |
+| `ConvertedAccountId` | `string` | equals, contains, startsWith, endsWith, in |
+| `ConvertedContactId` | `string` | equals, contains, startsWith, endsWith, in |
+| `ConvertedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `ConvertedOpportunityId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Country` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `Description` | `string` | equals, contains, startsWith, endsWith, in |
+| `Email` | `string` | equals, contains, startsWith, endsWith, in |
+| `EmailBouncedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `EmailBouncedReason` | `string` | equals, contains, startsWith, endsWith, in |
+| `Fax` | `string` | equals, contains, startsWith, endsWith, in |
+| `FirstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `HasOptedOutOfEmail` | `boolean` | equals |
+| `IndividualId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Industry` | `string` | equals, contains, startsWith, endsWith, in |
+| `IsConverted` | `boolean` | equals |
+| `IsDeleted` | `boolean` | equals |
+| `IsUnreadByOwner` | `boolean` | equals |
+| `LastActivityDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastReferencedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastViewedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `LeadSource` | `string` | equals, contains, startsWith, endsWith, in |
+| `MasterRecordId` | `string` | equals, contains, startsWith, endsWith, in |
+| `MobilePhone` | `string` | equals, contains, startsWith, endsWith, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `NumberOfEmployees` | `number` | equals, gt, gte, lt, lte, in |
+| `OwnerId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `PostalCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `Rating` | `string` | equals, contains, startsWith, endsWith, in |
+| `RecordTypeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Salutation` | `string` | equals, contains, startsWith, endsWith, in |
+| `State` | `string` | equals, contains, startsWith, endsWith, in |
+| `Status` | `string` | equals, contains, startsWith, endsWith, in |
+| `Street` | `string` | equals, contains, startsWith, endsWith, in |
+| `SystemModstamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `Title` | `string` | equals, contains, startsWith, endsWith, in |
+| `Website` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Note
+
+Path: `salesforce.db.note.search`
+
+```ts
+const rows = await corsair.salesforce.db.note.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Body` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `IsDeleted` | `boolean` | equals |
+| `IsPrivate` | `boolean` | equals |
+| `LastModifiedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `OwnerId` | `string` | equals, contains, startsWith, endsWith, in |
+| `ParentId` | `string` | equals, contains, startsWith, endsWith, in |
+| `SystemModstamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `Title` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Opportunity
+
+Path: `salesforce.db.opportunity.search`
+
+```ts
+const rows = await corsair.salesforce.db.opportunity.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `AccountId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Amount` | `number` | equals, gt, gte, lt, lte, in |
+| `CampaignId` | `string` | equals, contains, startsWith, endsWith, in |
+| `CloseDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `ContactId` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `Description` | `string` | equals, contains, startsWith, endsWith, in |
+| `ExpectedRevenue` | `number` | equals, gt, gte, lt, lte, in |
+| `ForecastCategory` | `string` | equals, contains, startsWith, endsWith, in |
+| `ForecastCategoryName` | `string` | equals, contains, startsWith, endsWith, in |
+| `HasOpportunityLineItem` | `boolean` | equals |
+| `IsClosed` | `boolean` | equals |
+| `IsDeleted` | `boolean` | equals |
+| `IsPrivate` | `boolean` | equals |
+| `IsWon` | `boolean` | equals |
+| `LastActivityDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastReferencedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastViewedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LeadSource` | `string` | equals, contains, startsWith, endsWith, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `NextStep` | `string` | equals, contains, startsWith, endsWith, in |
+| `OwnerId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Pricebook2Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Probability` | `number` | equals, gt, gte, lt, lte, in |
+| `RecordTypeId` | `string` | equals, contains, startsWith, endsWith, in |
+| `StageName` | `string` | equals, contains, startsWith, endsWith, in |
+| `SystemModstamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `TotalOpportunityQuantity` | `number` | equals, gt, gte, lt, lte, in |
+| `Type` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Opportunity Line Item
+
+Path: `salesforce.db.opportunityLineItem.search`
+
+```ts
+const rows = await corsair.salesforce.db.opportunityLineItem.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `Description` | `string` | equals, contains, startsWith, endsWith, in |
+| `IsDeleted` | `boolean` | equals |
+| `LastModifiedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `ListPrice` | `number` | equals, gt, gte, lt, lte, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `OpportunityId` | `string` | equals, contains, startsWith, endsWith, in |
+| `PricebookEntryId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Product2Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `ProductCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `Quantity` | `number` | equals, gt, gte, lt, lte, in |
+| `ServiceDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `SortOrder` | `number` | equals, gt, gte, lt, lte, in |
+| `SystemModstamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `TotalPrice` | `number` | equals, gt, gte, lt, lte, in |
+| `UnitPrice` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Pricebook
+
+Path: `salesforce.db.pricebook.search`
+
+```ts
+const rows = await corsair.salesforce.db.pricebook.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `Description` | `string` | equals, contains, startsWith, endsWith, in |
+| `IsActive` | `boolean` | equals |
+| `IsArchived` | `boolean` | equals |
+| `IsDeleted` | `boolean` | equals |
+| `IsStandard` | `boolean` | equals |
+| `LastModifiedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastReferencedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastViewedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `SystemModstamp` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Pricebook Entry
+
+Path: `salesforce.db.pricebookEntry.search`
+
+```ts
+const rows = await corsair.salesforce.db.pricebookEntry.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `IsActive` | `boolean` | equals |
+| `IsArchived` | `boolean` | equals |
+| `IsDeleted` | `boolean` | equals |
+| `LastModifiedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `Pricebook2Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Product2Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `ProductCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `SystemModstamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `UnitPrice` | `number` | equals, gt, gte, lt, lte, in |
+| `UseStandardPrice` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Task
+
+Path: `salesforce.db.task.search`
+
+```ts
+const rows = await corsair.salesforce.db.task.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `AccountId` | `string` | equals, contains, startsWith, endsWith, in |
+| `ActivityDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `CallDisposition` | `string` | equals, contains, startsWith, endsWith, in |
+| `CallDurationInSeconds` | `number` | equals, gt, gte, lt, lte, in |
+| `CallObject` | `string` | equals, contains, startsWith, endsWith, in |
+| `CallType` | `string` | equals, contains, startsWith, endsWith, in |
+| `CompletedDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `Description` | `string` | equals, contains, startsWith, endsWith, in |
+| `IsArchived` | `boolean` | equals |
+| `IsClosed` | `boolean` | equals |
+| `IsDeleted` | `boolean` | equals |
+| `IsHighPriority` | `boolean` | equals |
+| `IsRecurrence` | `boolean` | equals |
+| `IsReminderSet` | `boolean` | equals |
+| `LastModifiedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `OwnerId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Priority` | `string` | equals, contains, startsWith, endsWith, in |
+| `RecurrenceRegeneratedType` | `string` | equals, contains, startsWith, endsWith, in |
+| `ReminderDateTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `Status` | `string` | equals, contains, startsWith, endsWith, in |
+| `Subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `SystemModstamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `TaskSubtype` | `string` | equals, contains, startsWith, endsWith, in |
+| `WhatId` | `string` | equals, contains, startsWith, endsWith, in |
+| `WhoId` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## User
+
+Path: `salesforce.db.user.search`
+
+```ts
+const rows = await corsair.salesforce.db.user.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `Id` | `string` | equals, contains, startsWith, endsWith, in |
+| `AboutMe` | `string` | equals, contains, startsWith, endsWith, in |
+| `AccountId` | `string` | equals, contains, startsWith, endsWith, in |
+| `Alias` | `string` | equals, contains, startsWith, endsWith, in |
+| `City` | `string` | equals, contains, startsWith, endsWith, in |
+| `CompanyName` | `string` | equals, contains, startsWith, endsWith, in |
+| `Country` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `CreatedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `Department` | `string` | equals, contains, startsWith, endsWith, in |
+| `Email` | `string` | equals, contains, startsWith, endsWith, in |
+| `EmailEncodingKey` | `string` | equals, contains, startsWith, endsWith, in |
+| `FirstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `IsActive` | `boolean` | equals |
+| `LanguageLocaleKey` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastLoginDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedById` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `LastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `LocaleSidKey` | `string` | equals, contains, startsWith, endsWith, in |
+| `MobilePhone` | `string` | equals, contains, startsWith, endsWith, in |
+| `Name` | `string` | equals, contains, startsWith, endsWith, in |
+| `Phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `PostalCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `ProfileId` | `string` | equals, contains, startsWith, endsWith, in |
+| `State` | `string` | equals, contains, startsWith, endsWith, in |
+| `Street` | `string` | equals, contains, startsWith, endsWith, in |
+| `SystemModstamp` | `string` | equals, contains, startsWith, endsWith, in |
+| `TimeZoneSidKey` | `string` | equals, contains, startsWith, endsWith, in |
+| `Title` | `string` | equals, contains, startsWith, endsWith, in |
+| `Username` | `string` | equals, contains, startsWith, endsWith, in |
+| `UserRoleId` | `string` | equals, contains, startsWith, endsWith, in |
+| `UserType` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

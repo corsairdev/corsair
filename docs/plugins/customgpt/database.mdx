@@ -1,0 +1,233 @@
+---
+title: Database
+description: "CustomGPT local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The CustomGPT plugin syncs data locally. Use `corsair.customgpt.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Conversations
+
+Path: `customgpt.db.conversations.search`
+
+```ts
+const rows = await corsair.customgpt.db.conversations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `session_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `deleted_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `syncedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Leads
+
+Path: `customgpt.db.leads.search`
+
+```ts
+const rows = await corsair.customgpt.db.leads.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_id` | `number` | equals, gt, gte, lt, lte, in |
+| `session_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `query_id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone_number` | `string` | equals, contains, startsWith, endsWith, in |
+| `company` | `string` | equals, contains, startsWith, endsWith, in |
+| `captured_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `syncedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Licenses
+
+Path: `customgpt.db.licenses.search`
+
+```ts
+const rows = await corsair.customgpt.db.licenses.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `key` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_id` | `number` | equals, gt, gte, lt, lte, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `syncedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Messages
+
+Path: `customgpt.db.messages.search`
+
+```ts
+const rows = await corsair.customgpt.db.messages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `conversation_id` | `number` | equals, gt, gte, lt, lte, in |
+| `user_id` | `number` | equals, gt, gte, lt, lte, in |
+| `user_query` | `string` | equals, contains, startsWith, endsWith, in |
+| `openai_response` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `syncedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Pages
+
+Path: `customgpt.db.pages.search`
+
+```ts
+const rows = await corsair.customgpt.db.pages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `page_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `page_url_hash` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_id` | `number` | equals, gt, gte, lt, lte, in |
+| `s3_path` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_file` | `boolean` | equals |
+| `is_refreshable` | `boolean` | equals |
+| `is_file_kept` | `boolean` | equals |
+| `filename` | `string` | equals, contains, startsWith, endsWith, in |
+| `filesize` | `number` | equals, gt, gte, lt, lte, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `deleted_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `syncedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projects
+
+Path: `customgpt.db.projects.search`
+
+```ts
+const rows = await corsair.customgpt.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `project_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `sitemap_path` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_chat_active` | `boolean` | equals |
+| `is_master` | `boolean` | equals |
+| `user_id` | `number` | equals, gt, gte, lt, lte, in |
+| `team_id` | `number` | equals, gt, gte, lt, lte, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `deleted_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_shared` | `boolean` | equals |
+| `shareable_slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `shareable_link` | `string` | equals, contains, startsWith, endsWith, in |
+| `embed_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `live_chat_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `are_licenses_allowed` | `boolean` | equals |
+| `subdomain_slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `syncedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Sources
+
+Path: `customgpt.db.sources.search`
+
+```ts
+const rows = await corsair.customgpt.db.sources.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `project_id` | `number` | equals, gt, gte, lt, lte, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `syncedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
