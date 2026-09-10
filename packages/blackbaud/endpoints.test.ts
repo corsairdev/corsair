@@ -136,9 +136,9 @@ describe('Blackbaud endpoints', () => {
 			id: `m${index}`,
 		}));
 		mockRequest
-			.mockResolvedValueOnce({ count: 501, value: firstPage })
+			.mockResolvedValueOnce({ count: 500, value: firstPage })
 			.mockResolvedValueOnce({
-				count: 501,
+				count: 1,
 				value: [{ id: 'm500', member_junction_id: 'j500' }],
 			});
 
@@ -182,8 +182,8 @@ describe('Blackbaud endpoints', () => {
 			id: `m${index}`,
 		}));
 		mockRequest
-			.mockResolvedValueOnce({ count: 501, value: fullPage })
-			.mockResolvedValueOnce({ count: 501, value: [{ id: 'm500' }] });
+			.mockResolvedValueOnce({ count: 500, value: fullPage })
+			.mockResolvedValueOnce({ count: 0, value: [{ id: 'm500' }] });
 
 		const result = await listMemberships(testCtx(), {
 			constituent_id: 'c1',
