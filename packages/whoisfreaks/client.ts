@@ -8,6 +8,7 @@ export async function makeWhoisfreaksRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// unknown: bulk endpoints accept varying JSON shapes (domainNames, ips, tld, ...).
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},

@@ -31,6 +31,7 @@ function matchedHandlerName(error: Error): string {
 type HandlerContext = {
 	pluginId: string;
 	operation: string;
+	// unknown: handler inputs vary per endpoint; this suite only exercises matching.
 	input: Record<string, unknown>;
 	originalError: Error;
 };
@@ -47,11 +48,14 @@ function handlerContext(error: Error): HandlerContext {
 type AnyHandler = (
 	error: Error,
 	context: HandlerContext,
+	// unknown: handler results carry varying optional fields (headersRetryAfterMs, ...).
 ) => Promise<Record<string, unknown>>;
 
 function runHandler(
+	// unknown: the handlers map mixes arities; normalized to the runtime (error, context) shape.
 	handler: unknown,
 	error: Error,
+	// unknown: same result shape as AnyHandler above (varying optional fields).
 ): Promise<Record<string, unknown>> {
 	return (handler as AnyHandler)(error, handlerContext(error));
 }
