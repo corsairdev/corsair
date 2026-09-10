@@ -1,6 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { ALLOWED_EXTRA, detectPlugin, pluginOf } from './gate.ts';
+import {
+	ALLOWED_EXTRA,
+	DOCS_NAV_FILE,
+	detectPlugin,
+	isPluginDocsManifestPr,
+	isSamePluginDocs,
+	pluginOf,
+} from './gate.ts';
 
 export type PrScope =
 	| { lane: 'plugin'; plugin: string }
@@ -11,6 +18,8 @@ export type PrScope =
 export type PrScopeFilters = {
 	lane: PrScope['lane'];
 	turboFilter: string;
+	/** Extra Turbo `--filter` flag so the full lane also builds/tests adapters/*. */
+	adaptersFilter: string;
 	skipHeavy: boolean;
 	includeWww: boolean;
 	wwwInstallFilter: string;
@@ -81,11 +90,19 @@ export function classifyPrScope(changedFiles: string[]): PrScope {
 	);
 	const plugin = detectPlugin(changedFiles);
 
+	if (isPluginDocsManifestPr(changedFiles)) {
+		return { lane: 'skip-heavy' };
+	}
+
 	if (
 		plugin !== null &&
 		plugins.size === 1 &&
 		changedFiles.every(
-			(file) => pluginOf(file) === plugin || ALLOWED_EXTRA.includes(file),
+			(file) =>
+				pluginOf(file) === plugin ||
+				ALLOWED_EXTRA.includes(file) ||
+				file === DOCS_NAV_FILE ||
+				isSamePluginDocs(file, plugin),
 		)
 	) {
 		return { lane: 'plugin', plugin };
@@ -139,6 +156,7 @@ export function filtersForScope(
 			return {
 				lane: 'plugin',
 				turboFilter: `${name}...`,
+				adaptersFilter: '',
 				skipHeavy: false,
 				includeWww: false,
 				wwwInstallFilter: '',
@@ -149,6 +167,7 @@ export function filtersForScope(
 			return {
 				lane: 'www',
 				turboFilter: '@corsair/www',
+				adaptersFilter: '',
 				skipHeavy: false,
 				includeWww: false,
 				wwwInstallFilter: '',
@@ -158,6 +177,7 @@ export function filtersForScope(
 			return {
 				lane: 'full',
 				turboFilter: './packages/*',
+				adaptersFilter: '--filter=./adapters/*',
 				skipHeavy: false,
 				includeWww: scope.includeWww,
 				wwwInstallFilter: scope.includeWww ? '--filter=@corsair/www...' : '',
@@ -167,6 +187,7 @@ export function filtersForScope(
 			return {
 				lane: 'skip-heavy',
 				turboFilter: '',
+				adaptersFilter: '',
 				skipHeavy: true,
 				includeWww: false,
 				wwwInstallFilter: '',
