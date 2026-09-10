@@ -12,7 +12,18 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { Account, Campaigns, Contacts } from './endpoints';
+import {
+	Account,
+	Blacklist,
+	Campaigns,
+	Contacts,
+	EmailCampaigns,
+	Linkedin,
+	Providers,
+	RestCampaigns,
+	Tools,
+	Webhooks,
+} from './endpoints';
 import type {
 	EmeliaEndpointInputs,
 	EmeliaEndpointOutputs,
@@ -54,6 +65,28 @@ export type EmeliaEndpoints = {
 	campaignsRemoveContact: EmeliaEndpoint<'campaignsRemoveContact'>;
 	contactsListLists: EmeliaEndpoint<'contactsListLists'>;
 	contactsAddToList: EmeliaEndpoint<'contactsAddToList'>;
+	restCreateCampaign: EmeliaEndpoint<'restCreateCampaign'>;
+	restListCampaigns: EmeliaEndpoint<'restListCampaigns'>;
+	restGetCampaignActivities: EmeliaEndpoint<'restGetCampaignActivities'>;
+	emailAddContact: EmeliaEndpoint<'emailAddContact'>;
+	emailListContacts: EmeliaEndpoint<'emailListContacts'>;
+	emailDeleteContact: EmeliaEndpoint<'emailDeleteContact'>;
+	blacklistAdd: EmeliaEndpoint<'blacklistAdd'>;
+	blacklistRemove: EmeliaEndpoint<'blacklistRemove'>;
+	linkedinCreateCampaign: EmeliaEndpoint<'linkedinCreateCampaign'>;
+	linkedinListCampaigns: EmeliaEndpoint<'linkedinListCampaigns'>;
+	linkedinDeleteContact: EmeliaEndpoint<'linkedinDeleteContact'>;
+	linkedinGetActivities: EmeliaEndpoint<'linkedinGetActivities'>;
+	findEmailSingle: EmeliaEndpoint<'findEmailSingle'>;
+	getFindEmailResult: EmeliaEndpoint<'getFindEmailResult'>;
+	findPhoneSingle: EmeliaEndpoint<'findPhoneSingle'>;
+	getFindPhoneResult: EmeliaEndpoint<'getFindPhoneResult'>;
+	verifyEmailSingle: EmeliaEndpoint<'verifyEmailSingle'>;
+	getVerifyEmailResult: EmeliaEndpoint<'getVerifyEmailResult'>;
+	listProviders: EmeliaEndpoint<'listProviders'>;
+	listWebhooks: EmeliaEndpoint<'listWebhooks'>;
+	createWebhook: EmeliaEndpoint<'createWebhook'>;
+	deleteWebhook: EmeliaEndpoint<'deleteWebhook'>;
 };
 
 const emeliaEndpointsNested = {
@@ -68,6 +101,42 @@ const emeliaEndpointsNested = {
 	contacts: {
 		listLists: Contacts.listLists,
 		addToList: Contacts.addToList,
+	},
+	restCampaigns: {
+		create: RestCampaigns.create,
+		list: RestCampaigns.list,
+		getActivities: RestCampaigns.getActivities,
+	},
+	emailCampaigns: {
+		addContact: EmailCampaigns.addContact,
+		listContacts: EmailCampaigns.listContacts,
+		deleteContact: EmailCampaigns.deleteContact,
+	},
+	blacklist: {
+		add: Blacklist.add,
+		remove: Blacklist.remove,
+	},
+	linkedin: {
+		createCampaign: Linkedin.createCampaign,
+		listCampaigns: Linkedin.listCampaigns,
+		deleteContact: Linkedin.deleteContact,
+		getActivities: Linkedin.getActivities,
+	},
+	tools: {
+		findEmailSingle: Tools.findEmailSingle,
+		getFindEmailResult: Tools.getFindEmailResult,
+		findPhoneSingle: Tools.findPhoneSingle,
+		getFindPhoneResult: Tools.getFindPhoneResult,
+		verifyEmailSingle: Tools.verifyEmailSingle,
+		getVerifyEmailResult: Tools.getVerifyEmailResult,
+	},
+	providers: {
+		list: Providers.list,
+	},
+	webhooks: {
+		list: Webhooks.list,
+		create: Webhooks.create,
+		remove: Webhooks.remove,
 	},
 } as const;
 
@@ -95,6 +164,94 @@ export const emeliaEndpointSchemas = {
 	'contacts.addToList': {
 		input: EmeliaEndpointInputSchemas.contactsAddToList,
 		output: EmeliaEndpointOutputSchemas.contactsAddToList,
+	},
+	'restCampaigns.create': {
+		input: EmeliaEndpointInputSchemas.restCreateCampaign,
+		output: EmeliaEndpointOutputSchemas.restCreateCampaign,
+	},
+	'restCampaigns.list': {
+		input: EmeliaEndpointInputSchemas.restListCampaigns,
+		output: EmeliaEndpointOutputSchemas.restListCampaigns,
+	},
+	'restCampaigns.getActivities': {
+		input: EmeliaEndpointInputSchemas.restGetCampaignActivities,
+		output: EmeliaEndpointOutputSchemas.restGetCampaignActivities,
+	},
+	'emailCampaigns.addContact': {
+		input: EmeliaEndpointInputSchemas.emailAddContact,
+		output: EmeliaEndpointOutputSchemas.emailAddContact,
+	},
+	'emailCampaigns.listContacts': {
+		input: EmeliaEndpointInputSchemas.emailListContacts,
+		output: EmeliaEndpointOutputSchemas.emailListContacts,
+	},
+	'emailCampaigns.deleteContact': {
+		input: EmeliaEndpointInputSchemas.emailDeleteContact,
+		output: EmeliaEndpointOutputSchemas.emailDeleteContact,
+	},
+	'blacklist.add': {
+		input: EmeliaEndpointInputSchemas.blacklistAdd,
+		output: EmeliaEndpointOutputSchemas.blacklistAdd,
+	},
+	'blacklist.remove': {
+		input: EmeliaEndpointInputSchemas.blacklistRemove,
+		output: EmeliaEndpointOutputSchemas.blacklistRemove,
+	},
+	'linkedin.createCampaign': {
+		input: EmeliaEndpointInputSchemas.linkedinCreateCampaign,
+		output: EmeliaEndpointOutputSchemas.linkedinCreateCampaign,
+	},
+	'linkedin.listCampaigns': {
+		input: EmeliaEndpointInputSchemas.linkedinListCampaigns,
+		output: EmeliaEndpointOutputSchemas.linkedinListCampaigns,
+	},
+	'linkedin.deleteContact': {
+		input: EmeliaEndpointInputSchemas.linkedinDeleteContact,
+		output: EmeliaEndpointOutputSchemas.linkedinDeleteContact,
+	},
+	'linkedin.getActivities': {
+		input: EmeliaEndpointInputSchemas.linkedinGetActivities,
+		output: EmeliaEndpointOutputSchemas.linkedinGetActivities,
+	},
+	'tools.findEmailSingle': {
+		input: EmeliaEndpointInputSchemas.findEmailSingle,
+		output: EmeliaEndpointOutputSchemas.findEmailSingle,
+	},
+	'tools.getFindEmailResult': {
+		input: EmeliaEndpointInputSchemas.getFindEmailResult,
+		output: EmeliaEndpointOutputSchemas.getFindEmailResult,
+	},
+	'tools.findPhoneSingle': {
+		input: EmeliaEndpointInputSchemas.findPhoneSingle,
+		output: EmeliaEndpointOutputSchemas.findPhoneSingle,
+	},
+	'tools.getFindPhoneResult': {
+		input: EmeliaEndpointInputSchemas.getFindPhoneResult,
+		output: EmeliaEndpointOutputSchemas.getFindPhoneResult,
+	},
+	'tools.verifyEmailSingle': {
+		input: EmeliaEndpointInputSchemas.verifyEmailSingle,
+		output: EmeliaEndpointOutputSchemas.verifyEmailSingle,
+	},
+	'tools.getVerifyEmailResult': {
+		input: EmeliaEndpointInputSchemas.getVerifyEmailResult,
+		output: EmeliaEndpointOutputSchemas.getVerifyEmailResult,
+	},
+	'providers.list': {
+		input: EmeliaEndpointInputSchemas.listProviders,
+		output: EmeliaEndpointOutputSchemas.listProviders,
+	},
+	'webhooks.list': {
+		input: EmeliaEndpointInputSchemas.listWebhooks,
+		output: EmeliaEndpointOutputSchemas.listWebhooks,
+	},
+	'webhooks.create': {
+		input: EmeliaEndpointInputSchemas.createWebhook,
+		output: EmeliaEndpointOutputSchemas.createWebhook,
+	},
+	'webhooks.remove': {
+		input: EmeliaEndpointInputSchemas.deleteWebhook,
+		output: EmeliaEndpointOutputSchemas.deleteWebhook,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof emeliaEndpointsNested
@@ -126,6 +283,94 @@ const emeliaEndpointMeta = {
 	'contacts.addToList': {
 		riskLevel: 'write',
 		description: 'Add a contact to a contact list',
+	},
+	'restCampaigns.create': {
+		riskLevel: 'write',
+		description: 'Create a new email campaign (REST)',
+	},
+	'restCampaigns.list': {
+		riskLevel: 'read',
+		description: 'List all email campaigns (REST)',
+	},
+	'restCampaigns.getActivities': {
+		riskLevel: 'read',
+		description: 'Retrieve activities for an email campaign',
+	},
+	'emailCampaigns.addContact': {
+		riskLevel: 'write',
+		description: 'Add a contact to an email campaign (legacy REST)',
+	},
+	'emailCampaigns.listContacts': {
+		riskLevel: 'read',
+		description: 'List contacts in an email campaign',
+	},
+	'emailCampaigns.deleteContact': {
+		riskLevel: 'destructive',
+		description: 'Remove a contact from an email campaign',
+	},
+	'blacklist.add': {
+		riskLevel: 'write',
+		description: 'Add a contact to the email blacklist',
+	},
+	'blacklist.remove': {
+		riskLevel: 'write',
+		description: 'Remove a contact from the email blacklist',
+	},
+	'linkedin.createCampaign': {
+		riskLevel: 'write',
+		description: 'Create a new LinkedIn campaign',
+	},
+	'linkedin.listCampaigns': {
+		riskLevel: 'read',
+		description: 'List all LinkedIn campaigns',
+	},
+	'linkedin.deleteContact': {
+		riskLevel: 'destructive',
+		description: 'Delete a contact from a LinkedIn campaign',
+	},
+	'linkedin.getActivities': {
+		riskLevel: 'read',
+		description: 'Retrieve activities for a LinkedIn campaign',
+	},
+	'tools.findEmailSingle': {
+		riskLevel: 'write',
+		description: 'Initiate a find-email job for a single contact',
+	},
+	'tools.getFindEmailResult': {
+		riskLevel: 'read',
+		description: 'Retrieve the result of a find-email job',
+	},
+	'tools.findPhoneSingle': {
+		riskLevel: 'write',
+		description: 'Initiate a phone-find job for a single contact',
+	},
+	'tools.getFindPhoneResult': {
+		riskLevel: 'read',
+		description: 'Retrieve the result of a phone-find job',
+	},
+	'tools.verifyEmailSingle': {
+		riskLevel: 'write',
+		description: 'Initiate an email verification job',
+	},
+	'tools.getVerifyEmailResult': {
+		riskLevel: 'read',
+		description: 'Retrieve the result of an email verification job',
+	},
+	'providers.list': {
+		riskLevel: 'read',
+		description: 'List all configured email providers',
+	},
+	'webhooks.list': {
+		riskLevel: 'read',
+		description: 'List all webhooks',
+	},
+	'webhooks.create': {
+		riskLevel: 'write',
+		description: 'Create a webhook for campaign events',
+	},
+	'webhooks.remove': {
+		riskLevel: 'destructive',
+		description: 'Delete a webhook by URL',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof emeliaEndpointsNested>;
 
