@@ -4,9 +4,11 @@ import type { PluginDocsIntrospection } from '../packages/corsair/core/inspect/i
 import {
 	buildChangesetContent,
 	fillPackageMetadata,
+	isWorkspaceNotInstalledError,
 	MISSING_METADATA_FIELDS,
 	missingMetadataFields,
 	renderPluginReadme,
+	summarizeCheckResults,
 } from './generate-plugin-readmes.ts';
 
 const sampleIntrospection: PluginDocsIntrospection = {
@@ -140,6 +142,78 @@ test('missingMetadataFields detects gaps for --check', () => {
 	for (const f of MISSING_METADATA_FIELDS) {
 		assert.ok(gaps.includes(f), `expected ${f} to be reported missing`);
 	}
+});
+
+test('isWorkspaceNotInstalledError detects lane-scoped missing installs', () => {
+	assert.equal(
+		isWorkspaceNotInstalledError(
+			"import failed: Cannot find package 'corsair' imported from '/repo/packages/acme/index.ts'",
+		),
+		true,
+	);
+	assert.equal(
+		isWorkspaceNotInstalledError(
+			"import failed: Cannot find package 'zod' imported from '/repo/packages/acme/index.ts'",
+		),
+		false,
+	);
+	assert.equal(
+		isWorkspaceNotInstalledError('factory() threw: boom'),
+		false,
+	);
+	assert.equal(
+		isWorkspaceNotInstalledError('no factory export "acme"'),
+		false,
+	);
+});
+
+test('summarizeCheckResults skips uninstalled plugins but fails on gaps', () => {
+	const results = [
+		{ dir: 'acme', gaps: [], error: undefined },
+		{
+			dir: 'beta',
+			gaps: [],
+			error:
+				"import failed: Cannot find package 'corsair' imported from '/repo/packages/beta/index.ts'",
+		},
+	];
+	const summary = summarizeCheckResults(results);
+	assert.equal(summary.ok, true);
+	assert.deepEqual(summary.skipped, ['beta']);
+	assert.deepEqual(summary.offenders, []);
+	assert.deepEqual(summary.errored, []);
+});
+
+test('summarizeCheckResults still fails on real gaps and other errors', () => {
+	const results = [
+		{ dir: 'acme', gaps: ['README.md'], error: undefined },
+		{ dir: 'beta', gaps: [], error: 'factory() threw: boom' },
+		{
+			dir: 'gamma',
+			gaps: [],
+			error:
+				"import failed: Cannot find package 'corsair' imported from '/repo/packages/gamma/index.ts'",
+		},
+	];
+	const summary = summarizeCheckResults(results);
+	assert.equal(summary.ok, false);
+	assert.deepEqual(summary.offenders, ['acme']);
+	assert.deepEqual(summary.errored, ['beta']);
+	assert.deepEqual(summary.skipped, ['gamma']);
+});
+
+test('summarizeCheckResults fails when nothing introspected at all', () => {
+	const results = [
+		{
+			dir: 'beta',
+			gaps: [],
+			error:
+				"import failed: Cannot find package 'corsair' imported from '/repo/packages/beta/index.ts'",
+		},
+	];
+	const summary = summarizeCheckResults(results);
+	assert.equal(summary.ok, false);
+	assert.deepEqual(summary.skipped, ['beta']);
 });
 
 test('buildChangesetContent lists exactly the touched packages at patch', () => {

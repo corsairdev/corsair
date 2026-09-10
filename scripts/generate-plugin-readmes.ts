@@ -310,6 +310,49 @@ const FACTORY_OPTIONS: Record<string, Record<string, unknown>> = {
 	workday: { tenant: 'acme', host: 'wd2-impl-services1.workday.com' },
 };
 
+/**
+ * True when a plugin failed to load only because the `corsair` workspace
+ * dependency is not installed — the signature of a lane-scoped CI install
+ * (the plugin lane installs just the PR's plugin), not a broken plugin.
+ */
+export function isWorkspaceNotInstalledError(error: string): boolean {
+	return error.startsWith("import failed: Cannot find package 'corsair'");
+}
+
+export type CheckResultSummary = {
+	ok: boolean;
+	offenders: string[];
+	errored: string[];
+	skipped: string[];
+};
+
+/**
+ * Decide a `--check` run: gaps and real load errors fail, uninstalled
+ * plugins are skipped, and a run that introspected nothing fails so a
+ * broken install can never pass vacuously.
+ */
+export function summarizeCheckResults(
+	results: { dir: string; gaps: string[]; error?: string }[],
+): CheckResultSummary {
+	const skipped = results
+		.filter((r) => r.error && isWorkspaceNotInstalledError(r.error))
+		.map((r) => r.dir);
+	const errored = results
+		.filter((r) => r.error && !isWorkspaceNotInstalledError(r.error))
+		.map((r) => r.dir);
+	const offenders = results
+		.filter((r) => !r.error && r.gaps.length > 0)
+		.map((r) => r.dir);
+	const introspected = results.length - skipped.length;
+	return {
+		ok:
+			offenders.length === 0 && errored.length === 0 && introspected > 0,
+		offenders,
+		errored,
+		skipped,
+	};
+}
+
 async function loadPlugin(
 	entryPath: string,
 ): Promise<{ ok: true; plugin: CorsairPlugin } | { ok: false; error: string }> {
@@ -495,20 +538,32 @@ async function main() {
 	}
 
 	const errored = results.filter((r) => r.error);
-	for (const r of errored) {
-		console.error(`[${r.dir}] ${r.error}`);
-	}
 
 	if (check) {
-		const offenders = results.filter((r) => !r.error && r.gaps.length > 0);
-		for (const r of offenders) {
-			console.error(`[${r.dir}] missing: ${r.gaps.join(', ')}`);
+		const summary = summarizeCheckResults(results);
+		for (const dir of summary.skipped) {
+			console.warn(
+				`[${dir}] skipped: 'corsair' workspace dependency not installed`,
+			);
 		}
-		const ok = offenders.length === 0 && errored.length === 0;
+		for (const dir of summary.errored) {
+			console.error(
+				`[${dir}] ${results.find((r) => r.dir === dir)?.error}`,
+			);
+		}
+		for (const dir of summary.offenders) {
+			console.error(
+				`[${dir}] missing: ${results.find((r) => r.dir === dir)?.gaps.join(', ')}`,
+			);
+		}
 		console.log(
-			`--check: ${results.length} plugins, ${offenders.length} with gaps, ${errored.length} failed to introspect.`,
+			`--check: ${results.length} plugins, ${summary.offenders.length} with gaps, ${summary.errored.length} failed to introspect, ${summary.skipped.length} skipped (not installed).`,
 		);
-		process.exit(ok ? 0 : 1);
+		process.exit(summary.ok ? 0 : 1);
+	}
+
+	for (const r of errored) {
+		console.error(`[${r.dir}] ${r.error}`);
 	}
 
 	const readmesWritten = results.filter((r) => r.readmeWritten);
