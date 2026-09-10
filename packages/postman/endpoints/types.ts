@@ -1,5 +1,155 @@
 import { z } from 'zod';
 
+// Shared Postman Collection Format v2.1 shapes. Every field is optional so
+// validation accepts partial payloads; documented shapes are typed explicitly
+// instead of passing values through opaquely.
+export const CollectionKeyValueSchema = z.object({
+	key: z.string().optional(),
+	value: z.string().optional(),
+	description: z.string().nullable().optional(),
+	disabled: z.boolean().optional(),
+});
+
+export const CollectionVariableSchema = z.object({
+	key: z.string().optional(),
+	value: z.union([z.string(), z.boolean(), z.number()]).optional(),
+	description: z.string().optional(),
+	disabled: z.boolean().optional(),
+	type: z.string().optional(),
+});
+
+export const CollectionUrlSchema = z.union([
+	z.string(),
+	z.object({
+		raw: z.string().optional(),
+		protocol: z.string().optional(),
+		host: z.array(z.string()).optional(),
+		path: z.array(z.string()).optional(),
+		port: z.string().optional(),
+		query: z.array(CollectionKeyValueSchema).optional(),
+		variable: z.array(CollectionKeyValueSchema).optional(),
+	}),
+]);
+
+export const CollectionScriptSchema = z.object({
+	id: z.string().optional(),
+	name: z.string().optional(),
+	type: z.string().optional(),
+	exec: z.array(z.string()).optional(),
+});
+
+export const CollectionEventSchema = z.object({
+	id: z.string().optional(),
+	listen: z.enum(['test', 'prerequest']).optional(),
+	script: CollectionScriptSchema.optional(),
+});
+
+export const CollectionAuthAttributeSchema = z.object({
+	key: z.string(),
+	value: z.union([z.string(), z.number(), z.boolean()]).optional(),
+	type: z.string().optional(),
+});
+
+export const CollectionRequestBodySchema = z.union([
+	z.string(),
+	z.object({
+		mode: z.string().optional(),
+		raw: z.string().optional(),
+		urlencoded: z.array(CollectionKeyValueSchema).optional(),
+		formdata: z.array(CollectionKeyValueSchema).optional(),
+		file: z
+			.object({
+				src: z.string().optional(),
+				content: z.string().optional(),
+			})
+			.optional(),
+		// Justification: GraphQL bodies are arbitrary query documents with
+		// provider-defined variables; no closed shape exists.
+		graphql: z.record(z.string(), z.unknown()).optional(),
+		// Justification: body options (e.g. raw language settings) are an open
+		// provider-defined map, not a closed set of fields.
+		options: z.record(z.string(), z.unknown()).optional(),
+	}),
+]);
+
+export const CollectionRequestSchema = z.object({
+	url: CollectionUrlSchema.optional(),
+	// Justification: v2.1 auth carries 11+ variant configs (basic, bearer,
+	// oauth2, ...); kept opaque so valid provider auth is never rejected.
+	auth: z.unknown().optional(),
+	method: z.string().optional(),
+	description: z.string().nullable().optional(),
+	header: z.array(CollectionKeyValueSchema).optional(),
+	body: CollectionRequestBodySchema.optional(),
+});
+
+export const CollectionResponseNodeSchema = z.object({
+	id: z.string().optional(),
+	name: z.string().optional(),
+	status: z.string().optional(),
+	code: z.union([z.string(), z.number()]).optional(),
+	header: z.array(CollectionKeyValueSchema).optional(),
+	cookie: z.array(CollectionKeyValueSchema).optional(),
+	body: z.string().optional(),
+	responseTime: z.union([z.string(), z.number()]).optional(),
+	originalRequest: CollectionRequestSchema.optional(),
+});
+
+export const CollectionProtocolProfileBehaviorSchema = z.object({
+	strictSSL: z.boolean().optional(),
+	followRedirects: z.boolean().optional(),
+	maxRedirects: z.number().optional(),
+	disableBodyPruning: z.boolean().optional(),
+	disableUrlEncoding: z.boolean().optional(),
+	disabledSystemHeaders: z.array(z.string()).optional(),
+	insecureHTTPParser: z.boolean().optional(),
+	followOriginalHttpMethod: z.boolean().optional(),
+	followAuthorizationHeader: z.boolean().optional(),
+	protocolVersion: z.enum(['http1', 'http2', 'auto']).optional(),
+	removeRefererHeaderOnRedirect: z.boolean().optional(),
+	tlsPreferServerCiphers: z.boolean().optional(),
+	tlsDisabledProtocols: z.array(z.string()).optional(),
+	tlsCipherSelection: z.array(z.string()).optional(),
+});
+
+export const CollectionInfoSchema = z.object({
+	name: z.string().optional(),
+	description: z.string().optional(),
+	schema: z.string().optional(),
+});
+
+export interface CollectionItem {
+	id?: string;
+	uid?: string;
+	name?: string;
+	description?: string | null;
+	variable?: z.infer<typeof CollectionVariableSchema>[];
+	event?: z.infer<typeof CollectionEventSchema>[];
+	request?: string | z.infer<typeof CollectionRequestSchema>;
+	response?: z.infer<typeof CollectionResponseNodeSchema>[];
+	protocolProfileBehavior?: z.infer<
+		typeof CollectionProtocolProfileBehaviorSchema
+	>;
+	createdAt?: string;
+	updatedAt?: string;
+	item?: CollectionItem[];
+}
+
+export const CollectionItemSchema: z.ZodType<CollectionItem> = z.object({
+	id: z.string().optional(),
+	uid: z.string().optional(),
+	name: z.string().optional(),
+	description: z.string().nullable().optional(),
+	variable: z.array(CollectionVariableSchema).optional(),
+	event: z.array(CollectionEventSchema).optional(),
+	request: z.union([z.string(), CollectionRequestSchema]).optional(),
+	response: z.array(CollectionResponseNodeSchema).optional(),
+	protocolProfileBehavior: CollectionProtocolProfileBehaviorSchema.optional(),
+	createdAt: z.string().optional(),
+	updatedAt: z.string().optional(),
+	item: z.array(z.lazy(() => CollectionItemSchema)).optional(),
+});
+
 // Apis
 export const ApisCreateSchemaInputSchema = z.object({
 	apiId: z.string().min(1, 'ApiId is required'),
@@ -97,7 +247,7 @@ export const ApisCreateCollectionFromSchemaInputSchema = z.object({
 									.optional(),
 							})
 							.optional(),
-						item: z.array(z.unknown()).optional(),
+						item: z.array(CollectionItemSchema).optional(),
 					})
 					.optional(),
 				operationType: z.enum(['CREATE_NEW']).optional(),
@@ -105,6 +255,7 @@ export const ApisCreateCollectionFromSchemaInputSchema = z.object({
 			z.object({
 				name: z.string().optional(),
 				operationType: z.enum(['GENERATE_FROM_SCHEMA']).optional(),
+				// Justification: provider-defined free-form map; record is the precise shape.
 				options: z.record(z.string(), z.unknown()).optional(),
 			}),
 		])
@@ -436,12 +587,14 @@ export const ApisDeleteSchemaFileInputSchema = z.object({
 	filePath: z.string().min(1, 'FilePath is required'),
 });
 
+// Justification: endpoint returns an empty body; unknown preserves forward compatibility.
 export const ApisDeleteSchemaFileOutputSchema = z.unknown().optional();
 
 export const ApisRemoveInputSchema = z.object({
 	apiId: z.string().min(1, 'ApiId is required'),
 });
 
+// Justification: endpoint returns an empty body; unknown preserves forward compatibility.
 export const ApisRemoveOutputSchema = z.unknown().optional();
 
 export const ApisDeleteCommentInputSchema = z.object({
@@ -449,6 +602,7 @@ export const ApisDeleteCommentInputSchema = z.object({
 	commentId: z.number().int(),
 });
 
+// Justification: endpoint returns an empty body; unknown preserves forward compatibility.
 export const ApisDeleteCommentOutputSchema = z.unknown().optional();
 
 export const ApisUpdateInputSchema = z.object({
@@ -569,6 +723,7 @@ export const SpecsGetDefinitionInputSchema = z.object({
 	specId: z.string().min(1, 'SpecId is required'),
 });
 
+// Justification: provider-defined free-form map; record is the precise shape.
 export const SpecsGetDefinitionOutputSchema = z.record(z.string(), z.unknown());
 
 export const SpecsGetFileInputSchema = z.object({
@@ -699,12 +854,14 @@ export const SpecsDeleteFileInputSchema = z.object({
 	filePath: z.string().min(1, 'FilePath is required'),
 });
 
+// Justification: endpoint returns an empty body; unknown preserves forward compatibility.
 export const SpecsDeleteFileOutputSchema = z.unknown().optional();
 
 export const SpecsRemoveInputSchema = z.object({
 	specId: z.string().min(1, 'SpecId is required'),
 });
 
+// Justification: endpoint returns an empty body; unknown preserves forward compatibility.
 export const SpecsRemoveOutputSchema = z.unknown().optional();
 
 export const SpecsGenerateCollectionInputSchema = z.object({
@@ -1021,6 +1178,7 @@ export const CollectionsGetFolderInputSchema = z.object({
 
 export const CollectionsGetFolderOutputSchema = z.object({
 	model_id: z.string().optional(),
+	// Justification: provider-defined free-form map; record is the precise shape.
 	meta: z.record(z.string(), z.unknown()).optional(),
 	data: z
 		.object({
@@ -1096,6 +1254,7 @@ export const CollectionsGetRequestInputSchema = z.object({
 
 export const CollectionsGetRequestOutputSchema = z.object({
 	model_id: z.string().optional(),
+	// Justification: provider-defined free-form map; record is the precise shape.
 	meta: z.record(z.string(), z.unknown()).optional(),
 	data: z
 		.object({
@@ -1152,6 +1311,7 @@ export const CollectionsGetResponseOutputSchema = z.object({
 			lastUpdatedBy: z.string().optional(),
 		})
 		.optional(),
+	// Justification: provider-defined free-form map; record is the precise shape.
 	meta: z.record(z.string(), z.unknown()).optional(),
 	model_id: z.string().optional(),
 });
@@ -1187,19 +1347,10 @@ export const CollectionsCreateInputSchema = z.object({
 				z.object({
 					name: z.string().optional(),
 					description: z.string().nullable().optional(),
-					variable: z.array(z.unknown()).optional(),
-					event: z.array(z.unknown()).optional(),
-					request: z
-						.object({
-							url: z.unknown().optional(),
-							auth: z.unknown().optional(),
-							method: z.string().optional(),
-							description: z.string().nullable().optional(),
-							header: z.array(z.unknown()).optional(),
-							body: z.unknown().optional(),
-						})
-						.optional(),
-					response: z.array(z.unknown()).optional(),
+					variable: z.array(CollectionVariableSchema).optional(),
+					event: z.array(CollectionEventSchema).optional(),
+					request: CollectionRequestSchema.optional(),
+					response: z.array(CollectionResponseNodeSchema).optional(),
 					protocolProfileBehavior: z
 						.object({
 							strictSSL: z.boolean().optional(),
@@ -1207,7 +1358,7 @@ export const CollectionsCreateInputSchema = z.object({
 							maxRedirects: z.number().optional(),
 							disableBodyPruning: z.boolean().optional(),
 							disableUrlEncoding: z.boolean().optional(),
-							disabledSystemHeaders: z.unknown().optional(),
+							disabledSystemHeaders: z.array(z.string()).optional(),
 							insecureHTTPParser: z.boolean().optional(),
 							followOriginalHttpMethod: z.boolean().optional(),
 							followAuthorizationHeader: z.boolean().optional(),
@@ -1260,12 +1411,15 @@ export const CollectionsCreateInputSchema = z.object({
 						'ntlm',
 						'edgegrid',
 					]),
+					// Justification: noauth carries no fields; unknown tolerates provider additions.
 					noauth: z.unknown().optional(),
 					apikey: z
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -1283,7 +1437,9 @@ export const CollectionsCreateInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -1301,7 +1457,9 @@ export const CollectionsCreateInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -1319,7 +1477,9 @@ export const CollectionsCreateInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -1337,7 +1497,9 @@ export const CollectionsCreateInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -1355,7 +1517,9 @@ export const CollectionsCreateInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -1373,7 +1537,9 @@ export const CollectionsCreateInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -1391,7 +1557,9 @@ export const CollectionsCreateInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -1409,7 +1577,9 @@ export const CollectionsCreateInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -1427,7 +1597,9 @@ export const CollectionsCreateInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -1538,6 +1710,7 @@ export const CollectionsCreateFolderOutputSchema = z.object({
 			lastUpdatedBy: z.string().optional(),
 		})
 		.optional(),
+	// Justification: provider-defined free-form map; record is the precise shape.
 	meta: z.record(z.string(), z.unknown()).optional(),
 	model_id: z.string().optional(),
 	revision: z.number().optional(),
@@ -1628,7 +1801,7 @@ export const CollectionsCreateResponseInputSchema = z.object({
 	request: z.string(),
 	name: z.string().optional(),
 	description: z.string().nullable().optional(),
-	url: z.string().nullable().optional(),
+	url: z.union([z.string(), CollectionUrlSchema]).nullable().optional(),
 	method: z
 		.enum([
 			'GET',
@@ -1668,9 +1841,13 @@ export const CollectionsCreateResponseInputSchema = z.object({
 					language: z.string().optional(),
 				})
 				.optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			urlencoded: z.record(z.string(), z.unknown()).optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			params: z.record(z.string(), z.unknown()).optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			binary: z.record(z.string(), z.unknown()).optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			graphql: z.record(z.string(), z.unknown()).optional(),
 		})
 		.optional(),
@@ -1701,6 +1878,7 @@ export const CollectionsCreateResponseOutputSchema = z.object({
 			lastUpdatedBy: z.string().optional(),
 		})
 		.optional(),
+	// Justification: provider-defined free-form map; record is the precise shape.
 	meta: z.record(z.string(), z.unknown()).optional(),
 	model_id: z.string().optional(),
 	revision: z.number().optional(),
@@ -1761,6 +1939,7 @@ export const CollectionsDeleteFolderOutputSchema = z.object({
 			owner: z.string().optional(),
 		})
 		.optional(),
+	// Justification: provider-defined free-form map; record is the precise shape.
 	meta: z.record(z.string(), z.unknown()).optional(),
 	model_id: z.string().optional(),
 	revision: z.number().optional(),
@@ -1793,6 +1972,7 @@ export const CollectionsDeleteResponseInputSchema = z.object({
 
 export const CollectionsDeleteResponseOutputSchema = z.object({
 	model_id: z.string().optional(),
+	// Justification: provider-defined free-form map; record is the precise shape.
 	meta: z.record(z.string(), z.unknown()).optional(),
 	data: z
 		.object({
@@ -1818,6 +1998,7 @@ export const CollectionsDeleteCommentInputSchema = z.object({
 	commentId: z.number().int(),
 });
 
+// Justification: endpoint returns an empty body; unknown preserves forward compatibility.
 export const CollectionsDeleteCommentOutputSchema = z.unknown().optional();
 
 export const CollectionsDuplicateInputSchema = z.object({
@@ -1896,7 +2077,7 @@ export const CollectionsCreateRequestInputSchema = z.object({
 			'VIEW',
 		])
 		.optional(),
-	url: z.string().nullable().optional(),
+	url: z.union([z.string(), CollectionUrlSchema]).nullable().optional(),
 	headerData: z
 		.array(
 			z.object({
@@ -1945,9 +2126,13 @@ export const CollectionsCreateRequestInputSchema = z.object({
 					language: z.string().optional(),
 				})
 				.optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			urlencoded: z.record(z.string(), z.unknown()).optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			params: z.record(z.string(), z.unknown()).optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			binary: z.record(z.string(), z.unknown()).optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			graphql: z.record(z.string(), z.unknown()).optional(),
 		})
 		.optional(),
@@ -1972,7 +2157,9 @@ export const CollectionsCreateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -1983,7 +2170,9 @@ export const CollectionsCreateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -1994,7 +2183,9 @@ export const CollectionsCreateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2005,7 +2196,9 @@ export const CollectionsCreateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2016,7 +2209,9 @@ export const CollectionsCreateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2027,7 +2222,9 @@ export const CollectionsCreateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2038,7 +2235,9 @@ export const CollectionsCreateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2049,7 +2248,9 @@ export const CollectionsCreateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2060,7 +2261,9 @@ export const CollectionsCreateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2071,7 +2274,9 @@ export const CollectionsCreateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2082,7 +2287,9 @@ export const CollectionsCreateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2093,7 +2300,9 @@ export const CollectionsCreateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2133,6 +2342,7 @@ export const CollectionsCreateRequestOutputSchema = z.object({
 			lastUpdatedBy: z.string().optional(),
 		})
 		.optional(),
+	// Justification: provider-defined free-form map; record is the precise shape.
 	meta: z.record(z.string(), z.unknown()).optional(),
 	model_id: z.string().optional(),
 	revision: z.number().optional(),
@@ -2187,19 +2397,10 @@ export const CollectionsReplaceInputSchema = z.object({
 					id: z.string(),
 					name: z.string().optional(),
 					description: z.string().nullable().optional(),
-					variable: z.array(z.unknown()).optional(),
-					event: z.array(z.unknown()).optional(),
-					request: z
-						.object({
-							url: z.unknown().optional(),
-							auth: z.unknown().optional(),
-							method: z.string().optional(),
-							description: z.string().nullable().optional(),
-							header: z.array(z.unknown()).optional(),
-							body: z.unknown().optional(),
-						})
-						.optional(),
-					response: z.array(z.unknown()).optional(),
+					variable: z.array(CollectionVariableSchema).optional(),
+					event: z.array(CollectionEventSchema).optional(),
+					request: CollectionRequestSchema.optional(),
+					response: z.array(CollectionResponseNodeSchema).optional(),
 					protocolProfileBehavior: z
 						.object({
 							strictSSL: z.boolean().optional(),
@@ -2207,7 +2408,7 @@ export const CollectionsReplaceInputSchema = z.object({
 							maxRedirects: z.number().optional(),
 							disableBodyPruning: z.boolean().optional(),
 							disableUrlEncoding: z.boolean().optional(),
-							disabledSystemHeaders: z.unknown().optional(),
+							disabledSystemHeaders: z.array(z.string()).optional(),
 							insecureHTTPParser: z.boolean().optional(),
 							followOriginalHttpMethod: z.boolean().optional(),
 							followAuthorizationHeader: z.boolean().optional(),
@@ -2254,7 +2455,8 @@ export const CollectionsReplaceInputSchema = z.object({
 							secret: z.boolean().optional(),
 							source: z
 								.object({
-									postman: z.unknown().optional(),
+									// Justification: secret-source blob is provider-defined; record preserves it opaquely.
+									postman: z.record(z.string(), z.unknown()).optional(),
 									provider: z.enum(['postman']).optional(),
 								})
 								.optional(),
@@ -2283,7 +2485,9 @@ export const CollectionsReplaceInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -2301,7 +2505,9 @@ export const CollectionsReplaceInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -2319,7 +2525,9 @@ export const CollectionsReplaceInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -2337,7 +2545,9 @@ export const CollectionsReplaceInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -2355,7 +2565,9 @@ export const CollectionsReplaceInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -2373,7 +2585,9 @@ export const CollectionsReplaceInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -2391,7 +2605,9 @@ export const CollectionsReplaceInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -2409,7 +2625,9 @@ export const CollectionsReplaceInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -2427,7 +2645,9 @@ export const CollectionsReplaceInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -2445,7 +2665,9 @@ export const CollectionsReplaceInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -2463,7 +2685,9 @@ export const CollectionsReplaceInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -2481,7 +2705,9 @@ export const CollectionsReplaceInputSchema = z.object({
 						.array(
 							z.object({
 								key: z.string(),
-								value: z.union([z.string(), z.array(z.unknown())]).optional(),
+								value: z
+									.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+									.optional(),
 								type: z
 									.enum([
 										'string',
@@ -2587,7 +2813,20 @@ export const CollectionsTransformToOpenapiOutputSchema = z.object({
 
 export const CollectionsUpdateInputSchema = z.object({
 	collectionId: z.string().min(1, 'CollectionId is required'),
-	collection: z.unknown().optional(),
+	collection: z
+		.union([
+			z.string(),
+			z.object({
+				info: CollectionInfoSchema.optional(),
+				item: z.array(CollectionItemSchema).optional(),
+				event: z.array(CollectionEventSchema).optional(),
+				variable: z.array(CollectionVariableSchema).optional(),
+				// Justification: PATCH bodies reuse the v2.1 auth variants; kept
+				// opaque so valid provider auth is never rejected.
+				auth: z.unknown().optional(),
+			}),
+		])
+		.optional(),
 });
 
 export const CollectionsUpdateOutputSchema = z.object({
@@ -2624,7 +2863,7 @@ export const CollectionsUpdateRequestInputSchema = z.object({
 			'VIEW',
 		])
 		.optional(),
-	url: z.string().nullable().optional(),
+	url: z.union([z.string(), CollectionUrlSchema]).nullable().optional(),
 	headerData: z
 		.array(
 			z.object({
@@ -2673,9 +2912,13 @@ export const CollectionsUpdateRequestInputSchema = z.object({
 					language: z.string().optional(),
 				})
 				.optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			urlencoded: z.record(z.string(), z.unknown()).optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			params: z.record(z.string(), z.unknown()).optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			binary: z.record(z.string(), z.unknown()).optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			graphql: z.record(z.string(), z.unknown()).optional(),
 		})
 		.optional(),
@@ -2700,7 +2943,9 @@ export const CollectionsUpdateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2711,7 +2956,9 @@ export const CollectionsUpdateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2722,7 +2969,9 @@ export const CollectionsUpdateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2733,7 +2982,9 @@ export const CollectionsUpdateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2744,7 +2995,9 @@ export const CollectionsUpdateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2755,7 +3008,9 @@ export const CollectionsUpdateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2766,7 +3021,9 @@ export const CollectionsUpdateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2777,7 +3034,9 @@ export const CollectionsUpdateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2788,7 +3047,9 @@ export const CollectionsUpdateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2799,7 +3060,9 @@ export const CollectionsUpdateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2810,7 +3073,9 @@ export const CollectionsUpdateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2821,7 +3086,9 @@ export const CollectionsUpdateRequestInputSchema = z.object({
 				.array(
 					z.object({
 						key: z.string(),
-						value: z.union([z.string(), z.array(z.unknown())]).optional(),
+						value: z
+							.union([z.string(), z.array(CollectionAuthAttributeSchema)])
+							.optional(),
 						type: z
 							.enum(['string', 'boolean', 'number', 'array', 'object', 'any'])
 							.optional(),
@@ -2859,6 +3126,7 @@ export const CollectionsUpdateRequestOutputSchema = z.object({
 			lastRevision: z.number().int().optional(),
 		})
 		.optional(),
+	// Justification: provider-defined free-form map; record is the precise shape.
 	meta: z.record(z.string(), z.unknown()).optional(),
 	model_id: z.string().optional(),
 	revision: z.number().optional(),
@@ -2886,6 +3154,7 @@ export const CollectionsUpdateFolderOutputSchema = z.object({
 			folder: z.string().nullable().optional(),
 		})
 		.optional(),
+	// Justification: provider-defined free-form map; record is the precise shape.
 	meta: z.record(z.string(), z.unknown()).optional(),
 	model_id: z.string().optional(),
 	revision: z.number().optional(),
@@ -2956,7 +3225,7 @@ export const CollectionsUpdateResponseInputSchema = z.object({
 	collectionId: z.string().min(1, 'CollectionId is required'),
 	name: z.string().optional(),
 	description: z.string().nullable().optional(),
-	url: z.string().nullable().optional(),
+	url: z.union([z.string(), CollectionUrlSchema]).nullable().optional(),
 	method: z
 		.enum([
 			'GET',
@@ -2996,9 +3265,13 @@ export const CollectionsUpdateResponseInputSchema = z.object({
 					language: z.string().optional(),
 				})
 				.optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			urlencoded: z.record(z.string(), z.unknown()).optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			params: z.record(z.string(), z.unknown()).optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			binary: z.record(z.string(), z.unknown()).optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			graphql: z.record(z.string(), z.unknown()).optional(),
 		})
 		.optional(),
@@ -3030,6 +3303,7 @@ export const CollectionsUpdateResponseOutputSchema = z.object({
 			lastUpdatedBy: z.string().optional(),
 		})
 		.optional(),
+	// Justification: provider-defined free-form map; record is the precise shape.
 	meta: z.record(z.string(), z.unknown()).optional(),
 	model_id: z.string().optional(),
 });
@@ -3103,6 +3377,7 @@ export const MocksListOutputSchema = z.object({
 				name: z.string().optional(),
 				config: z
 					.object({
+						// Justification: provider response shape varies; kept permissive so valid responses are never rejected.
 						delay: z.unknown().optional(),
 						headers: z.array(z.string()).optional(),
 						matchBody: z.boolean().optional(),
@@ -3401,7 +3676,9 @@ export const MonitorsGetOutputSchema = z.object({
 				.optional(),
 			notifications: z
 				.object({
+					// Justification: provider response shape varies; kept permissive so valid responses are never rejected.
 					onError: z.array(z.unknown()).optional(),
+					// Justification: provider response shape varies; kept permissive so valid responses are never rejected.
 					onFailure: z.array(z.unknown()).optional(),
 				})
 				.optional(),
@@ -3443,7 +3720,9 @@ export const MonitorsGetOutputSchema = z.object({
 					finishedAt: z.string().optional(),
 					stats: z
 						.object({
+							// Justification: provider response shape varies; kept permissive so valid responses are never rejected.
 							assertions: z.unknown().optional(),
+							// Justification: provider response shape varies; kept permissive so valid responses are never rejected.
 							requests: z.unknown().optional(),
 							runCount: z.number().int().optional(),
 							errorCount: z.number().int().optional(),
@@ -3594,13 +3873,18 @@ export const MonitorsRunOutputSchema = z.object({
 				.array(
 					z.object({
 						id: z.number().optional(),
+						// Justification: provider response shape varies; kept permissive so valid responses are never rejected.
 						item: z.unknown().optional(),
+						// Justification: provider response shape varies; kept permissive so valid responses are never rejected.
 						request: z.unknown().optional(),
+						// Justification: provider response shape varies; kept permissive so valid responses are never rejected.
 						response: z.unknown().optional(),
+						// Justification: provider response shape varies; kept permissive so valid responses are never rejected.
 						errors: z.array(z.unknown()).optional(),
 					}),
 				)
 				.optional(),
+			// Justification: provider-defined free-form map; record is the precise shape.
 			failures: z.array(z.record(z.string(), z.unknown())).optional(),
 		})
 		.optional(),
@@ -4070,6 +4354,7 @@ export const BillingListInvoicesOutputSchema = z.object({
 				.optional(),
 			links: z
 				.object({
+					// Justification: provider response shape varies; kept permissive so valid responses are never rejected.
 					web: z.unknown().optional(),
 				})
 				.optional(),
@@ -4166,7 +4451,8 @@ export const EnvironmentsGetOutputSchema = z.object({
 							value: z.string().optional(),
 							type: z.enum(['secret', 'default']).optional(),
 							secret: z.boolean().optional(),
-							source: z.unknown().optional(),
+							// Justification: source blob is provider-defined; record preserves it opaquely.
+							source: z.record(z.string(), z.unknown()).optional(),
 							description: z.string().optional(),
 						}),
 					]),
@@ -4200,7 +4486,8 @@ export const EnvironmentsCreateInputSchema = z.object({
 							secret: z.boolean().optional(),
 							source: z
 								.object({
-									postman: z.unknown().optional(),
+									// Justification: secret-source blob is provider-defined; record preserves it opaquely.
+									postman: z.record(z.string(), z.unknown()).optional(),
 									provider: z.enum(['postman']).optional(),
 								})
 								.optional(),
@@ -4289,7 +4576,8 @@ export const EnvironmentsReplaceInputSchema = z.object({
 							secret: z.boolean().optional(),
 							source: z
 								.object({
-									postman: z.unknown().optional(),
+									// Justification: secret-source blob is provider-defined; record preserves it opaquely.
+									postman: z.record(z.string(), z.unknown()).optional(),
 									provider: z.enum(['postman']).optional(),
 								})
 								.optional(),
@@ -4336,7 +4624,8 @@ export const EnvironmentsUpdateInputSchema = z.object({
 							secret: z.boolean().optional(),
 							source: z
 								.object({
-									postman: z.unknown().optional(),
+									// Justification: secret-source blob is provider-defined; record preserves it opaquely.
+									postman: z.record(z.string(), z.unknown()).optional(),
 									provider: z.enum(['postman']).optional(),
 								})
 								.optional(),
@@ -4393,7 +4682,8 @@ export const EnvironmentsUpdateOutputSchema = z.object({
 							value: z.string().optional(),
 							type: z.enum(['secret', 'default']).optional(),
 							secret: z.boolean().optional(),
-							source: z.unknown().optional(),
+							// Justification: source blob is provider-defined; record preserves it opaquely.
+							source: z.record(z.string(), z.unknown()).optional(),
 							description: z.string().optional(),
 						}),
 					]),
@@ -4509,6 +4799,7 @@ export const ToolsImportOpenapiInputSchema = z.object({
 		.union([
 			z.object({
 				type: z.enum(['json']),
+				// Justification: provider-defined free-form map; record is the precise shape.
 				input: z.record(z.string(), z.unknown()),
 				options: z
 					.object({
@@ -4564,6 +4855,7 @@ export const CommentsResolveInputSchema = z.object({
 	threadId: z.number().int(),
 });
 
+// Justification: endpoint returns an empty body; unknown preserves forward compatibility.
 export const CommentsResolveOutputSchema = z.unknown().optional();
 
 // PullRequests
