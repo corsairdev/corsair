@@ -13,7 +13,7 @@ describe('Blackbaud schema', () => {
 	it('declares an entities map', () => {
 		expect(typeof BlackbaudSchema.entities).toBe('object');
 		expect(BlackbaudSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(BlackbaudSchema.entities))).toBe(true);
+		expect(Array.isArray(BlackbaudSchema.entities)).toBe(false);
 		for (const entity of Object.values(BlackbaudSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
