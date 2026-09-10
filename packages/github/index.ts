@@ -12,7 +12,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type { GithubEndpointInputs, GithubEndpointOutputs } from './endpoints';
 import {
@@ -1938,13 +1938,10 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 
 					return res;
 				} else if (ctx.authType === 'oauth_2') {
-					const res = await ctx.keys.get_access_token();
-
-					if (!res) {
-						throw new AuthMissingError('github', 'oauth_2');
-					}
-
-					return res;
+					return getOAuthAccessToken(ctx, {
+						plugin: 'github',
+						tokenUrl: 'https://github.com/login/oauth/access_token',
+					});
 				} else if (ctx.authType === 'managed') {
 					if (!ctx.hub) {
 						throw new Error(
