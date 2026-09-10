@@ -66,7 +66,7 @@ export const create: PostmanEndpoints['monitorsCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'postman.monitors.create',
-		{ ...input },
+		{ workspace: input.workspace },
 		'completed',
 	);
 	return response;
@@ -135,7 +135,7 @@ export const update: PostmanEndpoints['monitorsUpdate'] = async (
 	await logEventFromContext(
 		ctx,
 		'postman.monitors.update',
-		{ ...input },
+		{ monitorId: input.monitorId },
 		'completed',
 	);
 	return response;

@@ -558,7 +558,7 @@ export const createResponse: PostmanEndpoints['collectionsCreateResponse'] =
 		await logEventFromContext(
 			ctx,
 			'postman.collections.createResponse',
-			{ ...input },
+			{ collectionId: input.collectionId },
 			'completed',
 		);
 		return response;
@@ -1221,7 +1221,7 @@ export const updateResponse: PostmanEndpoints['collectionsUpdateResponse'] =
 		await logEventFromContext(
 			ctx,
 			'postman.collections.updateResponse',
-			{ ...input },
+			{ collectionId: input.collectionId, responseId: input.responseId },
 			'completed',
 		);
 		return response;

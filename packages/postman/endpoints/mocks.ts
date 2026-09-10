@@ -83,7 +83,7 @@ export const createServerResponse: PostmanEndpoints['mocksCreateServerResponse']
 		await logEventFromContext(
 			ctx,
 			'postman.mocks.createServerResponse',
-			{ ...input },
+			{ mockId: input.mockId },
 			'completed',
 		);
 		return response;
@@ -148,7 +148,7 @@ export const updateServerResponse: PostmanEndpoints['mocksUpdateServerResponse']
 		await logEventFromContext(
 			ctx,
 			'postman.mocks.updateServerResponse',
-			{ ...input },
+			{ mockId: input.mockId, serverResponseId: input.serverResponseId },
 			'completed',
 		);
 		return response;

@@ -153,7 +153,7 @@ export const create: PostmanEndpoints['specsCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'postman.specs.create',
-		{ ...input },
+		{ workspaceId: input.workspaceId, name: input.name },
 		'completed',
 	);
 	return response;
