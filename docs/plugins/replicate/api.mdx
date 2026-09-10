@@ -1,0 +1,1864 @@
+---
+title: API
+description: "API reference for Replicate: every `replicate.api.*` operation with input and output types."
+---
+
+Every `replicate.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Get authenticated account information
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `user \| organization` | Yes | — |
+| `avatar_url` | `string` | No | — |
+| `github_url` | `string` | No | — |
+
+
+
+---
+
+## Collections
+
+### get
+
+`collections.get`
+
+Get model collection details by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.collections.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collectionSlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `full_description` | `string` | No | — |
+| `models` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="models full type">
+
+```ts
+{
+  owner: string,
+  name: string,
+  description?: string | null,
+  visibility?: public | private,
+  url?: string,
+  github_url?: string | null,
+  paper_url?: string | null,
+  license_url?: string | null,
+  cover_image_url?: string | null,
+  run_count?: number,
+  is_official?: boolean,
+  default_example?: any | null,
+  latest_version?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`collections.list`
+
+List model collections
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.collections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  name: string,
+  slug: string,
+  description: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Deployments
+
+### create
+
+`deployments.create`
+
+Create a deployment
+
+**Risk:** `write`
+
+```ts
+await corsair.replicate.api.deployments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `model` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+| `hardware` | `string` | Yes | — |
+| `min_instances` | `number` | Yes | — |
+| `max_instances` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `current_release` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="current_release full type">
+
+```ts
+{
+  number?: number,
+  model?: string,
+  version?: string,
+  created_at?: string | string,
+  configuration?: {
+    hardware?: string,
+    min_instances?: number,
+    max_instances?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`deployments.delete`
+
+Delete a deployment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.replicate.api.deployments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`deployments.get`
+
+Get deployment details
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.deployments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `current_release` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="current_release full type">
+
+```ts
+{
+  number?: number,
+  model?: string,
+  version?: string,
+  created_at?: string | string,
+  configuration?: {
+    hardware?: string,
+    min_instances?: number,
+    max_instances?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`deployments.list`
+
+List deployments
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.deployments.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  owner: string,
+  name: string,
+  current_release?: {
+    number?: number,
+    model?: string,
+    version?: string,
+    created_at?: string | string,
+    configuration?: {
+      hardware?: string,
+      min_instances?: number,
+      max_instances?: number
+    }
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### predictionsCreate
+
+`deployments.predictionsCreate`
+
+Create a prediction from deployment
+
+**Risk:** `write`
+
+```ts
+await corsair.replicate.api.deployments.predictionsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `input` | `object` | Yes | — |
+| `stream` | `boolean` | No | — |
+| `webhook` | `string` | No | — |
+| `webhook_events_filter` | `start \| output \| logs \| completed[]` | No | — |
+| `prefer` | `string` | No | — |
+| `cancelAfter` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
+| `model` | `string` | No | — |
+| `version` | `string` | No | — |
+| `deployment` | `string` | No | — |
+| `input` | `object` | No | — |
+| `output` | `any` | No | — |
+| `error` | `string` | No | — |
+| `logs` | `string` | No | — |
+| `source` | `api \| web` | No | — |
+| `data_removed` | `boolean` | No | — |
+| `created_at` | `string \| string` | No | — |
+| `started_at` | `string \| string` | No | — |
+| `completed_at` | `string \| string` | No | — |
+| `deadline` | `string \| string` | No | — |
+| `metrics` | `object` | No | — |
+| `urls` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  get?: string,
+  cancel?: string,
+  web?: string,
+  stream?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### create
+
+`files.create`
+
+Upload a file
+
+**Risk:** `write`
+
+```ts
+await corsair.replicate.api.files.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `any` | Yes | — |
+| `filename` | `string` | No | — |
+| `type` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `content_type` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+| `checksums` | `object` | Yes | — |
+| `metadata` | `object` | Yes | — |
+| `created_at` | `string \| string` | Yes | — |
+| `expires_at` | `string \| string` | Yes | — |
+| `urls` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="checksums full type">
+
+```ts
+{
+  sha256?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  get: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`files.delete`
+
+Delete a file
+
+**Risk:** `destructive`
+
+```ts
+await corsair.replicate.api.files.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`files.get`
+
+Get file details
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.files.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `content_type` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+| `checksums` | `object` | Yes | — |
+| `metadata` | `object` | Yes | — |
+| `created_at` | `string \| string` | Yes | — |
+| `expires_at` | `string \| string` | Yes | — |
+| `urls` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="checksums full type">
+
+```ts
+{
+  sha256?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  get: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`files.list`
+
+List uploaded files
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.files.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  content_type: string,
+  size: number,
+  checksums: {
+    sha256?: string
+  },
+  metadata: {
+  },
+  created_at: string | string,
+  expires_at: string | string,
+  urls: {
+    get: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Hardware
+
+### list
+
+`hardware.list`
+
+List available hardware SKUs
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.hardware.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  sku: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Models
+
+### examplesList
+
+`models.examplesList`
+
+List model examples
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.models.examplesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  status: starting | processing | succeeded | failed | canceled | aborted,
+  model?: string,
+  version?: string,
+  deployment?: string,
+  input?: {
+  },
+  output?: any,
+  error?: string | null,
+  logs?: string,
+  source?: api | web,
+  data_removed?: boolean,
+  created_at?: string | string,
+  started_at?: string | string | null,
+  completed_at?: string | string | null,
+  deadline?: string | string,
+  metrics?: {
+  },
+  urls?: {
+    get?: string,
+    cancel?: string,
+    web?: string,
+    stream?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`models.get`
+
+Get model details
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.models.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `visibility` | `public \| private` | No | — |
+| `url` | `string` | No | — |
+| `github_url` | `string` | No | — |
+| `paper_url` | `string` | No | — |
+| `license_url` | `string` | No | — |
+| `cover_image_url` | `string` | No | — |
+| `run_count` | `number` | No | — |
+| `is_official` | `boolean` | No | — |
+| `default_example` | `any` | No | — |
+| `latest_version` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`models.list`
+
+List public models
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.models.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `sort_by` | `model_created_at \| latest_version_created_at` | No | — |
+| `sort_direction` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  owner: string,
+  name: string,
+  description?: string | null,
+  visibility?: public | private,
+  url?: string,
+  github_url?: string | null,
+  paper_url?: string | null,
+  license_url?: string | null,
+  cover_image_url?: string | null,
+  run_count?: number,
+  is_official?: boolean,
+  default_example?: any | null,
+  latest_version?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### predictionsCreate
+
+`models.predictionsCreate`
+
+Create official model prediction
+
+**Risk:** `write`
+
+```ts
+await corsair.replicate.api.models.predictionsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `input` | `object` | Yes | — |
+| `stream` | `boolean` | No | — |
+| `webhook` | `string` | No | — |
+| `webhook_events_filter` | `start \| output \| logs \| completed[]` | No | — |
+| `prefer` | `string` | No | — |
+| `cancelAfter` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
+| `model` | `string` | No | — |
+| `version` | `string` | No | — |
+| `deployment` | `string` | No | — |
+| `input` | `object` | No | — |
+| `output` | `any` | No | — |
+| `error` | `string` | No | — |
+| `logs` | `string` | No | — |
+| `source` | `api \| web` | No | — |
+| `data_removed` | `boolean` | No | — |
+| `created_at` | `string \| string` | No | — |
+| `started_at` | `string \| string` | No | — |
+| `completed_at` | `string \| string` | No | — |
+| `deadline` | `string \| string` | No | — |
+| `metrics` | `object` | No | — |
+| `urls` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  get?: string,
+  cancel?: string,
+  web?: string,
+  stream?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### readmeGet
+
+`models.readmeGet`
+
+Get model README
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.models.readmeGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### update
+
+`models.update`
+
+Update model metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.replicate.api.models.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `readme` | `string` | No | — |
+| `github_url` | `string` | No | — |
+| `paper_url` | `string` | No | — |
+| `weights_url` | `string` | No | — |
+| `license_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `visibility` | `public \| private` | No | — |
+| `url` | `string` | No | — |
+| `github_url` | `string` | No | — |
+| `paper_url` | `string` | No | — |
+| `license_url` | `string` | No | — |
+| `cover_image_url` | `string` | No | — |
+| `run_count` | `number` | No | — |
+| `is_official` | `boolean` | No | — |
+| `default_example` | `any` | No | — |
+| `latest_version` | `any` | No | — |
+
+
+
+---
+
+### versionsGet
+
+`models.versionsGet`
+
+Get model version
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.models.versionsGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `versionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created_at` | `string \| string` | Yes | — |
+| `cog_version` | `string` | No | — |
+| `openapi_schema` | `any` | No | — |
+
+
+
+---
+
+### versionsList
+
+`models.versionsList`
+
+List model versions
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.models.versionsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  created_at: string | string,
+  cog_version?: string | null,
+  openapi_schema?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Predictions
+
+### cancel
+
+`predictions.cancel`
+
+Cancel prediction
+
+**Risk:** `write`
+
+```ts
+await corsair.replicate.api.predictions.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `predictionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
+| `model` | `string` | No | — |
+| `version` | `string` | No | — |
+| `deployment` | `string` | No | — |
+| `input` | `object` | No | — |
+| `output` | `any` | No | — |
+| `error` | `string` | No | — |
+| `logs` | `string` | No | — |
+| `source` | `api \| web` | No | — |
+| `data_removed` | `boolean` | No | — |
+| `created_at` | `string \| string` | No | — |
+| `started_at` | `string \| string` | No | — |
+| `completed_at` | `string \| string` | No | — |
+| `deadline` | `string \| string` | No | — |
+| `metrics` | `object` | No | — |
+| `urls` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  get?: string,
+  cancel?: string,
+  web?: string,
+  stream?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`predictions.create`
+
+Create prediction by version
+
+**Risk:** `write`
+
+```ts
+await corsair.replicate.api.predictions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `object` | Yes | — |
+| `stream` | `boolean` | No | — |
+| `webhook` | `string` | No | — |
+| `webhook_events_filter` | `start \| output \| logs \| completed[]` | No | — |
+| `prefer` | `string` | No | — |
+| `cancelAfter` | `string` | No | — |
+| `version` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
+| `model` | `string` | No | — |
+| `version` | `string` | No | — |
+| `deployment` | `string` | No | — |
+| `input` | `object` | No | — |
+| `output` | `any` | No | — |
+| `error` | `string` | No | — |
+| `logs` | `string` | No | — |
+| `source` | `api \| web` | No | — |
+| `data_removed` | `boolean` | No | — |
+| `created_at` | `string \| string` | No | — |
+| `started_at` | `string \| string` | No | — |
+| `completed_at` | `string \| string` | No | — |
+| `deadline` | `string \| string` | No | — |
+| `metrics` | `object` | No | — |
+| `urls` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  get?: string,
+  cancel?: string,
+  web?: string,
+  stream?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`predictions.get`
+
+Get prediction status
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.predictions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `predictionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
+| `model` | `string` | No | — |
+| `version` | `string` | No | — |
+| `deployment` | `string` | No | — |
+| `input` | `object` | No | — |
+| `output` | `any` | No | — |
+| `error` | `string` | No | — |
+| `logs` | `string` | No | — |
+| `source` | `api \| web` | No | — |
+| `data_removed` | `boolean` | No | — |
+| `created_at` | `string \| string` | No | — |
+| `started_at` | `string \| string` | No | — |
+| `completed_at` | `string \| string` | No | — |
+| `deadline` | `string \| string` | No | — |
+| `metrics` | `object` | No | — |
+| `urls` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  get?: string,
+  cancel?: string,
+  web?: string,
+  stream?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`predictions.list`
+
+List predictions
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.predictions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `created_after` | `string` | No | — |
+| `created_before` | `string` | No | — |
+| `source` | `web` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  status: starting | processing | succeeded | failed | canceled | aborted,
+  model?: string,
+  version?: string,
+  deployment?: string,
+  input?: {
+  },
+  output?: any,
+  error?: string | null,
+  logs?: string,
+  source?: api | web,
+  data_removed?: boolean,
+  created_at?: string | string,
+  started_at?: string | string | null,
+  completed_at?: string | string | null,
+  deadline?: string | string,
+  metrics?: {
+  },
+  urls?: {
+    get?: string,
+    cancel?: string,
+    web?: string,
+    stream?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### search
+
+`search.search`
+
+Search models, collections, and docs
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.search.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `models` | `object[]` | Yes | — |
+| `collections` | `object[]` | Yes | — |
+| `pages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="models full type">
+
+```ts
+{
+  model: {
+    owner: string,
+    name: string,
+    description?: string | null,
+    visibility?: public | private,
+    url?: string,
+    github_url?: string | null,
+    paper_url?: string | null,
+    license_url?: string | null,
+    cover_image_url?: string | null,
+    run_count?: number,
+    is_official?: boolean,
+    default_example?: any | null,
+    latest_version?: any | null
+  },
+  metadata: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="collections full type">
+
+```ts
+{
+  slug: string,
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pages full type">
+
+```ts
+{
+  title?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Trainings
+
+### cancel
+
+`trainings.cancel`
+
+Cancel training job
+
+**Risk:** `write`
+
+```ts
+await corsair.replicate.api.trainings.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trainingId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
+| `model` | `string` | No | — |
+| `version` | `string` | No | — |
+| `input` | `object` | No | — |
+| `output` | `object` | No | — |
+| `error` | `string` | No | — |
+| `logs` | `string` | No | — |
+| `source` | `api \| web` | No | — |
+| `created_at` | `string \| string` | No | — |
+| `started_at` | `string \| string` | No | — |
+| `completed_at` | `string \| string` | No | — |
+| `urls` | `object` | No | — |
+| `metrics` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="output full type">
+
+```ts
+{
+  version?: string,
+  weights?: string
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  get?: string,
+  cancel?: string,
+  web?: string,
+  stream?: string
+}
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`trainings.create`
+
+Create training job
+
+**Risk:** `write`
+
+```ts
+await corsair.replicate.api.trainings.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `versionId` | `string` | Yes | — |
+| `destination` | `string` | Yes | — |
+| `input` | `object` | Yes | — |
+| `webhook` | `string` | No | — |
+| `webhook_events_filter` | `start \| output \| logs \| completed[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
+| `model` | `string` | No | — |
+| `version` | `string` | No | — |
+| `input` | `object` | No | — |
+| `output` | `object` | No | — |
+| `error` | `string` | No | — |
+| `logs` | `string` | No | — |
+| `source` | `api \| web` | No | — |
+| `created_at` | `string \| string` | No | — |
+| `started_at` | `string \| string` | No | — |
+| `completed_at` | `string \| string` | No | — |
+| `urls` | `object` | No | — |
+| `metrics` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="output full type">
+
+```ts
+{
+  version?: string,
+  weights?: string
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  get?: string,
+  cancel?: string,
+  web?: string,
+  stream?: string
+}
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`trainings.get`
+
+Get training job details
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.trainings.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trainingId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `starting \| processing \| succeeded \| failed \| canceled \| aborted` | Yes | — |
+| `model` | `string` | No | — |
+| `version` | `string` | No | — |
+| `input` | `object` | No | — |
+| `output` | `object` | No | — |
+| `error` | `string` | No | — |
+| `logs` | `string` | No | — |
+| `source` | `api \| web` | No | — |
+| `created_at` | `string \| string` | No | — |
+| `started_at` | `string \| string` | No | — |
+| `completed_at` | `string \| string` | No | — |
+| `urls` | `object` | No | — |
+| `metrics` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="output full type">
+
+```ts
+{
+  version?: string,
+  weights?: string
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  get?: string,
+  cancel?: string,
+  web?: string,
+  stream?: string
+}
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`trainings.list`
+
+List training jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.trainings.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  status: starting | processing | succeeded | failed | canceled | aborted,
+  model?: string,
+  version?: string,
+  input?: {
+  },
+  output?: {
+    version?: string,
+    weights?: string
+  },
+  error?: string | null,
+  logs?: string,
+  source?: api | web,
+  created_at?: string | string,
+  started_at?: string | string | null,
+  completed_at?: string | string | null,
+  urls?: {
+    get?: string,
+    cancel?: string,
+    web?: string,
+    stream?: string
+  },
+  metrics?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### defaultSecretGet
+
+`webhooks.defaultSecretGet`
+
+Get default webhook signing secret
+
+**Risk:** `read`
+
+```ts
+await corsair.replicate.api.webhooks.defaultSecretGet({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+
+
+
+---
+
