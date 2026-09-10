@@ -157,14 +157,8 @@ test('isWorkspaceNotInstalledError detects lane-scoped missing installs', () => 
 		),
 		false,
 	);
-	assert.equal(
-		isWorkspaceNotInstalledError('factory() threw: boom'),
-		false,
-	);
-	assert.equal(
-		isWorkspaceNotInstalledError('no factory export "acme"'),
-		false,
-	);
+	assert.equal(isWorkspaceNotInstalledError('factory() threw: boom'), false);
+	assert.equal(isWorkspaceNotInstalledError('no factory export "acme"'), false);
 });
 
 test('summarizeCheckResults skips uninstalled plugins but fails on gaps', () => {

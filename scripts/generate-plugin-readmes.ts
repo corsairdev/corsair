@@ -345,8 +345,7 @@ export function summarizeCheckResults(
 		.map((r) => r.dir);
 	const introspected = results.length - skipped.length;
 	return {
-		ok:
-			offenders.length === 0 && errored.length === 0 && introspected > 0,
+		ok: offenders.length === 0 && errored.length === 0 && introspected > 0,
 		offenders,
 		errored,
 		skipped,
@@ -547,9 +546,7 @@ async function main() {
 			);
 		}
 		for (const dir of summary.errored) {
-			console.error(
-				`[${dir}] ${results.find((r) => r.dir === dir)?.error}`,
-			);
+			console.error(`[${dir}] ${results.find((r) => r.dir === dir)?.error}`);
 		}
 		for (const dir of summary.offenders) {
 			console.error(
