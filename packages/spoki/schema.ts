@@ -19,7 +19,7 @@ export const SpokiAccountSchema = z.object({
 	current_credit: z.number(),
 	status: z.string(),
 	default_language: z.string(),
-	phone: z.string(),
+	phone: z.string().nullable(),
 	has_official_verification: z.boolean(),
 	daily_limit: z.number(),
 	phone_status: z.string(),

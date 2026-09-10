@@ -10,7 +10,7 @@ export interface SpokiAccount {
 	current_credit: number;
 	status: string;
 	default_language: string;
-	phone: string;
+	phone: string | null;
 	has_official_verification: boolean;
 	daily_limit: number;
 	phone_status: string;

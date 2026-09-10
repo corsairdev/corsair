@@ -54,6 +54,14 @@ describe('Spoki schema', () => {
 		expect(parsed.channels?.[0]?.identifier).toBe('3933312345678');
 	});
 
+	it('parses a live account with null phone', () => {
+		const parsed = SpokiSchema.entities.accounts.parse({
+			...validAccount,
+			phone: null,
+		});
+		expect(parsed.phone).toBeNull();
+	});
+
 	it('parses an account without quality_reasons', () => {
 		const { quality_reasons: _omitted, ...withoutReasons } = validAccount;
 		const parsed = SpokiSchema.entities.accounts.parse(withoutReasons);
