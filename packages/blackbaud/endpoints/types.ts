@@ -75,9 +75,30 @@ export type GetGiftByIdResponse = z.infer<typeof GetGiftByIdResponseSchema>;
 // https://learn.microsoft.com/en-us/connectors/blackbaudconstituent
 const ListMembershipsInputSchema = z.object({
 	constituent_id: z.string().min(1),
-	member_junction_id: z.string().min(1).optional(),
-	limit: z.number().int().positive().max(5000).optional(),
-	offset: z.number().int().nonnegative().optional(),
+	member_junction_id: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'Looks the junction up across all pages in 500-record scans; plain limit/offset are ignored in this mode.',
+		),
+	limit: z
+		.number()
+		.int()
+		.positive()
+		.max(5000)
+		.optional()
+		.describe(
+			'Page size for plain lists (junction lookup always scans 500 per page).',
+		),
+	offset: z
+		.number()
+		.int()
+		.nonnegative()
+		.optional()
+		.describe(
+			'Zero-based skip for plain lists (junction lookup always starts at 0).',
+		),
 });
 
 export type ListMembershipsInput = z.infer<typeof ListMembershipsInputSchema>;

@@ -132,17 +132,19 @@ describe('Blackbaud endpoints', () => {
 	});
 
 	it('listMemberships finds a junction id on a later page', async () => {
+		const firstPage = Array.from({ length: 500 }, (_, index) => ({
+			id: `m${index}`,
+		}));
 		mockRequest
-			.mockResolvedValueOnce({ count: 3, value: [{ id: 'm1' }] })
+			.mockResolvedValueOnce({ count: 501, value: firstPage })
 			.mockResolvedValueOnce({
-				count: 3,
-				value: [{ id: 'm2' }, { id: 'm3', member_junction_id: 'j3' }],
+				count: 501,
+				value: [{ id: 'm500', member_junction_id: 'j500' }],
 			});
 
 		const result = await listMemberships(testCtx(), {
 			constituent_id: 'c1',
-			member_junction_id: 'j3',
-			limit: 1,
+			member_junction_id: 'j500',
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(2);
@@ -150,43 +152,61 @@ describe('Blackbaud endpoints', () => {
 			2,
 			'constituent/v1/constituents/c1/memberships',
 			expect.anything(),
-			expect.objectContaining({ query: { limit: 1, offset: 1 } }),
+			expect.objectContaining({ query: { limit: 500, offset: 500 } }),
 		);
 		expect(result).toEqual({
 			count: 1,
-			value: [{ id: 'm3', member_junction_id: 'j3' }],
+			value: [{ id: 'm500', member_junction_id: 'j500' }],
 		});
 	});
 
+	it('listMemberships ignores a small caller limit when scanning', async () => {
+		mockRequest.mockResolvedValueOnce({ count: 1, value: [{ id: 'j1' }] });
+
+		const result = await listMemberships(testCtx(), {
+			constituent_id: 'c1',
+			member_junction_id: 'j1',
+			limit: 1,
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.anything(),
+			expect.objectContaining({ query: { limit: 500, offset: 0 } }),
+		);
+		expect(result.count).toBe(1);
+	});
+
 	it('listMemberships returns empty only after all pages are scanned', async () => {
+		const fullPage = Array.from({ length: 500 }, (_, index) => ({
+			id: `m${index}`,
+		}));
 		mockRequest
-			.mockResolvedValueOnce({ count: 2, value: [{ id: 'm1' }] })
-			.mockResolvedValueOnce({ count: 2, value: [{ id: 'm2' }] });
+			.mockResolvedValueOnce({ count: 501, value: fullPage })
+			.mockResolvedValueOnce({ count: 501, value: [{ id: 'm500' }] });
 
 		const result = await listMemberships(testCtx(), {
 			constituent_id: 'c1',
 			member_junction_id: 'missing',
-			limit: 1,
 		});
 
 		expect(mockRequest).toHaveBeenCalledTimes(2);
 		expect(result).toEqual({ count: 0, value: [] });
 	});
 
-	it('listMemberships stops scanning after the page cap', async () => {
+	it('listMemberships throws instead of reporting absence past the cap', async () => {
 		const fullPage = Array.from({ length: 500 }, (_, index) => ({
 			id: `m${index}`,
 		}));
 		mockRequest.mockResolvedValue({ count: 100000, value: fullPage });
 
-		const result = await listMemberships(testCtx(), {
-			constituent_id: 'c1',
-			member_junction_id: 'missing',
-			limit: 500,
-		});
-
+		await expect(
+			listMemberships(testCtx(), {
+				constituent_id: 'c1',
+				member_junction_id: 'missing',
+			}),
+		).rejects.toThrow('absence beyond that range is unknown');
 		expect(mockRequest).toHaveBeenCalledTimes(20);
-		expect(result).toEqual({ count: 0, value: [] });
 	});
 
 	it('listMemberships confines the constituent id to one path segment', async () => {
