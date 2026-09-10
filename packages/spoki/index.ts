@@ -5,6 +5,7 @@ import type {
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
+	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -38,6 +39,7 @@ import { EndpointInputSchemas, EndpointOutputSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { SpokiSchema } from './schema';
 import { matchSpokiPluginWebhook, matchSpokiTenantWebhook } from './webhooks';
+import { spokiEvent } from './webhooks/event';
 
 export type SpokiPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -100,6 +102,14 @@ const spokiEndpointsNested = {
 		triggerAutomation,
 	},
 };
+
+export type SpokiWebhooks = {
+	event: CorsairWebhook<SpokiContext, unknown, unknown>;
+};
+
+const spokiWebhooksNested = {
+	event: spokiEvent,
+} as const;
 
 export const spokiEndpointSchemas = {
 	'accounts.listAccounts': {
@@ -164,7 +174,7 @@ export type BaseSpokiPlugin<T extends SpokiPluginOptions> = CorsairPlugin<
 	'spoki',
 	typeof SpokiSchema,
 	typeof spokiEndpointsNested,
-	{},
+	typeof spokiWebhooksNested,
 	T,
 	typeof defaultAuthType
 >;
@@ -195,7 +205,7 @@ export function spoki<const T extends SpokiPluginOptions>(
 
 		endpoints: spokiEndpointsNested,
 
-		webhooks: {},
+		webhooks: spokiWebhooksNested,
 
 		endpointMeta: spokiEndpointMeta,
 
@@ -216,6 +226,10 @@ export function spoki<const T extends SpokiPluginOptions>(
 			ctx: SpokiKeyBuilderContext,
 			source: 'endpoint' | 'webhook',
 		) => {
+			if (source === 'webhook' && options.webhookSecret) {
+				return options.webhookSecret;
+			}
+
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}

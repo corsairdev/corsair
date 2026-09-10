@@ -1,3 +1,4 @@
+export { spokiEvent } from './event';
 export {
 	matchSpokiPluginWebhook,
 	matchSpokiTenantWebhook,

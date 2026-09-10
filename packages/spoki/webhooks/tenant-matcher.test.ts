@@ -93,7 +93,7 @@ describe('matchSpokiPluginWebhook', () => {
 		).toBe(true);
 	});
 
-	it('routes by header presence so parsed bodies match too', () => {
+	it('rejects parsed bodies at match time; callers must pass raw body', () => {
 		expect(
 			matchSpokiPluginWebhook(
 				{
@@ -105,7 +105,7 @@ describe('matchSpokiPluginWebhook', () => {
 				},
 				SECRET,
 			),
-		).toBe(true);
+		).toBe(false);
 	});
 
 	it('rejects a raw body with an invalid signature when a secret is set', () => {
@@ -218,7 +218,7 @@ describe('matchSpokiTenantWebhook', () => {
 		).toBeNull();
 	});
 
-	it('routes deliveries with a parsed body; verification needs rawBody', () => {
+	it('rejects parsed bodies at match time instead of trusting headers', () => {
 		expect(
 			matchSpokiTenantWebhook(
 				{
@@ -230,10 +230,22 @@ describe('matchSpokiTenantWebhook', () => {
 				},
 				SECRET,
 			),
-		).toEqual({
-			linkType: 'spoki_account',
-			externalId: '13128334',
-		});
+		).toBeNull();
+	});
+
+	it('rejects forged parsed-body deliveries with a fake signature', () => {
+		expect(
+			matchSpokiTenantWebhook(
+				{
+					headers: {
+						'x-spoki-account': '999',
+						'x-spoki-signature': 't=9999999999,v2=fake',
+					},
+					body: { version: 1 },
+				},
+				SECRET,
+			),
+		).toBeNull();
 	});
 
 	it('accepts a valid V2 signature over a Buffer body', () => {

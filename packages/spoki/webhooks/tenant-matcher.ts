@@ -12,14 +12,14 @@ import crypto from 'crypto';
  * `<ts>.<raw body>` keyed by the webhook secret). The deprecated V1
  * `X-SPOKI-HASH` header cannot be verified and never matches on its own.
  *
- * When the caller hands over the raw body (string/Buffer/Uint8Array) the
- * HMAC is verified during matching and invalid signatures are rejected
- * before any tenant is resolved. When the body is already parsed
- * (processWebhook always passes the parsed object) byte-exact verification
- * is impossible, so matching falls back to header presence and verification
- * is deferred to the handler via verifySpokiWebhookRequest, where
- * request.rawBody is available. Matching stays fail-closed: without a
- * configured webhook secret no delivery routes.
+ * Matching stays fail-closed: the HMAC is verified during matching when the
+ * caller hands over the raw body (string/Buffer/Uint8Array) and invalid
+ * signatures are rejected before any tenant is resolved. When the body is
+ * already parsed, byte-exact verification is impossible, so matchers reject
+ * the delivery instead of trusting the unverified `x-spoki-account` header.
+ * Callers must pass the raw string/Buffer body (processWebhook preserves it
+ * as request.rawBody for the handler). Without a configured webhook secret
+ * no delivery routes.
  */
 
 const SIGNATURE_TOLERANCE_SECONDS = 300;
@@ -137,10 +137,10 @@ function hasValidSignature(
 	const rawBody = readRawBody(request.body);
 
 	if (rawBody === undefined) {
-		// Parsed body: verification needs the exact raw bytes, so routing
-		// checks header presence only. The handler must verify with
-		// request.rawBody via verifySpokiWebhookRequest.
-		return true;
+		// Parsed body: byte-exact verification is impossible without the raw
+		// bytes, so reject instead of trusting the unverified account header.
+		// Callers must pass the raw string/Buffer body for verification.
+		return false;
 	}
 
 	return verifySpokiWebhookSignature(rawBody, signature, webhookSecret);
