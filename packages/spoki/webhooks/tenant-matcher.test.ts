@@ -281,8 +281,36 @@ describe('verifySpokiWebhookRequest', () => {
 		).toBe(false);
 	});
 
-	it('rejects when rawBody is missing', () => {
+	it('verifies over the re-serialized payload when rawBody is missing', () => {
 		const header = sign(RAW_BODY, Math.floor(Date.now() / 1000));
+		expect(
+			verifySpokiWebhookRequest(
+				{
+					payload: JSON.parse(RAW_BODY),
+					headers: { 'x-spoki-signature': header },
+				},
+				SECRET,
+			),
+		).toEqual({ valid: true });
+	});
+
+	it('verifies a trailing-newline body via the payload fallback', () => {
+		const withNewline = `${RAW_BODY}\n`;
+		const header = sign(withNewline, Math.floor(Date.now() / 1000));
+		expect(
+			verifySpokiWebhookRequest(
+				{
+					payload: JSON.parse(RAW_BODY),
+					headers: { 'x-spoki-signature': header },
+				},
+				SECRET,
+			),
+		).toEqual({ valid: true });
+	});
+
+	it('still rejects when the original bytes cannot be reconstructed', () => {
+		const pretty = JSON.stringify(JSON.parse(RAW_BODY), null, 2);
+		const header = sign(pretty, Math.floor(Date.now() / 1000));
 		expect(
 			verifySpokiWebhookRequest(
 				{

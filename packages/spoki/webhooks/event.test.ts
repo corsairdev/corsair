@@ -55,8 +55,18 @@ describe('spokiEvent handler', () => {
 		expect(res.statusCode).toBe(401);
 	});
 
-	it('rejects when rawBody is missing', async () => {
+	it('accepts a re-serializable payload when rawBody is missing', async () => {
 		const header = sign(RAW_BODY, Math.floor(Date.now() / 1000));
+		const res = await spokiEvent.handler({ key: SECRET } as never, {
+			payload: JSON.parse(RAW_BODY),
+			headers: { 'x-spoki-signature': header },
+		});
+		expect(res.success).toBe(true);
+	});
+
+	it('rejects with 401 when the original bytes cannot be reconstructed', async () => {
+		const pretty = JSON.stringify(JSON.parse(RAW_BODY), null, 2);
+		const header = sign(pretty, Math.floor(Date.now() / 1000));
 		const res = await spokiEvent.handler({ key: SECRET } as never, {
 			payload: JSON.parse(RAW_BODY),
 			headers: { 'x-spoki-signature': header },

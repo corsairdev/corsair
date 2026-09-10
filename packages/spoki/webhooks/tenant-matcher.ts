@@ -24,9 +24,11 @@ import crypto from 'crypto';
  *   configured to verify it with"). It makes no authenticity claim, so it
  *   works with the parsed bodies the standard webhook flow hands to
  *   matchers. Authenticity and freshness are enforced in the registered
- *   `spokiEvent` handler via verifySpokiWebhookRequest over request.rawBody
- *   (byte-exact when callers pass the raw string body); anything else gets
- *   a 401. Without a configured webhook secret nothing routes.
+ *   `spokiEvent` handler via verifySpokiWebhookRequest: byte-exact
+ *   request.rawBody first, then the compact re-serialization (plus a
+ *   trailing-newline variant) for runtimes that parsed the JSON first;
+ *   anything else gets a 401. Without a configured webhook secret nothing
+ *   routes.
  */
 
 const SIGNATURE_TOLERANCE_SECONDS = 300;
@@ -101,21 +103,40 @@ export function verifySpokiWebhookRequest(
 		return { valid: false, error: 'Missing webhook secret' };
 	}
 
-	const rawBody = request.rawBody;
-	if (!rawBody) {
-		return {
-			valid: false,
-			error: 'Missing raw body for signature verification',
-		};
-	}
-
 	const headers = request.headers ?? {};
 	const signature = getHeader(headers, 'x-spoki-signature');
 	if (!signature) {
 		return { valid: false, error: 'Missing x-spoki-signature header' };
 	}
 
-	const ok = verifySpokiWebhookSignature(rawBody, signature, secret);
+	// Byte-exact rawBody first. When a runtime parsed the JSON before us
+	// (processWebhook re-serializes it), fall back to the compact
+	// re-serialization plus a trailing-newline variant — same approach as the
+	// typeform plugin. Trying extra candidates cannot help an attacker: a
+	// match still requires the secret. For fully byte-exact verification,
+	// callers should pass the raw string body through to processWebhook.
+	const candidates: string[] = [];
+	if (request.rawBody) {
+		candidates.push(request.rawBody);
+	} else if (request.payload && typeof request.payload === 'object') {
+		candidates.push(JSON.stringify(request.payload));
+	}
+	for (const base of [...candidates]) {
+		const withNewline = `${base}\n`;
+		if (!candidates.includes(withNewline)) candidates.push(withNewline);
+	}
+
+	if (candidates.length === 0) {
+		return {
+			valid: false,
+			error:
+				'Missing raw body for signature verification (pass the raw string body)',
+		};
+	}
+
+	const ok = candidates.some((candidate) =>
+		verifySpokiWebhookSignature(candidate, signature, secret),
+	);
 	if (!ok) {
 		return { valid: false, error: 'Invalid signature' };
 	}
