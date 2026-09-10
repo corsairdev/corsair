@@ -400,6 +400,14 @@ const ForksListInputSchema = z.object({
 	page: z.number().optional(),
 });
 
+const ForksCreateInputSchema = z.object({
+	owner: z.string(),
+	repo: z.string(),
+	organization: z.string().optional(),
+	name: z.string().optional(),
+	defaultBranchOnly: z.boolean().optional(),
+});
+
 const UsersListInputSchema = z.object({
 	since: z.number().optional(),
 	perPage: z.number().optional(),
@@ -513,6 +521,7 @@ export const GithubEndpointInputSchemas = {
 	discussionsList: DiscussionsListInputSchema,
 	discussionsGet: DiscussionsGetInputSchema,
 	forksList: ForksListInputSchema,
+	forksCreate: ForksCreateInputSchema,
 	commentsList: CommentsListInputSchema,
 	commentsListForIssue: CommentsListForIssueInputSchema,
 	commentsGet: CommentsGetInputSchema,
@@ -1126,6 +1135,7 @@ export const GithubEndpointOutputSchemas = {
 	discussionsList: z.array(DiscussionEndpointSchema),
 	discussionsGet: DiscussionEndpointSchema,
 	forksList: z.array(RepositorySchema),
+	forksCreate: RepositorySchema,
 	commentsList: z.array(CommentSchema),
 	commentsListForIssue: z.array(CommentSchema),
 	commentsGet: CommentSchema,
@@ -1236,6 +1246,9 @@ export type DiscussionGetResponse = z.infer<
 >;
 export type ForksListResponse = z.infer<
 	typeof GithubEndpointOutputSchemas.forksList
+>;
+export type ForkCreateResponse = z.infer<
+	typeof GithubEndpointOutputSchemas.forksCreate
 >;
 
 export type CommentsListResponse = z.infer<

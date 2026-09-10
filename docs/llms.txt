@@ -42,7 +42,7 @@
 - [Auth](https://docs.corsair.dev/concepts/auth.md): OAuth, API keys, and bot tokens, handled automatically.
 - [Permissions](https://docs.corsair.dev/concepts/permissions.md): Gate destructive agent actions behind human approval before they execute.
 - [Multi-tenancy](https://docs.corsair.dev/concepts/multi-tenancy.md): One flag, and every user gets their own credentials and data.
-- [Database](https://docs.corsair.dev/concepts/database.md): Six tables, always-fresh integration data, tenant-scoped by default.
+- [Database](https://docs.corsair.dev/concepts/database.md): Five tables, always-fresh integration data, tenant-scoped by default.
 - [Triggers](https://docs.corsair.dev/concepts/webhooks.md): One endpoint for every incoming webhook, automatically routed and verified.
 - [Hooks](https://docs.corsair.dev/concepts/hooks.md): Hook into API calls and webhooks to customize behavior.
 - [API](https://docs.corsair.dev/concepts/api.md): Call plugin operations directly with `tenant.run()`.

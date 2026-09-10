@@ -1,0 +1,2061 @@
+{
+  "id": "insightoai",
+  "displayName": "Insighto AI",
+  "description": "Conversational analytics platform for AI chatbots with voice and customer insight tools.",
+  "npmPackageName": "@corsair-dev/insightoai",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 66,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "insightoai.api.agency.createAgency",
+      "shortPath": "agency.createAgency",
+      "description": "Create a new agency with organization-specific branding and config",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "branding",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "user_auth",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "billing_plan",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.agency.getAgencyBillingPlan",
+      "shortPath": "agency.getAgencyBillingPlan",
+      "description": "View an agency billing plan limits for bots, queries, words, and voice seconds",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "billing_plan_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.agency.getAgencyBrandingById",
+      "shortPath": "agency.getAgencyBrandingById",
+      "description": "Retrieve the branding configuration for an agency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agency_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.agency.getAgentList",
+      "shortPath": "agency.getAgentList",
+      "description": "Fetch a paginated list of team agents/users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.agency.getPricingForUser",
+      "shortPath": "agency.getPricingForUser",
+      "description": "Retrieve pricing tier information for LLM, voice, or transcription services",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "llm_model_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voice_stt_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voice_tts_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.agency.retrieveUserMonthlyUsagesAggregation",
+      "shortPath": "agency.retrieveUserMonthlyUsagesAggregation",
+      "description": "Retrieve monthly aggregated usage analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.agency.updateUserProfile",
+      "shortPath": "agency.updateUserProfile",
+      "description": "Modify user account details, contact information, or billing settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.assistants.addIntentToAssistant",
+      "shortPath": "assistants.addIntentToAssistant",
+      "description": "Link an existing conversational intent to an assistant",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistant_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "intent_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.assistants.createIntent",
+      "shortPath": "assistants.createIntent",
+      "description": "Create a new custom conversational intent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "intent_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.assistants.createPrompt",
+      "shortPath": "assistants.createPrompt",
+      "description": "Create a new customizable AI prompt template with variable support",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prompt_template",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.assistants.deleteAssistantById",
+      "shortPath": "assistants.deleteAssistantById",
+      "description": "Permanently remove an assistant from the system",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistant_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.assistants.deletePromptById",
+      "shortPath": "assistants.deletePromptById",
+      "description": "Permanently delete a prompt template by ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.assistants.getAssistantById",
+      "shortPath": "assistants.getAssistantById",
+      "description": "Retrieve comprehensive details and configuration of a specific assistant",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistant_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.assistants.getIntentById",
+      "shortPath": "assistants.getIntentById",
+      "description": "Retrieve details of a specific intent by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "intent_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.assistants.getPromptById",
+      "shortPath": "assistants.getPromptById",
+      "description": "Retrieve details of a specific prompt template by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.assistants.readIntentsList",
+      "shortPath": "assistants.readIntentsList",
+      "description": "Retrieve a paginated list of all configured intents",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.contacts.createContactCustomField",
+      "shortPath": "contacts.createContactCustomField",
+      "description": "Create a custom metadata field for contacts",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_field_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_field_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.contacts.deleteContactsInBulk",
+      "shortPath": "contacts.deleteContactsInBulk",
+      "description": "Delete multiple contacts simultaneously by UUIDs",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.contacts.getContactById",
+      "shortPath": "contacts.getContactById",
+      "description": "Retrieve a comprehensive profile of a specific contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.contacts.getListOfContacts",
+      "shortPath": "contacts.getListOfContacts",
+      "description": "Fetch a paginated list of contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.contacts.readCampaignContactList",
+      "shortPath": "contacts.readCampaignContactList",
+      "description": "Fetch all contacts enrolled in a specific campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.contacts.readContactCustomFieldList",
+      "shortPath": "contacts.readContactCustomFieldList",
+      "description": "Retrieve definitions of all contact custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.contacts.readContactSyncLogList",
+      "shortPath": "contacts.readContactSyncLogList",
+      "description": "Retrieve audit history and logs of contact synchronization operations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.contacts.sendMessagesToContacts",
+      "shortPath": "contacts.sendMessagesToContacts",
+      "description": "Send bulk broadcast messages to contacts via connected WhatsApp or SMS",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "start_new_conversation",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.contacts.upsertContactByEmailOrPhoneNumber",
+      "shortPath": "contacts.upsertContactByEmailOrPhoneNumber",
+      "description": "Create or update a contact using email or phone number",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.datasources.createTag",
+      "shortPath": "datasources.createTag",
+      "description": "Create a custom tag for categorizing contacts and conversations",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "color_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.datasources.deleteLinkedAssistantDatasource",
+      "shortPath": "datasources.deleteLinkedAssistantDatasource",
+      "description": "Unlink and remove a data source from an assistant's knowledge base",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistant_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasource_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.datasources.deleteLinkTagEntityById",
+      "shortPath": "datasources.deleteLinkTagEntityById",
+      "description": "Remove a specific tag association from an entity",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_tag_entity_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.datasources.deleteTagById",
+      "shortPath": "datasources.deleteTagById",
+      "description": "Permanently remove a tag by ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.datasources.getDatasourceById",
+      "shortPath": "datasources.getDatasourceById",
+      "description": "Retrieve comprehensive details of a specific knowledge base data source",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasource_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.datasources.getListOfDatasources",
+      "shortPath": "datasources.getListOfDatasources",
+      "description": "Discover all available knowledge base data sources (text, URLs, files)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.datasources.getListOfDataSourcesLinkedToAssistantId",
+      "shortPath": "datasources.getListOfDataSourcesLinkedToAssistantId",
+      "description": "List all data sources linked to an assistant",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assistant_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.datasources.readTagList",
+      "shortPath": "datasources.readTagList",
+      "description": "Fetch a paginated list of all available tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.forms.createForm",
+      "shortPath": "forms.createForm",
+      "description": "Create a conversational AI-driven or traditional data capture form",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "form_type",
+            "optional": false,
+            "type": "natural | simple"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trigger_tools",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "contact_mapping",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "trigger_instructions",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.forms.deleteBulkFormsByIds",
+      "shortPath": "forms.deleteBulkFormsByIds",
+      "description": "Delete multiple forms in a single bulk operation",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.forms.deleteFormById",
+      "shortPath": "forms.deleteFormById",
+      "description": "Permanently remove a form by unique ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.forms.getCapturedFormByFormId",
+      "shortPath": "forms.getCapturedFormByFormId",
+      "description": "Fetch captured user form submissions with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.providers.createProvider",
+      "shortPath": "providers.createProvider",
+      "description": "Configure an AI provider (OpenAI, ElevenLabs, Azure Speech, Cartesia, PlayHT)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "provider_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider_name",
+            "optional": true,
+            "type": "openai | elevenlabs | azure_speech | cartesia | playht"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.providers.deleteProviderById",
+      "shortPath": "providers.deleteProviderById",
+      "description": "Permanently delete an AI provider configuration",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.providers.getProviderById",
+      "shortPath": "providers.getProviderById",
+      "description": "Retrieve configuration details of an AI provider",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "provider_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.providers.getSpeechtotextList",
+      "shortPath": "providers.getSpeechtotextList",
+      "description": "Fetch a paginated list of available speech-to-text voice configurations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.providers.retrieveListOfUserCustomVoice",
+      "shortPath": "providers.retrieveListOfUserCustomVoice",
+      "description": "Retrieve a paginated list of custom user voice models",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.tools.createToolfunction",
+      "shortPath": "tools.createToolfunction",
+      "description": "Register a new tool function (SDK, CURL, or query index) for assistant workflows",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "tool_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tool_function_type",
+            "optional": false,
+            "type": "sdk | curl | query_index"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.tools.deleteToolById",
+      "shortPath": "tools.deleteToolById",
+      "description": "Remove an entire tool integration by ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.tools.deleteToolfunctionById",
+      "shortPath": "tools.deleteToolfunctionById",
+      "description": "Remove a tool function from the system",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "toolfunction_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.tools.readToolFunctionInvokeLogList",
+      "shortPath": "tools.readToolFunctionInvokeLogList",
+      "description": "Inspect execution history and audit logs of tool function calls",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "conversation_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.tools.readToolToolfunctionList",
+      "shortPath": "tools.readToolToolfunctionList",
+      "description": "Fetch all tool functions associated with a specific tool ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tool_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.tools.retrieveLinkedToolAndUser",
+      "shortPath": "tools.retrieveLinkedToolAndUser",
+      "description": "Retrieve linked tool and user associations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tool_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.tools.updateLinkToolUser",
+      "shortPath": "tools.updateLinkToolUser",
+      "description": "Modify properties of a linked tool user integration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_tool_user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tool_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "credentials",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.tools.updateToolById",
+      "shortPath": "tools.updateToolById",
+      "description": "Modify general properties and enabled status of a tool",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sdk",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "base_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logo_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tool_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tool_provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authentication",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.tools.updateToolfunctionById",
+      "shortPath": "tools.updateToolfunctionById",
+      "description": "Modify the name, type, or enabled status of an existing tool function",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "toolfunction_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "tool_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tool_function_type",
+            "optional": true,
+            "type": "sdk | curl | query_index"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.webhooksTelephony.createWebhook",
+      "shortPath": "webhooksTelephony.createWebhook",
+      "description": "Configure an outbound webhook URL for event notifications",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "endpoint",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.webhooksTelephony.deleteTwilioAuthById",
+      "shortPath": "webhooksTelephony.deleteTwilioAuthById",
+      "description": "Remove a Twilio authentication integration",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "twilio_auth_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.webhooksTelephony.deleteUserwhatsappById",
+      "shortPath": "webhooksTelephony.deleteUserwhatsappById",
+      "description": "Remove a WhatsApp Business connection",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userwhatsapp_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.webhooksTelephony.deleteWebhookById",
+      "shortPath": "webhooksTelephony.deleteWebhookById",
+      "description": "Permanently remove an outbound webhook configuration",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.webhooksTelephony.readTwilioAuthList",
+      "shortPath": "webhooksTelephony.readTwilioAuthList",
+      "description": "Retrieve all configured Twilio authentication integrations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.webhooksTelephony.retrieveWebhookLog",
+      "shortPath": "webhooksTelephony.retrieveWebhookLog",
+      "description": "Inspect delivery status and debug logs for a specific webhook",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.webhooksTelephony.updateTwilioAuthById",
+      "shortPath": "webhooksTelephony.updateTwilioAuthById",
+      "description": "Modify Twilio auth credentials or telephony settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "twilio_auth_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twilio_auth_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twilio_account_sid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.webhooksTelephony.updateUserwhatsappById",
+      "shortPath": "webhooksTelephony.updateUserwhatsappById",
+      "description": "Modify WhatsApp Business API settings for a user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userwhatsapp_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phone_number_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_business_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "facebook_app_secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whatsapp_access_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "whatsapp_phone_number",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.webhooksTelephony.updateWebhookById",
+      "shortPath": "webhooksTelephony.updateWebhookById",
+      "description": "Modify the endpoint URL, name, or enabled status of an outbound webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.widgets.createWidget",
+      "shortPath": "widgets.createWidget",
+      "description": "Create a new chat/voice widget for web or mobile embedding",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "bubble_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "widget_type",
+            "optional": false,
+            "type": "web_chat | web_voice | whatsapp | sms | messenger | instagram | telegram | ghl_chat | ghl_missed_call | embedded_form | popup | inline | floating_bubble | voice_widget | custom"
+          },
+          {
+            "key": "assistant_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bubble_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "header_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "style_params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "intro_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "action_buttons",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "bot_icon_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ice_break_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remove_branding",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bot_message_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "header_text_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_message_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "action_buttons_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "textbox_default_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_opening_messages",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "bot_text_message_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_text_message_color",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.widgets.deleteWidgetById",
+      "shortPath": "widgets.deleteWidgetById",
+      "description": "Permanently remove a widget by ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.widgets.getListOfConversations",
+      "shortPath": "widgets.getListOfConversations",
+      "description": "Retrieve filtered conversation metadata across date ranges",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date_from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "intent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assistant_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includes_voice",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.widgets.getListOfWidgetsLinkedToAssistantId",
+      "shortPath": "widgets.getListOfWidgetsLinkedToAssistantId",
+      "description": "Discover all widgets associated with a specific assistant",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assistant_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.widgets.getWidgetById",
+      "shortPath": "widgets.getWidgetById",
+      "description": "Retrieve widget configuration and visual styling attributes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "widget_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "insightoai.api.widgets.listChannels",
+      "shortPath": "widgets.listChannels",
+      "description": "Retrieve all available communication channels and configurations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

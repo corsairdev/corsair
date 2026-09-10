@@ -1,9 +1,9 @@
 import { AuthMissingError } from 'corsair/core';
-import { worldNewsApi } from './index';
+import { worldnewsapi } from './index';
 
 describe('World News API Plugin Setup & KeyBuilder', () => {
 	it('instantiates plugin with default options', () => {
-		const plugin = worldNewsApi();
+		const plugin = worldnewsapi();
 		expect(plugin.id).toBe('worldnewsapi');
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.endpoints?.news?.topNews).toBeDefined();
@@ -16,7 +16,7 @@ describe('World News API Plugin Setup & KeyBuilder', () => {
 	});
 
 	it('returns explicit key from options in keyBuilder', async () => {
-		const plugin = worldNewsApi({ key: 'explicit-key' });
+		const plugin = worldnewsapi({ key: 'explicit-key' });
 		const key = await (plugin.keyBuilder as any)(
 			{
 				authType: 'api_key',
@@ -28,7 +28,7 @@ describe('World News API Plugin Setup & KeyBuilder', () => {
 	});
 
 	it('resolves key from keys manager in keyBuilder when options.key is not provided', async () => {
-		const plugin = worldNewsApi();
+		const plugin = worldnewsapi();
 		const key = await (plugin.keyBuilder as any)(
 			{
 				authType: 'api_key',
@@ -40,7 +40,7 @@ describe('World News API Plugin Setup & KeyBuilder', () => {
 	});
 
 	it('throws AuthMissingError when key is not found', async () => {
-		const plugin = worldNewsApi();
+		const plugin = worldnewsapi();
 		await expect(
 			(plugin.keyBuilder as any)(
 				{

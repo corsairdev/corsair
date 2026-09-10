@@ -17,6 +17,7 @@ import {
 	completeOAuthCallback,
 	createConnectLink,
 	createTenant,
+	disconnectConnection,
 	getConnectionStatus,
 	getPermission,
 	getPermissionByToken,
@@ -27,7 +28,11 @@ import {
 	ok,
 	resolveConnect,
 } from './operations';
-import type { CreateConnectLinkInput, OAuthCallbackInput } from './types';
+import type {
+	CreateConnectLinkInput,
+	DisconnectInput,
+	OAuthCallbackInput,
+} from './types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Management HTTP handler — framework-agnostic (Request) => Promise<Response>.
@@ -258,15 +263,32 @@ const ROUTES: Route[] = [
 		method: 'POST',
 		pattern: '/connect/request/clear',
 		handler: async ({ internal, body, scopedTenant }) => {
+			const parsed = body as { tenantId?: string; plugin?: string } | undefined;
 			const tenantId =
-				resolveScopedTenant(
-					scopedTenant,
-					(body as { tenantId?: string } | undefined)?.tenantId,
-				) ?? 'default';
+				resolveScopedTenant(scopedTenant, parsed?.tenantId) ?? 'default';
 			if (internal.database) {
-				await clearConnectRequest(internal.database, tenantId);
+				await clearConnectRequest(
+					internal.database,
+					tenantId,
+					undefined,
+					parsed?.plugin,
+				);
 			}
 			return json(200, { ok: true });
+		},
+	},
+	{
+		method: 'POST',
+		pattern: '/disconnect',
+		handler: async ({ internal, body, scopedTenant }) => {
+			// An empty or non-JSON body arrives as undefined; default it so a missing
+			// `plugin` reaches disconnectConnection's 400, not a property-access 500.
+			const input = (body ?? {}) as DisconnectInput;
+			const tenantId = resolveScopedTenant(scopedTenant, input.tenantId);
+			return json(
+				200,
+				await disconnectConnection(internal, { ...input, tenantId }),
+			);
 		},
 	},
 ];

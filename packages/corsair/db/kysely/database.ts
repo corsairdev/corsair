@@ -5,7 +5,6 @@ import type { Pool } from 'pg';
 import type { ReservedSql, Sql, UnsafeQueryOptions } from 'postgres';
 import type {
 	CorsairAccount,
-	CorsairConnect,
 	CorsairEntity,
 	CorsairEvent,
 	CorsairIntegration,
@@ -19,11 +18,12 @@ export type CorsairKyselyDatabase = {
 	corsair_entities: CorsairEntity;
 	corsair_events: CorsairEvent;
 	corsair_permissions: CorsairPermission;
-	corsair_connects: CorsairConnect;
 };
 
 export type CorsairDatabase = {
 	db: Kysely<CorsairKyselyDatabase>;
+	/** True when the underlying dialect is Postgres (pg Pool or postgres.js). Omitting defaults to true. */
+	isPg?: boolean;
 };
 
 /**
@@ -181,7 +181,9 @@ export function createCorsairDatabase(
 	input: CorsairDatabaseInput,
 ): CorsairDatabase {
 	if (isKysely(input)) {
-		return { db: input };
+		// Caller supplies a Kysely instance directly; we cannot inspect the
+		// underlying dialect, so assume Postgres (the only prod target).
+		return { db: input, isPg: true };
 	}
 
 	if (isBetterSqlite3(input)) {
@@ -189,14 +191,14 @@ export function createCorsairDatabase(
 			dialect: new SqliteDialect({ database: input }),
 			plugins: [new SqliteDatePlugin()],
 		});
-		return { db };
+		return { db, isPg: false };
 	}
 
 	if (isPgPool(input)) {
 		const db = new Kysely<CorsairKyselyDatabase>({
 			dialect: new PostgresDialect({ pool: input }),
 		});
-		return { db };
+		return { db, isPg: true };
 	}
 
 	if (isPostgresJs(input)) {
@@ -206,7 +208,7 @@ export function createCorsairDatabase(
 				postgres: withParamSerialization(input),
 			}),
 		});
-		return { db };
+		return { db, isPg: true };
 	}
 
 	throw new Error(

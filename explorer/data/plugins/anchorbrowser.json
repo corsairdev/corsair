@@ -1,0 +1,3075 @@
+{
+  "id": "anchorbrowser",
+  "displayName": "Anchor Browser",
+  "description": "Cloud browser automation API for running headless web sessions and scraping tasks.",
+  "npmPackageName": "@corsair-dev/anchorbrowser",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 64,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "anchorbrowser.api.agent.listAgentResources",
+      "shortPath": "agent.listAgentResources",
+      "description": "List all agent resources (files) uploaded to a browser session. Returns metadata for each file including name, size, file type, and last modified timestamp. Requires an active running session - use START_BROWSER_SESSION first. Files can be uploaded using UPLOAD_FILE action.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.agent.pauseAgent",
+      "shortPath": "agent.pauseAgent",
+      "description": "Tool to pause the AI agent for a specific browser session. Use when you need to temporarily halt autonomous agent execution while keeping the session active.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.agent.resumeAgent",
+      "shortPath": "agent.resumeAgent",
+      "description": "Tool to resume the AI agent for a specific browser session. Use when you need to restart agent execution after it has been paused or stopped.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.agent.uploadFile",
+      "shortPath": "agent.uploadFile",
+      "description": "Tool to upload a file to a browser session as an agent resource. Use after starting or referencing a session when you need to provide file inputs (single files or ZIP archives) for web forms or AI-driven tasks. Supports direct base64-encoded content or S3 key references from other actions.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_content_base64",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.batchSessions.getBatchSessionStatus",
+      "shortPath": "batchSessions.getBatchSessionStatus",
+      "description": "Tool to retrieve detailed status information for a specific batch including progress and errors. Use when you need to check the status of a batch session creation request.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batchId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.downloads.listSessionDownloads",
+      "shortPath": "downloads.listSessionDownloads",
+      "description": "Tool to retrieve metadata of files downloaded during a browser session. Use after confirming the session ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.events.signalEvent",
+      "shortPath": "events.signalEvent",
+      "description": "Tool to signal a specific event to be received by other processes or sessions. Use when you need real-time coordination across browser sessions after verifying session is active.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "eventName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.events.waitForEvent",
+      "shortPath": "events.waitForEvent",
+      "description": "Blocks execution until a specific named event is signaled or the timeout expires. Used for cross-session coordination, MFA handling, and workflow synchronization. The event must first be signaled using the Signal Event action. Returns the data payload that was sent with the signal. Events are user-scoped.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "eventName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.extensions.deleteExtension",
+      "shortPath": "extensions.deleteExtension",
+      "description": "Tool to delete a browser extension and remove it from storage. Use after confirming the extension exists.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.extensions.listExtensions",
+      "shortPath": "extensions.listExtensions",
+      "description": "Retrieves all browser extensions uploaded by the authenticated user. Use this to view available extensions that can be attached to browser sessions for automation tasks.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.extensions.uploadExtension",
+      "shortPath": "extensions.uploadExtension",
+      "description": "Tool to upload a new browser extension as a ZIP file for use in browser sessions. Use when you need to add custom extensions that can be attached to automation sessions. The ZIP file must contain a valid extension manifest (manifest.json). Extensions are scoped to the authenticated user and can be listed or attached to sessions later.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_content_base64",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.integrations.createIntegration",
+      "shortPath": "integrations.createIntegration",
+      "description": "Tool to create a new integration with a third-party service like 1Password. Use when you need to set up an integration for managing credentials or accessing external services. The integration will be available immediately after creation for use in browser sessions and profiles.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credentials",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.integrations.deleteIntegration",
+      "shortPath": "integrations.deleteIntegration",
+      "description": "Tool to delete an existing integration and remove its stored credentials. Use after confirming the integration ID exists.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.integrations.listIntegrations",
+      "shortPath": "integrations.listIntegrations",
+      "description": "Tool to retrieve all integrations for the authenticated team. Use when you need to view available integrations that can be used with browser sessions.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.osLevel.clickMouse",
+      "shortPath": "osLevel.clickMouse",
+      "description": "Tool to perform a mouse click at specified coordinates within a browser session. Use when you need to interact with page elements by clicking at specific x/y positions. The click is executed in the context of the specified browser session.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "x",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "y",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "button",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.osLevel.copySelectedText",
+      "shortPath": "osLevel.copySelectedText",
+      "description": "Tool to copy currently selected text in a browser session to the clipboard. Use when you need to extract text that the user or automation has selected in the browser.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.osLevel.doubleClickMouse",
+      "shortPath": "osLevel.doubleClickMouse",
+      "description": "Tool to perform a double click at specified coordinates in a browser session. Use when you need to trigger double-click events on UI elements or specific page locations.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "x",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "y",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.osLevel.dragAndDrop",
+      "shortPath": "osLevel.dragAndDrop",
+      "description": "Tool to perform a drag and drop operation from start coordinates to end coordinates within a browser session. Use when you need to simulate dragging UI elements or files in automated workflows.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endX",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "endY",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "startX",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "startY",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.osLevel.getClipboardContent",
+      "shortPath": "osLevel.getClipboardContent",
+      "description": "Tool to retrieve the current content of the clipboard from a browser session. Use when you need to read clipboard data from an active session.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.osLevel.moveMouse",
+      "shortPath": "osLevel.moveMouse",
+      "description": "Tool to move the mouse cursor to specified coordinates within a browser session. Use when you need to simulate mouse movement at the OS level.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "x",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "y",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.osLevel.navigateToUrl",
+      "shortPath": "osLevel.navigateToUrl",
+      "description": "Tool to navigate a browser session to a specified URL. Use when you need to direct an existing session to a new webpage.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.osLevel.pasteText",
+      "shortPath": "osLevel.pasteText",
+      "description": "Tool to paste text at the current cursor position in a browser session. Use when you need to insert text into an active form field or text area.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.osLevel.performKeyboardShortcut",
+      "shortPath": "osLevel.performKeyboardShortcut",
+      "description": "Tool to perform a keyboard shortcut using specified keys in a browser session. Use when you need to simulate keyboard input like copy (Control+C), paste (Control+V), or any other key combination.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keys",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "hold_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.osLevel.pressMouseButton",
+      "shortPath": "osLevel.pressMouseButton",
+      "description": "Tool to perform a mouse button down action at specified coordinates within a browser session. Use when you need to simulate pressing and holding a mouse button at a specific screen position.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "x",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "y",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "button",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.osLevel.releaseMouseButton",
+      "shortPath": "osLevel.releaseMouseButton",
+      "description": "Tool to release a mouse button at specified coordinates within a browser session. Use when automating mouse interactions that require button release events, such as completing drag operations or simulating natural mouse behavior.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "x",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "y",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "button",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.osLevel.scrollSession",
+      "shortPath": "osLevel.scrollSession",
+      "description": "Tool to perform a scroll action at specified coordinates within a browser session. Use when you need to scroll to specific positions or simulate user scrolling behavior. Example: \"Scroll down 100 pixels from position (100, 100) in session sess_123\".",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "x",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "y",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "useOs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deltaX",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "deltaY",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.osLevel.setClipboardContent",
+      "shortPath": "osLevel.setClipboardContent",
+      "description": "Tool to set the content of the clipboard in a browser session. Use when you need to programmatically copy text to the clipboard for automated workflows.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.osLevel.typeText",
+      "shortPath": "osLevel.typeText",
+      "description": "Tool to type specified text with optional delay between keystrokes. Use when you need to input text into a browser session, such as filling forms or entering search queries.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.pages.getSessionPages",
+      "shortPath": "pages.getSessionPages",
+      "description": "Tool to retrieve all pages associated with a specific browser session. Use when you need to list all open tabs or pages in an active or completed session.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.profiles.createProfile",
+      "shortPath": "profiles.createProfile",
+      "description": "Creates a new browser profile from an active session. A profile stores cookies, local storage, and cache data. The session must be running when this is called; profile data is persisted once the session terminates. Use profiles to maintain persistent browser state across multiple sessions.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dedicated_sticky_ip",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.profiles.deleteProfile",
+      "shortPath": "profiles.deleteProfile",
+      "description": "Tool to delete a browser profile by ID. Use after confirming the profile exists.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.profiles.getProfile",
+      "shortPath": "profiles.getProfile",
+      "description": "Tool to retrieve details of a specific profile by its name. Use when you need to fetch information about a particular browser profile.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.profiles.listProfiles",
+      "shortPath": "profiles.listProfiles",
+      "description": "Tool to fetch all stored browser profiles. Use when you need an overview of all profiles available to the authenticated user (e.g., after creating or deleting profiles).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.profiles.updateProfile",
+      "shortPath": "profiles.updateProfile",
+      "description": "Updates an existing browser profile with data from an active session. The profile stores cookies, local storage, and cache from the session. Requires an active (running) browser session - the session_id must reference a session that has not been terminated.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.recordings.listSessionRecordings",
+      "shortPath": "recordings.listSessionRecordings",
+      "description": "Tool to list all recordings for a specific browser session. Use after confirming the session ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.recordings.pauseSessionRecording",
+      "shortPath": "recordings.pauseSessionRecording",
+      "description": "Tool to pause the video recording for a specific browser session. Use when you need to temporarily stop recording without ending the session.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.recordings.resumeSessionRecording",
+      "shortPath": "recordings.resumeSessionRecording",
+      "description": "Tool to resume video recording for a specific browser session. Use when recording was previously paused and needs to be restarted.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.screenshots.takeScreenshot",
+      "shortPath": "screenshots.takeScreenshot",
+      "description": "Tool to take a screenshot of the current browser session and return it as an image. Use when you need a visual snapshot of an active browser session.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.sessions.endAllSessions",
+      "shortPath": "sessions.endAllSessions",
+      "description": "Tool to terminate all active browser sessions at once. Use when you need to immediately close every browser session for the authenticated user, such as during cleanup operations or security concerns.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.sessions.endBrowserSession",
+      "shortPath": "sessions.endBrowserSession",
+      "description": "Tool to end a specific browser session by ID. Use after confirming the session ID you want to terminate.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.sessions.getBrowserSession",
+      "shortPath": "sessions.getBrowserSession",
+      "description": "Tool to retrieve detailed information about a specific browser session. Use when you need to check the status, configuration, or execution details of a browser session.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.sessions.listSessions",
+      "shortPath": "sessions.listSessions",
+      "description": "Tool to list all browser sessions. Use when you need to retrieve both active and inactive sessions.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "task_initiated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "playground",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "extra_stealth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "profile_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.sessions.startBrowserSession",
+      "shortPath": "sessions.startBrowserSession",
+      "description": "Tool to start a new browser session with optional customizations. Use when you need to programmatically allocate an isolated browser instance with recording, proxy, live view, and feature toggles.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "browser",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "session",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "identities",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "integrations",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.createOrUpdateTaskDraft",
+      "shortPath": "tasks.createOrUpdateTaskDraft",
+      "description": "Tool to create or update the draft version of a task. Draft versions are used for development and testing before publishing. Use when you need to save task code changes without creating a published version.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.createTask",
+      "shortPath": "tasks.createTask",
+      "description": "Tool to create a new task or update an existing task with the same name. Tasks are reusable TypeScript code snippets that execute in browser sessions. Use when you need to define repeatable automation workflows that can be invoked across multiple sessions.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "browserConfiguration",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.deleteTask",
+      "shortPath": "tasks.deleteTask",
+      "description": "Tool to soft delete a task and all its versions. Use after confirming the task exists.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.deleteTaskVersion",
+      "shortPath": "tasks.deleteTaskVersion",
+      "description": "Tool to soft delete a specific version of a task. The version will no longer be accessible but data is preserved for recovery. Use when you need to remove a specific task version.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskVersion",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.deployTask",
+      "shortPath": "tasks.deployTask",
+      "description": "Tool to deploy a task by creating a new version with auto-incremented version number. Use when you need to publish task changes and make them available for execution.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "browserConfiguration",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.getLatestTaskVersion",
+      "shortPath": "tasks.getLatestTaskVersion",
+      "description": "Tool to retrieve the latest version of a task including the full base64 encoded code content. Use when you need to access the most recent task implementation.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.getTaskDraft",
+      "shortPath": "tasks.getTaskDraft",
+      "description": "Tool to retrieve the draft version of a task, including the full Base64 encoded code content. Use when you need to access the current draft of a task that hasn't been published yet.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.getTaskExecutionResult",
+      "shortPath": "tasks.getTaskExecutionResult",
+      "description": "Tool to retrieve a single task execution result by its ID. Use when you need to check the status, output, or error details of a specific task execution.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "executionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.getTaskMetadata",
+      "shortPath": "tasks.getTaskMetadata",
+      "description": "Tool to retrieve task metadata without downloading the full task code. Use when you need task information such as status, creation time, or language without the code content.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.getTaskVersion",
+      "shortPath": "tasks.getTaskVersion",
+      "description": "Tool to retrieve a specific version of a task, including the full code content. Use when you need to access the complete task code for a particular version (draft, latest, or specific version number).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskVersion",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.listTaskExecutions",
+      "shortPath": "tasks.listTaskExecutions",
+      "description": "Tool to retrieve execution history for a specific task with filtering and pagination support. Use when you need to view past execution results, monitor task success rates, or debug failed executions.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.listTasks",
+      "shortPath": "tasks.listTasks",
+      "description": "Tool to retrieve a paginated list of all tasks for the authenticated team. Use when you need to view available tasks with their latest version information and metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.listTaskVersions",
+      "shortPath": "tasks.listTaskVersions",
+      "description": "Tool to retrieve all versions of a specific task, including draft and published versions. Use when you need to view the version history of a task or select a specific version for deployment or execution.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.publishTaskVersion",
+      "shortPath": "tasks.publishTaskVersion",
+      "description": "Tool to publish a specific version of a task. Creates a new version if it doesn't exist, or updates an existing version's metadata. Use when you need to make a specific task version available for execution. Cannot publish to 'draft' versions.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "taskVersion",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "browserConfiguration",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.runTask",
+      "shortPath": "tasks.runTask",
+      "description": "Tool to execute a task in a browser session with a specific or latest version. Use when you need to run an existing task with optional session reuse and configuration overrides.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inputs",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cleanupSessions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "overrideBrowserConfiguration",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.runTaskByName",
+      "shortPath": "tasks.runTaskByName",
+      "description": "Tool to execute a task by its name, always using the latest version. Use when you need to run a predefined browser automation task by referencing its name.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inputs",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "taskName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "taskSessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "overrideBrowserConfiguration",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tasks.updateTaskMetadata",
+      "shortPath": "tasks.updateTaskMetadata",
+      "description": "Updates task metadata (name and description). This does not affect the task code or versions. Use when you need to update task information without modifying the implementation.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tools.getWebpageContent",
+      "shortPath": "tools.getWebpageContent",
+      "description": "Tool to retrieve rendered content of a webpage in HTML or Markdown format. Use when you need to fetch a page’s full content, optionally within an existing browser session.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "wait",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "new_page",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_index",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "return_partial_on_timeout",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tools.performWebTask",
+      "shortPath": "tools.performWebTask",
+      "description": "Tool to perform autonomous web tasks using AI agents. Use when you need to automate complex browser interactions like form filling, data extraction, or multi-step workflows.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_steps",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "output_schema",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "secret_values",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "detect_elements",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "highlight_elements",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "human_intervention",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.tools.screenshotWebpage",
+      "shortPath": "tools.screenshotWebpage",
+      "description": "Tool to take a screenshot of a specified webpage within a session. Use when you need a visual PNG snapshot of a live page. Example: \"Capture a 1280×720 screenshot of https://example.com\".",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wait",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_quality",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "s3_target_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scroll_all_content",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "capture_full_height",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "anchorbrowser.api.uploads.uploadFilesToSession",
+      "shortPath": "uploads.uploadFilesToSession",
+      "description": "Tool to upload files directly to a browser session for use with web forms and file inputs. Use when you need to provide file inputs to web forms during automated browser sessions.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "anchorbrowser.db.profiles.search",
+      "entityName": "profiles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "session_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "anchorbrowser.db.sessions.search",
+      "entityName": "sessions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "session_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "team_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cdp_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "live_view_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "credits_used",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "playground",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "proxy_bytes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "steps",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "anchorbrowser.db.tasks.search",
+      "entityName": "tasks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "teamId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "applicationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "taskVersionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "selectedTaskVersion",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "latestVersion",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isDraft",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "outputFileOnly",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "humanIntervention",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "aiFallbackEnabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

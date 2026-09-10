@@ -26,11 +26,11 @@ WORLD_NEWS_API_KEY=your_api_key_here
 
 ```ts
 import { createCorsair } from 'corsair';
-import { worldNewsApi } from '@corsair-dev/worldnewsapi';
+import { worldnewsapi } from '@corsair-dev/worldnewsapi';
 
 const app = createCorsair({
   plugins: [
-    worldNewsApi({
+    worldnewsapi({
       // Explicit key, or automatically resolved from WORLD_NEWS_API_KEY / key manager
       key: process.env.WORLD_NEWS_API_KEY,
     }),
