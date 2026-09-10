@@ -14,8 +14,8 @@
  *   CORSAIR_MULTITENANCY  (optional) "true" to enable multi-tenant storage
  *   CORSAIR_READONLY      (optional) "true" to expose only read operations
  *
- * ponytail: sqlite is the only bundled store (matches demo/mcp/db.ts). Swap in
- * a hosted DB by importing this package's pieces directly if you outgrow it.
+ * sqlite is the only bundled store (matches demo/mcp/db.ts). Outgrow it by
+ * importing this package's pieces directly against a hosted database.
  */
 import { createCorsair } from 'corsair';
 import { runStdioMcpServer } from './index.js';
@@ -97,6 +97,24 @@ async function main() {
 	const database = new Database(process.env.CORSAIR_DB_PATH ?? './corsair.db');
 	(database as { exec: (sql: string) => void }).exec(SCHEMA);
 
+	// CREATE TABLE IF NOT EXISTS is a no-op against a database created by an
+	// older schema, so a reused CORSAIR_DB_PATH can lack columns the permission
+	// runtime needs. Reject an incompatible database with a clear message rather
+	// than hitting missing-column errors mid-operation.
+	const permissionCols = new Set(
+		(database as { pragma: (s: string) => Array<{ name: string }> })
+			.pragma('table_info(corsair_permissions)')
+			.map((c) => c.name),
+	);
+	for (const col of ['token', 'plugin', 'args', 'tenant_id', 'expires_at']) {
+		if (!permissionCols.has(col)) {
+			console.error(
+				`[corsair-mcp] corsair_permissions in this database is missing the "${col}" column — it was created by an older schema. Delete the database file or migrate it, then restart.`,
+			);
+			process.exit(1);
+		}
+	}
+
 	const plugins = [];
 	for (const spec of specs) {
 		const { pkg, exportName } = resolvePlugin(spec);
@@ -113,8 +131,8 @@ async function main() {
 			);
 			process.exit(1);
 		}
-		// ponytail: plugin defaults only. Per-plugin options (e.g. authType) via
-		// env would need a JSON config; add that when a listing actually needs it.
+		// Plugin defaults only. Per-plugin options (e.g. authType) would need a
+		// JSON config in env; add that when a listing actually needs it.
 		plugins.push((factory as () => unknown)());
 	}
 
