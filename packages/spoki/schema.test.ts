@@ -54,6 +54,13 @@ describe('Spoki schema', () => {
 		expect(parsed.channels?.[0]?.identifier).toBe('3933312345678');
 	});
 
+	it('parses an account without quality_reasons', () => {
+		const { quality_reasons: _omitted, ...withoutReasons } = validAccount;
+		const parsed = SpokiSchema.entities.accounts.parse(withoutReasons);
+		expect(parsed.id).toBe(13128334);
+		expect(parsed.quality_reasons).toBeUndefined();
+	});
+
 	it('rejects an account missing required fields', () => {
 		expect(() =>
 			SpokiSchema.entities.accounts.parse({ id: 1, name: 'Incomplete' }),

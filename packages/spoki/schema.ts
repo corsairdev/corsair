@@ -24,7 +24,7 @@ export const SpokiAccountSchema = z.object({
 	daily_limit: z.number(),
 	phone_status: z.string(),
 	quality_score: z.number(),
-	quality_reasons: z.unknown(),
+	quality_reasons: z.unknown().optional(),
 	is_active: z.boolean(),
 	country_code: z.string(),
 	estimated_available_conversations: z.number(),
