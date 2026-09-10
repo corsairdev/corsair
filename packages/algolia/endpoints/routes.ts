@@ -1192,19 +1192,6 @@ export const algoliaRoutes = [
 		riskLevel: 'read' as const,
 	},
 	{
-		key: 'indexExists',
-		group: 'indices',
-		name: 'indexExists',
-		method: 'GET',
-		path: '/1/indexes/{indexName}',
-		hostType: 'search',
-		description:
-			"Tool to check if an Algolia index exists. Use before performing index operations to prevent accidental index creation. Results are scoped to the Algolia app ID configured in the Composio connection. Example: IndexExists(index_name='products').",
-		pathParams: ['index_name'],
-		queryParams: [],
-		riskLevel: 'read' as const,
-	},
-	{
 		key: 'initInsights',
 		group: 'insights',
 		name: 'initInsights',
