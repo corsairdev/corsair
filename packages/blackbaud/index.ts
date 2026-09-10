@@ -56,7 +56,7 @@ type BlackbaudEndpoint<K extends keyof BlackbaudEndpointOutputs> =
 export type BlackbaudEndpoints = {
 	addGiftsToBatch: BlackbaudEndpoint<'addGiftsToBatch'>;
 	getGiftById: BlackbaudEndpoint<'getGiftById'>;
-	getMembershipDetails: BlackbaudEndpoint<'getMembershipDetails'>;
+	listMemberships: BlackbaudEndpoint<'listMemberships'>;
 	getPaymentTransaction: BlackbaudEndpoint<'getPaymentTransaction'>;
 	oneRosterOAuth2BaseApi: BlackbaudEndpoint<'oneRosterOAuth2BaseApi'>;
 };
@@ -69,7 +69,7 @@ const blackbaudEndpointsNested = {
 		getGiftById: Gifts.getGiftById,
 	},
 	membership: {
-		getMembershipDetails: Membership.getMembershipDetails,
+		listMemberships: Membership.listMemberships,
 	},
 	payments: {
 		getPaymentTransaction: Payments.getPaymentTransaction,
@@ -88,9 +88,9 @@ export const blackbaudEndpointSchemas = {
 		input: BlackbaudEndpointInputSchemas.getGiftById,
 		output: BlackbaudEndpointOutputSchemas.getGiftById,
 	},
-	'membership.getMembershipDetails': {
-		input: BlackbaudEndpointInputSchemas.getMembershipDetails,
-		output: BlackbaudEndpointOutputSchemas.getMembershipDetails,
+	'membership.listMemberships': {
+		input: BlackbaudEndpointInputSchemas.listMemberships,
+		output: BlackbaudEndpointOutputSchemas.listMemberships,
 	},
 	'payments.getPaymentTransaction': {
 		input: BlackbaudEndpointInputSchemas.getPaymentTransaction,
@@ -110,17 +110,17 @@ const blackbaudEndpointMeta = {
 	'batch.addGiftsToBatch': {
 		riskLevel: 'write',
 		description:
-			"Add one or more gifts (donations) to an existing gift batch in Blackbaud Raiser's Edge NXT.",
+			"Add one or more gifts (donations) to an existing open gift batch in Blackbaud Raiser's Edge NXT. Success returns status_code 200; failures throw (rate-limit retries via error handlers).",
 	},
 	'gifts.getGiftById': {
 		riskLevel: 'read',
 		description:
 			"Retrieves comprehensive gift details from Blackbaud Raiser's Edge NXT by gift ID.",
 	},
-	'membership.getMembershipDetails': {
+	'membership.listMemberships': {
 		riskLevel: 'read',
 		description:
-			"Retrieves comprehensive membership details from Blackbaud Raiser's Edge NXT by member junction ID.",
+			"Lists memberships for a constituent from Blackbaud Raiser's Edge NXT Constituent API (ListConstituentMemberships), with optional member-junction filter and limit/offset pagination.",
 	},
 	'payments.getPaymentTransaction': {
 		riskLevel: 'read',
@@ -160,6 +160,7 @@ export type ExternalBlackbaudPlugin<T extends BlackbaudPluginOptions> =
 	BaseBlackbaudPlugin<T>;
 
 export function blackbaud<const T extends BlackbaudPluginOptions>(
+	// Test/scaffold default: empty options satisfy the generic bound.
 	incomingOptions: BlackbaudPluginOptions & T = {} as BlackbaudPluginOptions &
 		T,
 ): ExternalBlackbaudPlugin<T> {
@@ -214,10 +215,11 @@ export type {
 	BlackbaudEndpointOutputs,
 	GetGiftByIdInput,
 	GetGiftByIdResponse,
-	GetMembershipDetailsInput,
-	GetMembershipDetailsResponse,
 	GetPaymentTransactionInput,
 	GetPaymentTransactionResponse,
+	ListMembershipsInput,
+	ListMembershipsResponse,
+	MembershipRecord,
 	OneRosterOAuth2BaseApiInput,
 	OneRosterOAuth2BaseApiResponse,
 } from './endpoints/types';

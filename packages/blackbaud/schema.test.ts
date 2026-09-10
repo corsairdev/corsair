@@ -30,6 +30,19 @@ describe('Blackbaud schema', () => {
 			}),
 		).toBeDefined();
 		expect(
+			BlackbaudEndpointInputSchemas.listMemberships.parse({
+				constituent_id: 'c1',
+			}),
+		).toEqual({ constituent_id: 'c1' });
+		expect(
+			BlackbaudEndpointInputSchemas.listMemberships.parse({
+				constituent_id: 'c1',
+				member_junction_id: 'j1',
+				limit: 50,
+				offset: 0,
+			}),
+		).toBeDefined();
+		expect(
 			BlackbaudEndpointInputSchemas.oneRosterOAuth2BaseApi.parse({
 				operation: 'publickeys',
 			}),
@@ -39,6 +52,11 @@ describe('Blackbaud schema', () => {
 	it('rejects empty identifiers and token operations', () => {
 		expect(() =>
 			BlackbaudEndpointInputSchemas.getGiftById.parse({ gift_id: '' }),
+		).toThrow();
+		expect(() =>
+			BlackbaudEndpointInputSchemas.listMemberships.parse({
+				constituent_id: '',
+			}),
 		).toThrow();
 		expect(() =>
 			BlackbaudEndpointInputSchemas.getPaymentTransaction.parse({
@@ -64,6 +82,13 @@ describe('Blackbaud schema', () => {
 			response_details: { batch: 'ok' },
 		});
 		expect(batch.status_code).toBe(200);
+
+		const memberships = BlackbaudEndpointOutputSchemas.listMemberships.parse({
+			count: 1,
+			value: [{ id: 'm1', program: 'Annual', custom_extension: 'kept' }],
+		});
+		expect(memberships.count).toBe(1);
+		expect(memberships.value).toHaveLength(1);
 	});
 });
 

@@ -68,29 +68,53 @@ const GetGiftByIdResponseSchema = z
 
 export type GetGiftByIdResponse = z.infer<typeof GetGiftByIdResponseSchema>;
 
-const GetMembershipDetailsInputSchema = z.object({
-	member_junction_id: z.string().min(1),
+// Constituent API list operation (ListConstituentMemberships, per the RENXT
+// connector reference): constituent_id is required; junction id is a
+// client-side filter because no single-membership GET exists. Refs:
+// live gateway (constituent/v1/constituents/{id}/memberships -> 401) and
+// https://learn.microsoft.com/en-us/connectors/blackbaudconstituent
+const ListMembershipsInputSchema = z.object({
+	constituent_id: z.string().min(1),
+	member_junction_id: z.string().min(1).optional(),
+	limit: z.number().int().positive().max(5000).optional(),
+	offset: z.number().int().nonnegative().optional(),
 });
 
-export type GetMembershipDetailsInput = z.infer<
-	typeof GetMembershipDetailsInputSchema
->;
+export type ListMembershipsInput = z.infer<typeof ListMembershipsInputSchema>;
 
-// Raiser's Edge NXT membership record served under membership/v1/memberships.
-// Ref: https://api.sky.blackbaud.com/membership/v1/memberships (SKY API)
-const GetMembershipDetailsResponseSchema = z
+// Membership record fields use RENXT domain vocabulary (program, category,
+// standing, dues). All optional + passthrough: exact MembershipRead names
+// need SKY-console confirmation with creds; unknown fields pass through.
+// Ref: https://webfiles-sc1.blackbaud.com/files/support/helpfiles/rex/content/bb-memberships.html
+const MembershipRecordSchema = z
 	.object({
 		id: z.string().optional(),
-		member_id: z.string().optional(),
-		membership_level: z.string().optional(),
+		member_junction_id: z.string().optional(),
+		constituent_id: z.string().optional(),
+		program: z.string().optional(),
+		category: z.string().optional(),
+		subcategory: z.string().optional(),
+		standing: z.string().optional(),
 		status: z.string().optional(),
 		join_date: z.string().optional(),
 		expiry_date: z.string().optional(),
+		dropped_date: z.string().optional(),
+		dues: GiftAmountSchema.optional(),
 	})
 	.passthrough();
 
-export type GetMembershipDetailsResponse = z.infer<
-	typeof GetMembershipDetailsResponseSchema
+export type MembershipRecord = z.infer<typeof MembershipRecordSchema>;
+
+// SKY API collection envelope (count + value), same pattern as other lists.
+const ListMembershipsResponseSchema = z
+	.object({
+		count: z.number(),
+		value: z.array(MembershipRecordSchema),
+	})
+	.passthrough();
+
+export type ListMembershipsResponse = z.infer<
+	typeof ListMembershipsResponseSchema
 >;
 
 const GetPaymentTransactionInputSchema = z.object({
@@ -149,7 +173,7 @@ export type OneRosterOAuth2BaseApiResponse = z.infer<
 export type BlackbaudEndpointInputs = {
 	addGiftsToBatch: AddGiftsToBatchInput;
 	getGiftById: GetGiftByIdInput;
-	getMembershipDetails: GetMembershipDetailsInput;
+	listMemberships: ListMembershipsInput;
 	getPaymentTransaction: GetPaymentTransactionInput;
 	oneRosterOAuth2BaseApi: OneRosterOAuth2BaseApiInput;
 };
@@ -157,7 +181,7 @@ export type BlackbaudEndpointInputs = {
 export type BlackbaudEndpointOutputs = {
 	addGiftsToBatch: AddGiftsToBatchResponse;
 	getGiftById: GetGiftByIdResponse;
-	getMembershipDetails: GetMembershipDetailsResponse;
+	listMemberships: ListMembershipsResponse;
 	getPaymentTransaction: GetPaymentTransactionResponse;
 	oneRosterOAuth2BaseApi: OneRosterOAuth2BaseApiResponse;
 };
@@ -165,7 +189,7 @@ export type BlackbaudEndpointOutputs = {
 export const BlackbaudEndpointInputSchemas = {
 	addGiftsToBatch: AddGiftsToBatchInputSchema,
 	getGiftById: GetGiftByIdInputSchema,
-	getMembershipDetails: GetMembershipDetailsInputSchema,
+	listMemberships: ListMembershipsInputSchema,
 	getPaymentTransaction: GetPaymentTransactionInputSchema,
 	oneRosterOAuth2BaseApi: OneRosterOAuth2BaseApiInputSchema,
 } as const;
@@ -173,7 +197,7 @@ export const BlackbaudEndpointInputSchemas = {
 export const BlackbaudEndpointOutputSchemas = {
 	addGiftsToBatch: AddGiftsToBatchResponseSchema,
 	getGiftById: GetGiftByIdResponseSchema,
-	getMembershipDetails: GetMembershipDetailsResponseSchema,
+	listMemberships: ListMembershipsResponseSchema,
 	getPaymentTransaction: GetPaymentTransactionResponseSchema,
 	oneRosterOAuth2BaseApi: OneRosterOAuth2BaseApiResponseSchema,
 } as const;

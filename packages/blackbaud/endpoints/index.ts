@@ -1,6 +1,6 @@
 import { addGiftsToBatch } from './batch';
 import { getGiftById } from './gifts';
-import { getMembershipDetails } from './membership';
+import { listMemberships } from './membership';
 import { oneRosterOAuth2BaseApi } from './oneroster';
 import { getPaymentTransaction } from './payments';
 
@@ -13,7 +13,7 @@ export const Gifts = {
 };
 
 export const Membership = {
-	getMembershipDetails,
+	listMemberships,
 };
 
 export const Payments = {

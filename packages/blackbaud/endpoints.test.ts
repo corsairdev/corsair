@@ -3,10 +3,9 @@ import { ApiError } from 'corsair/http';
 import { makeBlackbaudRequest } from './client';
 import { addGiftsToBatch } from './endpoints/batch';
 import { getGiftById } from './endpoints/gifts';
-import { getMembershipDetails } from './endpoints/membership';
+import { listMemberships } from './endpoints/membership';
 import { oneRosterOAuth2BaseApi } from './endpoints/oneroster';
 import { getPaymentTransaction } from './endpoints/payments';
-import type { OneRosterOAuth2BaseApiInput } from './endpoints/types';
 import type { BlackbaudContext } from './index';
 
 jest.mock('./client', () => ({
@@ -75,19 +74,74 @@ describe('Blackbaud endpoints', () => {
 		);
 	});
 
-	it('getMembershipDetails requests the membership path', async () => {
-		mockRequest.mockResolvedValue({ id: 'm1' });
+	it('listMemberships requests the constituent memberships path', async () => {
+		mockRequest.mockResolvedValue({ count: 1, value: [{ id: 'm1' }] });
 
-		const result = await getMembershipDetails(testCtx(), {
-			member_junction_id: 'm1',
+		const result = await listMemberships(testCtx(), {
+			constituent_id: 'c1',
 		});
 
 		expect(mockRequest).toHaveBeenCalledWith(
-			'membership/v1/memberships/m1',
+			'constituent/v1/constituents/c1/memberships',
 			'test-access-token',
 			expect.objectContaining({ method: 'GET' }),
 		);
-		expect(result).toEqual({ id: 'm1' });
+		expect(result).toEqual({ count: 1, value: [{ id: 'm1' }] });
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			expect.anything(),
+			'blackbaud.memberships.list',
+			{ constituent_id: 'c1', count: 1 },
+			'completed',
+		);
+	});
+
+	it('listMemberships forwards limit/offset pagination', async () => {
+		mockRequest.mockResolvedValue({ count: 0, value: [] });
+
+		await listMemberships(testCtx(), {
+			constituent_id: 'c1',
+			limit: 50,
+			offset: 100,
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.anything(),
+			expect.objectContaining({
+				query: { limit: 50, offset: 100 },
+			}),
+		);
+	});
+
+	it('listMemberships filters by member junction id client-side', async () => {
+		mockRequest.mockResolvedValue({
+			count: 2,
+			value: [{ id: 'm1' }, { id: 'm2', member_junction_id: 'j2' }],
+		});
+
+		const result = await listMemberships(testCtx(), {
+			constituent_id: 'c1',
+			member_junction_id: 'j2',
+		});
+
+		expect(result).toEqual({
+			count: 1,
+			value: [{ id: 'm2', member_junction_id: 'j2' }],
+		});
+	});
+
+	it('listMemberships confines the constituent id to one path segment', async () => {
+		mockRequest.mockResolvedValue({ count: 0, value: [] });
+
+		await listMemberships(testCtx(), {
+			constituent_id: '../other?x=1',
+		});
+
+		const calledUrl: string = mockRequest.mock.calls[0][0];
+		expect(calledUrl).toBe(
+			`constituent/v1/constituents/${encodeURIComponent('../other?x=1')}/memberships`,
+		);
+		expect(calledUrl).not.toContain('?x=1');
 	});
 
 	it('getPaymentTransaction confines the id to one path segment', async () => {
@@ -184,12 +238,12 @@ describe('Blackbaud endpoints', () => {
 	});
 
 	it('oneRoster rejects unsupported operations', async () => {
-		// Intentionally invalid input that bypasses static types, to verify the
-		// runtime guard rejects unsupported operations - safe in tests only.
+		// Test-only invalid input to verify runtime guard - static type rejects it.
 		await expect(
 			oneRosterOAuth2BaseApi(testCtx(), {
+				// @ts-expect-error - intentionally invalid operation for runtime-guard test
 				operation: 'token',
-			} as unknown as OneRosterOAuth2BaseApiInput),
+			}),
 		).rejects.toThrow('Unsupported OneRoster operation');
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
