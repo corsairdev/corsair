@@ -32,6 +32,8 @@ describe('Benzinga endpoint registry', () => {
 		expect(keys).toContain('calendar.listSplits');
 		expect(keys).toContain('calendar.listEconomics');
 		for (const key of keys) {
+			// Assertion justified: `keys` comes from Object.keys of this same
+			// registry object, so each entry is guaranteed to be a valid key.
 			const entry =
 				benzingaEndpointSchemas[key as keyof typeof benzingaEndpointSchemas];
 			expect(entry.input).toBeDefined();

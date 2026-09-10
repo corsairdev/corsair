@@ -86,6 +86,8 @@ describe('Benzinga API client', () => {
 		mockRequest.mockRejectedValue(rateLimited);
 
 		const seen = await makeBenzingaRequest('/api/v2/news', 'test-key').catch(
+			// unknown justified: the rejection is typed explicitly so the
+			// assertions below can narrow it safely instead of using `any`.
 			(error: unknown) => error,
 		);
 		expect(seen).toBe(rateLimited);
@@ -100,6 +102,8 @@ describe('Benzinga API client', () => {
 		mockRequest.mockRejectedValue(new Error('fetch failed'));
 
 		const seen = await makeBenzingaRequest('/api/v2/news', 'test-key').catch(
+			// unknown justified: the rejection is typed explicitly so the
+			// assertions below can narrow it safely instead of using `any`.
 			(error: unknown) => error,
 		);
 		expect(seen).toBeInstanceOf(BenzingaAPIError);
@@ -114,6 +118,8 @@ describe('Benzinga API client', () => {
 		mockRequest.mockRejectedValue('boom');
 
 		const seen = await makeBenzingaRequest('/api/v2/news', 'test-key').catch(
+			// unknown justified: the rejection is typed explicitly so the
+			// assertions below can narrow it safely instead of using `any`.
 			(error: unknown) => error,
 		);
 		expect(seen).toBeInstanceOf(BenzingaAPIError);

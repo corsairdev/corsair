@@ -119,16 +119,18 @@ describe('Benzinga error handlers', () => {
 		);
 		expect(networkStrategy.maxRetries).toBe(3);
 
-		const unknown = new Error('something unexpected');
-		const unknownCtx = errorContext('benzinga.news.get', unknown);
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(unknown, unknownCtx)).toBe(
+		const unexpected = new Error('something unexpected');
+		const unexpectedCtx = errorContext('benzinga.news.get', unexpected);
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(unexpected, unexpectedCtx),
+		).toBe(false);
+		expect(errorHandlers.AUTH_ERROR.match(unexpected, unexpectedCtx)).toBe(
 			false,
 		);
-		expect(errorHandlers.AUTH_ERROR.match(unknown, unknownCtx)).toBe(false);
-		expect(errorHandlers.DEFAULT.match(unknown, unknownCtx)).toBe(true);
+		expect(errorHandlers.DEFAULT.match(unexpected, unexpectedCtx)).toBe(true);
 		const defaultStrategy = await errorHandlers.DEFAULT.handler(
-			unknown,
-			unknownCtx,
+			unexpected,
+			unexpectedCtx,
 		);
 		expect(defaultStrategy.maxRetries).toBe(0);
 	});

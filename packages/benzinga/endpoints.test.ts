@@ -1,6 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeBenzingaRequest } from './client';
+import { listNewsChannels } from './endpoints/channels';
+import { listDividends } from './endpoints/dividends';
+import { listEarnings } from './endpoints/earnings';
+import { listEconomics } from './endpoints/economics';
+import { listGuidance } from './endpoints/guidance';
+import { listIpos } from './endpoints/ipos';
 import { getNews } from './endpoints/news';
+import { listRatings } from './endpoints/ratings';
+import { listSplits } from './endpoints/splits';
 import {
 	BenzingaEndpointInputSchemas,
 	BenzingaEndpointOutputSchemas,
@@ -25,6 +33,10 @@ jest.mock('corsair/core', () => {
 
 const mockRequest = jest.mocked(makeBenzingaRequest);
 const mockLogEvent = jest.mocked(logEventFromContext);
+
+// Narrow assertion, justified: handlers under test only read ctx.key;
+// request execution and event logging are both mocked above.
+const testCtx = () => ({ key: 'test-key' }) as BenzingaContext;
 
 describe('Benzinga endpoint schemas', () => {
 	it('accepts a fully populated news query', () => {
@@ -217,9 +229,7 @@ describe('Benzinga endpoint schemas', () => {
 });
 
 describe('news.get endpoint implementation', () => {
-	// Narrow assertion, justified: getNews only reads ctx.key on this path;
-	// request execution and event logging are both mocked above.
-	const ctx = { key: 'test-key' } as BenzingaContext;
+	const ctx = testCtx();
 
 	const article = {
 		id: 123456,
@@ -261,5 +271,363 @@ describe('news.get endpoint implementation', () => {
 			'completed',
 		);
 		expect(result).toEqual([article]);
+	});
+});
+
+describe('news.listChannels endpoint implementation', () => {
+	const ctx = testCtx();
+
+	const payload = { ok: true, data: [{ channel: 'Technology' }] };
+
+	beforeEach(() => {
+		jest.clearAllMocks();
+		mockRequest.mockResolvedValue(payload);
+	});
+
+	it('calls the channels endpoint with ctx.key and logs completion', async () => {
+		const result = await listNewsChannels(ctx, {});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const [endpoint, key, options] = mockRequest.mock.calls[0] ?? [];
+		expect(endpoint).toBe('/api/v2.1/news/channels');
+		expect(key).toBe('test-key');
+		expect(options?.method).toBe('GET');
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'benzinga.news.listChannels',
+			{},
+			'completed',
+		);
+		expect(result).toEqual(payload);
+	});
+});
+
+describe('calendar.listEarnings endpoint implementation', () => {
+	const ctx = testCtx();
+
+	const payload = {
+		earnings: [
+			{
+				id: '69030cfb619d3a00015b72a3',
+				date: '2026-10-29',
+				ticker: 'AAPL',
+				name: 'Apple',
+			},
+		],
+	};
+
+	beforeEach(() => {
+		jest.clearAllMocks();
+		mockRequest.mockResolvedValue(payload);
+	});
+
+	it('maps input to parameters[] query, uses ctx.key, and logs completion', async () => {
+		const result = await listEarnings(ctx, {
+			page: 1,
+			pagesize: 50,
+			date: '2024-01-09',
+			tickers: 'AAPL',
+			importance: 3,
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const [endpoint, key, options] = mockRequest.mock.calls[0] ?? [];
+		expect(endpoint).toBe('/api/v2.1/calendar/earnings');
+		expect(key).toBe('test-key');
+		expect(options?.method).toBe('GET');
+		expect(options?.query).toMatchObject({
+			page: 1,
+			pagesize: 50,
+			'parameters[date]': '2024-01-09',
+			'parameters[tickers]': 'AAPL',
+			'parameters[importance]': 3,
+		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'benzinga.calendar.listEarnings',
+			expect.objectContaining({ tickers: 'AAPL' }),
+			'completed',
+		);
+		expect(result).toEqual(payload);
+	});
+});
+
+describe('calendar.listDividends endpoint implementation', () => {
+	const ctx = testCtx();
+
+	const payload = {
+		dividends: [
+			{
+				id: '6958d4d893cde40001ee2606',
+				date: '2026-12-31',
+				ticker: 'XIMR',
+				name: 'First Trust ETF',
+			},
+		],
+	};
+
+	beforeEach(() => {
+		jest.clearAllMocks();
+		mockRequest.mockResolvedValue(payload);
+	});
+
+	it('maps yield filters to parameters[] query and logs completion', async () => {
+		const result = await listDividends(ctx, {
+			dateSort: 'ex',
+			dividend_yield: 0.5,
+			dividend_yield_operation: 'gte',
+			tickers: 'XIMR',
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const [endpoint, key, options] = mockRequest.mock.calls[0] ?? [];
+		expect(endpoint).toBe('/api/v2.2/calendar/dividends');
+		expect(key).toBe('test-key');
+		expect(options?.method).toBe('GET');
+		expect(options?.query).toMatchObject({
+			'parameters[date_sort]': 'ex',
+			'parameters[dividend_yield]': 0.5,
+			'parameters[dividend_yield_operation]': 'gte',
+			'parameters[tickers]': 'XIMR',
+		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'benzinga.calendar.listDividends',
+			expect.objectContaining({ tickers: 'XIMR' }),
+			'completed',
+		);
+		expect(result).toEqual(payload);
+	});
+});
+
+describe('calendar.listRatings endpoint implementation', () => {
+	const ctx = testCtx();
+
+	const payload = {
+		ratings: [
+			{
+				id: '695c16678f047b0001fee512',
+				date: '2026-01-05',
+				ticker: 'MNDY',
+				name: 'Monday.Com',
+			},
+		],
+	};
+
+	beforeEach(() => {
+		jest.clearAllMocks();
+		mockRequest.mockResolvedValue(payload);
+	});
+
+	it('maps fields, action and analyst filters and logs completion', async () => {
+		const result = await listRatings(ctx, {
+			fields: 'id,date,ticker',
+			action: 'Upgrades',
+			analyst: 'analyst-1',
+			firm: 'firm-1',
+			simplify: true,
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const [endpoint, key, options] = mockRequest.mock.calls[0] ?? [];
+		expect(endpoint).toBe('/api/v2.1/calendar/ratings');
+		expect(key).toBe('test-key');
+		expect(options?.method).toBe('GET');
+		expect(options?.query).toMatchObject({
+			fields: 'id,date,ticker',
+			'parameters[action]': 'Upgrades',
+			analyst: 'analyst-1',
+			firm: 'firm-1',
+			simplify: true,
+		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'benzinga.calendar.listRatings',
+			expect.objectContaining({ action: 'Upgrades' }),
+			'completed',
+		);
+		expect(result).toEqual(payload);
+	});
+});
+
+describe('calendar.listGuidance endpoint implementation', () => {
+	const ctx = testCtx();
+
+	const payload = {
+		guidance: [
+			{
+				id: '695bcc0c83cac20001becbd4',
+				date: '2026-01-05',
+				ticker: 'RCT',
+				name: 'RedCloud Holdings',
+			},
+		],
+	};
+
+	beforeEach(() => {
+		jest.clearAllMocks();
+		mockRequest.mockResolvedValue(payload);
+	});
+
+	it('maps is_primary filter to parameters[] query and logs completion', async () => {
+		const result = await listGuidance(ctx, {
+			is_primary: 'Y',
+			tickers: 'RCT',
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const [endpoint, key, options] = mockRequest.mock.calls[0] ?? [];
+		expect(endpoint).toBe('/api/v2.1/calendar/guidance');
+		expect(key).toBe('test-key');
+		expect(options?.method).toBe('GET');
+		expect(options?.query).toMatchObject({
+			'parameters[is_primary]': 'Y',
+			'parameters[tickers]': 'RCT',
+		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'benzinga.calendar.listGuidance',
+			expect.objectContaining({ tickers: 'RCT' }),
+			'completed',
+		);
+		expect(result).toEqual(payload);
+	});
+});
+
+describe('calendar.listIpos endpoint implementation', () => {
+	const ctx = testCtx();
+
+	const ipo = {
+		id: '604b6d8a36622a000186b793',
+		date: '2024-01-09',
+		ticker: 'ABNB',
+		name: 'Airbnb Inc.',
+	};
+
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it('maps ipo_date input, uses ctx.key, and logs completion', async () => {
+		mockRequest.mockResolvedValue({ ipos: [ipo] });
+
+		const result = await listIpos(ctx, {
+			ipo_date: '2024-01-09',
+			tickers: 'ABNB',
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const [endpoint, key, options] = mockRequest.mock.calls[0] ?? [];
+		expect(endpoint).toBe('/api/v2.1/calendar/ipos');
+		expect(key).toBe('test-key');
+		expect(options?.method).toBe('GET');
+		expect(options?.query).toMatchObject({
+			ipo_date: '2024-01-09',
+			'parameters[tickers]': 'ABNB',
+		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'benzinga.calendar.listIpos',
+			expect.objectContaining({ tickers: 'ABNB' }),
+			'completed',
+		);
+		expect(result).toEqual({ ipos: [ipo] });
+	});
+
+	it('normalizes a bare-array response to { ipos }', async () => {
+		mockRequest.mockResolvedValue([ipo]);
+
+		const result = await listIpos(ctx, {});
+
+		expect(result).toEqual({ ipos: [ipo] });
+	});
+});
+
+describe('calendar.listSplits endpoint implementation', () => {
+	const ctx = testCtx();
+
+	const payload = {
+		splits: [
+			{
+				id: '677675329a903000017cb6f1',
+				ticker: 'TCBP',
+				name: 'TC BioPharm (Holdings)',
+			},
+		],
+	};
+
+	beforeEach(() => {
+		jest.clearAllMocks();
+		mockRequest.mockResolvedValue(payload);
+	});
+
+	it('maps date_search_field to parameters[] query and logs completion', async () => {
+		const result = await listSplits(ctx, {
+			date_search_field: 'ex',
+			tickers: 'TCBP',
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const [endpoint, key, options] = mockRequest.mock.calls[0] ?? [];
+		expect(endpoint).toBe('/api/v2.1/calendar/splits');
+		expect(key).toBe('test-key');
+		expect(options?.method).toBe('GET');
+		expect(options?.query).toMatchObject({
+			'parameters[date_search_field]': 'ex',
+			'parameters[tickers]': 'TCBP',
+		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'benzinga.calendar.listSplits',
+			expect.objectContaining({ tickers: 'TCBP' }),
+			'completed',
+		);
+		expect(result).toEqual(payload);
+	});
+});
+
+describe('calendar.listEconomics endpoint implementation', () => {
+	const ctx = testCtx();
+
+	const payload = {
+		economics: [
+			{
+				id: '6745790147f2830001365a27',
+				date: '2026-03-08',
+				event_name: 'Challenger Job Cuts (YoY)',
+				event_category: 'Employment',
+			},
+		],
+	};
+
+	beforeEach(() => {
+		jest.clearAllMocks();
+		mockRequest.mockResolvedValue(payload);
+	});
+
+	it('maps country and event filters and logs completion', async () => {
+		const result = await listEconomics(ctx, {
+			country: 'USA',
+			event_name: 'CPI',
+			event_category: 'Employment',
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const [endpoint, key, options] = mockRequest.mock.calls[0] ?? [];
+		expect(endpoint).toBe('/api/v2.1/calendar/economics');
+		expect(key).toBe('test-key');
+		expect(options?.method).toBe('GET');
+		expect(options?.query).toMatchObject({
+			country: 'USA',
+			event_name: 'CPI',
+			event_category: 'Employment',
+		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'benzinga.calendar.listEconomics',
+			expect.objectContaining({ country: 'USA' }),
+			'completed',
+		);
+		expect(result).toEqual(payload);
 	});
 });

@@ -200,6 +200,9 @@ export type ExternalBenzingaPlugin<T extends BenzingaPluginOptions> =
 	BaseBenzingaPlugin<T>;
 
 export function benzinga<const T extends BenzingaPluginOptions>(
+	// Assertion justified: every BenzingaPluginOptions field is optional, so
+	// `{}` is already a valid value; the assertion only satisfies the generic
+	// `T` default parameter, and real defaults are filled in below.
 	incomingOptions: BenzingaPluginOptions & T = {} as BenzingaPluginOptions & T,
 ): ExternalBenzingaPlugin<T> {
 	const options = {
