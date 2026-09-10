@@ -10,6 +10,7 @@ export const create: PagerdutyEndpoints['incidentsCreate'] = async (
 	const result = await makePagerdutyRequest<
 		PagerdutyEndpointOutputs['incidentsCreate']
 	>('incidents', ctx.key, {
+		authType: ctx.options.authType,
 		method: 'POST',
 		from: input.from,
 		body: {
@@ -51,7 +52,7 @@ export const create: PagerdutyEndpoints['incidentsCreate'] = async (
 export const get: PagerdutyEndpoints['incidentsGet'] = async (ctx, input) => {
 	const result = await makePagerdutyRequest<
 		PagerdutyEndpointOutputs['incidentsGet']
-	>(`incidents/${input.id}`, ctx.key);
+	>(`incidents/${input.id}`, ctx.key, { authType: ctx.options.authType });
 
 	await logEventFromContext(
 		ctx,
@@ -66,6 +67,7 @@ export const list: PagerdutyEndpoints['incidentsList'] = async (ctx, input) => {
 	const result = await makePagerdutyRequest<
 		PagerdutyEndpointOutputs['incidentsList']
 	>('incidents', ctx.key, {
+		authType: ctx.options.authType,
 		query: {
 			limit: input.limit,
 			offset: input.offset,
@@ -98,6 +100,7 @@ export const update: PagerdutyEndpoints['incidentsUpdate'] = async (
 	const result = await makePagerdutyRequest<
 		PagerdutyEndpointOutputs['incidentsUpdate']
 	>(`incidents/${id}`, ctx.key, {
+		authType: ctx.options.authType,
 		method: 'PUT',
 		body: {
 			incident: {

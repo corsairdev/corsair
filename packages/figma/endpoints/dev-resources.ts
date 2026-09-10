@@ -9,7 +9,11 @@ export const create: FigmaEndpoints['devResourcesCreate'] = async (
 ) => {
 	const result = await makeFigmaRequest<
 		FigmaEndpointOutputs['devResourcesCreate']
-	>(`v1/dev_resources`, ctx.key, { method: 'POST', body: { ...input } });
+	>(`v1/dev_resources`, ctx.key, {
+		method: 'POST',
+		body: { ...input },
+		authType: ctx.options.authType,
+	});
 
 	if (result.links_created && ctx.db.fileMetadata) {
 		try {
@@ -48,7 +52,7 @@ export const deleteDevResource: FigmaEndpoints['devResourcesDelete'] = async (
 	>(
 		`v1/files/${input.file_key}/dev_resources/${input.dev_resource_id}`,
 		ctx.key,
-		{ method: 'DELETE' },
+		{ method: 'DELETE', authType: ctx.options.authType },
 	);
 
 	if (ctx.db.fileMetadata) {
@@ -79,6 +83,7 @@ export const get: FigmaEndpoints['devResourcesGet'] = async (ctx, input) => {
 	>(`v1/files/${input.file_key}/dev_resources`, ctx.key, {
 		method: 'GET',
 		query: { node_ids: input.node_ids },
+		authType: ctx.options.authType,
 	});
 
 	if (ctx.db.fileMetadata) {
@@ -106,7 +111,11 @@ export const update: FigmaEndpoints['devResourcesUpdate'] = async (
 ) => {
 	const result = await makeFigmaRequest<
 		FigmaEndpointOutputs['devResourcesUpdate']
-	>(`v1/dev_resources`, ctx.key, { method: 'PUT', body: { ...input } });
+	>(`v1/dev_resources`, ctx.key, {
+		method: 'PUT',
+		body: { ...input },
+		authType: ctx.options.authType,
+	});
 
 	await logEventFromContext(
 		ctx,

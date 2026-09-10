@@ -17,7 +17,7 @@ export const getComments: RedditEndpoints['postsGetComments'] = async (
 	const { post_id, ...query } = input;
 	const raw = await makeRedditRequest<[RedditListingRaw, RedditListingRaw]>(
 		`/comments/${post_id}.json`,
-		{ query },
+		{ token: ctx.key, authType: ctx.options.authType, query },
 	);
 
 	const postRaw = raw[0].data.children.find((c) => c.kind === 't3'); // t3 = link/post
@@ -46,6 +46,7 @@ export const getComments: RedditEndpoints['postsGetComments'] = async (
 export const getById: RedditEndpoints['postsGetById'] = async (ctx, input) => {
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/by_id/${input.names}.json`,
+		{ token: ctx.key, authType: ctx.options.authType },
 	);
 
 	const posts = extractPosts(raw);

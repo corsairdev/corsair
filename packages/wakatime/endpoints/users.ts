@@ -10,7 +10,7 @@ export const getCurrentUser: WakaTimeEndpoints['getCurrentUser'] = async (
 ) => {
 	const response = await makeWakaTimeRequest<
 		WakaTimeEndpointOutputs['getCurrentUser']
-	>('users/current', ctx.key);
+	>('users/current', ctx.key, { authType: ctx.options.authType });
 
 	const validatedResponse =
 		WakaTimeEndpointOutputSchemas.getCurrentUser.parse(response);

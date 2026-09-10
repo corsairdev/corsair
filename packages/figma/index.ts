@@ -13,7 +13,8 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import {
 	ActivityLogs,
 	Comments,
@@ -73,7 +74,7 @@ import {
 } from './webhooks/types';
 
 export type FigmaPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalFigmaPlugin['hooks'];
@@ -706,7 +707,13 @@ const figmaWebhookSchemas = {
 } as const;
 
 export const figmaAuthConfig = {
+	api_key: {
+		account: ['webhook_id'] as const,
+	},
 	oauth_2: {
+		account: ['webhook_id'] as const,
+	},
+	managed: {
 		account: ['webhook_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -736,6 +743,25 @@ export function figma<const T extends FigmaPluginOptions>(
 	return {
 		id: 'figma',
 		authConfig: figmaAuthConfig,
+		oauthConfig: {
+			providerName: 'Figma',
+			authUrl: 'https://www.figma.com/oauth',
+			tokenUrl: 'https://api.figma.com/v1/oauth/token',
+			scopes: [
+				'file_content:read',
+				'file_comments:read',
+				'file_comments:write',
+				'current_user:read',
+				'file_dev_resources:read',
+				'file_dev_resources:write',
+				'file_variables:read',
+				'file_variables:write',
+				'webhooks:read',
+				'webhooks:write',
+				'library_analytics:read',
+			],
+			tokenAuthMethod: 'basic',
+		},
 		schema: FigmaSchema,
 		options: options,
 		hooks: options.hooks,
@@ -785,6 +811,32 @@ export function figma<const T extends FigmaPluginOptions>(
 				}
 
 				return res;
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+				return getOAuthAccessToken(ctx, {
+					plugin: 'figma',
+					tokenUrl: 'https://api.figma.com/v1/oauth/token',
+				});
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:figma:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'figma',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('figma', 'api_key');
