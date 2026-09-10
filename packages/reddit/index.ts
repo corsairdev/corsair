@@ -403,12 +403,10 @@ export function reddit<const T extends RedditPluginOptions>(
 				return options.key;
 			}
 
+			// Reddit's public JSON API is anonymous; api_key auth has no credential
+			// to send, so stay anonymous (the client omits Authorization for it).
 			if (ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (!res) {
-					throw new AuthMissingError('reddit', 'api_key');
-				}
-				return res;
+				return (await ctx.keys.get_api_key()) ?? '';
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {

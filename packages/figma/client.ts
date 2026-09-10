@@ -41,8 +41,8 @@ export async function makeFigmaRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query, authType = 'api_key' } = options;
 
-	// OAuth and managed credentials are bearer tokens; api_key uses Figma's
-	// native X-Figma-Token header.
+	// api_key authenticates via Figma's X-Figma-Token header; request() turns
+	// TOKEN into a bearer header for oauth/managed.
 	const useBearer = authType !== 'api_key';
 
 	const config: OpenAPIConfig = {
@@ -51,12 +51,10 @@ export async function makeFigmaRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: useBearer ? apiKey : undefined,
-		HEADERS: useBearer
-			? { 'Content-Type': 'application/json' }
-			: {
-					'Content-Type': 'application/json',
-					'X-Figma-Token': apiKey,
-				},
+		HEADERS: {
+			'Content-Type': 'application/json',
+			...(useBearer ? {} : { 'X-Figma-Token': apiKey }),
+		},
 	};
 
 	const requestOptions: ApiRequestOptions = {

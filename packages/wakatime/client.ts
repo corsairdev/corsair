@@ -43,8 +43,7 @@ export async function makeWakaTimeRequest<T>(
 ): Promise<T> {
 	const { query, authType = 'api_key' } = options;
 
-	// OAuth and managed credentials are bearer tokens; the api_key is sent via
-	// WakaTime's Base64 Basic scheme.
+	// api_key is sent Base64-encoded via WakaTime's Basic scheme.
 	const authorization =
 		authType === 'api_key'
 			? `Basic ${Buffer.from(apiKey).toString('base64')}`
