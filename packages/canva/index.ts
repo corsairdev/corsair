@@ -14,6 +14,7 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { resolveManagedAccessToken } from 'corsair/hub';
 import {
 	Assets,
 	AssetUploads,
@@ -41,7 +42,7 @@ import { resolveCanvaOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link
 import { matchCanvaTenantWebhook } from './webhooks/tenant-matcher';
 
 export type CanvaPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalCanvaPlugin['hooks'];
 	webhookHooks?: InternalCanvaPlugin['webhookHooks'];
@@ -509,6 +510,9 @@ export const canvaAuthConfig = {
 	oauth_2: {
 		account: ['user_id'] as const,
 	},
+	managed: {
+		account: ['user_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseCanvaPlugin<T extends CanvaPluginOptions> = CorsairPlugin<
@@ -588,6 +592,10 @@ export function canva<const T extends CanvaPluginOptions>(
 				}
 
 				return accessToken;
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'managed') {
+				return resolveManagedAccessToken(ctx, 'canva');
 			}
 
 			throw new AuthMissingError('canva', 'oauth_2');
