@@ -308,9 +308,37 @@ describe('verifySpokiWebhookRequest', () => {
 		).toEqual({ valid: true });
 	});
 
-	it('still rejects when the original bytes cannot be reconstructed', () => {
+	it('verifies a CRLF-terminated body via the payload fallback', () => {
+		const withCrlf = `${RAW_BODY}\r\n`;
+		const header = sign(withCrlf, Math.floor(Date.now() / 1000));
+		expect(
+			verifySpokiWebhookRequest(
+				{
+					payload: JSON.parse(RAW_BODY),
+					headers: { 'x-spoki-signature': header },
+				},
+				SECRET,
+			),
+		).toEqual({ valid: true });
+	});
+
+	it('verifies a pretty-printed original via the payload fallback', () => {
 		const pretty = JSON.stringify(JSON.parse(RAW_BODY), null, 2);
 		const header = sign(pretty, Math.floor(Date.now() / 1000));
+		expect(
+			verifySpokiWebhookRequest(
+				{
+					payload: JSON.parse(RAW_BODY),
+					headers: { 'x-spoki-signature': header },
+				},
+				SECRET,
+			),
+		).toEqual({ valid: true });
+	});
+
+	it('still rejects exotic formats that no candidate reconstructs', () => {
+		const tabbed = JSON.stringify(JSON.parse(RAW_BODY), null, '\t');
+		const header = sign(tabbed, Math.floor(Date.now() / 1000));
 		expect(
 			verifySpokiWebhookRequest(
 				{

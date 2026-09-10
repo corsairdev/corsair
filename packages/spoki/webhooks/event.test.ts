@@ -64,9 +64,19 @@ describe('spokiEvent handler', () => {
 		expect(res.success).toBe(true);
 	});
 
-	it('rejects with 401 when the original bytes cannot be reconstructed', async () => {
+	it('accepts a pretty-printed original via the payload fallback', async () => {
 		const pretty = JSON.stringify(JSON.parse(RAW_BODY), null, 2);
 		const header = sign(pretty, Math.floor(Date.now() / 1000));
+		const res = await spokiEvent.handler({ key: SECRET } as never, {
+			payload: JSON.parse(RAW_BODY),
+			headers: { 'x-spoki-signature': header },
+		});
+		expect(res.success).toBe(true);
+	});
+
+	it('rejects with 401 when the original bytes cannot be reconstructed', async () => {
+		const tabbed = JSON.stringify(JSON.parse(RAW_BODY), null, '\t');
+		const header = sign(tabbed, Math.floor(Date.now() / 1000));
 		const res = await spokiEvent.handler({ key: SECRET } as never, {
 			payload: JSON.parse(RAW_BODY),
 			headers: { 'x-spoki-signature': header },

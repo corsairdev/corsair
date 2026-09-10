@@ -25,10 +25,10 @@ import crypto from 'crypto';
  *   works with the parsed bodies the standard webhook flow hands to
  *   matchers. Authenticity and freshness are enforced in the registered
  *   `spokiEvent` handler via verifySpokiWebhookRequest: byte-exact
- *   request.rawBody first, then the compact re-serialization (plus a
- *   trailing-newline variant) for runtimes that parsed the JSON first;
- *   anything else gets a 401. Without a configured webhook secret nothing
- *   routes.
+ *   request.rawBody first, then the common re-serializations (compact,
+ *   trailing LF/CRLF, 2-space pretty) for runtimes that parsed the JSON
+ *   first; anything else gets a 401. Without a configured webhook secret
+ *   nothing routes.
  */
 
 const SIGNATURE_TOLERANCE_SECONDS = 300;
@@ -110,23 +110,31 @@ export function verifySpokiWebhookRequest(
 	}
 
 	// Byte-exact rawBody first. When a runtime parsed the JSON before us
-	// (processWebhook re-serializes it), fall back to the compact
-	// re-serialization plus a trailing-newline variant — same approach as the
-	// typeform plugin. Trying extra candidates cannot help an attacker: a
-	// match still requires the secret. For fully byte-exact verification,
-	// callers should pass the raw string body through to processWebhook.
-	const candidates: string[] = [];
+	// (processWebhook re-serializes it), fall back through the common
+	// serializations — compact, trailing LF/CRLF, 2-space pretty — same
+	// approach as the typeform plugin. Trying extra candidates cannot help
+	// an attacker: a match still requires the secret. For fully byte-exact
+	// verification, callers should pass the raw string body through to
+	// processWebhook.
+	const bases = new Set<string>();
 	if (request.rawBody) {
-		candidates.push(request.rawBody);
+		bases.add(request.rawBody);
 	} else if (request.payload && typeof request.payload === 'object') {
-		candidates.push(JSON.stringify(request.payload));
+		bases.add(JSON.stringify(request.payload));
 	}
-	for (const base of [...candidates]) {
-		const withNewline = `${base}\n`;
-		if (!candidates.includes(withNewline)) candidates.push(withNewline);
+	const candidates = new Set<string>();
+	for (const base of bases) {
+		candidates.add(base);
+		candidates.add(`${base}\n`);
+		candidates.add(`${base}\r\n`);
+		try {
+			candidates.add(JSON.stringify(JSON.parse(base), null, 2));
+		} catch {
+			// Not valid JSON; keep only the raw candidates.
+		}
 	}
 
-	if (candidates.length === 0) {
+	if (candidates.size === 0) {
 		return {
 			valid: false,
 			error:
@@ -134,9 +142,13 @@ export function verifySpokiWebhookRequest(
 		};
 	}
 
-	const ok = candidates.some((candidate) =>
-		verifySpokiWebhookSignature(candidate, signature, secret),
-	);
+	let ok = false;
+	for (const candidate of candidates) {
+		if (verifySpokiWebhookSignature(candidate, signature, secret)) {
+			ok = true;
+			break;
+		}
+	}
 	if (!ok) {
 		return { valid: false, error: 'Invalid signature' };
 	}
