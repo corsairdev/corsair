@@ -50,6 +50,34 @@ describe('superviseTunnel', () => {
 		expect(scheduled).toHaveLength(1);
 	});
 
+	it('ignores a delayed close from a superseded attempt', async () => {
+		const scheduled: Array<() => void> = [];
+		const closers: Array<() => void> = [];
+
+		// Each attempt fails; runTunnel's killed child may exit *after* the next
+		// attempt already started, firing the old attempt's onClose late. That
+		// stale signal must not schedule an extra (overlapping) restart.
+		superviseTunnel({
+			start: (onClose) => {
+				closers.push(onClose);
+				return Promise.reject(new Error('frpc died'));
+			},
+			schedule: (fn) => scheduled.push(fn),
+			minDelayMs: 1,
+			maxDelayMs: 8,
+		});
+
+		await flush();
+		expect(scheduled).toHaveLength(1);
+		scheduled.pop()!();
+		await flush();
+		expect(scheduled).toHaveLength(1);
+
+		// Attempt 1's child finally exits, calling attempt 1's (superseded) onClose.
+		closers[0]();
+		expect(scheduled).toHaveLength(1);
+	});
+
 	it('backs off exponentially on repeated start failures and caps', async () => {
 		const timers: Array<{ fn: () => void; ms: number }> = [];
 		let starts = 0;

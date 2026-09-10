@@ -208,18 +208,20 @@ export function superviseTunnel(opts: {
 	const min = opts.minDelayMs ?? TUNNEL_RESTART_MIN_MS;
 	const max = opts.maxDelayMs ?? TUNNEL_RESTART_MAX_MS;
 	let delay = min;
-	let scheduled = false;
-	// A dead attempt can signal twice — the promise rejects AND onClose fires
-	// (runTunnel's fail() kills the child, whose exit then runs onClose). Collapse
-	// both into one restart, else each death spawns two overlapping frpc processes.
-	const restart = () => {
-		if (scheduled) return;
-		scheduled = true;
-		schedule(run, delay);
-		delay = Math.min(delay * 2, max);
-	};
-	const run = () => {
-		scheduled = false;
+	const run = (): void => {
+		// One restart per attempt, latched per attempt (not globally). A dead
+		// attempt can signal twice — runTunnel's fail() rejects the promise and
+		// kills the child, whose exit later fires onClose, possibly *after* the
+		// next attempt already started. onClose is bound to this attempt's
+		// `restart`, so a superseded attempt's late signal no-ops here instead of
+		// spawning an overlapping frpc process.
+		let ended = false;
+		const restart = (): void => {
+			if (ended) return;
+			ended = true;
+			schedule(run, delay);
+			delay = Math.min(delay * 2, max);
+		};
 		void opts
 			.start(restart)
 			.then(() => {
