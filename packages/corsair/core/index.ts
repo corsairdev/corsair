@@ -186,6 +186,50 @@ const activeTunnels: Set<string> = ((
 	}
 ).__corsairTunnels ??= new Set<string>());
 
+const TUNNEL_RESTART_MIN_MS = 1_000;
+const TUNNEL_RESTART_MAX_MS = 30_000;
+
+/**
+ * Keep a dev tunnel alive. frpc has no supervisor — a death (laptop sleep,
+ * network blip, frps restart) leaves the tunnel down until the app process
+ * restarts, and the Hub keeps delivering to the dead URL. Restart on death with
+ * capped exponential backoff; a healthy start resets the backoff. The
+ * Hub-owned slug is sticky, so a restart re-registers the same public URL.
+ * Extracted from the spawn so the restart wiring is unit-testable.
+ */
+export function superviseTunnel(opts: {
+	start: (onClose: () => void) => Promise<unknown>;
+	schedule?: (fn: () => void, ms: number) => void;
+	minDelayMs?: number;
+	maxDelayMs?: number;
+}): void {
+	const schedule =
+		opts.schedule ?? ((fn, ms) => void setTimeout(fn, ms).unref?.());
+	const min = opts.minDelayMs ?? TUNNEL_RESTART_MIN_MS;
+	const max = opts.maxDelayMs ?? TUNNEL_RESTART_MAX_MS;
+	let delay = min;
+	let scheduled = false;
+	// A dead attempt can signal twice — the promise rejects AND onClose fires
+	// (runTunnel's fail() kills the child, whose exit then runs onClose). Collapse
+	// both into one restart, else each death spawns two overlapping frpc processes.
+	const restart = () => {
+		if (scheduled) return;
+		scheduled = true;
+		schedule(run, delay);
+		delay = Math.min(delay * 2, max);
+	};
+	const run = () => {
+		scheduled = false;
+		void opts
+			.start(restart)
+			.then(() => {
+				delay = min;
+			})
+			.catch(restart);
+	};
+	run();
+}
+
 function maybeStartTunnel(
 	_instance: unknown,
 	hub: HubConfig | undefined,
@@ -206,25 +250,28 @@ function maybeStartTunnel(
 	const cfg = typeof hub!.tunnel === 'object' ? hub!.tunnel : {};
 	const shareHost =
 		process.env.CORSAIR_FRP_HOST ?? cfg.shareHost ?? CORSAIR_TUNNEL_ZONE;
-	void import('../hub/tunnel/run-tunnel')
-		.then((m) =>
-			m.runTunnel({
-				port,
-				apiUrl: hub!.apiUrl,
-				apiKey: key,
-				shareHost,
-				onClose: () => activeTunnels.delete(key),
-			}),
-		)
-		.then(({ url }) => {
-			console.log(`[corsair] tunnel active: ${url}${CORSAIR_TUNNEL_PATH}`);
-		})
-		.catch((err: unknown) => {
-			activeTunnels.delete(key);
-			console.warn(
-				`[corsair] tunnel failed to start: ${err instanceof Error ? err.message : String(err)}. Run \`corsair setup\` to enable your dev tunnel.`,
-			);
-		});
+	superviseTunnel({
+		start: (onClose) =>
+			import('../hub/tunnel/run-tunnel')
+				.then((m) =>
+					m.runTunnel({
+						port,
+						apiUrl: hub!.apiUrl,
+						apiKey: key,
+						shareHost,
+						onClose,
+					}),
+				)
+				.then(({ url }) => {
+					console.log(`[corsair] tunnel active: ${url}${CORSAIR_TUNNEL_PATH}`);
+				})
+				.catch((err: unknown) => {
+					console.warn(
+						`[corsair] tunnel down: ${err instanceof Error ? err.message : String(err)}. Retrying — run \`corsair setup\` if it doesn't recover.`,
+					);
+					throw err;
+				}),
+	});
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
