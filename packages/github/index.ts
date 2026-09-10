@@ -333,6 +333,7 @@ export type GithubEndpoints = {
 	discussionsList: GithubEndpoint<'discussionsList'>;
 	discussionsGet: GithubEndpoint<'discussionsGet'>;
 	forksList: GithubEndpoint<'forksList'>;
+	forksCreate: GithubEndpoint<'forksCreate'>;
 	commentsList: GithubEndpoint<'commentsList'>;
 	commentsListForIssue: GithubEndpoint<'commentsListForIssue'>;
 	commentsGet: GithubEndpoint<'commentsGet'>;
@@ -660,6 +661,7 @@ const githubEndpointsNested = {
 	},
 	forks: {
 		list: ForksEndpoints.list,
+		create: ForksEndpoints.create,
 	},
 	comments: {
 		list: CommentsEndpoints.list,
@@ -846,6 +848,10 @@ export const githubEndpointSchemas = {
 	'forks.list': {
 		input: GithubEndpointInputSchemas.forksList,
 		output: GithubEndpointOutputSchemas.forksList,
+	},
+	'forks.create': {
+		input: GithubEndpointInputSchemas.forksCreate,
+		output: GithubEndpointOutputSchemas.forksCreate,
 	},
 	'comments.list': {
 		input: GithubEndpointInputSchemas.commentsList,
@@ -1750,6 +1756,10 @@ const githubEndpointMeta = {
 	'forks.list': {
 		riskLevel: 'read',
 		description: 'List forks of a repository',
+	},
+	'forks.create': {
+		riskLevel: 'write',
+		description: 'Create a fork of a repository',
 	},
 	'comments.list': {
 		riskLevel: 'read',

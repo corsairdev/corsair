@@ -1,0 +1,65 @@
+{
+  "id": "agiled",
+  "displayName": "Agiled",
+  "description": "Agiled plugin for Corsair",
+  "npmPackageName": "@corsair-dev/agiled",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 1,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "agiled.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts from an Agiled workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number | string, first_name: string, last_name?: string, email?: string, phone?: string | null }[]"
+          },
+          {
+            "key": "current_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
