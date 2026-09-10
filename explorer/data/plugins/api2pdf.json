@@ -1,0 +1,755 @@
+{
+  "id": "api2pdf",
+  "displayName": "API2PDF",
+  "description": "HTML and URL to PDF conversion API for generating documents from web content.",
+  "npmPackageName": "@corsair-dev/api2pdf",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "api2pdf.api.chrome.addHeaderFooter",
+      "shortPath": "chrome.addHeaderFooter",
+      "description": "Render HTML to PDF with custom headers and footers",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string",
+            "description": "HTML content to render as PDF"
+          },
+          {
+            "key": "headerTemplate",
+            "optional": true,
+            "type": "string",
+            "description": "HTML template for page header (Headless Chrome)"
+          },
+          {
+            "key": "footerTemplate",
+            "optional": true,
+            "type": "string",
+            "description": "HTML template for page footer (Headless Chrome)"
+          },
+          {
+            "key": "displayHeaderFooter",
+            "optional": true,
+            "type": "boolean",
+            "description": "Render the header/footer templates (default true)"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Serve the file inline rather than as an attachment (default true)"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string",
+            "description": "Name for the generated file"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "FileUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MbOut",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "Error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ResponseId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "api2pdf.api.libreoffice.libreOfficePdfToHtml",
+      "shortPath": "libreoffice.libreOfficePdfToHtml",
+      "description": "Convert a PDF to HTML using LibreOffice",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the PDF to convert"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Serve the file inline rather than as an attachment (default true)"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string",
+            "description": "Name for the generated file"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "FileUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MbOut",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "Error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ResponseId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "api2pdf.api.libreoffice.libreOfficeThumbnail",
+      "shortPath": "libreoffice.libreOfficeThumbnail",
+      "description": "Generate a thumbnail preview of a document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of PDF or Office document"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Serve the file inline rather than as an attachment (default true)"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string",
+            "description": "Name for the generated file"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "FileUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MbOut",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "Error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ResponseId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "api2pdf.api.pdfsharp.extractPages",
+      "shortPath": "pdfsharp.extractPages",
+      "description": "Extract a page range from a PDF",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based index of the first page to extract; negative counts back from the end"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based index of the last page to extract, inclusive; negative counts back from the end"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Serve the file inline rather than as an attachment (default true)"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string",
+            "description": "Name for the generated file"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "FileUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MbOut",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "Error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ResponseId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "api2pdf.api.pdfsharp.mergePdfs",
+      "shortPath": "pdfsharp.mergePdfs",
+      "description": "Merge multiple PDF URLs into a single document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]",
+            "description": "Publicly accessible PDF URLs to merge in order"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Serve the file inline rather than as an attachment (default true)"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string",
+            "description": "Name for the generated file"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "FileUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MbOut",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "Error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ResponseId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "api2pdf.api.pdfsharp.optimizePdf",
+      "shortPath": "pdfsharp.optimizePdf",
+      "description": "Compress a PDF to reduce file size",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the PDF to compress"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Serve the file inline rather than as an attachment (default true)"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string",
+            "description": "Name for the generated file"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "FileUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MbOut",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "Error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ResponseId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "api2pdf.api.pdfsharp.watermarkPdf",
+      "shortPath": "pdfsharp.watermarkPdf",
+      "description": "Stamp a text watermark onto every page of a PDF",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the PDF to watermark"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "Watermark text to stamp on each page"
+          },
+          {
+            "key": "fontSize",
+            "optional": true,
+            "type": "number",
+            "description": "Watermark font size in points"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string",
+            "description": "Watermark colour, e.g. \"#FF0000\""
+          },
+          {
+            "key": "opacity",
+            "optional": true,
+            "type": "number",
+            "description": "Watermark opacity between 0 and 1"
+          },
+          {
+            "key": "rotation",
+            "optional": true,
+            "type": "number",
+            "description": "Watermark rotation in degrees"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Serve the file inline rather than as an attachment (default true)"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string",
+            "description": "Name for the generated file"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "FileUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MbOut",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "Error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ResponseId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "api2pdf.api.utility.checkStatus",
+      "shortPath": "utility.checkStatus",
+      "description": "Check API2PDF service health status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "api2pdf.api.utility.deletePdf",
+      "shortPath": "utility.deletePdf",
+      "description": "Delete a previously generated PDF by response ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseId",
+            "optional": false,
+            "type": "string",
+            "description": "ResponseId from a prior API2PDF job"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "Error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "api2pdf.api.zebra.generateBarcode",
+      "shortPath": "zebra.generateBarcode",
+      "description": "Generate a barcode or QR code image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "format",
+            "optional": false,
+            "type": "string",
+            "description": "ZXING barcode format, e.g. QR_CODE, CODE_128, EAN_13"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string",
+            "description": "Value to encode"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "showLabel",
+            "optional": true,
+            "type": "boolean",
+            "description": "Render the encoded value beneath the barcode"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "FileUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MbOut",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "Success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "Error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ResponseId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "api2pdf.db.pdfJobs.search",
+      "entityName": "pdfJobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "operation",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "responseId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fileUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "success",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "cost",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "mbOut",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "seconds",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

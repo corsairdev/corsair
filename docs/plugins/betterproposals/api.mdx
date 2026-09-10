@@ -1,0 +1,1810 @@
+---
+title: API
+description: "API reference for Better Proposals: every `betterproposals.api.*` operation with input and output types."
+---
+
+Every `betterproposals.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Companies
+
+### create
+
+`companies.create`
+
+Create a new company record
+
+**Risk:** `write`
+
+```ts
+await corsair.betterproposals.api.companies.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CompanyName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AccountID?: string | number | null,
+  DemoCompany?: string | number | null,
+  CompanyName: string,
+  CompanyCRMID?: string | null,
+  DateCreated?: string | null,
+  CreatedBy?: string | number | null,
+  DateEdited?: string | null,
+  EditedBy?: string | number | null,
+  Deleted?: string | number | null,
+  DeletedBy?: string | number | null
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`companies.get`
+
+Get details for a specific company by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.companies.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AccountID?: string | number | null,
+  DemoCompany?: string | number | null,
+  CompanyName: string,
+  CompanyCRMID?: string | null,
+  DateCreated?: string | null,
+  CreatedBy?: string | number | null,
+  DateEdited?: string | null,
+  EditedBy?: string | number | null,
+  Deleted?: string | number | null,
+  DeletedBy?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`companies.list`
+
+Get all companies in the account with optional pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.companies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| string` | No | — |
+| `per_page` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AccountID?: string | number | null,
+  DemoCompany?: string | number | null,
+  CompanyName: string,
+  CompanyCRMID?: string | null,
+  DateCreated?: string | null,
+  CreatedBy?: string | number | null,
+  DateEdited?: string | null,
+  EditedBy?: string | number | null,
+  Deleted?: string | number | null,
+  DeletedBy?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Currencies
+
+### get
+
+`currencies.get`
+
+Get details for a specific currency by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.currencies.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currency_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  CurrencyName?: string | null,
+  CurrencySymbol?: string | null,
+  CurrencyCode?: string | null,
+  ZeroDecimal?: string | number | null,
+  StripeSupport?: string | number | null,
+  PaypalSupport?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`currencies.list`
+
+Get all currencies supported in Better Proposals
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.currencies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| string` | No | — |
+| `per_page` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  CurrencyName?: string | null,
+  CurrencySymbol?: string | null,
+  CurrencyCode?: string | null,
+  ZeroDecimal?: string | number | null,
+  StripeSupport?: string | number | null,
+  PaypalSupport?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Document Types
+
+### create
+
+`documentTypes.create`
+
+Create a new document type with name and colour
+
+**Risk:** `write`
+
+```ts
+await corsair.betterproposals.api.documentTypes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TypeName` | `string` | Yes | — |
+| `TypeColour` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AccountID?: string | number | null,
+  TypeName: string,
+  TypeIcon?: string | null,
+  TypeColour?: string | null,
+  TypeNameSingular?: string | null,
+  CategoryIcon?: string | null,
+  DisplayOrder?: string | number | null,
+  NumberOfOutstandingDocuments?: number | null,
+  NumberOfTemplates?: number | null,
+  DateCreated?: string | null,
+  CreatedBy?: string | number | null,
+  DateEdited?: string | null,
+  EditedBy?: string | number | null,
+  Deleted?: string | number | null,
+  DateDeleted?: string | null,
+  DeletedBy?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`documentTypes.list`
+
+Get all document types available in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.documentTypes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| string` | No | — |
+| `per_page` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AccountID?: string | number | null,
+  TypeName: string,
+  TypeIcon?: string | null,
+  TypeColour?: string | null,
+  TypeNameSingular?: string | null,
+  CategoryIcon?: string | null,
+  DisplayOrder?: string | number | null,
+  NumberOfOutstandingDocuments?: number | null,
+  NumberOfTemplates?: number | null,
+  DateCreated?: string | null,
+  CreatedBy?: string | number | null,
+  DateEdited?: string | null,
+  EditedBy?: string | number | null,
+  Deleted?: string | number | null,
+  DateDeleted?: string | null,
+  DeletedBy?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Proposals
+
+### createCover
+
+`proposals.createCover`
+
+Create a proposal cover design with custom colours, headline, and button
+
+**Risk:** `write`
+
+```ts
+await corsair.betterproposals.api.proposals.createCover({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `BrandID` | `string \| number` | No | — |
+| `CoverName` | `string` | No | — |
+| `BGColour` | `string \| number` | No | — |
+| `Headline` | `string` | No | — |
+| `Subheader` | `string` | No | — |
+| `TextColour` | `string` | No | — |
+| `TextAlign` | `left \| center \| right \| string` | No | — |
+| `ButtonStyle` | `string` | No | — |
+| `ButtonText` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID?: string | number,
+  Name?: string | null,
+  BrandID?: string | number | null,
+  Headline?: string | null,
+  Subheader?: string | null,
+  BGColour?: string | null,
+  TextColour?: string | null,
+  TextAlign?: string | null,
+  ButtonStyle?: string | null,
+  ButtonText?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`proposals.get`
+
+Get detailed information for a specific proposal by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.proposals.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `proposal_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AssignedTo?: string | number | null,
+  BrandID?: string | number | null,
+  ViewType?: string | null,
+  CurrencyCode?: string | null,
+  Tax?: string | number | null,
+  TaxLabel?: string | null,
+  TaxAmount?: string | null,
+  TaxPercentage?: string | null,
+  TaxName?: string | null,
+  Amount?: string | null,
+  AmountDesc?: string | null,
+  Paid?: string | number | null,
+  DatePaid?: string | null,
+  CoverID?: string | number | null,
+  TypeID?: string | number | null,
+  Description?: string | null,
+  SubjectLine?: string | null,
+  PersonalMessage?: string | null,
+  CustomerJourneyID?: string | number | null,
+  DateCreated?: string | null,
+  SignOrder?: string | number | null,
+  OriginalDateSent?: string | null,
+  DateSent?: string | null,
+  QuoteID?: string | number | null,
+  Signed?: string | number | null,
+  SignedName?: string | null,
+  SignedDate?: string | null,
+  SignedTime?: string | null,
+  EditLock?: string | number | null,
+  ProposalPassword?: string | null,
+  CompanyName?: string | null,
+  CompanyCRMID?: string | null,
+  OneOffTotal?: string | null,
+  MonthlyTotal?: string | null,
+  QuarterlyTotal?: string | null,
+  AnnualTotal?: string | null,
+  SignedFirstName?: string | null,
+  SignedSurname?: string | null,
+  SignedEmail?: string | null,
+  CurrencyName?: string | null,
+  CurrencySymbol?: string | null,
+  CRMOpportunityID?: string | number | null,
+  Preview?: string | null,
+  ProposalView?: string | null,
+  Contacts?: {
+    Email?: string | null,
+    FirstName?: string | null,
+    Surname?: string | null,
+    Link?: string | null,
+    Signature?: boolean | string | number | null
+  }[] | null,
+  PriceTables?: {
+    ID?: string | number | null,
+    Title?: string | null,
+    Show?: boolean | null,
+    ForceClientChoice?: boolean | null,
+    DateCreated?: string | null,
+    DisplayOrder?: string | number | null,
+    Items?: {
+      ID?: string | number | null,
+      Label?: string | null,
+      Description?: string | null,
+      Date?: string | null,
+      PriceType?: string | null,
+      UnitCost?: string | null,
+      Cost?: string | null,
+      RecurringType?: string | null,
+      MonthlyCost?: string | null,
+      ShowQuantity?: boolean | null,
+      CanClientSetQuantity?: boolean | null,
+      Quantity?: string | number | null,
+      isQuantityLimited?: boolean | null,
+      QuantityMin?: string | number | null,
+      QuantityMax?: string | number | null,
+      Optional?: boolean | null,
+      Selected?: boolean | null,
+      Selectable?: boolean | null,
+      Discount?: boolean | string | number | null,
+      DiscountType?: boolean | string | number | null,
+      DiscountAmount?: string | null,
+      TableDiscount?: boolean | string | number | null,
+      TableDiscountType?: boolean | string | number | null,
+      TableDiscountAmount?: string | null,
+      TaxExemptionStatus?: boolean | null,
+      DisplayOrder?: string | number | null
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCount
+
+`proposals.getCount`
+
+Get total proposal count across account
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.proposals.getCount({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `count` | `number` | Yes | — |
+
+
+
+---
+
+### getNew
+
+`proposals.getNew`
+
+Get new proposals that have not yet been sent
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.proposals.getNew({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| string` | No | — |
+| `per_page` | `number \| string` | No | — |
+| `type` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AssignedTo?: string | number | null,
+  BrandID?: string | number | null,
+  ViewType?: string | null,
+  CurrencyCode?: string | null,
+  Tax?: string | number | null,
+  TaxLabel?: string | null,
+  TaxAmount?: string | null,
+  TaxPercentage?: string | null,
+  TaxName?: string | null,
+  Amount?: string | null,
+  AmountDesc?: string | null,
+  Paid?: string | number | null,
+  DatePaid?: string | null,
+  CoverID?: string | number | null,
+  TypeID?: string | number | null,
+  Description?: string | null,
+  SubjectLine?: string | null,
+  PersonalMessage?: string | null,
+  CustomerJourneyID?: string | number | null,
+  DateCreated?: string | null,
+  SignOrder?: string | number | null,
+  OriginalDateSent?: string | null,
+  DateSent?: string | null,
+  QuoteID?: string | number | null,
+  Signed?: string | number | null,
+  SignedName?: string | null,
+  SignedDate?: string | null,
+  SignedTime?: string | null,
+  EditLock?: string | number | null,
+  ProposalPassword?: string | null,
+  CompanyName?: string | null,
+  CompanyCRMID?: string | null,
+  OneOffTotal?: string | null,
+  MonthlyTotal?: string | null,
+  QuarterlyTotal?: string | null,
+  AnnualTotal?: string | null,
+  SignedFirstName?: string | null,
+  SignedSurname?: string | null,
+  SignedEmail?: string | null,
+  CurrencyName?: string | null,
+  CurrencySymbol?: string | null,
+  CRMOpportunityID?: string | number | null,
+  Preview?: string | null,
+  ProposalView?: string | null,
+  Contacts?: {
+    Email?: string | null,
+    FirstName?: string | null,
+    Surname?: string | null,
+    Link?: string | null,
+    Signature?: boolean | string | number | null
+  }[] | null,
+  PriceTables?: {
+    ID?: string | number | null,
+    Title?: string | null,
+    Show?: boolean | null,
+    ForceClientChoice?: boolean | null,
+    DateCreated?: string | null,
+    DisplayOrder?: string | number | null,
+    Items?: {
+      ID?: string | number | null,
+      Label?: string | null,
+      Description?: string | null,
+      Date?: string | null,
+      PriceType?: string | null,
+      UnitCost?: string | null,
+      Cost?: string | null,
+      RecurringType?: string | null,
+      MonthlyCost?: string | null,
+      ShowQuantity?: boolean | null,
+      CanClientSetQuantity?: boolean | null,
+      Quantity?: string | number | null,
+      isQuantityLimited?: boolean | null,
+      QuantityMin?: string | number | null,
+      QuantityMax?: string | number | null,
+      Optional?: boolean | null,
+      Selected?: boolean | null,
+      Selectable?: boolean | null,
+      Discount?: boolean | string | number | null,
+      DiscountType?: boolean | string | number | null,
+      DiscountAmount?: string | null,
+      TableDiscount?: boolean | string | number | null,
+      TableDiscountType?: boolean | string | number | null,
+      TableDiscountAmount?: string | null,
+      TaxExemptionStatus?: boolean | null,
+      DisplayOrder?: string | number | null
+    }[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOpened
+
+`proposals.getOpened`
+
+Get proposals that have been opened by recipients
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.proposals.getOpened({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| string` | No | — |
+| `per_page` | `number \| string` | No | — |
+| `type` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AssignedTo?: string | number | null,
+  BrandID?: string | number | null,
+  ViewType?: string | null,
+  CurrencyCode?: string | null,
+  Tax?: string | number | null,
+  TaxLabel?: string | null,
+  TaxAmount?: string | null,
+  TaxPercentage?: string | null,
+  TaxName?: string | null,
+  Amount?: string | null,
+  AmountDesc?: string | null,
+  Paid?: string | number | null,
+  DatePaid?: string | null,
+  CoverID?: string | number | null,
+  TypeID?: string | number | null,
+  Description?: string | null,
+  SubjectLine?: string | null,
+  PersonalMessage?: string | null,
+  CustomerJourneyID?: string | number | null,
+  DateCreated?: string | null,
+  SignOrder?: string | number | null,
+  OriginalDateSent?: string | null,
+  DateSent?: string | null,
+  QuoteID?: string | number | null,
+  Signed?: string | number | null,
+  SignedName?: string | null,
+  SignedDate?: string | null,
+  SignedTime?: string | null,
+  EditLock?: string | number | null,
+  ProposalPassword?: string | null,
+  CompanyName?: string | null,
+  CompanyCRMID?: string | null,
+  OneOffTotal?: string | null,
+  MonthlyTotal?: string | null,
+  QuarterlyTotal?: string | null,
+  AnnualTotal?: string | null,
+  SignedFirstName?: string | null,
+  SignedSurname?: string | null,
+  SignedEmail?: string | null,
+  CurrencyName?: string | null,
+  CurrencySymbol?: string | null,
+  CRMOpportunityID?: string | number | null,
+  Preview?: string | null,
+  ProposalView?: string | null,
+  Contacts?: {
+    Email?: string | null,
+    FirstName?: string | null,
+    Surname?: string | null,
+    Link?: string | null,
+    Signature?: boolean | string | number | null
+  }[] | null,
+  PriceTables?: {
+    ID?: string | number | null,
+    Title?: string | null,
+    Show?: boolean | null,
+    ForceClientChoice?: boolean | null,
+    DateCreated?: string | null,
+    DisplayOrder?: string | number | null,
+    Items?: {
+      ID?: string | number | null,
+      Label?: string | null,
+      Description?: string | null,
+      Date?: string | null,
+      PriceType?: string | null,
+      UnitCost?: string | null,
+      Cost?: string | null,
+      RecurringType?: string | null,
+      MonthlyCost?: string | null,
+      ShowQuantity?: boolean | null,
+      CanClientSetQuantity?: boolean | null,
+      Quantity?: string | number | null,
+      isQuantityLimited?: boolean | null,
+      QuantityMin?: string | number | null,
+      QuantityMax?: string | number | null,
+      Optional?: boolean | null,
+      Selected?: boolean | null,
+      Selectable?: boolean | null,
+      Discount?: boolean | string | number | null,
+      DiscountType?: boolean | string | number | null,
+      DiscountAmount?: string | null,
+      TableDiscount?: boolean | string | number | null,
+      TableDiscountType?: boolean | string | number | null,
+      TableDiscountAmount?: string | null,
+      TaxExemptionStatus?: boolean | null,
+      DisplayOrder?: string | number | null
+    }[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPaid
+
+`proposals.getPaid`
+
+Get proposals that have been paid
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.proposals.getPaid({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| string` | No | — |
+| `per_page` | `number \| string` | No | — |
+| `type` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AssignedTo?: string | number | null,
+  BrandID?: string | number | null,
+  ViewType?: string | null,
+  CurrencyCode?: string | null,
+  Tax?: string | number | null,
+  TaxLabel?: string | null,
+  TaxAmount?: string | null,
+  TaxPercentage?: string | null,
+  TaxName?: string | null,
+  Amount?: string | null,
+  AmountDesc?: string | null,
+  Paid?: string | number | null,
+  DatePaid?: string | null,
+  CoverID?: string | number | null,
+  TypeID?: string | number | null,
+  Description?: string | null,
+  SubjectLine?: string | null,
+  PersonalMessage?: string | null,
+  CustomerJourneyID?: string | number | null,
+  DateCreated?: string | null,
+  SignOrder?: string | number | null,
+  OriginalDateSent?: string | null,
+  DateSent?: string | null,
+  QuoteID?: string | number | null,
+  Signed?: string | number | null,
+  SignedName?: string | null,
+  SignedDate?: string | null,
+  SignedTime?: string | null,
+  EditLock?: string | number | null,
+  ProposalPassword?: string | null,
+  CompanyName?: string | null,
+  CompanyCRMID?: string | null,
+  OneOffTotal?: string | null,
+  MonthlyTotal?: string | null,
+  QuarterlyTotal?: string | null,
+  AnnualTotal?: string | null,
+  SignedFirstName?: string | null,
+  SignedSurname?: string | null,
+  SignedEmail?: string | null,
+  CurrencyName?: string | null,
+  CurrencySymbol?: string | null,
+  CRMOpportunityID?: string | number | null,
+  Preview?: string | null,
+  ProposalView?: string | null,
+  Contacts?: {
+    Email?: string | null,
+    FirstName?: string | null,
+    Surname?: string | null,
+    Link?: string | null,
+    Signature?: boolean | string | number | null
+  }[] | null,
+  PriceTables?: {
+    ID?: string | number | null,
+    Title?: string | null,
+    Show?: boolean | null,
+    ForceClientChoice?: boolean | null,
+    DateCreated?: string | null,
+    DisplayOrder?: string | number | null,
+    Items?: {
+      ID?: string | number | null,
+      Label?: string | null,
+      Description?: string | null,
+      Date?: string | null,
+      PriceType?: string | null,
+      UnitCost?: string | null,
+      Cost?: string | null,
+      RecurringType?: string | null,
+      MonthlyCost?: string | null,
+      ShowQuantity?: boolean | null,
+      CanClientSetQuantity?: boolean | null,
+      Quantity?: string | number | null,
+      isQuantityLimited?: boolean | null,
+      QuantityMin?: string | number | null,
+      QuantityMax?: string | number | null,
+      Optional?: boolean | null,
+      Selected?: boolean | null,
+      Selectable?: boolean | null,
+      Discount?: boolean | string | number | null,
+      DiscountType?: boolean | string | number | null,
+      DiscountAmount?: string | null,
+      TableDiscount?: boolean | string | number | null,
+      TableDiscountType?: boolean | string | number | null,
+      TableDiscountAmount?: string | null,
+      TaxExemptionStatus?: boolean | null,
+      DisplayOrder?: string | number | null
+    }[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSent
+
+`proposals.getSent`
+
+Get sent proposals
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.proposals.getSent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| string` | No | — |
+| `per_page` | `number \| string` | No | — |
+| `type` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AssignedTo?: string | number | null,
+  BrandID?: string | number | null,
+  ViewType?: string | null,
+  CurrencyCode?: string | null,
+  Tax?: string | number | null,
+  TaxLabel?: string | null,
+  TaxAmount?: string | null,
+  TaxPercentage?: string | null,
+  TaxName?: string | null,
+  Amount?: string | null,
+  AmountDesc?: string | null,
+  Paid?: string | number | null,
+  DatePaid?: string | null,
+  CoverID?: string | number | null,
+  TypeID?: string | number | null,
+  Description?: string | null,
+  SubjectLine?: string | null,
+  PersonalMessage?: string | null,
+  CustomerJourneyID?: string | number | null,
+  DateCreated?: string | null,
+  SignOrder?: string | number | null,
+  OriginalDateSent?: string | null,
+  DateSent?: string | null,
+  QuoteID?: string | number | null,
+  Signed?: string | number | null,
+  SignedName?: string | null,
+  SignedDate?: string | null,
+  SignedTime?: string | null,
+  EditLock?: string | number | null,
+  ProposalPassword?: string | null,
+  CompanyName?: string | null,
+  CompanyCRMID?: string | null,
+  OneOffTotal?: string | null,
+  MonthlyTotal?: string | null,
+  QuarterlyTotal?: string | null,
+  AnnualTotal?: string | null,
+  SignedFirstName?: string | null,
+  SignedSurname?: string | null,
+  SignedEmail?: string | null,
+  CurrencyName?: string | null,
+  CurrencySymbol?: string | null,
+  CRMOpportunityID?: string | number | null,
+  Preview?: string | null,
+  ProposalView?: string | null,
+  Contacts?: {
+    Email?: string | null,
+    FirstName?: string | null,
+    Surname?: string | null,
+    Link?: string | null,
+    Signature?: boolean | string | number | null
+  }[] | null,
+  PriceTables?: {
+    ID?: string | number | null,
+    Title?: string | null,
+    Show?: boolean | null,
+    ForceClientChoice?: boolean | null,
+    DateCreated?: string | null,
+    DisplayOrder?: string | number | null,
+    Items?: {
+      ID?: string | number | null,
+      Label?: string | null,
+      Description?: string | null,
+      Date?: string | null,
+      PriceType?: string | null,
+      UnitCost?: string | null,
+      Cost?: string | null,
+      RecurringType?: string | null,
+      MonthlyCost?: string | null,
+      ShowQuantity?: boolean | null,
+      CanClientSetQuantity?: boolean | null,
+      Quantity?: string | number | null,
+      isQuantityLimited?: boolean | null,
+      QuantityMin?: string | number | null,
+      QuantityMax?: string | number | null,
+      Optional?: boolean | null,
+      Selected?: boolean | null,
+      Selectable?: boolean | null,
+      Discount?: boolean | string | number | null,
+      DiscountType?: boolean | string | number | null,
+      DiscountAmount?: string | null,
+      TableDiscount?: boolean | string | number | null,
+      TableDiscountType?: boolean | string | number | null,
+      TableDiscountAmount?: string | null,
+      TaxExemptionStatus?: boolean | null,
+      DisplayOrder?: string | number | null
+    }[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSigned
+
+`proposals.getSigned`
+
+Get signed proposals
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.proposals.getSigned({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| string` | No | — |
+| `per_page` | `number \| string` | No | — |
+| `type` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AssignedTo?: string | number | null,
+  BrandID?: string | number | null,
+  ViewType?: string | null,
+  CurrencyCode?: string | null,
+  Tax?: string | number | null,
+  TaxLabel?: string | null,
+  TaxAmount?: string | null,
+  TaxPercentage?: string | null,
+  TaxName?: string | null,
+  Amount?: string | null,
+  AmountDesc?: string | null,
+  Paid?: string | number | null,
+  DatePaid?: string | null,
+  CoverID?: string | number | null,
+  TypeID?: string | number | null,
+  Description?: string | null,
+  SubjectLine?: string | null,
+  PersonalMessage?: string | null,
+  CustomerJourneyID?: string | number | null,
+  DateCreated?: string | null,
+  SignOrder?: string | number | null,
+  OriginalDateSent?: string | null,
+  DateSent?: string | null,
+  QuoteID?: string | number | null,
+  Signed?: string | number | null,
+  SignedName?: string | null,
+  SignedDate?: string | null,
+  SignedTime?: string | null,
+  EditLock?: string | number | null,
+  ProposalPassword?: string | null,
+  CompanyName?: string | null,
+  CompanyCRMID?: string | null,
+  OneOffTotal?: string | null,
+  MonthlyTotal?: string | null,
+  QuarterlyTotal?: string | null,
+  AnnualTotal?: string | null,
+  SignedFirstName?: string | null,
+  SignedSurname?: string | null,
+  SignedEmail?: string | null,
+  CurrencyName?: string | null,
+  CurrencySymbol?: string | null,
+  CRMOpportunityID?: string | number | null,
+  Preview?: string | null,
+  ProposalView?: string | null,
+  Contacts?: {
+    Email?: string | null,
+    FirstName?: string | null,
+    Surname?: string | null,
+    Link?: string | null,
+    Signature?: boolean | string | number | null
+  }[] | null,
+  PriceTables?: {
+    ID?: string | number | null,
+    Title?: string | null,
+    Show?: boolean | null,
+    ForceClientChoice?: boolean | null,
+    DateCreated?: string | null,
+    DisplayOrder?: string | number | null,
+    Items?: {
+      ID?: string | number | null,
+      Label?: string | null,
+      Description?: string | null,
+      Date?: string | null,
+      PriceType?: string | null,
+      UnitCost?: string | null,
+      Cost?: string | null,
+      RecurringType?: string | null,
+      MonthlyCost?: string | null,
+      ShowQuantity?: boolean | null,
+      CanClientSetQuantity?: boolean | null,
+      Quantity?: string | number | null,
+      isQuantityLimited?: boolean | null,
+      QuantityMin?: string | number | null,
+      QuantityMax?: string | number | null,
+      Optional?: boolean | null,
+      Selected?: boolean | null,
+      Selectable?: boolean | null,
+      Discount?: boolean | string | number | null,
+      DiscountType?: boolean | string | number | null,
+      DiscountAmount?: string | null,
+      TableDiscount?: boolean | string | number | null,
+      TableDiscountType?: boolean | string | number | null,
+      TableDiscountAmount?: string | null,
+      TaxExemptionStatus?: boolean | null,
+      DisplayOrder?: string | number | null
+    }[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`proposals.list`
+
+Get all proposals with optional pagination and document type filtering
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.proposals.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| string` | No | — |
+| `per_page` | `number \| string` | No | — |
+| `type` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AssignedTo?: string | number | null,
+  BrandID?: string | number | null,
+  ViewType?: string | null,
+  CurrencyCode?: string | null,
+  Tax?: string | number | null,
+  TaxLabel?: string | null,
+  TaxAmount?: string | null,
+  TaxPercentage?: string | null,
+  TaxName?: string | null,
+  Amount?: string | null,
+  AmountDesc?: string | null,
+  Paid?: string | number | null,
+  DatePaid?: string | null,
+  CoverID?: string | number | null,
+  TypeID?: string | number | null,
+  Description?: string | null,
+  SubjectLine?: string | null,
+  PersonalMessage?: string | null,
+  CustomerJourneyID?: string | number | null,
+  DateCreated?: string | null,
+  SignOrder?: string | number | null,
+  OriginalDateSent?: string | null,
+  DateSent?: string | null,
+  QuoteID?: string | number | null,
+  Signed?: string | number | null,
+  SignedName?: string | null,
+  SignedDate?: string | null,
+  SignedTime?: string | null,
+  EditLock?: string | number | null,
+  ProposalPassword?: string | null,
+  CompanyName?: string | null,
+  CompanyCRMID?: string | null,
+  OneOffTotal?: string | null,
+  MonthlyTotal?: string | null,
+  QuarterlyTotal?: string | null,
+  AnnualTotal?: string | null,
+  SignedFirstName?: string | null,
+  SignedSurname?: string | null,
+  SignedEmail?: string | null,
+  CurrencyName?: string | null,
+  CurrencySymbol?: string | null,
+  CRMOpportunityID?: string | number | null,
+  Preview?: string | null,
+  ProposalView?: string | null,
+  Contacts?: {
+    Email?: string | null,
+    FirstName?: string | null,
+    Surname?: string | null,
+    Link?: string | null,
+    Signature?: boolean | string | number | null
+  }[] | null,
+  PriceTables?: {
+    ID?: string | number | null,
+    Title?: string | null,
+    Show?: boolean | null,
+    ForceClientChoice?: boolean | null,
+    DateCreated?: string | null,
+    DisplayOrder?: string | number | null,
+    Items?: {
+      ID?: string | number | null,
+      Label?: string | null,
+      Description?: string | null,
+      Date?: string | null,
+      PriceType?: string | null,
+      UnitCost?: string | null,
+      Cost?: string | null,
+      RecurringType?: string | null,
+      MonthlyCost?: string | null,
+      ShowQuantity?: boolean | null,
+      CanClientSetQuantity?: boolean | null,
+      Quantity?: string | number | null,
+      isQuantityLimited?: boolean | null,
+      QuantityMin?: string | number | null,
+      QuantityMax?: string | number | null,
+      Optional?: boolean | null,
+      Selected?: boolean | null,
+      Selectable?: boolean | null,
+      Discount?: boolean | string | number | null,
+      DiscountType?: boolean | string | number | null,
+      DiscountAmount?: string | null,
+      TableDiscount?: boolean | string | number | null,
+      TableDiscountType?: boolean | string | number | null,
+      TableDiscountAmount?: string | null,
+      TaxExemptionStatus?: boolean | null,
+      DisplayOrder?: string | number | null
+    }[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Quotes
+
+### get
+
+`quotes.get`
+
+Get details for a specific quote by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.quotes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quote_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AccountID?: string | number | null,
+  Status?: string | number | null,
+  MarkDead?: string | number | null,
+  MarkedDeadBy?: string | number | null,
+  DateMarkedDead?: string | null,
+  CompanyID?: string | number | null,
+  QuoteAmount?: string | null,
+  MonthlyAmount?: string | null,
+  QuarterlyAmount?: string | null,
+  AnnualAmount?: string | null,
+  VatAmount?: string | null,
+  QuoteTotal?: string | null,
+  CreatedBy?: string | number | null,
+  DateCreated?: string | null,
+  DateEdited?: string | null,
+  EditedBy?: string | number | null,
+  DateAccepted?: string | null,
+  DateCompleted?: string | null,
+  Archived?: string | number | null,
+  ArchivedBy?: string | number | null,
+  DateArchived?: string | null,
+  Deleted?: string | number | null,
+  DeletedBy?: string | number | null,
+  DateDeleted?: string | null
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`quotes.list`
+
+Get all quotes with optional pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.quotes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| string` | No | — |
+| `per_page` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AccountID?: string | number | null,
+  Status?: string | number | null,
+  MarkDead?: string | number | null,
+  MarkedDeadBy?: string | number | null,
+  DateMarkedDead?: string | null,
+  CompanyID?: string | number | null,
+  QuoteAmount?: string | null,
+  MonthlyAmount?: string | null,
+  QuarterlyAmount?: string | null,
+  AnnualAmount?: string | null,
+  VatAmount?: string | null,
+  QuoteTotal?: string | null,
+  CreatedBy?: string | number | null,
+  DateCreated?: string | null,
+  DateEdited?: string | null,
+  EditedBy?: string | number | null,
+  DateAccepted?: string | null,
+  DateCompleted?: string | null,
+  Archived?: string | number | null,
+  ArchivedBy?: string | number | null,
+  DateArchived?: string | null,
+  Deleted?: string | number | null,
+  DeletedBy?: string | number | null,
+  DateDeleted?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Settings
+
+### get
+
+`settings.get`
+
+Get account settings including tax and timezone information
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.settings.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID?: string | number | null,
+  AccountID?: string | number | null,
+  CurrencyID?: string | number | null,
+  Tax?: string | number | null,
+  TaxLabel?: string | null,
+  TaxAmount?: string | null,
+  TimeZone?: string | null,
+  CustomerJourneysActive?: string | number | null,
+  CustomerJourneysDefault?: string | number | null,
+  EditedBy?: string | number | null,
+  DateEdited?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBrand
+
+`settings.getBrand`
+
+Get brand settings including default currency, tax, and company styling
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.settings.getBrand({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID?: string | number | null,
+  AccountID?: string | number | null,
+  Default?: string | number | null,
+  PageTitle?: string | null,
+  Name?: string | null,
+  CurrencyID?: string | number | null,
+  Tax?: string | number | null,
+  TaxLabel?: string | null,
+  TaxAmount?: string | null,
+  ShowBadge?: string | number | null,
+  CompanyName?: string | null,
+  DateCreated?: string | null,
+  CreatedBy?: string | number | null,
+  DateEdited?: string | null,
+  EditedBy?: string | number | null,
+  Deleted?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMergeTags
+
+`settings.listMergeTags`
+
+List custom merge tags configured in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.settings.listMergeTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| string` | No | — |
+| `per_page` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AccountID?: string | number | null,
+  Name?: string | null,
+  Tag?: string | null,
+  Fallback?: string | null,
+  DateCreated?: string | null,
+  CreatedBy?: string | number | null,
+  DateEdited?: string | null,
+  EditedBy?: string | number | null,
+  Archived?: string | number | null,
+  DateArchived?: string | null,
+  ArchivedBy?: string | number | null,
+  CRMSync?: string | number | null,
+  CRMTagName?: string | null,
+  CRMTagId?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### get
+
+`templates.get`
+
+Get details for a specific proposal template by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.templates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AccountID?: string | number | null,
+  CoverID?: string | number | null,
+  BrandID?: string | number | null,
+  TemplateName?: string | null,
+  Description?: string | null,
+  QuoteAmount?: string | null,
+  MonthlyAmount?: string | null,
+  QuarterlyAmount?: string | null,
+  AnnualAmount?: string | null,
+  DateCreated?: string | null,
+  CreatedBy?: string | number | null,
+  DateEdited?: string | null,
+  EditedBy?: string | number | null,
+  Default?: string | number | null,
+  Deleted?: string | number | null,
+  IndustryID?: string | number | null,
+  SampleTemplate?: string | number | null,
+  FromMarketplace?: string | number | null,
+  CategoryID?: string | number | null
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`templates.list`
+
+Get all proposal templates with optional pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.betterproposals.api.templates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number \| string` | No | — |
+| `per_page` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ID: string | number,
+  AccountID?: string | number | null,
+  CoverID?: string | number | null,
+  BrandID?: string | number | null,
+  TemplateName?: string | null,
+  Description?: string | null,
+  QuoteAmount?: string | null,
+  MonthlyAmount?: string | null,
+  QuarterlyAmount?: string | null,
+  AnnualAmount?: string | null,
+  DateCreated?: string | null,
+  CreatedBy?: string | number | null,
+  DateEdited?: string | null,
+  EditedBy?: string | number | null,
+  Default?: string | number | null,
+  Deleted?: string | number | null,
+  IndustryID?: string | number | null,
+  SampleTemplate?: string | number | null,
+  FromMarketplace?: string | number | null,
+  CategoryID?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

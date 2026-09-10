@@ -13,7 +13,7 @@ import * as VideosEndpoints from './endpoints/videos';
 import type { FacebookContext } from './index';
 
 /**
- * Live Graph matrix for all Composio FACEBOOK_* ops.
+ * Live Graph matrix for all FACEBOOK_* ops.
  *
  *   FB_ACCESS_TOKEN=... \
  *   FB_PAGE_ID=... \              # optional; auto from /me/accounts
@@ -201,7 +201,7 @@ const hasToken = Boolean(FB_ACCESS_TOKEN);
 			);
 		});
 
-		it('runs the full Composio op matrix', async () => {
+		it('runs the full FACEBOOK_* op matrix', async () => {
 			await tryOp('FACEBOOK_GET_CURRENT_USER', async () => {
 				const me = await UsersEndpoints.getCurrentUser(ctx, {});
 				expect(me.id).toBeDefined();
