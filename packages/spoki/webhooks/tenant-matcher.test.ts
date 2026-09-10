@@ -108,7 +108,7 @@ describe('matchSpokiPluginWebhook', () => {
 		).toBe(true);
 	});
 
-	it('routes even with an invalid signature; the handler rejects it', () => {
+	it('rejects a raw body with an invalid signature when a secret is set', () => {
 		expect(
 			matchSpokiPluginWebhook(
 				{
@@ -120,7 +120,7 @@ describe('matchSpokiPluginWebhook', () => {
 				},
 				SECRET,
 			),
-		).toBe(true);
+		).toBe(false);
 	});
 
 	it('does not match the deprecated V1 hash header alone', () => {
@@ -191,33 +191,31 @@ describe('matchSpokiTenantWebhook', () => {
 		});
 	});
 
-	it('rejects a spoofed delivery with an invalid signature', () => {
+	it('rejects a spoofed raw-body delivery with an invalid signature', () => {
 		expect(
-			verifySpokiWebhookRequest(
+			matchSpokiTenantWebhook(
 				{
-					payload: JSON.parse(RAW_BODY),
 					headers: {
 						'x-spoki-account': '13128334',
 						'x-spoki-signature': 't=123,v2=deadbeef',
 					},
-					rawBody: RAW_BODY,
+					body: RAW_BODY,
 				},
 				SECRET,
-			).valid,
-		).toBe(false);
+			),
+		).toBeNull();
 	});
 
-	it('rejects unsigned deliveries when a webhook secret is set', () => {
+	it('rejects unsigned raw-body deliveries when a webhook secret is set', () => {
 		expect(
-			verifySpokiWebhookRequest(
+			matchSpokiTenantWebhook(
 				{
-					payload: JSON.parse(RAW_BODY),
 					headers: { 'x-spoki-account': '13128334' },
-					rawBody: RAW_BODY,
+					body: RAW_BODY,
 				},
 				SECRET,
-			).valid,
-		).toBe(false);
+			),
+		).toBeNull();
 	});
 
 	it('routes deliveries with a parsed body; verification needs rawBody', () => {
@@ -256,7 +254,7 @@ describe('matchSpokiTenantWebhook', () => {
 		});
 	});
 
-	it('routes a Buffer body by header; tampering is caught at verify time', () => {
+	it('routes a tampered Buffer body to null at match time', () => {
 		expect(
 			matchSpokiTenantWebhook(
 				{
@@ -271,10 +269,7 @@ describe('matchSpokiTenantWebhook', () => {
 				},
 				SECRET,
 			),
-		).toEqual({
-			linkType: 'spoki_account',
-			externalId: '13128334',
-		});
+		).toBeNull();
 	});
 });
 

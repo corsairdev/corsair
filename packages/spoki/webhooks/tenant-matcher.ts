@@ -12,10 +12,12 @@ import crypto from 'crypto';
  * `<ts>.<raw body>` keyed by the webhook secret). The deprecated V1
  * `X-SPOKI-HASH` header cannot be verified and never matches on its own.
  *
- * Matching is header-based only so routing works whether the caller hands
- * over a raw string body or an already-parsed object (processWebhook always
- * passes the parsed body). Signature verification needs the exact raw bytes
- * and happens later in the handler via verifySpokiWebhookRequest, where
+ * When the caller hands over the raw body (string/Buffer/Uint8Array) the
+ * HMAC is verified during matching and invalid signatures are rejected
+ * before any tenant is resolved. When the body is already parsed
+ * (processWebhook always passes the parsed object) byte-exact verification
+ * is impossible, so matching falls back to header presence and verification
+ * is deferred to the handler via verifySpokiWebhookRequest, where
  * request.rawBody is available. Matching stays fail-closed: without a
  * configured webhook secret no delivery routes.
  */
@@ -114,13 +116,34 @@ export function verifySpokiWebhookRequest(
 	return { valid: true };
 }
 
-// Raw-body adapters hand over either a string or binary (Buffer/Uint8Array);
-// pre-parsed objects cannot be signature-verified byte-exactly, so routing
-// checks header presence only. Verification happens in the handler with
-// request.rawBody via verifySpokiWebhookRequest.
-function hasSignatureHeader(request: RawWebhookRequest): boolean {
-	const headers = request.headers ?? {};
-	return getHeader(headers, 'x-spoki-signature') !== undefined;
+// Raw-body callers hand over a string or binary (Buffer/Uint8Array);
+// pre-parsed objects cannot be signature-verified byte-exactly.
+function readRawBody(body: unknown): string | undefined {
+	if (typeof body === 'string') return body;
+	if (Buffer.isBuffer(body) || body instanceof Uint8Array) {
+		return Buffer.from(body).toString('utf8');
+	}
+	return undefined;
+}
+
+function hasValidSignature(
+	request: RawWebhookRequest,
+	webhookSecret: string,
+): boolean {
+	const signature = getHeader(request.headers ?? {}, 'x-spoki-signature');
+
+	if (!signature) return false;
+
+	const rawBody = readRawBody(request.body);
+
+	if (rawBody === undefined) {
+		// Parsed body: verification needs the exact raw bytes, so routing
+		// checks header presence only. The handler must verify with
+		// request.rawBody via verifySpokiWebhookRequest.
+		return true;
+	}
+
+	return verifySpokiWebhookSignature(rawBody, signature, webhookSecret);
 }
 
 export function matchSpokiPluginWebhook(
@@ -129,7 +152,7 @@ export function matchSpokiPluginWebhook(
 ): boolean {
 	if (!webhookSecret) return false;
 
-	return hasSignatureHeader(request);
+	return hasValidSignature(request, webhookSecret);
 }
 
 export function matchSpokiTenantWebhook(
@@ -142,7 +165,7 @@ export function matchSpokiTenantWebhook(
 
 	if (!tenantId) return null;
 
-	if (!hasSignatureHeader(request)) return null;
+	if (!hasValidSignature(request, webhookSecret)) return null;
 
 	return {
 		linkType: 'spoki_account',
