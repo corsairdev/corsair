@@ -93,9 +93,11 @@ async function searchMembershipPages(
 		if (found.length > 0) {
 			return found;
 		}
-		const fetched = offset + response.value.length;
-		// SKY count excludes paging; a short page or full count ends the scan.
-		if (response.value.length < SEARCH_PAGE_SIZE || fetched >= response.count) {
+		// Stop only on a short (or empty) page. response.count is ignored
+		// on purpose: its scope (page-local vs collection-total) is not
+		// documented for this list, and trusting it can end the scan early.
+		// An exact multiple of the page size costs one extra empty fetch.
+		if (response.value.length < SEARCH_PAGE_SIZE) {
 			return [];
 		}
 		offset += SEARCH_PAGE_SIZE;
