@@ -28,10 +28,14 @@ type Opts = {
 	mediaType?: string;
 };
 
-function lastCall(): { config: Config; opts: Opts } {
+function lastCall(): {
+	config: Config;
+	opts: Opts;
+	extra?: { rateLimitConfig?: { enabled?: boolean; maxRetries?: number } };
+} {
 	const calls = requestMock.mock.calls;
-	const [config, opts] = calls[calls.length - 1];
-	return { config, opts };
+	const [config, opts, extra] = calls[calls.length - 1];
+	return { config, opts, extra };
 }
 
 function makeApiError(status: number, body: unknown, retryAfter?: number) {
@@ -88,6 +92,33 @@ describe('auth and config', () => {
 		expect(opts.method).toBe('POST');
 		expect(opts.body).toEqual({ type: 'note', body: 'hi' });
 		expect(opts.mediaType).toBe('application/json');
+	});
+});
+
+describe('transport retry policy', () => {
+	it('disables transport retries for POST — a 429 replay would duplicate', async () => {
+		// P1: the default transport policy replays 429s up to three times.
+		// For a non-idempotent POST that means duplicate pushes, devices,
+		// chats or upload reservations, so the client must send each write
+		// exactly once and let the plugin error policy decide.
+		await makePushbulletRequest('pushes', 'o.secret', {
+			method: 'POST',
+			body: { type: 'note', body: 'hi' },
+		});
+
+		const { extra } = lastCall();
+		expect(extra?.rateLimitConfig?.enabled).toBe(false);
+		expect(extra?.rateLimitConfig?.maxRetries).toBe(0);
+	});
+
+	it('keeps transport retries for idempotent reads', async () => {
+		for (const method of ['GET', 'DELETE'] as const) {
+			await makePushbulletRequest('pushes', 'o.secret', { method });
+
+			const { extra } = lastCall();
+			expect(extra?.rateLimitConfig?.enabled).toBe(true);
+			expect(extra?.rateLimitConfig?.maxRetries).toBeGreaterThan(0);
+		}
 	});
 });
 

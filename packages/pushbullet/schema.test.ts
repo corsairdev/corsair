@@ -160,10 +160,10 @@ describe('error policy', () => {
 		).toBe(true);
 	});
 
-	it('never retries a 429 — the transport already retried it', async () => {
-		// corsair/http retries 429 three times honoring Retry-After
-		// (DEFAULT_RATE_LIMIT_CONFIG); plugin-level retries would both
-		// amplify those attempts and replay unsafe writes.
+	it('never retries a 429 — replays risk duplicates', async () => {
+		// Reads may have been retried by the transport honouring Retry-After;
+		// writes arrive unretried. Plugin-level retries would replay a write
+		// the server may already have applied.
 		expect(
 			errorHandlers.RATE_LIMIT_ERROR.match(wrapped(429, 'slow down')),
 		).toBe(true);
@@ -336,10 +336,10 @@ describe('retry safety for non-idempotent writes', () => {
 		expect(result.maxRetries).toBeGreaterThan(0);
 	});
 
-	it('never replays a rate-limited POST — the transport already retried it', async () => {
-		// Same reasoning as the 5xx POST case, but for a 429: the request
-		// escaped the transport after four attempts, so re-running the
-		// endpoint here would only add more replays of an unsafe write.
+	it('never replays a rate-limited POST — the client sends it once', async () => {
+		// Same reasoning as the 5xx POST case, but for a 429: the client
+		// disables transport retries for writes, so this error is the first
+		// and only attempt — re-running the endpoint would duplicate it.
 		expect(
 			errorHandlers.RATE_LIMIT_ERROR.match(wrappedWithMethod(429, 'POST')),
 		).toBe(true);

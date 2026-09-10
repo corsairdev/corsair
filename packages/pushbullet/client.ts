@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import type { ZodType } from 'zod';
 
@@ -63,6 +67,26 @@ export async function tryGetStoredKey(
 export const PUSHBULLET_API_BASE = 'https://api.pushbullet.com/v2';
 
 /**
+ * Transport retry policy for idempotent reads. Writes never use this: a
+ * Pushbullet POST may already have been applied when a 429 arrives, and only
+ * pushes carry an idempotency marker (the optional caller-supplied `guid`) —
+ * replaying a device, chat or upload-request POST would duplicate it with no
+ * way to dedupe. Header names follow docs `#ratelimiting`.
+ */
+const PUSHBULLET_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'retry-after',
+		resetTime: 'x-ratelimit-reset',
+		remaining: 'x-ratelimit-remaining',
+		limit: 'x-ratelimit-limit',
+	},
+};
+
+/**
  * Performs a request against the Pushbullet API.
  *
  * Auth: Pushbullet uses its own `Access-Token` header rather than
@@ -112,7 +136,15 @@ export async function makePushbulletRequest<T>(
 	};
 
 	try {
-		const response = await request<T>(config, requestOptions);
+		// No transport retries on writes: a 429 POST is surfaced immediately
+		// so the plugin error policy (maxRetries: 0) is the only policy that
+		// ever sees it. Reads keep the default retries — they are idempotent.
+		const response = await request<T>(config, requestOptions, {
+			rateLimitConfig:
+				method === 'POST'
+					? { ...PUSHBULLET_RATE_LIMIT_CONFIG, enabled: false, maxRetries: 0 }
+					: PUSHBULLET_RATE_LIMIT_CONFIG,
+		});
 		return schema ? schema.parse(response) : response;
 	} catch (error) {
 		if (error instanceof ApiError) {

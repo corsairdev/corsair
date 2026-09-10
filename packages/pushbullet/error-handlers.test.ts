@@ -46,9 +46,10 @@ function makeError(options: {
 }
 
 describe('RATE_LIMIT_ERROR', () => {
-	it('matches a 429 status but never retries — the transport already did', async () => {
-		// corsair/http retried this 429 three times honoring Retry-After
-		// before the error escaped; the plugin adds no further attempts.
+	it('matches a 429 status but never retries — replays are unsafe', async () => {
+		// Reads may already have been retried by the transport honouring
+		// Retry-After; writes reach the handler unretried. Either way the
+		// plugin adds no further attempts.
 		const error = makeError({ status: 429, retryAfter: 2500 });
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
@@ -58,10 +59,10 @@ describe('RATE_LIMIT_ERROR', () => {
 	});
 
 	it('never replays a rate-limited POST at the plugin level', async () => {
-		// A 429 escaping the transport means the budget stayed exhausted
-		// across four attempts. Re-running a POST here could duplicate a
-		// push the rate limiter may have let through in the meantime. The
-		// handler ignores the method entirely — no request is ever replayed.
+		// Writes reach the handler unretried (the client disables transport
+		// retries for POST). Re-running one here could duplicate a push the
+		// server already applied. The handler ignores the method entirely —
+		// no request is ever replayed.
 		const error = makeError({ status: 429, method: 'POST' });
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
