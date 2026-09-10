@@ -14,7 +14,12 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { tryGetStoredKey } from './client';
-import { Coverage, Credits, Verify } from './endpoints';
+import {
+	Coverage,
+	Credits,
+	GetExamplePhoneNumber,
+	VerifyPhoneNumber,
+} from './endpoints';
 import type {
 	VeriphoneEndpointInputs,
 	VeriphoneEndpointOutputs,
@@ -40,8 +45,9 @@ export type VeriphonePluginOptions = {
 	errorHandlers?: CorsairErrorHandler;
 	/**
 	 * Permission configuration for the Veriphone plugin. The read-only
-	 * endpoints (credits, coverage) default to 'open'; verify defaults to
-	 * 'allow' because `record: true` writes provider-side history.
+	 * endpoints (credits, coverage, getExamplePhoneNumber) default to
+	 * 'open'; verifyPhoneNumber defaults to 'allow' because `record: true`
+	 * writes provider-side history.
 	 */
 	permissions?: PluginPermissionsConfig<typeof veriphoneEndpointsNested>;
 };
@@ -70,15 +76,17 @@ type VeriphoneEndpoint<K extends keyof VeriphoneEndpointOutputs> =
 	>;
 
 export type VeriphoneEndpoints = {
-	verify: VeriphoneEndpoint<'verify'>;
+	verifyPhoneNumber: VeriphoneEndpoint<'verifyPhoneNumber'>;
+	getExamplePhoneNumber: VeriphoneEndpoint<'getExamplePhoneNumber'>;
 	credits: VeriphoneEndpoint<'credits'>;
 	coverage: VeriphoneEndpoint<'coverage'>;
 };
 
 const veriphoneEndpointsNested = {
-	verify: Verify.verify,
-	credits: Credits.get,
-	coverage: Coverage.get,
+	verifyPhoneNumber: VerifyPhoneNumber.verifyPhoneNumber,
+	getExamplePhoneNumber: GetExamplePhoneNumber.getExamplePhoneNumber,
+	credits: Credits.getCredits,
+	coverage: Coverage.getCoverage,
 } as const;
 
 // No webhooks — Veriphone is a pull-based validation API with no event
@@ -86,9 +94,13 @@ const veriphoneEndpointsNested = {
 const veriphoneWebhooksNested = {} as const;
 
 export const veriphoneEndpointSchemas = {
-	verify: {
-		input: VeriphoneEndpointInputSchemas.verify,
-		output: VeriphoneEndpointOutputSchemas.verify,
+	verifyPhoneNumber: {
+		input: VeriphoneEndpointInputSchemas.verifyPhoneNumber,
+		output: VeriphoneEndpointOutputSchemas.verifyPhoneNumber,
+	},
+	getExamplePhoneNumber: {
+		input: VeriphoneEndpointInputSchemas.getExamplePhoneNumber,
+		output: VeriphoneEndpointOutputSchemas.getExamplePhoneNumber,
 	},
 	credits: {
 		input: VeriphoneEndpointInputSchemas.credits,
@@ -103,12 +115,17 @@ export const veriphoneEndpointSchemas = {
 >;
 
 const veriphoneEndpointMeta = {
-	verify: {
+	verifyPhoneNumber: {
 		// write: `record: true` saves the result to the provider-side
 		// verification history (https://veriphone.io/docs/v3#verify).
 		riskLevel: 'write',
 		description:
-			'Verify a phone number and retrieve carrier and country information',
+			'Tool to verify if a phone number is valid. Use when you need to confirm formatting, region, and carrier details.',
+	},
+	getExamplePhoneNumber: {
+		riskLevel: 'read',
+		description:
+			"Tool to retrieve an example phone number for a specified country and type. Use after confirming the country code. Example: 'Get an example mobile number for US'.",
 	},
 	credits: {
 		riskLevel: 'read',
@@ -149,6 +166,7 @@ export type ExternalVeriphonePlugin<T extends VeriphonePluginOptions> =
 	BaseVeriphonePlugin<T>;
 
 export function veriphone<const T extends VeriphonePluginOptions>(
+	// Generator scaffold default: empty options satisfy the generic bound.
 	incomingOptions: VeriphonePluginOptions & T = {} as VeriphonePluginOptions &
 		T,
 ): ExternalVeriphonePlugin<T> {
@@ -197,18 +215,24 @@ export type {
 	CoverageResponse,
 	CreditsInput,
 	CreditsResponse,
-	VerifyInput,
-	VerifyResponse,
+	GetExamplePhoneNumberInput,
+	GetExamplePhoneNumberResponse,
+	VerifyPhoneNumberInput,
+	VerifyPhoneNumberResponse,
 	VeriphoneEndpointInputs,
 	VeriphoneEndpointOutputs,
 } from './endpoints/types';
-
 export {
 	CoverageCountrySchema,
 	CoverageInputSchema,
 	CoverageResponseSchema,
 	CreditsInputSchema,
 	CreditsResponseSchema,
-	VerifyInputSchema,
-	VerifyResponseSchema,
+	ExamplePhoneTypeSchema,
+	GetExamplePhoneNumberInputSchema,
+	GetExamplePhoneNumberResponseSchema,
+	PhoneTypeSchema,
+	VerifyPhoneNumberInputSchema,
+	VerifyPhoneNumberResponseSchema,
 } from './endpoints/types';
+export type { VeriphoneEndpointContext } from './endpoints/verify-phone-number';

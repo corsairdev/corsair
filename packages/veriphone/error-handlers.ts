@@ -1,20 +1,19 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import type { VeriphoneAPIError } from './client';
 
-/**
- * Helper to extract the HTTP status from an error.
- * Works with VeriphoneAPIError (which copies status from ApiError)
- * and any error that exposes a numeric `status` property.
- */
+/** Extracts a numeric HTTP status from any error exposing one. */
 function getStatus(error: Error): number | undefined {
-	return (error as Partial<VeriphoneAPIError>).status;
+	if ('status' in error && typeof error.status === 'number') {
+		return error.status;
+	}
+	return undefined;
 }
 
-/**
- * Helper to extract the Retry-After value (in ms) from an error.
- */
+/** Extracts the Retry-After delay (ms) from any error exposing one. */
 function getRetryAfter(error: Error): number | undefined {
-	return (error as Partial<VeriphoneAPIError>).retryAfter;
+	if ('retryAfter' in error && typeof error.retryAfter === 'number') {
+		return error.retryAfter;
+	}
+	return undefined;
 }
 
 /**

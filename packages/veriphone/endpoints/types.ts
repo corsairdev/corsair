@@ -1,23 +1,61 @@
 import { z } from 'zod';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// verify — GET /v3/verify
-// Docs: https://veriphone.io/docs/v3#verify
+// Shared
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const VerifyInputSchema = z.object({
+// ISO 3166-1 alpha-2, normalized to uppercase so 'us' and 'US' behave alike.
+export const CountryCodeSchema = z
+	.string()
+	.trim()
+	.length(2)
+	.regex(/^[A-Za-z]{2}$/, 'expected a 2-letter country code')
+	.transform((value) => value.toUpperCase());
+
+export type CountryCode = z.infer<typeof CountryCodeSchema>;
+
+// Line types documented across v2 (`/v2/verify` response table) and v3
+// (`/v3/verify` response fields). Docs: https://veriphone.io/docs/v3#verify
+export const PhoneTypeSchema = z.enum([
+	'mobile',
+	'fixed_line',
+	'fixed_line_or_mobile',
+	'toll_free',
+	'premium_rate',
+	'shared_cost',
+	'voip',
+	'short_code',
+	'emergency',
+	'unknown',
+]);
+
+export type PhoneType = z.infer<typeof PhoneTypeSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// verifyPhoneNumber — GET /v3/verify
+// Current docs: https://veriphone.io/docs/v3#verify
+// (The v2 page states new integrations must use v3.)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const VerifyPhoneNumberInputSchema = z.object({
 	phone: z
 		.string()
-		.min(1)
+		.trim()
+		.min(4)
+		.max(25)
+		.refine(
+			(value) => {
+				const digits = value.replace(/\D/g, '');
+				return digits.length >= 4 && digits.length <= 20;
+			},
+			{ message: 'expected 4 to 20 digits' },
+		)
 		.describe(
 			'Phone number to verify. International E.164 format recommended.',
 		),
-	default_country: z
-		.string()
-		.optional()
-		.describe(
-			'ISO 3166-1 alpha-2 country code used when the number has no international prefix.',
-		),
+	default_country: CountryCodeSchema.optional().describe(
+		'ISO 3166-1 alpha-2 country code used when the number has no international prefix.',
+	),
 	mode: z
 		.enum(['static', 'current'])
 		.optional()
@@ -30,15 +68,28 @@ export const VerifyInputSchema = z.object({
 		.describe('true to save the result to the account verification history.'),
 });
 
-export type VerifyInput = z.infer<typeof VerifyInputSchema>;
+export type VerifyPhoneNumberInput = z.infer<
+	typeof VerifyPhoneNumberInputSchema
+>;
 
-export const VerifyResponseSchema = z.object({
-	status: z.string(),
+export const VerifyPhoneNumberResponseSchema = z.object({
+	status: z.enum(['success', 'error', 'syntax-error']),
+	phone_valid: z.boolean(),
 	phone: z.string().optional(),
-	phone_valid: z.boolean().optional(),
-	reason: z.string().optional(),
-	phone_type: z.string().optional(),
-	shortcode_cost: z.string().optional(),
+	reason: z
+		.enum([
+			'too_short',
+			'too_long',
+			'invalid_length',
+			'invalid_country_code',
+			'unrecognized_range',
+			'not_a_number',
+		])
+		.optional(),
+	phone_type: PhoneTypeSchema.optional(),
+	shortcode_cost: z
+		.enum(['toll_free', 'standard_rate', 'premium_rate', 'unknown'])
+		.optional(),
 	carrier: z.string().optional(),
 	phone_region: z.string().optional(),
 	country: z.string().optional(),
@@ -61,11 +112,68 @@ export const VerifyResponseSchema = z.object({
 	carrier_data_source: z.string().nullable().optional(),
 });
 
-export type VerifyResponse = z.infer<typeof VerifyResponseSchema>;
+export type VerifyPhoneNumberResponse = z.infer<
+	typeof VerifyPhoneNumberResponseSchema
+>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// getExamplePhoneNumber — GET /v2/example
+// Honest caveat: this endpoint is absent from the official v2/v3 references
+// fetched 2026-09-09 (they list only verify/credits/plan and
+// verify/credits/coverage). It is documented by the RapidAPI Veriphone mirror
+// with query params `type` + `country_code` and the response shape below.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ExamplePhoneTypeSchema = z.enum([
+	'mobile',
+	'fixed_line',
+	'toll_free',
+	'premium_rate',
+	'shared_cost',
+	'voip',
+]);
+
+export type ExamplePhoneType = z.infer<typeof ExamplePhoneTypeSchema>;
+
+export const GetExamplePhoneNumberInputSchema = z.object({
+	country_code: CountryCodeSchema.describe(
+		'ISO 3166-1 alpha-2 country code, e.g. US. Confirm it before calling.',
+	),
+	type: ExamplePhoneTypeSchema.optional().describe(
+		'Example number line type. Defaults to mobile when omitted.',
+	),
+});
+
+export type GetExamplePhoneNumberInput = z.infer<
+	typeof GetExamplePhoneNumberInputSchema
+>;
+
+export const GetExamplePhoneNumberResponseSchema = z.object({
+	status: z.enum(['success', 'error']),
+	// Live evidence 2026-09-09: /v2/example returns UPPERCASE ("MOBILE")
+	// while mirrors document lowercase, so normalize before the enum check.
+	phone_type: z
+		.string()
+		.transform((value) => value.toLowerCase())
+		.pipe(PhoneTypeSchema),
+	country_code: z.string(),
+	country_prefix: z.string().optional(),
+	international_number: z.string().optional(),
+	local_number: z.string().optional(),
+	// Some mirrors render this key uppercase (`E164`); accept both.
+	e164: z.string().optional(),
+	E164: z.string().optional(),
+});
+
+export type GetExamplePhoneNumberResponse = z.infer<
+	typeof GetExamplePhoneNumberResponseSchema
+>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // credits — GET /v3/credits
 // Docs: https://veriphone.io/docs/v3#v3credits
+// Live-verified 2026-09-09: all scalar fields present; last_reset is an
+// object in v3 (a string in v2), usage splits static/current.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const CreditsInputSchema = z.object({});
@@ -73,13 +181,13 @@ export const CreditsInputSchema = z.object({});
 export type CreditsInput = z.infer<typeof CreditsInputSchema>;
 
 export const CreditsResponseSchema = z.object({
-	email: z.string().optional(),
-	counter: z.number().optional(),
-	active: z.boolean().optional(),
-	payg: z.number().optional(),
-	limit: z.number().optional(),
-	plan: z.string().optional(),
-	renew: z.number().optional(),
+	email: z.string(),
+	counter: z.number(),
+	active: z.boolean(),
+	payg: z.number(),
+	limit: z.number(),
+	plan: z.string(),
+	renew: z.number(),
 	last_reset: z
 		.union([z.string(), z.object({ seconds: z.number(), nanos: z.number() })])
 		.optional(),
@@ -94,8 +202,9 @@ export const CreditsResponseSchema = z.object({
 export type CreditsResponse = z.infer<typeof CreditsResponseSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// coverage — GET /v3/coverage/current (public, unauthenticated)
+// coverage — GET /v3/coverage/current
 // Docs: https://veriphone.io/docs/v3#v3coveragecurrent
+// Live-verified 2026-09-09: { countries: [{ iso, covered }], updatedAt }.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const CoverageInputSchema = z.object({});
@@ -121,25 +230,29 @@ export type CoverageResponse = z.infer<typeof CoverageResponseSchema>;
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type VeriphoneEndpointInputs = {
-	verify: VerifyInput;
+	verifyPhoneNumber: VerifyPhoneNumberInput;
+	getExamplePhoneNumber: GetExamplePhoneNumberInput;
 	credits: CreditsInput;
 	coverage: CoverageInput;
 };
 
 export type VeriphoneEndpointOutputs = {
-	verify: VerifyResponse;
+	verifyPhoneNumber: VerifyPhoneNumberResponse;
+	getExamplePhoneNumber: GetExamplePhoneNumberResponse;
 	credits: CreditsResponse;
 	coverage: CoverageResponse;
 };
 
 export const VeriphoneEndpointInputSchemas = {
-	verify: VerifyInputSchema,
+	verifyPhoneNumber: VerifyPhoneNumberInputSchema,
+	getExamplePhoneNumber: GetExamplePhoneNumberInputSchema,
 	credits: CreditsInputSchema,
 	coverage: CoverageInputSchema,
 } as const;
 
 export const VeriphoneEndpointOutputSchemas = {
-	verify: VerifyResponseSchema,
+	verifyPhoneNumber: VerifyPhoneNumberResponseSchema,
+	getExamplePhoneNumber: GetExamplePhoneNumberResponseSchema,
 	credits: CreditsResponseSchema,
 	coverage: CoverageResponseSchema,
 } as const;

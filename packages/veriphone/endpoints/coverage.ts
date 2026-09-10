@@ -1,25 +1,28 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import type { VeriphoneEndpoints } from '..';
 import { makeVeriphoneRequest } from '../client';
+import type { CoverageInput, CoverageResponse } from './types';
 import { CoverageInputSchema, CoverageResponseSchema } from './types';
+import type { VeriphoneEndpointContext } from './verify-phone-number';
 
 /**
  * List countries where Current (`mode=current`) lookups are available.
  *
- * API: GET /v3/coverage/current (public, unauthenticated per docs, but the
- * plugin still sends the configured API key when present — the provider
- * accepts authenticated calls to this endpoint).
+ * API: GET /v3/coverage/current
  * Docs: https://veriphone.io/docs/v3#v3coveragecurrent
+ * Public endpoint per docs, but the plugin sends the configured API key
+ * when present — the provider accepts authenticated calls to it.
  */
-export const get: VeriphoneEndpoints['coverage'] = async (ctx, input) => {
+export async function getCoverage(
+	ctx: VeriphoneEndpointContext,
+	input: CoverageInput,
+): Promise<CoverageResponse> {
 	if (!ctx.key) {
 		throw new AuthMissingError('veriphone', 'api_key');
 	}
 
 	CoverageInputSchema.parse(input);
 
-	// `unknown` because the provider returns unvalidated JSON; it is narrowed
-	// by CoverageResponseSchema.parse below before crossing the endpoint boundary.
+	// Provider returns unvalidated JSON; validated by the schema below.
 	const response = await makeVeriphoneRequest<unknown>(
 		'v3/coverage/current',
 		ctx.key,
@@ -30,4 +33,4 @@ export const get: VeriphoneEndpoints['coverage'] = async (ctx, input) => {
 	await logEventFromContext(ctx, 'veriphone.coverage', {}, 'completed');
 
 	return parsed;
-};
+}

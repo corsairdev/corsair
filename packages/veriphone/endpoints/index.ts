@@ -1,17 +1,23 @@
-import { get as getCoverage } from './coverage';
-import { get as getCredits } from './credits';
-import { verify } from './verify';
+import { getCoverage } from './coverage';
+import { getCredits } from './credits';
+import { getExamplePhoneNumber } from './get-example-phone-number';
+import { verifyPhoneNumber } from './verify-phone-number';
 
-export const Verify = {
-	verify,
+export const VerifyPhoneNumber = {
+	verifyPhoneNumber,
+};
+
+export const GetExamplePhoneNumber = {
+	getExamplePhoneNumber,
 };
 
 export const Credits = {
-	get: getCredits,
+	getCredits,
 };
 
 export const Coverage = {
-	get: getCoverage,
+	getCoverage,
 };
 
 export * from './types';
+export type { VeriphoneEndpointContext } from './verify-phone-number';

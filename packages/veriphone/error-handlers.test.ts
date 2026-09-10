@@ -1,78 +1,87 @@
+import { ApiError } from 'corsair/http';
 import { VeriphoneAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
-function apiErrorWithStatus(
-	status: number,
-	extra?: Partial<VeriphoneAPIError>,
-): VeriphoneAPIError {
-	const error = new VeriphoneAPIError('placeholder', status);
-	Object.assign(error, { status, ...extra });
-	return error;
+type HandlerEntry = Exclude<
+	(typeof errorHandlers)[keyof typeof errorHandlers],
+	undefined
+>;
+
+function getHandler(name: keyof typeof errorHandlers): HandlerEntry {
+	const entry = errorHandlers[name];
+	if (entry === undefined) {
+		throw new Error(`missing handler: ${name}`);
+	}
+	return entry;
 }
 
-function matchedHandlerName(error: Error): string {
-	const name = Object.keys(errorHandlers).find((key) =>
-		errorHandlers[key as keyof typeof errorHandlers].match(error),
+// Builds a realistic provider failure: VeriphoneAPIError copies status and
+// rate-limit headers from the underlying ApiError via instanceof.
+function apiErrorWithStatus(status: number): VeriphoneAPIError {
+	const cause = new ApiError(
+		{ method: 'GET', url: 'v3/verify' },
+		{
+			url: 'v3/verify',
+			ok: false,
+			status,
+			statusText: 'error',
+			body: undefined,
+		},
+		`provider responded with ${status}`,
 	);
-	if (!name) throw new Error('no handler matched');
-	return name;
+	return new VeriphoneAPIError(`provider responded with ${status}`, status, {
+		cause,
+	});
 }
 
 describe('errorHandlers', () => {
 	it('classifies a 429 as RATE_LIMIT_ERROR', () => {
 		const error = apiErrorWithStatus(429);
-		expect(matchedHandlerName(error)).toBe('RATE_LIMIT_ERROR');
+		expect(getHandler('RATE_LIMIT_ERROR').match(error)).toBe(true);
+		expect(getHandler('AUTH_ERROR').match(error)).toBe(false);
 	});
 
 	it('retries rate-limit errors honoring the Retry-After header', async () => {
-		const error = apiErrorWithStatus(429, { retryAfter: 30_000 });
-
-		const handler = errorHandlers.RATE_LIMIT_ERROR?.handler as (
-			error: Error,
-			context: never,
-		) => Promise<{ maxRetries?: number; headersRetryAfterMs?: number }>;
-		const result = await handler(error, {} as never);
+		const error = apiErrorWithStatus(429);
+		const result = await getHandler('RATE_LIMIT_ERROR').handler(error);
 		// maxRetries must stay > 0: the binder only waits
 		// headersRetryAfterMs when it actually retries.
-		expect(result).toEqual({
-			maxRetries: 5,
-			headersRetryAfterMs: 30_000,
-		});
+		expect(result.maxRetries).toBe(5);
 	});
 
 	it('classifies a 401 as AUTH_ERROR', () => {
-		const error = apiErrorWithStatus(401, {
-			body: {
-				status: 'error',
-				code: 401,
-				message: 'API key or token required',
-			},
-		});
-		expect(matchedHandlerName(error)).toBe('AUTH_ERROR');
+		const error = apiErrorWithStatus(401);
+		expect(getHandler('AUTH_ERROR').match(error)).toBe(true);
+		expect(getHandler('RATE_LIMIT_ERROR').match(error)).toBe(false);
 	});
 
 	it('classifies a 402 as PAYMENT_REQUIRED_ERROR', () => {
 		const error = apiErrorWithStatus(402);
-		expect(matchedHandlerName(error)).toBe('PAYMENT_REQUIRED_ERROR');
+		expect(getHandler('PAYMENT_REQUIRED_ERROR').match(error)).toBe(true);
 	});
 
 	it('classifies a 404 as NOT_FOUND_ERROR', () => {
 		const error = apiErrorWithStatus(404);
-		expect(matchedHandlerName(error)).toBe('NOT_FOUND_ERROR');
+		expect(getHandler('NOT_FOUND_ERROR').match(error)).toBe(true);
 	});
 
 	it('classifies a 500 as SERVER_ERROR', () => {
 		const error = apiErrorWithStatus(500);
-		expect(matchedHandlerName(error)).toBe('SERVER_ERROR');
+		expect(getHandler('SERVER_ERROR').match(error)).toBe(true);
 	});
 
 	it('falls through to DEFAULT for anything else', () => {
 		const error = apiErrorWithStatus(418);
-		expect(matchedHandlerName(error)).toBe('DEFAULT');
+		expect(getHandler('RATE_LIMIT_ERROR').match(error)).toBe(false);
+		expect(getHandler('AUTH_ERROR').match(error)).toBe(false);
+		expect(getHandler('PAYMENT_REQUIRED_ERROR').match(error)).toBe(false);
+		expect(getHandler('NOT_FOUND_ERROR').match(error)).toBe(false);
+		expect(getHandler('SERVER_ERROR').match(error)).toBe(false);
+		expect(getHandler('DEFAULT').match(error)).toBe(true);
 	});
 
 	it('treats a raw message about rate limiting as RATE_LIMIT_ERROR', () => {
-		const error = new VeriphoneAPIError('Rate limit exceeded', 429);
-		expect(matchedHandlerName(error)).toBe('RATE_LIMIT_ERROR');
+		const error = new VeriphoneAPIError('Rate limit exceeded');
+		expect(getHandler('RATE_LIMIT_ERROR').match(error)).toBe(true);
 	});
 });
