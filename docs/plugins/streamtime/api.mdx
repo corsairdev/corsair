@@ -1,0 +1,177 @@
+---
+title: API
+description: "API reference for Streamtime: every `streamtime.api.*` operation with input and output types."
+---
+
+Every `streamtime.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Organisation
+
+### get
+
+`organisation.get`
+
+Retrieve the organisation's details
+
+**Risk:** `read`
+
+```ts
+await corsair.streamtime.api.organisation.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Organisation name |
+| `domain` | `string` | Yes | Organisation domain |
+| `currency` | `object` | Yes | Default customer currency |
+| `address` | `string` | Yes | Organisation address (default branch) |
+| `country` | `object` | Yes | Organisation country |
+
+<AccordionGroup>
+<Accordion title="currency full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  symbol: string
+}
+```
+</Accordion>
+
+<Accordion title="country full type">
+
+```ts
+{
+  id: string,
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Roles
+
+### get
+
+`roles.get`
+
+Retrieve a role by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.streamtime.api.roles.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `role_id` | `number` | Yes | Role ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The ID of the role |
+| `name` | `string` | Yes | The name of the role |
+| `active` | `boolean` | Yes | Whether the role is active or archived |
+
+
+
+---
+
+### list
+
+`roles.list`
+
+Retrieve all roles in the organisation
+
+**Risk:** `read`
+
+```ts
+await corsair.streamtime.api.roles.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  active: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Users
+
+### listSavedSegments
+
+`users.listSavedSegments`
+
+Retrieve saved segments for a specific user
+
+**Risk:** `read`
+
+```ts
+await corsair.streamtime.api.users.listSavedSegments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | User ID |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number | null,
+  userId: number,
+  savedSegmentType: {
+    id: number,
+    name?: string
+  },
+  name: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

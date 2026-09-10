@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/cli",
-  "version": "0.1.20",
-  "description": "",
+  "version": "0.1.21",
+  "description": "Command-line tool for Corsair, the open-source integration layer. Scaffold a project, add integrations, and run your app.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -47,9 +47,21 @@
     "tsx": "^4.20.6",
     "typescript": "^5.3.3"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "corsair",
+    "cli",
+    "integrations",
+    "oauth",
+    "scaffold"
+  ],
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
+  "homepage": "https://corsair.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/cli"
+  },
   "packageManager": "pnpm@10.20.0",
   "files": [
     "dist"

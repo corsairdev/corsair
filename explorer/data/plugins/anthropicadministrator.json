@@ -1,0 +1,1542 @@
+{
+  "id": "anthropicadministrator",
+  "displayName": "Anthropic Admin",
+  "description": "Admin API for managing Anthropic organization members, workspaces, and API keys.",
+  "npmPackageName": "@corsair-dev/anthropicadministrator",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 22,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "anthropicadministrator.api.apiKeys.getApiKey",
+      "shortPath": "apiKeys.getApiKey",
+      "description": "Get a single API key by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api_key_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ id: string, type: string }"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "partial_key_hint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "principal",
+            "optional": true,
+            "type": "{ id: string, type: string }"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "active | archived | expired | inactive"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "api_key"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.apiKeys.listApiKeys",
+      "shortPath": "apiKeys.listApiKeys",
+      "description": "List organization API keys, optionally filtered by status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after_id",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: return the page immediately after this object ID"
+          },
+          {
+            "key": "before_id",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: return the page immediately before this object ID"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page (1-1000, default 20)"
+          },
+          {
+            "key": "created_by_user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | archived | expired | inactive"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, created_at: string, created_by?: { id: string, type: string } | null, expires_at?: string | null, name: string, partial_key_hint?: string | null, principal?: { id: string, type: string } | null, status: active | archived | expired | inactive, type: api_key, workspace_id?: string | null }[]"
+          },
+          {
+            "key": "first_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "last_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.apiKeys.updateApiKey",
+      "shortPath": "apiKeys.updateApiKey",
+      "description": "Rename an API key or change its active status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api_key_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | archived | inactive"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ id: string, type: string }"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "partial_key_hint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "principal",
+            "optional": true,
+            "type": "{ id: string, type: string }"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "active | archived | expired | inactive"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "api_key"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.invites.createInvite",
+      "shortPath": "invites.createInvite",
+      "description": "Invite someone to the organization with a given role",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Email address to invite"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "billing | claude_code_user | developer | user | admin"
+          },
+          {
+            "key": "rbac_group_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accepted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "invited_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rbac_group_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "accepted | deleted | expired | pending"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "invite"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.invites.deleteInvite",
+      "shortPath": "invites.deleteInvite",
+      "description": "Delete a pending organization invite",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invite_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "invite_deleted"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.invites.getInvite",
+      "shortPath": "invites.getInvite",
+      "description": "Get a single invite by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invite_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accepted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "invited_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rbac_group_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "accepted | deleted | expired | pending"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "invite"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.invites.listInvites",
+      "shortPath": "invites.listInvites",
+      "description": "List organization invites",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after_id",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: return the page immediately after this object ID"
+          },
+          {
+            "key": "before_id",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: return the page immediately before this object ID"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page (1-1000, default 20)"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user[]"
+          },
+          {
+            "key": "statuses",
+            "optional": true,
+            "type": "accepted | expired | pending[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, accepted_at?: string | null, email: string, expires_at: string, invited_at: string, rbac_group_ids?: string[], role: admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user, status: accepted | deleted | expired | pending, type: invite }[]"
+          },
+          {
+            "key": "first_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "last_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.organization.getOrganization",
+      "shortPath": "organization.getOrganization",
+      "description": "Get the organization associated with the Admin API key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "organization"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.users.getUser",
+      "shortPath": "users.getUser",
+      "description": "Get a single organization member by user ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "added_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "user"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.users.listUsers",
+      "shortPath": "users.listUsers",
+      "description": "List organization members, optionally filtered by email or role",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after_id",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: return the page immediately after this object ID"
+          },
+          {
+            "key": "before_id",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: return the page immediately before this object ID"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page (1-1000, default 20)"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by user email"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user[]",
+            "description": "Filter to users whose role matches any supplied value"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, added_at: string, email: string, name: string, role: admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user, type: user }[]"
+          },
+          {
+            "key": "first_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "last_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.users.removeUser",
+      "shortPath": "users.removeUser",
+      "description": "Remove a member from the organization",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "user_deleted"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.users.updateUser",
+      "shortPath": "users.updateUser",
+      "description": "Change an organization member's role",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "billing | claude_code_user | developer | user | admin",
+            "description": "New organization role"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "added_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "admin | billing | claude_code_user | developer | managed | membership_admin | owner | primary_owner | user"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "user"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.workspaceMembers.createWorkspaceMember",
+      "shortPath": "workspaceMembers.createWorkspaceMember",
+      "description": "Add an organization member to a workspace with a role",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_role",
+            "optional": false,
+            "type": "workspace_admin | workspace_developer | workspace_restricted_developer | workspace_user"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "workspace_member"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_role",
+            "optional": false,
+            "type": "workspace_admin | workspace_billing | workspace_developer | workspace_restricted_developer | workspace_user"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.workspaceMembers.deleteWorkspaceMember",
+      "shortPath": "workspaceMembers.deleteWorkspaceMember",
+      "description": "Remove a member from a workspace",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "workspace_member_deleted"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.workspaceMembers.getWorkspaceMember",
+      "shortPath": "workspaceMembers.getWorkspaceMember",
+      "description": "Get a single workspace member",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "workspace_member"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_role",
+            "optional": false,
+            "type": "workspace_admin | workspace_billing | workspace_developer | workspace_restricted_developer | workspace_user"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.workspaceMembers.listWorkspaceMembers",
+      "shortPath": "workspaceMembers.listWorkspaceMembers",
+      "description": "List members of a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "after_id",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: return the page immediately after this object ID"
+          },
+          {
+            "key": "before_id",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: return the page immediately before this object ID"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page (1-1000, default 20)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type: workspace_member, user_id: string, workspace_id: string, workspace_role: workspace_admin | workspace_billing | workspace_developer | workspace_restricted_developer | workspace_user }[]"
+          },
+          {
+            "key": "first_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "last_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.workspaceMembers.updateWorkspaceMember",
+      "shortPath": "workspaceMembers.updateWorkspaceMember",
+      "description": "Change a workspace member's role",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_role",
+            "optional": false,
+            "type": "workspace_admin | workspace_billing | workspace_developer | workspace_restricted_developer | workspace_user"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "workspace_member"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_role",
+            "optional": false,
+            "type": "workspace_admin | workspace_billing | workspace_developer | workspace_restricted_developer | workspace_user"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.workspaces.archiveWorkspace",
+      "shortPath": "workspaces.archiveWorkspace",
+      "description": "Archive a workspace",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "archived_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compartment_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data_residency",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "display_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_key_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "workspace"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.workspaces.createWorkspace",
+      "shortPath": "workspaces.createWorkspace",
+      "description": "Create a workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace name"
+          },
+          {
+            "key": "data_residency",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "external_key_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "archived_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compartment_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data_residency",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "display_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_key_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "workspace"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.workspaces.getWorkspace",
+      "shortPath": "workspaces.getWorkspace",
+      "description": "Get a single workspace by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "archived_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compartment_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data_residency",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "display_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_key_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "workspace"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.workspaces.listWorkspaces",
+      "shortPath": "workspaces.listWorkspaces",
+      "description": "List workspaces, optionally including archived ones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after_id",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: return the page immediately after this object ID"
+          },
+          {
+            "key": "before_id",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: return the page immediately before this object ID"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page (1-1000, default 20)"
+          },
+          {
+            "key": "include_archived",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include archived workspaces in the results"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, archived_at?: string | null, compartment_id?: string, created_at: string, data_residency?: {} | null, display_color?: string, external_key_id?: string | null, name: string, tags?: {} | null, type: workspace }[]"
+          },
+          {
+            "key": "first_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "last_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anthropicadministrator.api.workspaces.updateWorkspace",
+      "shortPath": "workspaces.updateWorkspace",
+      "description": "Update a workspace name, tags or data residency",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_residency",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "external_key_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "archived_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compartment_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data_residency",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "display_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_key_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "workspace"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "anthropicadministrator.db.apiKeys.search",
+      "entityName": "apiKeys",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expires_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "partial_key_hint",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workspace_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "anthropicadministrator.db.invites.search",
+      "entityName": "invites",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "accepted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expires_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "invited_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "anthropicadministrator.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "added_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "anthropicadministrator.db.workspaceMembers.search",
+      "entityName": "workspaceMembers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workspace_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "anthropicadministrator.db.workspaces.search",
+      "entityName": "workspaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "archived_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "compartment_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "display_color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "external_key_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

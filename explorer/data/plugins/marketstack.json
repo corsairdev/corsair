@@ -1,0 +1,1121 @@
+{
+  "id": "marketstack",
+  "displayName": "Marketstack",
+  "description": "Stock market data API for real-time and historical end-of-day exchange prices worldwide.",
+  "npmPackageName": "@corsair-dev/marketstack",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "marketstack.api.currencies.list",
+      "shortPath": "currencies.list",
+      "description": "List all currencies supported by the Marketstack API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return (default 100, max 1000)"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to skip, for pagination (default 0)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ limit: number, offset: number, count: number, total: number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, symbol?: string, name?: string, symbol_native?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "marketstack.api.dividends.get",
+      "shortPath": "dividends.get",
+      "description": "Retrieve historical dividend amounts and payment dates for one or more tickers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbols",
+            "optional": false,
+            "type": "string[]",
+            "description": "Ticker symbols to fetch, e.g. [\"AAPL\", \"MSFT\"] (max 100)"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string",
+            "description": "Only return dividends on or after this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string",
+            "description": "Only return dividends on or before this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return (default 100, max 1000)"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to skip, for pagination (default 0)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ limit: number, offset: number, count: number, total: number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ symbol: string, date: string, dividend: number, payment_date?: string | null, record_date?: string | null, declaration_date?: string | null, distr_freq?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "marketstack.api.eod.get",
+      "shortPath": "eod.get",
+      "description": "Retrieve end-of-day (EOD) OHLCV data for one or more ticker symbols",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbols",
+            "optional": false,
+            "type": "string[]",
+            "description": "Ticker symbols to fetch, e.g. [\"AAPL\", \"MSFT\"] (max 100)"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by stock exchange MIC"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "ASC | DESC",
+            "description": "Sort order by date (default DESC)"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string",
+            "description": "Only return data on or after this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string",
+            "description": "Only return data on or before this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return (default 100, max 1000)"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to skip, for pagination (default 0)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ limit: number, offset: number, count: number, total: number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ open?: number | null, high?: number | null, low?: number | null, close?: number | null, volume?: number | null, adj_high?: number | null, adj_low?: number | null, adj_close?: number | null, adj_open?: number | null, adj_volume?: number | null, split_factor?: number | null, dividend?: number | null, name?: string, exchange_code?: string, asset_type?: string, price_currency?: string, symbol: string, exchange?: string, date: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "marketstack.api.exchanges.get",
+      "shortPath": "exchanges.get",
+      "description": "Retrieve exchange details by MIC, including location, status, and operational fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mic",
+            "optional": false,
+            "type": "string",
+            "description": "Market Identifier Code of the exchange, e.g. \"XNAS\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "acronym",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mic",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "operating_mic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oprt_sgmt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "legal_entity_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exchange_lei",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "market_category_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exchange_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_creation",
+            "optional": true,
+            "type": "string | { date?: string, timezone_type?: number, timezone?: string }"
+          },
+          {
+            "key": "date_last_update",
+            "optional": true,
+            "type": "string | { date?: string, timezone_type?: number, timezone?: string }"
+          },
+          {
+            "key": "date_last_validation",
+            "optional": true,
+            "type": "string | { date?: string, timezone_type?: number, timezone?: string }"
+          },
+          {
+            "key": "date_expiry",
+            "optional": true,
+            "type": "string | { date?: string, timezone_type?: number, timezone?: string }"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "marketstack.api.exchanges.list",
+      "shortPath": "exchanges.list",
+      "description": "List or search the stock exchanges supported by Marketstack",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Search exchanges by name, acronym, or MIC"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return (default 100, max 1000)"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to skip, for pagination (default 0)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ limit: number, offset: number, count: number, total: number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string, acronym?: string | null, mic: string, country?: string | null, country_code?: string | null, city?: string | null, website?: string | null, operating_mic?: string, oprt_sgmt?: string, legal_entity_name?: string, exchange_lei?: string, market_category_code?: string, exchange_status?: string, date_creation?: string | { date?: string, timezone_type?: number, timezone?: string } | null, date_last_update?: string | { date?: string, timezone_type?: number, timezone?: string } | null, date_last_validation?: string | { date?: string, timezone_type?: number, timezone?: string } | null, date_expiry?: string | { date?: string, timezone_type?: number, timezone?: string } | null, comments?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "marketstack.api.splits.get",
+      "shortPath": "splits.get",
+      "description": "Retrieve historical stock split data for one or more ticker symbols",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbols",
+            "optional": false,
+            "type": "string[]",
+            "description": "Ticker symbols to fetch, e.g. [\"AAPL\", \"MSFT\"] (max 100)"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string",
+            "description": "Only return splits on or after this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string",
+            "description": "Only return splits on or before this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return (default 100, max 1000)"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to skip, for pagination (default 0)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ limit: number, offset: number, count: number, total: number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ symbol: string, date: string, split_factor: number, stock_split?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "marketstack.api.tickers.get",
+      "shortPath": "tickers.get",
+      "description": "Retrieve detailed ticker information including exchange, sector, and industry",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string",
+            "description": "Ticker symbol, e.g. \"AAPL\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "has_intraday",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_eod",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cik",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cusip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ein_employer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lei",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "series_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sic_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sic_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stock_exchange",
+            "optional": true,
+            "type": "{ name?: string, acronym?: string | null, mic?: string, country?: string | null, country_code?: string | null, city?: string | null, website?: string | null, operating_mic?: string, oprt_sgmt?: string, legal_entity_name?: string, exchange_lei?: string, market_category_code?: string, exchange_status?: string, date_creation?: string | { date?: string, timezone_type?: number, timezone?: string } | null, date_last_update?: string | { date?: string, timezone_type?: number, timezone?: string } | null, date_last_validation?: string | { date?: string, timezone_type?: number, timezone?: string } | null, date_expiry?: string | { date?: string, timezone_type?: number, timezone?: string } | null, comments?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "marketstack.api.tickers.getEod",
+      "shortPath": "tickers.getEod",
+      "description": "Retrieve historical end-of-day (EOD) price data for a specific ticker symbol",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string",
+            "description": "Ticker symbol, e.g. \"AAPL\""
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "ASC | DESC",
+            "description": "Sort order by date (default DESC)"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string",
+            "description": "Only return data on or after this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string",
+            "description": "Only return data on or before this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return (default 100, max 1000)"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to skip, for pagination (default 0)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ limit: number, offset: number, count: number, total: number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ open?: number | null, high?: number | null, low?: number | null, close?: number | null, volume?: number | null, adj_high?: number | null, adj_low?: number | null, adj_close?: number | null, adj_open?: number | null, adj_volume?: number | null, split_factor?: number | null, dividend?: number | null, name?: string, exchange_code?: string, asset_type?: string, price_currency?: string, symbol: string, exchange?: string, date: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "marketstack.api.tickers.getEodLatest",
+      "shortPath": "tickers.getEodLatest",
+      "description": "Retrieve the most recent end-of-day (EOD) data available for a specific ticker symbol",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string",
+            "description": "Ticker symbol, e.g. \"AAPL\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "open",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "high",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "low",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "close",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "volume",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "adj_high",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "adj_low",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "adj_close",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "adj_open",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "adj_volume",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "split_factor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dividend",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exchange_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asset_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price_currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "marketstack.api.tickers.list",
+      "shortPath": "tickers.list",
+      "description": "List or search the stock tickers supported by Marketstack",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Search tickers by name or symbol, e.g. \"Apple\""
+          },
+          {
+            "key": "exchange",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by stock exchange MIC"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return (default 100, max 1000)"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to skip, for pagination (default 0)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ limit: number, offset: number, count: number, total: number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string, symbol: string, has_intraday?: boolean, has_eod?: boolean, country?: string | null, cik?: string, isin?: string, cusip?: string, ein_employer_id?: string, lei?: string, series_id?: string, item_type?: string, sector?: string, industry?: string, sic_code?: string, sic_name?: string, stock_exchange?: { name?: string, acronym?: string | null, mic?: string, country?: string | null, country_code?: string | null, city?: string | null, website?: string | null, operating_mic?: string, oprt_sgmt?: string, legal_entity_name?: string, exchange_lei?: string, market_category_code?: string, exchange_status?: string, date_creation?: string | { date?: string, timezone_type?: number, timezone?: string } | null, date_last_update?: string | { date?: string, timezone_type?: number, timezone?: string } | null, date_last_validation?: string | { date?: string, timezone_type?: number, timezone?: string } | null, date_expiry?: string | { date?: string, timezone_type?: number, timezone?: string } | null, comments?: string | null } }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "marketstack.db.currencies.search",
+      "entityName": "currencies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "symbol_native",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "marketstack.db.dividends.search",
+      "entityName": "dividends",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dividend",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "payment_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "record_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "declaration_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "distr_freq",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "marketstack.db.eodBars.search",
+      "entityName": "eodBars",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "open",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "high",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "low",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "close",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "volume",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "adj_high",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "adj_low",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "adj_close",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "adj_open",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "adj_volume",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "split_factor",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "dividend",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "exchange_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "asset_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "price_currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "exchange",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "marketstack.db.exchanges.search",
+      "entityName": "exchanges",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "acronym",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mic",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "website",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "operating_mic",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "oprt_sgmt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "legal_entity_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "exchange_lei",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "market_category_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "exchange_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "comments",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "marketstack.db.splits.search",
+      "entityName": "splits",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "split_factor",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "stock_split",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "marketstack.db.tickers.search",
+      "entityName": "tickers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "has_intraday",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "has_eod",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cik",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cusip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ein_employer_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lei",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "series_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "item_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sector",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "industry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sic_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sic_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

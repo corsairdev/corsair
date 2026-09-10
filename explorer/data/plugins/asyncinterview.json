@@ -1,0 +1,320 @@
+{
+  "id": "asyncinterview",
+  "displayName": "AsyncInterview",
+  "description": "Asynchronous video interview platform for remote candidate screening and hiring workflows.",
+  "npmPackageName": "@corsair-dev/asyncinterview",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "asyncinterview.api.jobs.delete",
+      "shortPath": "jobs.delete",
+      "description": "Deletes an interview job permanently.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Unique identifier (integer ID) of the interview job to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asyncinterview.api.jobs.list",
+      "shortPath": "jobs.list",
+      "description": "Retrieves a list of all interview jobs.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, title?: string | null, date?: string | null, time?: string | null, datetime?: string | null, team_id?: number | null, sub_title?: string | null, description?: string | null, is_public?: 0 | 1 | boolean | null, created_at?: string | null, updated_at?: string | null, slug?: string | null, public_job_url?: string | null }[]"
+      }
+    },
+    {
+      "path": "asyncinterview.api.jobs.listResponses",
+      "shortPath": "jobs.listResponses",
+      "description": "Retrieves all interview responses with candidate details.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": true,
+            "type": "number | string",
+            "description": "Filter interviews by job ID (GET /interviews?job_id=)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, title?: string | null, url?: string | null, job_id?: number | null, job?: string | null, date?: string | null, time?: string | null, datetime?: string | null, questions?: { id: number, stage_id?: number | null, title?: string | null, created_at?: string | null, updated_at?: string | null, order?: number | null }[] | null, contacts?: { id?: number | null, name?: string | null, email?: string | null, first_name?: string | null, last_name?: string | null, phone?: string | null }[] | null }[]"
+      }
+    },
+    {
+      "path": "asyncinterview.api.jobs.update",
+      "shortPath": "jobs.update",
+      "description": "Updates an existing interview job's details after creation.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Unique identifier of the interview job to update (integer ID)."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "New title for the job"
+          },
+          {
+            "key": "is_public",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the job is publicly visible (true to make public, false to make private)"
+          },
+          {
+            "key": "sub_title",
+            "optional": true,
+            "type": "string",
+            "description": "Subtitle or tagline for the job"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Detailed description of the job role"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datetime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sub_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_public",
+            "optional": true,
+            "type": "0 | 1 | boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public_job_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "asyncinterview.db.interviews.search",
+      "entityName": "interviews",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "job",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "datetime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "asyncinterview.db.jobs.search",
+      "entityName": "jobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "datetime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "team_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sub_title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "public_job_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,7 +1,27 @@
 {
   "name": "@corsair-dev/mcp",
-  "version": "0.1.26",
-  "description": "MCP server and SDK adapters for Corsair — list operations, inspect schemas, run API calls",
+  "version": "0.1.27",
+  "description": "MCP server and framework adapters for Corsair. Expose 200+ integrations to any agent framework (Mastra, OpenAI, Vercel AI, Claude) as tools.",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai-agents",
+    "tools",
+    "tool-calling",
+    "mastra",
+    "openai",
+    "vercel-ai",
+    "integrations",
+    "corsair"
+  ],
+  "author": "Corsair (https://corsair.dev)",
+  "license": "Apache-2.0",
+  "homepage": "https://corsair.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/mcp"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

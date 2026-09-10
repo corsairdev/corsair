@@ -1,0 +1,33 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["esnext"],
+    "types": ["node", "jest"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "outDir": "./dist",
+    "rootDir": "./",
+    "composite": true,
+    "incremental": true,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationMap": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "./index.ts",
+    "./client.ts",
+    "./error-handlers.ts",
+    "./endpoints/**/*.ts",
+    "./schema/**/*.ts",
+    "./webhooks/**/*.ts"
+  ],
+  "exclude": [
+    "./dist",
+    "./node_modules",
+    "./**/*.test.ts",
+    "./jest.config.cjs",
+    "./tsup.config.ts"
+  ],
+  "references": []
+}
