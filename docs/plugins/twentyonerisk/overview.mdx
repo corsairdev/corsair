@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "TwentyOneRisk plugin for Corsair"
+description: "Risk intelligence platform for compliance screening, fraud detection, and vendor due diligence."
 ---
 
-Use **TwentyOneRisk** through Corsair: one client, typed API calls.
+Use **TwentyOne Risk** through Corsair: one client, typed API calls.
 
 **What you get:**
 
@@ -44,8 +44,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```

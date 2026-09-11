@@ -1,0 +1,273 @@
+---
+title: Database
+description: "Capsule CRM local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Capsule CRM plugin syncs data locally. Use `corsair.capsulecrm.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Boards
+
+Path: `capsulecrm.db.boards.search`
+
+```ts
+const rows = await corsair.capsulecrm.db.boards.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Entries
+
+Path: `capsulecrm.db.entries.search`
+
+```ts
+const rows = await corsair.capsulecrm.db.entries.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `content` | `string` | equals, contains, startsWith, endsWith, in |
+| `subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `entryAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Milestones
+
+Path: `capsulecrm.db.milestones.search`
+
+```ts
+const rows = await corsair.capsulecrm.db.milestones.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `complete` | `boolean` | equals |
+| `probability` | `number` | equals, gt, gte, lt, lte, in |
+| `daysUntilStale` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Opportunities
+
+Path: `capsulecrm.db.opportunities.search`
+
+```ts
+const rows = await corsair.capsulecrm.db.opportunities.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `probability` | `number` | equals, gt, gte, lt, lte, in |
+| `expectedCloseOn` | `string` | equals, contains, startsWith, endsWith, in |
+| `closedOn` | `string` | equals, contains, startsWith, endsWith, in |
+| `duration` | `number` | equals, gt, gte, lt, lte, in |
+| `durationBasis` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Parties
+
+Path: `capsulecrm.db.parties.search`
+
+```ts
+const rows = await corsair.capsulecrm.db.parties.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `firstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobTitle` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `about` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastContactedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `pictureURL` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projects
+
+Path: `capsulecrm.db.projects.search`
+
+```ts
+const rows = await corsair.capsulecrm.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `startOn` | `string` | equals, contains, startsWith, endsWith, in |
+| `expectedCloseOn` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Site
+
+Path: `capsulecrm.db.site.search`
+
+```ts
+const rows = await corsair.capsulecrm.db.site.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `subdomain` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tasks
+
+Path: `capsulecrm.db.tasks.search`
+
+```ts
+const rows = await corsair.capsulecrm.db.tasks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `dueOn` | `string` | equals, contains, startsWith, endsWith, in |
+| `dueTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `capsulecrm.db.users.search`
+
+```ts
+const rows = await corsair.capsulecrm.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `locale` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastLoginAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `taskReminder` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

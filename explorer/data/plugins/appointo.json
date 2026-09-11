@@ -1,0 +1,377 @@
+{
+  "id": "appointo",
+  "displayName": "Appointo",
+  "description": "Appointo plugin for Corsair",
+  "npmPackageName": "@corsair-dev/appointo",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "appointo.api.appointments.getAvailability",
+      "shortPath": "appointments.getAvailability",
+      "description": "Get calendar availability for an appointment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appointment_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "impersonated_tms",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number, weekday?: string, weekday_index?: number, slots?: { start_time: string, end_time: string, surge?: boolean, price?: string, max_capacity?: number }[], shop_id?: number, appointment_id?: number, day_available?: boolean, max_capacity?: number | null }[]"
+      }
+    },
+    {
+      "path": "appointo.api.appointments.list",
+      "shortPath": "appointments.list",
+      "description": "List all appointments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appointment_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "product_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_term",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, activate?: boolean | null, product_uuid?: string, calendly_event_uuid?: string | null, duration_uuid?: string, shop_id?: number, product_detail_id?: number, name?: string, is_combo_service?: boolean, price?: string, currency?: string, description?: string | null, archived?: boolean }[]"
+      }
+    },
+    {
+      "path": "appointo.api.appointments.upsertConfig",
+      "shortPath": "appointments.upsertConfig",
+      "description": "Update appointment configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appointment_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{ timezone?: string, duration?: string, minimum_notice?: string, max_capacity?: string, meeting_detail?: string, note?: string, interval?: string, reminder_duration?: string, send_reminder?: boolean, whatsapp_duration?: string, send_whatsapp_reminder?: boolean, enable_max_events_per_day?: boolean, max_events_per_day?: number, start_buffer_time?: string, end_buffer_time?: string, location_type?: string, location_value?: string, allow_cancel?: boolean, allow_reschedule?: boolean, reschedule_duration?: number, cancel_duration?: number, date_range_type?: string, tm_assign_rule?: string, days_in_future?: string, start_date_range?: string, end_date_range?: string, is_combo_service?: boolean, send_text_reminder?: boolean, text_duration?: string, min_day_duration?: string, max_day_duration?: string, fixed_multi_day_price?: boolean, rem_group_slot_after_booking?: boolean, start_month?: string, color?: string, allow_waitlist?: boolean, email_label?: string, name_label?: string, phone_label?: string, show_phone?: boolean }"
+          },
+          {
+            "key": "availabilities",
+            "optional": true,
+            "type": "{ id?: number, weekday?: string, weekday_index?: number, slots?: { start_time: string, end_time: string, surge?: boolean, price?: string, max_capacity?: number }[], shop_id?: number, appointment_id?: number, day_available?: boolean, max_capacity?: number | null }[]"
+          },
+          {
+            "key": "override",
+            "optional": true,
+            "type": "{ id?: number, day: string, slots?: { start_time: string, end_time: string, surge?: boolean, price?: string, max_capacity?: number }[], shop_id?: number, appointment_id?: number, day_available?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, activate?: boolean | null, product_uuid?: string, calendly_event_uuid?: string | null, duration_uuid?: string, shop_id?: number, product_detail_id?: number, name?: string, is_combo_service?: boolean, price?: string, currency?: string, description?: string | null, archived?: boolean }[]"
+      }
+    },
+    {
+      "path": "appointo.api.bookings.cancel",
+      "shortPath": "bookings.cancel",
+      "description": "Cancel a booking",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "booking_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "customer_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ status: string, booking?: { id: number, selected_time?: string, timestring?: string, shop_id?: number, appointment_id?: number, created_at?: string, updated_at?: string, customers_count?: number, duration?: number, product_name?: string, variant_name?: string, order_uuid?: string, price?: string, order_name?: string, currency?: string, meeting_detail?: string, note?: string, google_meta?: {}, google_event_id?: string, location_value?: string | null, location_type?: string | null, location_meta?: {} | null, quantity?: number, team_member_id?: number | null, scenario?: string, day_duration?: number, end_date?: string, start_date?: string, group_id?: number | null, start_buffer_time?: number, end_buffer_time?: number, category?: string | null, archived?: boolean, notes_count?: number, customers?: { id: number, email?: string, payload?: { phone?: string }, name?: string, shop_id?: number, appointment_id?: number, booking_id?: number, created_at?: string, updated_at?: string, customer_uuid?: string, reschedule_uuid?: string | null, cancel_uuid?: string | null, order_name?: string, order_uuid?: string | null, shipping_address?: { id?: number, customer_id?: number, first_name?: string | null, last_name?: string | null, company?: string | null, address1?: string | null, address2?: string | null, city?: string | null, province?: string | null, country?: string | null, zip?: string | null, phone?: string | null, name?: string | null, province_code?: string | null, country_code?: string | null, country_name?: string | null, default?: boolean }, override?: boolean, signpanda_cust_uuid?: string | null, parent_customer_id?: number | null, is_active_sub?: boolean, sub_interval?: string | null, sub_booking_count?: number | null, sub_booking_num?: number | null, sub_recurring_type?: string | null, customer_type?: string | null, customer_timezone?: string | null, archived?: boolean, subscription_contract_id?: string | number | null, selling_plan_id?: string | number | null, checkin?: boolean, checkin_qr_code?: string | null, image_data?: string | null }[], archived_customers?: { id: number, email?: string, payload?: { phone?: string }, name?: string, shop_id?: number, appointment_id?: number, booking_id?: number, created_at?: string, updated_at?: string, customer_uuid?: string, reschedule_uuid?: string | null, cancel_uuid?: string | null, order_name?: string, order_uuid?: string | null, shipping_address?: { id?: number, customer_id?: number, first_name?: string | null, last_name?: string | null, company?: string | null, address1?: string | null, address2?: string | null, city?: string | null, province?: string | null, country?: string | null, zip?: string | null, phone?: string | null, name?: string | null, province_code?: string | null, country_code?: string | null, country_name?: string | null, default?: boolean }, override?: boolean, signpanda_cust_uuid?: string | null, parent_customer_id?: number | null, is_active_sub?: boolean, sub_interval?: string | null, sub_booking_count?: number | null, sub_booking_num?: number | null, sub_recurring_type?: string | null, customer_type?: string | null, customer_timezone?: string | null, archived?: boolean, subscription_contract_id?: string | number | null, selling_plan_id?: string | number | null, checkin?: boolean, checkin_qr_code?: string | null, image_data?: string | null }[], appointment?: { id: number, activate?: boolean | null, product_uuid?: string, duration_uuid?: string, shop_id?: number, product_detail_id?: number, name?: string, is_combo_service?: boolean, price?: string, currency?: string, description?: string | null, archived?: boolean } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "appointo.api.bookings.create",
+      "shortPath": "bookings.create",
+      "description": "Create a new booking",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appointment_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "timestring",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, selected_time?: string, timestring?: string, shop_id?: number, appointment_id?: number, created_at?: string, updated_at?: string, customers_count?: number, duration?: number, product_name?: string, variant_name?: string, order_uuid?: string, price?: string, order_name?: string, currency?: string, meeting_detail?: string, note?: string, google_meta?: {}, google_event_id?: string, location_value?: string | null, location_type?: string | null, location_meta?: {} | null, quantity?: number, team_member_id?: number | null, scenario?: string, day_duration?: number, end_date?: string, start_date?: string, group_id?: number | null, start_buffer_time?: number, end_buffer_time?: number, category?: string | null, archived?: boolean, notes_count?: number, customers?: { id: number, email?: string, payload?: { phone?: string }, name?: string, shop_id?: number, appointment_id?: number, booking_id?: number, created_at?: string, updated_at?: string, customer_uuid?: string, reschedule_uuid?: string | null, cancel_uuid?: string | null, order_name?: string, order_uuid?: string | null, shipping_address?: { id?: number, customer_id?: number, first_name?: string | null, last_name?: string | null, company?: string | null, address1?: string | null, address2?: string | null, city?: string | null, province?: string | null, country?: string | null, zip?: string | null, phone?: string | null, name?: string | null, province_code?: string | null, country_code?: string | null, country_name?: string | null, default?: boolean }, override?: boolean, signpanda_cust_uuid?: string | null, parent_customer_id?: number | null, is_active_sub?: boolean, sub_interval?: string | null, sub_booking_count?: number | null, sub_booking_num?: number | null, sub_recurring_type?: string | null, customer_type?: string | null, customer_timezone?: string | null, archived?: boolean, subscription_contract_id?: string | number | null, selling_plan_id?: string | number | null, checkin?: boolean, checkin_qr_code?: string | null, image_data?: string | null }[], archived_customers?: { id: number, email?: string, payload?: { phone?: string }, name?: string, shop_id?: number, appointment_id?: number, booking_id?: number, created_at?: string, updated_at?: string, customer_uuid?: string, reschedule_uuid?: string | null, cancel_uuid?: string | null, order_name?: string, order_uuid?: string | null, shipping_address?: { id?: number, customer_id?: number, first_name?: string | null, last_name?: string | null, company?: string | null, address1?: string | null, address2?: string | null, city?: string | null, province?: string | null, country?: string | null, zip?: string | null, phone?: string | null, name?: string | null, province_code?: string | null, country_code?: string | null, country_name?: string | null, default?: boolean }, override?: boolean, signpanda_cust_uuid?: string | null, parent_customer_id?: number | null, is_active_sub?: boolean, sub_interval?: string | null, sub_booking_count?: number | null, sub_booking_num?: number | null, sub_recurring_type?: string | null, customer_type?: string | null, customer_timezone?: string | null, archived?: boolean, subscription_contract_id?: string | number | null, selling_plan_id?: string | number | null, checkin?: boolean, checkin_qr_code?: string | null, image_data?: string | null }[], appointment?: { id: number, activate?: boolean | null, product_uuid?: string, duration_uuid?: string, shop_id?: number, product_detail_id?: number, name?: string, is_combo_service?: boolean, price?: string, currency?: string, description?: string | null, archived?: boolean } }[]"
+      }
+    },
+    {
+      "path": "appointo.api.bookings.list",
+      "shortPath": "bookings.list",
+      "description": "List all bookings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "past | upcoming"
+          },
+          {
+            "key": "booking_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_term",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, selected_time?: string, timestring?: string, shop_id?: number, appointment_id?: number, created_at?: string, updated_at?: string, customers_count?: number, duration?: number, product_name?: string, variant_name?: string, order_uuid?: string, price?: string, order_name?: string, currency?: string, meeting_detail?: string, note?: string, google_meta?: {}, google_event_id?: string, location_value?: string | null, location_type?: string | null, location_meta?: {} | null, quantity?: number, team_member_id?: number | null, scenario?: string, day_duration?: number, end_date?: string, start_date?: string, group_id?: number | null, start_buffer_time?: number, end_buffer_time?: number, category?: string | null, archived?: boolean, notes_count?: number, customers?: { id: number, email?: string, payload?: { phone?: string }, name?: string, shop_id?: number, appointment_id?: number, booking_id?: number, created_at?: string, updated_at?: string, customer_uuid?: string, reschedule_uuid?: string | null, cancel_uuid?: string | null, order_name?: string, order_uuid?: string | null, shipping_address?: { id?: number, customer_id?: number, first_name?: string | null, last_name?: string | null, company?: string | null, address1?: string | null, address2?: string | null, city?: string | null, province?: string | null, country?: string | null, zip?: string | null, phone?: string | null, name?: string | null, province_code?: string | null, country_code?: string | null, country_name?: string | null, default?: boolean }, override?: boolean, signpanda_cust_uuid?: string | null, parent_customer_id?: number | null, is_active_sub?: boolean, sub_interval?: string | null, sub_booking_count?: number | null, sub_booking_num?: number | null, sub_recurring_type?: string | null, customer_type?: string | null, customer_timezone?: string | null, archived?: boolean, subscription_contract_id?: string | number | null, selling_plan_id?: string | number | null, checkin?: boolean, checkin_qr_code?: string | null, image_data?: string | null }[], archived_customers?: { id: number, email?: string, payload?: { phone?: string }, name?: string, shop_id?: number, appointment_id?: number, booking_id?: number, created_at?: string, updated_at?: string, customer_uuid?: string, reschedule_uuid?: string | null, cancel_uuid?: string | null, order_name?: string, order_uuid?: string | null, shipping_address?: { id?: number, customer_id?: number, first_name?: string | null, last_name?: string | null, company?: string | null, address1?: string | null, address2?: string | null, city?: string | null, province?: string | null, country?: string | null, zip?: string | null, phone?: string | null, name?: string | null, province_code?: string | null, country_code?: string | null, country_name?: string | null, default?: boolean }, override?: boolean, signpanda_cust_uuid?: string | null, parent_customer_id?: number | null, is_active_sub?: boolean, sub_interval?: string | null, sub_booking_count?: number | null, sub_booking_num?: number | null, sub_recurring_type?: string | null, customer_type?: string | null, customer_timezone?: string | null, archived?: boolean, subscription_contract_id?: string | number | null, selling_plan_id?: string | number | null, checkin?: boolean, checkin_qr_code?: string | null, image_data?: string | null }[], appointment?: { id: number, activate?: boolean | null, product_uuid?: string, duration_uuid?: string, shop_id?: number, product_detail_id?: number, name?: string, is_combo_service?: boolean, price?: string, currency?: string, description?: string | null, archived?: boolean } }[]"
+      }
+    },
+    {
+      "path": "appointo.api.bookings.reschedule",
+      "shortPath": "bookings.reschedule",
+      "description": "Reschedule an existing booking",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "booking_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "timestring",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "override",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ status: string, booking?: { id: number, selected_time?: string, timestring?: string, shop_id?: number, appointment_id?: number, created_at?: string, updated_at?: string, customers_count?: number, duration?: number, product_name?: string, variant_name?: string, order_uuid?: string, price?: string, order_name?: string, currency?: string, meeting_detail?: string, note?: string, google_meta?: {}, google_event_id?: string, location_value?: string | null, location_type?: string | null, location_meta?: {} | null, quantity?: number, team_member_id?: number | null, scenario?: string, day_duration?: number, end_date?: string, start_date?: string, group_id?: number | null, start_buffer_time?: number, end_buffer_time?: number, category?: string | null, archived?: boolean, notes_count?: number, customers?: { id: number, email?: string, payload?: { phone?: string }, name?: string, shop_id?: number, appointment_id?: number, booking_id?: number, created_at?: string, updated_at?: string, customer_uuid?: string, reschedule_uuid?: string | null, cancel_uuid?: string | null, order_name?: string, order_uuid?: string | null, shipping_address?: { id?: number, customer_id?: number, first_name?: string | null, last_name?: string | null, company?: string | null, address1?: string | null, address2?: string | null, city?: string | null, province?: string | null, country?: string | null, zip?: string | null, phone?: string | null, name?: string | null, province_code?: string | null, country_code?: string | null, country_name?: string | null, default?: boolean }, override?: boolean, signpanda_cust_uuid?: string | null, parent_customer_id?: number | null, is_active_sub?: boolean, sub_interval?: string | null, sub_booking_count?: number | null, sub_booking_num?: number | null, sub_recurring_type?: string | null, customer_type?: string | null, customer_timezone?: string | null, archived?: boolean, subscription_contract_id?: string | number | null, selling_plan_id?: string | number | null, checkin?: boolean, checkin_qr_code?: string | null, image_data?: string | null }[], archived_customers?: { id: number, email?: string, payload?: { phone?: string }, name?: string, shop_id?: number, appointment_id?: number, booking_id?: number, created_at?: string, updated_at?: string, customer_uuid?: string, reschedule_uuid?: string | null, cancel_uuid?: string | null, order_name?: string, order_uuid?: string | null, shipping_address?: { id?: number, customer_id?: number, first_name?: string | null, last_name?: string | null, company?: string | null, address1?: string | null, address2?: string | null, city?: string | null, province?: string | null, country?: string | null, zip?: string | null, phone?: string | null, name?: string | null, province_code?: string | null, country_code?: string | null, country_name?: string | null, default?: boolean }, override?: boolean, signpanda_cust_uuid?: string | null, parent_customer_id?: number | null, is_active_sub?: boolean, sub_interval?: string | null, sub_booking_count?: number | null, sub_booking_num?: number | null, sub_recurring_type?: string | null, customer_type?: string | null, customer_timezone?: string | null, archived?: boolean, subscription_contract_id?: string | number | null, selling_plan_id?: string | number | null, checkin?: boolean, checkin_qr_code?: string | null, image_data?: string | null }[], appointment?: { id: number, activate?: boolean | null, product_uuid?: string, duration_uuid?: string, shop_id?: number, product_detail_id?: number, name?: string, is_combo_service?: boolean, price?: string, currency?: string, description?: string | null, archived?: boolean } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "appointo.api.bookings.update",
+      "shortPath": "bookings.update",
+      "description": "Update a booking (buffer updates)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "booking_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "start_buffer_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_buffer_time",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ status: string, booking?: { id: number, selected_time?: string, timestring?: string, shop_id?: number, appointment_id?: number, created_at?: string, updated_at?: string, customers_count?: number, duration?: number, product_name?: string, variant_name?: string, order_uuid?: string, price?: string, order_name?: string, currency?: string, meeting_detail?: string, note?: string, google_meta?: {}, google_event_id?: string, location_value?: string | null, location_type?: string | null, location_meta?: {} | null, quantity?: number, team_member_id?: number | null, scenario?: string, day_duration?: number, end_date?: string, start_date?: string, group_id?: number | null, start_buffer_time?: number, end_buffer_time?: number, category?: string | null, archived?: boolean, notes_count?: number, customers?: { id: number, email?: string, payload?: { phone?: string }, name?: string, shop_id?: number, appointment_id?: number, booking_id?: number, created_at?: string, updated_at?: string, customer_uuid?: string, reschedule_uuid?: string | null, cancel_uuid?: string | null, order_name?: string, order_uuid?: string | null, shipping_address?: { id?: number, customer_id?: number, first_name?: string | null, last_name?: string | null, company?: string | null, address1?: string | null, address2?: string | null, city?: string | null, province?: string | null, country?: string | null, zip?: string | null, phone?: string | null, name?: string | null, province_code?: string | null, country_code?: string | null, country_name?: string | null, default?: boolean }, override?: boolean, signpanda_cust_uuid?: string | null, parent_customer_id?: number | null, is_active_sub?: boolean, sub_interval?: string | null, sub_booking_count?: number | null, sub_booking_num?: number | null, sub_recurring_type?: string | null, customer_type?: string | null, customer_timezone?: string | null, archived?: boolean, subscription_contract_id?: string | number | null, selling_plan_id?: string | number | null, checkin?: boolean, checkin_qr_code?: string | null, image_data?: string | null }[], archived_customers?: { id: number, email?: string, payload?: { phone?: string }, name?: string, shop_id?: number, appointment_id?: number, booking_id?: number, created_at?: string, updated_at?: string, customer_uuid?: string, reschedule_uuid?: string | null, cancel_uuid?: string | null, order_name?: string, order_uuid?: string | null, shipping_address?: { id?: number, customer_id?: number, first_name?: string | null, last_name?: string | null, company?: string | null, address1?: string | null, address2?: string | null, city?: string | null, province?: string | null, country?: string | null, zip?: string | null, phone?: string | null, name?: string | null, province_code?: string | null, country_code?: string | null, country_name?: string | null, default?: boolean }, override?: boolean, signpanda_cust_uuid?: string | null, parent_customer_id?: number | null, is_active_sub?: boolean, sub_interval?: string | null, sub_booking_count?: number | null, sub_booking_num?: number | null, sub_recurring_type?: string | null, customer_type?: string | null, customer_timezone?: string | null, archived?: boolean, subscription_contract_id?: string | number | null, selling_plan_id?: string | number | null, checkin?: boolean, checkin_qr_code?: string | null, image_data?: string | null }[], appointment?: { id: number, activate?: boolean | null, product_uuid?: string, duration_uuid?: string, shop_id?: number, product_detail_id?: number, name?: string, is_combo_service?: boolean, price?: string, currency?: string, description?: string | null, archived?: boolean } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "appointo.api.products.list",
+      "shortPath": "products.list",
+      "description": "List all products",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_term",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, activate?: boolean, product_uuid?: string, shop_id?: number, created_at?: string, updated_at?: string, product_name?: string, show_widget?: boolean, appointment_type?: string, vendor_name?: string, include_variant_booking?: boolean, book_without_pay?: boolean, image_url?: string | null, variants_count?: number, appointments?: { id: number, activate?: boolean | null, product_uuid?: string, calendly_event_uuid?: string | null, duration_uuid?: string, shop_id?: number, product_detail_id?: number, name?: string, is_combo_service?: boolean, price?: string, currency?: string, description?: string | null, archived?: boolean }[] }[]"
+      }
+    },
+    {
+      "path": "appointo.api.subscriptions.list",
+      "shortPath": "subscriptions.list",
+      "description": "List all appointment subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_term",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

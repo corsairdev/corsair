@@ -1,7 +1,7 @@
 import type { CorsairDatabase } from '../db/kysely/database';
 import { createCorsairDatabase } from '../db/kysely/database';
 import type { HubConfig } from '../hub';
-import { normalizeHubConfig } from '../hub';
+import { resolveHubConfigInput } from '../hub';
 import {
 	CORSAIR_TUNNEL_PATH,
 	CORSAIR_TUNNEL_ZONE,
@@ -73,16 +73,18 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		? createCorsairDatabase(config.database)
 		: undefined;
 
-	// Build integration-level keys if database and kek are configured
-	// Otherwise create a proxy that throws helpful errors
+	const kek = config.kek;
+
+	// Build integration-level keys when database + KEK are configured;
+	// otherwise a proxy throws a clear error on first key access.
 	type IntegrationKeysType = ReturnType<typeof buildIntegrationKeys<Plugins>>;
 
 	const integrationKeys: IntegrationKeysType =
-		resolvedDatabase && config.kek
-			? buildIntegrationKeys(config.plugins, resolvedDatabase, config.kek)
+		resolvedDatabase && kek
+			? buildIntegrationKeys(config.plugins, resolvedDatabase, kek)
 			: createMissingConfigProxy<IntegrationKeysType>(
 					!!resolvedDatabase,
-					!!config.kek,
+					!!kek,
 				);
 
 	const rootPermissions = resolveRootPermissionsConfig(config);
@@ -90,11 +92,11 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	const internalConfig: CorsairInternalConfig = {
 		plugins: config.plugins,
 		database: resolvedDatabase,
-		kek: config.kek,
+		kek,
 		multiTenancy: !!config.multiTenancy,
 		permissions: rootPermissions,
 		manual: config.manual,
-		hub: config.hub ? normalizeHubConfig(config.hub) : undefined,
+		hub: config.hub ? resolveHubConfigInput(config.hub) : undefined,
 	};
 
 	const permissions = buildPermissionsNamespace(resolvedDatabase);
@@ -112,7 +114,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 					const client = buildCorsairClient(config.plugins, {
 						database: resolvedDatabase,
 						tenantId,
-						kek: config.kek,
+						kek,
 						rootErrorHandlers: config.errorHandlers,
 						permissionsOptions: rootPermissions,
 						manualConfig: config.manual,
@@ -137,7 +139,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	const client = buildCorsairClient(config.plugins, {
 		database: resolvedDatabase,
 		tenantId: undefined,
-		kek: config.kek,
+		kek,
 		rootErrorHandlers: config.errorHandlers,
 		permissionsOptions: rootPermissions,
 		manualConfig: config.manual,
@@ -184,6 +186,52 @@ const activeTunnels: Set<string> = ((
 	}
 ).__corsairTunnels ??= new Set<string>());
 
+const TUNNEL_RESTART_MIN_MS = 1_000;
+const TUNNEL_RESTART_MAX_MS = 30_000;
+
+/**
+ * Keep a dev tunnel alive. frpc has no supervisor — a death (laptop sleep,
+ * network blip, frps restart) leaves the tunnel down until the app process
+ * restarts, and the Hub keeps delivering to the dead URL. Restart on death with
+ * capped exponential backoff; a healthy start resets the backoff. The
+ * Hub-owned slug is sticky, so a restart re-registers the same public URL.
+ * Extracted from the spawn so the restart wiring is unit-testable.
+ */
+export function superviseTunnel(opts: {
+	start: (onClose: () => void) => Promise<unknown>;
+	schedule?: (fn: () => void, ms: number) => void;
+	minDelayMs?: number;
+	maxDelayMs?: number;
+}): void {
+	const schedule =
+		opts.schedule ?? ((fn, ms) => void setTimeout(fn, ms).unref?.());
+	const min = opts.minDelayMs ?? TUNNEL_RESTART_MIN_MS;
+	const max = opts.maxDelayMs ?? TUNNEL_RESTART_MAX_MS;
+	let delay = min;
+	const run = (): void => {
+		// One restart per attempt, latched per attempt (not globally). A dead
+		// attempt can signal twice — runTunnel's fail() rejects the promise and
+		// kills the child, whose exit later fires onClose, possibly *after* the
+		// next attempt already started. onClose is bound to this attempt's
+		// `restart`, so a superseded attempt's late signal no-ops here instead of
+		// spawning an overlapping frpc process.
+		let ended = false;
+		const restart = (): void => {
+			if (ended) return;
+			ended = true;
+			schedule(run, delay);
+			delay = Math.min(delay * 2, max);
+		};
+		void opts
+			.start(restart)
+			.then(() => {
+				delay = min;
+			})
+			.catch(restart);
+	};
+	run();
+}
+
 function maybeStartTunnel(
 	_instance: unknown,
 	hub: HubConfig | undefined,
@@ -204,25 +252,28 @@ function maybeStartTunnel(
 	const cfg = typeof hub!.tunnel === 'object' ? hub!.tunnel : {};
 	const shareHost =
 		process.env.CORSAIR_FRP_HOST ?? cfg.shareHost ?? CORSAIR_TUNNEL_ZONE;
-	void import('../hub/tunnel/run-tunnel')
-		.then((m) =>
-			m.runTunnel({
-				port,
-				apiUrl: hub!.apiUrl,
-				apiKey: key,
-				shareHost,
-				onClose: () => activeTunnels.delete(key),
-			}),
-		)
-		.then(({ url }) => {
-			console.log(`[corsair] tunnel active: ${url}${CORSAIR_TUNNEL_PATH}`);
-		})
-		.catch((err: unknown) => {
-			activeTunnels.delete(key);
-			console.warn(
-				`[corsair] tunnel failed to start: ${err instanceof Error ? err.message : String(err)}. Run \`corsair setup\` to enable your dev tunnel.`,
-			);
-		});
+	superviseTunnel({
+		start: (onClose) =>
+			import('../hub/tunnel/run-tunnel')
+				.then((m) =>
+					m.runTunnel({
+						port,
+						apiUrl: hub!.apiUrl,
+						apiKey: key,
+						shareHost,
+						onClose,
+					}),
+				)
+				.then(({ url }) => {
+					console.log(`[corsair] tunnel active: ${url}${CORSAIR_TUNNEL_PATH}`);
+				})
+				.catch((err: unknown) => {
+					console.warn(
+						`[corsair] tunnel down: ${err instanceof Error ? err.message : String(err)}. Retrying — run \`corsair setup\` if it doesn't recover.`,
+					);
+					throw err;
+				}),
+	});
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -247,6 +298,7 @@ export type {
 export {
 	AuthMissingError,
 	BASE_AUTH_FIELDS,
+	CorsairKekMissingError,
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 	decryptConfig,
@@ -260,6 +312,7 @@ export {
 	getOAuthAccessToken,
 	initializeAccountDEK,
 	initializeIntegrationDEK,
+	ReconnectRequiredError,
 	reEncryptConfig,
 } from './auth';
 // Agent chats namespace

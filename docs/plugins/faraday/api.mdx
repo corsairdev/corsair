@@ -1,0 +1,6664 @@
+---
+title: API
+description: "API reference for Faraday: every `faraday.api.*` operation with input and output types."
+---
+
+Every `faraday.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### create
+
+`accounts.create`
+
+Create a Faraday subaccount
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.accounts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `branding` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="branding full type">
+
+```ts
+{
+  suppress_from_reports?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `resource_type` | `string` | No | — |
+| `status` | `new \| starting \| running \| ready \| error \| string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `archived_at` | `string` | No | — |
+| `status_changed_at` | `string` | No | — |
+| `status_error` | `string` | No | — |
+| `last_read_input_at` | `string` | No | — |
+| `last_updated_config_at` | `string` | No | — |
+| `last_updated_output_at` | `string` | No | — |
+| `branding` | `object` | No | — |
+| `commitment` | `object` | No | — |
+| `contract_started_at` | `string` | No | — |
+| `identity_graph` | `object` | No | — |
+| `parent_account_id` | `string` | No | — |
+| `stripe_customer_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="branding full type">
+
+```ts
+{
+  suppress_from_reports?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="commitment full type">
+
+```ts
+{
+  monthly_cost?: number,
+  renewal_date?: string
+}
+```
+</Accordion>
+
+<Accordion title="identity_graph full type">
+
+```ts
+{
+  feature_store_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`accounts.delete`
+
+Delete a Faraday account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.faraday.api.accounts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`accounts.get`
+
+Retrieve a Faraday account
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.accounts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `resource_type` | `string` | No | — |
+| `status` | `new \| starting \| running \| ready \| error \| string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `archived_at` | `string` | No | — |
+| `status_changed_at` | `string` | No | — |
+| `status_error` | `string` | No | — |
+| `last_read_input_at` | `string` | No | — |
+| `last_updated_config_at` | `string` | No | — |
+| `last_updated_output_at` | `string` | No | — |
+| `branding` | `object` | No | — |
+| `commitment` | `object` | No | — |
+| `contract_started_at` | `string` | No | — |
+| `identity_graph` | `object` | No | — |
+| `parent_account_id` | `string` | No | — |
+| `stripe_customer_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="branding full type">
+
+```ts
+{
+  suppress_from_reports?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="commitment full type">
+
+```ts
+{
+  monthly_cost?: number,
+  renewal_date?: string
+}
+```
+</Accordion>
+
+<Accordion title="identity_graph full type">
+
+```ts
+{
+  feature_store_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBilling
+
+`accounts.getBilling`
+
+Get billing for a Faraday account
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.accounts.getBilling({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCurrent
+
+`accounts.getCurrent`
+
+Retrieve the current Faraday account
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.accounts.getCurrent({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `resource_type` | `string` | No | — |
+| `status` | `new \| starting \| running \| ready \| error \| string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `archived_at` | `string` | No | — |
+| `status_changed_at` | `string` | No | — |
+| `status_error` | `string` | No | — |
+| `last_read_input_at` | `string` | No | — |
+| `last_updated_config_at` | `string` | No | — |
+| `last_updated_output_at` | `string` | No | — |
+| `branding` | `object` | No | — |
+| `commitment` | `object` | No | — |
+| `contract_started_at` | `string` | No | — |
+| `identity_graph` | `object` | No | — |
+| `parent_account_id` | `string` | No | — |
+| `stripe_customer_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="branding full type">
+
+```ts
+{
+  suppress_from_reports?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="commitment full type">
+
+```ts
+{
+  monthly_cost?: number,
+  renewal_date?: string
+}
+```
+</Accordion>
+
+<Accordion title="identity_graph full type">
+
+```ts
+{
+  feature_store_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCurrentBilling
+
+`accounts.getCurrentBilling`
+
+Get billing for the current Faraday account
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.accounts.getCurrentBilling({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`accounts.list`
+
+List Faraday accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.accounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  resource_type?: string,
+  status?: new | starting | running | ready | error | string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null,
+  status_changed_at?: string,
+  status_error?: string | null,
+  last_read_input_at?: string,
+  last_updated_config_at?: string,
+  last_updated_output_at?: string,
+  branding?: {
+    suppress_from_reports?: boolean
+  },
+  commitment?: {
+    monthly_cost?: number,
+    renewal_date?: string
+  },
+  contract_started_at?: string,
+  identity_graph?: {
+    feature_store_id: string
+  },
+  parent_account_id?: string,
+  stripe_customer_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`accounts.update`
+
+Update a Faraday account (JSON Merge Patch)
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.accounts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `resource_type` | `string` | No | — |
+| `status` | `new \| starting \| running \| ready \| error \| string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `archived_at` | `string` | No | — |
+| `status_changed_at` | `string` | No | — |
+| `status_error` | `string` | No | — |
+| `last_read_input_at` | `string` | No | — |
+| `last_updated_config_at` | `string` | No | — |
+| `last_updated_output_at` | `string` | No | — |
+| `branding` | `object` | No | — |
+| `commitment` | `object` | No | — |
+| `contract_started_at` | `string` | No | — |
+| `identity_graph` | `object` | No | — |
+| `parent_account_id` | `string` | No | — |
+| `stripe_customer_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="branding full type">
+
+```ts
+{
+  suppress_from_reports?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="commitment full type">
+
+```ts
+{
+  monthly_cost?: number,
+  renewal_date?: string
+}
+```
+</Accordion>
+
+<Accordion title="identity_graph full type">
+
+```ts
+{
+  feature_store_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Attributes
+
+### list
+
+`attributes.list`
+
+List Faraday attributes
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.attributes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Cohorts
+
+### archive
+
+`cohorts.archive`
+
+Archive a Faraday cohort
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.cohorts.archive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`cohorts.create`
+
+Create a Faraday cohort
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.cohorts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`cohorts.delete`
+
+Delete a Faraday cohort
+
+**Risk:** `destructive`
+
+```ts
+await corsair.faraday.api.cohorts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### forceUpdate
+
+`cohorts.forceUpdate`
+
+Force update a Faraday cohort
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.cohorts.forceUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`cohorts.get`
+
+Retrieve a Faraday cohort
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.cohorts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMembershipAnalysis
+
+`cohorts.getMembershipAnalysis`
+
+Get Faraday cohort membership analysis
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.cohorts.getMembershipAnalysis({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`cohorts.list`
+
+List Faraday cohorts
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.cohorts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### unarchive
+
+`cohorts.unarchive`
+
+Unarchive a Faraday cohort
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.cohorts.unarchive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`cohorts.update`
+
+Update a Faraday cohort (JSON Merge Patch)
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.cohorts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Connections
+
+### archive
+
+`connections.archive`
+
+Archive a Faraday connection
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.connections.archive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`connections.delete`
+
+Delete a Faraday connection
+
+**Risk:** `destructive`
+
+```ts
+await corsair.faraday.api.connections.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### forceUpdate
+
+`connections.forceUpdate`
+
+Force update a Faraday connection
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.connections.forceUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDatasets
+
+`connections.getDatasets`
+
+List datasets for a Faraday connection
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.connections.getDatasets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTargets
+
+`connections.getTargets`
+
+List targets for a Faraday connection
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.connections.getTargets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`connections.list`
+
+List Faraday connections
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.connections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`connections.update`
+
+Update a Faraday connection (JSON Merge Patch)
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.connections.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Datasets
+
+### archive
+
+`datasets.archive`
+
+Archive a Faraday dataset
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.datasets.archive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`datasets.create`
+
+Create a Faraday dataset
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.datasets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`datasets.delete`
+
+Delete a Faraday dataset
+
+**Risk:** `destructive`
+
+```ts
+await corsair.faraday.api.datasets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### forceUpdate
+
+`datasets.forceUpdate`
+
+Force update a Faraday dataset
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.datasets.forceUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`datasets.get`
+
+Retrieve a Faraday dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.datasets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getIngressLogs
+
+`datasets.getIngressLogs`
+
+Get Faraday dataset ingress logs
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.datasets.getIngressLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`datasets.list`
+
+List Faraday datasets
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.datasets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### unarchive
+
+`datasets.unarchive`
+
+Unarchive a Faraday dataset
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.datasets.unarchive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`datasets.update`
+
+Update a Faraday dataset (JSON Merge Patch)
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.datasets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Feature Stores
+
+### list
+
+`featureStores.list`
+
+List Faraday feature stores
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.featureStores.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Graph
+
+### get
+
+`graph.get`
+
+Retrieve the Faraday resource dependency graph
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.graph.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  downstream_id: string,
+  downstream_literate?: string,
+  downstream_status?: string,
+  downstream_type?: string,
+  upstream_id: string,
+  upstream_literate?: string,
+  upstream_status?: string,
+  upstream_type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Market Opportunity Analyses
+
+### list
+
+`marketOpportunityAnalyses.list`
+
+List Faraday market opportunity analyses
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.marketOpportunityAnalyses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Outcomes
+
+### archive
+
+`outcomes.archive`
+
+Archive a Faraday outcome
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.outcomes.archive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`outcomes.create`
+
+Create a Faraday outcome
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.outcomes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`outcomes.delete`
+
+Delete a Faraday outcome
+
+**Risk:** `destructive`
+
+```ts
+await corsair.faraday.api.outcomes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### forceUpdate
+
+`outcomes.forceUpdate`
+
+Force update a Faraday outcome
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.outcomes.forceUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`outcomes.get`
+
+Retrieve a Faraday outcome
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.outcomes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`outcomes.list`
+
+List Faraday outcomes
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.outcomes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### unarchive
+
+`outcomes.unarchive`
+
+Unarchive a Faraday outcome
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.outcomes.unarchive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`outcomes.update`
+
+Update a Faraday outcome (JSON Merge Patch)
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.outcomes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Persona Sets
+
+### archive
+
+`personaSets.archive`
+
+Archive a Faraday persona set
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.personaSets.archive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`personaSets.create`
+
+Create a Faraday persona set
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.personaSets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`personaSets.delete`
+
+Delete a Faraday persona set
+
+**Risk:** `destructive`
+
+```ts
+await corsair.faraday.api.personaSets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### forceUpdate
+
+`personaSets.forceUpdate`
+
+Force update a Faraday persona set
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.personaSets.forceUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`personaSets.get`
+
+Retrieve a Faraday persona set
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.personaSets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAnalysisDimensions
+
+`personaSets.getAnalysisDimensions`
+
+Get Faraday persona set dimension analysis
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.personaSets.getAnalysisDimensions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAnalysisFlow
+
+`personaSets.getAnalysisFlow`
+
+Get Faraday persona set flow analysis
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.personaSets.getAnalysisFlow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`personaSets.list`
+
+List Faraday persona sets
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.personaSets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### unarchive
+
+`personaSets.unarchive`
+
+Unarchive a Faraday persona set
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.personaSets.unarchive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`personaSets.update`
+
+Update a Faraday persona set (JSON Merge Patch)
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.personaSets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Places
+
+### archive
+
+`places.archive`
+
+Archive a Faraday place
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.places.archive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`places.create`
+
+Create a Faraday place
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.places.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`places.delete`
+
+Delete a Faraday place
+
+**Risk:** `destructive`
+
+```ts
+await corsair.faraday.api.places.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### forceUpdate
+
+`places.forceUpdate`
+
+Force update a Faraday place
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.places.forceUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`places.get`
+
+Retrieve a Faraday place
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.places.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`places.list`
+
+List Faraday places
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.places.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### unarchive
+
+`places.unarchive`
+
+Unarchive a Faraday place
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.places.unarchive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`places.update`
+
+Update a Faraday place (JSON Merge Patch)
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.places.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Recommenders
+
+### list
+
+`recommenders.list`
+
+List Faraday recommenders
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.recommenders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Scopes
+
+### archive
+
+`scopes.archive`
+
+Archive a Faraday scope
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.scopes.archive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`scopes.create`
+
+Create a Faraday scope
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.scopes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`scopes.delete`
+
+Delete a Faraday scope
+
+**Risk:** `destructive`
+
+```ts
+await corsair.faraday.api.scopes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### forceUpdate
+
+`scopes.forceUpdate`
+
+Force update a Faraday scope
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.scopes.forceUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`scopes.get`
+
+Retrieve a Faraday scope
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.scopes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAnalysis
+
+`scopes.getAnalysis`
+
+Get Faraday scope analysis
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.scopes.getAnalysis({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDatasets
+
+`scopes.getDatasets`
+
+List datasets for a Faraday scope
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.scopes.getDatasets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getEfficacy
+
+`scopes.getEfficacy`
+
+Get Faraday scope efficacy
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.scopes.getEfficacy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPayloadCohorts
+
+`scopes.getPayloadCohorts`
+
+Get Faraday scope payload cohorts
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.scopes.getPayloadCohorts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPayloadOutcomes
+
+`scopes.getPayloadOutcomes`
+
+Get Faraday scope payload outcomes
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.scopes.getPayloadOutcomes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPayloadPersonaSets
+
+`scopes.getPayloadPersonaSets`
+
+Get Faraday scope payload persona sets
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.scopes.getPayloadPersonaSets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPayloadRecommenders
+
+`scopes.getPayloadRecommenders`
+
+Get Faraday scope payload recommenders
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.scopes.getPayloadRecommenders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPopulationCohorts
+
+`scopes.getPopulationCohorts`
+
+Get Faraday scope population cohorts
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.scopes.getPopulationCohorts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPopulationExclusionCohorts
+
+`scopes.getPopulationExclusionCohorts`
+
+Get Faraday scope population exclusion cohorts
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.scopes.getPopulationExclusionCohorts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTargets
+
+`scopes.getTargets`
+
+Get Faraday scope targets
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.scopes.getTargets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`scopes.list`
+
+List Faraday scopes
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.scopes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### unarchive
+
+`scopes.unarchive`
+
+Unarchive a Faraday scope
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.scopes.unarchive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`scopes.update`
+
+Update a Faraday scope (JSON Merge Patch)
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.scopes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Streams
+
+### archive
+
+`streams.archive`
+
+Archive a Faraday stream
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.streams.archive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`streams.create`
+
+Create a Faraday stream
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.streams.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`streams.delete`
+
+Delete a Faraday stream
+
+**Risk:** `destructive`
+
+```ts
+await corsair.faraday.api.streams.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### forceUpdate
+
+`streams.forceUpdate`
+
+Force update a Faraday stream
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.streams.forceUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`streams.get`
+
+Retrieve a Faraday stream
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.streams.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAnalysis
+
+`streams.getAnalysis`
+
+Get Faraday stream event analysis
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.streams.getAnalysis({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`streams.list`
+
+List Faraday streams
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.streams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### unarchive
+
+`streams.unarchive`
+
+Unarchive a Faraday stream
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.streams.unarchive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`streams.update`
+
+Update a Faraday stream (JSON Merge Patch)
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.streams.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Targets
+
+### archive
+
+`targets.archive`
+
+Archive a Faraday target
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.targets.archive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`targets.create`
+
+Create a Faraday target
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.targets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createPreview
+
+`targets.createPreview`
+
+Start a Faraday target preview delivery
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.targets.createPreview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`targets.delete`
+
+Delete a Faraday target
+
+**Risk:** `destructive`
+
+```ts
+await corsair.faraday.api.targets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### forceUpdate
+
+`targets.forceUpdate`
+
+Force update a Faraday target
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.targets.forceUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`targets.get`
+
+Retrieve a Faraday target
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.targets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAnalysis
+
+`targets.getAnalysis`
+
+Get Faraday target analysis
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.targets.getAnalysis({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`targets.list`
+
+List Faraday targets
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.targets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`targets.update`
+
+Update a Faraday target (JSON Merge Patch)
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.targets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Traits
+
+### archive
+
+`traits.archive`
+
+Archive a Faraday trait
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.traits.archive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`traits.create`
+
+Create a Faraday trait
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.traits.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`traits.delete`
+
+Delete a Faraday trait
+
+**Risk:** `destructive`
+
+```ts
+await corsair.faraday.api.traits.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteOrphaned
+
+`traits.deleteOrphaned`
+
+Delete all orphaned Faraday traits
+
+**Risk:** `destructive`
+
+```ts
+await corsair.faraday.api.traits.deleteOrphaned({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### forceUpdate
+
+`traits.forceUpdate`
+
+Force update a Faraday trait
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.traits.forceUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`traits.get`
+
+Retrieve a Faraday trait
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.traits.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAnalysisDimensions
+
+`traits.getAnalysisDimensions`
+
+Get Faraday trait dimension analysis
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.traits.getAnalysisDimensions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCsv
+
+`traits.getCsv`
+
+Download Faraday traits as CSV
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.traits.getCsv({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`traits.list`
+
+List Faraday traits
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.traits.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### unarchive
+
+`traits.unarchive`
+
+Unarchive a Faraday trait
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.traits.unarchive({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_id?: string,
+  cohort_id?: string,
+  dataset_id?: string,
+  stream_id?: string,
+  outcome_id?: string,
+  persona_set_id?: string,
+  place_id?: string,
+  scope_id?: string,
+  target_id?: string,
+  trait_id?: string,
+  connection_id?: string,
+  webhook_endpoint_id?: string,
+  id?: string
+}& {
+  cascade_to?: string[],
+  cascade_to_all?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`traits.update`
+
+Update a Faraday trait (JSON Merge Patch)
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.traits.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Uploads
+
+### delete
+
+`uploads.delete`
+
+Delete a Faraday uploaded file
+
+**Risk:** `destructive`
+
+```ts
+await corsair.faraday.api.uploads.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `directory` | `string` | Yes | — |
+| `filename` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`uploads.get`
+
+Download a Faraday uploaded file
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.uploads.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `directory` | `string` | Yes | — |
+| `filename` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  content: string
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`uploads.list`
+
+List Faraday uploaded files
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.uploads.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Usages
+
+### get
+
+`usages.get`
+
+Get Faraday account usage stats
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.usages.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Webhook Endpoints
+
+### create
+
+`webhookEndpoints.create`
+
+Create a Faraday webhook endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.webhookEndpoints.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `enabled_events` | `resource.errored \| resource.ready_with_update[]` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`webhookEndpoints.delete`
+
+Delete a Faraday webhook endpoint
+
+**Risk:** `destructive`
+
+```ts
+await corsair.faraday.api.webhookEndpoints.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  ok: true
+} | {
+} | {
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`webhookEndpoints.get`
+
+Retrieve a Faraday webhook endpoint
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.webhookEndpoints.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | No | — |
+| `cohort_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `stream_id` | `string` | No | — |
+| `outcome_id` | `string` | No | — |
+| `persona_set_id` | `string` | No | — |
+| `place_id` | `string` | No | — |
+| `scope_id` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `trait_id` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `webhook_endpoint_id` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`webhookEndpoints.list`
+
+List Faraday webhook endpoints
+
+**Risk:** `read`
+
+```ts
+await corsair.faraday.api.webhookEndpoints.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`webhookEndpoints.update`
+
+Update a Faraday webhook endpoint
+
+**Risk:** `write`
+
+```ts
+await corsair.faraday.api.webhookEndpoints.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_endpoint_id` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `status` | `enabled \| disabled` | No | — |
+| `enabled_events` | `resource.errored \| resource.ready_with_update[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  resource_type?: string,
+  status?: string,
+  created_at?: string,
+  updated_at?: string,
+  archived_at?: string | null
+} | {
+} | {
+  ok: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
