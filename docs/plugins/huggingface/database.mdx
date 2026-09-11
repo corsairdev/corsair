@@ -1,0 +1,209 @@
+---
+title: Database
+description: "Hugging Face local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Hugging Face plugin syncs data locally. Use `corsair.huggingface.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Collections
+
+Path: `huggingface.db.collections.search`
+
+```ts
+const rows = await corsair.huggingface.db.collections.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastUpdated` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `theme` | `string` | equals, contains, startsWith, endsWith, in |
+| `upvotes` | `number` | equals, gt, gte, lt, lte, in |
+| `isUpvotedByUser` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Datasets
+
+Path: `huggingface.db.datasets.search`
+
+```ts
+const rows = await corsair.huggingface.db.datasets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `author` | `string` | equals, contains, startsWith, endsWith, in |
+| `sha` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModified` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `disabled` | `boolean` | equals |
+| `downloads` | `number` | equals, gt, gte, lt, lte, in |
+| `likes` | `number` | equals, gt, gte, lt, lte, in |
+| `trendingScore` | `number` | equals, gt, gte, lt, lte, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `citation` | `string` | equals, contains, startsWith, endsWith, in |
+| `paperswithcode_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `usedStorage` | `number` | equals, gt, gte, lt, lte, in |
+| `_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Discussions
+
+Path: `huggingface.db.discussions.search`
+
+```ts
+const rows = await corsair.huggingface.db.discussions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `num` | `number` | equals, gt, gte, lt, lte, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `isPullRequest` | `boolean` | equals |
+| `pinned` | `boolean` | equals |
+| `numComments` | `number` | equals, gt, gte, lt, lte, in |
+| `numReactionUsers` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Models
+
+Path: `huggingface.db.models.search`
+
+```ts
+const rows = await corsair.huggingface.db.models.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `modelId` | `string` | equals, contains, startsWith, endsWith, in |
+| `author` | `string` | equals, contains, startsWith, endsWith, in |
+| `sha` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModified` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `disabled` | `boolean` | equals |
+| `downloads` | `number` | equals, gt, gte, lt, lte, in |
+| `likes` | `number` | equals, gt, gte, lt, lte, in |
+| `trendingScore` | `number` | equals, gt, gte, lt, lte, in |
+| `pipeline_tag` | `string` | equals, contains, startsWith, endsWith, in |
+| `library_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `usedStorage` | `number` | equals, gt, gte, lt, lte, in |
+| `_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Papers
+
+Path: `huggingface.db.papers.search`
+
+```ts
+const rows = await corsair.huggingface.db.papers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `summary` | `string` | equals, contains, startsWith, endsWith, in |
+| `publishedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `upvotes` | `number` | equals, gt, gte, lt, lte, in |
+| `ai_summary` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Spaces
+
+Path: `huggingface.db.spaces.search`
+
+```ts
+const rows = await corsair.huggingface.db.spaces.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `author` | `string` | equals, contains, startsWith, endsWith, in |
+| `sha` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModified` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `disabled` | `boolean` | equals |
+| `likes` | `number` | equals, gt, gte, lt, lte, in |
+| `trendingScore` | `number` | equals, gt, gte, lt, lte, in |
+| `sdk` | `string` | equals, contains, startsWith, endsWith, in |
+| `subdomain` | `string` | equals, contains, startsWith, endsWith, in |
+| `host` | `string` | equals, contains, startsWith, endsWith, in |
+| `region` | `string` | equals, contains, startsWith, endsWith, in |
+| `usedStorage` | `number` | equals, gt, gte, lt, lte, in |
+| `_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

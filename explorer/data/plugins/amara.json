@@ -1,0 +1,2441 @@
+{
+  "id": "amara",
+  "displayName": "Amara",
+  "description": "Collaborative subtitling and captioning platform for video accessibility and translation.",
+  "npmPackageName": "@corsair-dev/amara",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 30,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "amara.api.activity.get",
+      "shortPath": "activity.get",
+      "description": "Get a single activity item by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "activity_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "type_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "video",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "video_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: string, username?: string, uri?: string } | string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "new_video_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.activity.list",
+      "shortPath": "activity.list",
+      "description": "List platform activity with optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size"
+          },
+          {
+            "key": "video",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Result offset"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_activity",
+            "optional": true,
+            "type": "string | boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ previous?: string | null, next?: string | null, offset?: number, limit?: number, total_count?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{ id?: number | string, type?: number | string, type_name?: string, created?: string | null, video?: string | null, video_uri?: string | null, language?: string | null, language_url?: string | null, user?: { id?: string, username?: string, uri?: string } | string | null, comment?: string | null, new_video_title?: string | null, resource_uri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.languages.listAvailable",
+      "shortPath": "languages.listAvailable",
+      "description": "List all supported Amara language codes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "languages",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send a message to a user or team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "amara.api.teams.getDetails",
+      "shortPath": "teams.getDetails",
+      "description": "Get team details by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "video_visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_visible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "membership_policy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "video_policy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activity_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projects_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "applications_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "languages_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tasks_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.teams.getLanguages",
+      "shortPath": "teams.getLanguages",
+      "description": "Get preferred/blacklisted language URIs for a team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "preferred",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blacklisted",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List teams",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Result offset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ previous?: string | null, next?: string | null, offset?: number, limit?: number, total_count?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{ name?: string, slug?: string, type?: string | null, description?: string | null, team_visibility?: string | null, video_visibility?: string | null, is_visible?: boolean, membership_policy?: string | null, video_policy?: string | null, activity_uri?: string, members_uri?: string, projects_uri?: string, applications_uri?: string | null, languages_uri?: string | null, tasks_uri?: string | null, resource_uri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.users.getActivity",
+      "shortPath": "users.getActivity",
+      "description": "List activity for a user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Result offset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ previous?: string | null, next?: string | null, offset?: number, limit?: number, total_count?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{ id?: number | string, type?: number | string, type_name?: string, created?: string | null, video?: string | null, video_uri?: string | null, language?: string | null, language_url?: string | null, user?: { id?: string, username?: string, uri?: string } | string | null, comment?: string | null, new_video_title?: string | null, resource_uri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.users.getData",
+      "shortPath": "users.getData",
+      "description": "Get a user profile by identifier (or \"me\")",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "Username, id$…, or \"me\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "biography",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "homepage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "num_videos",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_partner",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "activity_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.addSubtitleNote",
+      "shortPath": "videos.addSubtitleNote",
+      "description": "Add an editor note to a subtitle set",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: string, username?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.addUrl",
+      "shortPath": "videos.addUrl",
+      "description": "Add a URL to a video",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "primary",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "original",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "videoid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.create",
+      "shortPath": "videos.create",
+      "description": "Create a video from a public URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primary_audio_language_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "video_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primary_audio_language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "all_urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "{ code?: string, name?: string, published?: boolean, dir?: string | null, subtitles_uri?: string, resource_uri?: string }[]"
+          },
+          {
+            "key": "activity_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "urls_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtitle_languages_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.createSubtitleLanguage",
+      "shortPath": "videos.createSubtitleLanguage",
+      "description": "Create a subtitle language on a video",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_primary_audio_language",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "soft_limit_cpl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_cps",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_lines",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_max_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_min_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subtitles_complete",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_primary_audio_language",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_rtl",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "soft_limit_cpl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_cps",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_lines",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_max_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_min_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "subtitle_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subtitles_complete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "versions",
+            "optional": true,
+            "type": "{ author?: { id?: string, username?: string, uri?: string } | null, published?: boolean, version_number?: number, created?: string | null }[]"
+          },
+          {
+            "key": "subtitles_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.createSubtitles",
+      "shortPath": "videos.createSubtitles",
+      "description": "Create or update subtitles for a language",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "subtitles",
+            "optional": true,
+            "type": "string | any[]"
+          },
+          {
+            "key": "sub_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtitles_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version_number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sub_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtitles",
+            "optional": true,
+            "type": "{ start?: number, end?: number, text?: string, meta?: {}, position?: number }[] | string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id?: string, username?: string, uri?: string }"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "{ code?: string, dir?: string | null, name?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "notes_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "video_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "video_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "actions_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.deleteUrl",
+      "shortPath": "videos.deleteUrl",
+      "description": "Delete a video URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.fetchSubtitlesData",
+      "shortPath": "videos.fetchSubtitlesData",
+      "description": "Fetch subtitles for a video language",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string",
+            "description": "Subtitle format (default json)"
+          },
+          {
+            "key": "sub_format",
+            "optional": true,
+            "type": "string",
+            "description": "Alias for format"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version_number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sub_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtitles",
+            "optional": true,
+            "type": "{ start?: number, end?: number, text?: string, meta?: {}, position?: number }[] | string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id?: string, username?: string, uri?: string }"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "{ code?: string, dir?: string | null, name?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "notes_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "site_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "video_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "video_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "actions_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.getSubtitleLanguageDetails",
+      "shortPath": "videos.getSubtitleLanguageDetails",
+      "description": "Get details for a subtitle language",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_primary_audio_language",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_rtl",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "soft_limit_cpl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_cps",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_lines",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_max_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_min_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "subtitle_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subtitles_complete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "versions",
+            "optional": true,
+            "type": "{ author?: { id?: string, username?: string, uri?: string } | null, published?: boolean, version_number?: number, created?: string | null }[]"
+          },
+          {
+            "key": "subtitles_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.getUrl",
+      "shortPath": "videos.getUrl",
+      "description": "Get a single video URL by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "original",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "videoid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.getUrlDetails",
+      "shortPath": "videos.getUrlDetails",
+      "description": "Look up a video by its public URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public video URL to look up"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ previous?: string | null, next?: string | null, offset?: number, limit?: number, total_count?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{ id: string, video_type?: string | null, primary_audio_language_code?: string | null, title?: string | null, description?: string | null, duration?: number | null, thumbnail?: string | null, created?: string | null, team?: string | null, project?: string | null, all_urls?: string[], metadata?: {}, languages?: { code?: string, name?: string, published?: boolean, dir?: string | null, subtitles_uri?: string, resource_uri?: string }[], activity_uri?: string, urls_uri?: string, subtitle_languages_uri?: string, resource_uri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.list",
+      "shortPath": "videos.list",
+      "description": "List videos with optional filters and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "List ordering (mapped to order_by)"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Result offset"
+          },
+          {
+            "key": "archive",
+            "optional": true,
+            "type": "string | boolean"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "video_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "video_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ previous?: string | null, next?: string | null, offset?: number, limit?: number, total_count?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{ id: string, video_type?: string | null, primary_audio_language_code?: string | null, title?: string | null, description?: string | null, duration?: number | null, thumbnail?: string | null, created?: string | null, team?: string | null, project?: string | null, all_urls?: string[], metadata?: {}, languages?: { code?: string, name?: string, published?: boolean, dir?: string | null, subtitles_uri?: string, resource_uri?: string }[], activity_uri?: string, urls_uri?: string, subtitle_languages_uri?: string, resource_uri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.listActivity",
+      "shortPath": "videos.listActivity",
+      "description": "List activity for a video",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Result offset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ previous?: string | null, next?: string | null, offset?: number, limit?: number, total_count?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{ id?: number | string, type?: number | string, type_name?: string, created?: string | null, video?: string | null, video_uri?: string | null, language?: string | null, language_url?: string | null, user?: { id?: string, username?: string, uri?: string } | string | null, comment?: string | null, new_video_title?: string | null, resource_uri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.listSubtitleActions",
+      "shortPath": "videos.listSubtitleActions",
+      "description": "List available subtitle actions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ action: string, label?: string, complete?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "amara.api.videos.listSubtitleLanguages",
+      "shortPath": "videos.listSubtitleLanguages",
+      "description": "List subtitle languages for a video",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Result offset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ previous?: string | null, next?: string | null, offset?: number, limit?: number, total_count?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{ created?: string | null, language_code?: string, is_primary_audio_language?: boolean, is_rtl?: boolean, soft_limit_cpl?: number | null, soft_limit_cps?: number | null, soft_limit_lines?: number | null, soft_limit_max_duration?: number | null, soft_limit_min_duration?: number | null, published?: boolean, name?: string | null, title?: string | null, description?: string | null, metadata?: {}, subtitle_count?: number, subtitles_complete?: boolean, versions?: { author?: { id?: string, username?: string, uri?: string } | null, published?: boolean, version_number?: number, created?: string | null }[], subtitles_uri?: string, resource_uri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.listSubtitleNotes",
+      "shortPath": "videos.listSubtitleNotes",
+      "description": "List editor notes on a subtitle set",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Result offset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ previous?: string | null, next?: string | null, offset?: number, limit?: number, total_count?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{ body?: string, created?: string | null, user?: { id?: string, username?: string, uri?: string } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.listUrls",
+      "shortPath": "videos.listUrls",
+      "description": "List URLs associated with a video",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Result offset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ previous?: string | null, next?: string | null, offset?: number, limit?: number, total_count?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{ created?: string | null, url?: string, primary?: boolean, original?: boolean, id?: number, resource_uri?: string, videoid?: string | null, type?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.makeUrlPrimary",
+      "shortPath": "videos.makeUrlPrimary",
+      "description": "Set a video URL as primary",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "primary",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "original",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "videoid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.performSubtitleAction",
+      "shortPath": "videos.performSubtitleAction",
+      "description": "Perform a subtitle action (publish, save-draft, …)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.update",
+      "shortPath": "videos.update",
+      "description": "Update video metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "primary_audio_language_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "video_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primary_audio_language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "all_urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "{ code?: string, name?: string, published?: boolean, dir?: string | null, subtitles_uri?: string, resource_uri?: string }[]"
+          },
+          {
+            "key": "activity_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "urls_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtitle_languages_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.updateSubtitleLanguage",
+      "shortPath": "videos.updateSubtitleLanguage",
+      "description": "Update subtitle language settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_primary_audio_language",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "soft_limit_cpl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_cps",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_lines",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_max_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_min_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subtitles_complete",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_primary_audio_language",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_rtl",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "soft_limit_cpl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_cps",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_lines",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_max_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "soft_limit_min_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "subtitle_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subtitles_complete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "versions",
+            "optional": true,
+            "type": "{ author?: { id?: string, username?: string, uri?: string } | null, published?: boolean, version_number?: number, created?: string | null }[]"
+          },
+          {
+            "key": "subtitles_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.videos.viewDetails",
+      "shortPath": "videos.viewDetails",
+      "description": "Get details for a single video by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "video_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primary_audio_language_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "all_urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "{ code?: string, name?: string, published?: boolean, dir?: string | null, subtitles_uri?: string, resource_uri?: string }[]"
+          },
+          {
+            "key": "activity_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "urls_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtitle_languages_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "amara.db.teams.search",
+      "entityName": "teams",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "membership_policy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "video_policy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_visible",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "resource_uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "amara.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "full_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "biography",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "homepage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "num_videos",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "resource_uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "amara.db.videos.search",
+      "entityName": "videos",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "thumbnail",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "team",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "primary_audio_language_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "video_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource_uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}
