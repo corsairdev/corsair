@@ -1,7 +1,7 @@
 {
   "id": "faraday",
   "displayName": "Faraday",
-  "description": "Faraday plugin for Corsair",
+  "description": "Customer prediction platform for propensity scores, personas, and marketing intelligence.",
   "npmPackageName": "@corsair-dev/faraday",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

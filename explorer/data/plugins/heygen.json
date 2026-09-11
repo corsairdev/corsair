@@ -1,7 +1,7 @@
 {
   "id": "heygen",
   "displayName": "HeyGen",
-  "description": "HeyGen plugin for Corsair",
+  "description": "AI video platform for creating avatar videos, translations, and personalized video content.",
   "npmPackageName": "@corsair-dev/heygen",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

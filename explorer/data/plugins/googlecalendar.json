@@ -1,7 +1,7 @@
 {
   "id": "googlecalendar",
-  "displayName": "Google calendar",
-  "description": "Google calendar plugin for Corsair",
+  "displayName": "Google Calendar",
+  "description": "Scheduling service for creating events, managing calendars, and checking availability.",
   "npmPackageName": "@corsair-dev/googlecalendar",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -332,7 +332,7 @@
     {
       "path": "googlecalendar.api.events.delete",
       "shortPath": "events.delete",
-      "description": "Delete a calendar event [DESTRUCTIVE]",
+      "description": "Delete a calendar event",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

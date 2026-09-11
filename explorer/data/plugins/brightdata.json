@@ -1,7 +1,7 @@
 {
   "id": "brightdata",
   "displayName": "Bright Data",
-  "description": "Bright Data plugin for Corsair",
+  "description": "Web data platform for proxies, scraping, and collecting public internet datasets.",
   "npmPackageName": "@corsair-dev/brightdata",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

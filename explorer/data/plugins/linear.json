@@ -1,7 +1,7 @@
 {
   "id": "linear",
   "displayName": "Linear",
-  "description": "Linear plugin for Corsair",
+  "description": "Issue tracking tool for software teams managing projects, cycles, and product roadmaps.",
   "npmPackageName": "@corsair-dev/linear",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
@@ -109,7 +109,7 @@
     {
       "path": "linear.api.comments.delete",
       "shortPath": "comments.delete",
-      "description": "Delete a comment [DESTRUCTIVE]",
+      "description": "Delete a comment",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {

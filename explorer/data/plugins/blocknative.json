@@ -1,7 +1,7 @@
 {
   "id": "blocknative",
   "displayName": "Blocknative",
-  "description": "Blocknative plugin for Corsair",
+  "description": "Mempool monitoring API for real-time Ethereum and blockchain transaction tracking.",
   "npmPackageName": "@corsair-dev/blocknative",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

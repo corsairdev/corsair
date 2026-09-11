@@ -1,7 +1,7 @@
 {
   "id": "removebg",
   "displayName": "remove.bg",
-  "description": "remove.bg plugin for Corsair",
+  "description": "Background removal API for automatically cutting out subjects from photos and images.",
   "npmPackageName": "@corsair-dev/removebg",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

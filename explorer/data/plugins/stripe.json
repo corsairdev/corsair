@@ -1,7 +1,7 @@
 {
   "id": "stripe",
   "displayName": "Stripe",
-  "description": "Stripe plugin for Corsair",
+  "description": "Payment infrastructure for accepting charges, subscriptions, invoices, and online checkout flows.",
   "npmPackageName": "@corsair-dev/stripe",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
@@ -725,7 +725,7 @@
     {
       "path": "stripe.api.customers.delete",
       "shortPath": "customers.delete",
-      "description": "Delete a Stripe customer [DESTRUCTIVE]",
+      "description": "Delete a Stripe customer",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

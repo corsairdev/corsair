@@ -1,7 +1,7 @@
 {
   "id": "pdfmonkey",
   "displayName": "PDFMonkey",
-  "description": "PDFMonkey plugin for Corsair",
+  "description": "PDF generation API for creating documents from HTML templates and dynamic data.",
   "npmPackageName": "@corsair-dev/pdfmonkey",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

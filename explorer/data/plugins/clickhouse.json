@@ -1,7 +1,7 @@
 {
   "id": "clickhouse",
-  "displayName": "Clickhouse",
-  "description": "Clickhouse plugin for Corsair",
+  "displayName": "ClickHouse",
+  "description": "Columnar analytics database for fast OLAP queries on large-scale event and log data.",
   "npmPackageName": "@corsair-dev/clickhouse",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
