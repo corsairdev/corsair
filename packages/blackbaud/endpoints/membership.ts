@@ -114,6 +114,12 @@ async function searchMembershipPages(
 		limit: SEARCH_PAGE_SIZE,
 		offset,
 	});
+	const tailFound = tail.value.filter((record) =>
+		matchesJunction(record, junctionId),
+	);
+	if (tailFound.length > 0) {
+		return tailFound;
+	}
 	const scanned = offset + tail.value.length;
 	if (tail.value.length < SEARCH_PAGE_SIZE || scanned >= tail.count) {
 		return [];
