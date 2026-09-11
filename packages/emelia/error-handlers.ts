@@ -22,7 +22,9 @@ export const errorHandlers = {
 				error instanceof EmeliaAPIError &&
 				typeof error.retryAfter === 'number'
 			) {
-				retryAfterMs = error.retryAfter * 1000;
+				// ApiError.retryAfter is already milliseconds
+				// (async-core/rate-limit.ts converts seconds to ms).
+				retryAfterMs = error.retryAfter;
 			}
 			return { maxRetries: 3, headersRetryAfterMs: retryAfterMs };
 		},

@@ -83,4 +83,45 @@ describe('Emelia REST client', () => {
 		expect(config.BASE).toBe('https://api.emelia.io');
 		expect(options.url).toBe('/email-providers');
 	});
+
+	it('retries GETs but not mutations after rate limits', async () => {
+		mockRequest.mockResolvedValue([]);
+		await makeEmeliaRestRequest<ReadonlyArray<{ id?: string }>>(
+			'/advanced/campaigns',
+			'k',
+			{ method: 'GET' },
+		);
+		const getThird = mockRequest.mock.calls[0];
+		if (getThird === undefined || getThird[2] === undefined) {
+			throw new Error('expected request options');
+		}
+		expect(getThird[2].rateLimitConfig?.maxRetries).toBe(3);
+
+		jest.clearAllMocks();
+		mockRequest.mockResolvedValue({ success: true });
+		await makeEmeliaRestRequest<{ success?: boolean }>(
+			'/advanced/campaigns',
+			'k',
+			{ method: 'POST', body: { name: 'X' } },
+		);
+		const postThird = mockRequest.mock.calls[0];
+		if (postThird === undefined || postThird[2] === undefined) {
+			throw new Error('expected request options');
+		}
+		expect(postThird[2].rateLimitConfig?.maxRetries).toBe(0);
+	});
+
+	it('allows explicit retry override per call', async () => {
+		mockRequest.mockResolvedValue({ success: true });
+		await makeEmeliaRestRequest<{ success?: boolean }>('/webhook', 'k', {
+			method: 'POST',
+			body: { url: 'https://example.com/h' },
+			maxRetries: 2,
+		});
+		const third = mockRequest.mock.calls[0];
+		if (third === undefined || third[2] === undefined) {
+			throw new Error('expected request options');
+		}
+		expect(third[2].rateLimitConfig?.maxRetries).toBe(2);
+	});
 });

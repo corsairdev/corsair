@@ -65,7 +65,8 @@ export const deleteContact: EmeliaEndpoints['emailDeleteContact'] = async (
 	await logEventFromContext(
 		ctx,
 		'emelia.emailCampaigns.deleteContact',
-		{ campaignId: input.campaignId, email: input.email },
+		// Email omitted: event payloads persist to corsair_events.
+		{ campaignId: input.campaignId },
 		'completed',
 	);
 	return response;

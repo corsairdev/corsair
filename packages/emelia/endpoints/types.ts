@@ -104,6 +104,19 @@ export const FlatContactSchema = z.record(
 	z.union([z.string(), z.number(), z.boolean()]),
 );
 
+// List envelopes keep only documented-minimal fields (extra provider keys
+// are stripped, never rejected) but must not parse as empty objects: an
+// undocumented shape like `{ items: [...] }` would otherwise silently
+// become `{}`. Require at least one documented field instead.
+function nonEmptyEnvelope<T extends z.ZodRawShape>(shape: T) {
+	return z
+		.object(shape)
+		.refine(
+			(value) => Object.values(value).some((field) => field !== undefined),
+			{ message: 'Response envelope has no documented fields' },
+		);
+}
+
 const RestCampaignSummarySchema = z.object({
 	id: z.string().optional(),
 	campaignId: z.string().optional(),
@@ -132,7 +145,7 @@ export const RestListCampaignsInputSchema = PaginationInputSchema;
 
 export const RestListCampaignsOutputSchema = z.union([
 	z.array(RestCampaignSummarySchema),
-	z.object({
+	nonEmptyEnvelope({
 		campaigns: z.array(RestCampaignSummarySchema).optional(),
 		data: z.array(RestCampaignSummarySchema).optional(),
 		total: z.number().optional(),
@@ -158,7 +171,7 @@ export const RestGetCampaignActivitiesInputSchema = z.object({
 
 export const RestGetCampaignActivitiesOutputSchema = z.union([
 	z.array(CampaignActivitySchema),
-	z.object({
+	nonEmptyEnvelope({
 		activities: z.array(CampaignActivitySchema).optional(),
 		data: z.array(CampaignActivitySchema).optional(),
 		total: z.number().optional(),
@@ -196,7 +209,7 @@ export const EmailListContactsInputSchema = z
 
 export const EmailListContactsOutputSchema = z.union([
 	z.array(EmailCampaignContactSchema),
-	z.object({
+	nonEmptyEnvelope({
 		contacts: z.array(EmailCampaignContactSchema).optional(),
 		data: z.array(EmailCampaignContactSchema).optional(),
 		total: z.number().optional(),
@@ -250,7 +263,7 @@ export const LinkedinListCampaignsInputSchema = PaginationInputSchema;
 
 export const LinkedinListCampaignsOutputSchema = z.union([
 	z.array(RestCampaignSummarySchema),
-	z.object({
+	nonEmptyEnvelope({
 		campaigns: z.array(RestCampaignSummarySchema).optional(),
 		data: z.array(RestCampaignSummarySchema).optional(),
 		total: z.number().optional(),
@@ -273,7 +286,7 @@ export const LinkedinGetActivitiesInputSchema = z.object({
 
 export const LinkedinGetActivitiesOutputSchema = z.union([
 	z.array(CampaignActivitySchema),
-	z.object({
+	nonEmptyEnvelope({
 		activities: z.array(CampaignActivitySchema).optional(),
 		data: z.array(CampaignActivitySchema).optional(),
 		total: z.number().optional(),
@@ -378,7 +391,7 @@ export const ListProvidersInputSchema = z.object({}).optional();
 
 export const ListProvidersOutputSchema = z.union([
 	z.array(EmailProviderSchema),
-	z.object({
+	nonEmptyEnvelope({
 		providers: z.array(EmailProviderSchema).optional(),
 		data: z.array(EmailProviderSchema).optional(),
 	}),
@@ -398,7 +411,7 @@ export const ListWebhooksInputSchema = z.object({}).optional();
 
 export const ListWebhooksOutputSchema = z.union([
 	z.array(WebhookSchema),
-	z.object({
+	nonEmptyEnvelope({
 		webhooks: z.array(WebhookSchema).optional(),
 		data: z.array(WebhookSchema).optional(),
 	}),
@@ -406,7 +419,23 @@ export const ListWebhooksOutputSchema = z.union([
 
 export const CreateWebhookInputSchema = z.object({
 	campaignId: z.string().min(1, 'Campaign ID is required'),
-	url: z.string().url('Valid webhook URL is required'),
+	// Emelia requires webhook destinations to use HTTPS.
+	url: z
+		.string()
+		.url('Valid webhook URL is required')
+		.refine(
+			(value) => {
+				try {
+					return new URL(value).protocol === 'https:';
+				} catch {
+					// Invalid URLs are already rejected by .url() above.
+					return false;
+				}
+			},
+			{
+				message: 'Webhook URL must use HTTPS',
+			},
+		),
 	events: z.array(z.string().min(1)).min(1, 'At least one event is required'),
 });
 
@@ -418,7 +447,23 @@ export const CreateWebhookOutputSchema = z.object({
 });
 
 export const DeleteWebhookInputSchema = z.object({
-	url: z.string().url('Valid webhook URL is required'),
+	// Emelia requires webhook destinations to use HTTPS.
+	url: z
+		.string()
+		.url('Valid webhook URL is required')
+		.refine(
+			(value) => {
+				try {
+					return new URL(value).protocol === 'https:';
+				} catch {
+					// Invalid URLs are already rejected by .url() above.
+					return false;
+				}
+			},
+			{
+				message: 'Webhook URL must use HTTPS',
+			},
+		),
 });
 
 export const DeleteWebhookOutputSchema = z.object({

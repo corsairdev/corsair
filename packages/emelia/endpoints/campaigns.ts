@@ -51,10 +51,17 @@ export const addContact: EmeliaEndpoints['campaignsAddContact'] = async (
 ) => {
 	const response = await makeEmeliaRequest<
 		EmeliaEndpointOutputs['campaignsAddContact']
-	>(ADD_CONTACT_TO_CAMPAIGN_MUTATION, ctx.key, {
-		id: input.id,
-		contact: input.contact,
-	});
+	>(
+		ADD_CONTACT_TO_CAMPAIGN_MUTATION,
+		ctx.key,
+		{
+			id: input.id,
+			contact: input.contact,
+		},
+		// No documented idempotency protection for campaign membership
+		// writes: never auto-retry after a rate-limit response.
+		0,
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -71,15 +78,23 @@ export const removeContact: EmeliaEndpoints['campaignsRemoveContact'] = async (
 ) => {
 	const response = await makeEmeliaRequest<
 		EmeliaEndpointOutputs['campaignsRemoveContact']
-	>(REMOVE_CONTACT_FROM_CAMPAIGN_MUTATION, ctx.key, {
-		id: input.id,
-		email: input.email,
-	});
+	>(
+		REMOVE_CONTACT_FROM_CAMPAIGN_MUTATION,
+		ctx.key,
+		{
+			id: input.id,
+			email: input.email,
+		},
+		// No documented idempotency protection for campaign membership
+		// writes: never auto-retry after a rate-limit response.
+		0,
+	);
 
 	await logEventFromContext(
 		ctx,
 		'emelia.campaigns.removeContact',
-		{ id: input.id, email: input.email },
+		// Email omitted: event payloads persist to corsair_events.
+		{ id: input.id },
 		'completed',
 	);
 	return response;

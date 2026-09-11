@@ -1,3 +1,5 @@
+import { ApiError } from 'corsair/http';
+import { EmeliaAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
 describe('Emelia Error Handlers', () => {
@@ -43,5 +45,26 @@ describe('Emelia Error Handlers', () => {
 
 		const result = await handler.handler();
 		expect(result.maxRetries).toBe(0);
+	});
+
+	it('forwards retryAfter in milliseconds without reconverting', async () => {
+		const cause = new ApiError(
+			{ method: 'GET', url: '/webhook' },
+			{
+				url: 'https://api.emelia.io/webhook',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: '',
+			},
+			'Too Many Requests',
+			{ retryAfter: 1500 },
+		);
+		const wrapped = new EmeliaAPIError('Too Many Requests', { cause });
+		expect(wrapped.retryAfter).toBe(1500);
+
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(wrapped);
+		expect(result.maxRetries).toBe(3);
+		expect(result.headersRetryAfterMs).toBe(1500);
 	});
 });

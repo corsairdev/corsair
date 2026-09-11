@@ -56,6 +56,10 @@ export async function makeEmeliaRequest<T>(
 	apiKey: string,
 	// Justification: GraphQL variables are an open JSON map by definition.
 	variables?: Record<string, unknown>,
+	// Transport retries after a rate-limit response. Queries default to 3;
+	// pass 0 for mutations without documented idempotency protection, since
+	// a 429 does not prove the first attempt had no side effect.
+	maxRetries = 3,
 ): Promise<T> {
 	const config: OpenAPIConfig = {
 		BASE: EMELIA_API_BASE,
@@ -80,7 +84,10 @@ export async function makeEmeliaRequest<T>(
 
 	try {
 		const response = await request<GraphQLResponse<T>>(config, requestOptions, {
-			rateLimitConfig: EMELIA_RATE_LIMIT_CONFIG,
+			rateLimitConfig: {
+				...EMELIA_RATE_LIMIT_CONFIG,
+				maxRetries,
+			},
 		});
 
 		if (response.errors && response.errors.length > 0) {
@@ -129,6 +136,12 @@ export type EmeliaRestOptions = {
 	// schemas validate shape before this point.
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
+	// Transport retries after a rate-limit response. Defaults to 3 for GET
+	// and 0 otherwise: Emelia documents duplicate protection only for
+	// add-to-list contacts, so non-idempotent POST/DELETE operations must
+	// not be re-sent blindly (a 429 does not prove the first attempt
+	// had no side effect).
+	maxRetries?: number;
 };
 
 // REST helper for docs.emelia.io endpoints. Auth is a raw API key in the
@@ -138,7 +151,8 @@ export async function makeEmeliaRestRequest<T>(
 	apiKey: string,
 	options: EmeliaRestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, maxRetries } = options;
+	const effectiveRetries = maxRetries ?? (method === 'GET' ? 3 : 0);
 
 	const config: OpenAPIConfig = {
 		BASE: EMELIA_REST_BASE,
@@ -163,7 +177,10 @@ export async function makeEmeliaRestRequest<T>(
 
 	try {
 		return await request<T>(config, requestOptions, {
-			rateLimitConfig: EMELIA_RATE_LIMIT_CONFIG,
+			rateLimitConfig: {
+				...EMELIA_RATE_LIMIT_CONFIG,
+				maxRetries: effectiveRetries,
+			},
 		});
 	} catch (error) {
 		if (error instanceof EmeliaAPIError) {

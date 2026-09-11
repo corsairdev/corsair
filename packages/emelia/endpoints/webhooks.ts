@@ -53,7 +53,8 @@ export const remove: EmeliaEndpoints['deleteWebhook'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'emelia.webhooks.remove',
-		{ url: input.url },
+		// URL omitted: event payloads persist to corsair_events.
+		{},
 		'completed',
 	);
 	return response;

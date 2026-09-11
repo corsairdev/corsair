@@ -44,10 +44,16 @@ export const addToList: EmeliaEndpoints['contactsAddToList'] = async (
 ) => {
 	const response = await makeEmeliaRequest<
 		EmeliaEndpointOutputs['contactsAddToList']
-	>(ADD_CONTACTS_TO_LIST_MUTATION, ctx.key, {
-		id: input.id,
-		contact: input.contact,
-	});
+	>(
+		ADD_CONTACTS_TO_LIST_MUTATION,
+		ctx.key,
+		{
+			id: input.id,
+			contact: input.contact,
+		},
+		// Default retries kept: Emelia documents duplicate protection for
+		// list adds (same email/LinkedIn returns the existing contact).
+	);
 
 	await logEventFromContext(
 		ctx,

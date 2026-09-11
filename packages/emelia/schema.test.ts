@@ -263,4 +263,40 @@ describe('Emelia REST output schemas', () => {
 			}),
 		).toEqual({ id: 'wh_1', url: 'https://example.com/hook' });
 	});
+
+	it('webhook URLs must use HTTPS', () => {
+		expect(
+			EmeliaEndpointInputSchemas.createWebhook.safeParse({
+				campaignId: 'cmp_1',
+				url: 'http://example.com/hook',
+				events: ['FINISHED'],
+			}).success,
+		).toBe(false);
+		expect(
+			EmeliaEndpointInputSchemas.deleteWebhook.safeParse({
+				url: 'http://example.com/hook',
+			}).success,
+		).toBe(false);
+		expect(
+			EmeliaEndpointInputSchemas.deleteWebhook.parse({
+				url: 'https://example.com/hook',
+			}),
+		).toEqual({ url: 'https://example.com/hook' });
+	});
+
+	it('list envelopes reject empty or unrecognized objects', () => {
+		const envelopes = [
+			EmeliaEndpointOutputSchemas.restListCampaigns,
+			EmeliaEndpointOutputSchemas.restGetCampaignActivities,
+			EmeliaEndpointOutputSchemas.emailListContacts,
+			EmeliaEndpointOutputSchemas.linkedinListCampaigns,
+			EmeliaEndpointOutputSchemas.linkedinGetActivities,
+			EmeliaEndpointOutputSchemas.listProviders,
+			EmeliaEndpointOutputSchemas.listWebhooks,
+		];
+		for (const schema of envelopes) {
+			expect(schema.safeParse({}).success).toBe(false);
+			expect(schema.safeParse({ items: [{ id: 'x' }] }).success).toBe(false);
+		}
+	});
 });

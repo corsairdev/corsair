@@ -313,7 +313,7 @@ const emeliaEndpointMeta = {
 		description: 'Add a contact to the email blacklist',
 	},
 	'blacklist.remove': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Remove a contact from the email blacklist',
 	},
 	'linkedin.createCampaign': {

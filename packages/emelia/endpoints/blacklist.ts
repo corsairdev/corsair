@@ -17,7 +17,8 @@ export const add: EmeliaEndpoints['blacklistAdd'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'emelia.blacklist.add',
-		{ email: input.email },
+		// Email omitted: event payloads persist to corsair_events.
+		{},
 		'completed',
 	);
 	return response;
@@ -37,7 +38,8 @@ export const remove: EmeliaEndpoints['blacklistRemove'] = async (
 	await logEventFromContext(
 		ctx,
 		'emelia.blacklist.remove',
-		{ email: input.email },
+		// Email omitted: event payloads persist to corsair_events.
+		{},
 		'completed',
 	);
 	return response;

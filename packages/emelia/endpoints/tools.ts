@@ -27,7 +27,9 @@ export const findEmailSingle: EmeliaEndpoints['findEmailSingle'] = async (
 	await logEventFromContext(
 		ctx,
 		'emelia.tools.findEmailSingle',
-		{ fullname: input.fullname, companyName: input.companyName },
+		// Inputs omitted (PII): event payloads persist to corsair_events.
+		// The provider jobId below is the non-PII correlation value.
+		{ jobId: response.jobId },
 		'completed',
 	);
 	return response;
@@ -66,7 +68,8 @@ export const findPhoneSingle: EmeliaEndpoints['findPhoneSingle'] = async (
 	await logEventFromContext(
 		ctx,
 		'emelia.tools.findPhoneSingle',
-		{ linkedinUrl: input.linkedinUrl },
+		// Inputs omitted (PII): event payloads persist to corsair_events.
+		{ jobId: response.jobId },
 		'completed',
 	);
 	return response;
@@ -105,7 +108,8 @@ export const verifyEmailSingle: EmeliaEndpoints['verifyEmailSingle'] = async (
 	await logEventFromContext(
 		ctx,
 		'emelia.tools.verifyEmailSingle',
-		{ email: input.email },
+		// Inputs omitted (PII): event payloads persist to corsair_events.
+		{ jobId: response.jobId },
 		'completed',
 	);
 	return response;
