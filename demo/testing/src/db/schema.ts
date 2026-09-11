@@ -75,3 +75,23 @@ export const corsair_events = sqliteTable(
 		),
 	],
 );
+
+export const corsair_permissions = sqliteTable('corsair_permissions', {
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	created_at: integer('created_at', { mode: 'timestamp' })
+		.notNull()
+		.$defaultFn(() => new Date()),
+	updated_at: integer('updated_at', { mode: 'timestamp' })
+		.notNull()
+		.$defaultFn(() => new Date()),
+	token: text('token').notNull(),
+	args: text('args').notNull(),
+	plugin: text('plugin').notNull(),
+	endpoint: text('endpoint').notNull(),
+	tenant_id: text('tenant_id').notNull().default('default'),
+	status: text('status').notNull().default('pending'),
+	expires_at: text('expires_at').notNull(),
+	error: text('error'),
+});
