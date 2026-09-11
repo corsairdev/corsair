@@ -2110,6 +2110,14 @@
                 ]
               },
               {
+                "group": "Starton",
+                "pages": [
+                  "plugins/starton/overview",
+                  "plugins/starton/api",
+                  "plugins/starton/database"
+                ]
+              },
+              {
                 "group": "Strava",
                 "pages": [
                   "plugins/strava/overview",

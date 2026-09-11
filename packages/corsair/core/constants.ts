@@ -246,6 +246,7 @@ export const BaseProviders = [
 	'slack',
 	'sourcegraph',
 	'spotify',
+	'starton',
 	'strava',
 	'streamtime',
 	'stripe',
@@ -532,6 +533,7 @@ export const ProviderDisplayNames = {
 	slack: 'Slack',
 	sourcegraph: 'Sourcegraph',
 	spotify: 'Spotify',
+	starton: 'Starton',
 	strava: 'Strava',
 	streamtime: 'Streamtime',
 	stripe: 'Stripe',
@@ -825,6 +827,7 @@ export type AllProviders =
 	| 'slack'
 	| 'sourcegraph'
 	| 'spotify'
+	| 'starton'
 	| 'strava'
 	| 'streamtime'
 	| 'stripe'
