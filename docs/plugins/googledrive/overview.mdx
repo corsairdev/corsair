@@ -92,19 +92,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`files.download`**
+**List files**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.googledrive.api.files.download({});
+await tenant.googledrive.api.files.list({});
 ```
 
 
-**`files.copy`**
+**Create a file**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.googledrive.api.files.copy({});
+await tenant.googledrive.api.files.createFromText({ name: 'hello.txt', content: 'Hello from Corsair' });
 ```
 
 
@@ -112,15 +112,35 @@ See the full list on the [API](/plugins/googledrive/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.googledrive.db.<entity>.search()` and `.list()`: `files`, `folders`, `sharedDrives`.
+Search synced files without hitting Drive.
 
-See [Database](/plugins/googledrive/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googledrive.db.files.search({
+	data: { trashed: false },
+	limit: 50,
+});
+```
+
+Synced entities: `files`, `folders`, `sharedDrives`. See [Database](/plugins/googledrive/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a file or folder is created, updated, or deleted.
 
-See [Webhooks](/plugins/googledrive/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+googledrive({
+    webhookHooks: {
+        driveChanged: {
+            after: async (ctx, result) => {
+                console.log('Drive change:', result.data?.changeType, result.data?.fileId ?? result.data?.folderId);
+            }
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)). Corsair opens the Drive changes watch with that URL on connect. Drive has no console field for a webhook URL. Full event list: [Webhooks](/plugins/googledrive/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 
