@@ -129,6 +129,7 @@ export const BaseProviders = [
 	'cloudflare',
 	'cloudinary',
 	'collegefootballdata',
+	'composio',
 	'confluence',
 	'connecteam',
 	'contentfulgraphql',
@@ -418,6 +419,7 @@ export const ProviderDisplayNames = {
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
+	composio: 'Composio',
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
 	contentfulgraphql: 'Contentful GraphQL',
@@ -714,6 +716,7 @@ export type AllProviders =
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'collegefootballdata'
+	| 'composio'
 	| 'confluence'
 	| 'connecteam'
 	| 'contentfulgraphql'
