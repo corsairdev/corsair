@@ -104,6 +104,43 @@ describe('resolveCall — resolution', () => {
 		}
 	});
 
+	it('never evicts a tenant with an in-flight op → refresh single-flight survives the LRU cap', async () => {
+		let release!: () => void;
+		const gate = new Promise<void>((r) => {
+			release = r;
+		});
+		const withTenant = jest.fn((t: string) => ({
+			github: {
+				api: {
+					issues: {
+						create: async () => {
+							if (t === 'busy') await gate; // hold the op open
+							return { ok: true };
+						},
+					},
+				},
+			},
+		}));
+		const corsair = { withTenant };
+		const internal = internalWith([{ id: 'github' }], true);
+		const call = (tenant: string) =>
+			resolveCall(corsair, internal, {
+				plugin: 'github',
+				op: 'issues.create',
+				tenant,
+				args: {},
+			});
+		// 'busy' stays in-flight while we flood the cache well past the 512 cap
+		// with unique idle tenants — its client must not be evicted.
+		const busy = call('busy');
+		for (let i = 0; i < 560; i++) await call(`t${i}`);
+		// still in-flight: a fresh call for 'busy' must reuse the cached client
+		const busy2 = call('busy');
+		release();
+		await Promise.all([busy, busy2]);
+		expect(withTenant.mock.calls.filter(([t]) => t === 'busy')).toHaveLength(1);
+	});
+
 	it('G2: concurrent same-tenant calls build the client once (shared key-manager)', async () => {
 		const create = jest.fn(async () => ({}));
 		const withTenant = jest.fn(() => ({
