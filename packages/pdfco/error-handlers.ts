@@ -1,10 +1,18 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
+import { PdfcoAPIError } from './client';
+
+function statusOf(error: Error): number | undefined {
+	if (error instanceof ApiError) {
+		return error.status;
+	}
+	return undefined;
+}
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (statusOf(error) === 429) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
@@ -18,9 +26,30 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			const status = statusOf(error);
+			if (status === 401 || status === 403) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('invalid_auth') ||
+				msg.includes('invalid api key') ||
+				(error instanceof PdfcoAPIError && msg.includes('unauthorized'))
+			);
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => {
+			if (statusOf(error) === 404) return true;
+			return error.message.toLowerCase().includes('job not found');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	BAD_REQUEST_ERROR: {
+		match: (error: Error) => {
+			if (statusOf(error) === 400) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('bad request');
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

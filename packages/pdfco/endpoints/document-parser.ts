@@ -1,21 +1,33 @@
-import type { DocumentParserInput, DocumentParserResponse } from './types';
-import type { PdfcoContext } from '../index';
 import { makePdfcoRequest } from '../client';
+import type {
+	DocumentParserInput,
+	DocumentParserResponse,
+	PdfcoEndpointContext,
+} from './types';
+import { PdfcoEndpointInputSchemas, PdfcoEndpointOutputSchemas } from './types';
 
 export async function documentParser(
-	ctx: PdfcoContext,
+	ctx: PdfcoEndpointContext,
 	input: DocumentParserInput,
 ): Promise<DocumentParserResponse> {
-	const key = ctx.key;
-	
+	const args = PdfcoEndpointInputSchemas.documentParser.parse(input);
 	return await makePdfcoRequest<DocumentParserResponse>(
-		'/pdf/documentparser',
-		key,
+		'/v1/pdf/documentparser',
+		ctx.key,
 		{
-			method: 'POST',
+			schema: PdfcoEndpointOutputSchemas.documentParser,
 			body: {
-				url: input.url,
-				templateId: input.templateId,
+				url: args.url,
+				templateId: args.templateId,
+				template: args.template,
+				password: args.password,
+				inline: args.inline,
+				pages: args.pages,
+				outputFormat: args.outputFormat,
+				async: args.async,
+				name: args.name,
+				expiration: args.expiration,
+				profiles: args.profiles,
 			},
 		},
 	);

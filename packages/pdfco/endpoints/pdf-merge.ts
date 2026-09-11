@@ -1,22 +1,24 @@
-import type { PdfMergeInput, PdfMergeResponse } from './types';
-import type { PdfcoContext } from '../index';
 import { makePdfcoRequest } from '../client';
+import type {
+	PdfcoEndpointContext,
+	PdfMergeInput,
+	PdfMergeResponse,
+} from './types';
+import { PdfcoEndpointInputSchemas, PdfcoEndpointOutputSchemas } from './types';
 
 export async function pdfMerge(
-	ctx: PdfcoContext,
+	ctx: PdfcoEndpointContext,
 	input: PdfMergeInput,
 ): Promise<PdfMergeResponse> {
-	const key = ctx.key;
-	
-	return await makePdfcoRequest<PdfMergeResponse>(
-		'/pdf/merge',
-		key,
-		{
-			method: 'POST',
-			body: {
-				url: input.url,
-				name: input.name,
-			},
+	const args = PdfcoEndpointInputSchemas.pdfMerge.parse(input);
+	return await makePdfcoRequest<PdfMergeResponse>('/v1/pdf/merge', ctx.key, {
+		schema: PdfcoEndpointOutputSchemas.pdfMerge,
+		body: {
+			url: args.url,
+			name: args.name,
+			expiration: args.expiration,
+			async: args.async,
+			profiles: args.profiles,
 		},
-	);
+	});
 }
