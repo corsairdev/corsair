@@ -78,4 +78,4 @@ node packages/plain/node_modules/jest/bin/jest.js --config packages/plain/jest.c
 
 ## Live demo
 
-Working proof recording (R4): _TODO — owner to add the demo video URL in the PR's "Screenshots / Demos" section._
+Working proof (R4) is linked in the PR's "Screenshots / Demos" section.
