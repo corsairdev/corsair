@@ -1,5 +1,4 @@
-import { ApiError } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 import { makePlainRequest, PLAIN_API_BASE, PlainAPIError } from './client';
 
 jest.mock('corsair/http', () => ({

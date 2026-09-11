@@ -45,17 +45,16 @@ describe('Plain RATE_LIMIT_ERROR handler', () => {
 	});
 
 	it('does not match unrelated errors', () => {
-		expect(
-			errorHandlers.RATE_LIMIT_ERROR.match(transportError(500)),
-		).toBe(false);
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(new Error('nope'))).toBe(
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(transportError(500))).toBe(
 			false,
 		);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(new Error('nope'))).toBe(false);
 	});
 
 	it('retries with the transport retryAfter', async () => {
-		const result =
-			await errorHandlers.RATE_LIMIT_ERROR.handler(transportError(429, 2500));
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
+			transportError(429, 2500),
+		);
 		expect(result).toEqual({ maxRetries: 5, headersRetryAfterMs: 2500 });
 	});
 
@@ -83,9 +82,9 @@ describe('Plain AUTH_ERROR handler', () => {
 	});
 
 	it('matches auth messages without a status', () => {
-		expect(
-			errorHandlers.AUTH_ERROR.match(new Error('Unauthorized')),
-		).toBe(true);
+		expect(errorHandlers.AUTH_ERROR.match(new Error('Unauthorized'))).toBe(
+			true,
+		);
 		expect(
 			errorHandlers.AUTH_ERROR.match(new Error('invalid_auth token')),
 		).toBe(true);

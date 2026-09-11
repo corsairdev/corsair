@@ -1,7 +1,7 @@
 import { AuthMissingError } from 'corsair/core';
 import { makePlainRequest, PlainAPIError } from './client';
-import { plain, plainEndpointSchemas } from './index';
 import type { PlainContext } from './index';
+import { plain, plainEndpointSchemas } from './index';
 
 jest.mock('./client', () => ({
 	...jest.requireActual('./client'),
@@ -175,7 +175,10 @@ describe('Plain endpoint surface', () => {
 		expect(explicitOptions.authType).toBe('api_key');
 
 		await expect(
-			plugin.keyBuilder?.(mockKeyCtx(async () => null), 'endpoint'),
+			plugin.keyBuilder?.(
+				mockKeyCtx(async () => null),
+				'endpoint',
+			),
 		).resolves.toBe('plainApiKey_option');
 
 		const pluginWithoutOption = plain();
@@ -568,13 +571,10 @@ describe('Plain customer group endpoints', () => {
 			removeCustomerFromCustomerGroups: {},
 		});
 		const { endpoints } = getEndpoints();
-		const result = await endpoints.customerGroups.removeCustomer(
-			mockCtx('k'),
-			{
-				customerId: 'cus_123',
-				customerGroupIdentifiers: [{ customerGroupKey: 'enterprise' }],
-			},
-		);
+		const result = await endpoints.customerGroups.removeCustomer(mockCtx('k'), {
+			customerId: 'cus_123',
+			customerGroupIdentifiers: [{ customerGroupKey: 'enterprise' }],
+		});
 
 		expect(result.success).toBe(true);
 	});

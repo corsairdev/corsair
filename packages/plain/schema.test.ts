@@ -1,8 +1,8 @@
-import { PlainSchema } from './schema';
 import {
 	PlainEndpointInputSchemas,
 	PlainEndpointOutputSchemas,
 } from './endpoints/types';
+import { PlainSchema } from './schema';
 
 describe('Plain schema', () => {
 	it('declares a semver version', () => {
@@ -379,6 +379,9 @@ describe('Plain outputs', () => {
 			PlainEndpointOutputSchemas.runGraphqlQuery.safeParse({
 				myWorkspace: { id: 'ws_1' },
 			}),
-		).toEqual({ success: true, data: { data: { myWorkspace: { id: 'ws_1' } } } });
+		).toEqual({
+			success: true,
+			data: { data: { myWorkspace: { id: 'ws_1' } } },
+		});
 	});
 });

@@ -1,5 +1,5 @@
-import { z } from 'zod';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import { makePlainRequest, PlainAPIError } from '../client';
 import type { PlainEndpoints } from '../index';
 import type { PlainEndpointOutputs } from './types';

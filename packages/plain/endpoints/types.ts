@@ -258,9 +258,7 @@ const ThreadsFilterSchema = z
 		assignedToUser: z.array(z.string()).optional(),
 		isMarkedAsSpam: z.boolean().optional(),
 		supportEmailAddresses: z.array(z.string()).optional(),
-		customerGroupIdentifiers: z
-			.array(CustomerGroupIdentifierSchema)
-			.optional(),
+		customerGroupIdentifiers: z.array(CustomerGroupIdentifierSchema).optional(),
 		tierIdentifiers: z.array(TierIdentifierInputSchema).optional(),
 		companyIdentifiers: z.array(CompanyIdentifierInputSchema).optional(),
 		tenantIdentifiers: z.array(TenantIdentifierInputSchema).optional(),
@@ -308,8 +306,7 @@ type PaginationControls = {
 };
 
 function hasMixedPaginationControls(value: PaginationControls): boolean {
-	const hasForward =
-		value.first !== undefined || value.after !== undefined;
+	const hasForward = value.first !== undefined || value.after !== undefined;
 	const hasReverse = value.last !== undefined || value.before !== undefined;
 	return hasForward && hasReverse;
 }
