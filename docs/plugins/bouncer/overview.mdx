@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "Email verification API for validating addresses, reducing bounces, and improving deliverability."
+---
+
+Use **Bouncer** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 12 typed API operations
+- 5 synced entities (`batchVerifications`, `domainVerifications`, `emailVerifications`, `toxicityJobs`, `toxicityResults`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/bouncer
+```
+```bash yarn
+yarn add corsair @corsair-dev/bouncer
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/bouncer
+```
+```bash bun
+bun add corsair @corsair-dev/bouncer
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { bouncer } from '@corsair-dev/bouncer';
+
+export const corsair = createCorsair({
+	plugins: [
+		bouncer(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+bouncer()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'bouncer',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`account.getCredits`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.bouncer.api.account.getCredits({});
+```
+
+
+**`email.createBatchRequest`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.bouncer.api.email.createBatchRequest({});
+```
+
+
+See the full list on the [API](/plugins/bouncer/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.bouncer.db.<entity>.search()` and `.list()`: `batchVerifications`, `domainVerifications`, `emailVerifications`, `toxicityJobs`, `toxicityResults`.
+
+See [Database](/plugins/bouncer/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/bouncer/api">
+    Every `bouncer.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/bouncer/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

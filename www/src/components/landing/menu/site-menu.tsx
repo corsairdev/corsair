@@ -1,6 +1,6 @@
 'use client';
 
-import { BookOpen, Code, DiscordLogo, GithubLogo } from '@phosphor-icons/react';
+import { BookOpen, DiscordLogo, GithubLogo } from '@phosphor-icons/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
@@ -85,13 +85,13 @@ export function SiteMenu() {
 				</span>
 
 				<nav
-					className="flex w-full min-w-0 items-center justify-between gap-2 sm:gap-4 px-3 py-2 sm:px-4 sm:py-2.5 md:px-6"
+					className="relative flex w-full min-w-0 items-center gap-2 sm:gap-4 px-3 py-2 sm:px-4 sm:py-2.5 md:px-6"
 					aria-label="Primary navigation"
 				>
 					<Link
 						href="/"
 						aria-label="Corsair home"
-						className="inline-flex shrink-0 items-center gap-2 sm:gap-2.5 no-underline transition-opacity hover:opacity-80"
+						className="relative z-10 inline-flex shrink-0 items-center gap-2 sm:gap-2.5 no-underline transition-opacity hover:opacity-80"
 					>
 						<Image
 							src="/corsair-logo.png"
@@ -106,8 +106,8 @@ export function SiteMenu() {
 						</span>
 					</Link>
 
-					{/* Desktop Menu */}
-					<div className="hidden md:flex shrink-0 items-center gap-0.5">
+					{/* Desktop center links */}
+					<div className="absolute left-1/2 hidden -translate-x-1/2 md:flex items-center gap-0.5">
 						<Link
 							href="/#pricing"
 							className="px-3 py-2 text-sm font-medium text-[#1c1c1c]/80 no-underline transition-colors duration-200 hover:text-[#1c1c1c] font-[family-name:var(--landing-font-sans)]"
@@ -123,17 +123,15 @@ export function SiteMenu() {
 							Docs
 						</a>
 						<Link
-							href="/blog"
+							href="/integrations"
 							className="px-3 py-2 text-sm font-medium text-[#1c1c1c]/80 no-underline transition-colors duration-200 hover:text-[#1c1c1c] font-[family-name:var(--landing-font-sans)]"
 						>
-							Blog
+							Integrations
 						</Link>
-						<Link
-							href="/oss"
-							className="px-3 py-2 text-sm font-medium text-[#1c1c1c]/80 no-underline transition-colors duration-200 hover:text-[#1c1c1c] font-[family-name:var(--landing-font-sans)]"
-						>
-							Contribute
-						</Link>
+					</div>
+
+					{/* Desktop right actions */}
+					<div className="relative z-10 ml-auto hidden md:flex shrink-0 items-center gap-0.5">
 						<div className="mx-2 flex items-center gap-0.5 rounded-full border border-[#1c1c1c]/[0.09] bg-gradient-to-b from-white/80 to-white/30 p-1 shadow-[0_1px_4px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.9)]">
 							<a
 								href={GITHUB_URL}
@@ -165,7 +163,7 @@ export function SiteMenu() {
 					</div>
 
 					{/* Mobile Controls */}
-					<div className="flex md:hidden items-center gap-1.5 sm:gap-2">
+					<div className="ml-auto flex md:hidden items-center gap-1.5 sm:gap-2">
 						<a
 							href={APP_URL}
 							target="_blank"
@@ -208,19 +206,11 @@ export function SiteMenu() {
 							<BookOpen size={16} weight="fill" className="text-[#1c1c1c]/50" />
 						</a>
 						<Link
-							href="/blog"
+							href="/integrations"
 							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
 							onClick={() => setIsMobileMenuOpen(false)}
 						>
-							Blog
-						</Link>
-						<Link
-							href="/oss"
-							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
-							onClick={() => setIsMobileMenuOpen(false)}
-						>
-							Contribute
-							<Code size={16} weight="fill" className="text-[#1c1c1c]/50" />
+							Integrations
 						</Link>
 						<a
 							href={GITHUB_URL}

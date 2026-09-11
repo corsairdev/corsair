@@ -1,0 +1,4332 @@
+---
+title: API
+description: "API reference for Harvest: every `harvest.api.*` operation with input and output types."
+---
+
+Every `harvest.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Clients
+
+### create
+
+`clients.create`
+
+Create a client
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.clients.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+| `address` | `string` | No | — |
+| `currency` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `address` | `string` | No | — |
+| `statement_key` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`clients.delete`
+
+Delete a client
+
+**Risk:** `destructive`
+
+```ts
+await corsair.harvest.api.clients.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`clients.get`
+
+Get a client by id
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.clients.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `address` | `string` | No | — |
+| `statement_key` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`clients.list`
+
+List clients
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.clients.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_active` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `updated_since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clients` | `object[]` | Yes | — |
+| `per_page` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `total_entries` | `number` | No | — |
+| `next_page` | `number` | No | — |
+| `previous_page` | `number` | No | — |
+| `page` | `number` | No | — |
+| `links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="clients full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  is_active?: boolean | null,
+  address?: string | null,
+  statement_key?: string | null,
+  currency?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  next?: string | null,
+  previous?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`clients.update`
+
+Update a client
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.clients.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `address` | `string` | No | — |
+| `currency` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `address` | `string` | No | — |
+| `statement_key` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+## Company
+
+### get
+
+`company.get`
+
+Get company settings
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.company.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `full_domain` | `string` | Yes | — |
+| `base_uri` | `string` | No | — |
+| `name` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `week_start_day` | `string` | No | — |
+| `wants_timestamp_timers` | `boolean` | No | — |
+| `time_format` | `string` | No | — |
+| `date_format` | `string` | No | — |
+| `plan_type` | `string` | No | — |
+| `clock` | `string` | No | — |
+| `currency_code_display` | `string` | No | — |
+| `currency_symbol_display` | `string` | No | — |
+| `decimal_symbol` | `string` | No | — |
+| `thousands_separator` | `string` | No | — |
+| `color_scheme` | `string` | No | — |
+| `weekly_capacity` | `number` | No | — |
+| `expense_feature` | `boolean` | No | — |
+| `invoice_feature` | `boolean` | No | — |
+| `estimate_feature` | `boolean` | No | — |
+| `approval_feature` | `boolean` | No | — |
+| `team_feature` | `boolean` | No | — |
+| `currency` | `string` | No | — |
+| `saml_sign_in_required` | `boolean` | No | — |
+| `day_entry_notes_required` | `boolean` | No | — |
+
+
+
+---
+
+### update
+
+`company.update`
+
+Update the writable company settings
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.company.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `wants_timestamp_timers` | `boolean` | No | — |
+| `weekly_capacity` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `full_domain` | `string` | Yes | — |
+| `base_uri` | `string` | No | — |
+| `name` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `week_start_day` | `string` | No | — |
+| `wants_timestamp_timers` | `boolean` | No | — |
+| `time_format` | `string` | No | — |
+| `date_format` | `string` | No | — |
+| `plan_type` | `string` | No | — |
+| `clock` | `string` | No | — |
+| `currency_code_display` | `string` | No | — |
+| `currency_symbol_display` | `string` | No | — |
+| `decimal_symbol` | `string` | No | — |
+| `thousands_separator` | `string` | No | — |
+| `color_scheme` | `string` | No | — |
+| `weekly_capacity` | `number` | No | — |
+| `expense_feature` | `boolean` | No | — |
+| `invoice_feature` | `boolean` | No | — |
+| `estimate_feature` | `boolean` | No | — |
+| `approval_feature` | `boolean` | No | — |
+| `team_feature` | `boolean` | No | — |
+| `currency` | `string` | No | — |
+| `saml_sign_in_required` | `boolean` | No | — |
+| `day_entry_notes_required` | `boolean` | No | — |
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a client contact
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | — |
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_office` | `string` | No | — |
+| `phone_mobile` | `string` | No | — |
+| `fax` | `string` | No | — |
+| `invoice_recipient_status` | `none \| recipient \| cc \| bcc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client` | `object` | No | — |
+| `title` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_office` | `string` | No | — |
+| `phone_mobile` | `string` | No | — |
+| `fax` | `string` | No | — |
+| `invoice_recipient_status` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a client contact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.harvest.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List client contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `updated_since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+| `per_page` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `total_entries` | `number` | No | — |
+| `next_page` | `number` | No | — |
+| `previous_page` | `number` | No | — |
+| `page` | `number` | No | — |
+| `links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id: number,
+  client?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null,
+  title?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  phone_office?: string | null,
+  phone_mobile?: string | null,
+  fax?: string | null,
+  invoice_recipient_status?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  next?: string | null,
+  previous?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a client contact
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `number` | Yes | — |
+| `client_id` | `number` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_office` | `string` | No | — |
+| `phone_mobile` | `string` | No | — |
+| `fax` | `string` | No | — |
+| `invoice_recipient_status` | `none \| recipient \| cc \| bcc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client` | `object` | No | — |
+| `title` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_office` | `string` | No | — |
+| `phone_mobile` | `string` | No | — |
+| `fax` | `string` | No | — |
+| `invoice_recipient_status` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Estimates
+
+### create
+
+`estimates.create`
+
+Create a draft estimate
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.estimates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | — |
+| `subject` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `number` | `string` | No | — |
+| `purchase_order` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `issue_date` | `string` | No | — |
+| `tax` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `discount` | `number` | No | — |
+| `line_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: number,
+  kind: string,
+  description?: string,
+  quantity?: number,
+  unit_price: number,
+  taxed?: boolean,
+  taxed2?: boolean,
+  project_id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client` | `object` | No | — |
+| `line_items` | `object[]` | No | — |
+| `creator` | `object` | No | — |
+| `client_key` | `string` | No | — |
+| `number` | `string` | No | — |
+| `purchase_order` | `string` | No | — |
+| `amount` | `number` | No | — |
+| `tax` | `number` | No | — |
+| `tax_amount` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `tax2_amount` | `number` | No | — |
+| `discount` | `number` | No | — |
+| `discount_amount` | `number` | No | — |
+| `subject` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `state` | `string` | No | — |
+| `issue_date` | `string` | No | — |
+| `sent_at` | `string` | No | — |
+| `accepted_at` | `string` | No | — |
+| `declined_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: number | null,
+  kind?: string | null,
+  description?: string | null,
+  quantity?: number | null,
+  unit_price?: number | null,
+  amount?: number | null,
+  taxed?: boolean | null,
+  taxed2?: boolean | null,
+  project?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="creator full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createItemCategory
+
+`estimates.createItemCategory`
+
+Create an estimate item category
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.estimates.createItemCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### createMessage
+
+`estimates.createMessage`
+
+Create an estimate message; event_type "send" emails the client
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.estimates.createMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate_id` | `number` | Yes | — |
+| `event_type` | `send \| accept \| decline \| re-open` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `send_me_a_copy` | `boolean` | No | — |
+| `recipients` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  name?: string,
+  email: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `sent_by` | `string` | No | — |
+| `sent_by_email` | `string` | No | — |
+| `sent_from` | `string` | No | — |
+| `sent_from_email` | `string` | No | — |
+| `send_me_a_copy` | `boolean` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `event_type` | `string` | No | — |
+| `recipients` | `object[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`estimates.delete`
+
+Delete an estimate
+
+**Risk:** `destructive`
+
+```ts
+await corsair.harvest.api.estimates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `number` | No | — |
+
+
+
+---
+
+### deleteMessage
+
+`estimates.deleteMessage`
+
+Delete an estimate message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.harvest.api.estimates.deleteMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate_id` | `number` | Yes | — |
+| `message_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`estimates.get`
+
+Get an estimate by id
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.estimates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client` | `object` | No | — |
+| `line_items` | `object[]` | No | — |
+| `creator` | `object` | No | — |
+| `client_key` | `string` | No | — |
+| `number` | `string` | No | — |
+| `purchase_order` | `string` | No | — |
+| `amount` | `number` | No | — |
+| `tax` | `number` | No | — |
+| `tax_amount` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `tax2_amount` | `number` | No | — |
+| `discount` | `number` | No | — |
+| `discount_amount` | `number` | No | — |
+| `subject` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `state` | `string` | No | — |
+| `issue_date` | `string` | No | — |
+| `sent_at` | `string` | No | — |
+| `accepted_at` | `string` | No | — |
+| `declined_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: number | null,
+  kind?: string | null,
+  description?: string | null,
+  quantity?: number | null,
+  unit_price?: number | null,
+  amount?: number | null,
+  taxed?: boolean | null,
+  taxed2?: boolean | null,
+  project?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="creator full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMessages
+
+`estimates.listMessages`
+
+List the messages recorded against an estimate
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.estimates.listMessages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate_id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `updated_since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate_messages` | `object[]` | Yes | — |
+| `per_page` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `total_entries` | `number` | No | — |
+| `next_page` | `number` | No | — |
+| `previous_page` | `number` | No | — |
+| `page` | `number` | No | — |
+| `links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="estimate_messages full type">
+
+```ts
+{
+  id?: number | null,
+  sent_by?: string | null,
+  sent_by_email?: string | null,
+  sent_from?: string | null,
+  sent_from_email?: string | null,
+  send_me_a_copy?: boolean | null,
+  subject?: string | null,
+  body?: string | null,
+  event_type?: string | null,
+  recipients?: {
+    name?: string | null,
+    email?: string | null
+  }[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  next?: string | null,
+  previous?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`estimates.update`
+
+Update an estimate
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.estimates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate_id` | `number` | Yes | — |
+| `client_id` | `number` | No | — |
+| `subject` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `number` | `string` | No | — |
+| `purchase_order` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `issue_date` | `string` | No | — |
+| `tax` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `discount` | `number` | No | — |
+| `line_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: number,
+  kind: string,
+  description?: string,
+  quantity?: number,
+  unit_price: number,
+  taxed?: boolean,
+  taxed2?: boolean,
+  project_id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client` | `object` | No | — |
+| `line_items` | `object[]` | No | — |
+| `creator` | `object` | No | — |
+| `client_key` | `string` | No | — |
+| `number` | `string` | No | — |
+| `purchase_order` | `string` | No | — |
+| `amount` | `number` | No | — |
+| `tax` | `number` | No | — |
+| `tax_amount` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `tax2_amount` | `number` | No | — |
+| `discount` | `number` | No | — |
+| `discount_amount` | `number` | No | — |
+| `subject` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `state` | `string` | No | — |
+| `issue_date` | `string` | No | — |
+| `sent_at` | `string` | No | — |
+| `accepted_at` | `string` | No | — |
+| `declined_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: number | null,
+  kind?: string | null,
+  description?: string | null,
+  quantity?: number | null,
+  unit_price?: number | null,
+  amount?: number | null,
+  taxed?: boolean | null,
+  taxed2?: boolean | null,
+  project?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="creator full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateItemCategory
+
+`estimates.updateItemCategory`
+
+Rename an estimate item category
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.estimates.updateItemCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate_item_category_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+## Expenses
+
+### create
+
+`expenses.create`
+
+Record an expense against a project
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.expenses.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+| `expense_category_id` | `number` | Yes | — |
+| `spent_date` | `string` | Yes | — |
+| `user_id` | `number` | No | — |
+| `units` | `number` | No | — |
+| `total_cost` | `number` | No | — |
+| `notes` | `string` | No | — |
+| `billable` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `spent_date` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `total_cost` | `number` | No | — |
+| `units` | `number` | No | — |
+| `billable` | `boolean` | No | — |
+| `receipt` | `object` | No | — |
+| `approval_status` | `string` | No | — |
+| `is_closed` | `boolean` | No | — |
+| `is_locked` | `boolean` | No | — |
+| `is_explicitly_locked` | `boolean` | No | — |
+| `is_billed` | `boolean` | No | — |
+| `locked_reason` | `string` | No | — |
+| `reimbursement` | `boolean` | No | — |
+| `user` | `object` | No | — |
+| `client` | `object` | No | — |
+| `project` | `object` | No | — |
+| `expense_category` | `object` | No | — |
+| `user_assignment` | `object` | No | — |
+| `invoice` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="receipt full type">
+
+```ts
+{
+  url?: string | null,
+  file_name?: string | null,
+  file_size?: number | null,
+  content_type?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="expense_category full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="user_assignment full type">
+
+```ts
+{
+  id?: number | null,
+  is_project_manager?: boolean | null,
+  is_active?: boolean | null,
+  budget?: number | null,
+  hourly_rate?: number | null,
+  use_default_rates?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="invoice full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listCategories
+
+`expenses.listCategories`
+
+List expense categories
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.expenses.listCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_active` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `updated_since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense_categories` | `object[]` | Yes | — |
+| `per_page` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `total_entries` | `number` | No | — |
+| `next_page` | `number` | No | — |
+| `previous_page` | `number` | No | — |
+| `page` | `number` | No | — |
+| `links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="expense_categories full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  unit_name?: string | null,
+  unit_price?: number | null,
+  is_active?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  next?: string | null,
+  previous?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`expenses.update`
+
+Update an expense
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.expenses.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense_id` | `number` | Yes | — |
+| `project_id` | `number` | No | — |
+| `expense_category_id` | `number` | No | — |
+| `spent_date` | `string` | No | — |
+| `units` | `number` | No | — |
+| `total_cost` | `number` | No | — |
+| `notes` | `string` | No | — |
+| `billable` | `boolean` | No | — |
+| `delete_receipt` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `spent_date` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `total_cost` | `number` | No | — |
+| `units` | `number` | No | — |
+| `billable` | `boolean` | No | — |
+| `receipt` | `object` | No | — |
+| `approval_status` | `string` | No | — |
+| `is_closed` | `boolean` | No | — |
+| `is_locked` | `boolean` | No | — |
+| `is_explicitly_locked` | `boolean` | No | — |
+| `is_billed` | `boolean` | No | — |
+| `locked_reason` | `string` | No | — |
+| `reimbursement` | `boolean` | No | — |
+| `user` | `object` | No | — |
+| `client` | `object` | No | — |
+| `project` | `object` | No | — |
+| `expense_category` | `object` | No | — |
+| `user_assignment` | `object` | No | — |
+| `invoice` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="receipt full type">
+
+```ts
+{
+  url?: string | null,
+  file_name?: string | null,
+  file_size?: number | null,
+  content_type?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="expense_category full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="user_assignment full type">
+
+```ts
+{
+  id?: number | null,
+  is_project_manager?: boolean | null,
+  is_active?: boolean | null,
+  budget?: number | null,
+  hourly_rate?: number | null,
+  use_default_rates?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="invoice full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invoices
+
+### create
+
+`invoices.create`
+
+Create a draft invoice
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.invoices.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | — |
+| `retainer_id` | `number` | No | — |
+| `estimate_id` | `number` | No | — |
+| `subject` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `number` | `string` | No | — |
+| `purchase_order` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `issue_date` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `payment_term` | `string` | No | — |
+| `payment_options` | `ach \| credit_card \| paypal[]` | No | — |
+| `tax` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `discount` | `number` | No | — |
+| `line_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: number,
+  kind: string,
+  description?: string,
+  quantity?: number,
+  unit_price: number,
+  taxed?: boolean,
+  taxed2?: boolean,
+  project_id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client` | `object` | No | — |
+| `line_items` | `object[]` | No | — |
+| `estimate` | `object` | No | — |
+| `retainer` | `object` | No | — |
+| `creator` | `object` | No | — |
+| `client_key` | `string` | No | — |
+| `number` | `string` | No | — |
+| `purchase_order` | `string` | No | — |
+| `amount` | `number` | No | — |
+| `due_amount` | `number` | No | — |
+| `tax` | `number` | No | — |
+| `tax_amount` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `tax2_amount` | `number` | No | — |
+| `discount` | `number` | No | — |
+| `discount_amount` | `number` | No | — |
+| `subject` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `state` | `string` | No | — |
+| `period_start` | `string` | No | — |
+| `period_end` | `string` | No | — |
+| `issue_date` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `payment_term` | `string` | No | — |
+| `payment_options` | `string[]` | No | — |
+| `sent_at` | `string` | No | — |
+| `paid_at` | `string` | No | — |
+| `paid_date` | `string` | No | — |
+| `closed_at` | `string` | No | — |
+| `recurring_invoice_id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: number | null,
+  kind?: string | null,
+  description?: string | null,
+  quantity?: number | null,
+  unit_price?: number | null,
+  amount?: number | null,
+  taxed?: boolean | null,
+  taxed2?: boolean | null,
+  project?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="estimate full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="retainer full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="creator full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createItemCategory
+
+`invoices.createItemCategory`
+
+Create an invoice item category
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.invoices.createItemCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `use_as_service` | `boolean` | No | — |
+| `use_as_expense` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### createMessage
+
+`invoices.createMessage`
+
+Create an invoice message; event_type "send" emails the client
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.invoices.createMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | Yes | — |
+| `event_type` | `send \| close \| re-open \| draft` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `include_link_to_client_invoice` | `boolean` | No | — |
+| `attach_pdf` | `boolean` | No | — |
+| `send_me_a_copy` | `boolean` | No | — |
+| `thank_you` | `boolean` | No | — |
+| `recipients` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  name?: string,
+  email: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `sent_by` | `string` | No | — |
+| `sent_by_email` | `string` | No | — |
+| `sent_from` | `string` | No | — |
+| `sent_from_email` | `string` | No | — |
+| `include_link_to_client_invoice` | `boolean` | No | — |
+| `send_me_a_copy` | `boolean` | No | — |
+| `thank_you` | `boolean` | No | — |
+| `reminder` | `boolean` | No | — |
+| `send_reminder_on` | `string` | No | — |
+| `attach_pdf` | `boolean` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `event_type` | `string` | No | — |
+| `recipients` | `object[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createPayment
+
+`invoices.createPayment`
+
+Record a payment against an invoice
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.invoices.createPayment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `paid_at` | `string` | No | — |
+| `paid_date` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `send_thank_you` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `amount` | `number` | No | — |
+| `paid_at` | `string` | No | — |
+| `paid_date` | `string` | No | — |
+| `recorded_by` | `string` | No | — |
+| `recorded_by_email` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `transaction_id` | `string` | No | — |
+| `payment_gateway` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payment_gateway full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`invoices.delete`
+
+Delete an invoice
+
+**Risk:** `destructive`
+
+```ts
+await corsair.harvest.api.invoices.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `number` | No | — |
+
+
+
+---
+
+### deleteItemCategory
+
+`invoices.deleteItemCategory`
+
+Delete an unused invoice item category
+
+**Risk:** `destructive`
+
+```ts
+await corsair.harvest.api.invoices.deleteItemCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_item_category_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `number` | No | — |
+
+
+
+---
+
+### deleteMessage
+
+`invoices.deleteMessage`
+
+Delete an invoice message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.harvest.api.invoices.deleteMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | Yes | — |
+| `message_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `number` | No | — |
+
+
+
+---
+
+### deletePayment
+
+`invoices.deletePayment`
+
+Delete a recorded payment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.harvest.api.invoices.deletePayment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | Yes | — |
+| `payment_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`invoices.get`
+
+Get an invoice by id
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.invoices.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client` | `object` | No | — |
+| `line_items` | `object[]` | No | — |
+| `estimate` | `object` | No | — |
+| `retainer` | `object` | No | — |
+| `creator` | `object` | No | — |
+| `client_key` | `string` | No | — |
+| `number` | `string` | No | — |
+| `purchase_order` | `string` | No | — |
+| `amount` | `number` | No | — |
+| `due_amount` | `number` | No | — |
+| `tax` | `number` | No | — |
+| `tax_amount` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `tax2_amount` | `number` | No | — |
+| `discount` | `number` | No | — |
+| `discount_amount` | `number` | No | — |
+| `subject` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `state` | `string` | No | — |
+| `period_start` | `string` | No | — |
+| `period_end` | `string` | No | — |
+| `issue_date` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `payment_term` | `string` | No | — |
+| `payment_options` | `string[]` | No | — |
+| `sent_at` | `string` | No | — |
+| `paid_at` | `string` | No | — |
+| `paid_date` | `string` | No | — |
+| `closed_at` | `string` | No | — |
+| `recurring_invoice_id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: number | null,
+  kind?: string | null,
+  description?: string | null,
+  quantity?: number | null,
+  unit_price?: number | null,
+  amount?: number | null,
+  taxed?: boolean | null,
+  taxed2?: boolean | null,
+  project?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="estimate full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="retainer full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="creator full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+List invoices
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.invoices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `state` | `draft \| open \| paid \| closed` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `updated_since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoices` | `object[]` | Yes | — |
+| `per_page` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `total_entries` | `number` | No | — |
+| `next_page` | `number` | No | — |
+| `previous_page` | `number` | No | — |
+| `page` | `number` | No | — |
+| `links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+{
+  id: number,
+  client?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null,
+  line_items?: {
+    id?: number | null,
+    kind?: string | null,
+    description?: string | null,
+    quantity?: number | null,
+    unit_price?: number | null,
+    amount?: number | null,
+    taxed?: boolean | null,
+    taxed2?: boolean | null,
+    project?: {
+      id?: number | null,
+      name?: string | null,
+      code?: string | null,
+      currency?: string | null
+    } | null
+  }[] | null,
+  estimate?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null,
+  retainer?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null,
+  creator?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null,
+  client_key?: string | null,
+  number?: string | null,
+  purchase_order?: string | null,
+  amount?: number | null,
+  due_amount?: number | null,
+  tax?: number | null,
+  tax_amount?: number | null,
+  tax2?: number | null,
+  tax2_amount?: number | null,
+  discount?: number | null,
+  discount_amount?: number | null,
+  subject?: string | null,
+  notes?: string | null,
+  currency?: string | null,
+  state?: string | null,
+  period_start?: string | null,
+  period_end?: string | null,
+  issue_date?: string | null,
+  due_date?: string | null,
+  payment_term?: string | null,
+  payment_options?: string[] | null,
+  sent_at?: string | null,
+  paid_at?: string | null,
+  paid_date?: string | null,
+  closed_at?: string | null,
+  recurring_invoice_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  next?: string | null,
+  previous?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listItemCategories
+
+`invoices.listItemCategories`
+
+List invoice item categories
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.invoices.listItemCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `updated_since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_item_categories` | `object[]` | Yes | — |
+| `per_page` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `total_entries` | `number` | No | — |
+| `next_page` | `number` | No | — |
+| `previous_page` | `number` | No | — |
+| `page` | `number` | No | — |
+| `links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoice_item_categories full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  use_as_service?: boolean | null,
+  use_as_expense?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  next?: string | null,
+  previous?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMessages
+
+`invoices.listMessages`
+
+List the messages recorded against an invoice
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.invoices.listMessages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `updated_since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_messages` | `object[]` | Yes | — |
+| `per_page` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `total_entries` | `number` | No | — |
+| `next_page` | `number` | No | — |
+| `previous_page` | `number` | No | — |
+| `page` | `number` | No | — |
+| `links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoice_messages full type">
+
+```ts
+{
+  id?: number | null,
+  sent_by?: string | null,
+  sent_by_email?: string | null,
+  sent_from?: string | null,
+  sent_from_email?: string | null,
+  include_link_to_client_invoice?: boolean | null,
+  send_me_a_copy?: boolean | null,
+  thank_you?: boolean | null,
+  reminder?: boolean | null,
+  send_reminder_on?: string | null,
+  attach_pdf?: boolean | null,
+  subject?: string | null,
+  body?: string | null,
+  event_type?: string | null,
+  recipients?: {
+    name?: string | null,
+    email?: string | null
+  }[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  next?: string | null,
+  previous?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPayments
+
+`invoices.listPayments`
+
+List payments recorded against an invoice
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.invoices.listPayments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `updated_since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_payments` | `object[]` | Yes | — |
+| `per_page` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `total_entries` | `number` | No | — |
+| `next_page` | `number` | No | — |
+| `previous_page` | `number` | No | — |
+| `page` | `number` | No | — |
+| `links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoice_payments full type">
+
+```ts
+{
+  id?: number | null,
+  amount?: number | null,
+  paid_at?: string | null,
+  paid_date?: string | null,
+  recorded_by?: string | null,
+  recorded_by_email?: string | null,
+  notes?: string | null,
+  transaction_id?: string | null,
+  payment_gateway?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  next?: string | null,
+  previous?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`invoices.update`
+
+Update an invoice
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.invoices.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `number` | Yes | — |
+| `client_id` | `number` | No | — |
+| `retainer_id` | `number` | No | — |
+| `estimate_id` | `number` | No | — |
+| `subject` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `number` | `string` | No | — |
+| `purchase_order` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `issue_date` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `payment_term` | `string` | No | — |
+| `payment_options` | `ach \| credit_card \| paypal[]` | No | — |
+| `tax` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `discount` | `number` | No | — |
+| `line_items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: number,
+  kind: string,
+  description?: string,
+  quantity?: number,
+  unit_price: number,
+  taxed?: boolean,
+  taxed2?: boolean,
+  project_id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client` | `object` | No | — |
+| `line_items` | `object[]` | No | — |
+| `estimate` | `object` | No | — |
+| `retainer` | `object` | No | — |
+| `creator` | `object` | No | — |
+| `client_key` | `string` | No | — |
+| `number` | `string` | No | — |
+| `purchase_order` | `string` | No | — |
+| `amount` | `number` | No | — |
+| `due_amount` | `number` | No | — |
+| `tax` | `number` | No | — |
+| `tax_amount` | `number` | No | — |
+| `tax2` | `number` | No | — |
+| `tax2_amount` | `number` | No | — |
+| `discount` | `number` | No | — |
+| `discount_amount` | `number` | No | — |
+| `subject` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `state` | `string` | No | — |
+| `period_start` | `string` | No | — |
+| `period_end` | `string` | No | — |
+| `issue_date` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `payment_term` | `string` | No | — |
+| `payment_options` | `string[]` | No | — |
+| `sent_at` | `string` | No | — |
+| `paid_at` | `string` | No | — |
+| `paid_date` | `string` | No | — |
+| `closed_at` | `string` | No | — |
+| `recurring_invoice_id` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="line_items full type">
+
+```ts
+{
+  id?: number | null,
+  kind?: string | null,
+  description?: string | null,
+  quantity?: number | null,
+  unit_price?: number | null,
+  amount?: number | null,
+  taxed?: boolean | null,
+  taxed2?: boolean | null,
+  project?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="estimate full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="retainer full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="creator full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a project
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `is_billable` | `boolean` | Yes | — |
+| `bill_by` | `Project \| Tasks \| People \| none` | Yes | — |
+| `budget_by` | `project \| project_cost \| task \| task_fees \| person \| none` | Yes | — |
+| `code` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `is_fixed_fee` | `boolean` | No | — |
+| `hourly_rate` | `number` | No | — |
+| `budget` | `number` | No | — |
+| `budget_is_monthly` | `boolean` | No | — |
+| `notify_when_over_budget` | `boolean` | No | — |
+| `over_budget_notification_percentage` | `number` | No | — |
+| `show_budget_to_all` | `boolean` | No | — |
+| `cost_budget` | `number` | No | — |
+| `cost_budget_include_expenses` | `boolean` | No | — |
+| `fee` | `number` | No | — |
+| `notes` | `string` | No | — |
+| `starts_on` | `string` | No | — |
+| `ends_on` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client` | `object` | No | — |
+| `name` | `string` | No | — |
+| `code` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `is_billable` | `boolean` | No | — |
+| `is_fixed_fee` | `boolean` | No | — |
+| `bill_by` | `string` | No | — |
+| `hourly_rate` | `number` | No | — |
+| `budget_by` | `string` | No | — |
+| `budget_is_monthly` | `boolean` | No | — |
+| `budget` | `number` | No | — |
+| `cost_budget` | `number` | No | — |
+| `cost_budget_include_expenses` | `boolean` | No | — |
+| `notify_when_over_budget` | `boolean` | No | — |
+| `over_budget_notification_percentage` | `number` | No | — |
+| `over_budget_notification_date` | `string` | No | — |
+| `show_budget_to_all` | `boolean` | No | — |
+| `fee` | `number` | No | — |
+| `notes` | `string` | No | — |
+| `starts_on` | `string` | No | — |
+| `ends_on` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `currency` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project and its time entries and expenses
+
+**Risk:** `destructive`
+
+```ts
+await corsair.harvest.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get a project by id
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client` | `object` | No | — |
+| `name` | `string` | No | — |
+| `code` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `is_billable` | `boolean` | No | — |
+| `is_fixed_fee` | `boolean` | No | — |
+| `bill_by` | `string` | No | — |
+| `hourly_rate` | `number` | No | — |
+| `budget_by` | `string` | No | — |
+| `budget_is_monthly` | `boolean` | No | — |
+| `budget` | `number` | No | — |
+| `cost_budget` | `number` | No | — |
+| `cost_budget_include_expenses` | `boolean` | No | — |
+| `notify_when_over_budget` | `boolean` | No | — |
+| `over_budget_notification_percentage` | `number` | No | — |
+| `over_budget_notification_date` | `string` | No | — |
+| `show_budget_to_all` | `boolean` | No | — |
+| `fee` | `number` | No | — |
+| `notes` | `string` | No | — |
+| `starts_on` | `string` | No | — |
+| `ends_on` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `currency` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_active` | `boolean` | No | — |
+| `client_id` | `number` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `updated_since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+| `per_page` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `total_entries` | `number` | No | — |
+| `next_page` | `number` | No | — |
+| `previous_page` | `number` | No | — |
+| `page` | `number` | No | — |
+| `links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: number,
+  client?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null,
+  name?: string | null,
+  code?: string | null,
+  is_active?: boolean | null,
+  is_billable?: boolean | null,
+  is_fixed_fee?: boolean | null,
+  bill_by?: string | null,
+  hourly_rate?: number | null,
+  budget_by?: string | null,
+  budget_is_monthly?: boolean | null,
+  budget?: number | null,
+  cost_budget?: number | null,
+  cost_budget_include_expenses?: boolean | null,
+  notify_when_over_budget?: boolean | null,
+  over_budget_notification_percentage?: number | null,
+  over_budget_notification_date?: string | null,
+  show_budget_to_all?: boolean | null,
+  fee?: number | null,
+  notes?: string | null,
+  starts_on?: string | null,
+  ends_on?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  currency?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  next?: string | null,
+  previous?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+| `client_id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `code` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `is_billable` | `boolean` | No | — |
+| `is_fixed_fee` | `boolean` | No | — |
+| `bill_by` | `Project \| Tasks \| People \| none` | No | — |
+| `budget_by` | `project \| project_cost \| task \| task_fees \| person \| none` | No | — |
+| `hourly_rate` | `number` | No | — |
+| `budget` | `number` | No | — |
+| `budget_is_monthly` | `boolean` | No | — |
+| `notify_when_over_budget` | `boolean` | No | — |
+| `over_budget_notification_percentage` | `number` | No | — |
+| `show_budget_to_all` | `boolean` | No | — |
+| `cost_budget` | `number` | No | — |
+| `cost_budget_include_expenses` | `boolean` | No | — |
+| `fee` | `number` | No | — |
+| `notes` | `string` | No | — |
+| `starts_on` | `string` | No | — |
+| `ends_on` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `client` | `object` | No | — |
+| `name` | `string` | No | — |
+| `code` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `is_billable` | `boolean` | No | — |
+| `is_fixed_fee` | `boolean` | No | — |
+| `bill_by` | `string` | No | — |
+| `hourly_rate` | `number` | No | — |
+| `budget_by` | `string` | No | — |
+| `budget_is_monthly` | `boolean` | No | — |
+| `budget` | `number` | No | — |
+| `cost_budget` | `number` | No | — |
+| `cost_budget_include_expenses` | `boolean` | No | — |
+| `notify_when_over_budget` | `boolean` | No | — |
+| `over_budget_notification_percentage` | `number` | No | — |
+| `over_budget_notification_date` | `string` | No | — |
+| `show_budget_to_all` | `boolean` | No | — |
+| `fee` | `number` | No | — |
+| `notes` | `string` | No | — |
+| `starts_on` | `string` | No | — |
+| `ends_on` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `currency` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a task
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `billable_by_default` | `boolean` | No | — |
+| `default_hourly_rate` | `number` | No | — |
+| `is_default` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `billable_by_default` | `boolean` | No | — |
+| `default_hourly_rate` | `number` | No | — |
+| `is_default` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Delete a task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.harvest.api.tasks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get a task by id
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `billable_by_default` | `boolean` | No | — |
+| `default_hourly_rate` | `number` | No | — |
+| `is_default` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_active` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `updated_since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | Yes | — |
+| `per_page` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `total_entries` | `number` | No | — |
+| `next_page` | `number` | No | — |
+| `previous_page` | `number` | No | — |
+| `page` | `number` | No | — |
+| `links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  billable_by_default?: boolean | null,
+  default_hourly_rate?: number | null,
+  is_default?: boolean | null,
+  is_active?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  next?: string | null,
+  previous?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update a task
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `billable_by_default` | `boolean` | No | — |
+| `default_hourly_rate` | `number` | No | — |
+| `is_default` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `billable_by_default` | `boolean` | No | — |
+| `default_hourly_rate` | `number` | No | — |
+| `is_default` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+## Time Entries
+
+### create
+
+`timeEntries.create`
+
+Log time against a project and task
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.timeEntries.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | — |
+| `task_id` | `number` | Yes | — |
+| `spent_date` | `string` | Yes | — |
+| `user_id` | `number` | No | — |
+| `hours` | `number` | No | — |
+| `started_time` | `string` | No | — |
+| `ended_time` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `external_reference` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="external_reference full type">
+
+```ts
+{
+  id?: string,
+  group_id?: string,
+  account_id?: string,
+  permalink?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `spent_date` | `string` | No | — |
+| `hours` | `number` | No | — |
+| `hours_without_timer` | `number` | No | — |
+| `rounded_hours` | `number` | No | — |
+| `notes` | `string` | No | — |
+| `is_locked` | `boolean` | No | — |
+| `is_explicitly_locked` | `boolean` | No | — |
+| `locked_reason` | `string` | No | — |
+| `approval_status` | `string` | No | — |
+| `is_closed` | `boolean` | No | — |
+| `is_billed` | `boolean` | No | — |
+| `timer_started_at` | `string` | No | — |
+| `started_time` | `string` | No | — |
+| `ended_time` | `string` | No | — |
+| `is_running` | `boolean` | No | — |
+| `billable` | `boolean` | No | — |
+| `budgeted` | `boolean` | No | — |
+| `billable_rate` | `number` | No | — |
+| `cost_rate` | `number` | No | — |
+| `user` | `object` | No | — |
+| `client` | `object` | No | — |
+| `project` | `object` | No | — |
+| `task` | `object` | No | — |
+| `user_assignment` | `object` | No | — |
+| `task_assignment` | `object` | No | — |
+| `invoice` | `object` | No | — |
+| `external_reference` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="task full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="user_assignment full type">
+
+```ts
+{
+  id?: number | null,
+  is_project_manager?: boolean | null,
+  is_active?: boolean | null,
+  budget?: number | null,
+  hourly_rate?: number | null,
+  use_default_rates?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="task_assignment full type">
+
+```ts
+{
+  id?: number | null,
+  billable?: boolean | null,
+  is_active?: boolean | null,
+  budget?: number | null,
+  hourly_rate?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="invoice full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="external_reference full type">
+
+```ts
+{
+  id?: string | null,
+  group_id?: string | null,
+  account_id?: string | null,
+  permalink?: string | null,
+  service?: string | null,
+  service_icon_url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`timeEntries.delete`
+
+Delete a time entry
+
+**Risk:** `destructive`
+
+```ts
+await corsair.harvest.api.timeEntries.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_entry_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`timeEntries.get`
+
+Get a time entry by id
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.timeEntries.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_entry_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `spent_date` | `string` | No | — |
+| `hours` | `number` | No | — |
+| `hours_without_timer` | `number` | No | — |
+| `rounded_hours` | `number` | No | — |
+| `notes` | `string` | No | — |
+| `is_locked` | `boolean` | No | — |
+| `is_explicitly_locked` | `boolean` | No | — |
+| `locked_reason` | `string` | No | — |
+| `approval_status` | `string` | No | — |
+| `is_closed` | `boolean` | No | — |
+| `is_billed` | `boolean` | No | — |
+| `timer_started_at` | `string` | No | — |
+| `started_time` | `string` | No | — |
+| `ended_time` | `string` | No | — |
+| `is_running` | `boolean` | No | — |
+| `billable` | `boolean` | No | — |
+| `budgeted` | `boolean` | No | — |
+| `billable_rate` | `number` | No | — |
+| `cost_rate` | `number` | No | — |
+| `user` | `object` | No | — |
+| `client` | `object` | No | — |
+| `project` | `object` | No | — |
+| `task` | `object` | No | — |
+| `user_assignment` | `object` | No | — |
+| `task_assignment` | `object` | No | — |
+| `invoice` | `object` | No | — |
+| `external_reference` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="task full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="user_assignment full type">
+
+```ts
+{
+  id?: number | null,
+  is_project_manager?: boolean | null,
+  is_active?: boolean | null,
+  budget?: number | null,
+  hourly_rate?: number | null,
+  use_default_rates?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="task_assignment full type">
+
+```ts
+{
+  id?: number | null,
+  billable?: boolean | null,
+  is_active?: boolean | null,
+  budget?: number | null,
+  hourly_rate?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="invoice full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="external_reference full type">
+
+```ts
+{
+  id?: string | null,
+  group_id?: string | null,
+  account_id?: string | null,
+  permalink?: string | null,
+  service?: string | null,
+  service_icon_url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`timeEntries.list`
+
+List time entries
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.timeEntries.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | No | — |
+| `client_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `task_id` | `number` | No | — |
+| `external_reference_id` | `string` | No | — |
+| `is_billed` | `boolean` | No | — |
+| `is_running` | `boolean` | No | — |
+| `approval_status` | `unsubmitted \| submitted \| approved` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `updated_since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_entries` | `object[]` | Yes | — |
+| `per_page` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `total_entries` | `number` | No | — |
+| `next_page` | `number` | No | — |
+| `previous_page` | `number` | No | — |
+| `page` | `number` | No | — |
+| `links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="time_entries full type">
+
+```ts
+{
+  id: number,
+  spent_date?: string | null,
+  hours?: number | null,
+  hours_without_timer?: number | null,
+  rounded_hours?: number | null,
+  notes?: string | null,
+  is_locked?: boolean | null,
+  is_explicitly_locked?: boolean | null,
+  locked_reason?: string | null,
+  approval_status?: string | null,
+  is_closed?: boolean | null,
+  is_billed?: boolean | null,
+  timer_started_at?: string | null,
+  started_time?: string | null,
+  ended_time?: string | null,
+  is_running?: boolean | null,
+  billable?: boolean | null,
+  budgeted?: boolean | null,
+  billable_rate?: number | null,
+  cost_rate?: number | null,
+  user?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null,
+  client?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null,
+  project?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null,
+  task?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null,
+  user_assignment?: {
+    id?: number | null,
+    is_project_manager?: boolean | null,
+    is_active?: boolean | null,
+    budget?: number | null,
+    hourly_rate?: number | null,
+    use_default_rates?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  task_assignment?: {
+    id?: number | null,
+    billable?: boolean | null,
+    is_active?: boolean | null,
+    budget?: number | null,
+    hourly_rate?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  invoice?: {
+    id?: number | null,
+    name?: string | null,
+    code?: string | null,
+    currency?: string | null
+  } | null,
+  external_reference?: {
+    id?: string | null,
+    group_id?: string | null,
+    account_id?: string | null,
+    permalink?: string | null,
+    service?: string | null,
+    service_icon_url?: string | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  next?: string | null,
+  previous?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`timeEntries.update`
+
+Update a time entry
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.timeEntries.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_entry_id` | `number` | Yes | — |
+| `project_id` | `number` | No | — |
+| `task_id` | `number` | No | — |
+| `spent_date` | `string` | No | — |
+| `hours` | `number` | No | — |
+| `started_time` | `string` | No | — |
+| `ended_time` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `external_reference` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="external_reference full type">
+
+```ts
+{
+  id?: string,
+  group_id?: string,
+  account_id?: string,
+  permalink?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `spent_date` | `string` | No | — |
+| `hours` | `number` | No | — |
+| `hours_without_timer` | `number` | No | — |
+| `rounded_hours` | `number` | No | — |
+| `notes` | `string` | No | — |
+| `is_locked` | `boolean` | No | — |
+| `is_explicitly_locked` | `boolean` | No | — |
+| `locked_reason` | `string` | No | — |
+| `approval_status` | `string` | No | — |
+| `is_closed` | `boolean` | No | — |
+| `is_billed` | `boolean` | No | — |
+| `timer_started_at` | `string` | No | — |
+| `started_time` | `string` | No | — |
+| `ended_time` | `string` | No | — |
+| `is_running` | `boolean` | No | — |
+| `billable` | `boolean` | No | — |
+| `budgeted` | `boolean` | No | — |
+| `billable_rate` | `number` | No | — |
+| `cost_rate` | `number` | No | — |
+| `user` | `object` | No | — |
+| `client` | `object` | No | — |
+| `project` | `object` | No | — |
+| `task` | `object` | No | — |
+| `user_assignment` | `object` | No | — |
+| `task_assignment` | `object` | No | — |
+| `invoice` | `object` | No | — |
+| `external_reference` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="client full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="task full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="user_assignment full type">
+
+```ts
+{
+  id?: number | null,
+  is_project_manager?: boolean | null,
+  is_active?: boolean | null,
+  budget?: number | null,
+  hourly_rate?: number | null,
+  use_default_rates?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="task_assignment full type">
+
+```ts
+{
+  id?: number | null,
+  billable?: boolean | null,
+  is_active?: boolean | null,
+  budget?: number | null,
+  hourly_rate?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="invoice full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  code?: string | null,
+  currency?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="external_reference full type">
+
+```ts
+{
+  id?: string | null,
+  group_id?: string | null,
+  account_id?: string | null,
+  permalink?: string | null,
+  service?: string | null,
+  service_icon_url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Create a team member and email them an invitation
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.users.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `timezone` | `string` | No | — |
+| `is_contractor` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `weekly_capacity` | `number` | No | — |
+| `default_hourly_rate` | `number` | No | — |
+| `cost_rate` | `number` | No | — |
+| `has_access_to_all_future_projects` | `boolean` | No | — |
+| `saml_exempt` | `boolean` | No | — |
+| `roles` | `string[]` | No | — |
+| `access_roles` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `telephone` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `has_access_to_all_future_projects` | `boolean` | No | — |
+| `is_contractor` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `saml_exempt` | `boolean` | No | — |
+| `weekly_capacity` | `number` | No | — |
+| `default_hourly_rate` | `number` | No | — |
+| `cost_rate` | `number` | No | — |
+| `roles` | `string[]` | No | — |
+| `access_roles` | `string[]` | No | — |
+| `avatar_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `employee_id` | `string` | No | — |
+| `calendar_integration_enabled` | `boolean` | No | — |
+| `calendar_integration_source` | `string` | No | — |
+| `can_create_projects` | `boolean` | No | — |
+| `permissions_claims` | `string[]` | No | — |
+
+
+
+---
+
+### delete
+
+`users.delete`
+
+Delete a team member
+
+**Risk:** `destructive`
+
+```ts
+await corsair.harvest.api.users.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`users.get`
+
+Get a team member by id
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `telephone` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `has_access_to_all_future_projects` | `boolean` | No | — |
+| `is_contractor` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `saml_exempt` | `boolean` | No | — |
+| `weekly_capacity` | `number` | No | — |
+| `default_hourly_rate` | `number` | No | — |
+| `cost_rate` | `number` | No | — |
+| `roles` | `string[]` | No | — |
+| `access_roles` | `string[]` | No | — |
+| `avatar_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `employee_id` | `string` | No | — |
+| `calendar_integration_enabled` | `boolean` | No | — |
+| `calendar_integration_source` | `string` | No | — |
+| `can_create_projects` | `boolean` | No | — |
+| `permissions_claims` | `string[]` | No | — |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List team members
+
+**Risk:** `read`
+
+```ts
+await corsair.harvest.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_active` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `updated_since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+| `per_page` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `total_entries` | `number` | No | — |
+| `next_page` | `number` | No | — |
+| `previous_page` | `number` | No | — |
+| `page` | `number` | No | — |
+| `links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: number,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  telephone?: string | null,
+  timezone?: string | null,
+  has_access_to_all_future_projects?: boolean | null,
+  is_contractor?: boolean | null,
+  is_active?: boolean | null,
+  saml_exempt?: boolean | null,
+  weekly_capacity?: number | null,
+  default_hourly_rate?: number | null,
+  cost_rate?: number | null,
+  roles?: string[] | null,
+  access_roles?: string[] | null,
+  avatar_url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  employee_id?: string | null,
+  calendar_integration_enabled?: boolean | null,
+  calendar_integration_source?: string | null,
+  can_create_projects?: boolean | null,
+  permissions_claims?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  next?: string | null,
+  previous?: string | null,
+  last?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`users.update`
+
+Update a team member
+
+**Risk:** `write`
+
+```ts
+await corsair.harvest.api.users.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `is_contractor` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `weekly_capacity` | `number` | No | — |
+| `default_hourly_rate` | `number` | No | — |
+| `cost_rate` | `number` | No | — |
+| `has_access_to_all_future_projects` | `boolean` | No | — |
+| `saml_exempt` | `boolean` | No | — |
+| `roles` | `string[]` | No | — |
+| `access_roles` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `telephone` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `has_access_to_all_future_projects` | `boolean` | No | — |
+| `is_contractor` | `boolean` | No | — |
+| `is_active` | `boolean` | No | — |
+| `saml_exempt` | `boolean` | No | — |
+| `weekly_capacity` | `number` | No | — |
+| `default_hourly_rate` | `number` | No | — |
+| `cost_rate` | `number` | No | — |
+| `roles` | `string[]` | No | — |
+| `access_roles` | `string[]` | No | — |
+| `avatar_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `employee_id` | `string` | No | — |
+| `calendar_integration_enabled` | `boolean` | No | — |
+| `calendar_integration_source` | `string` | No | — |
+| `can_create_projects` | `boolean` | No | — |
+| `permissions_claims` | `string[]` | No | — |
+
+
+
+---
+

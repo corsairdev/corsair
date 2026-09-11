@@ -1,0 +1,188 @@
+---
+title: Database
+description: "Browserless local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Browserless plugin syncs data locally. Use `corsair.browserless.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Cookies
+
+Path: `browserless.db.cookies.search`
+
+```ts
+const rows = await corsair.browserless.db.cookies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `value` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `path` | `string` | equals, contains, startsWith, endsWith, in |
+| `secure` | `boolean` | equals |
+| `httpOnly` | `boolean` | equals |
+| `expires` | `number` | equals, gt, gte, lt, lte, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Files
+
+Path: `browserless.db.files.search`
+
+```ts
+const rows = await corsair.browserless.db.files.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `base64` | `string` | equals, contains, startsWith, endsWith, in |
+| `contentType` | `string` | equals, contains, startsWith, endsWith, in |
+| `filename` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Html
+
+Path: `browserless.db.html.search`
+
+```ts
+const rows = await corsair.browserless.db.html.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `html` | `string` | equals, contains, startsWith, endsWith, in |
+| `contentType` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Scrape Groups
+
+Path: `browserless.db.scrapeGroups.search`
+
+```ts
+const rows = await corsair.browserless.db.scrapeGroups.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `selector` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Scrape Matches
+
+Path: `browserless.db.scrapeMatches.search`
+
+```ts
+const rows = await corsair.browserless.db.scrapeMatches.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `height` | `number` | equals, gt, gte, lt, lte, in |
+| `html` | `string` | equals, contains, startsWith, endsWith, in |
+| `left` | `number` | equals, gt, gte, lt, lte, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `top` | `number` | equals, gt, gte, lt, lte, in |
+| `width` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Scrape Results
+
+Path: `browserless.db.scrapeResults.search`
+
+```ts
+const rows = await corsair.browserless.db.scrapeResults.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Unblock Results
+
+Path: `browserless.db.unblockResults.search`
+
+```ts
+const rows = await corsair.browserless.db.unblockResults.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `content` | `string` | equals, contains, startsWith, endsWith, in |
+| `screenshot` | `string` | equals, contains, startsWith, endsWith, in |
+| `browserWSEndpoint` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

@@ -18,6 +18,7 @@
 		0 14px 80px 0 rgba(0, 0, 0, 0.26), 0 4px 12px 0 rgba(0, 0, 0, 0.08);
 	color: var(--landing-black);
 	font-family: var(--landing-font-sans);
+	color-scheme: only light;
 }
 
 .landing *,

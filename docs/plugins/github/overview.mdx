@@ -1,14 +1,14 @@
 ---
 title: Overview
-description: "Github plugin for Corsair"
+description: "Code hosting platform for repositories, issues, pull requests, and developer workflows."
 ---
 
-Use **Github** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+Use **GitHub** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
 - 52 typed API operations
-- 11 database entities synced for fast `.search()` / `.list()` queries
+- 11 synced entities (`branches`, `comments`, `discussions`, `events`, `forks`, `issues`, and 5 more) for fast `.search()` / `.list()`
 - 100 incoming webhook event types
 
 ## Setup
@@ -16,147 +16,185 @@ Use **Github** through Corsair: one client, typed API calls, optional local DB s
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/github
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/github
 ```
+```bash yarn
+yarn add corsair @corsair-dev/github
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/github
+```
+```bash bun
+bun add corsair @corsair-dev/github
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { github } from '@corsair-dev/github';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [github()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { github } from '@corsair-dev/github';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [github()],
+	plugins: [
+		github({
+			authType: 'managed',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/github/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=github
+<Tab title="Managed OAuth (Recommended)">
+
+No setup required. Corsair hosts the OAuth app for **GitHub** — your tenants connect through Hub when they sign in.
+
+Provider walkthrough: [Get Credentials](/plugins/github/get-credentials).
+
+```ts
+github({
+	authType: 'managed',
+})
 ```
 
-Use the key names documented in [Get Credentials](/plugins/github/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+More: [Managed OAuth](/concepts/auth#managed)
+
 </Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=github --tenant=<tenantId>
-```
+<Tab title="API Key">
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-</Step>
+Provider walkthrough: [Get Credentials](/plugins/github/get-credentials).
 
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="API Key (Default)">
-
-```ts corsair.ts
+```ts
 github()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=github` (see [Get Credentials](/plugins/github/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 <Tab title="OAuth 2.0">
 
-```ts corsair.ts
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your GitHub OAuth app.
+
+Provider walkthrough: [Get Credentials](/plugins/github/get-credentials).
+
+```ts
 github({
-    authType: 'oauth_2',
+	authType: 'oauth_2',
 })
 ```
-
-Store credentials with `pnpm corsair setup --plugin=github` (see [Get Credentials](/plugins/github/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [OAuth 2.0](/concepts/oauth)
 
 </Tab>
 </Tabs>
 
-## Webhooks
+</Step>
 
-This plugin registers **100** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-See [Webhooks](/plugins/github/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'github',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
 
+</Step>
 
-## Query synced data
-
-Synced entities support `corsair.github.db.<entity>.search()` and `.list()`. See [Database](/plugins/github/database) for filters and operators.
-
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `comments.get`
+**List repositories**
 
 ```ts
-await corsair.github.api.comments.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.repositories.list({});
 ```
 
 
-**Write-style (write):** `comments.delete`
+**Create an issue**
 
 ```ts
-await corsair.github.api.comments.delete({});
+const tenant = corsair.withTenant('acme');
+await tenant.github.api.issues.create({ owner: 'octocat', repo: 'hello-world', title: 'Found a bug' });
 ```
 
 
-See the full list on the [API](/plugins/github/api) page. Use `pnpm corsair list --plugin=github` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/github/api) page.
 
----
+## Query synced data
 
-## Hooks
+Search synced repositories without hitting GitHub.
 
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/github/webhooks) page for payload types.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.github.db.repositories.search({
+	data: {},
+	limit: 50,
+});
+```
 
----
+Synced entities: `branches`, `comments`, `discussions`, `events`, `forks`, `issues`, `pullRequests`, `releases`, `repositories`, `users`, `workflows`. See [Database](/plugins/github/database) for filters and operators.
 
-## Reference
+## Webhooks
 
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/github/api) |
-| Database | [Database](/plugins/github/database) |
-| Webhooks | [Webhooks](/plugins/github/webhooks) |
-| Credentials | [Get credentials](/plugins/github/get-credentials) |
+Fires when a GitHub issue is opened.
 
+```ts
+github({
+    webhookHooks: {
+        issue: {
+            opened: {
+                after: async (ctx, result) => {
+                    console.log('GitHub issue opened:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/github/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/github/api">
+    Every `github.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/github/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/github/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/github/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

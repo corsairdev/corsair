@@ -1,0 +1,50 @@
+import {
+	FaradayAccount,
+	FaradayCohort,
+	FaradayConnection,
+	FaradayDataset,
+	FaradayGraphEdge,
+	FaradayOutcome,
+	FaradayPersonaSet,
+	FaradayPlace,
+	FaradayScope,
+	FaradayStream,
+	FaradayTarget,
+	FaradayTrait,
+	FaradayWebhookEndpoint,
+} from './database';
+
+export const FaradaySchema = {
+	version: '1.0.0',
+	entities: {
+		accounts: FaradayAccount,
+		cohorts: FaradayCohort,
+		datasets: FaradayDataset,
+		streams: FaradayStream,
+		outcomes: FaradayOutcome,
+		personaSets: FaradayPersonaSet,
+		places: FaradayPlace,
+		scopes: FaradayScope,
+		targets: FaradayTarget,
+		traits: FaradayTrait,
+		connections: FaradayConnection,
+		webhookEndpoints: FaradayWebhookEndpoint,
+		graphEdges: FaradayGraphEdge,
+	},
+} as const;
+
+export {
+	FaradayAccount,
+	FaradayCohort,
+	FaradayConnection,
+	FaradayDataset,
+	FaradayGraphEdge,
+	FaradayOutcome,
+	FaradayPersonaSet,
+	FaradayPlace,
+	FaradayScope,
+	FaradayStream,
+	FaradayTarget,
+	FaradayTrait,
+	FaradayWebhookEndpoint,
+} from './database';
