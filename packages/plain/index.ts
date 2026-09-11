@@ -41,6 +41,12 @@ export type PlainPluginOptions = {
 	permissions?: PluginPermissionsConfig<typeof plainEndpointsNested>;
 };
 
+// JUSTIFY(as const, file-wide): the `as const` assertions below only narrow
+// object literals to readonly literal types so the corsair core generics
+// (`RequiredPluginEndpointSchemas`, `RequiredPluginEndpointMeta`,
+// `BindEndpoints`) resolve per-operation keys. They add type information;
+// they never reinterpret a value as an unrelated type the way `x as T` casts
+// do, and every one is checked by a `satisfies` clause.
 export const plainAuthConfig = {
 	api_key: {},
 } as const satisfies PluginAuthConfig;
@@ -343,6 +349,10 @@ export type ExternalPlainPlugin<T extends PlainPluginOptions> =
 	BasePlainPlugin<T>;
 
 export function plain<const T extends PlainPluginOptions>(
+	// JUSTIFY(as): `{}` is the empty-options default for the generic factory
+	// signature. The object literal carries no data, so no value's type is
+	// reinterpreted; the assertion only satisfies the generic default slot.
+	// This mirrors the factory pattern used by every corsair plugin.
 	incomingOptions: PlainPluginOptions & T = {} as PlainPluginOptions & T,
 ): ExternalPlainPlugin<T> {
 	const options = {

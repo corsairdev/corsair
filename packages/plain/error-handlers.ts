@@ -2,6 +2,12 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { PlainAPIError } from './client';
 
+// JUSTIFY(instanceof, file-wide): the `CorsairErrorHandler` contract hands
+// `match`/`handler` a plain `Error`. Distinguishing transport failures
+// (ApiError status codes) from GraphQL failures (PlainAPIError) requires
+// `instanceof` discrimination at this boundary. No values are cast; message
+// substring checks below are the fallback for errors that cross package
+// boundaries without their prototype.
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
@@ -34,7 +40,7 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
-		match: () => true,
+		match: (_error: Error) => true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;

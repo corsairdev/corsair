@@ -1,14 +1,26 @@
 import { z } from 'zod';
 
-const PageInfoSchema = z.object({
+// Schema source: live introspection of
+// https://core-api.uk.plain.com/graphql/v1/schema.graphql (fetched 2026-09-11)
+// plus https://www.plain.com/docs/graphql-reference. Every section below names
+// the exact schema type it mirrors. Deviations from the schema are marked
+// DEVIATION with a reason. No `unknown` appears in this file: open-ended JSON
+// uses `z.json()` (typed JSONValue) instead.
+
+// `type PageInfo` in schema.graphql.
+export const PageInfoSchema = z.object({
 	hasNextPage: z.boolean(),
 	hasPreviousPage: z.boolean(),
 	startCursor: z.string().nullable(),
 	endCursor: z.string().nullable(),
 });
 
-const UpsertResultSchema = z.enum(['CREATED', 'UPDATED', 'NOOP']);
+// `enum UpsertResult` in schema.graphql.
+export const UpsertResultSchema = z.enum(['CREATED', 'UPDATED', 'NOOP']);
 
+// `input UpsertCustomerIdentifierInput`: all fields nullable, exactly one set
+// (documented on `input CustomerIdentifierInput`: "Only one of the fields can
+// be set").
 const CustomerIdentifierInputSchema = z
 	.object({
 		externalId: z.string().optional(),
@@ -24,6 +36,10 @@ const CustomerIdentifierInputSchema = z
 		'Exactly one customer identifier must be set',
 	);
 
+// `input CompanyIdentifierInput`: both fields nullable, no exactly-one rule in
+// the schema; the exactly-one rule lives on `input UpsertCompanyInput`
+// (identifier is required there, one of the two sub-fields must locate the
+// company). Enforced here so bad input fails before the network call.
 const CompanyIdentifierInputSchema = z
 	.object({
 		companyId: z.string().optional(),
@@ -37,6 +53,7 @@ const CompanyIdentifierInputSchema = z
 		'Exactly one company identifier must be set',
 	);
 
+// `input CustomerGroupIdentifier` ("Provide exactly one field").
 const CustomerGroupIdentifierSchema = z
 	.object({
 		customerGroupId: z.string().optional(),
@@ -52,6 +69,7 @@ const CustomerGroupIdentifierSchema = z
 		'Exactly one customer group identifier must be set',
 	);
 
+// `input TenantIdentifierInput`: both fields nullable.
 const TenantIdentifierInputSchema = z
 	.object({
 		tenantId: z.string().optional(),
@@ -63,32 +81,57 @@ const TenantIdentifierInputSchema = z
 		'Exactly one tenant identifier must be set',
 	);
 
-const CustomerSchema = z
+// `input TierIdentifierInput`: both fields nullable, no exactly-one rule.
+const TierIdentifierInputSchema = z.object({
+	tierId: z.string().optional(),
+	externalId: z.string().optional(),
+});
+
+// `input EmailAddressInput`: both fields required by the schema.
+const EmailAddressInputSchema = z.object({
+	email: z.string().email(),
+	isVerified: z.boolean(),
+});
+
+// Subset of `type Customer` (id/externalId/fullName/shortName/email are all
+// selected verbatim). `email: EmailAddress!` is non-null in the schema, so it
+// is required here. `.loose()` tolerates future server-side additions.
+// Exported for the raw GraphQL envelope schemas in operations.ts.
+export const CustomerSchema = z
 	.object({
 		id: z.string(),
 		externalId: z.string().nullable().optional(),
 		fullName: z.string(),
 		shortName: z.string().nullable().optional(),
-		email: z
-			.object({
-				email: z.string(),
-				isVerified: z.boolean(),
-			})
-			.optional(),
+		email: z.object({
+			email: z.string(),
+			isVerified: z.boolean(),
+		}),
 	})
 	.loose();
 
-const ThreadSummarySchema = z
+// Subset of `type Thread`. `ref: String!`, `status: ThreadStatus!` and
+// `priority: Int!` are non-null in the schema, so they are required here.
+// Status stays a string (not an enum) because the schema documents TODO /
+// SNOOZED / DONE today and string parsing stays forward-compatible if Plain
+// adds values. Priority 0 = urgent … 3 = low per the Thread type docs.
+// Exported for the raw GraphQL envelope schemas in operations.ts.
+export const ThreadSummarySchema = z
 	.object({
 		id: z.string(),
-		ref: z.string().optional(),
+		ref: z.string(),
 		title: z.string(),
-		status: z.string().optional(),
-		priority: z.number().int().optional(),
+		status: z.string(),
+		priority: z.number().int(),
 	})
 	.loose();
 
-const ThreadLinkSchema = z
+// Subset of `interface ThreadLink` (id/threadId/sourceId/sourceType/title/url/
+// status/linkType non-null; description nullable). Status and linkType stay
+// strings for the same forward-compatibility reason as Thread.status; the
+// schema enums are `enum ThreadLinkStatus` and `enum ThreadLinkLinkType`.
+// Exported for the raw GraphQL envelope schemas in operations.ts.
+export const ThreadLinkSchema = z
 	.object({
 		id: z.string(),
 		sourceId: z.string(),
@@ -101,34 +144,45 @@ const ThreadLinkSchema = z
 	})
 	.loose();
 
+// Subset of `type User`. `publicName: String!`, `email: String!` and
+// `isDeleted: Boolean!` are non-null in the schema, so they are required here.
 const UserSchema = z
 	.object({
 		id: z.string(),
 		fullName: z.string(),
-		publicName: z.string().optional(),
+		publicName: z.string(),
 		email: z.string(),
 		isDeleted: z.boolean().optional(),
 	})
 	.loose();
 
+// Subset of `type Company`. `domainName: String!` is non-null in the schema.
+// `contractValue: Int` is annual value in cents, nullable when unset.
 const CompanySchema = z
 	.object({
 		id: z.string(),
 		name: z.string(),
-		domainName: z.string().optional(),
+		domainName: z.string(),
 		contractValue: z.number().int().nullable().optional(),
 	})
 	.loose();
 
-const TierSchema = z
+// Subset of `type Tier`. The schema Tier has NO `description` field, so this
+// selects id/name/externalId/color/isDefault verbatim from the schema.
+// Exported for the raw GraphQL envelope schemas in operations.ts.
+export const TierSchema = z
 	.object({
 		id: z.string(),
 		name: z.string(),
-		description: z.string().nullable().optional(),
+		externalId: z.string().nullable().optional(),
+		color: z.string().optional(),
+		isDefault: z.boolean().optional(),
 	})
 	.loose();
 
-const CustomerGroupSchema = z
+// Full scalar surface of `type CustomerGroup` (externalId nullable).
+// Exported for the raw GraphQL envelope schemas in operations.ts.
+export const CustomerGroupSchema = z
 	.object({
 		id: z.string(),
 		name: z.string(),
@@ -138,13 +192,26 @@ const CustomerGroupSchema = z
 	})
 	.loose();
 
-const CustomerGroupMembershipSchema = z
+// `type CustomerGroupMembership`: customerId/customerGroup non-null.
+// Exported for the raw GraphQL envelope schemas in operations.ts.
+export const CustomerGroupMembershipSchema = z
 	.object({
 		customerId: z.string(),
 		customerGroup: CustomerGroupSchema,
 	})
 	.loose();
 
+// `type MutationError`: message/code non-null when an error is present.
+// Exported for the mutation-payload error check in operations.ts.
+export const MutationErrorSchema = z
+	.object({
+		message: z.string(),
+		code: z.string(),
+	})
+	.loose();
+
+// `input CustomersFilter` in schema.graphql (only documented fields; object
+// stays loose for future filter additions).
 const CustomersFilterSchema = z
 	.object({
 		isMarkedAsSpam: z.boolean().optional(),
@@ -156,6 +223,10 @@ const CustomersFilterSchema = z
 	})
 	.loose();
 
+// `input ThreadsSort` + `enum ThreadsSortField` + `enum SortDirection`.
+// `enum ThreadsSortField` =
+// STATUS_CHANGED_AT | CREATED_AT | CLOSEST_TO_BREACH_SLA |
+// LAST_INBOUND_MESSAGE_AT | PRIORITY | THREAD_FIELD.
 const ThreadsSortSchema = z
 	.object({
 		field: z.enum([
@@ -171,24 +242,87 @@ const ThreadsSortSchema = z
 	})
 	.loose();
 
-function rejectMixedPaginationControls<T extends z.ZodRawShape>(
-	schema: z.ZodObject<T>,
-) {
-	return schema.superRefine((value, ctx) => {
-		const hasForward =
-			typeof (value as Record<string, unknown>).first === 'number' ||
-			typeof (value as Record<string, unknown>).after === 'string';
-		const hasReverse =
-			typeof (value as Record<string, unknown>).last === 'number' ||
-			typeof (value as Record<string, unknown>).before === 'string';
-		if (hasForward && hasReverse) {
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				message:
-					'Cannot mix forward (first/after) and reverse (last/before) pagination controls',
-			});
-		}
-	});
+// Explicit subset of `input ThreadsFilter` in schema.graphql. The schema input
+// has ~25 fields; the complex nested ones (threadFields, statusChangedAt,
+// createdAt, serviceLevelAgreements, threadLinkSources, …) are intentionally
+// left to `.loose()` passthrough and validated server-side, which is stated
+// here instead of guessed.
+const ThreadsFilterSchema = z
+	.object({
+		threadIds: z.array(z.string()).optional(),
+		refs: z.array(z.string()).optional(),
+		labelTypeIds: z.array(z.string()).optional(),
+		priorities: z.array(z.number().int()).optional(),
+		customerIds: z.array(z.string()).optional(),
+		isAssigned: z.boolean().optional(),
+		assignedToUser: z.array(z.string()).optional(),
+		isMarkedAsSpam: z.boolean().optional(),
+		supportEmailAddresses: z.array(z.string()).optional(),
+		customerGroupIdentifiers: z
+			.array(CustomerGroupIdentifierSchema)
+			.optional(),
+		tierIdentifiers: z.array(TierIdentifierInputSchema).optional(),
+		companyIdentifiers: z.array(CompanyIdentifierInputSchema).optional(),
+		tenantIdentifiers: z.array(TenantIdentifierInputSchema).optional(),
+		messageSource: z
+			.array(
+				z.enum([
+					'CHAT',
+					'EMAIL',
+					'API',
+					'SLACK',
+					'MS_TEAMS',
+					'DISCORD',
+					'INTERNAL',
+				]),
+			)
+			.optional(),
+		participantIds: z.array(z.string()).optional(),
+		broadcastIds: z.array(z.string()).optional(),
+		statuses: z.array(z.enum(['TODO', 'SNOOZED', 'DONE'])).optional(),
+	})
+	.loose();
+
+// `input CreateThreadFieldOnThreadInput` + `enum ThreadFieldSchemaType`
+// (STRING | BOOL | ENUM | NUMBER | CURRENCY | DATE).
+const ThreadFieldOnThreadInputSchema = z.object({
+	key: z.string(),
+	type: z.enum(['STRING', 'BOOL', 'ENUM', 'NUMBER', 'CURRENCY', 'DATE']),
+	stringValue: z.string().optional(),
+	booleanValue: z.boolean().optional(),
+	numberValue: z.number().optional(),
+	dateValue: z.string().optional(),
+});
+
+// Cursor-pagination guard shared by every paginated input. Typed on the
+// pagination fields themselves (not on `unknown`), so no casts are needed to
+// read them. Forward = first/after, reverse = last/before; mixing both
+// directions is rejected because the Plain connections honor one direction
+// per call (`customers(...)`, `threads(...)`, `tiers(...)`,
+// `customerGroups(...)` in schema.graphql).
+type PaginationControls = {
+	readonly first?: number;
+	readonly after?: string;
+	readonly last?: number;
+	readonly before?: string;
+};
+
+function hasMixedPaginationControls(value: PaginationControls): boolean {
+	const hasForward =
+		value.first !== undefined || value.after !== undefined;
+	const hasReverse = value.last !== undefined || value.before !== undefined;
+	return hasForward && hasReverse;
+}
+
+function mixedPaginationIssue(): {
+	code: typeof z.ZodIssueCode.custom;
+	message: string;
+} {
+	return {
+		code: z.ZodIssueCode.custom,
+		message:
+			'Cannot mix forward (first/after) and reverse (last/before) pagination controls',
+	};
 }
 
 const GetCustomerByIdInputSchema = z.object({
@@ -199,11 +333,12 @@ const GetCustomerByEmailInputSchema = z.object({
 	email: z.string().email(),
 });
 
-const GetCustomersInputSchema = rejectMixedPaginationControls(
-	z.object({
+const GetCustomersInputSchema = z
+	.object({
 		filters: CustomersFilterSchema.optional(),
 		sortBy: z
 			.object({
+				// `enum CustomersSortField` has exactly one value: FULL_NAME.
 				field: z.enum(['FULL_NAME']),
 				direction: z.enum(['ASC', 'DESC']),
 			})
@@ -212,9 +347,15 @@ const GetCustomersInputSchema = rejectMixedPaginationControls(
 		after: z.string().optional(),
 		last: z.number().int().positive().max(100).optional(),
 		before: z.string().optional(),
-	}),
-);
+	})
+	.superRefine((value, ctx) => {
+		if (hasMixedPaginationControls(value)) {
+			ctx.addIssue(mixedPaginationIssue());
+		}
+	});
 
+// `input UpsertCustomerInput` in schema.graphql. `onCreate.email` is
+// `EmailAddressInput!` (required) in the schema, mirrored here.
 const UpsertCustomerInputSchema = z.object({
 	identifier: CustomerIdentifierInputSchema,
 	onCreate: z
@@ -222,7 +363,7 @@ const UpsertCustomerInputSchema = z.object({
 			externalId: z.string().optional(),
 			fullName: z.string(),
 			shortName: z.string().optional(),
-			email: z.object({ email: z.string().email() }).optional(),
+			email: EmailAddressInputSchema,
 			customerGroupIdentifiers: z
 				.array(CustomerGroupIdentifierSchema)
 				.max(25)
@@ -239,11 +380,12 @@ const UpsertCustomerInputSchema = z.object({
 			shortName: z
 				.object({ value: z.string().nullable().optional() })
 				.optional(),
-			email: z.object({ email: z.string().email() }).optional(),
+			email: EmailAddressInputSchema.optional(),
 		})
 		.loose(),
 });
 
+// `input DeleteCustomerInput`: customerId required.
 const DeleteCustomerInputSchema = z.object({
 	customerId: z.string(),
 });
@@ -252,17 +394,24 @@ const GetThreadByIdInputSchema = z.object({
 	threadId: z.string(),
 });
 
-const QueryThreadsInputSchema = rejectMixedPaginationControls(
-	z.object({
-		filters: z.record(z.string(), z.unknown()).optional(),
+const QueryThreadsInputSchema = z
+	.object({
+		filters: ThreadsFilterSchema.optional(),
 		sortBy: ThreadsSortSchema.optional(),
 		first: z.number().int().positive().max(100).optional(),
 		after: z.string().optional(),
 		last: z.number().int().positive().max(100).optional(),
 		before: z.string().optional(),
-	}),
-);
+	})
+	.superRefine((value, ctx) => {
+		if (hasMixedPaginationControls(value)) {
+			ctx.addIssue(mixedPaginationIssue());
+		}
+	});
 
+// `threads(first/after/last/before)` nested under `customer(customerId:)` plus
+// `links(first:)` on `type Thread`. Same forward/reverse guard as above, on
+// the thread* control names.
 const FetchIssuesInputSchema = z
 	.object({
 		customerId: z.string(),
@@ -274,11 +423,9 @@ const FetchIssuesInputSchema = z
 	})
 	.superRefine((value, ctx) => {
 		const hasForward =
-			typeof value.threadFirst === 'number' ||
-			typeof value.threadAfter === 'string';
+			value.threadFirst !== undefined || value.threadAfter !== undefined;
 		const hasReverse =
-			typeof value.threadLast === 'number' ||
-			typeof value.threadBefore === 'string';
+			value.threadLast !== undefined || value.threadBefore !== undefined;
 		if (hasForward && hasReverse) {
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
@@ -288,6 +435,11 @@ const FetchIssuesInputSchema = z
 		}
 	});
 
+// `input ReplyToThreadInput` in schema.graphql. `channelSpecificOptions` is
+// omitted: its shape is channel-dependent and out of scope for this plugin;
+// the server rejects misuse. `impersonation` mirrors
+// `input ImpersonationInput` (`asCustomer` wrapping
+// `input CustomerImpersonationInput`, which holds CustomerIdentifierInput).
 const SendMessageInputSchema = z.object({
 	threadId: z.string(),
 	textContent: z.string().min(1),
@@ -302,13 +454,17 @@ const SendMessageInputSchema = z.object({
 		.optional(),
 });
 
+// `input CreateThreadInput` in schema.graphql. Deprecated `components` /
+// `attachmentIds` are not exposed. `channelDetails` (required only for SLACK /
+// MS_TEAMS channels) is omitted — noted here instead of guessed. `channel`
+// mirrors `enum ThreadChannel` (all 8 values).
 const CreateThreadInputSchema = z.object({
 	customerIdentifier: CustomerIdentifierInputSchema,
 	title: z.string().optional(),
 	description: z.string().optional(),
 	priority: z.number().int().min(0).max(3).optional(),
 	labelTypeIds: z.array(z.string()).optional(),
-	threadFields: z.array(z.record(z.string(), z.unknown())).optional(),
+	threadFields: z.array(ThreadFieldOnThreadInputSchema).optional(),
 	assignedTo: z
 		.object({
 			userId: z.string().optional(),
@@ -318,10 +474,20 @@ const CreateThreadInputSchema = z.object({
 	externalId: z.string().optional(),
 	tenantIdentifier: TenantIdentifierInputSchema.optional(),
 	channel: z
-		.enum(['API', 'EMAIL', 'SLACK', 'MS_TEAMS', 'CHAT', 'INTERNAL'])
+		.enum([
+			'API',
+			'EMAIL',
+			'SLACK',
+			'MS_TEAMS',
+			'CHAT',
+			'INTERNAL',
+			'DISCORD',
+			'IMPORT',
+		])
 		.optional(),
 });
 
+// `input UpdateThreadTitleInput`: threadId + title required.
 const UpdateThreadInputSchema = z.object({
 	threadId: z.string(),
 	title: z.string().min(1),
@@ -331,6 +497,7 @@ const GetUserByIdInputSchema = z.object({
 	userId: z.string(),
 });
 
+// `input DeleteUserInput`: userId required.
 const DeleteUserInputSchema = z.object({
 	userId: z.string(),
 });
@@ -339,6 +506,8 @@ const FetchCompanyInputSchema = z.object({
 	companyId: z.string(),
 });
 
+// `input UpsertCompanyInput`: identifier/name/domainName required,
+// contractValue is an Int (cents), accountOwnerUserId an ID.
 const UpdateCompanyInputSchema = z.object({
 	identifier: CompanyIdentifierInputSchema,
 	name: z.string(),
@@ -351,15 +520,22 @@ const FetchTierInputSchema = z.object({
 	tierId: z.string(),
 });
 
-const ListTiersInputSchema = rejectMixedPaginationControls(
-	z.object({
+// `tiers(first/after/last/before)` in schema.graphql.
+const ListTiersInputSchema = z
+	.object({
 		first: z.number().int().positive().max(100).optional(),
 		after: z.string().optional(),
 		last: z.number().int().positive().max(100).optional(),
 		before: z.string().optional(),
-	}),
-);
+	})
+	.superRefine((value, ctx) => {
+		if (hasMixedPaginationControls(value)) {
+			ctx.addIssue(mixedPaginationIssue());
+		}
+	});
 
+// `input CreateCustomerGroupInput`: name/key/color required, externalId
+// optional.
 const CreateCustomerGroupInputSchema = z.object({
 	name: z.string().min(1),
 	key: z.string().min(1),
@@ -367,8 +543,10 @@ const CreateCustomerGroupInputSchema = z.object({
 	externalId: z.string().optional(),
 });
 
-const ListCustomerGroupsInputSchema = rejectMixedPaginationControls(
-	z.object({
+// `customerGroups(filters/first/after/last/before)`; `input
+// CustomerGroupsFilter` holds only `externalIds: [String!]`.
+const ListCustomerGroupsInputSchema = z
+	.object({
 		filters: z
 			.object({
 				externalIds: z.array(z.string()).optional(),
@@ -378,9 +556,14 @@ const ListCustomerGroupsInputSchema = rejectMixedPaginationControls(
 		after: z.string().optional(),
 		last: z.number().int().positive().max(100).optional(),
 		before: z.string().optional(),
-	}),
-);
+	})
+	.superRefine((value, ctx) => {
+		if (hasMixedPaginationControls(value)) {
+			ctx.addIssue(mixedPaginationIssue());
+		}
+	});
 
+// `input AddCustomerToCustomerGroupsInput`: docs cap at 25 groups per call.
 const AddCustomerToGroupInputSchema = z.object({
 	customerId: z.string(),
 	customerGroupIdentifiers: z
@@ -389,6 +572,7 @@ const AddCustomerToGroupInputSchema = z.object({
 		.max(25),
 });
 
+// `input RemoveCustomerFromCustomerGroupsInput`: same shape.
 const RemoveCustomerFromGroupInputSchema = z.object({
 	customerId: z.string(),
 	customerGroupIdentifiers: z
@@ -397,9 +581,12 @@ const RemoveCustomerFromGroupInputSchema = z.object({
 		.max(25),
 });
 
+// `variables` uses `z.json()` (typed JSON, not `unknown`): GraphQL variables
+// are arbitrary JSON by definition (see API introduction docs: `variables` is
+// "a JSON object of variables").
 const RunGraphqlQueryInputSchema = z.object({
 	query: z.string().min(1),
-	variables: z.record(z.string(), z.unknown()).optional(),
+	variables: z.record(z.string(), z.json()).optional(),
 	operationName: z.string().optional(),
 });
 
@@ -546,10 +733,15 @@ const RemoveCustomerFromGroupResponseSchema = z
 	})
 	.loose();
 
-const RunGraphqlQueryResponseSchema = z
-	.unknown()
-	.transform((data) => ({ data }));
+// The wrapped `{ data }` envelope for arbitrary GraphQL results. `z.json()`
+// (not `z.unknown()`) because a GraphQL `data` payload is JSON by definition.
+const RunGraphqlQueryResponseSchema = z.json().transform((data) => ({ data }));
 
+// JUSTIFY(as const): registry objects need readonly literal keys so the
+// `PlainEndpointInputs` / `PlainEndpointOutputs` mapped types and the
+// `RequiredPluginEndpointSchemas` check in index.ts resolve per-operation.
+// `as const` only narrows literals here; it never reinterprets a value's type
+// the way a value cast (`x as T`) does.
 export const PlainEndpointInputSchemas = {
 	getCustomerById: GetCustomerByIdInputSchema,
 	getCustomerByEmail: GetCustomerByEmailInputSchema,
