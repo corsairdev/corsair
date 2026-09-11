@@ -193,6 +193,7 @@ export const BaseProviders = [
 	'htmltoimage',
 	'hubspot',
 	'huggingface',
+	'imagior',
 	'imgbb',
 	'insightoai',
 	'instagram',
@@ -479,6 +480,7 @@ export const ProviderDisplayNames = {
 	htmltoimage: 'HtmlToImage',
 	hubspot: 'HubSpot',
 	huggingface: 'Hugging Face',
+	imagior: 'Imagior',
 	imgbb: 'ImgBB',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
@@ -772,6 +774,7 @@ export type AllProviders =
 	| 'htmltoimage'
 	| 'hubspot'
 	| 'huggingface'
+	| 'imagior'
 	| 'imgbb'
 	| 'insightoai'
 	| 'instagram'
