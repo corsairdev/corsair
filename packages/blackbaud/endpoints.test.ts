@@ -206,7 +206,27 @@ describe('Blackbaud endpoints', () => {
 				member_junction_id: 'missing',
 			}),
 		).rejects.toThrow('absence beyond that range is unknown');
-		expect(mockRequest).toHaveBeenCalledTimes(20);
+		// 20 full pages plus the confirmatory fetch, which is also full here
+		// so records genuinely remain beyond the cap.
+		expect(mockRequest).toHaveBeenCalledTimes(21);
+	});
+
+	it('listMemberships reports absence when exactly 10,000 memberships were scanned', async () => {
+		const fullPage = Array.from({ length: 500 }, (_, index) => ({
+			id: `m${index}`,
+		}));
+		for (let page = 0; page < 20; page++) {
+			mockRequest.mockResolvedValueOnce({ count: 10000, value: fullPage });
+		}
+		mockRequest.mockResolvedValueOnce({ count: 10000, value: [] });
+
+		const result = await listMemberships(testCtx(), {
+			constituent_id: 'c1',
+			member_junction_id: 'missing',
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(21);
+		expect(result).toEqual({ count: 0, value: [] });
 	});
 
 	it('listMemberships confines the constituent id to one path segment', async () => {
