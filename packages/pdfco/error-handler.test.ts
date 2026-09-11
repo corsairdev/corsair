@@ -52,11 +52,11 @@ describe('Pdfco error handlers', () => {
 		expect(classify(new Error('some unexpected failure'))).toBe('DEFAULT');
 	});
 
-	it('retries rate limits with backoff and never retries auth failures', async () => {
+	it('does not re-execute rate-limited endpoints (transport owns 429 retries) and never retries auth failures', async () => {
 		const rateLimited = await errorHandlers.RATE_LIMIT_ERROR.handler(
 			apiError(429),
 		);
-		expect(rateLimited.maxRetries).toBe(5);
+		expect(rateLimited.maxRetries).toBe(0);
 		const auth = await errorHandlers.AUTH_ERROR.handler();
 		expect(auth.maxRetries).toBe(0);
 	});

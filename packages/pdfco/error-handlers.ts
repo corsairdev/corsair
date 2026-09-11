@@ -16,12 +16,15 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
+		// No framework-level re-execution: the transport already retries
+		// 429s with backoff (PDFCO_RATE_LIMIT_CONFIG), so retrying here
+		// would multiply attempts. Same split as the boxhero reference.
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
 			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {

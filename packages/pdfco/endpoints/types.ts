@@ -8,17 +8,34 @@ export type PdfcoEndpointContext = {
 	readonly key: string;
 };
 
-// `profiles` values across PDF.co docs are strings, numbers, or booleans
-// (for example `{ 'Angle': 3 }` or `{ 'FlattenDocument()': [] }` is expressed
-// with booleans). Arrays are not part of any documented profile value, so a
-// precise union covers every documented case without `unknown`.
-const PdfcoProfileValueSchema = z.union([z.string(), z.number(), z.boolean()]);
+// Recursive JSON value: PDF.co documents `profiles` as an object with
+// nested values (arrays like ExtractionArea, nested objects) or as a
+// serialized JSON string. The recursive union covers both shapes
+// without `unknown` or `any`.
+export type PdfcoJsonValue =
+	| string
+	| number
+	| boolean
+	| null
+	| PdfcoJsonValue[]
+	| { [key: string]: PdfcoJsonValue };
+
+const PdfcoJsonValueSchema: z.ZodType<PdfcoJsonValue> = z.lazy(() =>
+	z.union([
+		z.string(),
+		z.number(),
+		z.boolean(),
+		z.null(),
+		z.array(PdfcoJsonValueSchema),
+		z.record(z.string(), PdfcoJsonValueSchema),
+	]),
+);
 
 const PdfcoProfilesSchema = z
-	.record(z.string(), PdfcoProfileValueSchema)
+	.union([z.string(), z.record(z.string(), PdfcoJsonValueSchema)])
 	.optional()
 	.describe(
-		'Advanced profiles object, see https://developer.pdf.co/api/profiles',
+		'Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles',
 	);
 
 const PdfcoAsyncSchema = z
@@ -641,11 +658,15 @@ const PdfSearchAndReplaceTextInputSchema = z
 	})
 	.refine(
 		(value) =>
-			(value.searchString !== undefined && value.replaceString !== undefined) ||
-			(value.searchStrings !== undefined && value.replaceStrings !== undefined),
+			(value.searchString !== undefined &&
+				value.replaceString !== undefined) ||
+			(value.searchStrings !== undefined &&
+				value.replaceStrings !== undefined &&
+				value.searchStrings.length > 0 &&
+				value.searchStrings.length === value.replaceStrings.length),
 		{
 			message:
-				'Provide searchString with replaceString, or searchStrings with replaceStrings',
+				'Provide searchString with replaceString, or non-empty searchStrings with equal-length replaceStrings',
 		},
 	);
 
@@ -843,9 +864,8 @@ const DocumentParserInputSchema = z.object({
 });
 
 const DocumentParserBodySchema = z.object({
-	objects: z
-		.array(z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])))
-		.optional(),
+	objects: z.array(z.record(z.string(), PdfcoJsonValueSchema)).optional(),
+	elapsed: z.number().optional(),
 	templateName: z.string().optional(),
 	templateVersion: z.string().optional(),
 	timestamp: z.string().optional(),
