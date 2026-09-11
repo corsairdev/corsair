@@ -86,6 +86,24 @@ describe('resolveCall — resolution', () => {
 		).rejects.toMatchObject({ status: 404, code: 'unknown_op' });
 	});
 
+	it('inherited/prototype ops → 404 unknown_op (own-property only)', async () => {
+		const corsair = { github: { api: { issues: { create: () => {} } } } };
+		for (const op of [
+			'constructor',
+			'toString',
+			'__proto__.constructor',
+			'issues.constructor',
+		]) {
+			await expect(
+				resolveCall(corsair, internalWith([{ id: 'github' }]), {
+					plugin: 'github',
+					op,
+					args: {},
+				}),
+			).rejects.toMatchObject({ status: 404, code: 'unknown_op' });
+		}
+	});
+
 	it('G2: concurrent same-tenant calls build the client once (shared key-manager)', async () => {
 		const create = jest.fn(async () => ({}));
 		const withTenant = jest.fn(() => ({
@@ -207,10 +225,22 @@ describe('resolveCall — error normalization', () => {
 		}
 	});
 
-	it('unknown throw → 500 internal_error', async () => {
-		await expect(
-			callGh(corsairThrowing(new Error('weird'))),
-		).rejects.toMatchObject({ status: 500, code: 'internal_error' });
+	it('unknown throw → 500 internal_error with a generic message (no detail leak, original logged)', async () => {
+		const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+		try {
+			await callGh(corsairThrowing(new Error('db-host:5432 password=hunter2')));
+			throw new Error('expected throw');
+		} catch (e) {
+			const mErr = e as ManagementApiError;
+			expect(mErr.status).toBe(500);
+			expect(mErr.code).toBe('internal_error');
+			expect(mErr.message).toBe('Internal error');
+			const serialized = JSON.stringify(await errorResponse(mErr).json());
+			expect(serialized).not.toContain('hunter2');
+			expect(spy).toHaveBeenCalled(); // original retained for server-side diagnostics
+		} finally {
+			spy.mockRestore();
+		}
 	});
 });
 
@@ -312,6 +342,25 @@ describe('managementHandler — authenticate hook', () => {
 			new Request('http://x/api/corsair/ok', { method: 'GET' }),
 		);
 		expect(res.status).toBe(200);
+	});
+
+	it('/call honors resolveTenant: null → 401 unauthenticated (no cross-tenant bypass)', async () => {
+		const corsair = createCorsair({ plugins: [githubStub], kek: 'k' } as any);
+		const handler = managementHandler(corsair, {
+			authenticate: () => true,
+			resolveTenant: () => null,
+		});
+		const res = await handler(
+			new Request('http://x/api/corsair/t1/github/call/issues.create', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({ args: {} }),
+			}),
+		);
+		expect(res.status).toBe(401);
+		expect((await readJson<{ error: string }>(res)).error).toBe(
+			'unauthenticated',
+		);
 	});
 
 	it('supplying authenticate enables /call without unsafeAllowUnauthenticated', async () => {

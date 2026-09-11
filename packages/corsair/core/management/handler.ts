@@ -330,13 +330,24 @@ const ROUTES: Route[] = [
 	{
 		method: 'POST',
 		pattern: '/:tenant/:plugin/call/:op',
-		handler: async ({ corsair, internal, params, body, allowCall }) => {
+		handler: async ({
+			corsair,
+			internal,
+			params,
+			body,
+			scopedTenant,
+			allowCall,
+		}) => {
 			if (!allowCall) throw callDisabled();
 			const input = (body ?? {}) as { args?: unknown };
+			// The URL tenant is client-controlled; when resolveTenant is configured
+			// the resolver's value is authoritative (and null → 401), same as every
+			// other tenant-taking route. No resolver → the URL value is trusted.
+			const tenant = resolveScopedTenant(scopedTenant, params.tenant);
 			const data = await resolveCall(corsair, internal, {
 				plugin: params.plugin!,
 				op: params.op!,
-				tenant: params.tenant!,
+				tenant,
 				args: input.args,
 			});
 			return json(200, { data });

@@ -78,17 +78,21 @@ function normalizeCallError(err: unknown, plugin: string): ManagementApiError {
 		const e = err as { status?: number; body?: unknown };
 		return providerError(typeof e.status === 'number' ? e.status : 502, e.body);
 	}
-	return new ManagementApiError(
-		500,
-		'internal_error',
-		err instanceof Error ? err.message : 'Internal error',
-	);
+	// Never surface an arbitrary operation error's message — it can carry
+	// internal hosts, config, or credential-bearing text (CWE-209). Keep the
+	// original for server-side diagnostics; return a fixed public message.
+	console.error('[corsair] unhandled error in call operation', err);
+	return new ManagementApiError(500, 'internal_error', 'Internal error');
 }
 
 // Per-(corsair instance, tenant) client cache: concurrent same-tenant calls
 // share ONE client → ONE key-manager → ONE refresh single-flight store, so a
 // burst can't double-refresh and stale-write the rotating refresh_token.
 const clientCacheByCorsair = new WeakMap<object, Map<string, unknown>>();
+// LRU cap — the URL tenant is unbounded in cardinality, so evict the
+// least-recently-used client past this size. Hot tenants keep their shared
+// client (refresh single-flight); idle ones just rebuild on next use.
+const MAX_TENANT_CLIENTS = 512;
 
 function resolveClient(
 	corsair: unknown,
@@ -108,11 +112,19 @@ function resolveClient(
 		clientCacheByCorsair.set(corsair as object, cache);
 	}
 	const cached = cache.get(tenantId);
-	if (cached) return cached;
+	if (cached) {
+		cache.delete(tenantId); // LRU: move to most-recently-used
+		cache.set(tenantId, cached);
+		return cached;
+	}
 	const client = (corsair as { withTenant: (t: string) => unknown }).withTenant(
 		tenantId,
 	);
 	cache.set(tenantId, client);
+	if (cache.size > MAX_TENANT_CLIENTS) {
+		const oldest = cache.keys().next().value;
+		if (oldest !== undefined) cache.delete(oldest);
+	}
 	return client;
 }
 
@@ -120,6 +132,9 @@ function walkToBoundFn(apiTree: unknown, op: string): Function | null {
 	let node: unknown = apiTree;
 	for (const seg of op.split('.')) {
 		if (node == null || typeof node !== 'object') return null;
+		// Own-property only: never traverse into inherited members, or ops like
+		// `constructor` / `__proto__.constructor` would resolve to Object methods.
+		if (!Object.prototype.hasOwnProperty.call(node, seg)) return null;
 		node = (node as Record<string, unknown>)[seg];
 	}
 	return typeof node === 'function' ? (node as Function) : null;
