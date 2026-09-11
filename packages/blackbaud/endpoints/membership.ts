@@ -102,6 +102,19 @@ async function searchMembershipPages(
 		}
 		offset += SEARCH_PAGE_SIZE;
 	}
+	// Edge case: an exact multiple of the page size (e.g. exactly 10,000
+	// memberships) fills every page, so the loop above cannot see the
+	// terminating short/empty page. One confirmatory fetch decides: an empty
+	// (or short) page proves the whole collection was scanned and the
+	// junction is truly absent; a full page proves records remain beyond the
+	// cap and absence there is still unknown.
+	const tail = await fetchMembershipPage(ctx, input, {
+		limit: SEARCH_PAGE_SIZE,
+		offset,
+	});
+	if (tail.value.length < SEARCH_PAGE_SIZE) {
+		return [];
+	}
 	throw new BlackbaudAPIError(
 		`member_junction_id '${junctionId}' not found within the first ${MAX_SEARCH_PAGES * SEARCH_PAGE_SIZE} memberships for constituent '${input.constituent_id}'; absence beyond that range is unknown`,
 		{ code: 'SEARCH_RANGE_EXCEEDED' },
