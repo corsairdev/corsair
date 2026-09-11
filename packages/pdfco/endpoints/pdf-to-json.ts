@@ -1,21 +1,30 @@
-import type { PdfToJsonInput, PdfToJsonResponse } from './types';
-import type { PdfcoContext } from '../index';
 import { makePdfcoRequest } from '../client';
+import type {
+	PdfcoEndpointContext,
+	PdfToJsonInput,
+	PdfToJsonResponse,
+} from './types';
+import { PdfcoEndpointInputSchemas, PdfcoEndpointOutputSchemas } from './types';
 
 export async function pdfToJson(
-	ctx: PdfcoContext,
+	ctx: PdfcoEndpointContext,
 	input: PdfToJsonInput,
 ): Promise<PdfToJsonResponse> {
-	const key = ctx.key;
-	
+	const args = PdfcoEndpointInputSchemas.pdfToJson.parse(input);
 	return await makePdfcoRequest<PdfToJsonResponse>(
-		'/pdf/convert/to/json',
-		key,
+		'/v1/pdf/convert/to/json',
+		ctx.key,
 		{
-			method: 'POST',
+			schema: PdfcoEndpointOutputSchemas.pdfToJson,
 			body: {
-				url: input.url,
-				inline: input.inline,
+				url: args.url,
+				pages: args.pages,
+				inline: args.inline,
+				password: args.password,
+				async: args.async,
+				name: args.name,
+				expiration: args.expiration,
+				profiles: args.profiles,
 			},
 		},
 	);

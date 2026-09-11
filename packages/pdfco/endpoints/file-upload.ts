@@ -1,21 +1,24 @@
-import type { FileUploadInput, FileUploadResponse } from './types';
-import type { PdfcoContext } from '../index';
 import { makePdfcoRequest } from '../client';
+import type {
+	FileUploadInput,
+	FileUploadResponse,
+	PdfcoEndpointContext,
+} from './types';
+import { PdfcoEndpointInputSchemas, PdfcoEndpointOutputSchemas } from './types';
 
 export async function fileUpload(
-	ctx: PdfcoContext,
+	ctx: PdfcoEndpointContext,
 	input: FileUploadInput,
 ): Promise<FileUploadResponse> {
-	const key = ctx.key;
-	
+	const args = PdfcoEndpointInputSchemas.fileUpload.parse(input);
 	return await makePdfcoRequest<FileUploadResponse>(
-		'/file/upload/url',
-		key,
+		'/v1/file/upload/url',
+		ctx.key,
 		{
-			method: 'POST',
+			schema: PdfcoEndpointOutputSchemas.fileUpload,
 			body: {
-				url: input.url,
-				name: input.name,
+				url: args.url,
+				name: args.name,
 			},
 		},
 	);
