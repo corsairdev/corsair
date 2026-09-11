@@ -658,8 +658,7 @@ const PdfSearchAndReplaceTextInputSchema = z
 	})
 	.refine(
 		(value) =>
-			(value.searchString !== undefined &&
-				value.replaceString !== undefined) ||
+			(value.searchString !== undefined && value.replaceString !== undefined) ||
 			(value.searchStrings !== undefined &&
 				value.replaceStrings !== undefined &&
 				value.searchStrings.length > 0 &&
