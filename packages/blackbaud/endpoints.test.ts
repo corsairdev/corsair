@@ -229,6 +229,44 @@ describe('Blackbaud endpoints', () => {
 		expect(result).toEqual({ count: 0, value: [] });
 	});
 
+	it('listMemberships reports absence when exactly 10,500 memberships were scanned', async () => {
+		const fullPage = Array.from({ length: 500 }, (_, index) => ({
+			id: `m${index}`,
+		}));
+		for (let page = 0; page < 20; page++) {
+			mockRequest.mockResolvedValueOnce({ count: 10500, value: fullPage });
+		}
+		// Confirmatory fetch is a full page, but the envelope total proves
+		// the whole collection (10,500) was scanned: absence is real.
+		mockRequest.mockResolvedValueOnce({ count: 10500, value: fullPage });
+
+		const result = await listMemberships(testCtx(), {
+			constituent_id: 'c1',
+			member_junction_id: 'missing',
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(21);
+		expect(result).toEqual({ count: 0, value: [] });
+	});
+
+	it('listMemberships throws when the tail page is full and the total exceeds the scan', async () => {
+		const fullPage = Array.from({ length: 500 }, (_, index) => ({
+			id: `m${index}`,
+		}));
+		for (let page = 0; page < 20; page++) {
+			mockRequest.mockResolvedValueOnce({ count: 11000, value: fullPage });
+		}
+		mockRequest.mockResolvedValueOnce({ count: 11000, value: fullPage });
+
+		await expect(
+			listMemberships(testCtx(), {
+				constituent_id: 'c1',
+				member_junction_id: 'missing',
+			}),
+		).rejects.toThrow('absence beyond that range is unknown');
+		expect(mockRequest).toHaveBeenCalledTimes(21);
+	});
+
 	it('listMemberships confines the constituent id to one path segment', async () => {
 		mockRequest.mockResolvedValue({ count: 0, value: [] });
 
