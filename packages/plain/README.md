@@ -67,7 +67,7 @@ node packages/plain/node_modules/jest/bin/jest.js --config packages/plain/jest.c
 - `endpoints.test.ts` — all 23 ops mocked, plus mutation-error, pagination-guard, and auth-missing paths
 - `client.test.ts` — transport, Bearer header, exact `v1` path, error wrapping
 - `error-handler.test.ts` — 429 / 401 / default handlers
-- `api.test.ts` — **live**, runs only when `PLAIN_API_KEY` and `CORSAIR_KEK` are set (uses a throwaway local test DB; `CORSAIR_KEK` can be any 32-char string):
+- `api.test.ts` — **live**, runs only when `PLAIN_API_KEY` and `CORSAIR_KEK` are set (uses a throwaway local test DB; `CORSAIR_KEK` can be any 32-char string). A read the key isn't scoped for becomes a loud `[live] SKIP` naming the missing scope instead of a failure; anything else still fails.
 
 ```bash
 # PowerShell
