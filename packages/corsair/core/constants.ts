@@ -288,6 +288,7 @@ export const BaseProviders = [
 	'workday',
 	'workiom',
 	'worldnewsapi',
+	'xero',
 	'xquik',
 	'youcom',
 	'youtube',
@@ -574,6 +575,7 @@ export const ProviderDisplayNames = {
 	workday: 'Workday',
 	workiom: 'Workiom',
 	worldnewsapi: 'World News API',
+	xero: 'Xero',
 	xquik: 'XQuik',
 	youcom: 'You.com',
 	youtube: 'YouTube',
@@ -867,6 +869,7 @@ export type AllProviders =
 	| 'workday'
 	| 'workiom'
 	| 'worldnewsapi'
+	| 'xero'
 	| 'xquik'
 	| 'youcom'
 	| 'youtube'
