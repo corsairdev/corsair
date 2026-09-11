@@ -80,6 +80,8 @@
                   "mcp-adapters/claude-sdk",
                   "mcp-adapters/vercel-ai",
                   "mcp-adapters/mastra",
+                  "mcp-adapters/langchain",
+                  "mcp-adapters/llamaindex",
                   "mcp-adapters/openai"
                 ]
               },
