@@ -294,6 +294,35 @@ describe('Pdfco input schemas accept documented inputs', () => {
 				replaceStrings: ['c', 'd'],
 			}),
 		).toBeDefined();
+		expect(() =>
+			PdfcoEndpointInputSchemas.pdfSearchAndReplaceText.parse({
+				url: PDF_URL,
+				searchStrings: ['a', 'b'],
+				replaceStrings: ['c'],
+			}),
+		).toThrow();
+		expect(() =>
+			PdfcoEndpointInputSchemas.pdfSearchAndReplaceText.parse({
+				url: PDF_URL,
+				searchStrings: [],
+				replaceStrings: [],
+			}),
+		).toThrow();
+	});
+
+	it('accepts profiles as an object with nested values or a JSON string', () => {
+		expect(
+			PdfcoEndpointInputSchemas.pdfToJson.parse({
+				url: PDF_URL,
+				profiles: { Angle: 3, ExtractionArea: ['0', '0', '100', '100'] },
+			}),
+		).toBeDefined();
+		expect(
+			PdfcoEndpointInputSchemas.pdfToJson.parse({
+				url: PDF_URL,
+				profiles: "{'Angle': 3}",
+			}),
+		).toBeDefined();
 	});
 
 	it('validates pdfSearchAndDeleteText inputs', () => {
@@ -456,5 +485,19 @@ describe('Pdfco output schemas parse documented responses', () => {
 			status: 200,
 		});
 		expect(parsed.info?.PageCount).toBe(3);
+	});
+
+	it('parses a document parser response with elapsed and array values', () => {
+		const parsed = PdfcoEndpointOutputSchemas.documentParser.parse({
+			body: {
+				objects: [{ total: '10', rectangle: [1, 2, 3, 4] }],
+				elapsed: 1.5,
+				templateName: 'invoice',
+			},
+			error: false,
+			status: 200,
+		});
+		expect(parsed.body?.elapsed).toBe(1.5);
+		expect(parsed.body?.objects?.[0]?.rectangle).toEqual([1, 2, 3, 4]);
 	});
 });
