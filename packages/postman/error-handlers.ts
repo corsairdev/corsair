@@ -27,9 +27,11 @@ export const errorHandlers = {
 				// which corsair/http normalizes to ms (async-core/rate-limit.ts).
 				retryAfterMs = error.retryAfter;
 			}
-			// Transport owns 429 retries (POSTMAN_RATE_LIMIT_CONFIG); the
-			// framework must not replay requests on top, especially
-			// non-idempotent POST/PUT/PATCH bodies.
+			// Transport retries idempotent reads only (GET/DELETE); writes
+			// (POST/PUT/PATCH) reach this handler unretried because the client
+			// disables transport retries for them — replaying a 429 write could
+			// duplicate a resource Postman already applied. The framework must
+			// not replay either, so maxRetries stays 0 for every method.
 			return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
 		},
 	},

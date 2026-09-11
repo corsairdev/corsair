@@ -77,8 +77,16 @@ export async function makePostmanRequest<T>(
 	};
 
 	try {
+		// No transport retries on writes: a 429 on POST/PUT/PATCH may arrive
+		// after Postman has accepted or partially applied the mutation, and
+		// the shared transport replays without an idempotency key — replaying
+		// would create or mutate the resource twice. Reads (GET/DELETE) are
+		// idempotent, so they keep the backoff retries.
+		const retryable = method === 'GET' || method === 'DELETE';
 		return await request<T>(config, requestOptions, {
-			rateLimitConfig: POSTMAN_RATE_LIMIT_CONFIG,
+			rateLimitConfig: retryable
+				? POSTMAN_RATE_LIMIT_CONFIG
+				: { ...POSTMAN_RATE_LIMIT_CONFIG, enabled: false, maxRetries: 0 },
 		});
 	} catch (error) {
 		if (error instanceof PostmanAPIError) {

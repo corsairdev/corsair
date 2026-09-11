@@ -124,7 +124,7 @@ Results are automatically persisted to the plugin database for caching and offli
 ## Rate Limiting & Error Handling
 
 - **Rate limits**: 300 requests/minute per user. `GET /collections`, `GET /workspaces`, and `GET /workspaces/{id}` are limited to 10 calls per 10 seconds; workspace updates to 20 requests/minute.
-- **429 Too Many Requests**: Automatically retries with exponential backoff respecting the `Retry-After` header. The framework never replays non-idempotent requests on top of transport retries.
+- **429 Too Many Requests**: Idempotent reads (GET/DELETE) retry with exponential backoff respecting the `Retry-After` header. Writes (POST/PUT/PATCH) are never retried automatically — a 429 may arrive after Postman already applied the mutation, so the error surfaces immediately instead of risking a duplicate. The framework never replays 429s on top.
 - **401 Unauthorized**: Thrown as `AuthMissingError` when no API key resolves, or surfaced when the key is invalid.
 - **403 / 404**: Mapped to permission and not-found handlers with no retries.
 - **Event logging**: Endpoint activity is logged without secret-capable request bodies (headers, cookies, file contents).

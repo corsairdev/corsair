@@ -101,6 +101,33 @@ describe('Postman client', () => {
 			});
 		});
 
+		it('disables transport retries for POST/PUT/PATCH — a 429 replay would duplicate', async () => {
+			// P1: the shared transport replays 429s without checking the method
+			// or an idempotency key, so a throttled write Postman already
+			// applied would execute twice. Writes must surface immediately.
+			mockRequest.mockResolvedValue({ id: 'col_1' });
+
+			for (const method of ['POST', 'PUT', 'PATCH'] as const) {
+				jest.clearAllMocks();
+				await makePostmanRequest('collections', 'tok', { method, body: {} });
+				const [, , extra] = mockRequest.mock.calls[0] ?? [];
+				expect(extra?.rateLimitConfig?.enabled).toBe(false);
+				expect(extra?.rateLimitConfig?.maxRetries).toBe(0);
+			}
+		});
+
+		it('keeps transport retries for idempotent GET/DELETE', async () => {
+			mockRequest.mockResolvedValue({ collections: [] });
+
+			for (const method of ['GET', 'DELETE'] as const) {
+				jest.clearAllMocks();
+				await makePostmanRequest('collections', 'tok', { method });
+				const [, , extra] = mockRequest.mock.calls[0] ?? [];
+				expect(extra?.rateLimitConfig?.enabled).toBe(true);
+				expect(extra?.rateLimitConfig?.maxRetries).toBeGreaterThan(0);
+			}
+		});
+
 		it('rethrows PostmanAPIErrors without rewrapping', async () => {
 			const original = new PostmanAPIError('already wrapped');
 			mockRequest.mockRejectedValueOnce(original);
