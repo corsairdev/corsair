@@ -104,15 +104,18 @@ async function searchMembershipPages(
 	}
 	// Edge case: an exact multiple of the page size (e.g. exactly 10,000
 	// memberships) fills every page, so the loop above cannot see the
-	// terminating short/empty page. One confirmatory fetch decides: an empty
-	// (or short) page proves the whole collection was scanned and the
-	// junction is truly absent; a full page proves records remain beyond the
-	// cap and absence there is still unknown.
+	// terminating short/empty page. A full tail page is still ambiguous:
+	// it may be the exact end of the collection (e.g. exactly 10,500
+	// memberships) or proof that more records remain. Disambiguate with
+	// the SKY collection total (`count` in the response envelope): when
+	// the scanned prefix covers the total, every record was examined and
+	// absence is proven; otherwise absence beyond the cap stays unknown.
 	const tail = await fetchMembershipPage(ctx, input, {
 		limit: SEARCH_PAGE_SIZE,
 		offset,
 	});
-	if (tail.value.length < SEARCH_PAGE_SIZE) {
+	const scanned = offset + tail.value.length;
+	if (tail.value.length < SEARCH_PAGE_SIZE || scanned >= tail.count) {
 		return [];
 	}
 	throw new BlackbaudAPIError(
