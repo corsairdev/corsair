@@ -516,20 +516,17 @@ describe('makeClassmarkerRequest', () => {
 
 		await makeClassmarkerRequestActual<{ status: string }>(
 			'/v1.json',
-			packClassmarkerCredentialsActual(
-				'FHBSvPJl4hUSNyyPGxj56ihJyIRoxp1U',
-				'AMrajbsvsoU7D2276YkRhqXO0hHgMDicxJdXMtVF',
-			),
+			packClassmarkerCredentialsActual('test-api-key', 'test-api-secret'),
 		);
 
 		expect(mockHttpRequest).toHaveBeenCalledWith(
 			expect.objectContaining({ BASE: 'https://api.classmarker.com' }),
 			expect.objectContaining({
 				query: expect.objectContaining({
-					api_key: 'FHBSvPJl4hUSNyyPGxj56ihJyIRoxp1U',
+					api_key: 'test-api-key',
 					timestamp: 1_762_783_200,
 					signature:
-						'3121ce3cec81a4bba3a05488318767b0a2c922f10e18e4aa64aefb4d02aee2cc',
+						'3bf43819abfb95beee607a011d22b5f69f0993faa7d5a920b975e6fe3e9d9144',
 				}),
 			}),
 		);

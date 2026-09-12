@@ -31,7 +31,7 @@ pnpm add @corsair-dev/classmarker
 
 ## Auth
 
-Auth: API key. Corsair prompts your tenant for credentials on first use.
+Auth: API key pair. Corsair prompts your tenant for both `api_key` and `api_key_secret` on first use.
 
 ## Webhooks
 
