@@ -40,7 +40,9 @@ import { snapchat } from '@corsair-dev/snapchat';
 
 export const corsair = createCorsair({
 	plugins: [
-		snapchat(),
+		snapchat({
+			composioApiKey: process.env.COMPOSIO_API_KEY!,
+		}),
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,

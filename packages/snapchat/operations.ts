@@ -6,7 +6,7 @@ export type SnapchatOperation = {
 	readonly riskLevel: SnapchatRiskLevel;
 };
 
-export const SNAPCHAT_TOOLKIT_VERSION = '20260913_00' as const;
+export const SNAPCHAT_TOOLKIT_VERSION = '20260721_00' as const;
 
 export const SNAPCHAT_OPERATIONS = [
 	{

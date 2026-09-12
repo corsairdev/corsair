@@ -52,4 +52,56 @@ describe('executeSnapchatTool', () => {
 			),
 		).rejects.toThrow('[snapchat] composioApiKey is required');
 	});
+
+	it('rejects non-https composio base urls', async () => {
+		await expect(
+			executeSnapchatTool(
+				'SNAPCHAT_GET_AUTHENTICATED_USER',
+				{},
+				{
+					composioApiKey: 'ck_test',
+					composioBaseUrl: 'http://backend.composio.dev/api/v3',
+				},
+			),
+		).rejects.toThrow('[snapchat] composioBaseUrl must use https');
+	});
+
+	it('forwards timeoutMs to request config', async () => {
+		await executeSnapchatTool(
+			'SNAPCHAT_GET_AUTHENTICATED_USER',
+			{},
+			{
+				composioApiKey: 'ck_test',
+				timeoutMs: 12_345,
+			},
+		);
+
+		const [config] = requestMock.mock.calls[0]!;
+		expect(config.TIMEOUT).toBe(12_345);
+	});
+
+	it('cancels request when abort signal is triggered', async () => {
+		const cancel = jest.fn();
+		const cancelable = Object.assign(Promise.resolve({ successful: true }), {
+			cancel,
+		});
+		requestMock.mockReturnValueOnce(
+			cancelable as unknown as ReturnType<typeof request>,
+		);
+
+		const controller = new AbortController();
+		const resultPromise = executeSnapchatTool(
+			'SNAPCHAT_GET_AUTHENTICATED_USER',
+			{},
+			{
+				composioApiKey: 'ck_test',
+				signal: controller.signal,
+			},
+		);
+
+		controller.abort();
+		await resultPromise;
+
+		expect(cancel).toHaveBeenCalledTimes(1);
+	});
 });

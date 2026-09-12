@@ -28,7 +28,14 @@ function normalizeBaseUrl(value?: string): string {
 	if (!trimmed) {
 		return DEFAULT_COMPOSIO_BASE_URL;
 	}
-	return trimmed.endsWith('/') ? trimmed.slice(0, -1) : trimmed;
+
+	const parsed = new URL(trimmed);
+	if (parsed.protocol !== 'https:') {
+		throw new Error('[snapchat] composioBaseUrl must use https');
+	}
+
+	const normalized = parsed.toString();
+	return normalized.endsWith('/') ? normalized.slice(0, -1) : normalized;
 }
 
 function createCustomAuthParams(
@@ -76,6 +83,7 @@ export async function executeSnapchatTool(
 	const config: OpenAPIConfig = {
 		BASE: normalizeBaseUrl(options.composioBaseUrl),
 		VERSION: '1.0.0',
+		TIMEOUT: options.timeoutMs,
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: {
@@ -92,5 +100,25 @@ export async function executeSnapchatTool(
 		mediaType: 'application/json; charset=utf-8',
 	};
 
-	return request<SnapchatToolResponse>(config, requestOptions);
+	const requestPromise = request<SnapchatToolResponse>(config, requestOptions);
+
+	if (!options.signal) {
+		return requestPromise;
+	}
+
+	const onAbort = () => {
+		requestPromise.cancel();
+	};
+
+	if (options.signal.aborted) {
+		onAbort();
+	}
+
+	options.signal.addEventListener('abort', onAbort, { once: true });
+
+	try {
+		return await requestPromise;
+	} finally {
+		options.signal.removeEventListener('abort', onAbort);
+	}
 }

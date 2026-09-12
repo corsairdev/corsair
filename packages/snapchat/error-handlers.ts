@@ -4,11 +4,7 @@ import { ApiError } from 'corsair/http';
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error) => {
-			if (error instanceof ApiError && error.status === 429) {
-				return true;
-			}
-			const message = error.message.toLowerCase();
-			return message.includes('rate') || message.includes('429');
+			return error instanceof ApiError && error.status === 429;
 		},
 		handler: async (error) => {
 			const retryAfterMs =
