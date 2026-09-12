@@ -1,0 +1,265 @@
+---
+title: Webhooks
+description: "Chatwork incoming webhooks: event paths, payloads, and response data."
+---
+
+The Chatwork plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/chatwork/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `mentions`
+  - `toMe` (`mentions.toMe`)
+- `messages`
+  - `created` (`messages.created`)
+  - `updated` (`messages.updated`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Mentions
+
+### To Me
+
+`mentions.toMe`
+
+Current user was mentioned in a room message
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_setting_id` | `string \| number` | Yes | — |
+| `webhook_event_type` | `mention_to_me` | Yes | — |
+| `webhook_event_time` | `number` | Yes | — |
+| `webhook_event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook_event full type">
+
+```ts
+{
+  mention_id: string | number,
+  message_id: string,
+  room_id: number,
+  account_id?: number,
+  from_account_id: number,
+  to_account_id: number,
+  body: string,
+  send_time: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhook_setting_id: string | number,
+  webhook_event_type: mention_to_me,
+  webhook_event_time: number,
+  webhook_event: {
+    mention_id: string | number,
+    message_id: string,
+    room_id: number,
+    account_id?: number,
+    from_account_id: number,
+    to_account_id: number,
+    body: string,
+    send_time: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+chatwork({
+    webhookHooks: {
+        mentions: {
+            toMe: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Messages
+
+### Created
+
+`messages.created`
+
+A message was created in a room
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_setting_id` | `string \| number` | Yes | — |
+| `webhook_event_type` | `message_created` | Yes | — |
+| `webhook_event_time` | `number` | Yes | — |
+| `webhook_event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook_event full type">
+
+```ts
+{
+  message_id: string,
+  room_id: number,
+  account_id: number,
+  body: string,
+  send_time: number,
+  update_time?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhook_setting_id: string | number,
+  webhook_event_type: message_created,
+  webhook_event_time: number,
+  webhook_event: {
+    message_id: string,
+    room_id: number,
+    account_id: number,
+    body: string,
+    send_time: number,
+    update_time?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+chatwork({
+    webhookHooks: {
+        messages: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`messages.updated`
+
+A message was updated in a room
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_setting_id` | `string \| number` | Yes | — |
+| `webhook_event_type` | `message_updated` | Yes | — |
+| `webhook_event_time` | `number` | Yes | — |
+| `webhook_event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook_event full type">
+
+```ts
+{
+  message_id: string,
+  room_id: number,
+  account_id: number,
+  body: string,
+  send_time: number,
+  update_time: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhook_setting_id: string | number,
+  webhook_event_type: message_updated,
+  webhook_event_time: number,
+  webhook_event: {
+    message_id: string,
+    room_id: number,
+    account_id: number,
+    body: string,
+    send_time: number,
+    update_time: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+chatwork({
+    webhookHooks: {
+        messages: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

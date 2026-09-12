@@ -1036,6 +1036,15 @@
                 ]
               },
               {
+                "group": "Chatwork",
+                "pages": [
+                  "plugins/chatwork/overview",
+                  "plugins/chatwork/api",
+                  "plugins/chatwork/database",
+                  "plugins/chatwork/webhooks"
+                ]
+              },
+              {
                 "group": "ChMeetings",
                 "pages": [
                   "plugins/chmeetings/overview",

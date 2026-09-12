@@ -1,0 +1,316 @@
+---
+title: API
+description: "API reference for Chatwork: every `chatwork.api.*` operation with input and output types."
+---
+
+Every `chatwork.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Get profile information of the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `number` | Yes | The Chatwork account ID |
+| `room_id` | `number` | Yes | The user personal room ID |
+| `name` | `string` | Yes | The user name |
+| `chatwork_id` | `string` | No | The Chatwork ID handle |
+| `organization_id` | `number` | No | The organization ID |
+| `organization_name` | `string` | No | The organization name |
+| `department` | `string` | No | The department name |
+| `title` | `string` | No | The user title/position |
+| `url` | `string` | No | The user website URL |
+| `introduction` | `string` | No | The user profile introduction |
+| `mail` | `string` | No | The user email address |
+| `tel_organization` | `string` | No | Organization phone number |
+| `tel_extension` | `string` | No | Extension phone number |
+| `tel_mobile` | `string` | No | Mobile phone number |
+| `skype` | `string` | No | Skype handle |
+| `facebook` | `string` | No | Facebook profile |
+| `twitter` | `string` | No | Twitter/X handle |
+| `avatar_image_url` | `string` | No | Avatar image URL |
+
+
+
+---
+
+## Members
+
+### list
+
+`members.list`
+
+List members belonging to a chat room
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.members.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  account_id: number,
+  role: admin | member | readonly | string,
+  name: string,
+  chatwork_id?: string,
+  organization_id?: number,
+  organization_name?: string,
+  department?: string,
+  avatar_image_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Messages
+
+### get
+
+`messages.get`
+
+Get a specific message from a chat room
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `message_id` | `string` | Yes | The ID of the message to retrieve |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | The unique message ID |
+| `account` | `object` | Yes | The sender profile summary |
+| `body` | `string` | Yes | The message content |
+| `send_time` | `number` | Yes | Sent timestamp in Unix seconds |
+| `update_time` | `number` | Yes | Updated timestamp in Unix seconds (0 if not updated) |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  account_id: number,
+  name: string,
+  avatar_image_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List messages in a chat room
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room |
+| `force` | `0 \| 1` | No | 0: get only unread messages (default), 1: get up to 100 latest messages |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  message_id: string,
+  account: {
+    account_id: number,
+    name: string,
+    avatar_image_url?: string
+  },
+  body: string,
+  send_time: number,
+  update_time: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### send
+
+`messages.send`
+
+Send a new message to a chat room
+
+**Risk:** `write`
+
+```ts
+await corsair.chatwork.api.messages.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room to post to |
+| `body` | `string` | Yes | The message body text |
+| `self_unread` | `0 \| 1 \| boolean` | No | Whether the posted message should be marked as unread for the sender (0: read, 1: unread) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | The ID of the created message |
+
+
+
+---
+
+## Rooms
+
+### get
+
+`rooms.get`
+
+Get details of a specific chat room
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.rooms.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The ID of the room to retrieve |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `room_id` | `number` | Yes | The room ID |
+| `name` | `string` | Yes | The room name |
+| `type` | `string` | Yes | The room type (e.g. my, direct, group) |
+| `role` | `string` | Yes | The current user role in the room (e.g. admin, member, readonly) |
+| `sticky` | `boolean` | Yes | Whether the room is pinned |
+| `unread_num` | `number` | Yes | Number of unread messages |
+| `mention_num` | `number` | Yes | Number of unread mentions |
+| `mytask_num` | `number` | Yes | Number of open tasks assigned to me |
+| `message_num` | `number` | Yes | Total number of messages in the room |
+| `file_num` | `number` | Yes | Total number of files in the room |
+| `task_num` | `number` | Yes | Total number of tasks in the room |
+| `icon_path` | `string` | Yes | Icon image URL or icon path |
+| `last_update_time` | `number` | Yes | Last updated timestamp in Unix seconds |
+| `description` | `string` | No | Detailed room description |
+
+
+
+---
+
+### list
+
+`rooms.list`
+
+List chat rooms the authenticated user belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.chatwork.api.rooms.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  room_id: number,
+  name: string,
+  type: string,
+  role: string,
+  sticky: boolean,
+  unread_num: number,
+  mention_num: number,
+  mytask_num: number,
+  message_num: number,
+  file_num: number,
+  task_num: number,
+  icon_path: string,
+  last_update_time: number,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
