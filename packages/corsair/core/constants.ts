@@ -413,7 +413,7 @@ export const ProviderDisplayNames = {
 	chatfai: 'ChatFAI',
 	chmeetings: 'ChMeetings',
 	circleci: 'CircleCI',
-	classmarker: 'Classmarker',
+	classmarker: 'ClassMarker',
 	clickhouse: 'Clickhouse',
 	clientary: 'Clientary',
 	clockify: 'Clockify',

@@ -1,4 +1,6 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { ApiError, request } from 'corsair/http';
+import type { ClassmarkerAPIError } from './client';
 import { makeClassmarkerRequest } from './client';
 import { addAccessCodes, deleteAccessCodes } from './endpoints/access-lists';
 import {
@@ -30,6 +32,14 @@ jest.mock('corsair/core', () => {
 	};
 });
 
+jest.mock('corsair/http', () => {
+	const original = jest.requireActual('corsair/http');
+	return {
+		...original,
+		request: jest.fn(),
+	};
+});
+
 jest.mock('./client', () => {
 	const original = jest.requireActual('./client');
 	return {
@@ -40,6 +50,11 @@ jest.mock('./client', () => {
 
 const mockRequest = jest.mocked(makeClassmarkerRequest);
 const mockLog = jest.mocked(logEventFromContext);
+const mockHttpRequest = jest.mocked(request);
+const {
+	makeClassmarkerRequest: makeClassmarkerRequestActual,
+	packClassmarkerCredentials: packClassmarkerCredentialsActual,
+} = jest.requireActual('./client') as typeof import('./client');
 
 const okEnvelope = {
 	status: 'ok',
@@ -425,5 +440,87 @@ describe('ClassMarker endpoints', () => {
 		).rejects.toThrow();
 		await expect(listQuestions(ctx, { page: 0 })).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
+	});
+});
+
+describe('makeClassmarkerRequest', () => {
+	const originalDateNow = Date.now;
+
+	beforeEach(() => {
+		Date.now = jest.fn(() => 1_762_783_200_000);
+	});
+
+	afterEach(() => {
+		Date.now = originalDateNow;
+	});
+
+	it('signs requests with lowercase SHA-256 using API key + secret + timestamp', async () => {
+		mockHttpRequest.mockResolvedValueOnce({ status: 'ok' });
+
+		await makeClassmarkerRequestActual<{ status: string }>(
+			'/v1.json',
+			packClassmarkerCredentialsActual(
+				'FHBSvPJl4hUSNyyPGxj56ihJyIRoxp1U',
+				'AMrajbsvsoU7D2276YkRhqXO0hHgMDicxJdXMtVF',
+			),
+		);
+
+		expect(mockHttpRequest).toHaveBeenCalledWith(
+			expect.objectContaining({ BASE: 'https://api.classmarker.com' }),
+			expect.objectContaining({
+				query: expect.objectContaining({
+					api_key: 'FHBSvPJl4hUSNyyPGxj56ihJyIRoxp1U',
+					timestamp: 1_762_783_200,
+					signature:
+						'3121ce3cec81a4bba3a05488318767b0a2c922f10e18e4aa64aefb4d02aee2cc',
+				}),
+			}),
+		);
+	});
+
+	it('preserves ApiError to keep status and retry metadata', async () => {
+		const apiError = new ApiError(
+			{ method: 'GET', url: '/v1.json' },
+			{
+				url: '/v1.json',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: {
+					status: 'error',
+					error: {
+						error_code: 'rateLimitExceeded',
+						error_message: 'Too Many Requests',
+						next_request_after: 1_762_783_560,
+					},
+				},
+			},
+			'Too Many Requests',
+			{ retryAfter: 60_000 },
+		);
+		mockHttpRequest.mockRejectedValueOnce(apiError);
+
+		await expect(
+			makeClassmarkerRequestActual<{ status: string }>(
+				'/v1.json',
+				packClassmarkerCredentialsActual('key', 'secret'),
+			),
+		).rejects.toBe(apiError);
+	});
+
+	it('wraps non-ApiError failures in ClassmarkerAPIError', async () => {
+		mockHttpRequest.mockRejectedValueOnce(new Error('network down'));
+
+		await expect(
+			makeClassmarkerRequestActual<{ status: string }>(
+				'/v1.json',
+				packClassmarkerCredentialsActual('key', 'secret'),
+			),
+		).rejects.toEqual(
+			expect.objectContaining<ClassmarkerAPIError>({
+				name: 'ClassmarkerAPIError',
+				message: 'network down',
+			}),
+		);
 	});
 });

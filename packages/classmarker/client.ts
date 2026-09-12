@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { webcrypto } from 'node:crypto';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
@@ -48,8 +48,8 @@ export function packClassmarkerCredentials(
 }
 
 function unpackClassmarkerCredentials(packed: string): {
-	apiKey: string;
-	apiSecret: string;
+	keyId: string;
+	keySecret: string;
 } {
 	const separatorIndex = packed.indexOf(CREDENTIAL_SEPARATOR);
 	if (separatorIndex <= 0 || separatorIndex >= packed.length - 1) {
@@ -60,8 +60,8 @@ function unpackClassmarkerCredentials(packed: string): {
 	}
 
 	return {
-		apiKey: packed.slice(0, separatorIndex),
-		apiSecret: packed.slice(separatorIndex + 1),
+		keyId: packed.slice(0, separatorIndex),
+		keySecret: packed.slice(separatorIndex + 1),
 	};
 }
 
@@ -79,24 +79,26 @@ export async function tryGetStoredKey(
 	}
 }
 
-function signatureFor(
-	apiKey: string,
-	apiSecret: string,
+async function signatureFor(
+	keyId: string,
+	keySecret: string,
 	timestampSeconds: number,
-): string {
-	return createHash('sha256')
-		.update(`${apiKey}${apiSecret}${timestampSeconds}`)
-		.digest('hex');
+): Promise<string> {
+	const signaturePayload = new TextEncoder().encode(
+		`${keyId}${keySecret}${timestampSeconds}`,
+	);
+	const digest = await webcrypto.subtle.digest('SHA-256', signaturePayload);
+	return Buffer.from(digest).toString('hex');
 }
 
-function authQuery(
-	apiKey: string,
-	apiSecret: string,
+async function authQuery(
+	keyId: string,
+	keySecret: string,
 	timestampSeconds: number,
-): Record<string, string | number> {
+): Promise<Record<string, string | number>> {
 	return {
-		api_key: apiKey,
-		signature: signatureFor(apiKey, apiSecret, timestampSeconds),
+		api_key: keyId,
+		signature: await signatureFor(keyId, keySecret, timestampSeconds),
 		timestamp: timestampSeconds,
 	};
 }
@@ -132,9 +134,10 @@ export async function makeClassmarkerRequest<T>(
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
-	const { apiKey, apiSecret } = unpackClassmarkerCredentials(packedCredentials);
+	const { keyId, keySecret } = unpackClassmarkerCredentials(packedCredentials);
 	const { method = 'GET', body, query } = options;
 	const timestampSeconds = Math.floor(Date.now() / 1000);
+	const authParams = await authQuery(keyId, keySecret, timestampSeconds);
 
 	const config: OpenAPIConfig = {
 		BASE: CLASSMARKER_API_BASE,
@@ -155,7 +158,7 @@ export async function makeClassmarkerRequest<T>(
 		mediaType: 'application/json; charset=utf-8',
 		query: {
 			...(query ?? {}),
-			...authQuery(apiKey, apiSecret, timestampSeconds),
+			...authParams,
 		},
 	};
 
@@ -169,21 +172,7 @@ export async function makeClassmarkerRequest<T>(
 		}
 
 		if (error instanceof ApiError) {
-			const bodyAsRecord =
-				error.body && typeof error.body === 'object'
-					? (error.body as ClassmarkerErrorResponse)
-					: undefined;
-
-			throw new ClassmarkerAPIError(
-				bodyAsRecord?.error?.error_message ?? error.message,
-				bodyAsRecord?.error?.error_code,
-				{
-					status: error.status,
-					retryAfter: error.retryAfter,
-					nextRequestAfter: bodyAsRecord?.error?.next_request_after,
-					cause: error,
-				},
-			);
+			throw error;
 		}
 
 		if (error instanceof Error) {
