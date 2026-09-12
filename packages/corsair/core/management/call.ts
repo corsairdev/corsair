@@ -109,13 +109,20 @@ function mapFor<V>(
 	return m;
 }
 
-// Evict the oldest client that has no in-flight op. If every candidate over the
-// cap is busy, skip — a brief overshoot is safe; splitting a live refresh isn't.
-function evictIdle(corsair: object, cache: Map<string, unknown>): void {
+// Evict the oldest idle client. `keep` is the just-inserted tenant — never evict
+// it (its op isn't marked in-flight yet, so it'd otherwise look idle and get
+// dropped when every older client is busy). If no other candidate is idle, skip
+// — a brief overshoot is safe; splitting a live refresh isn't.
+function evictIdle(
+	corsair: object,
+	cache: Map<string, unknown>,
+	keep: string,
+): void {
 	if (cache.size <= MAX_TENANT_CLIENTS) return;
 	const inFlight = inFlightByCorsair.get(corsair);
 	for (const key of cache.keys()) {
 		// Map iterates in insertion order → oldest first.
+		if (key === keep) continue;
 		if ((inFlight?.get(key) ?? 0) === 0) {
 			cache.delete(key);
 			return;
@@ -146,7 +153,7 @@ function resolveClient(
 		tenantId,
 	);
 	cache.set(tenantId, client);
-	evictIdle(corsair as object, cache);
+	evictIdle(corsair as object, cache, tenantId);
 	return { client, tenantId };
 }
 

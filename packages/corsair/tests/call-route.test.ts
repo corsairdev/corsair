@@ -141,6 +141,38 @@ describe('resolveCall — resolution', () => {
 		expect(withTenant.mock.calls.filter(([t]) => t === 'busy')).toHaveLength(1);
 	});
 
+	it('protects the just-inserted tenant when every older client is in-flight', async () => {
+		let release!: () => void;
+		const gate = new Promise<void>((r) => {
+			release = r;
+		});
+		const withTenant = jest.fn((_t: string) => ({
+			github: {
+				api: { issues: { create: async () => (await gate, { ok: true }) } },
+			},
+		}));
+		const corsair = { withTenant };
+		const internal = internalWith([{ id: 'github' }], true);
+		const call = (t: string) =>
+			resolveCall(corsair, internal, {
+				plugin: 'github',
+				op: 'issues.create',
+				tenant: t,
+				args: {},
+			});
+		// 512 tenants all held in-flight → cache is at the cap, every client busy
+		const busy = Array.from({ length: 512 }, (_, i) => call(`t${i}`));
+		// a brand-new tenant is inserted while all 512 older clients are active;
+		// it must not be the one evicted — a concurrent call reuses its client
+		const newbie = call('newbie');
+		const newbie2 = call('newbie');
+		release();
+		await Promise.all([...busy, newbie, newbie2]);
+		expect(withTenant.mock.calls.filter(([t]) => t === 'newbie')).toHaveLength(
+			1,
+		);
+	});
+
 	it('G2: concurrent same-tenant calls build the client once (shared key-manager)', async () => {
 		const create = jest.fn(async () => ({}));
 		const withTenant = jest.fn(() => ({
