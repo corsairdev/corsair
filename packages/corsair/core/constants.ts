@@ -163,6 +163,7 @@ export const BaseProviders = [
 	'faraday',
 	'figma',
 	'filloutforms',
+	'finerworks',
 	'firecrawl',
 	'fireflies',
 	'flexisign',
@@ -452,6 +453,7 @@ export const ProviderDisplayNames = {
 	faraday: 'Faraday',
 	figma: 'Figma',
 	filloutforms: 'FilloutForms',
+	finerworks: 'FinerWorks',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
 	flexisign: 'Flexisign',
@@ -748,6 +750,7 @@ export type AllProviders =
 	| 'faraday'
 	| 'figma'
 	| 'filloutforms'
+	| 'finerworks'
 	| 'firecrawl'
 	| 'fireflies'
 	| 'flexisign'
