@@ -489,6 +489,25 @@ describe('ClassMarker endpoints', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('rejects correct options not present in options and does not call API', async () => {
+		const ctx = createContext();
+		const invalidCreateInput = {
+			question: {
+				question: 'Mismatch',
+				question_type: 'multiplechoice',
+				category_id: 1,
+				points: 1,
+				options: { A: { content: 'A' } },
+				correct_options: ['B'],
+			},
+		} as unknown as Parameters<typeof createQuestion>[1];
+
+		await expect(createQuestion(ctx, invalidCreateInput)).rejects.toThrow(
+			'correct option B is not defined in options',
+		);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
 	it('rejects invalid input and does not call API', async () => {
 		const ctx = createContext();
 

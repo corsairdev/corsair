@@ -195,6 +195,18 @@ const ChoiceQuestionMutationSchema = QuestionBaseMutationSchema.extend({
 		.optional(),
 }).superRefine((value, ctx) => {
 	const optionKeys = Object.keys(value.options);
+	const optionKeySet = new Set(optionKeys);
+
+	for (const option of value.correct_options) {
+		if (!optionKeySet.has(option)) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				path: ['correct_options'],
+				message: `correct option ${option} is not defined in options`,
+			});
+		}
+	}
+
 	if (optionKeys.length === 0 || optionKeys.length > 10) {
 		ctx.addIssue({
 			code: z.ZodIssueCode.custom,
