@@ -22,6 +22,7 @@ export async function runClassmarkerEndpoint<TInput, TOutput>(
 		query?: Record<string, string | number | boolean | undefined>;
 		body?: unknown;
 		logPayload?: Record<string, unknown>;
+		responseTransformer?: (response: unknown) => unknown;
 	},
 ): Promise<TOutput> {
 	if (!ctx.key) {
@@ -35,7 +36,10 @@ export async function runClassmarkerEndpoint<TInput, TOutput>(
 		body: params.body,
 	});
 
-	const parsed = params.outputSchema.parse(response);
+	const transformedResponse = params.responseTransformer
+		? params.responseTransformer(response)
+		: response;
+	const parsed = params.outputSchema.parse(transformedResponse);
 
 	await logEventFromContext(
 		ctx,

@@ -16,10 +16,17 @@ import { AuthMissingError } from 'corsair/core';
 import { packClassmarkerCredentials, tryGetStoredKey } from './client';
 import {
 	AccessLists,
+	ApiKeys,
 	Categories,
+	Certificates,
+	Groups,
 	GroupsLinksExams,
 	Questions,
 	RecentResults,
+	Tests,
+	Users,
+	Utility,
+	Webhooks,
 } from './endpoints';
 import type {
 	ClassmarkerEndpointInputs,
@@ -81,6 +88,21 @@ export type ClassmarkerEndpoints = {
 	getQuestion: ClassmarkerEndpoint<'getQuestion'>;
 	createQuestion: ClassmarkerEndpoint<'createQuestion'>;
 	updateQuestion: ClassmarkerEndpoint<'updateQuestion'>;
+	listUsers: ClassmarkerEndpoint<'listUsers'>;
+	getUserDetails: ClassmarkerEndpoint<'getUserDetails'>;
+	createUser: ClassmarkerEndpoint<'createUser'>;
+	deleteUser: ClassmarkerEndpoint<'deleteUser'>;
+	createGroup: ClassmarkerEndpoint<'createGroup'>;
+	deleteGroup: ClassmarkerEndpoint<'deleteGroup'>;
+	getGroupDetails: ClassmarkerEndpoint<'getGroupDetails'>;
+	listTests: ClassmarkerEndpoint<'listTests'>;
+	getTestDetails: ClassmarkerEndpoint<'getTestDetails'>;
+	deleteTestLink: ClassmarkerEndpoint<'deleteTestLink'>;
+	listCertificates: ClassmarkerEndpoint<'listCertificates'>;
+	listWebhooks: ClassmarkerEndpoint<'listWebhooks'>;
+	deleteWebhook: ClassmarkerEndpoint<'deleteWebhook'>;
+	deleteApiKey: ClassmarkerEndpoint<'deleteApiKey'>;
+	getInitialFinishedAfterTimestamp: ClassmarkerEndpoint<'getInitialFinishedAfterTimestamp'>;
 };
 
 const classmarkerEndpointsNested = {
@@ -109,6 +131,35 @@ const classmarkerEndpointsNested = {
 		get: Questions.get,
 		create: Questions.create,
 		update: Questions.update,
+	},
+	users: {
+		list: Users.list,
+		get: Users.get,
+		create: Users.create,
+		delete: Users.delete,
+	},
+	groups: {
+		create: Groups.create,
+		delete: Groups.delete,
+		get: Groups.get,
+	},
+	tests: {
+		list: Tests.list,
+		get: Tests.get,
+		deleteLink: Tests.deleteLink,
+	},
+	certificates: {
+		list: Certificates.list,
+	},
+	webhooks: {
+		list: Webhooks.list,
+		delete: Webhooks.delete,
+	},
+	apiKeys: {
+		delete: ApiKeys.delete,
+	},
+	utility: {
+		getInitialFinishedAfterTimestamp: Utility.getInitialFinishedAfterTimestamp,
 	},
 } as const;
 
@@ -178,6 +229,66 @@ export const classmarkerEndpointSchemas = {
 	'questions.update': {
 		input: ClassmarkerEndpointInputSchemas.updateQuestion,
 		output: ClassmarkerEndpointOutputSchemas.updateQuestion,
+	},
+	'users.list': {
+		input: ClassmarkerEndpointInputSchemas.listUsers,
+		output: ClassmarkerEndpointOutputSchemas.listUsers,
+	},
+	'users.get': {
+		input: ClassmarkerEndpointInputSchemas.getUserDetails,
+		output: ClassmarkerEndpointOutputSchemas.getUserDetails,
+	},
+	'users.create': {
+		input: ClassmarkerEndpointInputSchemas.createUser,
+		output: ClassmarkerEndpointOutputSchemas.createUser,
+	},
+	'users.delete': {
+		input: ClassmarkerEndpointInputSchemas.deleteUser,
+		output: ClassmarkerEndpointOutputSchemas.deleteUser,
+	},
+	'groups.create': {
+		input: ClassmarkerEndpointInputSchemas.createGroup,
+		output: ClassmarkerEndpointOutputSchemas.createGroup,
+	},
+	'groups.delete': {
+		input: ClassmarkerEndpointInputSchemas.deleteGroup,
+		output: ClassmarkerEndpointOutputSchemas.deleteGroup,
+	},
+	'groups.get': {
+		input: ClassmarkerEndpointInputSchemas.getGroupDetails,
+		output: ClassmarkerEndpointOutputSchemas.getGroupDetails,
+	},
+	'tests.list': {
+		input: ClassmarkerEndpointInputSchemas.listTests,
+		output: ClassmarkerEndpointOutputSchemas.listTests,
+	},
+	'tests.get': {
+		input: ClassmarkerEndpointInputSchemas.getTestDetails,
+		output: ClassmarkerEndpointOutputSchemas.getTestDetails,
+	},
+	'tests.deleteLink': {
+		input: ClassmarkerEndpointInputSchemas.deleteTestLink,
+		output: ClassmarkerEndpointOutputSchemas.deleteTestLink,
+	},
+	'certificates.list': {
+		input: ClassmarkerEndpointInputSchemas.listCertificates,
+		output: ClassmarkerEndpointOutputSchemas.listCertificates,
+	},
+	'webhooks.list': {
+		input: ClassmarkerEndpointInputSchemas.listWebhooks,
+		output: ClassmarkerEndpointOutputSchemas.listWebhooks,
+	},
+	'webhooks.delete': {
+		input: ClassmarkerEndpointInputSchemas.deleteWebhook,
+		output: ClassmarkerEndpointOutputSchemas.deleteWebhook,
+	},
+	'apiKeys.delete': {
+		input: ClassmarkerEndpointInputSchemas.deleteApiKey,
+		output: ClassmarkerEndpointOutputSchemas.deleteApiKey,
+	},
+	'utility.getInitialFinishedAfterTimestamp': {
+		input: ClassmarkerEndpointInputSchemas.getInitialFinishedAfterTimestamp,
+		output: ClassmarkerEndpointOutputSchemas.getInitialFinishedAfterTimestamp,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof classmarkerEndpointsNested
@@ -250,6 +361,67 @@ const classmarkerEndpointMeta = {
 	'questions.update': {
 		riskLevel: 'write',
 		description: 'Update an existing question in the question bank.',
+	},
+	'users.list': {
+		riskLevel: 'read',
+		description: 'List users in your ClassMarker account.',
+	},
+	'users.get': {
+		riskLevel: 'read',
+		description: 'Get details for one ClassMarker user.',
+	},
+	'users.create': {
+		riskLevel: 'write',
+		description: 'Create a new ClassMarker user.',
+	},
+	'users.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete an existing ClassMarker user.',
+	},
+	'groups.create': {
+		riskLevel: 'write',
+		description: 'Create a new ClassMarker group.',
+	},
+	'groups.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a ClassMarker group.',
+	},
+	'groups.get': {
+		riskLevel: 'read',
+		description: 'Get details for a specific ClassMarker group.',
+	},
+	'tests.list': {
+		riskLevel: 'read',
+		description: 'List all tests available to the API key.',
+	},
+	'tests.get': {
+		riskLevel: 'read',
+		description: 'Get details for a specific ClassMarker test.',
+	},
+	'tests.deleteLink': {
+		riskLevel: 'destructive',
+		description: 'Delete one link assignment from a test.',
+	},
+	'certificates.list': {
+		riskLevel: 'read',
+		description: 'List all ClassMarker certificates.',
+	},
+	'webhooks.list': {
+		riskLevel: 'read',
+		description: 'List configured ClassMarker webhooks.',
+	},
+	'webhooks.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a ClassMarker webhook.',
+	},
+	'apiKeys.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a ClassMarker API key by id.',
+	},
+	'utility.getInitialFinishedAfterTimestamp': {
+		riskLevel: 'read',
+		description:
+			'Compute the initial finishedAfterTimestamp cursor for recent-results pagination.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof classmarkerEndpointsNested
@@ -332,12 +504,30 @@ export type {
 	ClassmarkerEndpointInputs,
 	ClassmarkerEndpointOutputs,
 	CreateCategoryInput,
+	CreateGroupInput,
+	CreateGroupOutput,
 	CreateParentCategoryInput,
 	CreateQuestionInput,
+	CreateUserInput,
+	CreateUserOutput,
+	DeleteApiKeyInput,
+	DeleteApiKeyOutput,
+	DeleteGroupInput,
+	DeleteGroupOutput,
+	DeleteTestLinkInput,
+	DeleteTestLinkOutput,
+	DeleteUserInput,
+	DeleteUserOutput,
+	DeleteWebhookInput,
+	DeleteWebhookOutput,
 	GetAllCategoriesInput,
 	GetAllCategoriesOutput,
 	GetAllGroupsLinksExamsInput,
 	GetAllGroupsLinksExamsOutput,
+	GetGroupDetailsInput,
+	GetGroupDetailsOutput,
+	GetInitialFinishedAfterTimestampInput,
+	GetInitialFinishedAfterTimestampOutput,
 	GetQuestionInput,
 	GetQuestionOutput,
 	GetRecentResultsForAllGroupsInput,
@@ -348,8 +538,20 @@ export type {
 	GetRecentResultsForGroupExamOutput,
 	GetRecentResultsForLinkExamInput,
 	GetRecentResultsForLinkExamOutput,
+	GetTestDetailsInput,
+	GetTestDetailsOutput,
+	GetUserDetailsInput,
+	GetUserDetailsOutput,
+	ListCertificatesInput,
+	ListCertificatesOutput,
 	ListQuestionsInput,
 	ListQuestionsOutput,
+	ListTestsInput,
+	ListTestsOutput,
+	ListUsersInput,
+	ListUsersOutput,
+	ListWebhooksInput,
+	ListWebhooksOutput,
 	ParentCategoryMutationOutput,
 	QuestionMutationOutput,
 	UpdateCategoryInput,

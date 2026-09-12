@@ -10,6 +10,13 @@ import {
 	updateCategory,
 	updateParentCategory,
 } from './endpoints/categories';
+import {
+	deleteApiKey,
+	deleteWebhook,
+	getInitialFinishedAfterTimestamp,
+	listCertificates,
+	listWebhooks,
+} from './endpoints/certificates-webhooks';
 import { getAllGroupsLinksExams } from './endpoints/groups-links-exams';
 import {
 	createQuestion,
@@ -23,6 +30,18 @@ import {
 	getRecentResultsForGroupExam,
 	getRecentResultsForLinkExam,
 } from './endpoints/recent-results';
+import {
+	createGroup,
+	createUser,
+	deleteGroup,
+	deleteTestLink,
+	deleteUser,
+	getGroupDetails,
+	getTestDetails,
+	getUserDetails,
+	listTests,
+	listUsers,
+} from './endpoints/users-groups-tests';
 
 jest.mock('corsair/core', () => {
 	const original = jest.requireActual('corsair/core');
@@ -516,6 +535,267 @@ describe('ClassMarker endpoints', () => {
 		).rejects.toThrow();
 		await expect(listQuestions(ctx, { page: 0 })).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('lists users and supports pagination', async () => {
+		mockRequest.mockResolvedValueOnce({
+			...okEnvelope,
+			users: [
+				{ user: { user_id: 10, first_name: 'Ada', last_name: 'Lovelace' } },
+			],
+		});
+
+		const ctx = createContext();
+		await listUsers(ctx, { page: 3 });
+
+		expect(mockRequest).toHaveBeenCalledWith('/v1/users.json', 'packed-key', {
+			method: 'GET',
+			query: { page: 3 },
+			body: undefined,
+		});
+	});
+
+	it('creates and deletes a user', async () => {
+		mockRequest
+			.mockResolvedValueOnce({ ...okEnvelope, user_id: 77 })
+			.mockResolvedValueOnce({ ...okEnvelope });
+
+		const ctx = createContext();
+		await createUser(ctx, {
+			first_name: 'Ada',
+			last_name: 'Lovelace',
+			email: 'ada@example.com',
+			group_ids: [2, 3],
+		});
+		await deleteUser(ctx, { user_id: 77 });
+
+		expect(mockRequest).toHaveBeenNthCalledWith(
+			1,
+			'/v1/users.json',
+			'packed-key',
+			{
+				method: 'POST',
+				query: undefined,
+				body: {
+					first_name: 'Ada',
+					last_name: 'Lovelace',
+					email: 'ada@example.com',
+					group_ids: [2, 3],
+				},
+			},
+		);
+		expect(mockRequest).toHaveBeenNthCalledWith(
+			2,
+			'/v1/users/77.json',
+			'packed-key',
+			{
+				method: 'DELETE',
+				query: undefined,
+				body: undefined,
+			},
+		);
+	});
+
+	it('gets user details', async () => {
+		mockRequest.mockResolvedValueOnce({
+			user_id: 77,
+			first_name: 'Ada',
+			last_name: 'Lovelace',
+		});
+
+		const ctx = createContext();
+		await getUserDetails(ctx, { user_id: 77 });
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/v1/users/77.json',
+			'packed-key',
+			{
+				method: 'GET',
+				query: undefined,
+				body: undefined,
+			},
+		);
+	});
+
+	it('creates, deletes, and finds groups', async () => {
+		mockRequest
+			.mockResolvedValueOnce({ ...okEnvelope, group_id: 9 })
+			.mockResolvedValueOnce({ ...okEnvelope })
+			.mockResolvedValueOnce({
+				...okEnvelope,
+				groups: [
+					{
+						group: {
+							group_id: 9,
+							group_name: 'Engineering',
+							assigned_tests: [{ test: { test_id: 100, test_name: 'Exam' } }],
+						},
+					},
+				],
+			});
+
+		const ctx = createContext();
+		await createGroup(ctx, { group_name: 'Engineering' });
+		await deleteGroup(ctx, { group_id: 9 });
+		const group = await getGroupDetails(ctx, { group_id: 9 });
+
+		expect(group.group?.group_id).toBe(9);
+		expect(group.group?.assigned_tests?.[0]?.test.test_id).toBe(100);
+		expect(mockRequest).toHaveBeenNthCalledWith(
+			1,
+			'/v1/groups.json',
+			'packed-key',
+			{
+				method: 'POST',
+				query: undefined,
+				body: { group_name: 'Engineering' },
+			},
+		);
+		expect(mockRequest).toHaveBeenNthCalledWith(
+			2,
+			'/v1/groups/9.json',
+			'packed-key',
+			{
+				method: 'DELETE',
+				query: undefined,
+				body: undefined,
+			},
+		);
+		expect(mockRequest).toHaveBeenNthCalledWith(3, '/v1.json', 'packed-key', {
+			method: 'GET',
+			query: undefined,
+			body: undefined,
+		});
+	});
+
+	it('lists tests and gets test details', async () => {
+		mockRequest
+			.mockResolvedValueOnce({
+				...okEnvelope,
+				groups: [
+					{
+						group: {
+							group_id: 9,
+							group_name: 'Engineering',
+							assigned_tests: [
+								{ test: { test_id: 100, test_name: 'Exam A' } },
+								{ test: { test_id: 100, test_name: 'Exam A' } },
+							],
+						},
+					},
+				],
+				links: [
+					{
+						link: {
+							link_id: 55,
+							link_name: 'Public',
+							assigned_tests: [{ test: { test_id: 200, test_name: 'Exam B' } }],
+						},
+					},
+				],
+			})
+			.mockResolvedValueOnce({
+				...okEnvelope,
+				groups: [
+					{
+						group: {
+							group_id: 9,
+							group_name: 'Engineering',
+							assigned_tests: [{ test: { test_id: 100, test_name: 'Exam A' } }],
+						},
+					},
+				],
+				links: [
+					{
+						link: {
+							link_id: 55,
+							link_name: 'Public',
+							link_url_id: 'abc',
+							access_list_id: 7,
+							assigned_tests: [{ test: { test_id: 100, test_name: 'Exam A' } }],
+						},
+					},
+				],
+			});
+
+		const ctx = createContext();
+		const listResponse = await listTests(ctx, {});
+		const details = await getTestDetails(ctx, { test_id: 100 });
+
+		expect(listResponse.tests).toHaveLength(2);
+		expect(details.assignments).toHaveLength(2);
+		expect(details.test?.test_id).toBe(100);
+	});
+
+	it('deletes test link', async () => {
+		mockRequest.mockResolvedValueOnce({ ...okEnvelope });
+		const ctx = createContext();
+
+		await deleteTestLink(ctx, { link_id: 10, test_id: 20 });
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/v1/links/10/tests/20.json',
+			'packed-key',
+			{
+				method: 'DELETE',
+				query: undefined,
+				body: undefined,
+			},
+		);
+	});
+
+	it('handles certificates and webhooks operations', async () => {
+		mockRequest
+			.mockResolvedValueOnce({ ...okEnvelope, certificates: [] })
+			.mockResolvedValueOnce({ ...okEnvelope, webhooks: [] })
+			.mockResolvedValueOnce({ ...okEnvelope })
+			.mockResolvedValueOnce({ ...okEnvelope })
+			.mockResolvedValueOnce({ ...okEnvelope });
+
+		const ctx = createContext();
+		await listCertificates(ctx, {});
+		await listWebhooks(ctx, {});
+		await deleteWebhook(ctx, { webhook_id: 2 });
+		await deleteApiKey(ctx, { api_key_id: 3 });
+		await deleteTestLink(ctx, { link_id: 1, test_id: 2 });
+
+		expect(mockRequest).toHaveBeenNthCalledWith(
+			1,
+			'/v1/certificates.json',
+			'packed-key',
+			{ method: 'GET', query: undefined, body: undefined },
+		);
+		expect(mockRequest).toHaveBeenNthCalledWith(
+			2,
+			'/v1/webhooks.json',
+			'packed-key',
+			{ method: 'GET', query: undefined, body: undefined },
+		);
+		expect(mockRequest).toHaveBeenNthCalledWith(
+			3,
+			'/v1/webhooks/2.json',
+			'packed-key',
+			{ method: 'DELETE', query: undefined, body: undefined },
+		);
+		expect(mockRequest).toHaveBeenNthCalledWith(
+			4,
+			'/v1/api_keys/3.json',
+			'packed-key',
+			{ method: 'DELETE', query: undefined, body: undefined },
+		);
+	});
+
+	it('computes initial finishedAfterTimestamp inside allowed range', async () => {
+		const originalDateNowFn = Date.now;
+		Date.now = jest.fn(() => 1_762_783_200_000);
+
+		const response = await getInitialFinishedAfterTimestamp(
+			createContext(),
+			{},
+		);
+
+		expect(response.finishedAfterTimestamp).toBe(1_761_573_600);
+		Date.now = originalDateNowFn;
 	});
 });
 

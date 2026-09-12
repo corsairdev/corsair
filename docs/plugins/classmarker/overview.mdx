@@ -7,7 +7,7 @@ Use **Classmarker** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
-- 16 typed API operations
+- 31 typed API operations
 - 1 synced entity (`results`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -105,8 +105,8 @@ await tenant.classmarker.api.categories.list({});
 ```ts
 const tenant = corsair.withTenant('acme');
 await tenant.classmarker.api.accessLists.addCodes({
-	access_list_id: 123456,
-	access_codes: ['EXAMPLE-CODE'],
+  access_list_id: 123456,
+  access_codes: ['EXAMPLE-CODE'],
 });
 ```
 

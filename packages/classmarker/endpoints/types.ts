@@ -361,6 +361,43 @@ export const UpdateQuestionInputSchema = z.object({
 	question: QuestionMutationSchema,
 	verify_only: z.boolean().optional(),
 });
+export const ListUsersInputSchema = z.object({
+	page: z.coerce.number().int().min(1).optional(),
+});
+export const GetUserDetailsInputSchema = z.object({
+	user_id: z.coerce.number().int().positive(),
+});
+export const CreateUserInputSchema = z.object({
+	first_name: z.string().min(1),
+	last_name: z.string().min(1),
+	email: z.string().email(),
+	group_ids: z.array(z.coerce.number().int().positive()).optional(),
+});
+export const DeleteUserInputSchema = GetUserDetailsInputSchema;
+export const CreateGroupInputSchema = z.object({
+	group_name: z.string().min(1),
+});
+export const DeleteGroupInputSchema = z.object({
+	group_id: z.coerce.number().int().positive(),
+});
+export const GetGroupDetailsInputSchema = DeleteGroupInputSchema;
+export const ListTestsInputSchema = z.object({});
+export const GetTestDetailsInputSchema = z.object({
+	test_id: z.coerce.number().int().positive(),
+});
+export const DeleteTestLinkInputSchema = z.object({
+	link_id: z.coerce.number().int().positive(),
+	test_id: z.coerce.number().int().positive(),
+});
+export const ListCertificatesInputSchema = z.object({});
+export const ListWebhooksInputSchema = z.object({});
+export const DeleteWebhookInputSchema = z.object({
+	webhook_id: z.coerce.number().int().positive(),
+});
+export const DeleteApiKeyInputSchema = z.object({
+	api_key_id: z.coerce.number().int().positive(),
+});
+export const GetInitialFinishedAfterTimestampInputSchema = z.object({});
 
 export const GetAllGroupsLinksExamsOutputSchema = BaseEnvelopeSchema.extend({
 	groups: z.array(GroupWrapperSchema).optional(),
@@ -407,6 +444,62 @@ export const QuestionMutationOutputSchema = z.union([
 	QuestionSchema,
 	BaseEnvelopeSchema.extend({ question_id: z.coerce.number().optional() }),
 ]);
+const UserSchema = z
+	.object({
+		user_id: z.coerce.number().optional(),
+		first_name: z.string().optional(),
+		last_name: z.string().optional(),
+		email: z.string().optional(),
+	})
+	.passthrough();
+const TestAssignmentSchema = z.object({
+	test: TestRefSchema,
+	group: GroupRefSchema.optional(),
+	link: LinkRefSchema.optional(),
+});
+const GenericEnvelopeOutputSchema = BaseEnvelopeSchema.passthrough();
+export const ListUsersOutputSchema = BaseEnvelopeSchema.extend({
+	users: z.array(z.object({ user: UserSchema })).optional(),
+}).passthrough();
+export const GetUserDetailsOutputSchema = z.union([
+	UserSchema,
+	BaseEnvelopeSchema.extend({
+		user: UserSchema.optional(),
+	}).passthrough(),
+]);
+export const CreateUserOutputSchema = GenericEnvelopeOutputSchema;
+export const DeleteUserOutputSchema = GenericEnvelopeOutputSchema;
+export const CreateGroupOutputSchema = GenericEnvelopeOutputSchema;
+export const DeleteGroupOutputSchema = GenericEnvelopeOutputSchema;
+export const GetGroupDetailsOutputSchema = z
+	.object({
+		status: ClassmarkerStatusSchema,
+		group: GroupRefSchema.optional(),
+		request_path: z.string().optional(),
+		server_timestamp: z.coerce.number().optional(),
+	})
+	.passthrough();
+export const ListTestsOutputSchema = z.object({
+	status: ClassmarkerStatusSchema,
+	tests: z.array(TestRefSchema),
+});
+export const GetTestDetailsOutputSchema = z.object({
+	status: ClassmarkerStatusSchema,
+	test: TestRefSchema.optional(),
+	assignments: z.array(TestAssignmentSchema),
+});
+export const DeleteTestLinkOutputSchema = GenericEnvelopeOutputSchema;
+export const ListCertificatesOutputSchema = BaseEnvelopeSchema.extend({
+	certificates: z.array(z.record(z.string(), z.unknown())).optional(),
+}).passthrough();
+export const ListWebhooksOutputSchema = BaseEnvelopeSchema.extend({
+	webhooks: z.array(z.record(z.string(), z.unknown())).optional(),
+}).passthrough();
+export const DeleteWebhookOutputSchema = GenericEnvelopeOutputSchema;
+export const DeleteApiKeyOutputSchema = GenericEnvelopeOutputSchema;
+export const GetInitialFinishedAfterTimestampOutputSchema = z.object({
+	finishedAfterTimestamp: z.coerce.number().int().positive(),
+});
 
 export const ClassmarkerEndpointInputSchemas = {
 	getAllGroupsLinksExams: GetAllGroupsLinksExamsInputSchema,
@@ -425,6 +518,21 @@ export const ClassmarkerEndpointInputSchemas = {
 	getQuestion: GetQuestionInputSchema,
 	createQuestion: CreateQuestionInputSchema,
 	updateQuestion: UpdateQuestionInputSchema,
+	listUsers: ListUsersInputSchema,
+	getUserDetails: GetUserDetailsInputSchema,
+	createUser: CreateUserInputSchema,
+	deleteUser: DeleteUserInputSchema,
+	createGroup: CreateGroupInputSchema,
+	deleteGroup: DeleteGroupInputSchema,
+	getGroupDetails: GetGroupDetailsInputSchema,
+	listTests: ListTestsInputSchema,
+	getTestDetails: GetTestDetailsInputSchema,
+	deleteTestLink: DeleteTestLinkInputSchema,
+	listCertificates: ListCertificatesInputSchema,
+	listWebhooks: ListWebhooksInputSchema,
+	deleteWebhook: DeleteWebhookInputSchema,
+	deleteApiKey: DeleteApiKeyInputSchema,
+	getInitialFinishedAfterTimestamp: GetInitialFinishedAfterTimestampInputSchema,
 } as const;
 
 export const ClassmarkerEndpointOutputSchemas = {
@@ -444,6 +552,22 @@ export const ClassmarkerEndpointOutputSchemas = {
 	getQuestion: GetQuestionOutputSchema,
 	createQuestion: QuestionMutationOutputSchema,
 	updateQuestion: QuestionMutationOutputSchema,
+	listUsers: ListUsersOutputSchema,
+	getUserDetails: GetUserDetailsOutputSchema,
+	createUser: CreateUserOutputSchema,
+	deleteUser: DeleteUserOutputSchema,
+	createGroup: CreateGroupOutputSchema,
+	deleteGroup: DeleteGroupOutputSchema,
+	getGroupDetails: GetGroupDetailsOutputSchema,
+	listTests: ListTestsOutputSchema,
+	getTestDetails: GetTestDetailsOutputSchema,
+	deleteTestLink: DeleteTestLinkOutputSchema,
+	listCertificates: ListCertificatesOutputSchema,
+	listWebhooks: ListWebhooksOutputSchema,
+	deleteWebhook: DeleteWebhookOutputSchema,
+	deleteApiKey: DeleteApiKeyOutputSchema,
+	getInitialFinishedAfterTimestamp:
+		GetInitialFinishedAfterTimestampOutputSchema,
 } as const;
 
 export type ClassmarkerEndpointInputs = {
@@ -483,6 +607,23 @@ export type ListQuestionsInput = ClassmarkerEndpointInputs['listQuestions'];
 export type GetQuestionInput = ClassmarkerEndpointInputs['getQuestion'];
 export type CreateQuestionInput = ClassmarkerEndpointInputs['createQuestion'];
 export type UpdateQuestionInput = ClassmarkerEndpointInputs['updateQuestion'];
+export type ListUsersInput = ClassmarkerEndpointInputs['listUsers'];
+export type GetUserDetailsInput = ClassmarkerEndpointInputs['getUserDetails'];
+export type CreateUserInput = ClassmarkerEndpointInputs['createUser'];
+export type DeleteUserInput = ClassmarkerEndpointInputs['deleteUser'];
+export type CreateGroupInput = ClassmarkerEndpointInputs['createGroup'];
+export type DeleteGroupInput = ClassmarkerEndpointInputs['deleteGroup'];
+export type GetGroupDetailsInput = ClassmarkerEndpointInputs['getGroupDetails'];
+export type ListTestsInput = ClassmarkerEndpointInputs['listTests'];
+export type GetTestDetailsInput = ClassmarkerEndpointInputs['getTestDetails'];
+export type DeleteTestLinkInput = ClassmarkerEndpointInputs['deleteTestLink'];
+export type ListCertificatesInput =
+	ClassmarkerEndpointInputs['listCertificates'];
+export type ListWebhooksInput = ClassmarkerEndpointInputs['listWebhooks'];
+export type DeleteWebhookInput = ClassmarkerEndpointInputs['deleteWebhook'];
+export type DeleteApiKeyInput = ClassmarkerEndpointInputs['deleteApiKey'];
+export type GetInitialFinishedAfterTimestampInput =
+	ClassmarkerEndpointInputs['getInitialFinishedAfterTimestamp'];
 
 export type GetAllGroupsLinksExamsOutput =
 	ClassmarkerEndpointOutputs['getAllGroupsLinksExams'];
@@ -506,3 +647,21 @@ export type ListQuestionsOutput = ClassmarkerEndpointOutputs['listQuestions'];
 export type GetQuestionOutput = ClassmarkerEndpointOutputs['getQuestion'];
 export type QuestionMutationOutput =
 	ClassmarkerEndpointOutputs['createQuestion'];
+export type ListUsersOutput = ClassmarkerEndpointOutputs['listUsers'];
+export type GetUserDetailsOutput = ClassmarkerEndpointOutputs['getUserDetails'];
+export type CreateUserOutput = ClassmarkerEndpointOutputs['createUser'];
+export type DeleteUserOutput = ClassmarkerEndpointOutputs['deleteUser'];
+export type CreateGroupOutput = ClassmarkerEndpointOutputs['createGroup'];
+export type DeleteGroupOutput = ClassmarkerEndpointOutputs['deleteGroup'];
+export type GetGroupDetailsOutput =
+	ClassmarkerEndpointOutputs['getGroupDetails'];
+export type ListTestsOutput = ClassmarkerEndpointOutputs['listTests'];
+export type GetTestDetailsOutput = ClassmarkerEndpointOutputs['getTestDetails'];
+export type DeleteTestLinkOutput = ClassmarkerEndpointOutputs['deleteTestLink'];
+export type ListCertificatesOutput =
+	ClassmarkerEndpointOutputs['listCertificates'];
+export type ListWebhooksOutput = ClassmarkerEndpointOutputs['listWebhooks'];
+export type DeleteWebhookOutput = ClassmarkerEndpointOutputs['deleteWebhook'];
+export type DeleteApiKeyOutput = ClassmarkerEndpointOutputs['deleteApiKey'];
+export type GetInitialFinishedAfterTimestampOutput =
+	ClassmarkerEndpointOutputs['getInitialFinishedAfterTimestamp'];

@@ -6,6 +6,13 @@ import {
 	updateCategory,
 	updateParentCategory,
 } from './categories';
+import {
+	deleteApiKey,
+	deleteWebhook,
+	getInitialFinishedAfterTimestamp,
+	listCertificates,
+	listWebhooks,
+} from './certificates-webhooks';
 import { getAllGroupsLinksExams } from './groups-links-exams';
 import {
 	createQuestion,
@@ -19,6 +26,18 @@ import {
 	getRecentResultsForGroupExam,
 	getRecentResultsForLinkExam,
 } from './recent-results';
+import {
+	createGroup,
+	createUser,
+	deleteGroup,
+	deleteTestLink,
+	deleteUser,
+	getGroupDetails,
+	getTestDetails,
+	getUserDetails,
+	listTests,
+	listUsers,
+} from './users-groups-tests';
 
 export const GroupsLinksExams = {
 	getAll: getAllGroupsLinksExams,
@@ -49,6 +68,42 @@ export const Questions = {
 	get: getQuestion,
 	create: createQuestion,
 	update: updateQuestion,
+};
+
+export const Users = {
+	list: listUsers,
+	get: getUserDetails,
+	create: createUser,
+	delete: deleteUser,
+};
+
+export const Groups = {
+	create: createGroup,
+	delete: deleteGroup,
+	get: getGroupDetails,
+};
+
+export const Tests = {
+	list: listTests,
+	get: getTestDetails,
+	deleteLink: deleteTestLink,
+};
+
+export const Certificates = {
+	list: listCertificates,
+};
+
+export const Webhooks = {
+	list: listWebhooks,
+	delete: deleteWebhook,
+};
+
+export const ApiKeys = {
+	delete: deleteApiKey,
+};
+
+export const Utility = {
+	getInitialFinishedAfterTimestamp,
 };
 
 export * from './types';
