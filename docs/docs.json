@@ -1052,6 +1052,14 @@
                 ]
               },
               {
+                "group": "Classmarker",
+                "pages": [
+                  "plugins/classmarker/overview",
+                  "plugins/classmarker/api",
+                  "plugins/classmarker/database"
+                ]
+              },
+              {
                 "group": "ClickHouse",
                 "pages": [
                   "plugins/clickhouse/overview",

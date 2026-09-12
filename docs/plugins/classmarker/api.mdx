@@ -1,0 +1,1380 @@
+---
+title: API
+description: "API reference for Classmarker: every `classmarker.api.*` operation with input and output types."
+---
+
+Every `classmarker.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Access Lists
+
+### addCodes
+
+`accessLists.addCodes`
+
+Add access-list codes for a link exam.
+
+**Risk:** `write`
+
+```ts
+await corsair.classmarker.api.accessLists.addCodes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `access_list_id` | `number` | Yes | — |
+| `access_codes` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `ok \| no_results \| error \| verified` | Yes | — |
+| `request_path` | `string` | No | — |
+| `server_timestamp` | `number` | No | — |
+| `finished_after_timestamp_used` | `number` | No | — |
+| `num_results_available` | `number` | No | — |
+| `num_results_returned` | `number` | No | — |
+| `more_results_exist` | `boolean` | No | — |
+| `next_finished_after_timestamp` | `number` | No | — |
+| `error` | `object` | No | — |
+| `access_lists` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  error_code?: string,
+  error_message?: string,
+  next_request_after?: number
+}
+```
+</Accordion>
+
+<Accordion title="access_lists full type">
+
+```ts
+{
+  access_list: {
+    access_list_id: number,
+    access_list_name?: string,
+    num_codes_added?: number,
+    num_codes_deleted?: number,
+    num_codes_total?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteCodes
+
+`accessLists.deleteCodes`
+
+Delete access-list codes for a link exam.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.classmarker.api.accessLists.deleteCodes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `access_list_id` | `number` | Yes | — |
+| `access_codes` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `ok \| no_results \| error \| verified` | Yes | — |
+| `request_path` | `string` | No | — |
+| `server_timestamp` | `number` | No | — |
+| `finished_after_timestamp_used` | `number` | No | — |
+| `num_results_available` | `number` | No | — |
+| `num_results_returned` | `number` | No | — |
+| `more_results_exist` | `boolean` | No | — |
+| `next_finished_after_timestamp` | `number` | No | — |
+| `error` | `object` | No | — |
+| `access_lists` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  error_code?: string,
+  error_message?: string,
+  next_request_after?: number
+}
+```
+</Accordion>
+
+<Accordion title="access_lists full type">
+
+```ts
+{
+  access_list: {
+    access_list_id: number,
+    access_list_name?: string,
+    num_codes_added?: number,
+    num_codes_deleted?: number,
+    num_codes_total?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Categories
+
+### create
+
+`categories.create`
+
+Create a category under a parent category.
+
+**Risk:** `write`
+
+```ts
+await corsair.classmarker.api.categories.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_name` | `string` | Yes | — |
+| `parent_category_id` | `number` | Yes | — |
+| `verify_only` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status: verified,
+  request_path?: string,
+  server_timestamp?: number
+} | {
+  status: ok | no_results | error | verified,
+  request_path?: string,
+  server_timestamp?: number,
+  finished_after_timestamp_used?: number,
+  num_results_available?: number,
+  num_results_returned?: number,
+  more_results_exist?: boolean,
+  next_finished_after_timestamp?: number,
+  error?: {
+    error_code?: string,
+    error_message?: string,
+    next_request_after?: number
+  },
+  data?: {
+    parent_category?: {
+      parent_category_id: number,
+      parent_category_name: string,
+      categories?: {
+        category_id: number,
+        category_name: string,
+        parent_category_id: number
+      }[]
+    },
+    category?: {
+      category_id: number,
+      category_name: string,
+      parent_category_id: number
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createParent
+
+`categories.createParent`
+
+Create a parent category in the question bank.
+
+**Risk:** `write`
+
+```ts
+await corsair.classmarker.api.categories.createParent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent_category_name` | `string` | Yes | — |
+| `verify_only` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status: verified,
+  request_path?: string,
+  server_timestamp?: number
+} | {
+  status: ok | no_results | error | verified,
+  request_path?: string,
+  server_timestamp?: number,
+  finished_after_timestamp_used?: number,
+  num_results_available?: number,
+  num_results_returned?: number,
+  more_results_exist?: boolean,
+  next_finished_after_timestamp?: number,
+  error?: {
+    error_code?: string,
+    error_message?: string,
+    next_request_after?: number
+  },
+  data?: {
+    parent_category?: {
+      parent_category_id: number,
+      parent_category_name: string,
+      categories?: {
+        category_id: number,
+        category_name: string,
+        parent_category_id: number
+      }[]
+    },
+    category?: {
+      category_id: number,
+      category_name: string,
+      parent_category_id: number
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`categories.list`
+
+List parent categories and sub-categories.
+
+**Risk:** `read`
+
+```ts
+await corsair.classmarker.api.categories.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `ok \| no_results \| error \| verified` | Yes | — |
+| `request_path` | `string` | No | — |
+| `server_timestamp` | `number` | No | — |
+| `finished_after_timestamp_used` | `number` | No | — |
+| `num_results_available` | `number` | No | — |
+| `num_results_returned` | `number` | No | — |
+| `more_results_exist` | `boolean` | No | — |
+| `next_finished_after_timestamp` | `number` | No | — |
+| `error` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  error_code?: string,
+  error_message?: string,
+  next_request_after?: number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  parent_categories: {
+    parent_category_id: number,
+    parent_category_name: string,
+    categories?: {
+      category_id: number,
+      category_name: string,
+      parent_category_id: number
+    }[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`categories.update`
+
+Update a category and optionally re-parent it.
+
+**Risk:** `write`
+
+```ts
+await corsair.classmarker.api.categories.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | Yes | — |
+| `category_name` | `string` | Yes | — |
+| `parent_category_id` | `number` | Yes | — |
+| `verify_only` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status: verified,
+  request_path?: string,
+  server_timestamp?: number
+} | {
+  status: ok | no_results | error | verified,
+  request_path?: string,
+  server_timestamp?: number,
+  finished_after_timestamp_used?: number,
+  num_results_available?: number,
+  num_results_returned?: number,
+  more_results_exist?: boolean,
+  next_finished_after_timestamp?: number,
+  error?: {
+    error_code?: string,
+    error_message?: string,
+    next_request_after?: number
+  },
+  data?: {
+    parent_category?: {
+      parent_category_id: number,
+      parent_category_name: string,
+      categories?: {
+        category_id: number,
+        category_name: string,
+        parent_category_id: number
+      }[]
+    },
+    category?: {
+      category_id: number,
+      category_name: string,
+      parent_category_id: number
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateParent
+
+`categories.updateParent`
+
+Update a parent category in the question bank.
+
+**Risk:** `write`
+
+```ts
+await corsair.classmarker.api.categories.updateParent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent_category_id` | `number` | Yes | — |
+| `parent_category_name` | `string` | Yes | — |
+| `verify_only` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status: verified,
+  request_path?: string,
+  server_timestamp?: number
+} | {
+  status: ok | no_results | error | verified,
+  request_path?: string,
+  server_timestamp?: number,
+  finished_after_timestamp_used?: number,
+  num_results_available?: number,
+  num_results_returned?: number,
+  more_results_exist?: boolean,
+  next_finished_after_timestamp?: number,
+  error?: {
+    error_code?: string,
+    error_message?: string,
+    next_request_after?: number
+  },
+  data?: {
+    parent_category?: {
+      parent_category_id: number,
+      parent_category_name: string,
+      categories?: {
+        category_id: number,
+        category_name: string,
+        parent_category_id: number
+      }[]
+    },
+    category?: {
+      category_id: number,
+      category_name: string,
+      parent_category_id: number
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Groups Links Exams
+
+### getAll
+
+`groupsLinksExams.getAll`
+
+List all groups, links, and assigned tests visible to the API key.
+
+**Risk:** `read`
+
+```ts
+await corsair.classmarker.api.groupsLinksExams.getAll({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `ok \| no_results \| error \| verified` | Yes | — |
+| `request_path` | `string` | No | — |
+| `server_timestamp` | `number` | No | — |
+| `finished_after_timestamp_used` | `number` | No | — |
+| `num_results_available` | `number` | No | — |
+| `num_results_returned` | `number` | No | — |
+| `more_results_exist` | `boolean` | No | — |
+| `next_finished_after_timestamp` | `number` | No | — |
+| `error` | `object` | No | — |
+| `groups` | `object[]` | No | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  error_code?: string,
+  error_message?: string,
+  next_request_after?: number
+}
+```
+</Accordion>
+
+<Accordion title="groups full type">
+
+```ts
+{
+  group: {
+    group_id: number,
+    group_name: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  link: {
+    link_id: number,
+    link_name: string,
+    link_url_id?: string,
+    access_list_id?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Questions
+
+### create
+
+`questions.create`
+
+Create a new question in the question bank.
+
+**Risk:** `write`
+
+```ts
+await corsair.classmarker.api.questions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `question` | `object` | Yes | — |
+| `verify_only` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="question full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status: verified,
+  request_path?: string,
+  server_timestamp?: number
+} | {
+  question_id: number,
+  question: string,
+  question_type: string,
+  category_id?: number,
+  random_answers?: boolean,
+  points?: string | number,
+  correct_feedback?: string,
+  incorrect_feedback?: string,
+  last_updated_timestamp?: number,
+  status?: string,
+  grade_style?: string,
+  options?: {
+  },
+  correct_options?: string[]
+} | {
+  status: ok | no_results | error | verified,
+  request_path?: string,
+  server_timestamp?: number,
+  finished_after_timestamp_used?: number,
+  num_results_available?: number,
+  num_results_returned?: number,
+  more_results_exist?: boolean,
+  next_finished_after_timestamp?: number,
+  error?: {
+    error_code?: string,
+    error_message?: string,
+    next_request_after?: number
+  },
+  question_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`questions.get`
+
+Get one question from the question bank.
+
+**Risk:** `read`
+
+```ts
+await corsair.classmarker.api.questions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `question_id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  question_id: number,
+  question: string,
+  question_type: string,
+  category_id?: number,
+  random_answers?: boolean,
+  points?: string | number,
+  correct_feedback?: string,
+  incorrect_feedback?: string,
+  last_updated_timestamp?: number,
+  status?: string,
+  grade_style?: string,
+  options?: {
+  },
+  correct_options?: string[]
+} | {
+  status: ok | no_results | error | verified,
+  request_path?: string,
+  server_timestamp?: number,
+  finished_after_timestamp_used?: number,
+  num_results_available?: number,
+  num_results_returned?: number,
+  more_results_exist?: boolean,
+  next_finished_after_timestamp?: number,
+  error?: {
+    error_code?: string,
+    error_message?: string,
+    next_request_after?: number
+  },
+  question_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`questions.list`
+
+List question-bank questions (200 per page).
+
+**Risk:** `read`
+
+```ts
+await corsair.classmarker.api.questions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `ok \| no_results \| error \| verified` | Yes | — |
+| `request_path` | `string` | No | — |
+| `server_timestamp` | `number` | No | — |
+| `finished_after_timestamp_used` | `number` | No | — |
+| `num_results_available` | `number` | No | — |
+| `num_results_returned` | `number` | No | — |
+| `more_results_exist` | `boolean` | No | — |
+| `next_finished_after_timestamp` | `number` | No | — |
+| `error` | `object` | No | — |
+| `questions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  error_code?: string,
+  error_message?: string,
+  next_request_after?: number
+}
+```
+</Accordion>
+
+<Accordion title="questions full type">
+
+```ts
+{
+  question_id: number,
+  question: string,
+  question_type: string,
+  category_id?: number,
+  random_answers?: boolean,
+  points?: string | number,
+  correct_feedback?: string,
+  incorrect_feedback?: string,
+  last_updated_timestamp?: number,
+  status?: string,
+  grade_style?: string,
+  options?: {
+  },
+  correct_options?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`questions.update`
+
+Update an existing question in the question bank.
+
+**Risk:** `write`
+
+```ts
+await corsair.classmarker.api.questions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `question_id` | `number` | Yes | — |
+| `question` | `object` | Yes | — |
+| `verify_only` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="question full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status: verified,
+  request_path?: string,
+  server_timestamp?: number
+} | {
+  question_id: number,
+  question: string,
+  question_type: string,
+  category_id?: number,
+  random_answers?: boolean,
+  points?: string | number,
+  correct_feedback?: string,
+  incorrect_feedback?: string,
+  last_updated_timestamp?: number,
+  status?: string,
+  grade_style?: string,
+  options?: {
+  },
+  correct_options?: string[]
+} | {
+  status: ok | no_results | error | verified,
+  request_path?: string,
+  server_timestamp?: number,
+  finished_after_timestamp_used?: number,
+  num_results_available?: number,
+  num_results_returned?: number,
+  more_results_exist?: boolean,
+  next_finished_after_timestamp?: number,
+  error?: {
+    error_code?: string,
+    error_message?: string,
+    next_request_after?: number
+  },
+  question_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Recent Results
+
+### forAllGroups
+
+`recentResults.forAllGroups`
+
+Fetch recent results across all groups with timestamp pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.classmarker.api.recentResults.forAllGroups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `finishedAfterTimestamp` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `ok \| no_results \| error \| verified` | Yes | — |
+| `request_path` | `string` | No | — |
+| `server_timestamp` | `number` | No | — |
+| `finished_after_timestamp_used` | `number` | No | — |
+| `num_results_available` | `number` | No | — |
+| `num_results_returned` | `number` | No | — |
+| `more_results_exist` | `boolean` | No | — |
+| `next_finished_after_timestamp` | `number` | No | — |
+| `error` | `object` | No | — |
+| `groups` | `object[]` | No | — |
+| `tests` | `object[]` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  error_code?: string,
+  error_message?: string,
+  next_request_after?: number
+}
+```
+</Accordion>
+
+<Accordion title="groups full type">
+
+```ts
+{
+  group: {
+    group_id: number,
+    group_name: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="tests full type">
+
+```ts
+{
+  test: {
+    test_id: number,
+    test_name: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  result: {
+    test_id: number,
+    percentage: number,
+    points_scored: number,
+    points_available: number,
+    time_started: number,
+    time_finished: number,
+    status: string,
+    duration?: string,
+    percentage_passmark?: number,
+    passed?: boolean,
+    requires_grading?: string,
+    give_certificate_only_when_passed?: boolean,
+    certificate_url?: string,
+    certificate_serial?: string,
+    view_results_url?: string,
+    test_type?: string,
+    monitor_events?: {
+      browser_monitoring?: string,
+      camera_monitoring?: string,
+      total_event_count?: number,
+      total_seconds_away?: number,
+      events?: {
+        timestamp: number,
+        event: string,
+        seconds_away: number
+      }[]
+    },
+    user_id: number,
+    group_id: number,
+    first?: string,
+    last?: string,
+    email?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### forAllLinks
+
+`recentResults.forAllLinks`
+
+Fetch recent results across all links with timestamp pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.classmarker.api.recentResults.forAllLinks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `finishedAfterTimestamp` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `ok \| no_results \| error \| verified` | Yes | — |
+| `request_path` | `string` | No | — |
+| `server_timestamp` | `number` | No | — |
+| `finished_after_timestamp_used` | `number` | No | — |
+| `num_results_available` | `number` | No | — |
+| `num_results_returned` | `number` | No | — |
+| `more_results_exist` | `boolean` | No | — |
+| `next_finished_after_timestamp` | `number` | No | — |
+| `error` | `object` | No | — |
+| `links` | `object[]` | No | — |
+| `tests` | `object[]` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  error_code?: string,
+  error_message?: string,
+  next_request_after?: number
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  link: {
+    link_id: number,
+    link_name: string,
+    link_url_id?: string,
+    access_list_id?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="tests full type">
+
+```ts
+{
+  test: {
+    test_id: number,
+    test_name: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  result: {
+    test_id: number,
+    percentage: number,
+    points_scored: number,
+    points_available: number,
+    time_started: number,
+    time_finished: number,
+    status: string,
+    duration?: string,
+    percentage_passmark?: number,
+    passed?: boolean,
+    requires_grading?: string,
+    give_certificate_only_when_passed?: boolean,
+    certificate_url?: string,
+    certificate_serial?: string,
+    view_results_url?: string,
+    test_type?: string,
+    monitor_events?: {
+      browser_monitoring?: string,
+      camera_monitoring?: string,
+      total_event_count?: number,
+      total_seconds_away?: number,
+      events?: {
+        timestamp: number,
+        event: string,
+        seconds_away: number
+      }[]
+    },
+    link_id: number,
+    first?: string,
+    last?: string,
+    email?: string,
+    access_code?: string,
+    extra_info?: string,
+    extra_info2?: string,
+    extra_info3?: string,
+    extra_info4?: string,
+    extra_info5?: string,
+    link_result_id?: number,
+    cm_user_id?: string,
+    ip_address?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### forGroupExam
+
+`recentResults.forGroupExam`
+
+Fetch recent results for one group/test pair.
+
+**Risk:** `read`
+
+```ts
+await corsair.classmarker.api.recentResults.forGroupExam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | — |
+| `test_id` | `number` | Yes | — |
+| `finishedAfterTimestamp` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `ok \| no_results \| error \| verified` | Yes | — |
+| `request_path` | `string` | No | — |
+| `server_timestamp` | `number` | No | — |
+| `finished_after_timestamp_used` | `number` | No | — |
+| `num_results_available` | `number` | No | — |
+| `num_results_returned` | `number` | No | — |
+| `more_results_exist` | `boolean` | No | — |
+| `next_finished_after_timestamp` | `number` | No | — |
+| `error` | `object` | No | — |
+| `groups` | `object[]` | No | — |
+| `tests` | `object[]` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  error_code?: string,
+  error_message?: string,
+  next_request_after?: number
+}
+```
+</Accordion>
+
+<Accordion title="groups full type">
+
+```ts
+{
+  group: {
+    group_id: number,
+    group_name: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="tests full type">
+
+```ts
+{
+  test: {
+    test_id: number,
+    test_name: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  result: {
+    test_id: number,
+    percentage: number,
+    points_scored: number,
+    points_available: number,
+    time_started: number,
+    time_finished: number,
+    status: string,
+    duration?: string,
+    percentage_passmark?: number,
+    passed?: boolean,
+    requires_grading?: string,
+    give_certificate_only_when_passed?: boolean,
+    certificate_url?: string,
+    certificate_serial?: string,
+    view_results_url?: string,
+    test_type?: string,
+    monitor_events?: {
+      browser_monitoring?: string,
+      camera_monitoring?: string,
+      total_event_count?: number,
+      total_seconds_away?: number,
+      events?: {
+        timestamp: number,
+        event: string,
+        seconds_away: number
+      }[]
+    },
+    user_id: number,
+    group_id: number,
+    first?: string,
+    last?: string,
+    email?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### forLinkExam
+
+`recentResults.forLinkExam`
+
+Fetch recent results for one link/test pair.
+
+**Risk:** `read`
+
+```ts
+await corsair.classmarker.api.recentResults.forLinkExam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_id` | `number` | Yes | — |
+| `test_id` | `number` | Yes | — |
+| `finishedAfterTimestamp` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `ok \| no_results \| error \| verified` | Yes | — |
+| `request_path` | `string` | No | — |
+| `server_timestamp` | `number` | No | — |
+| `finished_after_timestamp_used` | `number` | No | — |
+| `num_results_available` | `number` | No | — |
+| `num_results_returned` | `number` | No | — |
+| `more_results_exist` | `boolean` | No | — |
+| `next_finished_after_timestamp` | `number` | No | — |
+| `error` | `object` | No | — |
+| `links` | `object[]` | No | — |
+| `tests` | `object[]` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  error_code?: string,
+  error_message?: string,
+  next_request_after?: number
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  link: {
+    link_id: number,
+    link_name: string,
+    link_url_id?: string,
+    access_list_id?: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="tests full type">
+
+```ts
+{
+  test: {
+    test_id: number,
+    test_name: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  result: {
+    test_id: number,
+    percentage: number,
+    points_scored: number,
+    points_available: number,
+    time_started: number,
+    time_finished: number,
+    status: string,
+    duration?: string,
+    percentage_passmark?: number,
+    passed?: boolean,
+    requires_grading?: string,
+    give_certificate_only_when_passed?: boolean,
+    certificate_url?: string,
+    certificate_serial?: string,
+    view_results_url?: string,
+    test_type?: string,
+    monitor_events?: {
+      browser_monitoring?: string,
+      camera_monitoring?: string,
+      total_event_count?: number,
+      total_seconds_away?: number,
+      events?: {
+        timestamp: number,
+        event: string,
+        seconds_away: number
+      }[]
+    },
+    link_id: number,
+    first?: string,
+    last?: string,
+    email?: string,
+    access_code?: string,
+    extra_info?: string,
+    extra_info2?: string,
+    extra_info3?: string,
+    extra_info4?: string,
+    extra_info5?: string,
+    link_result_id?: number,
+    cm_user_id?: string,
+    ip_address?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
