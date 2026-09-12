@@ -241,6 +241,7 @@ export const BaseProviders = [
 	'scaleai',
 	'scrapegraphai',
 	'securitytrails',
+	'semanticscholar',
 	'sendgrid',
 	'sentry',
 	'serpapi',
@@ -530,6 +531,7 @@ export const ProviderDisplayNames = {
 	scaleai: 'Scale AI',
 	scrapegraphai: 'ScrapeGraphAI',
 	securitytrails: 'SecurityTrails',
+	semanticscholar: 'Semantic Scholar',
 	sendgrid: 'SendGrid',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',
@@ -826,6 +828,7 @@ export type AllProviders =
 	| 'scaleai'
 	| 'scrapegraphai'
 	| 'securitytrails'
+	| 'semanticscholar'
 	| 'sendgrid'
 	| 'sentry'
 	| 'serpapi'
