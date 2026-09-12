@@ -1,61 +1,96 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
+import { SNAPCHAT_TOOLKIT_VERSION } from './operations';
 
-export class SnapchatAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'SnapchatAPIError';
+const DEFAULT_COMPOSIO_BASE_URL = 'https://backend.composio.dev/api/v3';
+
+export type SnapchatToolResponse = {
+	successful?: boolean;
+	data?: unknown;
+	error?: unknown;
+	log_id?: string;
+	status?: string;
+	request_id?: string;
+} & Record<string, unknown>;
+
+export type ExecuteSnapchatToolOptions = {
+	composioApiKey: string;
+	snapchatAccessToken?: string;
+	connectedAccountId?: string;
+	userId?: string;
+	composioBaseUrl?: string;
+	timeoutMs?: number;
+	signal?: AbortSignal;
+};
+
+function normalizeBaseUrl(value?: string): string {
+	const trimmed = value?.trim();
+	if (!trimmed) {
+		return DEFAULT_COMPOSIO_BASE_URL;
 	}
+	return trimmed.endsWith('/') ? trimmed.slice(0, -1) : trimmed;
 }
 
-// TODO: Update with your API base URL
-const SNAPCHAT_API_BASE = 'https://api.example.com';
+function createCustomAuthParams(
+	snapchatAccessToken?: string,
+): Record<string, string> | undefined {
+	const token = snapchatAccessToken?.trim();
+	if (!token) {
+		return undefined;
+	}
 
-export async function makeSnapchatRequest<T>(
-	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
-): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	return {
+		access_token: token,
+		Authorization: `Bearer ${token}`,
+	};
+}
+
+export async function executeSnapchatTool(
+	toolSlug: string,
+	args: object,
+	options: ExecuteSnapchatToolOptions,
+): Promise<SnapchatToolResponse> {
+	const composioApiKey = options.composioApiKey.trim();
+	if (!composioApiKey) {
+		throw new Error('[snapchat] composioApiKey is required');
+	}
+
+	const body: Record<string, unknown> = {
+		arguments: args,
+		version: SNAPCHAT_TOOLKIT_VERSION,
+	};
+
+	if (options.connectedAccountId) {
+		body.connected_account_id = options.connectedAccountId;
+	}
+
+	if (options.userId) {
+		body.user_id = options.userId;
+	}
+
+	const customAuthParams = createCustomAuthParams(options.snapchatAccessToken);
+	if (customAuthParams) {
+		body.custom_auth_params = customAuthParams;
+	}
 
 	const config: OpenAPIConfig = {
-		BASE: SNAPCHAT_API_BASE,
+		BASE: normalizeBaseUrl(options.composioBaseUrl),
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
-			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			Accept: 'application/json',
+			'Content-Type': 'application/json; charset=utf-8',
+			'x-api-key': composioApiKey,
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		method: 'POST',
+		url: `/tools/execute/${encodeURIComponent(toolSlug)}`,
+		body,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new SnapchatAPIError(error.message);
-		}
-		throw new SnapchatAPIError('Unknown error');
-	}
+	return request<SnapchatToolResponse>(config, requestOptions);
 }

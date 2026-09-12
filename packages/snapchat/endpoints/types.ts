@@ -1,36 +1,48 @@
 import { z } from 'zod';
+import { SNAPCHAT_OPERATIONS } from '../operations';
 
-const SnapchatDataInputSchema = z.object({
-	search: z.string().optional(),
-});
+const GenericInputSchema = z.record(z.string(), z.unknown());
+const GenericOutputSchema = z
+	.object({
+		successful: z.boolean().optional(),
+		data: z.unknown().optional(),
+		error: z.unknown().optional(),
+		log_id: z.string().optional(),
+		status: z.string().optional(),
+		request_id: z.string().optional(),
+	})
+	.loose();
 
-export type SnapchatDataInput = z.infer<typeof SnapchatDataInputSchema>;
+const inputEntries = SNAPCHAT_OPERATIONS.map((operation) => [
+	operation.name,
+	GenericInputSchema,
+]);
 
-const SnapchatDataResponseSchema = z.object({
-	data: z.array(
-		z.object({
-			id: z.string(),
-			timestamp: z.string().optional(),
-			text: z.string().optional(),
-			source: z.string().optional(),
-		}),
-	),
-});
+const outputEntries = SNAPCHAT_OPERATIONS.map((operation) => [
+	operation.name,
+	GenericOutputSchema,
+]);
 
-export type SnapchatDataResponse = z.infer<typeof SnapchatDataResponseSchema>;
+export const SnapchatEndpointInputSchemas = Object.fromEntries(
+	inputEntries,
+) as {
+	[K in (typeof SNAPCHAT_OPERATIONS)[number]['name']]: typeof GenericInputSchema;
+};
+
+export const SnapchatEndpointOutputSchemas = Object.fromEntries(
+	outputEntries,
+) as {
+	[K in (typeof SNAPCHAT_OPERATIONS)[number]['name']]: typeof GenericOutputSchema;
+};
 
 export type SnapchatEndpointInputs = {
-	getPublicData: SnapchatDataInput;
+	[K in keyof typeof SnapchatEndpointInputSchemas]: z.input<
+		(typeof SnapchatEndpointInputSchemas)[K]
+	>;
 };
 
 export type SnapchatEndpointOutputs = {
-	getPublicData: SnapchatDataResponse;
+	[K in keyof typeof SnapchatEndpointOutputSchemas]: z.infer<
+		(typeof SnapchatEndpointOutputSchemas)[K]
+	>;
 };
-
-export const SnapchatEndpointInputSchemas = {
-	getPublicData: SnapchatDataInputSchema,
-} as const;
-
-export const SnapchatEndpointOutputSchemas = {
-	getPublicData: SnapchatDataResponseSchema,
-} as const;
