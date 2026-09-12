@@ -20,7 +20,10 @@ Add access-list codes for a link exam.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.accessLists.addCodes({});
+await corsair.classmarker.api.accessLists.addCodes({
+  access_list_id: 123456,
+  access_codes: ['USER-001', 'USER-002'],
+});
 ```
 
 **Input**
@@ -88,7 +91,10 @@ Delete access-list codes for a link exam.
 **Risk:** `destructive`
 
 ```ts
-await corsair.classmarker.api.accessLists.deleteCodes({});
+await corsair.classmarker.api.accessLists.deleteCodes({
+  access_list_id: 123456,
+  access_codes: ['USER-001'],
+});
 ```
 
 **Input**
@@ -158,7 +164,10 @@ Create a category under a parent category.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.categories.create({});
+await corsair.classmarker.api.categories.create({
+  category_name: 'Algebra',
+  parent_category_id: 12,
+});
 ```
 
 **Input**
@@ -228,7 +237,9 @@ Create a parent category in the question bank.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.categories.createParent({});
+await corsair.classmarker.api.categories.createParent({
+  parent_category_name: 'Mathematics',
+});
 ```
 
 **Input**
@@ -361,7 +372,11 @@ Update a category and optionally re-parent it.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.categories.update({});
+await corsair.classmarker.api.categories.update({
+  category_id: 34,
+  category_name: 'Advanced Algebra',
+  parent_category_id: 12,
+});
 ```
 
 **Input**
@@ -432,7 +447,10 @@ Update a parent category in the question bank.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.categories.updateParent({});
+await corsair.classmarker.api.categories.updateParent({
+  parent_category_id: 12,
+  parent_category_name: 'Mathematics and Logic',
+});
 ```
 
 **Input**
@@ -580,7 +598,19 @@ Create a new question in the question bank.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.questions.create({});
+await corsair.classmarker.api.questions.create({
+  question: {
+    question: 'What is 2 + 2?',
+    question_type: 'multiplechoice',
+    category_id: 34,
+    points: 1,
+    options: {
+      A: { content: '3' },
+      B: { content: '4' },
+    },
+    correct_options: ['B'],
+  },
+});
 ```
 
 **Input**
@@ -659,7 +689,9 @@ Get one question from the question bank.
 **Risk:** `read`
 
 ```ts
-await corsair.classmarker.api.questions.get({});
+await corsair.classmarker.api.questions.get({
+  question_id: 53353998,
+});
 ```
 
 **Input**
@@ -797,7 +829,20 @@ Update an existing question in the question bank.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.questions.update({});
+await corsair.classmarker.api.questions.update({
+  question_id: 53353998,
+  question: {
+    question: 'What is 3 + 3?',
+    question_type: 'multiplechoice',
+    category_id: 34,
+    points: 1,
+    options: {
+      A: { content: '5' },
+      B: { content: '6' },
+    },
+    correct_options: ['B'],
+  },
+});
 ```
 
 **Input**
@@ -1131,7 +1176,10 @@ Fetch recent results for one group/test pair.
 **Risk:** `read`
 
 ```ts
-await corsair.classmarker.api.recentResults.forGroupExam({});
+await corsair.classmarker.api.recentResults.forGroupExam({
+  group_id: 29765,
+  test_id: 64776,
+});
 ```
 
 **Input**
@@ -1254,7 +1302,10 @@ Fetch recent results for one link/test pair.
 **Risk:** `read`
 
 ```ts
-await corsair.classmarker.api.recentResults.forLinkExam({});
+await corsair.classmarker.api.recentResults.forLinkExam({
+  link_id: 38676,
+  test_id: 48756,
+});
 ```
 
 **Input**
@@ -1377,4 +1428,3 @@ await corsair.classmarker.api.recentResults.forLinkExam({});
 
 
 ---
-

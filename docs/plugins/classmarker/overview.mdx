@@ -59,7 +59,10 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for both:
+
+- `api_key` (ClassMarker API key ID)
+- `api_key_secret` (paired API secret used to sign every request)
 
 ```ts
 classmarker()
@@ -101,7 +104,10 @@ await tenant.classmarker.api.categories.list({});
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.classmarker.api.accessLists.addCodes({});
+await tenant.classmarker.api.accessLists.addCodes({
+	access_list_id: 123456,
+	access_codes: ['EXAMPLE-CODE'],
+});
 ```
 
 

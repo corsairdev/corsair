@@ -82,10 +82,37 @@ describe('ClassMarker endpoints', () => {
 	});
 
 	it('gets groups, links, and exams', async () => {
-		mockRequest.mockResolvedValueOnce({ ...okEnvelope, groups: [], links: [] });
+		mockRequest.mockResolvedValueOnce({
+			...okEnvelope,
+			groups: [
+				{
+					group: {
+						group_id: 1,
+						group_name: 'Group',
+						assigned_tests: [{ test: { test_id: 10, test_name: 'Test' } }],
+					},
+				},
+			],
+			links: [
+				{
+					link: {
+						link_id: 2,
+						link_name: 'Link',
+						assigned_tests: [{ test: { test_id: 11, test_name: 'Link Test' } }],
+					},
+				},
+			],
+		});
 		const ctx = createContext();
 
-		await getAllGroupsLinksExams(ctx, {});
+		const response = await getAllGroupsLinksExams(ctx, {});
+
+		expect(response.groups?.[0]?.group.assigned_tests?.[0]?.test.test_id).toBe(
+			10,
+		);
+		expect(response.links?.[0]?.link.assigned_tests?.[0]?.test.test_id).toBe(
+			11,
+		);
 
 		expect(mockRequest).toHaveBeenCalledWith('/v1.json', 'packed-key', {
 			method: 'GET',
@@ -202,6 +229,12 @@ describe('ClassMarker endpoints', () => {
 				query: undefined,
 				body: ['A', 'B'],
 			},
+		);
+		expect(mockLog).toHaveBeenCalledWith(
+			ctx,
+			'classmarker.addAccessCodes',
+			{ access_list_id: 9, access_code_count: 2 },
+			'completed',
 		);
 	});
 
@@ -400,9 +433,11 @@ describe('ClassMarker endpoints', () => {
 			});
 
 		const ctx = createContext();
-		const body = {
+		const body: Parameters<typeof createQuestion>[1]['question'] = {
 			question: 'Q',
 			question_type: 'multiplechoice',
+			category_id: 1,
+			points: 2,
 			options: { A: { content: 'A' } },
 			correct_options: ['A'],
 		};
@@ -420,6 +455,13 @@ describe('ClassMarker endpoints', () => {
 				body,
 			},
 		);
+		expect(mockLog).toHaveBeenNthCalledWith(
+			1,
+			ctx,
+			'classmarker.createQuestion',
+			{ verify_only: true },
+			'completed',
+		);
 		expect(mockRequest).toHaveBeenNthCalledWith(
 			2,
 			'/v1/questions/1.json',
@@ -430,6 +472,21 @@ describe('ClassMarker endpoints', () => {
 				body,
 			},
 		);
+	});
+
+	it('rejects unsupported question type and does not call API', async () => {
+		const ctx = createContext();
+		const invalidCreateInput = {
+			question: {
+				question: 'Unsupported',
+				question_type: 'matching',
+				category_id: 1,
+				points: 1,
+			},
+		} as unknown as Parameters<typeof createQuestion>[1];
+
+		await expect(createQuestion(ctx, invalidCreateInput)).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('rejects invalid input and does not call API', async () => {

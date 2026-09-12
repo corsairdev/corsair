@@ -28,7 +28,7 @@ export async function runClassmarkerEndpoint<TInput, TOutput>(
 		throw new AuthMissingError('classmarker', 'api_key');
 	}
 
-	const parsedInput = params.inputSchema.parse(params.input);
+	params.inputSchema.parse(params.input);
 	const response = await makeClassmarkerRequest<unknown>(params.path, ctx.key, {
 		method: params.method ?? 'GET',
 		query: params.query,
@@ -40,7 +40,7 @@ export async function runClassmarkerEndpoint<TInput, TOutput>(
 	await logEventFromContext(
 		ctx,
 		`classmarker.${params.operation}`,
-		params.logPayload ?? (parsedInput as Record<string, unknown>),
+		params.logPayload ?? {},
 		'completed',
 	);
 

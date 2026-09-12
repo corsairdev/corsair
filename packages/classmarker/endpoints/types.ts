@@ -12,9 +12,14 @@ const TestRefSchema = z.object({
 	test_name: z.string(),
 });
 
+const AssignedTestSchema = z.object({
+	test: TestRefSchema,
+});
+
 const GroupRefSchema = z.object({
 	group_id: z.coerce.number(),
 	group_name: z.string(),
+	assigned_tests: z.array(AssignedTestSchema).optional(),
 });
 
 const LinkRefSchema = z.object({
@@ -22,6 +27,7 @@ const LinkRefSchema = z.object({
 	link_name: z.string(),
 	link_url_id: z.string().optional(),
 	access_list_id: z.coerce.number().optional(),
+	assigned_tests: z.array(AssignedTestSchema).optional(),
 });
 
 const MonitorEventItemSchema = z.object({
@@ -161,6 +167,104 @@ const QuestionOptionSchema = z.object({
 	content: z.string().optional(),
 });
 
+const QuestionTypeSchema = z.enum([
+	'multiplechoice',
+	'multipleresponse',
+	'truefalse',
+	'essay',
+]);
+
+const QuestionBaseMutationSchema = z
+	.object({
+		question: z.string().min(1),
+		question_type: QuestionTypeSchema,
+		category_id: z.coerce.number().int().positive(),
+		points: z.union([z.string(), z.coerce.number()]),
+		correct_feedback: z.string().optional(),
+		incorrect_feedback: z.string().optional(),
+	})
+	.strict();
+
+const ChoiceQuestionMutationSchema = QuestionBaseMutationSchema.extend({
+	question_type: z.enum(['multiplechoice', 'multipleresponse', 'truefalse']),
+	random_answers: z.boolean().optional(),
+	options: z.record(z.string().regex(/^[A-J]$/), QuestionOptionSchema),
+	correct_options: z.array(z.string().regex(/^[A-J]$/)).min(1),
+	grade_style: z
+		.enum(['partial_with_deduction', 'partial_without_deduction', 'off'])
+		.optional(),
+}).superRefine((value, ctx) => {
+	const optionKeys = Object.keys(value.options);
+	if (optionKeys.length === 0 || optionKeys.length > 10) {
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			path: ['options'],
+			message: 'options must contain between 1 and 10 entries',
+		});
+	}
+
+	if (
+		value.question_type === 'multiplechoice' &&
+		value.correct_options.length !== 1
+	) {
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			path: ['correct_options'],
+			message: 'multiplechoice requires exactly one correct option',
+		});
+	}
+
+	if (value.question_type === 'truefalse') {
+		if (!('A' in value.options) || !('B' in value.options)) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				path: ['options'],
+				message: 'truefalse questions require A and B options',
+			});
+		}
+
+		if (value.correct_options.length !== 1) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				path: ['correct_options'],
+				message: 'truefalse requires exactly one correct option',
+			});
+		}
+
+		for (const option of value.correct_options) {
+			if (option !== 'A' && option !== 'B') {
+				ctx.addIssue({
+					code: z.ZodIssueCode.custom,
+					path: ['correct_options'],
+					message: 'truefalse correct option must be A or B',
+				});
+			}
+		}
+	}
+
+	if (
+		value.question_type === 'multiplechoice' ||
+		value.question_type === 'truefalse'
+	) {
+		if (value.grade_style !== undefined) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				path: ['grade_style'],
+				message: 'grade_style is only supported for multipleresponse questions',
+			});
+		}
+	}
+});
+
+const EssayQuestionMutationSchema = QuestionBaseMutationSchema.extend({
+	question_type: z.literal('essay'),
+}).strict();
+
+const QuestionMutationSchema = z.union([
+	ChoiceQuestionMutationSchema,
+	EssayQuestionMutationSchema,
+]);
+
 const QuestionSchema = z
 	.object({
 		question_id: z.coerce.number(),
@@ -237,12 +341,12 @@ export const GetQuestionInputSchema = z.object({
 	question_id: z.coerce.number().int().positive(),
 });
 export const CreateQuestionInputSchema = z.object({
-	question: z.record(z.string(), z.unknown()),
+	question: QuestionMutationSchema,
 	verify_only: z.boolean().optional(),
 });
 export const UpdateQuestionInputSchema = z.object({
 	question_id: z.coerce.number().int().positive(),
-	question: z.record(z.string(), z.unknown()),
+	question: QuestionMutationSchema,
 	verify_only: z.boolean().optional(),
 });
 

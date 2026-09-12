@@ -19,6 +19,10 @@ export const addAccessCodes: ClassmarkerEndpoints['addAccessCodes'] = async (
 		inputSchema: AddAccessCodesInputSchema,
 		outputSchema: AccessCodesResponseOutputSchema,
 		body: parsedInput.access_codes,
+		logPayload: {
+			access_list_id: parsedInput.access_list_id,
+			access_code_count: parsedInput.access_codes.length,
+		},
 	});
 };
 
@@ -33,5 +37,9 @@ export const deleteAccessCodes: ClassmarkerEndpoints['deleteAccessCodes'] =
 			inputSchema: DeleteAccessCodesInputSchema,
 			outputSchema: AccessCodesResponseOutputSchema,
 			body: parsedInput.access_codes,
+			logPayload: {
+				access_list_id: parsedInput.access_list_id,
+				access_code_count: parsedInput.access_codes.length,
+			},
 		});
 	};

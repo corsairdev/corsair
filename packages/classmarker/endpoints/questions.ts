@@ -57,6 +57,9 @@ export const createQuestion: ClassmarkerEndpoints['createQuestion'] = async (
 			verify_only: parsedInput.verify_only,
 		},
 		body: parsedInput.question,
+		logPayload: {
+			verify_only: parsedInput.verify_only,
+		},
 	});
 };
 

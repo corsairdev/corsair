@@ -34,8 +34,7 @@ function isRateLimitError(error: Error): boolean {
 		return true;
 	}
 
-	const message = error.message.toLowerCase();
-	return message.includes('rate limit') || message.includes('429');
+	return false;
 }
 
 export const errorHandlers = {
