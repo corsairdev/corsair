@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'packages/*/package.json'
+      - 'adapters/*/package.json'
   workflow_dispatch:
 
 permissions:
@@ -29,7 +30,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --filter . --filter "./packages/**"
+        run: pnpm install --frozen-lockfile --filter . --filter "./packages/**" --filter "./adapters/**"
 
       - name: Restore turbo cache
         uses: actions/cache/restore@v4
