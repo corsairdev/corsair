@@ -10,11 +10,9 @@ describe('Classmarker schema', () => {
 		expect(typeof ClassmarkerSchema.entities).toBe('object');
 		expect(ClassmarkerSchema.entities).not.toBeNull();
 		expect(Array.isArray(Object.keys(ClassmarkerSchema.entities))).toBe(true);
+		expect(Object.keys(ClassmarkerSchema.entities).length).toBeGreaterThan(0);
 		for (const entity of Object.values(ClassmarkerSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

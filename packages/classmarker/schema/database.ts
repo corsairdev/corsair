@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-// TODO: Define your database entities here
-// export const ClassmarkerExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type ClassmarkerExample = z.infer<typeof ClassmarkerExample>;
+export const ClassmarkerResult = z.object({
+	id: z.string(),
+	external_id: z.string(),
+	created_at: z.coerce.date().nullable().optional(),
+});
+
+export type ClassmarkerResult = z.infer<typeof ClassmarkerResult>;
