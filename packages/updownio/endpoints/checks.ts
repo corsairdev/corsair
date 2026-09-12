@@ -1,12 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
-import type { UpdownIOEndpoints } from '..';
 import { makeUpdownIORequest } from '../client';
+import type { UpdownIOEndpoints } from '../index';
 import { ChecksResponseSchema, ListChecksInputSchema } from './types';
 
 export const list: UpdownIOEndpoints['checksList'] = async (ctx, rawInput) => {
 	ListChecksInputSchema.parse(rawInput);
 	const response = ChecksResponseSchema.parse(
-		await makeUpdownIORequest<unknown>('/checks', ctx.key),
+		await makeUpdownIORequest<unknown>('/checks', ctx.key, {
+			requiresAuth: true,
+		}),
 	);
 	await logEventFromContext(
 		ctx,

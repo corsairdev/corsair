@@ -1,0 +1,173 @@
+---
+title: API
+description: "API reference for Updown.io: every `updownio.api.*` operation with input and output types."
+---
+
+Every `updownio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Checks
+
+### list
+
+`checks.list`
+
+List all monitoring checks on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.updownio.api.checks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  token: string,
+  url?: string | null,
+  type?: string | null,
+  alias?: string | null,
+  last_status?: number | null,
+  uptime?: number | null,
+  down?: boolean | null,
+  down_since?: string | null,
+  up_since?: string | null,
+  error?: string | null,
+  period?: number | null,
+  apdex_t?: number | null,
+  string_match?: string | null,
+  enabled?: boolean | null,
+  published?: boolean | null,
+  disabled_locations?: string[] | null,
+  recipients?: string[] | null,
+  last_check_at?: string | null,
+  next_check_at?: string | null,
+  created_at?: string | null,
+  mute_until?: string | null,
+  favicon_url?: string | null,
+  custom_headers?: {
+  } | null,
+  http_verb?: string | null,
+  http_body?: string | null,
+  ssl?: {
+    tested_at?: string | null,
+    expires_at?: string | null,
+    valid?: boolean | null,
+    error?: string | null
+  } | null,
+  domain?: {
+    tested_at?: string | null,
+    expires_at?: string | null,
+    remaining_days?: number | null,
+    source?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Nodes
+
+### list
+
+`nodes.list`
+
+List all Updown.io monitoring and webhook nodes
+
+**Risk:** `read`
+
+```ts
+await corsair.updownio.api.nodes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listIps
+
+`nodes.listIps`
+
+List all Updown.io node IP addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.updownio.api.nodes.listIps({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string[]`
+
+
+---
+
+### listIpv4
+
+`nodes.listIpv4`
+
+List all Updown.io node IPv4 addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.updownio.api.nodes.listIpv4({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string[]`
+
+
+---
+
+### listIpv6
+
+`nodes.listIpv6`
+
+List all Updown.io node IPv6 addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.updownio.api.nodes.listIpv6({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string[]`
+
+
+---
+

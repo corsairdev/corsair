@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { UpdownIOCheck, UpdownIONode } from '../schema/database';
 
 const EmptyInputSchema = z.object({}).strict();
 export const ListChecksInputSchema = EmptyInputSchema;
@@ -7,41 +8,14 @@ export const ListNodeIpsInputSchema = EmptyInputSchema;
 export const ListNodeIpv4InputSchema = EmptyInputSchema;
 export const ListNodeIpv6InputSchema = EmptyInputSchema;
 
-const NullableTimestamp = z.string().nullable().optional();
-export const CheckSchema = z
-	.object({
-		token: z.string(),
-		url: z.string().url().nullable().optional(),
-		type: z.string(),
-		alias: z.string().nullable().optional(),
-		last_status: z.number().int().nullable(),
-		uptime: z.number(),
-		down: z.boolean(),
-		down_since: NullableTimestamp,
-		up_since: NullableTimestamp,
-		error: z.string().nullable(),
-		period: z.number().int(),
-		apdex_t: z.number(),
-		enabled: z.boolean(),
-		published: z.boolean(),
-		disabled_locations: z.array(z.string()),
-		recipients: z.array(z.string()),
-		last_check_at: NullableTimestamp,
-		next_check_at: NullableTimestamp,
-		created_at: z.string(),
-	})
-	.loose();
-export const NodeSchema = z
-	.object({
-		ip: z.string(),
-		ip6: z.string(),
-		city: z.string(),
-		country: z.string(),
-		country_code: z.string(),
-		lat: z.number(),
-		lng: z.number(),
-	})
-	.loose();
+/**
+ * A check and a node are persisted entities, so their shapes live in the
+ * plugin's database schema and are reused here rather than redeclared.
+ * https://updown.io/api
+ */
+export const CheckSchema = UpdownIOCheck;
+export const NodeSchema = UpdownIONode;
+
 export const ChecksResponseSchema = z.array(CheckSchema);
 export const NodesResponseSchema = z.record(z.string(), NodeSchema);
 export const NodeIpsResponseSchema = z.array(z.string());

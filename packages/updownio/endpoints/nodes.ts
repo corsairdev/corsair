@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { UpdownIOEndpoints } from '..';
 import { makeUpdownIORequest } from '../client';
+import type { UpdownIOEndpoints } from '../index';
 import {
 	ListNodeIpsInputSchema,
 	ListNodeIpv4InputSchema,
