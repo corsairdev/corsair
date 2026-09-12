@@ -283,6 +283,7 @@ export const BaseProviders = [
 	'vestaboard',
 	'wakatime',
 	'webflow',
+	'webscrapingai',
 	'webvizio',
 	'whatsapp',
 	'witai',
@@ -572,6 +573,7 @@ export const ProviderDisplayNames = {
 	vestaboard: 'Vestaboard',
 	wakatime: 'WakaTime',
 	webflow: 'Webflow',
+	webscrapingai: 'WebScraping.AI',
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
 	witai: 'WitAi',
@@ -868,6 +870,7 @@ export type AllProviders =
 	| 'vestaboard'
 	| 'wakatime'
 	| 'webflow'
+	| 'webscrapingai'
 	| 'webvizio'
 	| 'whatsapp'
 	| 'witai'
