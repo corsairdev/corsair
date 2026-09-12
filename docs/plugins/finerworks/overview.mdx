@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "Print-on-demand fulfilment - manage images, virtual inventory products, framing options, pricing, shipping rates and orders."
+---
+
+Use **FinerWorks** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 33 typed API operations
+- 21 synced entities (`addresses`, `companyInfo`, `frameCollections`, `frames`, `galleries`, `galleryThemes`, and 15 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/finerworks
+```
+```bash yarn
+yarn add corsair @corsair-dev/finerworks
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/finerworks
+```
+```bash bun
+bun add corsair @corsair-dev/finerworks
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { finerworks } from '@corsair-dev/finerworks';
+
+export const corsair = createCorsair({
+	plugins: [
+		finerworks(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+finerworks()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'finerworks',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`account.getCompanyInfo`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.finerworks.api.account.getCompanyInfo({});
+```
+
+
+**`account.updateAppDetails`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.finerworks.api.account.updateAppDetails({});
+```
+
+
+See the full list on the [API](/plugins/finerworks/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.finerworks.db.<entity>.search()` and `.list()`: `addresses`, `companyInfo`, `frameCollections`, `frames`, `galleries`, `galleryThemes`, `glazing`, `images`, `mats`, `mediaTypes`, `orders`, `orderStatusDefinitions`, `prices`, `productTypes`, `shipments`, `shippingOptions`, `shippingQuotes`, `styleTypes`, `submittedOrders`, `userAccounts`, `virtualInventoryProducts`.
+
+See [Database](/plugins/finerworks/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/finerworks/api">
+    Every `finerworks.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/finerworks/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

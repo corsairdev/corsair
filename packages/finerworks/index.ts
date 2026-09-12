@@ -1,140 +1,85 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
-	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
-import type {
-	FinerWorksEndpointInputs,
-	FinerWorksEndpointOutputs,
-} from './endpoints/types';
+import { AuthMissingError } from 'corsair/core';
 import {
-	FinerWorksEndpointInputSchemas,
-	FinerWorksEndpointOutputSchemas,
-} from './endpoints/types';
+	finerworksEndpointSchemas,
+	finerworksEndpointsNested,
+	finerworksEndpointMeta as generatedFinerWorksEndpointMeta,
+} from './endpoints';
 import { errorHandlers } from './error-handlers';
 import { FinerWorksSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveFinerWorksOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchFinerWorksTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, FinerWorksWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
+
+export const finerworksEndpointMeta =
+	generatedFinerWorksEndpointMeta satisfies RequiredPluginEndpointMeta<
+		typeof finerworksEndpointsNested
+	>;
 
 export type FinerWorksPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
+	/** The FinerWorks `web_api_key`. Falls back to the connected account's key. */
 	key?: string;
-	webhookSecret?: string;
+	/**
+	 * The FinerWorks `app_key`, sent alongside the web API key on every request.
+	 * Falls back to the connected account's stored `app_key`.
+	 */
+	appKey?: string;
 	hooks?: InternalFinerWorksPlugin['hooks'];
-	webhookHooks?: InternalFinerWorksPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
-	permissions?: PluginPermissionsConfig<typeof finerWorksEndpointsNested>;
+	permissions?: PluginPermissionsConfig<typeof finerworksEndpointsNested>;
 };
+
+/**
+ * FinerWorks requires two credentials. `api_key` holds the `web_api_key`;
+ * declaring `app_key: ['app_key']` generates `ctx.keys.get_app_key()`, which is
+ * how the second half of the credential reaches an endpoint when it is not
+ * passed as the `appKey` plugin option.
+ * https://v2.api.finerworks.com/Help/Api/GET-v3-test_my_credentials
+ */
+export const finerworksAuthConfig = {
+	api_key: {
+		account: ['app_key'] as const,
+	},
+} as const satisfies PluginAuthConfig;
 
 export type FinerWorksContext = CorsairPluginContext<
 	typeof FinerWorksSchema,
-	FinerWorksPluginOptions
+	FinerWorksPluginOptions,
+	undefined,
+	typeof finerworksAuthConfig
 >;
 
-export type FinerWorksKeyBuilderContext =
-	KeyBuilderContext<FinerWorksPluginOptions>;
+export type FinerWorksKeyBuilderContext = KeyBuilderContext<
+	FinerWorksPluginOptions,
+	typeof finerworksAuthConfig
+>;
 
 export type FinerWorksBoundEndpoints = BindEndpoints<
-	typeof finerWorksEndpointsNested
+	typeof finerworksEndpointsNested
 >;
 
-type FinerWorksEndpoint<K extends keyof FinerWorksEndpointOutputs> =
-	CorsairEndpoint<
-		FinerWorksContext,
-		FinerWorksEndpointInputs[K],
-		FinerWorksEndpointOutputs[K]
-	>;
-
-export type FinerWorksEndpoints = {
-	testConnection: FinerWorksEndpoint<'exampleGet'>;
-};
-
-type FinerWorksWebhook<
-	K extends keyof FinerWorksWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<FinerWorksContext, TEvent, FinerWorksWebhookOutputs[K]>;
-
-export type FinerWorksWebhooks = {
-	example: FinerWorksWebhook<'example', ExampleEvent>;
-};
-
-export type FinerWorksBoundWebhooks = BindWebhooks<FinerWorksWebhooks>;
-
-const finerWorksEndpointsNested = {
-	testConnection: {
-		get: Example.get,
-	},
-} as const;
-
-const finerWorksWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
-
-export const finerWorksEndpointSchemas = {
-	'testConnection.get': {
-		input: FinerWorksEndpointInputSchemas.exampleGet,
-		output: FinerWorksEndpointOutputSchemas.exampleGet,
-	},
-} as const satisfies RequiredPluginEndpointSchemas<
-	typeof finerWorksEndpointsNested
->;
-
-const finerWorksWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof finerWorksWebhooksNested
->;
+export type FinerWorksEndpoints = typeof finerworksEndpointsNested;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
-
-const finerWorksEndpointMeta = {
-	'testConnection.get': {
-		riskLevel: 'read',
-		description: 'Test FinerWorks API connection',
-	},
-} as const satisfies RequiredPluginEndpointMeta<
-	typeof finerWorksEndpointsNested
->;
-
-export const finerWorksAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
-} as const satisfies PluginAuthConfig;
 
 export type BaseFinerWorksPlugin<T extends FinerWorksPluginOptions> =
 	CorsairPlugin<
 		'finerworks',
 		typeof FinerWorksSchema,
-		typeof finerWorksEndpointsNested,
-		typeof finerWorksWebhooksNested,
+		typeof finerworksEndpointsNested,
+		{},
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof finerworksAuthConfig
 	>;
 
 export type InternalFinerWorksPlugin =
@@ -154,66 +99,40 @@ export function finerworks<const T extends FinerWorksPluginOptions>(
 
 	return {
 		id: 'finerworks',
-		authConfig: finerWorksAuthConfig,
 		schema: FinerWorksSchema,
 		options,
+		authConfig: finerworksAuthConfig,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
-		endpoints: finerWorksEndpointsNested,
-		webhooks: finerWorksWebhooksNested,
-		endpointMeta: finerWorksEndpointMeta,
-		endpointSchemas: finerWorksEndpointSchemas,
-		webhookSchemas: finerWorksWebhookSchemas,
-
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-finerworks-signature' in headers;
-		},
-
-		pluginTenantWebhookMatcher: matchFinerWorksTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveFinerWorksOAuthWebhookTenantLink,
-
+		endpoints: finerworksEndpointsNested,
+		webhooks: {},
+		endpointMeta: finerworksEndpointMeta,
+		endpointSchemas: finerworksEndpointSchemas,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-
 		keyBuilder: async (ctx: FinerWorksKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('finerworks', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('finerworks', 'api_key');
 		},
 	} satisfies InternalFinerWorksPlugin;
 }
 
 export type {
-	ExampleGetInput,
-	ExampleGetResponse,
 	FinerWorksEndpointInputs,
 	FinerWorksEndpointOutputs,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	FinerWorksWebhookOutputs,
-} from './webhooks/types';
+
+export { finerworksEndpointsNested, finerworksEndpointSchemas };
