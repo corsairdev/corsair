@@ -12,6 +12,7 @@ import {
 	resolveBodyStallTimeoutMs,
 	resolveMaxBodyBytes,
 } from './body-limit';
+import { callDisabled, listRegisteredOps, resolveCall } from './call';
 import { errorResponse, json, ManagementApiError, notFound } from './errors';
 import {
 	completeOAuthCallback,
@@ -78,6 +79,22 @@ export type ManagementHandlerOptions = {
 	 * backend already scopes the tenant server-side.
 	 */
 	resolveTenant?: (req: Request) => string | null | Promise<string | null>;
+	/**
+	 * Enables the tool-call route `POST /:tenant/:plugin/call/:op` (and `GET
+	 * /call`). Off by default: the route trusts the `tenant` in the URL, so it is
+	 * only safe when the developer's own backend fronts this handler and owns
+	 * access control. The name is deliberately loud.
+	 */
+	unsafeAllowUnauthenticated?: boolean;
+	/**
+	 * Authenticate every non-public route before dispatch. Return false to answer
+	 * 401. The hook is credential-agnostic — the host supplies the check (e.g. a
+	 * Bearer project key on a hosted runtime). Supplying it also enables `/call`
+	 * (access control is now owned), so `unsafeAllowUnauthenticated` is not needed
+	 * alongside it. Omit it entirely to keep the legacy in-process behavior where
+	 * the developer's own backend fronts the handler.
+	 */
+	authenticate?: (req: Request) => boolean | Promise<boolean>;
 };
 
 type RouteCtx = {
@@ -89,6 +106,7 @@ type RouteCtx = {
 	body: unknown;
 	// The resolved tenant — see resolveScopedTenant for the tri-state.
 	scopedTenant: string | null | undefined;
+	allowCall: boolean;
 };
 
 // The resolver's result is authoritative for the two routes that take a raw
@@ -128,6 +146,8 @@ export function assertAdminRouteAllowed(
 type Route = {
 	method: 'GET' | 'POST';
 	pattern: string;
+	/** Skips the authenticate hook (health probes, provider/browser-signed legs). */
+	public?: boolean;
 	handler: (ctx: RouteCtx) => Promise<Response>;
 };
 
@@ -139,6 +159,7 @@ const ROUTES: Route[] = [
 	{
 		method: 'GET',
 		pattern: '/ok',
+		public: true,
 		handler: async () => json(200, ok()),
 	},
 	{
@@ -202,6 +223,8 @@ const ROUTES: Route[] = [
 		// capture URL paths, so placing the token in the path leaks it.
 		method: 'POST',
 		pattern: '/permissions/lookup-by-token',
+		// Approval page reads by unguessable token — the token IS the capability.
+		public: true,
 		handler: async ({ internal, body }) => {
 			const token = (body as { token?: string } | undefined)?.token?.trim();
 			if (!token) {
@@ -229,12 +252,17 @@ const ROUTES: Route[] = [
 	{
 		method: 'GET',
 		pattern: '/connect/resolve',
+		// Connect page resolves by unguessable state — the state IS the capability.
+		public: true,
 		handler: async ({ corsair, internal, query }) =>
 			json(200, await resolveConnect(corsair, internal, query.state ?? '')),
 	},
 	{
 		method: 'POST',
 		pattern: '/connect/oauth/callback',
+		// OAuth provider/connect-page callback — carries no project key; the
+		// state/code it exchanges is the capability.
+		public: true,
 		handler: async ({ corsair, internal, body }) =>
 			json(
 				200,
@@ -289,6 +317,40 @@ const ROUTES: Route[] = [
 				200,
 				await disconnectConnection(internal, { ...input, tenantId }),
 			);
+		},
+	},
+	{
+		method: 'GET',
+		pattern: '/call',
+		handler: async ({ internal, allowCall }) => {
+			if (!allowCall) throw callDisabled();
+			return json(200, { plugins: listRegisteredOps(internal) });
+		},
+	},
+	{
+		method: 'POST',
+		pattern: '/:tenant/:plugin/call/:op',
+		handler: async ({
+			corsair,
+			internal,
+			params,
+			body,
+			scopedTenant,
+			allowCall,
+		}) => {
+			if (!allowCall) throw callDisabled();
+			const input = (body ?? {}) as { args?: unknown };
+			// The URL tenant is client-controlled; when resolveTenant is configured
+			// the resolver's value is authoritative (and null → 401), same as every
+			// other tenant-taking route. No resolver → the URL value is trusted.
+			const tenant = resolveScopedTenant(scopedTenant, params.tenant);
+			const data = await resolveCall(corsair, internal, {
+				plugin: params.plugin!,
+				op: params.op!,
+				tenant,
+				args: input.args,
+			});
+			return json(200, { data });
 		},
 	},
 ];
@@ -431,6 +493,16 @@ export function managementHandler(
 				if (route.method !== method) continue;
 				const params = matchPattern(route.pattern, pathname);
 				if (!params) continue;
+				if (
+					!route.public &&
+					opts.authenticate &&
+					!(await opts.authenticate(req))
+				) {
+					return json(401, {
+						error: 'unauthorized',
+						message: 'invalid or missing credentials',
+					});
+				}
 				const body = await parseBody(req, bodyLimits);
 				const scopedTenant = opts.resolveTenant
 					? await opts.resolveTenant(req)
@@ -443,6 +515,9 @@ export function managementHandler(
 					query,
 					body,
 					scopedTenant,
+					allowCall:
+						(opts.unsafeAllowUnauthenticated ?? false) ||
+						Boolean(opts.authenticate),
 				});
 			}
 
