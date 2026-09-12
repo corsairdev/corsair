@@ -1,21 +1,26 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import { packClassmarkerCredentials, tryGetStoredKey } from './client';
+import {
+	AccessLists,
+	Categories,
+	GroupsLinksExams,
+	Questions,
+	RecentResults,
+} from './endpoints';
 import type {
 	ClassmarkerEndpointInputs,
 	ClassmarkerEndpointOutputs,
@@ -26,29 +31,27 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ClassmarkerSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveClassmarkerOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchClassmarkerTenantWebhook } from './webhooks/tenant-matcher';
-import type { ClassmarkerWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type ClassmarkerPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
+	apiSecret?: string;
 	hooks?: InternalClassmarkerPlugin['hooks'];
-	webhookHooks?: InternalClassmarkerPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof classmarkerEndpointsNested>;
 };
 
 export type ClassmarkerContext = CorsairPluginContext<
 	typeof ClassmarkerSchema,
-	ClassmarkerPluginOptions
+	ClassmarkerPluginOptions,
+	undefined,
+	typeof classmarkerAuthConfig
 >;
 
-export type ClassmarkerKeyBuilderContext =
-	KeyBuilderContext<ClassmarkerPluginOptions>;
+export type ClassmarkerKeyBuilderContext = KeyBuilderContext<
+	ClassmarkerPluginOptions,
+	typeof classmarkerAuthConfig
+>;
 
 export type ClassmarkerBoundEndpoints = BindEndpoints<
 	typeof classmarkerEndpointsNested
@@ -62,68 +65,201 @@ type ClassmarkerEndpoint<K extends keyof ClassmarkerEndpointOutputs> =
 	>;
 
 export type ClassmarkerEndpoints = {
-	exampleGet: ClassmarkerEndpoint<'exampleGet'>;
+	getAllGroupsLinksExams: ClassmarkerEndpoint<'getAllGroupsLinksExams'>;
+	getRecentResultsForAllGroups: ClassmarkerEndpoint<'getRecentResultsForAllGroups'>;
+	getRecentResultsForAllLinks: ClassmarkerEndpoint<'getRecentResultsForAllLinks'>;
+	getRecentResultsForGroupExam: ClassmarkerEndpoint<'getRecentResultsForGroupExam'>;
+	getRecentResultsForLinkExam: ClassmarkerEndpoint<'getRecentResultsForLinkExam'>;
+	addAccessCodes: ClassmarkerEndpoint<'addAccessCodes'>;
+	deleteAccessCodes: ClassmarkerEndpoint<'deleteAccessCodes'>;
+	getAllCategories: ClassmarkerEndpoint<'getAllCategories'>;
+	createParentCategory: ClassmarkerEndpoint<'createParentCategory'>;
+	updateParentCategory: ClassmarkerEndpoint<'updateParentCategory'>;
+	createCategory: ClassmarkerEndpoint<'createCategory'>;
+	updateCategory: ClassmarkerEndpoint<'updateCategory'>;
+	listQuestions: ClassmarkerEndpoint<'listQuestions'>;
+	getQuestion: ClassmarkerEndpoint<'getQuestion'>;
+	createQuestion: ClassmarkerEndpoint<'createQuestion'>;
+	updateQuestion: ClassmarkerEndpoint<'updateQuestion'>;
 };
-
-type ClassmarkerWebhook<
-	K extends keyof ClassmarkerWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<ClassmarkerContext, TEvent, ClassmarkerWebhookOutputs[K]>;
-
-export type ClassmarkerWebhooks = {
-	example: ClassmarkerWebhook<'example', ExampleEvent>;
-};
-
-export type ClassmarkerBoundWebhooks = BindWebhooks<ClassmarkerWebhooks>;
 
 const classmarkerEndpointsNested = {
-	example: {
-		get: Example.get,
+	groupsLinksExams: {
+		getAll: GroupsLinksExams.getAll,
+	},
+	recentResults: {
+		forAllGroups: RecentResults.forAllGroups,
+		forAllLinks: RecentResults.forAllLinks,
+		forGroupExam: RecentResults.forGroupExam,
+		forLinkExam: RecentResults.forLinkExam,
+	},
+	accessLists: {
+		addCodes: AccessLists.addCodes,
+		deleteCodes: AccessLists.deleteCodes,
+	},
+	categories: {
+		list: Categories.list,
+		createParent: Categories.createParent,
+		updateParent: Categories.updateParent,
+		create: Categories.create,
+		update: Categories.update,
+	},
+	questions: {
+		list: Questions.list,
+		get: Questions.get,
+		create: Questions.create,
+		update: Questions.update,
 	},
 } as const;
 
-const classmarkerWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const classmarkerWebhooksNested = {} as const;
 
 export const classmarkerEndpointSchemas = {
-	'example.get': {
-		input: ClassmarkerEndpointInputSchemas.exampleGet,
-		output: ClassmarkerEndpointOutputSchemas.exampleGet,
+	'groupsLinksExams.getAll': {
+		input: ClassmarkerEndpointInputSchemas.getAllGroupsLinksExams,
+		output: ClassmarkerEndpointOutputSchemas.getAllGroupsLinksExams,
+	},
+	'recentResults.forAllGroups': {
+		input: ClassmarkerEndpointInputSchemas.getRecentResultsForAllGroups,
+		output: ClassmarkerEndpointOutputSchemas.getRecentResultsForAllGroups,
+	},
+	'recentResults.forAllLinks': {
+		input: ClassmarkerEndpointInputSchemas.getRecentResultsForAllLinks,
+		output: ClassmarkerEndpointOutputSchemas.getRecentResultsForAllLinks,
+	},
+	'recentResults.forGroupExam': {
+		input: ClassmarkerEndpointInputSchemas.getRecentResultsForGroupExam,
+		output: ClassmarkerEndpointOutputSchemas.getRecentResultsForGroupExam,
+	},
+	'recentResults.forLinkExam': {
+		input: ClassmarkerEndpointInputSchemas.getRecentResultsForLinkExam,
+		output: ClassmarkerEndpointOutputSchemas.getRecentResultsForLinkExam,
+	},
+	'accessLists.addCodes': {
+		input: ClassmarkerEndpointInputSchemas.addAccessCodes,
+		output: ClassmarkerEndpointOutputSchemas.addAccessCodes,
+	},
+	'accessLists.deleteCodes': {
+		input: ClassmarkerEndpointInputSchemas.deleteAccessCodes,
+		output: ClassmarkerEndpointOutputSchemas.deleteAccessCodes,
+	},
+	'categories.list': {
+		input: ClassmarkerEndpointInputSchemas.getAllCategories,
+		output: ClassmarkerEndpointOutputSchemas.getAllCategories,
+	},
+	'categories.createParent': {
+		input: ClassmarkerEndpointInputSchemas.createParentCategory,
+		output: ClassmarkerEndpointOutputSchemas.createParentCategory,
+	},
+	'categories.updateParent': {
+		input: ClassmarkerEndpointInputSchemas.updateParentCategory,
+		output: ClassmarkerEndpointOutputSchemas.updateParentCategory,
+	},
+	'categories.create': {
+		input: ClassmarkerEndpointInputSchemas.createCategory,
+		output: ClassmarkerEndpointOutputSchemas.createCategory,
+	},
+	'categories.update': {
+		input: ClassmarkerEndpointInputSchemas.updateCategory,
+		output: ClassmarkerEndpointOutputSchemas.updateCategory,
+	},
+	'questions.list': {
+		input: ClassmarkerEndpointInputSchemas.listQuestions,
+		output: ClassmarkerEndpointOutputSchemas.listQuestions,
+	},
+	'questions.get': {
+		input: ClassmarkerEndpointInputSchemas.getQuestion,
+		output: ClassmarkerEndpointOutputSchemas.getQuestion,
+	},
+	'questions.create': {
+		input: ClassmarkerEndpointInputSchemas.createQuestion,
+		output: ClassmarkerEndpointOutputSchemas.createQuestion,
+	},
+	'questions.update': {
+		input: ClassmarkerEndpointInputSchemas.updateQuestion,
+		output: ClassmarkerEndpointOutputSchemas.updateQuestion,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof classmarkerEndpointsNested
 >;
 
-const classmarkerWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof classmarkerWebhooksNested
->;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
-
 const classmarkerEndpointMeta = {
-	'example.get': {
+	'groupsLinksExams.getAll': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description:
+			'List all groups, links, and assigned tests visible to the API key.',
+	},
+	'recentResults.forAllGroups': {
+		riskLevel: 'read',
+		description:
+			'Fetch recent results across all groups with timestamp pagination.',
+	},
+	'recentResults.forAllLinks': {
+		riskLevel: 'read',
+		description:
+			'Fetch recent results across all links with timestamp pagination.',
+	},
+	'recentResults.forGroupExam': {
+		riskLevel: 'read',
+		description: 'Fetch recent results for one group/test pair.',
+	},
+	'recentResults.forLinkExam': {
+		riskLevel: 'read',
+		description: 'Fetch recent results for one link/test pair.',
+	},
+	'accessLists.addCodes': {
+		riskLevel: 'write',
+		description: 'Add access-list codes for a link exam.',
+	},
+	'accessLists.deleteCodes': {
+		riskLevel: 'destructive',
+		description: 'Delete access-list codes for a link exam.',
+	},
+	'categories.list': {
+		riskLevel: 'read',
+		description: 'List parent categories and sub-categories.',
+	},
+	'categories.createParent': {
+		riskLevel: 'write',
+		description: 'Create a parent category in the question bank.',
+	},
+	'categories.updateParent': {
+		riskLevel: 'write',
+		description: 'Update a parent category in the question bank.',
+	},
+	'categories.create': {
+		riskLevel: 'write',
+		description: 'Create a category under a parent category.',
+	},
+	'categories.update': {
+		riskLevel: 'write',
+		description: 'Update a category and optionally re-parent it.',
+	},
+	'questions.list': {
+		riskLevel: 'read',
+		description: 'List question-bank questions (200 per page).',
+	},
+	'questions.get': {
+		riskLevel: 'read',
+		description: 'Get one question from the question bank.',
+	},
+	'questions.create': {
+		riskLevel: 'write',
+		description: 'Create a new question in the question bank.',
+	},
+	'questions.update': {
+		riskLevel: 'write',
+		description: 'Update an existing question in the question bank.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof classmarkerEndpointsNested
 >;
 
+const defaultAuthType = 'api_key' as const satisfies AuthTypes;
+
 export const classmarkerAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['api_key_secret'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -134,7 +270,8 @@ export type BaseClassmarkerPlugin<T extends ClassmarkerPluginOptions> =
 		typeof classmarkerEndpointsNested,
 		typeof classmarkerWebhooksNested,
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof classmarkerAuthConfig
 	>;
 
 export type InternalClassmarkerPlugin =
@@ -151,65 +288,71 @@ export function classmarker<const T extends ClassmarkerPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
 	return {
 		id: 'classmarker',
 		authConfig: classmarkerAuthConfig,
 		schema: ClassmarkerSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: undefined,
 		endpoints: classmarkerEndpointsNested,
 		webhooks: classmarkerWebhooksNested,
 		endpointMeta: classmarkerEndpointMeta,
 		endpointSchemas: classmarkerEndpointSchemas,
-		webhookSchemas: classmarkerWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-classmarker-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchClassmarkerTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveClassmarkerOAuthWebhookTenantLink,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ClassmarkerKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
+			if (source !== 'endpoint') {
+				return '';
 			}
 
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+			const apiKey =
+				options.key ?? (await tryGetStoredKey(() => ctx.keys.get_api_key()));
+			const apiSecret =
+				options.apiSecret ??
+				(await tryGetStoredKey(() => ctx.keys.get_api_key_secret()));
+
+			if (!apiKey || !apiSecret) {
+				throw new AuthMissingError('classmarker', 'api_key');
 			}
 
-			if (source === 'endpoint' && options.key) {
-				return options.key;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			return packClassmarkerCredentials(apiKey, apiSecret);
 		},
 	} satisfies InternalClassmarkerPlugin;
 }
 
 export type {
+	AccessCodesResponseOutput,
+	AddAccessCodesInput,
+	CategoryMutationOutput,
 	ClassmarkerEndpointInputs,
 	ClassmarkerEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	CreateCategoryInput,
+	CreateParentCategoryInput,
+	CreateQuestionInput,
+	GetAllCategoriesInput,
+	GetAllCategoriesOutput,
+	GetAllGroupsLinksExamsInput,
+	GetAllGroupsLinksExamsOutput,
+	GetQuestionInput,
+	GetQuestionOutput,
+	GetRecentResultsForAllGroupsInput,
+	GetRecentResultsForAllGroupsOutput,
+	GetRecentResultsForAllLinksInput,
+	GetRecentResultsForAllLinksOutput,
+	GetRecentResultsForGroupExamInput,
+	GetRecentResultsForGroupExamOutput,
+	GetRecentResultsForLinkExamInput,
+	GetRecentResultsForLinkExamOutput,
+	ListQuestionsInput,
+	ListQuestionsOutput,
+	ParentCategoryMutationOutput,
+	QuestionMutationOutput,
+	UpdateCategoryInput,
+	UpdateParentCategoryInput,
+	UpdateQuestionInput,
 } from './endpoints/types';
-export type {
-	ClassmarkerWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
