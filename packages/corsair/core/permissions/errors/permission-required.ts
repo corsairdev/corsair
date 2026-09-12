@@ -1,12 +1,21 @@
+export type PermissionRequiredReason =
+	| 'denied'
+	| 'policy'
+	| 'timeout'
+	| 'pending';
+
 /**
- * Error thrown when an endpoint call is blocked pending user approval or by
- * permission policy. Endpoint binding enriches the message with an approval URL
- * when hub/manual config is available, then rethrows for callers to handle.
+ * Thrown when an endpoint call is blocked by permission policy or pending user
+ * approval. `reason` discriminates the cause so non-TS callers over `/call` can
+ * branch — a hard deny versus an approval a human still has to grant.
  */
 export class PermissionRequiredError extends Error {
-	constructor(message: string) {
+	readonly reason: PermissionRequiredReason;
+
+	constructor(message: string, reason: PermissionRequiredReason = 'pending') {
 		super(message);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.name = 'PermissionRequiredError';
+		this.reason = reason;
 	}
 }
