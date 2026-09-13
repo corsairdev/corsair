@@ -73,6 +73,10 @@ export const deleteExtraction: ExtractaaiEndpoints['extractionDelete'] = async (
 	ctx,
 	input,
 ) => {
+	if (input.fileId !== undefined && input.batchId === undefined) {
+		throw new Error('batchId is required when fileId is provided');
+	}
+
 	const body: ExtractaJsonObject = { extractionId: input.extractionId };
 	if (input.batchId !== undefined) {
 		body['batchId'] = input.batchId;
