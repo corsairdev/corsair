@@ -232,6 +232,7 @@ export const BaseProviders = [
 	'posthog',
 	'razorpay',
 	'reddit',
+	'replicate',
 	'removebg',
 	'resend',
 	'retailed',
@@ -521,6 +522,7 @@ export const ProviderDisplayNames = {
 	posthog: 'PostHog',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
+	replicate: 'Replicate',
 	removebg: 'remove.bg',
 	resend: 'Resend',
 	retailed: 'Retailed',
@@ -817,6 +819,7 @@ export type AllProviders =
 	| 'posthog'
 	| 'razorpay'
 	| 'reddit'
+	| 'replicate'
 	| 'removebg'
 	| 'resend'
 	| 'retailed'
