@@ -107,6 +107,7 @@ export const BaseProviders = [
 	'browserless',
 	'browsertool',
 	'bubble',
+	'bugherd',
 	'bugsnag',
 	'buildkite',
 	'bunnycdn',
@@ -396,6 +397,7 @@ export const ProviderDisplayNames = {
 	browserless: 'Browserless',
 	browsertool: 'Browser Tool',
 	bubble: 'Bubble',
+	bugherd: 'Bugherd',
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
 	bunnycdn: 'Bunnycdn',
@@ -692,6 +694,7 @@ export type AllProviders =
 	| 'browserless'
 	| 'browsertool'
 	| 'bubble'
+	| 'bugherd'
 	| 'bugsnag'
 	| 'buildkite'
 	| 'bunnycdn'
