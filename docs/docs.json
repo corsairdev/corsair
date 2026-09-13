@@ -2093,6 +2093,14 @@
                 ]
               },
               {
+                "group": "Snapchat",
+                "pages": [
+                  "plugins/snapchat/overview",
+                  "plugins/snapchat/api",
+                  "plugins/snapchat/database"
+                ]
+              },
+              {
                 "group": "Sourcegraph",
                 "pages": [
                   "plugins/sourcegraph/overview",
