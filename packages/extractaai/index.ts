@@ -1,21 +1,18 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import { Classification, Credits, Extraction } from './endpoints';
 import type {
 	ExtractaaiEndpointInputs,
 	ExtractaaiEndpointOutputs,
@@ -26,19 +23,17 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ExtractaaiSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveExtractaaiOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchExtractaaiTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, ExtractaaiWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type ExtractaaiPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	/** Authentication method. Only api_key is supported. */
+	authType?: PickAuth<'api_key'>;
+	/** Optional: pass the API key directly (bypasses key manager) */
 	key?: string;
-	webhookSecret?: string;
+	/** Optional: lifecycle hooks for endpoints */
 	hooks?: InternalExtractaaiPlugin['hooks'];
-	webhookHooks?: InternalExtractaaiPlugin['webhookHooks'];
+	/** Optional: custom error handlers (merged with defaults) */
 	errorHandlers?: CorsairErrorHandler;
+	/** Permission configuration for the Extracta.ai plugin. */
 	permissions?: PluginPermissionsConfig<typeof extractaaiEndpointsNested>;
 };
 
@@ -62,77 +57,148 @@ type ExtractaaiEndpoint<K extends keyof ExtractaaiEndpointOutputs> =
 	>;
 
 export type ExtractaaiEndpoints = {
-	exampleGet: ExtractaaiEndpoint<'exampleGet'>;
+	extractionCreate: ExtractaaiEndpoint<'extractionCreate'>;
+	extractionView: ExtractaaiEndpoint<'extractionView'>;
+	extractionUpdate: ExtractaaiEndpoint<'extractionUpdate'>;
+	extractionDelete: ExtractaaiEndpoint<'extractionDelete'>;
+	extractionGetBatchResults: ExtractaaiEndpoint<'extractionGetBatchResults'>;
+	creditsGet: ExtractaaiEndpoint<'creditsGet'>;
+	classificationCreate: ExtractaaiEndpoint<'classificationCreate'>;
+	classificationView: ExtractaaiEndpoint<'classificationView'>;
+	classificationUpdate: ExtractaaiEndpoint<'classificationUpdate'>;
+	classificationDelete: ExtractaaiEndpoint<'classificationDelete'>;
 };
-
-type ExtractaaiWebhook<
-	K extends keyof ExtractaaiWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<ExtractaaiContext, TEvent, ExtractaaiWebhookOutputs[K]>;
-
-export type ExtractaaiWebhooks = {
-	example: ExtractaaiWebhook<'example', ExampleEvent>;
-};
-
-export type ExtractaaiBoundWebhooks = BindWebhooks<ExtractaaiWebhooks>;
 
 const extractaaiEndpointsNested = {
-	example: {
-		get: Example.get,
+	extraction: {
+		create: Extraction.create,
+		view: Extraction.view,
+		update: Extraction.update,
+		delete: Extraction.delete,
+		getBatchResults: Extraction.getBatchResults,
 	},
-} as const;
-
-const extractaaiWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	classification: {
+		create: Classification.create,
+		view: Classification.view,
+		update: Classification.update,
+		delete: Classification.delete,
 	},
-} as const;
+	credits: {
+		get: Credits.get,
+	},
+};
 
 export const extractaaiEndpointSchemas = {
-	'example.get': {
-		input: ExtractaaiEndpointInputSchemas.exampleGet,
-		output: ExtractaaiEndpointOutputSchemas.exampleGet,
+	'extraction.create': {
+		input: ExtractaaiEndpointInputSchemas.extractionCreate,
+		output: ExtractaaiEndpointOutputSchemas.extractionCreate,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<
-	typeof extractaaiEndpointsNested
->;
-
-const extractaaiWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'extraction.view': {
+		input: ExtractaaiEndpointInputSchemas.extractionView,
+		output: ExtractaaiEndpointOutputSchemas.extractionView,
 	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof extractaaiWebhooksNested
->;
+	'extraction.update': {
+		input: ExtractaaiEndpointInputSchemas.extractionUpdate,
+		output: ExtractaaiEndpointOutputSchemas.extractionUpdate,
+	},
+	'extraction.delete': {
+		input: ExtractaaiEndpointInputSchemas.extractionDelete,
+		output: ExtractaaiEndpointOutputSchemas.extractionDelete,
+	},
+	'extraction.getBatchResults': {
+		input: ExtractaaiEndpointInputSchemas.extractionGetBatchResults,
+		output: ExtractaaiEndpointOutputSchemas.extractionGetBatchResults,
+	},
+	'credits.get': {
+		input: ExtractaaiEndpointInputSchemas.creditsGet,
+		output: ExtractaaiEndpointOutputSchemas.creditsGet,
+	},
+	'classification.create': {
+		input: ExtractaaiEndpointInputSchemas.classificationCreate,
+		output: ExtractaaiEndpointOutputSchemas.classificationCreate,
+	},
+	'classification.view': {
+		input: ExtractaaiEndpointInputSchemas.classificationView,
+		output: ExtractaaiEndpointOutputSchemas.classificationView,
+	},
+	'classification.update': {
+		input: ExtractaaiEndpointInputSchemas.classificationUpdate,
+		output: ExtractaaiEndpointOutputSchemas.classificationUpdate,
+	},
+	'classification.delete': {
+		input: ExtractaaiEndpointInputSchemas.classificationDelete,
+		output: ExtractaaiEndpointOutputSchemas.classificationDelete,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof extractaaiEndpointsNested>;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType: PickAuth<'api_key'> = 'api_key';
 
 const extractaaiEndpointMeta = {
-	'example.get': {
-		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+	'extraction.create': {
+		riskLevel: 'write',
+		description:
+			'Create a document extraction template (EXTRACTA_AI_CREATE_EXTRACTION)',
 	},
-} as const satisfies RequiredPluginEndpointMeta<
-	typeof extractaaiEndpointsNested
->;
+	'extraction.view': {
+		riskLevel: 'read',
+		description:
+			'View a document extraction configuration (EXTRACTA_AI_VIEW_EXTRACTION)',
+	},
+	'extraction.update': {
+		riskLevel: 'write',
+		description:
+			'Update a document extraction configuration (EXTRACTA_AI_UPDATE_EXTRACTION)',
+	},
+	'extraction.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Delete an extraction, batch, or file (EXTRACTA_AI_DELETE_EXTRACTION) [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'extraction.getBatchResults': {
+		riskLevel: 'read',
+		description:
+			'Get extraction results for a batch (EXTRACTA_AI_GET_BATCH_RESULTS)',
+	},
+	'credits.get': {
+		riskLevel: 'read',
+		description: 'Get the account credit balance (EXTRACTA_AI_GET_CREDITS)',
+	},
+	'classification.create': {
+		riskLevel: 'write',
+		description:
+			'Create a document classification (EXTRACTA_AI_CREATE_CLASSIFICATION)',
+	},
+	'classification.view': {
+		riskLevel: 'read',
+		description:
+			'View a document classification configuration (EXTRACTA_AI_VIEW_CLASSIFICATION)',
+	},
+	'classification.update': {
+		riskLevel: 'write',
+		description:
+			'Update a document classification (EXTRACTA_AI_UPDATE_CLASSIFICATION)',
+	},
+	'classification.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Delete a document classification (EXTRACTA_AI_DELETE_CLASSIFICATION) [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+} satisfies RequiredPluginEndpointMeta<typeof extractaaiEndpointsNested>;
 
 export const extractaaiAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
+		account: [],
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
-} as const satisfies PluginAuthConfig;
+} satisfies PluginAuthConfig;
 
 export type BaseExtractaaiPlugin<T extends ExtractaaiPluginOptions> =
 	CorsairPlugin<
 		'extractaai',
 		typeof ExtractaaiSchema,
 		typeof extractaaiEndpointsNested,
-		typeof extractaaiWebhooksNested,
+		{},
 		T,
 		typeof defaultAuthType
 	>;
@@ -143,13 +209,18 @@ export type InternalExtractaaiPlugin =
 export type ExternalExtractaaiPlugin<T extends ExtractaaiPluginOptions> =
 	BaseExtractaaiPlugin<T>;
 
+// Overloads keep the factory generic over hook/permission options without
+// needing a type assertion on the default parameter.
+export function extractaai(): ExternalExtractaaiPlugin<ExtractaaiPluginOptions>;
 export function extractaai<const T extends ExtractaaiPluginOptions>(
-	incomingOptions: ExtractaaiPluginOptions & T = {} as ExtractaaiPluginOptions &
-		T,
-): ExternalExtractaaiPlugin<T> {
-	const options = {
+	incomingOptions: ExtractaaiPluginOptions & T,
+): ExternalExtractaaiPlugin<T>;
+export function extractaai(
+	incomingOptions?: ExtractaaiPluginOptions,
+): InternalExtractaaiPlugin {
+	const options: ExtractaaiPluginOptions = {
 		...incomingOptions,
-		authType: incomingOptions.authType ?? defaultAuthType,
+		authType: incomingOptions?.authType ?? defaultAuthType,
 	};
 	return {
 		id: 'extractaai',
@@ -157,59 +228,60 @@ export function extractaai<const T extends ExtractaaiPluginOptions>(
 		schema: ExtractaaiSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: undefined,
 		endpoints: extractaaiEndpointsNested,
-		webhooks: extractaaiWebhooksNested,
+		webhooks: {},
 		endpointMeta: extractaaiEndpointMeta,
 		endpointSchemas: extractaaiEndpointSchemas,
-		webhookSchemas: extractaaiWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-extractaai-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchExtractaaiTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveExtractaaiOAuthWebhookTenantLink,
+		pluginWebhookMatcher: () => false,
+		pluginTenantWebhookMatcher: () => null,
+		oauthWebhookTenantLinkResolver: () => null,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ExtractaaiKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && options.key) {
+			if (source === 'endpoint' && options.key !== undefined) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (res) return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('extractaai', 'api_key');
 		},
 	} satisfies InternalExtractaaiPlugin;
 }
 
 export type {
-	ExampleGetInput,
-	ExampleGetResponse,
+	CreateClassificationInput,
+	CreateClassificationResponse,
+	CreateExtractionInput,
+	CreateExtractionResponse,
+	DeleteClassificationInput,
+	DeleteClassificationResponse,
+	DeleteExtractionInput,
+	DeleteExtractionResponse,
+	DocumentType,
 	ExtractaaiEndpointInputs,
 	ExtractaaiEndpointOutputs,
+	ExtractaJsonObject,
+	ExtractaJsonValue,
+	ExtractionField,
+	ExtractionFieldItems,
+	ExtractionOptions,
+	GetBatchResultsInput,
+	GetBatchResultsResponse,
+	GetCreditsInput,
+	GetCreditsResponse,
+	UpdateClassificationInput,
+	UpdateClassificationResponse,
+	UpdateExtractionInput,
+	UpdateExtractionResponse,
+	ViewClassificationInput,
+	ViewClassificationResponse,
+	ViewExtractionInput,
+	ViewExtractionResponse,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	ExtractaaiWebhookOutputs,
-} from './webhooks/types';

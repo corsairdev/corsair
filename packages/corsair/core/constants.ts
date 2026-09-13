@@ -145,6 +145,7 @@ export const BaseProviders = [
 	'dynapictures',
 	'epicgames',
 	'exa',
+	'extractaai',
 	'facebook',
 	'faraday',
 	'figma',
@@ -411,6 +412,7 @@ export const ProviderDisplayNames = {
 	dynapictures: 'Dynapictures',
 	epicgames: 'Epic Games',
 	exa: 'Exa',
+	extractaai: 'Extracta.ai',
 	facebook: 'Facebook',
 	faraday: 'Faraday',
 	figma: 'Figma',
@@ -684,6 +686,7 @@ export type AllProviders =
 	| 'dynapictures'
 	| 'epicgames'
 	| 'exa'
+	| 'extractaai'
 	| 'facebook'
 	| 'faraday'
 	| 'figma'
