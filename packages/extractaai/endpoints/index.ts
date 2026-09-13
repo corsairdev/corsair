@@ -1,13 +1,17 @@
-import { create as classificationCreate } from './classification-create';
-import { deleteClassification as classificationDelete } from './classification-delete';
-import { update as classificationUpdate } from './classification-update';
-import { view as classificationView } from './classification-view';
+import {
+	create as classificationCreate,
+	deleteClassification as classificationDelete,
+	update as classificationUpdate,
+	view as classificationView,
+} from './classification';
 import { get as creditsGet } from './credits-get';
-import { create as extractionCreate } from './extraction-create';
-import { deleteExtraction as extractionDelete } from './extraction-delete';
-import { getBatchResults as extractionGetBatchResults } from './extraction-results';
-import { update as extractionUpdate } from './extraction-update';
-import { view as extractionView } from './extraction-view';
+import {
+	create as extractionCreate,
+	deleteExtraction as extractionDelete,
+	getBatchResults as extractionGetBatchResults,
+	update as extractionUpdate,
+	view as extractionView,
+} from './extraction';
 
 export const Extraction = {
 	create: extractionCreate,
