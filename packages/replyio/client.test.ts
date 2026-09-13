@@ -1,5 +1,5 @@
 import { ApiError, request } from 'corsair/http';
-import { ReplyioAPIError, makeReplyioRequest } from './client';
+import { makeReplyioRequest, ReplyioAPIError } from './client';
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');

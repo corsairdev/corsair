@@ -1,5 +1,5 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { ReplyioAPIError } from './client';
 
 // Reply.io error conventions (docs: Errors use application/problem+json with a

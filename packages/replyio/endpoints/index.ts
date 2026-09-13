@@ -1,18 +1,4 @@
-import {
-	add as sequenceContactsAdd,
-	bulkRemove as sequenceContactsBulkRemove,
-	listExtended as sequenceContactsListExtended,
-	remove as sequenceContactsRemove,
-	setStatus as sequenceContactsSetStatus,
-} from './sequence-contacts';
-import {
-	connectGmail as emailAccountsConnectGmail,
-	connectOffice365 as emailAccountsConnectOffice365,
-	deleteEmailAccount as emailAccountsDelete,
-	list as emailAccountsList,
-	listDisconnected as emailAccountsListDisconnected,
-	update as emailAccountsUpdate,
-} from './email-accounts';
+import { list as contactListsList } from './contact-lists';
 import {
 	clearStatus as contactsClearStatus,
 	create as contactsCreate,
@@ -24,8 +10,22 @@ import {
 	setStatus as contactsSetStatus,
 	update as contactsUpdate,
 } from './contacts';
-import { list as contactListsList } from './contact-lists';
+import {
+	connectGmail as emailAccountsConnectGmail,
+	connectOffice365 as emailAccountsConnectOffice365,
+	deleteEmailAccount as emailAccountsDelete,
+	list as emailAccountsList,
+	listDisconnected as emailAccountsListDisconnected,
+	update as emailAccountsUpdate,
+} from './email-accounts';
 import { deleteSchedule as schedulesDelete } from './schedules';
+import {
+	add as sequenceContactsAdd,
+	bulkRemove as sequenceContactsBulkRemove,
+	listExtended as sequenceContactsListExtended,
+	remove as sequenceContactsRemove,
+	setStatus as sequenceContactsSetStatus,
+} from './sequence-contacts';
 import {
 	create as stepsCreate,
 	get as stepsGet,

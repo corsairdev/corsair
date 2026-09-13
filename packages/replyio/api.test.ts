@@ -152,11 +152,9 @@ liveDescribe('Reply.io live API type tests', () => {
 	});
 
 	it('clear-status endpoints are wired to the correct POST routes (mocked)', async () => {
-		const spy = jest
-			.spyOn(client, 'makeReplyioRequest')
-			.mockResolvedValue({
-				'999999999': { error: 'notFound' },
-			} as unknown as never);
+		const spy = jest.spyOn(client, 'makeReplyioRequest').mockResolvedValue({
+			'999999999': { error: 'notFound' },
+		} as unknown as never);
 
 		const probes = [
 			{

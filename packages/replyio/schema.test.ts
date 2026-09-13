@@ -1,8 +1,8 @@
-import { ReplyioSchema } from './schema';
 import {
 	ReplyioEndpointInputSchemas,
 	ReplyioEndpointOutputSchemas,
 } from './endpoints/types';
+import { ReplyioSchema } from './schema';
 
 describe('Replyio schema', () => {
 	it('declares a semver version', () => {
