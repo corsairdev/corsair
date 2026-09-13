@@ -1,9 +1,4 @@
-import { z } from 'zod';
-
-// TODO: Define your database entities here
-// export const ReplyioExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type ReplyioExample = z.infer<typeof ReplyioExample>;
+// Reply.io exposes no persisted entities for this integration: every
+// endpoint reads or mutates remote API state directly, so the schema carries
+// no tables. The versioned shell below satisfies the plugin schema contract.
+export {};

@@ -1,40 +1,38 @@
 import type {
 	BindEndpoints,
-	BindWebhooks,
-	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { ReplyioEndpointInputs, ReplyioEndpointOutputs } from './endpoints/types';
-import { ReplyioEndpointInputSchemas, ReplyioEndpointOutputSchemas } from './endpoints/types';
-import type {
-	ReplyioWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { ReplyioSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+import { AuthMissingError } from 'corsair/core';
+import {
+	ContactLists,
+	Contacts,
+	EmailAccounts,
+	Schedules,
+	SequenceContacts,
+	Sequences,
+	Steps,
+	Users,
+} from './endpoints';
+import type { ReplyioEndpoint } from './endpoints/context';
+import {
+	ReplyioEndpointInputSchemas,
+	ReplyioEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchReplyioTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveReplyioOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { ReplyioSchema } from './schema';
 
 export type ReplyioPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalReplyioPlugin['hooks'];
-	webhookHooks?: InternalReplyioPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof replyioEndpointsNested>;
 };
@@ -46,72 +44,374 @@ export type ReplyioContext = CorsairPluginContext<
 
 export type ReplyioKeyBuilderContext = KeyBuilderContext<ReplyioPluginOptions>;
 
-export type ReplyioBoundEndpoints = BindEndpoints<typeof replyioEndpointsNested>;
-
-type ReplyioEndpoint<
-	K extends keyof ReplyioEndpointOutputs,
-> = CorsairEndpoint<
-	ReplyioContext,
-	ReplyioEndpointInputs[K],
-	ReplyioEndpointOutputs[K]
+export type ReplyioBoundEndpoints = BindEndpoints<
+	typeof replyioEndpointsNested
 >;
 
 export type ReplyioEndpoints = {
-	exampleGet: ReplyioEndpoint<'exampleGet'>;
+	contactsCreate: ReplyioEndpoint<'contactsCreate'>;
+	contactsGet: ReplyioEndpoint<'contactsGet'>;
+	contactsUpdate: ReplyioEndpoint<'contactsUpdate'>;
+	contactsDelete: ReplyioEndpoint<'contactsDelete'>;
+	contactsList: ReplyioEndpoint<'contactsList'>;
+	contactsSearchByEmail: ReplyioEndpoint<'contactsSearchByEmail'>;
+	contactsGetStatus: ReplyioEndpoint<'contactsGetStatus'>;
+	contactsSetStatus: ReplyioEndpoint<'contactsSetStatus'>;
+	contactsClearStatus: ReplyioEndpoint<'contactsClearStatus'>;
+	sequencesList: ReplyioEndpoint<'sequencesList'>;
+	sequencesGet: ReplyioEndpoint<'sequencesGet'>;
+	sequencesDelete: ReplyioEndpoint<'sequencesDelete'>;
+	sequencesStart: ReplyioEndpoint<'sequencesStart'>;
+	sequencesPause: ReplyioEndpoint<'sequencesPause'>;
+	sequencesArchive: ReplyioEndpoint<'sequencesArchive'>;
+	stepsList: ReplyioEndpoint<'stepsList'>;
+	stepsGet: ReplyioEndpoint<'stepsGet'>;
+	stepsCreate: ReplyioEndpoint<'stepsCreate'>;
+	sequenceContactsAdd: ReplyioEndpoint<'sequenceContactsAdd'>;
+	sequenceContactsRemove: ReplyioEndpoint<'sequenceContactsRemove'>;
+	sequenceContactsBulkRemove: ReplyioEndpoint<'sequenceContactsBulkRemove'>;
+	sequenceContactsListExtended: ReplyioEndpoint<'sequenceContactsListExtended'>;
+	emailAccountsList: ReplyioEndpoint<'emailAccountsList'>;
+	emailAccountsListDisconnected: ReplyioEndpoint<'emailAccountsListDisconnected'>;
+	emailAccountsUpdate: ReplyioEndpoint<'emailAccountsUpdate'>;
+	emailAccountsDelete: ReplyioEndpoint<'emailAccountsDelete'>;
+	emailAccountsConnectGmail: ReplyioEndpoint<'emailAccountsConnectGmail'>;
+	emailAccountsConnectOffice365: ReplyioEndpoint<'emailAccountsConnectOffice365'>;
+	schedulesDelete: ReplyioEndpoint<'schedulesDelete'>;
+	usersGetCurrent: ReplyioEndpoint<'usersGetCurrent'>;
+	usersListTeam: ReplyioEndpoint<'usersListTeam'>;
+	contactListsList: ReplyioEndpoint<'contactListsList'>;
 };
-
-type ReplyioWebhook<
-	K extends keyof ReplyioWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<ReplyioContext, TEvent, ReplyioWebhookOutputs[K]>;
-
-export type ReplyioWebhooks = {
-	example: ReplyioWebhook<'example', ExampleEvent>;
-};
-
-export type ReplyioBoundWebhooks = BindWebhooks<ReplyioWebhooks>;
 
 const replyioEndpointsNested = {
-	example: {
-		get: Example.get,
+	contacts: {
+		create: Contacts.create,
+		get: Contacts.get,
+		update: Contacts.update,
+		delete: Contacts.delete,
+		list: Contacts.list,
+		searchByEmail: Contacts.searchByEmail,
+		getStatus: Contacts.getStatus,
+		setStatus: Contacts.setStatus,
+		clearStatus: Contacts.clearStatus,
+	},
+	sequences: {
+		list: Sequences.list,
+		get: Sequences.get,
+		delete: Sequences.delete,
+		start: Sequences.start,
+		pause: Sequences.pause,
+		archive: Sequences.archive,
+	},
+	steps: {
+		list: Steps.list,
+		get: Steps.get,
+		create: Steps.create,
+	},
+	sequenceContacts: {
+		add: SequenceContacts.add,
+		remove: SequenceContacts.remove,
+		bulkRemove: SequenceContacts.bulkRemove,
+		listExtended: SequenceContacts.listExtended,
+	},
+	emailAccounts: {
+		list: EmailAccounts.list,
+		listDisconnected: EmailAccounts.listDisconnected,
+		update: EmailAccounts.update,
+		delete: EmailAccounts.delete,
+		connectGmail: EmailAccounts.connectGmail,
+		connectOffice365: EmailAccounts.connectOffice365,
+	},
+	schedules: {
+		delete: Schedules.delete,
+	},
+	users: {
+		getCurrent: Users.getCurrent,
+		listTeam: Users.listTeam,
+	},
+	contactLists: {
+		list: ContactLists.list,
 	},
 } as const;
 
-const replyioWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+// Reply.io exposes no webhook subscriptions for this integration surface, so
+// the plugin ships no webhooks. An empty nested map is the established
+// convention for webhook-less plugins.
+const replyioWebhooksNested = {} as const;
 
 export const replyioEndpointSchemas = {
-	'example.get': {
-		input: ReplyioEndpointInputSchemas.exampleGet,
-		output: ReplyioEndpointOutputSchemas.exampleGet,
+	'contacts.create': {
+		input: ReplyioEndpointInputSchemas.contactsCreate,
+		output: ReplyioEndpointOutputSchemas.contactsCreate,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof replyioEndpointsNested>;
-
-const replyioWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'contacts.get': {
+		input: ReplyioEndpointInputSchemas.contactsGet,
+		output: ReplyioEndpointOutputSchemas.contactsGet,
 	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof replyioWebhooksNested>;
+	'contacts.update': {
+		input: ReplyioEndpointInputSchemas.contactsUpdate,
+		output: ReplyioEndpointOutputSchemas.contactsUpdate,
+	},
+	'contacts.delete': {
+		input: ReplyioEndpointInputSchemas.contactsDelete,
+		output: ReplyioEndpointOutputSchemas.contactsDelete,
+	},
+	'contacts.list': {
+		input: ReplyioEndpointInputSchemas.contactsList,
+		output: ReplyioEndpointOutputSchemas.contactsList,
+	},
+	'contacts.searchByEmail': {
+		input: ReplyioEndpointInputSchemas.contactsSearchByEmail,
+		output: ReplyioEndpointOutputSchemas.contactsSearchByEmail,
+	},
+	'contacts.getStatus': {
+		input: ReplyioEndpointInputSchemas.contactsGetStatus,
+		output: ReplyioEndpointOutputSchemas.contactsGetStatus,
+	},
+	'contacts.setStatus': {
+		input: ReplyioEndpointInputSchemas.contactsSetStatus,
+		output: ReplyioEndpointOutputSchemas.contactsSetStatus,
+	},
+	'contacts.clearStatus': {
+		input: ReplyioEndpointInputSchemas.contactsClearStatus,
+		output: ReplyioEndpointOutputSchemas.contactsClearStatus,
+	},
+	'sequences.list': {
+		input: ReplyioEndpointInputSchemas.sequencesList,
+		output: ReplyioEndpointOutputSchemas.sequencesList,
+	},
+	'sequences.get': {
+		input: ReplyioEndpointInputSchemas.sequencesGet,
+		output: ReplyioEndpointOutputSchemas.sequencesGet,
+	},
+	'sequences.delete': {
+		input: ReplyioEndpointInputSchemas.sequencesDelete,
+		output: ReplyioEndpointOutputSchemas.sequencesDelete,
+	},
+	'sequences.start': {
+		input: ReplyioEndpointInputSchemas.sequencesStart,
+		output: ReplyioEndpointOutputSchemas.sequencesStart,
+	},
+	'sequences.pause': {
+		input: ReplyioEndpointInputSchemas.sequencesPause,
+		output: ReplyioEndpointOutputSchemas.sequencesPause,
+	},
+	'sequences.archive': {
+		input: ReplyioEndpointInputSchemas.sequencesArchive,
+		output: ReplyioEndpointOutputSchemas.sequencesArchive,
+	},
+	'steps.list': {
+		input: ReplyioEndpointInputSchemas.stepsList,
+		output: ReplyioEndpointOutputSchemas.stepsList,
+	},
+	'steps.get': {
+		input: ReplyioEndpointInputSchemas.stepsGet,
+		output: ReplyioEndpointOutputSchemas.stepsGet,
+	},
+	'steps.create': {
+		input: ReplyioEndpointInputSchemas.stepsCreate,
+		output: ReplyioEndpointOutputSchemas.stepsCreate,
+	},
+	'sequenceContacts.add': {
+		input: ReplyioEndpointInputSchemas.sequenceContactsAdd,
+		output: ReplyioEndpointOutputSchemas.sequenceContactsAdd,
+	},
+	'sequenceContacts.remove': {
+		input: ReplyioEndpointInputSchemas.sequenceContactsRemove,
+		output: ReplyioEndpointOutputSchemas.sequenceContactsRemove,
+	},
+	'sequenceContacts.bulkRemove': {
+		input: ReplyioEndpointInputSchemas.sequenceContactsBulkRemove,
+		output: ReplyioEndpointOutputSchemas.sequenceContactsBulkRemove,
+	},
+	'sequenceContacts.listExtended': {
+		input: ReplyioEndpointInputSchemas.sequenceContactsListExtended,
+		output: ReplyioEndpointOutputSchemas.sequenceContactsListExtended,
+	},
+	'emailAccounts.list': {
+		input: ReplyioEndpointInputSchemas.emailAccountsList,
+		output: ReplyioEndpointOutputSchemas.emailAccountsList,
+	},
+	'emailAccounts.listDisconnected': {
+		input: ReplyioEndpointInputSchemas.emailAccountsListDisconnected,
+		output: ReplyioEndpointOutputSchemas.emailAccountsListDisconnected,
+	},
+	'emailAccounts.update': {
+		input: ReplyioEndpointInputSchemas.emailAccountsUpdate,
+		output: ReplyioEndpointOutputSchemas.emailAccountsUpdate,
+	},
+	'emailAccounts.delete': {
+		input: ReplyioEndpointInputSchemas.emailAccountsDelete,
+		output: ReplyioEndpointOutputSchemas.emailAccountsDelete,
+	},
+	'emailAccounts.connectGmail': {
+		input: ReplyioEndpointInputSchemas.emailAccountsConnectGmail,
+		output: ReplyioEndpointOutputSchemas.emailAccountsConnectGmail,
+	},
+	'emailAccounts.connectOffice365': {
+		input: ReplyioEndpointInputSchemas.emailAccountsConnectOffice365,
+		output: ReplyioEndpointOutputSchemas.emailAccountsConnectOffice365,
+	},
+	'schedules.delete': {
+		input: ReplyioEndpointInputSchemas.schedulesDelete,
+		output: ReplyioEndpointOutputSchemas.schedulesDelete,
+	},
+	'users.getCurrent': {
+		input: ReplyioEndpointInputSchemas.usersGetCurrent,
+		output: ReplyioEndpointOutputSchemas.usersGetCurrent,
+	},
+	'users.listTeam': {
+		input: ReplyioEndpointInputSchemas.usersListTeam,
+		output: ReplyioEndpointOutputSchemas.usersListTeam,
+	},
+	'contactLists.list': {
+		input: ReplyioEndpointInputSchemas.contactListsList,
+		output: ReplyioEndpointOutputSchemas.contactListsList,
+	},
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof replyioEndpointsNested
+>;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType: PickAuth<'api_key'> = 'api_key';
 
 const replyioEndpointMeta = {
-	'example.get': {
+	'contacts.create': {
+		riskLevel: 'write',
+		description: 'Create a new contact in Reply.io',
+	},
+	'contacts.get': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Get a contact by ID',
+	},
+	'contacts.update': {
+		riskLevel: 'write',
+		description: 'Update an existing contact',
+	},
+	'contacts.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a contact [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'contacts.list': {
+		riskLevel: 'read',
+		description: 'List contacts with pagination and optional filters',
+	},
+	'contacts.searchByEmail': {
+		riskLevel: 'read',
+		description: 'Search contacts by exact email address',
+	},
+	'contacts.getStatus': {
+		riskLevel: 'read',
+		description: "Get a contact's statuses across sequences",
+	},
+	'contacts.setStatus': {
+		riskLevel: 'write',
+		description: "Set contacts' in-sequence status in bulk",
+	},
+	'contacts.clearStatus': {
+		riskLevel: 'write',
+		description: 'Clear clearable contact statuses (opt-out, replied, bounced)',
+	},
+	'sequences.list': {
+		riskLevel: 'read',
+		description: 'List sequences with pagination and optional filters',
+	},
+	'sequences.get': {
+		riskLevel: 'read',
+		description: 'Get a sequence by ID with settings and steps',
+	},
+	'sequences.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a sequence [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'sequences.start': {
+		riskLevel: 'write',
+		description: 'Start a sequence in New or Paused status',
+	},
+	'sequences.pause': {
+		riskLevel: 'write',
+		description: 'Pause a running sequence',
+	},
+	'sequences.archive': {
+		riskLevel: 'write',
+		description: 'Archive a sequence and remove its contacts',
+	},
+	'steps.list': {
+		riskLevel: 'read',
+		description: 'List all steps in a sequence',
+	},
+	'steps.get': {
+		riskLevel: 'read',
+		description: 'Get a sequence step by ID',
+	},
+	'steps.create': {
+		riskLevel: 'write',
+		description: 'Add a new step to a sequence',
+	},
+	'sequenceContacts.add': {
+		riskLevel: 'write',
+		description: 'Add contacts to a sequence in bulk',
+	},
+	'sequenceContacts.remove': {
+		riskLevel: 'write',
+		description: 'Remove a contact from a sequence',
+	},
+	'sequenceContacts.bulkRemove': {
+		riskLevel: 'write',
+		description: 'Remove multiple contacts from a sequence at once',
+	},
+	'sequenceContacts.listExtended': {
+		riskLevel: 'read',
+		description: 'List sequence contacts with extended engagement state',
+	},
+	'emailAccounts.list': {
+		riskLevel: 'read',
+		description: 'List email accounts with pagination',
+	},
+	'emailAccounts.listDisconnected': {
+		riskLevel: 'read',
+		description:
+			'List email accounts disconnected by auth or connection errors',
+	},
+	'emailAccounts.update': {
+		riskLevel: 'write',
+		description: 'Update an email account with custom SMTP/IMAP settings',
+	},
+	'emailAccounts.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete an email account [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'emailAccounts.connectGmail': {
+		riskLevel: 'write',
+		description: 'Get the Gmail OAuth connect URL for the user to open',
+	},
+	'emailAccounts.connectOffice365': {
+		riskLevel: 'write',
+		description: 'Get the Microsoft 365 OAuth connect URL for the user to open',
+	},
+	'schedules.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a sending schedule [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'users.getCurrent': {
+		riskLevel: 'read',
+		description: 'Get the current authenticated user and verify the API key',
+	},
+	'users.listTeam': {
+		riskLevel: 'read',
+		description: 'List users on the current team',
+	},
+	'contactLists.list': {
+		riskLevel: 'read',
+		description: 'List contact lists with pagination',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof replyioEndpointsNested>;
 
 export const replyioAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -130,73 +430,62 @@ export type InternalReplyioPlugin = BaseReplyioPlugin<ReplyioPluginOptions>;
 export type ExternalReplyioPlugin<T extends ReplyioPluginOptions> =
 	BaseReplyioPlugin<T>;
 
-export function replyio<const T extends ReplyioPluginOptions>(
-	incomingOptions: ReplyioPluginOptions & T = {} as ReplyioPluginOptions & T,
-): ExternalReplyioPlugin<T> {
-	const options = {
+// The factory is intentionally non-generic: the generated scaffold uses a
+// `const T` type parameter with a type assertion on the default options
+// object, and this plugin forbids type assertions. Callers still get a fully
+// typed plugin; only literal-level inference of caller-supplied overrides is
+// not captured.
+export function replyio(
+	incomingOptions?: ReplyioPluginOptions,
+): ExternalReplyioPlugin<ReplyioPluginOptions> {
+	const options: ReplyioPluginOptions = {
 		...incomingOptions,
-		authType: incomingOptions.authType ?? defaultAuthType,
+		authType: incomingOptions?.authType ?? defaultAuthType,
 	};
 	return {
 		id: 'replyio',
 		authConfig: replyioAuthConfig,
 		schema: ReplyioSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: replyioEndpointsNested,
 		webhooks: replyioWebhooksNested,
 		endpointMeta: replyioEndpointMeta,
 		endpointSchemas: replyioEndpointSchemas,
-		webhookSchemas: replyioWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-replyio-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchReplyioTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveReplyioOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ReplyioKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('replyio', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('replyio', 'api_key');
 		},
 	} satisfies InternalReplyioPlugin;
 }
 
 export type {
-	ExampleEvent,
-	ReplyioWebhookOutputs,
-} from './webhooks/types';
-
-export type {
+	Contact,
+	ContactStatus,
+	CurrentUser,
+	EmailAccountDetail,
+	EmailAccountListItem,
 	ReplyioEndpointInputs,
 	ReplyioEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	SequenceContactExtended,
+	SequenceDetail,
+	SequenceListItem,
+	SequenceStep,
+	TeamUser,
 } from './endpoints/types';
+export * from './error-handlers';
