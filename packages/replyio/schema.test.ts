@@ -21,12 +21,12 @@ describe('Replyio endpoint schema registry', () => {
 	const inputKeys = Object.keys(ReplyioEndpointInputSchemas);
 	const outputKeys = Object.keys(ReplyioEndpointOutputSchemas);
 
-	it('covers all 32 implemented endpoints with input schemas', () => {
-		expect(inputKeys).toHaveLength(32);
+	it('covers all 33 implemented endpoints with input schemas', () => {
+		expect(inputKeys).toHaveLength(33);
 	});
 
-	it('covers all 32 implemented endpoints with output schemas', () => {
-		expect(outputKeys).toHaveLength(32);
+	it('covers all 33 implemented endpoints with output schemas', () => {
+		expect(outputKeys).toHaveLength(33);
 	});
 
 	it('has a matching output schema for every input schema', () => {

@@ -40,6 +40,7 @@ Missing credentials throw `AuthMissingError` (never an empty string).
 | `sequenceContacts.remove` | `DELETE /sequences/{id}/contact-links/{contactId}` | Remove a contact from a sequence |
 | `sequenceContacts.bulkRemove` | `POST /sequences/{id}/contact-links/bulk-delete` | Bulk-remove contacts from a sequence |
 | `sequenceContacts.listExtended` | `GET /sequences/{id}/contacts/state` | Contacts with engagement state |
+| `sequenceContacts.setStatus` | `POST /sequences/{id}/contacts/set-status-in-sequence` | Set status for enrollments in that sequence |
 | `emailAccounts.list` | `GET /email-accounts` | List email accounts (paginated) |
 | `emailAccounts.listDisconnected` | `POST /email-accounts/filter` | Accounts broken by auth/connection errors |
 | `emailAccounts.update` | `PATCH /email-accounts/{id}` | Update SMTP/IMAP, safety, signature |

@@ -49,8 +49,14 @@ describe('Replyio error handlers', () => {
 		expect(strategy?.headersRetryAfterMs).toBe(2000);
 	});
 
-	it('matches rate-limit messages on plain errors', async () => {
-		const error = new Error('Request failed with 429');
+	it('matches ReplyioAPIError 429 responses and preserves Retry-After', async () => {
+		const { ReplyioAPIError } = await import('./client');
+		const error = new ReplyioAPIError(
+			'Too Many Requests',
+			'rateLimited',
+			429,
+			1500,
+		);
 		const context = makeContext('contacts.list', error);
 		expect(errorHandlers.RATE_LIMIT_ERROR?.match(error, context)).toBe(true);
 		const strategy = await errorHandlers.RATE_LIMIT_ERROR?.handler(
@@ -58,7 +64,7 @@ describe('Replyio error handlers', () => {
 			context,
 		);
 		expect(strategy?.maxRetries).toBe(5);
-		expect(strategy?.headersRetryAfterMs).toBeUndefined();
+		expect(strategy?.headersRetryAfterMs).toBe(1500);
 	});
 
 	it('does not treat unrelated errors as rate-limit errors', () => {

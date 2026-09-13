@@ -10,6 +10,8 @@ export class ReplyioAPIError extends Error {
 		message: string,
 		public readonly code?: string,
 		public readonly status?: number,
+		public readonly retryAfter?: number,
+		public readonly body?: unknown,
 	) {
 		super(message);
 		this.name = 'ReplyioAPIError';
@@ -82,6 +84,8 @@ export async function makeReplyioRequest<T>(
 				error.message,
 				readProblemCode(error.body),
 				error.status,
+				error.retryAfter,
+				error.body,
 			);
 		}
 		if (error instanceof Error) {

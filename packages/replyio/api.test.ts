@@ -1,3 +1,4 @@
+import * as client from './client';
 import { makeReplyioRequest } from './client';
 import type {
 	CurrentUser,
@@ -150,7 +151,13 @@ liveDescribe('Reply.io live API type tests', () => {
 		expect(Array.isArray(parsed)).toBe(true);
 	});
 
-	it('clear-status endpoints accept clear flags (probed with a nonexistent contact)', async () => {
+	it('clear-status endpoints are wired to the correct POST routes (mocked)', async () => {
+		const spy = jest
+			.spyOn(client, 'makeReplyioRequest')
+			.mockResolvedValue({
+				'999999999': { error: 'notFound' },
+			} as unknown as never);
+
 		const probes = [
 			{
 				path: 'contacts/set-opted-out',
@@ -178,5 +185,22 @@ liveDescribe('Reply.io live API type tests', () => {
 				ReplyioEndpointOutputSchemas.contactsClearStatus.parse(response);
 			expect(parsed['999999999']?.error).toBe('notFound');
 		}
+
+		expect(spy).toHaveBeenCalledWith(
+			'contacts/set-opted-out',
+			API_KEY,
+			expect.objectContaining({ method: 'POST' }),
+		);
+		expect(spy).toHaveBeenCalledWith(
+			'contacts/set-replied',
+			API_KEY,
+			expect.objectContaining({ method: 'POST' }),
+		);
+		expect(spy).toHaveBeenCalledWith(
+			'contacts/set-bounced',
+			API_KEY,
+			expect.objectContaining({ method: 'POST' }),
+		);
+		spy.mockRestore();
 	});
 });

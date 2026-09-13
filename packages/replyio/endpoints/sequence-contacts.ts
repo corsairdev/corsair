@@ -72,6 +72,29 @@ export const bulkRemove: ReplyioEndpoint<'sequenceContactsBulkRemove'> = async (
 	return response;
 };
 
+export const setStatus: ReplyioEndpoint<'sequenceContactsSetStatus'> = async (
+	ctx: ReplyioEndpointContext,
+	input,
+) => {
+	const response = await makeReplyioRequest<
+		ReplyioEndpointOutputs['sequenceContactsSetStatus']
+	>(`sequences/${input.sequenceId}/contacts/set-status-in-sequence`, ctx.key, {
+		method: 'POST',
+		body: {
+			contactIds: input.contactIds,
+			statusInSequence: input.statusInSequence,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'replyio.sequenceContacts.setStatus',
+		{ sequenceId: input.sequenceId, statusInSequence: input.statusInSequence },
+		'completed',
+	);
+	return response;
+};
+
 export const listExtended: ReplyioEndpoint<
 	'sequenceContactsListExtended'
 > = async (ctx: ReplyioEndpointContext, input) => {

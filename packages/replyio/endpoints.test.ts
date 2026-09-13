@@ -642,6 +642,34 @@ describe('sequenceContacts endpoints', () => {
 			'completed',
 		);
 	});
+
+	it('setStatus issues POST /sequences/:id/contacts/set-status-in-sequence', async () => {
+		const fixture =
+			ReplyioEndpointOutputSchemas.sequenceContactsSetStatus.parse({});
+		mockMakeReplyioRequest.mockResolvedValue(fixture);
+
+		const result = await SequenceContacts.setStatus(ctx, {
+			sequenceId: 1,
+			contactIds: [2],
+			statusInSequence: 'paused',
+		});
+
+		expect(result).toEqual(fixture);
+		expect(mockMakeReplyioRequest).toHaveBeenCalledWith(
+			'sequences/1/contacts/set-status-in-sequence',
+			'test-api-key',
+			expect.objectContaining({
+				method: 'POST',
+				body: { contactIds: [2], statusInSequence: 'paused' },
+			}),
+		);
+		expect(mockLogEventFromContext).toHaveBeenCalledWith(
+			ctx,
+			'replyio.sequenceContacts.setStatus',
+			expect.any(Object),
+			'completed',
+		);
+	});
 });
 
 describe('emailAccounts endpoints', () => {

@@ -556,6 +556,15 @@ const SequenceContactsListExtendedResponseSchema = z.object({
 	hasMore: z.boolean(),
 });
 
+// POST /v3/sequences/{id}/contacts/set-status-in-sequence — sequence-scoped
+// variant of the global POST /v3/contacts/set-status-in-sequence. Both share
+// the same writable statuses (active/paused/finished/outOfOffice); the
+// sequence-scoped form limits the update to enrollments in that sequence.
+const SequenceContactsSetStatusInputSchema = SequenceIdInputSchema.extend({
+	contactIds: z.array(PositiveIntSchema).min(1).max(100),
+	statusInSequence: z.enum(['active', 'paused', 'finished', 'outOfOffice']),
+});
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Email accounts
 // ─────────────────────────────────────────────────────────────────────────────
@@ -750,6 +759,7 @@ export const ReplyioEndpointInputSchemas = {
 	sequenceContactsRemove: SequenceContactRemoveInputSchema,
 	sequenceContactsBulkRemove: SequenceContactsBulkRemoveInputSchema,
 	sequenceContactsListExtended: SequenceContactsListExtendedInputSchema,
+	sequenceContactsSetStatus: SequenceContactsSetStatusInputSchema,
 	emailAccountsList: EmailAccountsListInputSchema,
 	emailAccountsListDisconnected: EmailAccountsListDisconnectedInputSchema,
 	emailAccountsUpdate: EmailAccountsUpdateInputSchema,
@@ -791,6 +801,7 @@ export const ReplyioEndpointOutputSchemas = {
 	sequenceContactsRemove: DeleteResponseSchema,
 	sequenceContactsBulkRemove: SequenceContactsBulkRemoveResponseSchema,
 	sequenceContactsListExtended: SequenceContactsListExtendedResponseSchema,
+	sequenceContactsSetStatus: NonAtomicContactResultSchema,
 	emailAccountsList: EmailAccountsListResponseSchema,
 	emailAccountsListDisconnected: EmailAccountsListResponseSchema,
 	emailAccountsUpdate: EmailAccountDetailSchema,

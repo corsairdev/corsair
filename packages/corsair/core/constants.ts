@@ -501,7 +501,7 @@ export const ProviderDisplayNames = {
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
 	removebg: 'remove.bg',
-	replyio: 'Replyio',
+	replyio: 'Reply.io',
 	resend: 'Resend',
 	retailed: 'Retailed',
 	runpod: 'RunPod',

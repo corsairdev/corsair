@@ -3,6 +3,7 @@ import {
 	bulkRemove as sequenceContactsBulkRemove,
 	listExtended as sequenceContactsListExtended,
 	remove as sequenceContactsRemove,
+	setStatus as sequenceContactsSetStatus,
 } from './sequence-contacts';
 import {
 	connectGmail as emailAccountsConnectGmail,
@@ -75,6 +76,7 @@ export const SequenceContacts = {
 	remove: sequenceContactsRemove,
 	bulkRemove: sequenceContactsBulkRemove,
 	listExtended: sequenceContactsListExtended,
+	setStatus: sequenceContactsSetStatus,
 };
 
 export const EmailAccounts = {

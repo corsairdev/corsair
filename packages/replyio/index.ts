@@ -71,6 +71,7 @@ export type ReplyioEndpoints = {
 	sequenceContactsRemove: ReplyioEndpoint<'sequenceContactsRemove'>;
 	sequenceContactsBulkRemove: ReplyioEndpoint<'sequenceContactsBulkRemove'>;
 	sequenceContactsListExtended: ReplyioEndpoint<'sequenceContactsListExtended'>;
+	sequenceContactsSetStatus: ReplyioEndpoint<'sequenceContactsSetStatus'>;
 	emailAccountsList: ReplyioEndpoint<'emailAccountsList'>;
 	emailAccountsListDisconnected: ReplyioEndpoint<'emailAccountsListDisconnected'>;
 	emailAccountsUpdate: ReplyioEndpoint<'emailAccountsUpdate'>;
@@ -113,6 +114,7 @@ const replyioEndpointsNested = {
 		remove: SequenceContacts.remove,
 		bulkRemove: SequenceContacts.bulkRemove,
 		listExtended: SequenceContacts.listExtended,
+		setStatus: SequenceContacts.setStatus,
 	},
 	emailAccounts: {
 		list: EmailAccounts.list,
@@ -227,6 +229,10 @@ export const replyioEndpointSchemas = {
 	'sequenceContacts.listExtended': {
 		input: ReplyioEndpointInputSchemas.sequenceContactsListExtended,
 		output: ReplyioEndpointOutputSchemas.sequenceContactsListExtended,
+	},
+	'sequenceContacts.setStatus': {
+		input: ReplyioEndpointInputSchemas.sequenceContactsSetStatus,
+		output: ReplyioEndpointOutputSchemas.sequenceContactsSetStatus,
 	},
 	'emailAccounts.list': {
 		input: ReplyioEndpointInputSchemas.emailAccountsList,
@@ -364,6 +370,10 @@ const replyioEndpointMeta = {
 	'sequenceContacts.listExtended': {
 		riskLevel: 'read',
 		description: 'List sequence contacts with extended engagement state',
+	},
+	'sequenceContacts.setStatus': {
+		riskLevel: 'write',
+		description: "Set contacts' status for enrollments in a specific sequence",
 	},
 	'emailAccounts.list': {
 		riskLevel: 'read',
