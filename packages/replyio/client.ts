@@ -11,6 +11,10 @@ export class ReplyioAPIError extends Error {
 		public readonly code?: string,
 		public readonly status?: number,
 		public readonly retryAfter?: number,
+		// Justification for `unknown`: the raw provider error body
+		// (application/problem+json) has no shared static shape. It is stored
+		// for debugging and never inspected, narrowed, or asserted on —
+		// classification uses only `status` (see error-handlers.ts).
 		public readonly body?: unknown,
 	) {
 		super(message);
@@ -131,6 +135,9 @@ export async function getReplyioConnectUrl(
 
 	let code: string | undefined;
 	try {
+		// Justification for `unknown`: fetch returns an untyped JSON body.
+		// It flows only into readProblemCode, which reads the string `code`
+		// field via structural checks and never asserts the overall shape.
 		const body: unknown = await response.json();
 		code = readProblemCode(body);
 	} catch {
