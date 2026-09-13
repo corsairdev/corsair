@@ -241,7 +241,11 @@ export function extractaai(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ExtractaaiKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key !== undefined) {
+			if (
+				source === 'endpoint' &&
+				options.key !== undefined &&
+				options.key.trim() !== ''
+			) {
 				return options.key;
 			}
 

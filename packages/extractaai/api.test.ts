@@ -164,9 +164,8 @@ liveDescribe('Extracta.ai live API (requires EXTRACTAAI_API_KEY)', () => {
 				],
 			},
 		});
-		expect(created.status).toBe('created');
-
 		try {
+			expect(created.status).toBe('created');
 			const viewed = await extraction.view(ctx, {
 				extractionId: created.extractionId,
 			});
@@ -219,9 +218,8 @@ liveDescribe('Extracta.ai live API (requires EXTRACTAAI_API_KEY)', () => {
 				],
 			},
 		});
-		expect(created.status).toBe('created');
-
 		try {
+			expect(created.status).toBe('created');
 			const viewed = await classification.view(ctx, {
 				classificationId: created.classificationId,
 			});

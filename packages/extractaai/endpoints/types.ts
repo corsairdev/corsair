@@ -49,6 +49,10 @@ export const ExtractionOptionsSchema = z
 				from: z.number().int().min(1),
 				to: z.number().int().min(1),
 			})
+			.refine((range) => range.to >= range.from, {
+				message: '"to" must be greater than or equal to "from"',
+				path: ['to'],
+			})
 			.optional(),
 	})
 	.refine(
@@ -387,7 +391,7 @@ export type DeleteClassificationInput = z.infer<
 >;
 
 const DeleteClassificationResponseSchema = z.object({
-	status: z.string().min(1),
+	status: z.literal('success'),
 	message: z.string().optional(),
 });
 
