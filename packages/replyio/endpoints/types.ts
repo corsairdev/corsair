@@ -672,9 +672,9 @@ const EmailAccountDetailSchema = EmailAccountListItemSchema.extend({
 const EmptyInputSchema = z.object({});
 
 // GET /v3/email-accounts/connect/{gmail,office-365} answers with a 302 to the
-// provider consent screen, which a server-side client must not follow and
-// consume. The tool therefore returns the provider connect URL for the user
-// to open in a browser instead of performing the redirect itself.
+// provider consent screen. The tool performs the authenticated request,
+// captures the redirect target without following it, and returns that
+// provider URL for the user to open in a browser.
 const EmailAccountsConnectGmailResponseSchema = z.object({
 	url: z.string().url(),
 	provider: z.literal('gmail'),

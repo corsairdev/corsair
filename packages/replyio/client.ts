@@ -95,6 +95,65 @@ export async function makeReplyioRequest<T>(
 	}
 }
 
+// The OAuth connect endpoints (GET /v3/email-accounts/connect/{gmail,
+// office-365}) answer with a 302 redirect to the provider consent screen,
+// which a server-side client must not follow. The shared `request` helper
+// always follows redirects, so this uses a direct fetch with
+// `redirect: 'manual'` to capture the `Location` header instead. Errors keep
+// structured status/retryAfter fields so the plugin error-handlers classify
+// them the same way as other endpoint failures.
+export async function getReplyioConnectUrl(
+	endpoint:
+		| 'email-accounts/connect/gmail'
+		| 'email-accounts/connect/office-365',
+	apiKey: string,
+): Promise<string> {
+	const response = await fetch(`${REPLY_IO_API_BASE}/${endpoint}`, {
+		method: 'GET',
+		headers: {
+			Authorization: `Bearer ${apiKey}`,
+			Accept: 'application/json',
+		},
+		redirect: 'manual',
+	});
+
+	if (response.status === 301 || response.status === 302) {
+		const location = response.headers.get('Location');
+		if (location) {
+			return location;
+		}
+		throw new ReplyioAPIError(
+			'Connect endpoint did not return a redirect URL',
+			undefined,
+			response.status,
+		);
+	}
+
+	let code: string | undefined;
+	try {
+		const body: unknown = await response.json();
+		code = readProblemCode(body);
+	} catch {
+		// Non-JSON error body; the HTTP status still classifies the failure.
+	}
+
+	let retryAfter: number | undefined;
+	const retryAfterHeader = response.headers.get('Retry-After');
+	if (retryAfterHeader !== null) {
+		const seconds = Number(retryAfterHeader);
+		if (Number.isFinite(seconds)) {
+			retryAfter = seconds * 1000;
+		}
+	}
+
+	throw new ReplyioAPIError(
+		`Connect request failed with status ${response.status}`,
+		code,
+		response.status,
+		retryAfter,
+	);
+}
+
 // Justification for `unknown` below: the Reply.io error envelope
 // (application/problem+json) is parsed by the shared HTTP layer into an
 // untyped body. We read only the documented string `code` field

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeReplyioRequest } from '../client';
+import { getReplyioConnectUrl, makeReplyioRequest } from '../client';
 import type { ReplyioEndpoint, ReplyioEndpointContext } from './context';
 import type { ReplyioEndpointOutputs } from './types';
 
@@ -89,7 +89,10 @@ export const deleteEmailAccount: ReplyioEndpoint<
 export const connectGmail: ReplyioEndpoint<
 	'emailAccountsConnectGmail'
 > = async (ctx: ReplyioEndpointContext) => {
-	const url = 'https://api.reply.io/v3/email-accounts/connect/gmail';
+	const url = await getReplyioConnectUrl(
+		'email-accounts/connect/gmail',
+		ctx.key,
+	);
 	await logEventFromContext(
 		ctx,
 		'replyio.emailAccounts.connectGmail',
@@ -102,7 +105,10 @@ export const connectGmail: ReplyioEndpoint<
 export const connectOffice365: ReplyioEndpoint<
 	'emailAccountsConnectOffice365'
 > = async (ctx: ReplyioEndpointContext) => {
-	const url = 'https://api.reply.io/v3/email-accounts/connect/office-365';
+	const url = await getReplyioConnectUrl(
+		'email-accounts/connect/office-365',
+		ctx.key,
+	);
 	await logEventFromContext(
 		ctx,
 		'replyio.emailAccounts.connectOffice365',

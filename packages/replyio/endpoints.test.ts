@@ -787,36 +787,70 @@ describe('emailAccounts endpoints', () => {
 		);
 	});
 
-	it('connectGmail returns the Gmail connect URL without calling the API', async () => {
+	it('connectGmail captures the Google consent redirect without following it', async () => {
+		const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(null, {
+				status: 302,
+				headers: { Location: 'https://accounts.google.com/consent?x=1' },
+			}),
+		);
+
 		const result = await EmailAccounts.connectGmail(ctx, {});
 
-		expect(result.provider).toBe('gmail');
-		expect(result.url).toBe(
+		expect(result).toEqual({
+			url: 'https://accounts.google.com/consent?x=1',
+			provider: 'gmail',
+		});
+		expect(fetchSpy).toHaveBeenCalledWith(
 			'https://api.reply.io/v3/email-accounts/connect/gmail',
+			expect.objectContaining({
+				method: 'GET',
+				redirect: 'manual',
+				headers: expect.objectContaining({
+					Authorization: 'Bearer test-api-key',
+				}),
+			}),
 		);
-		expect(mockMakeReplyioRequest).not.toHaveBeenCalled();
 		expect(mockLogEventFromContext).toHaveBeenCalledWith(
 			ctx,
 			'replyio.emailAccounts.connectGmail',
 			expect.any(Object),
 			'completed',
 		);
+		fetchSpy.mockRestore();
 	});
 
-	it('connectOffice365 returns the Microsoft connect URL without calling the API', async () => {
+	it('connectOffice365 captures the Microsoft consent redirect without following it', async () => {
+		const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(null, {
+				status: 302,
+				headers: { Location: 'https://login.microsoftonline.com/consent?x=1' },
+			}),
+		);
+
 		const result = await EmailAccounts.connectOffice365(ctx, {});
 
-		expect(result.provider).toBe('office-365');
-		expect(result.url).toBe(
+		expect(result).toEqual({
+			url: 'https://login.microsoftonline.com/consent?x=1',
+			provider: 'office-365',
+		});
+		expect(fetchSpy).toHaveBeenCalledWith(
 			'https://api.reply.io/v3/email-accounts/connect/office-365',
+			expect.objectContaining({
+				method: 'GET',
+				redirect: 'manual',
+				headers: expect.objectContaining({
+					Authorization: 'Bearer test-api-key',
+				}),
+			}),
 		);
-		expect(mockMakeReplyioRequest).not.toHaveBeenCalled();
 		expect(mockLogEventFromContext).toHaveBeenCalledWith(
 			ctx,
 			'replyio.emailAccounts.connectOffice365',
 			expect.any(Object),
 			'completed',
 		);
+		fetchSpy.mockRestore();
 	});
 });
 

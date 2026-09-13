@@ -1,5 +1,9 @@
 import { ApiError, request } from 'corsair/http';
-import { makeReplyioRequest, ReplyioAPIError } from './client';
+import {
+	getReplyioConnectUrl,
+	makeReplyioRequest,
+	ReplyioAPIError,
+} from './client';
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -136,6 +140,77 @@ describe('Replyio API client', () => {
 		expect(failure).toBeInstanceOf(ReplyioAPIError);
 		if (failure instanceof ReplyioAPIError) {
 			expect(failure.message).toBe('Unknown error');
+		}
+	});
+});
+
+describe('Replyio connect redirect helper', () => {
+	afterEach(() => {
+		jest.restoreAllMocks();
+	});
+
+	it('returns the provider consent URL from the 302 Location header', async () => {
+		const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(null, {
+				status: 302,
+				headers: { Location: 'https://accounts.google.com/consent?x=1' },
+			}),
+		);
+
+		const url = await getReplyioConnectUrl(
+			'email-accounts/connect/gmail',
+			'test-api-key',
+		);
+
+		expect(url).toBe('https://accounts.google.com/consent?x=1');
+		expect(fetchSpy).toHaveBeenCalledWith(
+			'https://api.reply.io/v3/email-accounts/connect/gmail',
+			expect.objectContaining({
+				method: 'GET',
+				redirect: 'manual',
+				headers: expect.objectContaining({
+					Authorization: 'Bearer test-api-key',
+				}),
+			}),
+		);
+	});
+
+	it('throws a structured error when the redirect URL is missing', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(new Response(null, { status: 302 }));
+
+		const failure = await getReplyioConnectUrl(
+			'email-accounts/connect/gmail',
+			'test-api-key',
+		).then(
+			() => null,
+			(error: unknown) => error,
+		);
+		expect(failure).toBeInstanceOf(ReplyioAPIError);
+		if (failure instanceof ReplyioAPIError) {
+			expect(failure.status).toBe(302);
+		}
+	});
+
+	it('preserves status and code on auth failures', async () => {
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(JSON.stringify({ title: 'Unauthorized', status: 401 }), {
+				status: 401,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+
+		const failure = await getReplyioConnectUrl(
+			'email-accounts/connect/office-365',
+			'bad-key',
+		).then(
+			() => null,
+			(error: unknown) => error,
+		);
+		expect(failure).toBeInstanceOf(ReplyioAPIError);
+		if (failure instanceof ReplyioAPIError) {
+			expect(failure.status).toBe(401);
 		}
 	});
 });
