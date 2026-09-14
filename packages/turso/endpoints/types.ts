@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isTursoDatabaseUrl } from '../client';
 
 /**
  * Location codes returned by the closest-region service.
@@ -65,6 +66,10 @@ export const ListenToChangesInputSchema = z.object({
 	databaseUrl: z
 		.string()
 		.url()
+		.refine(isTursoDatabaseUrl, {
+			message:
+				'databaseUrl must be an https Turso host (*.turso.io) — the tenant bearer token is sent to it',
+		})
 		.describe(
 			'Database-specific URL, e.g. https://mydb-myorg.turso.io — NOT the platform API host',
 		),
