@@ -1,3 +1,4 @@
+import { asRecord } from 'corsair/core';
 /**
  * Custom error class for failures originating from Turso APIs.
  */
@@ -76,9 +77,8 @@ function tursoError(
 ): TursoAPIError {
 	let message = `Turso request failed with status ${status}`;
 	try {
-		const parsed: unknown = JSON.parse(rawText);
-		if (parsed && typeof parsed === 'object') {
-			const body = parsed as { error?: unknown; message?: unknown };
+		const body = asRecord(JSON.parse(rawText));
+		if (body) {
 			const detail =
 				typeof body.error === 'string' && body.error.length > 0
 					? body.error

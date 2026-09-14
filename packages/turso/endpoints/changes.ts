@@ -1,4 +1,4 @@
-import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { AuthMissingError, asRecord, logEventFromContext } from 'corsair/core';
 import {
 	parseSseBuffer,
 	TursoAPIError,
@@ -28,13 +28,9 @@ function toChangeEvent(
 	const receivedAt = new Date().toISOString();
 	try {
 		const parsed: unknown = JSON.parse(payload);
-		if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-			return {
-				table,
-				action,
-				receivedAt,
-				data: parsed as Record<string, unknown>,
-			};
+		const record = asRecord(parsed);
+		if (record) {
+			return { table, action, receivedAt, data: record };
 		}
 		return { table, action, receivedAt, data: { raw: parsed } };
 	} catch {
