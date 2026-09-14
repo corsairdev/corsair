@@ -5,7 +5,6 @@ import { makeClassmarkerRequest } from './client';
 import { addAccessCodes, deleteAccessCodes } from './endpoints/access-lists';
 import {
 	createCategory,
-	createParentCategory,
 	getAllCategories,
 	updateCategory,
 	updateParentCategory,
@@ -17,7 +16,6 @@ import {
 	listCertificates,
 	listWebhooks,
 } from './endpoints/certificates-webhooks';
-import { getAllGroupsLinksExams } from './endpoints/groups-links-exams';
 import {
 	createQuestion,
 	getQuestion,
@@ -85,7 +83,7 @@ function createContext(key = 'packed-key') {
 	return {
 		key,
 		$getAccountId: async () => 'account-id',
-	} as unknown as Parameters<typeof getAllGroupsLinksExams>[0];
+	} as unknown as Parameters<typeof getAllCategories>[0];
 }
 
 describe('ClassMarker endpoints', () => {
@@ -95,55 +93,9 @@ describe('ClassMarker endpoints', () => {
 
 	it('requires auth key', async () => {
 		await expect(
-			getAllGroupsLinksExams(createContext(''), {}),
+			getAllCategories(createContext(''), {}),
 		).rejects.toBeInstanceOf(AuthMissingError);
 		expect(mockRequest).not.toHaveBeenCalled();
-	});
-
-	it('gets groups, links, and exams', async () => {
-		mockRequest.mockResolvedValueOnce({
-			...okEnvelope,
-			groups: [
-				{
-					group: {
-						group_id: 1,
-						group_name: 'Group',
-						assigned_tests: [{ test: { test_id: 10, test_name: 'Test' } }],
-					},
-				},
-			],
-			links: [
-				{
-					link: {
-						link_id: 2,
-						link_name: 'Link',
-						assigned_tests: [{ test: { test_id: 11, test_name: 'Link Test' } }],
-					},
-				},
-			],
-		});
-		const ctx = createContext();
-
-		const response = await getAllGroupsLinksExams(ctx, {});
-
-		expect(response.groups?.[0]?.group.assigned_tests?.[0]?.test.test_id).toBe(
-			10,
-		);
-		expect(response.links?.[0]?.link.assigned_tests?.[0]?.test.test_id).toBe(
-			11,
-		);
-
-		expect(mockRequest).toHaveBeenCalledWith('/v1.json', 'packed-key', {
-			method: 'GET',
-			query: undefined,
-			body: undefined,
-		});
-		expect(mockLog).toHaveBeenCalledWith(
-			ctx,
-			'classmarker.getAllGroupsLinksExams',
-			{},
-			'completed',
-		);
 	});
 
 	it('gets recent results for all groups', async () => {
@@ -300,14 +252,8 @@ describe('ClassMarker endpoints', () => {
 		);
 	});
 
-	it('creates and updates categories', async () => {
+	it('updates categories', async () => {
 		mockRequest
-			.mockResolvedValueOnce({
-				...okEnvelope,
-				data: {
-					parent_category: { parent_category_id: 1, parent_category_name: 'A' },
-				},
-			})
 			.mockResolvedValueOnce({
 				...okEnvelope,
 				data: {
@@ -337,10 +283,6 @@ describe('ClassMarker endpoints', () => {
 
 		const ctx = createContext();
 
-		await createParentCategory(ctx, {
-			parent_category_name: 'A',
-			verify_only: false,
-		});
 		await updateParentCategory(ctx, {
 			parent_category_id: 1,
 			parent_category_name: 'B',
@@ -357,16 +299,6 @@ describe('ClassMarker endpoints', () => {
 
 		expect(mockRequest).toHaveBeenNthCalledWith(
 			1,
-			'/v1/categories/parent_category.json',
-			'packed-key',
-			{
-				method: 'POST',
-				query: { verify_only: false },
-				body: { parent_category_name: 'A' },
-			},
-		);
-		expect(mockRequest).toHaveBeenNthCalledWith(
-			2,
 			'/v1/categories/parent_category/1.json',
 			'packed-key',
 			{
@@ -376,7 +308,7 @@ describe('ClassMarker endpoints', () => {
 			},
 		);
 		expect(mockRequest).toHaveBeenNthCalledWith(
-			3,
+			2,
 			'/v1/categories/category.json',
 			'packed-key',
 			{
@@ -386,7 +318,7 @@ describe('ClassMarker endpoints', () => {
 			},
 		);
 		expect(mockRequest).toHaveBeenNthCalledWith(
-			4,
+			3,
 			'/v1/categories/category/2.json',
 			'packed-key',
 			{

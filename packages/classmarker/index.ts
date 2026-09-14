@@ -20,7 +20,6 @@ import {
 	Categories,
 	Certificates,
 	Groups,
-	GroupsLinksExams,
 	Questions,
 	RecentResults,
 	Tests,
@@ -72,7 +71,6 @@ type ClassmarkerEndpoint<K extends keyof ClassmarkerEndpointOutputs> =
 	>;
 
 export type ClassmarkerEndpoints = {
-	getAllGroupsLinksExams: ClassmarkerEndpoint<'getAllGroupsLinksExams'>;
 	getRecentResultsForAllGroups: ClassmarkerEndpoint<'getRecentResultsForAllGroups'>;
 	getRecentResultsForAllLinks: ClassmarkerEndpoint<'getRecentResultsForAllLinks'>;
 	getRecentResultsForGroupExam: ClassmarkerEndpoint<'getRecentResultsForGroupExam'>;
@@ -80,7 +78,6 @@ export type ClassmarkerEndpoints = {
 	addAccessCodes: ClassmarkerEndpoint<'addAccessCodes'>;
 	deleteAccessCodes: ClassmarkerEndpoint<'deleteAccessCodes'>;
 	getAllCategories: ClassmarkerEndpoint<'getAllCategories'>;
-	createParentCategory: ClassmarkerEndpoint<'createParentCategory'>;
 	updateParentCategory: ClassmarkerEndpoint<'updateParentCategory'>;
 	createCategory: ClassmarkerEndpoint<'createCategory'>;
 	updateCategory: ClassmarkerEndpoint<'updateCategory'>;
@@ -106,9 +103,6 @@ export type ClassmarkerEndpoints = {
 };
 
 const classmarkerEndpointsNested = {
-	groupsLinksExams: {
-		getAll: GroupsLinksExams.getAll,
-	},
 	recentResults: {
 		forAllGroups: RecentResults.forAllGroups,
 		forAllLinks: RecentResults.forAllLinks,
@@ -121,7 +115,6 @@ const classmarkerEndpointsNested = {
 	},
 	categories: {
 		list: Categories.list,
-		createParent: Categories.createParent,
 		updateParent: Categories.updateParent,
 		create: Categories.create,
 		update: Categories.update,
@@ -166,10 +159,6 @@ const classmarkerEndpointsNested = {
 const classmarkerWebhooksNested = {} as const;
 
 export const classmarkerEndpointSchemas = {
-	'groupsLinksExams.getAll': {
-		input: ClassmarkerEndpointInputSchemas.getAllGroupsLinksExams,
-		output: ClassmarkerEndpointOutputSchemas.getAllGroupsLinksExams,
-	},
 	'recentResults.forAllGroups': {
 		input: ClassmarkerEndpointInputSchemas.getRecentResultsForAllGroups,
 		output: ClassmarkerEndpointOutputSchemas.getRecentResultsForAllGroups,
@@ -197,10 +186,6 @@ export const classmarkerEndpointSchemas = {
 	'categories.list': {
 		input: ClassmarkerEndpointInputSchemas.getAllCategories,
 		output: ClassmarkerEndpointOutputSchemas.getAllCategories,
-	},
-	'categories.createParent': {
-		input: ClassmarkerEndpointInputSchemas.createParentCategory,
-		output: ClassmarkerEndpointOutputSchemas.createParentCategory,
 	},
 	'categories.updateParent': {
 		input: ClassmarkerEndpointInputSchemas.updateParentCategory,
@@ -295,11 +280,6 @@ export const classmarkerEndpointSchemas = {
 >;
 
 const classmarkerEndpointMeta = {
-	'groupsLinksExams.getAll': {
-		riskLevel: 'read',
-		description:
-			'List all groups, links, and assigned tests visible to the API key.',
-	},
 	'recentResults.forAllGroups': {
 		riskLevel: 'read',
 		description:
@@ -329,10 +309,6 @@ const classmarkerEndpointMeta = {
 	'categories.list': {
 		riskLevel: 'read',
 		description: 'List parent categories and sub-categories.',
-	},
-	'categories.createParent': {
-		riskLevel: 'write',
-		description: 'Create a parent category in the question bank.',
 	},
 	'categories.updateParent': {
 		riskLevel: 'write',
@@ -506,7 +482,6 @@ export type {
 	CreateCategoryInput,
 	CreateGroupInput,
 	CreateGroupOutput,
-	CreateParentCategoryInput,
 	CreateQuestionInput,
 	CreateUserInput,
 	CreateUserOutput,
@@ -522,8 +497,6 @@ export type {
 	DeleteWebhookOutput,
 	GetAllCategoriesInput,
 	GetAllCategoriesOutput,
-	GetAllGroupsLinksExamsInput,
-	GetAllGroupsLinksExamsOutput,
 	GetGroupDetailsInput,
 	GetGroupDetailsOutput,
 	GetInitialFinishedAfterTimestampInput,

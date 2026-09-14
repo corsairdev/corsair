@@ -1,7 +1,6 @@
 import { addAccessCodes, deleteAccessCodes } from './access-lists';
 import {
 	createCategory,
-	createParentCategory,
 	getAllCategories,
 	updateCategory,
 	updateParentCategory,
@@ -13,7 +12,6 @@ import {
 	listCertificates,
 	listWebhooks,
 } from './certificates-webhooks';
-import { getAllGroupsLinksExams } from './groups-links-exams';
 import {
 	createQuestion,
 	getQuestion,
@@ -39,10 +37,6 @@ import {
 	listUsers,
 } from './users-groups-tests';
 
-export const GroupsLinksExams = {
-	getAll: getAllGroupsLinksExams,
-};
-
 export const RecentResults = {
 	forAllGroups: getRecentResultsForAllGroups,
 	forAllLinks: getRecentResultsForAllLinks,
@@ -57,7 +51,6 @@ export const AccessLists = {
 
 export const Categories = {
 	list: getAllCategories,
-	createParent: createParentCategory,
 	updateParent: updateParentCategory,
 	create: createCategory,
 	update: updateCategory,

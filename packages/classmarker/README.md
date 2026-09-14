@@ -16,7 +16,6 @@ pnpm add @corsair-dev/classmarker
 | `accessLists.deleteCodes` | `classmarker.api.accessLists.deleteCodes` | `destructive` | Delete access-list codes for a link exam. |
 | `apiKeys.delete` | `classmarker.api.apiKeys.delete` | `destructive` | Delete a ClassMarker API key by id. |
 | `categories.create` | `classmarker.api.categories.create` | `write` | Create a category under a parent category. |
-| `categories.createParent` | `classmarker.api.categories.createParent` | `write` | Create a parent category in the question bank. |
 | `categories.list` | `classmarker.api.categories.list` | `read` | List parent categories and sub-categories. |
 | `categories.update` | `classmarker.api.categories.update` | `write` | Update a category and optionally re-parent it. |
 | `categories.updateParent` | `classmarker.api.categories.updateParent` | `write` | Update a parent category in the question bank. |
@@ -24,7 +23,6 @@ pnpm add @corsair-dev/classmarker
 | `groups.create` | `classmarker.api.groups.create` | `write` | Create a new ClassMarker group. |
 | `groups.delete` | `classmarker.api.groups.delete` | `destructive` | Delete a ClassMarker group. |
 | `groups.get` | `classmarker.api.groups.get` | `read` | Get details for a specific ClassMarker group. |
-| `groupsLinksExams.getAll` | `classmarker.api.groupsLinksExams.getAll` | `read` | List all groups, links, and assigned tests visible to the API key. |
 | `questions.create` | `classmarker.api.questions.create` | `write` | Create a new question in the question bank. |
 | `questions.get` | `classmarker.api.questions.get` | `read` | Get one question from the question bank. |
 | `questions.list` | `classmarker.api.questions.list` | `read` | List question-bank questions (200 per page). |

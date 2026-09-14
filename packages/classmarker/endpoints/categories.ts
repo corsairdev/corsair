@@ -3,7 +3,6 @@ import { runClassmarkerEndpoint } from './helpers';
 import {
 	CategoryMutationOutputSchema,
 	CreateCategoryInputSchema,
-	CreateParentCategoryInputSchema,
 	GetAllCategoriesInputSchema,
 	GetAllCategoriesOutputSchema,
 	ParentCategoryMutationOutputSchema,
@@ -20,25 +19,6 @@ export const getAllCategories: ClassmarkerEndpoints['getAllCategories'] =
 			inputSchema: GetAllCategoriesInputSchema,
 			outputSchema: GetAllCategoriesOutputSchema,
 		});
-
-export const createParentCategory: ClassmarkerEndpoints['createParentCategory'] =
-	async (ctx, input) => {
-		const parsedInput = CreateParentCategoryInputSchema.parse(input);
-		return runClassmarkerEndpoint(ctx, {
-			operation: 'createParentCategory',
-			path: '/v1/categories/parent_category.json',
-			method: 'POST',
-			input: parsedInput,
-			inputSchema: CreateParentCategoryInputSchema,
-			outputSchema: ParentCategoryMutationOutputSchema,
-			query: {
-				verify_only: parsedInput.verify_only,
-			},
-			body: {
-				parent_category_name: parsedInput.parent_category_name,
-			},
-		});
-	};
 
 export const updateParentCategory: ClassmarkerEndpoints['updateParentCategory'] =
 	async (ctx, input) => {

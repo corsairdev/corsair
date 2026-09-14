@@ -301,7 +301,6 @@ const VerifyOnlySchema = z.object({
 	server_timestamp: z.coerce.number().optional(),
 });
 
-export const GetAllGroupsLinksExamsInputSchema = z.object({});
 export const GetRecentResultsForAllGroupsInputSchema = z.object({
 	finishedAfterTimestamp: z.coerce.number().optional(),
 	limit: z.coerce.number().int().min(1).max(200).optional(),
@@ -326,10 +325,6 @@ export const AddAccessCodesInputSchema = z.object({
 });
 export const DeleteAccessCodesInputSchema = AddAccessCodesInputSchema;
 export const GetAllCategoriesInputSchema = z.object({});
-export const CreateParentCategoryInputSchema = z.object({
-	parent_category_name: z.string().min(1),
-	verify_only: z.boolean().optional(),
-});
 export const UpdateParentCategoryInputSchema = z.object({
 	parent_category_id: z.coerce.number().int().positive(),
 	parent_category_name: z.string().min(1),
@@ -399,10 +394,6 @@ export const DeleteApiKeyInputSchema = z.object({
 });
 export const GetInitialFinishedAfterTimestampInputSchema = z.object({});
 
-export const GetAllGroupsLinksExamsOutputSchema = BaseEnvelopeSchema.extend({
-	groups: z.array(GroupWrapperSchema).optional(),
-	links: z.array(LinkWrapperSchema).optional(),
-});
 export const GetRecentResultsForAllGroupsOutputSchema =
 	BaseEnvelopeSchema.extend({
 		groups: z.array(GroupWrapperSchema).optional(),
@@ -502,7 +493,6 @@ export const GetInitialFinishedAfterTimestampOutputSchema = z.object({
 });
 
 export const ClassmarkerEndpointInputSchemas = {
-	getAllGroupsLinksExams: GetAllGroupsLinksExamsInputSchema,
 	getRecentResultsForAllGroups: GetRecentResultsForAllGroupsInputSchema,
 	getRecentResultsForAllLinks: GetRecentResultsForAllLinksInputSchema,
 	getRecentResultsForGroupExam: GetRecentResultsForGroupExamInputSchema,
@@ -510,7 +500,6 @@ export const ClassmarkerEndpointInputSchemas = {
 	addAccessCodes: AddAccessCodesInputSchema,
 	deleteAccessCodes: DeleteAccessCodesInputSchema,
 	getAllCategories: GetAllCategoriesInputSchema,
-	createParentCategory: CreateParentCategoryInputSchema,
 	updateParentCategory: UpdateParentCategoryInputSchema,
 	createCategory: CreateCategoryInputSchema,
 	updateCategory: UpdateCategoryInputSchema,
@@ -536,7 +525,6 @@ export const ClassmarkerEndpointInputSchemas = {
 } as const;
 
 export const ClassmarkerEndpointOutputSchemas = {
-	getAllGroupsLinksExams: GetAllGroupsLinksExamsOutputSchema,
 	getRecentResultsForAllGroups: GetRecentResultsForAllGroupsOutputSchema,
 	getRecentResultsForAllLinks: GetRecentResultsForAllLinksOutputSchema,
 	getRecentResultsForGroupExam: GetRecentResultsForGroupExamOutputSchema,
@@ -544,7 +532,6 @@ export const ClassmarkerEndpointOutputSchemas = {
 	addAccessCodes: AccessCodesResponseOutputSchema,
 	deleteAccessCodes: AccessCodesResponseOutputSchema,
 	getAllCategories: GetAllCategoriesOutputSchema,
-	createParentCategory: ParentCategoryMutationOutputSchema,
 	updateParentCategory: ParentCategoryMutationOutputSchema,
 	createCategory: CategoryMutationOutputSchema,
 	updateCategory: CategoryMutationOutputSchema,
@@ -582,8 +569,6 @@ export type ClassmarkerEndpointOutputs = {
 	>;
 };
 
-export type GetAllGroupsLinksExamsInput =
-	ClassmarkerEndpointInputs['getAllGroupsLinksExams'];
 export type GetRecentResultsForAllGroupsInput =
 	ClassmarkerEndpointInputs['getRecentResultsForAllGroups'];
 export type GetRecentResultsForAllLinksInput =
@@ -597,8 +582,6 @@ export type DeleteAccessCodesInput =
 	ClassmarkerEndpointInputs['deleteAccessCodes'];
 export type GetAllCategoriesInput =
 	ClassmarkerEndpointInputs['getAllCategories'];
-export type CreateParentCategoryInput =
-	ClassmarkerEndpointInputs['createParentCategory'];
 export type UpdateParentCategoryInput =
 	ClassmarkerEndpointInputs['updateParentCategory'];
 export type CreateCategoryInput = ClassmarkerEndpointInputs['createCategory'];
@@ -625,8 +608,6 @@ export type DeleteApiKeyInput = ClassmarkerEndpointInputs['deleteApiKey'];
 export type GetInitialFinishedAfterTimestampInput =
 	ClassmarkerEndpointInputs['getInitialFinishedAfterTimestamp'];
 
-export type GetAllGroupsLinksExamsOutput =
-	ClassmarkerEndpointOutputs['getAllGroupsLinksExams'];
 export type GetRecentResultsForAllGroupsOutput =
 	ClassmarkerEndpointOutputs['getRecentResultsForAllGroups'];
 export type GetRecentResultsForAllLinksOutput =
@@ -640,7 +621,7 @@ export type AccessCodesResponseOutput =
 export type GetAllCategoriesOutput =
 	ClassmarkerEndpointOutputs['getAllCategories'];
 export type ParentCategoryMutationOutput =
-	ClassmarkerEndpointOutputs['createParentCategory'];
+	ClassmarkerEndpointOutputs['updateParentCategory'];
 export type CategoryMutationOutput =
 	ClassmarkerEndpointOutputs['createCategory'];
 export type ListQuestionsOutput = ClassmarkerEndpointOutputs['listQuestions'];
