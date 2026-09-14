@@ -70,7 +70,9 @@ export const BaseProviders = [
 	'bart',
 	'basecamp',
 	'baselinker',
+	'basin',
 	'beaconstac',
+	'beeminder',
 	'benchmarkemail',
 	'bestbuy',
 	'bettercontact',
@@ -358,7 +360,9 @@ export const ProviderDisplayNames = {
 	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
+	basin: 'Basin',
 	beaconstac: 'Beaconstac',
+	beeminder: 'Beeminder',
 	benchmarkemail: 'BenchmarkEmail',
 	bestbuy: 'Best Buy',
 	bettercontact: 'BetterContact',
@@ -653,7 +657,9 @@ export type AllProviders =
 	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
+	| 'basin'
 	| 'beaconstac'
+	| 'beeminder'
 	| 'benchmarkemail'
 	| 'bestbuy'
 	| 'bettercontact'
