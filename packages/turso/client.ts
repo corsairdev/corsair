@@ -40,10 +40,10 @@ export const TURSO_REGION_BASE = 'https://region.turso.io';
 const TURSO_DATABASE_SUFFIX = '.turso.io';
 
 /**
- * Reports whether a URL is an https Turso database host.
+ * Reports whether a URL is an https Turso database host at root origin.
  *
  * @param value - Candidate database URL.
- * @returns True when the URL is safe to send a credential to.
+ * @returns True when the URL is an https Turso host with no non-root path.
  */
 export function isTursoDatabaseUrl(value: string): boolean {
 	let parsed: URL;
@@ -54,7 +54,10 @@ export function isTursoDatabaseUrl(value: string): boolean {
 	}
 	if (parsed.protocol !== 'https:') return false;
 	const host = parsed.hostname.toLowerCase();
-	return host === 'turso.io' || host.endsWith(TURSO_DATABASE_SUFFIX);
+	const isValidHost =
+		host === 'turso.io' || host.endsWith(TURSO_DATABASE_SUFFIX);
+	if (!isValidHost) return false;
+	return parsed.pathname === '' || parsed.pathname === '/';
 }
 
 /**
@@ -278,8 +281,9 @@ export async function tursoPipelineHealthCheck(
 	if (!isTursoDatabaseUrl(databaseUrl)) {
 		return false;
 	}
+	const base = new URL(databaseUrl).origin;
 	try {
-		await tursoFetchJson(`${databaseUrl.replace(/\/$/, '')}/v2/pipeline`, {
+		await tursoFetchJson(`${base}/v2/pipeline`, {
 			method: 'POST',
 			apiKey,
 			body: {

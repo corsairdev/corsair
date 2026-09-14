@@ -72,9 +72,9 @@ export const listen: TursoEndpoints['listenToChanges'] = async (
 	}
 
 	const input = ListenToChangesInputSchema.parse(rawInput);
-	const base = input.databaseUrl.replace(/\/$/, '');
+	const base = new URL(input.databaseUrl).origin;
 
-	if (!isTursoDatabaseUrl(base)) {
+	if (!isTursoDatabaseUrl(input.databaseUrl)) {
 		throw new TursoAPIError(
 			'databaseUrl must be an https Turso host (*.turso.io)',
 		);
