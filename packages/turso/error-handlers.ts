@@ -1,5 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { TursoAPIError } from './client';
+import { TRANSPORT_ERROR_CODE, TursoAPIError } from './client';
 
 function statusOf(error: Error): number | undefined {
 	return error instanceof TursoAPIError ? error.status : undefined;
@@ -36,6 +36,21 @@ export const errorHandlers = {
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
+	},
+	/**
+	 * A request that never reached Turso — DNS, TCP, TLS or timeout. Transient
+	 * and safe to retry, so it is classified ahead of DEFAULT rather than
+	 * falling through to the no-retry policy.
+	 */
+	NETWORK_ERROR: {
+		match: (error: Error) =>
+			error instanceof TursoAPIError &&
+			error.status === undefined &&
+			error.code === TRANSPORT_ERROR_CODE,
+		handler: async () => ({
+			maxRetries: 3,
+			retryStrategy: 'exponential_backoff_jitter' as const,
+		}),
 	},
 	NOT_FOUND_ERROR: {
 		match: (error: Error) => {

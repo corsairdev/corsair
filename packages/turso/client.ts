@@ -59,6 +59,12 @@ export function isTursoDatabaseUrl(value: string): boolean {
 	);
 }
 
+/**
+ * Marks a failure that never reached Turso — DNS, TCP, TLS or timeout. These
+ * are transient and safe to retry, unlike a rejection the service returned.
+ */
+export const TRANSPORT_ERROR_CODE = 'transport_error';
+
 /** Request timeout for non-streaming Turso calls. */
 const REQUEST_TIMEOUT_MS = 30_000;
 
@@ -120,8 +126,11 @@ export async function tursoFetchJson(
 	options: {
 		method?: 'GET' | 'POST';
 		apiKey?: string;
+		/** JSON request body; `unknown` values are serialised as-is. */
 		body?: Record<string, unknown>;
 	} = {},
+	// `unknown` rather than a generic: the provider's body is untrusted here and
+	// only becomes a typed value once the calling endpoint parses it with Zod.
 ): Promise<unknown> {
 	const { method = 'GET', apiKey, body } = options;
 
@@ -141,7 +150,10 @@ export async function tursoFetchJson(
 		});
 	} catch (err) {
 		const detail = err instanceof Error ? `: ${err.message}` : '';
-		throw new TursoAPIError(`Failed to reach Turso${detail}`);
+		throw new TursoAPIError(
+			`Failed to reach Turso${detail}`,
+			TRANSPORT_ERROR_CODE,
+		);
 	}
 
 	if (!response.ok) {

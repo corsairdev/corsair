@@ -1,4 +1,4 @@
-import { TursoAPIError } from './client';
+import { TRANSPORT_ERROR_CODE, TursoAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
 /** Returns the first handler key whose matcher claims the error. */
@@ -38,6 +38,12 @@ describe('errorHandlers routing', () => {
 		);
 	});
 
+	it('routes a transport failure to the network handler, not DEFAULT', () => {
+		expect(
+			route(new TursoAPIError('Failed to reach Turso', TRANSPORT_ERROR_CODE)),
+		).toBe('NETWORK_ERROR');
+	});
+
 	it('falls through to DEFAULT for an unclassified error', () => {
 		expect(route(new Error('something odd'))).toBe('DEFAULT');
 	});
@@ -66,6 +72,13 @@ describe('errorHandlers retry strategies', () => {
 		await expect(errorHandlers.SERVER_ERROR.handler()).resolves.toEqual({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it('retries transient transport failures with jittered backoff', async () => {
+		await expect(errorHandlers.NETWORK_ERROR.handler()).resolves.toEqual({
+			maxRetries: 3,
+			retryStrategy: 'exponential_backoff_jitter',
 		});
 	});
 
