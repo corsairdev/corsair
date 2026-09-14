@@ -52,6 +52,14 @@ test('non-plugin PR is skipped', () => {
 	assert.equal(r.isPluginPr, false);
 });
 
+test('framework adapters live outside packages/ and are not plugins', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: ['adapters/mastra/src/corsair-tool-provider.ts'],
+	});
+	assert.equal(r.isPluginPr, false);
+});
+
 test('draft plugin PR is skipped', () => {
 	const r = runGate({ ...goodInput, isDraft: true });
 	assert.equal(r.isPluginPr, false);
