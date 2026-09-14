@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { resolveManagedAccessToken } from 'corsair/hub';
 import {
 	ArchiveFiles,
 	Devices,
@@ -61,7 +62,7 @@ import {
 } from './webhooks/types';
 
 export type ZoomPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalZoomPlugin['hooks'];
@@ -373,6 +374,9 @@ export const zoomAuthConfig = {
 	oauth_2: {
 		account: ['account_id'] as const,
 	},
+	managed: {
+		account: ['account_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 const defaultAuthType = 'oauth_2' as const;
@@ -404,6 +408,20 @@ export function zoom<const PluginOptions extends ZoomPluginOptions>(
 	return {
 		id: 'zoom',
 		authConfig: zoomAuthConfig,
+		oauthConfig: {
+			providerName: 'Zoom',
+			authUrl: 'https://zoom.us/oauth/authorize',
+			tokenUrl: 'https://zoom.us/oauth/token',
+			scopes: [
+				'meeting:read:meeting',
+				'meeting:write:meeting',
+				'user:read:user',
+				'cloud_recording:read:list_recording_files',
+				'webinar:read:webinar',
+				'webinar:write:webinar',
+			],
+			tokenAuthMethod: 'basic',
+		},
 		schema: ZoomSchema,
 		options: options,
 		hooks: options.hooks,
@@ -453,6 +471,10 @@ export function zoom<const PluginOptions extends ZoomPluginOptions>(
 				}
 
 				return res;
+			}
+
+			if (ctx.authType === 'managed') {
+				return resolveManagedAccessToken(ctx, 'zoom');
 			}
 
 			throw new AuthMissingError('zoom', 'oauth_2');
