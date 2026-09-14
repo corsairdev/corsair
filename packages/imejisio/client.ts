@@ -1,14 +1,13 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
-
 /**
- * Custom error class for failures originating from Imejis.io APIs.
+ * Custom error class for failures originating from the Imejis.io render API.
  */
 export class ImejisioAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
 		public readonly status?: number,
+		/** Milliseconds to wait before retrying, derived from the quota reset time. */
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'ImejisioAPIError';
@@ -16,92 +15,16 @@ export class ImejisioAPIError extends Error {
 }
 
 /**
- * Base URL for the Imejis.io management REST API.
- */
-export const IMEJISIO_API_BASE = 'https://api.imejis.io';
-
-/**
- * Base URL for the Imejis.io image and PDF render service.
+ * Base URL for the Imejis.io render service.
+ *
+ * OpenAPI: https://api.imejis.io/openapi.json (`servers[1]`)
  */
 export const IMEJISIO_RENDER_BASE = 'https://render.imejis.io/v1';
 
 /**
- * Request timeout in milliseconds for Imejis HTTP requests.
+ * Request timeout in milliseconds for Imejis render requests.
  */
 const REQUEST_TIMEOUT_MS = 30_000;
-
-/**
- * Safely invokes an asynchronous stored key getter, suppressing missing DEK errors.
- *
- * @param getter - Async callback returning the stored key string.
- * @returns The resolved key or undefined if not found or inaccessible.
- */
-export async function tryGetStoredKey(
-	getter: () => Promise<string | null | undefined> | undefined,
-): Promise<string | undefined> {
-	try {
-		const value = await getter?.();
-		return value ?? undefined;
-	} catch {
-		return undefined;
-	}
-}
-
-/**
- * Dispatches an HTTP request to the Imejis.io management API (/designs/v2).
- *
- * @template T - Expected JSON response shape.
- * @param endpoint - API path relative to the base URL.
- * @param apiKey - Bearer API key for authorization.
- * @param options - Request options including method, body, and query parameters.
- * @returns The parsed JSON response.
- */
-export async function makeImejisioRequest<T>(
-	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
-): Promise<T> {
-	const { method = 'GET', body, query } = options;
-
-	const config: OpenAPIConfig = {
-		BASE: IMEJISIO_API_BASE,
-		VERSION: '1.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
-		HEADERS: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${apiKey}`,
-		},
-	};
-
-	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint.startsWith('/') ? endpoint : `/${endpoint}`,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
-	};
-
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof ApiError) {
-			throw error;
-		}
-		if (error instanceof Error) {
-			throw new ImejisioAPIError(error.message);
-		}
-		throw new ImejisioAPIError('Unknown error');
-	}
-}
 
 /**
  * Options for rendering an Imejis design template via the render service.
@@ -115,12 +38,89 @@ export type ImejisioRenderOptions = {
 };
 
 /**
- * Dispatches a POST render request to the Imejis render service (https://render.imejis.io/v1/{design_id}).
- * Normalizes binary stream responses to base64 or returns hosted/signed JSON responses.
+ * Converts the official `QuotaError.data.resetAt` timestamp into a retry delay.
+ *
+ * OpenAPI: `#/components/schemas/QuotaError`
+ *
+ * @param body - Parsed error body from the render service.
+ * @returns Milliseconds until the quota resets, or undefined when unavailable.
+ */
+function retryAfterFromQuota(body: unknown): number | undefined {
+	if (!body || typeof body !== 'object') return undefined;
+	const data = (body as { data?: unknown }).data;
+	if (!data || typeof data !== 'object') return undefined;
+	const resetAt = (data as { resetAt?: unknown }).resetAt;
+	if (typeof resetAt !== 'string') return undefined;
+	const resetMs = Date.parse(resetAt);
+	if (Number.isNaN(resetMs)) return undefined;
+	return Math.max(0, resetMs - Date.now());
+}
+
+/**
+ * Builds an ImejisioAPIError from a non-2xx render response.
+ *
+ * The render service uses two error body shapes: quota failures answer with
+ * `{ success, message, reason, data }` and auth failures with
+ * `{ success, error }`. Both are surfaced, and a quota body carries its reset
+ * time through to the rate-limit error handler.
+ *
+ * @param status - HTTP status code of the failed response.
+ * @param rawText - Raw response body text.
+ * @returns The error to throw.
+ */
+function renderError(status: number, rawText: string): ImejisioAPIError {
+	let message = `Imejis render request failed with status ${status}`;
+	let code: string | undefined;
+	let retryAfter: number | undefined;
+
+	let parsed: unknown;
+	try {
+		parsed = JSON.parse(rawText);
+	} catch {
+		if (rawText.trim().length > 0) {
+			message = rawText.trim();
+		}
+		return new ImejisioAPIError(message, code, status, retryAfter);
+	}
+
+	if (parsed && typeof parsed === 'object') {
+		const body = parsed as {
+			message?: unknown;
+			error?: unknown;
+			reason?: unknown;
+		};
+		const detail =
+			typeof body.message === 'string' && body.message.length > 0
+				? body.message
+				: typeof body.error === 'string' && body.error.length > 0
+					? body.error
+					: undefined;
+		if (detail) {
+			message = detail;
+		}
+		if (typeof body.reason === 'string') {
+			code = body.reason;
+		}
+		retryAfter = retryAfterFromQuota(parsed);
+	}
+
+	return new ImejisioAPIError(message, code, status, retryAfter);
+}
+
+/**
+ * Dispatches a POST render request to the Imejis render service.
+ *
+ * API: POST https://render.imejis.io/v1/{design_id}
+ * Docs: https://www.imejis.io/apis
+ * OpenAPI: `renderDesignPost`
+ *
+ * Authenticates with the `dma-api-key` header (`renderKeyHeader` security
+ * scheme) and normalizes binary stream responses to base64, leaving
+ * hosted/signed JSON responses intact.
  *
  * @template T - Expected normalized response shape.
  * @param designId - The unique design render code.
- * @param renderKey - The DMA API key required by the render service.
+ * @param renderKey - The render API key required by the render service.
  * @param options - Render options including format, quality, delivery, expiresIn, and overrides.
  * @returns The normalized response object ready for Zod validation.
  */
@@ -145,51 +145,29 @@ export async function makeImejisioRenderRequest<T>(
 		url.searchParams.set('expiresIn', String(options.expiresIn));
 	}
 
-	const headers: Record<string, string> = {
-		'dma-api-key': renderKey,
-		'Content-Type': 'application/json',
-	};
-
-	const body = JSON.stringify(options.overrides ?? {});
-
 	let response: Response;
 	try {
 		response = await fetch(url.toString(), {
 			method: 'POST',
-			headers,
-			body,
+			headers: {
+				'dma-api-key': renderKey,
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(options.overrides ?? {}),
 			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
 		});
 	} catch (err) {
-		if (err instanceof Error) {
-			throw new ImejisioAPIError(
-				`Failed to connect to Imejis render service: ${err.message}`,
-			);
-		}
-		throw new ImejisioAPIError('Failed to connect to Imejis render service');
+		const detail = err instanceof Error ? `: ${err.message}` : '';
+		throw new ImejisioAPIError(
+			`Failed to connect to Imejis render service${detail}`,
+		);
 	}
 
 	if (!response.ok) {
-		const rawText = await response.text();
-		let message = `Imejis render request failed with status ${response.status}`;
-		try {
-			const parsed = JSON.parse(rawText);
-			if (
-				parsed &&
-				typeof parsed === 'object' &&
-				typeof parsed.message === 'string'
-			) {
-				message = parsed.message;
-			}
-		} catch {
-			if (rawText.trim().length > 0) {
-				message = rawText.trim();
-			}
-		}
-		throw new ImejisioAPIError(message, undefined, response.status);
+		throw renderError(response.status, await response.text());
 	}
 
-	const contentTypeHeader = response.headers.get('content-type') || '';
+	const contentTypeHeader = response.headers.get('content-type') ?? '';
 	const isJson =
 		delivery === 'hosted' ||
 		delivery === 'signed' ||
@@ -197,23 +175,17 @@ export async function makeImejisioRenderRequest<T>(
 
 	if (isJson) {
 		const json = (await response.json()) as Record<string, unknown>;
-		return {
-			...json,
-			delivery,
-		} as unknown as T;
+		return { ...json, delivery } as unknown as T;
 	}
 
 	const arrayBuffer = await response.arrayBuffer();
-	const base64 = Buffer.from(arrayBuffer).toString('base64');
-	const firstPart = contentTypeHeader.split(';')[0];
-	const contentType =
-		(firstPart ? firstPart.trim() : '') ||
-		(format === 'pdf' ? 'application/pdf' : `image/${format}`);
+	const firstPart = contentTypeHeader.split(';')[0]?.trim();
 
 	return {
 		delivery: 'stream',
 		format,
-		contentType,
-		base64,
+		contentType:
+			firstPart || (format === 'pdf' ? 'application/pdf' : `image/${format}`),
+		base64: Buffer.from(arrayBuffer).toString('base64'),
 	} as unknown as T;
 }

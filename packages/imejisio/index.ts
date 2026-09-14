@@ -32,10 +32,11 @@ import { ImejisioSchema } from './schema';
 export type ImejisioPluginOptions = {
 	/** Authentication type, defaults to 'api_key'. */
 	authType?: PickAuth<'api_key'>;
-	/** Primary API key for the Imejis.io management API (/designs/v2). */
+	/**
+	 * A render API key, bypassing Corsair's stored credentials. Manage keys
+	 * under https://www.imejis.io/settings/api-keys.
+	 */
 	key?: string;
-	/** Render API key (DMA key) for the Imejis.io render service (/v1/{design_id}). */
-	renderKey?: string;
 	/** Lifecycle hooks for plugin execution. */
 	hooks?: InternalImejisioPlugin['hooks'];
 	/** Optional custom error handlers. */
@@ -45,11 +46,12 @@ export type ImejisioPluginOptions = {
 };
 
 /**
- * Multi-credential auth configuration declaring the secondary render_key account credential.
+ * Auth configuration. Imejis issues a single credential — a render API key —
+ * which is stored in the standard `api_key` account field.
  */
 export const imejisioAuthConfig = {
 	api_key: {
-		account: ['render_key'] as const,
+		account: [] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -89,18 +91,16 @@ type ImejisioEndpoint<K extends keyof ImejisioEndpointOutputs> =
  * Map of Imejis.io endpoint operations.
  */
 export type ImejisioEndpoints = {
-	listDesigns: ImejisioEndpoint<'listDesigns'>;
 	renderDesign: ImejisioEndpoint<'renderDesign'>;
 };
 
 /**
  * Webhooks type for Imejis.io (no webhook surface).
  */
-export type ImejisioWebhooks = {};
+export type ImejisioWebhooks = Record<string, never>;
 
 const imejisioEndpointsNested = {
 	designs: {
-		list: Designs.list,
 		render: Designs.render,
 	},
 } as const;
@@ -111,10 +111,6 @@ const imejisioWebhooksNested = {} as const;
  * Zod input and output schemas for all Imejis.io endpoints.
  */
 export const imejisioEndpointSchemas = {
-	'designs.list': {
-		input: ImejisioEndpointInputSchemas.listDesigns,
-		output: ImejisioEndpointOutputSchemas.listDesigns,
-	},
 	'designs.render': {
 		input: ImejisioEndpointInputSchemas.renderDesign,
 		output: ImejisioEndpointOutputSchemas.renderDesign,
@@ -134,14 +130,10 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
  * Endpoint metadata including risk levels and descriptions for permission evaluation.
  */
 const imejisioEndpointMeta = {
-	'designs.list': {
-		riskLevel: 'read',
-		description: "List the authenticated user's designs",
-	},
 	'designs.render': {
 		riskLevel: 'write',
 		description:
-			'Render an Imejis template design into image/PDF bytes or a hosted URL',
+			'Render an Imejis template design into image/PDF bytes or a stored URL',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof imejisioEndpointsNested>;
 
@@ -172,7 +164,7 @@ export type ExternalImejisioPlugin<T extends ImejisioPluginOptions> =
 /**
  * Creates an instance of the Imejis.io Corsair integration plugin.
  *
- * @param incomingOptions - Configuration options including API key and render key.
+ * @param incomingOptions - Configuration options including the render API key.
  * @returns The configured Imejis.io plugin instance.
  */
 export function imejisio<const T extends ImejisioPluginOptions>(
@@ -220,19 +212,13 @@ export function imejisio<const T extends ImejisioPluginOptions>(
 
 export type { ImejisioRenderOptions } from './client';
 export {
-	IMEJISIO_API_BASE,
 	IMEJISIO_RENDER_BASE,
 	ImejisioAPIError,
 	makeImejisioRenderRequest,
-	makeImejisioRequest,
-	tryGetStoredKey,
 } from './client';
 export type {
-	DesignSummary,
 	ImejisioEndpointInputs,
 	ImejisioEndpointOutputs,
-	ListDesignsInput,
-	PaginatedDesigns,
 	RenderDesignInput,
 	RenderDesignResponse,
 	RenderHostedResponse,
@@ -240,11 +226,8 @@ export type {
 	RenderStreamResponse,
 } from './endpoints/types';
 export {
-	DesignSummarySchema,
 	ImejisioEndpointInputSchemas,
 	ImejisioEndpointOutputSchemas,
-	ListDesignsInputSchema,
-	PaginatedDesignsSchema,
 	RenderDesignInputSchema,
 	RenderDesignResponseSchema,
 	RenderHostedResponseSchema,

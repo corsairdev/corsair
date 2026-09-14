@@ -443,7 +443,7 @@ export const ProviderDisplayNames = {
 	htmltoimage: 'HtmlToImage',
 	hubspot: 'HubSpot',
 	huggingface: 'Hugging Face',
-	imejisio: 'Imejisio',
+	imejisio: 'Imejis.io',
 	imgbb: 'ImgBB',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',

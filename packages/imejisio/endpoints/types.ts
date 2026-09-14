@@ -1,66 +1,11 @@
 import { z } from 'zod';
 
 /**
- * Zod schema for listDesigns endpoint input parameters.
- */
-export const ListDesignsInputSchema = z.object({
-	page: z
-		.number()
-		.int()
-		.min(1)
-		.optional()
-		.describe('Page number for pagination (starts at 1)'),
-	limit: z
-		.number()
-		.int()
-		.min(1)
-		.max(100)
-		.optional()
-		.describe('Number of design records per page (maximum 100)'),
-});
-
-/**
- * Input parameters for listing design templates.
- */
-export type ListDesignsInput = z.infer<typeof ListDesignsInputSchema>;
-
-/**
- * Schema representing a summary of an Imejis design template.
- */
-export const DesignSummarySchema = z
-	.object({
-		_id: z.string().describe('Unique identifier of the design template'),
-		name: z.string().describe('Display name of the design template'),
-		updatedAt: z.string().describe('ISO timestamp of the last modification'),
-	})
-	.loose();
-
-/**
- * Type representing a design template summary.
- */
-export type DesignSummary = z.infer<typeof DesignSummarySchema>;
-
-/**
- * Schema representing a paginated list of designs returned by Imejis.
- */
-export const PaginatedDesignsSchema = z
-	.object({
-		docs: z
-			.array(DesignSummarySchema)
-			.describe('Array of design template summaries'),
-		page: z.number().int().describe('Current page number'),
-		totalPages: z.number().int().describe('Total available pages'),
-		hasNextPage: z.boolean().describe('Whether a next page exists'),
-	})
-	.loose();
-
-/**
- * Type representing paginated designs response.
- */
-export type PaginatedDesigns = z.infer<typeof PaginatedDesignsSchema>;
-
-/**
- * Schema for rendering an Imejis design template.
+ * Zod schema for the renderDesign endpoint input.
+ *
+ * Mirrors the query parameters of `renderDesignPost` / `renderDesignGet` in the
+ * official OpenAPI spec (https://api.imejis.io/openapi.json), plus the JSON
+ * request body of dynamic-field overrides.
  */
 export const RenderDesignInputSchema = z.object({
 	designId: z
@@ -71,16 +16,14 @@ export const RenderDesignInputSchema = z.object({
 		.enum(['png', 'jpeg', 'webp', 'pdf'])
 		.optional()
 		.default('jpeg')
-		.describe(
-			'Output format. Defaults to jpeg per Imejis OpenAPI specification',
-		),
+		.describe('Output format. Defaults to jpeg per the Imejis OpenAPI spec'),
 	quality: z
 		.number()
 		.int()
 		.min(1)
 		.max(100)
 		.optional()
-		.describe('JPEG quality from 1 to 100 (only applies to jpeg format)'),
+		.describe('JPEG quality from 1 to 100 (only affects jpeg output)'),
 	delivery: z
 		.enum(['stream', 'hosted', 'signed'])
 		.optional()
@@ -109,7 +52,8 @@ export const RenderDesignInputSchema = z.object({
 export type RenderDesignInput = z.input<typeof RenderDesignInputSchema>;
 
 /**
- * Schema for stream delivery mode response (normalized base64 representation).
+ * Schema for stream delivery mode, normalized from the raw image bytes the
+ * render service returns for `delivery=stream`.
  */
 export const RenderStreamResponseSchema = z.object({
 	delivery: z
@@ -128,7 +72,7 @@ export const RenderStreamResponseSchema = z.object({
 export type RenderStreamResponse = z.infer<typeof RenderStreamResponseSchema>;
 
 /**
- * Schema for hosted delivery mode response returning a public URL.
+ * Schema for hosted delivery mode, returning a public URL to the stored render.
  */
 export const RenderHostedResponseSchema = z
 	.object({
@@ -157,7 +101,7 @@ export const RenderHostedResponseSchema = z
 export type RenderHostedResponse = z.infer<typeof RenderHostedResponseSchema>;
 
 /**
- * Schema for signed delivery mode response returning an expiring signed URL.
+ * Schema for signed delivery mode, returning an expiring signed URL.
  */
 export const RenderSignedResponseSchema = z
 	.object({
@@ -207,7 +151,6 @@ export type RenderDesignResponse = z.infer<typeof RenderDesignResponseSchema>;
  * Map of endpoint operation names to their respective input types.
  */
 export type ImejisioEndpointInputs = {
-	listDesigns: ListDesignsInput;
 	renderDesign: RenderDesignInput;
 };
 
@@ -215,7 +158,6 @@ export type ImejisioEndpointInputs = {
  * Map of endpoint operation names to their respective output types.
  */
 export type ImejisioEndpointOutputs = {
-	listDesigns: PaginatedDesigns;
 	renderDesign: RenderDesignResponse;
 };
 
@@ -223,7 +165,6 @@ export type ImejisioEndpointOutputs = {
  * Map of endpoint input Zod schemas.
  */
 export const ImejisioEndpointInputSchemas = {
-	listDesigns: ListDesignsInputSchema,
 	renderDesign: RenderDesignInputSchema,
 } as const;
 
@@ -231,6 +172,5 @@ export const ImejisioEndpointInputSchemas = {
  * Map of endpoint output Zod schemas.
  */
 export const ImejisioEndpointOutputSchemas = {
-	listDesigns: PaginatedDesignsSchema,
 	renderDesign: RenderDesignResponseSchema,
 } as const;

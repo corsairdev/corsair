@@ -1,58 +1,28 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { ApiError, request } from 'corsair/http';
 import { ImejisioAPIError } from './client';
 import { Designs } from './endpoints';
 import type { ImejisioContext } from './index';
 import { imejisio } from './index';
-
-jest.mock('corsair/http', () => ({
-	...jest.requireActual('corsair/http'),
-	request: jest.fn(),
-}));
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
 	logEventFromContext: jest.fn().mockResolvedValue(null),
 }));
 
-const mockRequest = request as jest.MockedFunction<typeof request>;
 const mockLog = logEventFromContext as jest.MockedFunction<
 	typeof logEventFromContext
 >;
 
-const TEST_API_KEY = 'test-imejis-token-123';
 const TEST_RENDER_KEY = 'test-dma-render-key-456';
 
 const ctx = {
-	key: TEST_API_KEY,
+	key: TEST_RENDER_KEY,
 	options: {},
 } as unknown as ImejisioContext;
 
-const renderCtx = {
-	key: TEST_API_KEY,
-	options: {
-		renderKey: TEST_RENDER_KEY,
-	},
-} as unknown as ImejisioContext;
-
-const mockPaginatedDesigns = {
-	docs: [
-		{
-			_id: '65a1234567890abcdef12345',
-			name: 'Social Banner',
-			updatedAt: '2025-01-20T14:32:00.000Z',
-		},
-	],
-	page: 1,
-	totalPages: 1,
-	hasNextPage: false,
-};
-
-// Global fetch mock helper
 const originalFetch = global.fetch;
 
 beforeEach(() => {
-	mockRequest.mockReset();
 	mockLog.mockClear();
 	global.fetch = jest.fn();
 });
@@ -61,170 +31,86 @@ afterAll(() => {
 	global.fetch = originalFetch;
 });
 
+const mockFetch = () => global.fetch as jest.MockedFunction<typeof fetch>;
+
+/** Builds a Response double for a binary (delivery=stream) render. */
+function streamResponse(bytes: Buffer, contentType = 'image/jpeg') {
+	return {
+		ok: true,
+		status: 200,
+		headers: new Headers({ 'content-type': contentType }),
+		arrayBuffer: async () =>
+			bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength),
+		text: async () => '',
+	} as Response;
+}
+
+/** Builds a Response double for a JSON (delivery=hosted|signed) render. */
+function jsonResponse(payload: unknown, status = 200) {
+	return {
+		ok: status >= 200 && status < 300,
+		status,
+		headers: new Headers({ 'content-type': 'application/json' }),
+		json: async () => payload,
+		text: async () => JSON.stringify(payload),
+	} as Response;
+}
+
 describe('plugin shape', () => {
-	it('registers designs.list and designs.render catalog endpoints and no webhooks', () => {
+	it('registers designs.render as the only catalog endpoint and no webhooks', () => {
 		const plugin = imejisio();
 		expect(plugin.id).toBe('imejisio');
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.webhooks).toEqual({});
-		expect(plugin.authConfig?.api_key?.account).toEqual(['render_key']);
+		expect(plugin.authConfig?.api_key?.account).toEqual([]);
 		expect(Object.keys(plugin.endpoints ?? {})).toEqual(['designs']);
-		expect(typeof plugin.endpoints?.designs?.list).toBe('function');
+		expect(Object.keys(plugin.endpoints?.designs ?? {})).toEqual(['render']);
 		expect(typeof plugin.endpoints?.designs?.render).toBe('function');
 	});
 
-	it('resolves api_key from options or context and rejects webhook key lookup', async () => {
-		const pluginWithOptionsKey = imejisio({ key: TEST_API_KEY });
+	it('declares the renders entity so hosted renders are queryable', () => {
+		const plugin = imejisio();
+		expect(Object.keys(plugin.schema?.entities ?? {})).toEqual(['renders']);
+	});
+
+	it('resolves the render key from options or context and rejects webhook lookup', async () => {
+		const pluginWithOptionsKey = imejisio({ key: TEST_RENDER_KEY });
 		await expect(
 			pluginWithOptionsKey.keyBuilder?.(
 				{ authType: 'api_key' } as never,
 				'endpoint',
 			),
-		).resolves.toBe(TEST_API_KEY);
+		).resolves.toBe(TEST_RENDER_KEY);
 
-		const pluginWithContextKey = imejisio();
-		const mockContext = {
+		const plugin = imejisio();
+		const storedCtx = {
 			authType: 'api_key',
-			keys: {
-				get_api_key: jest.fn().mockResolvedValue(TEST_API_KEY),
-			},
+			keys: { get_api_key: jest.fn().mockResolvedValue(TEST_RENDER_KEY) },
 		};
 		await expect(
-			pluginWithContextKey.keyBuilder?.(mockContext as never, 'endpoint'),
-		).resolves.toBe(TEST_API_KEY);
+			plugin.keyBuilder?.(storedCtx as never, 'endpoint'),
+		).resolves.toBe(TEST_RENDER_KEY);
 
-		const mockContextEmpty = {
+		const emptyCtx = {
 			authType: 'api_key',
-			keys: {
-				get_api_key: jest.fn().mockResolvedValue(null),
-			},
+			keys: { get_api_key: jest.fn().mockResolvedValue(null) },
 		};
 		await expect(
-			pluginWithContextKey.keyBuilder?.(mockContextEmpty as never, 'endpoint'),
+			plugin.keyBuilder?.(emptyCtx as never, 'endpoint'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 
 		await expect(
-			pluginWithContextKey.keyBuilder?.(
-				mockContext as never,
-				'webhook' as never,
-			),
+			plugin.keyBuilder?.(storedCtx as never, 'webhook' as never),
 		).rejects.toBeInstanceOf(AuthMissingError);
-	});
-});
-
-describe('Designs.list', () => {
-	it('makes GET /designs/v2 with Authorization Bearer header and default empty query', async () => {
-		mockRequest.mockResolvedValueOnce(mockPaginatedDesigns);
-
-		const result = await Designs.list(ctx, {});
-
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.objectContaining({
-				BASE: 'https://api.imejis.io',
-				HEADERS: expect.objectContaining({
-					Authorization: `Bearer ${TEST_API_KEY}`,
-					'Content-Type': 'application/json',
-				}),
-			}),
-			expect.objectContaining({
-				method: 'GET',
-				url: '/designs/v2',
-				query: {},
-			}),
-		);
-		expect(mockLog).toHaveBeenCalledWith(
-			ctx,
-			'imejisio.designs.list',
-			{},
-			'completed',
-		);
-		expect(result).toEqual(mockPaginatedDesigns);
-	});
-
-	it('passes page and limit as $page and $limit query parameters', async () => {
-		mockRequest.mockResolvedValueOnce(mockPaginatedDesigns);
-
-		const result = await Designs.list(ctx, { page: 2, limit: 25 });
-
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.objectContaining({
-				BASE: 'https://api.imejis.io',
-				HEADERS: expect.objectContaining({
-					Authorization: `Bearer ${TEST_API_KEY}`,
-				}),
-			}),
-			expect.objectContaining({
-				method: 'GET',
-				url: '/designs/v2',
-				query: {
-					$page: 2,
-					$limit: 25,
-				},
-			}),
-		);
-		expect(mockLog).toHaveBeenCalledWith(
-			ctx,
-			'imejisio.designs.list',
-			{ page: 2, limit: 25 },
-			'completed',
-		);
-		expect(result).toEqual(mockPaginatedDesigns);
-	});
-
-	it('enforces runtime input validation (throws on invalid limit)', async () => {
-		await expect(Designs.list(ctx, { limit: 150 })).rejects.toThrow();
-	});
-
-	it('enforces runtime output validation (throws on malformed provider response)', async () => {
-		mockRequest.mockResolvedValueOnce({
-			invalid_field: true,
-		});
-
-		await expect(Designs.list(ctx, {})).rejects.toThrow();
-	});
-
-	it('propagates ApiError unchanged for error handlers', async () => {
-		const apiError = new ApiError(
-			{ method: 'GET', url: 'https://api.imejis.io/designs/v2' },
-			{
-				url: 'https://api.imejis.io/designs/v2',
-				ok: false,
-				status: 401,
-				statusText: 'Unauthorized',
-				body: { error: 'Invalid token' },
-			},
-			'Unauthorized',
-		);
-		mockRequest.mockRejectedValueOnce(apiError);
-
-		await expect(Designs.list(ctx, {})).rejects.toBe(apiError);
-	});
-
-	it('wraps generic errors into ImejisioAPIError', async () => {
-		mockRequest.mockRejectedValueOnce(new Error('Network failure'));
-
-		await expect(Designs.list(ctx, {})).rejects.toThrow(ImejisioAPIError);
 	});
 });
 
 describe('Designs.render', () => {
-	const mockFetch = () => global.fetch as jest.MockedFunction<typeof fetch>;
-
 	it('renders stream mode with raw binary converted to base64', async () => {
 		const binaryBytes = Buffer.from('fake-jpeg-image-bytes');
-		const arrayBuffer = binaryBytes.buffer.slice(
-			binaryBytes.byteOffset,
-			binaryBytes.byteOffset + binaryBytes.byteLength,
-		);
-		mockFetch().mockResolvedValueOnce({
-			ok: true,
-			status: 200,
-			headers: new Headers({ 'content-type': 'image/jpeg' }),
-			arrayBuffer: async () => arrayBuffer,
-			text: async () => '',
-		} as Response);
+		mockFetch().mockResolvedValueOnce(streamResponse(binaryBytes));
 
-		const result = await Designs.render(renderCtx, { designId: 'des_456' });
+		const result = await Designs.render(ctx, { designId: 'des_456' });
 
 		expect(result).toEqual({
 			delivery: 'stream',
@@ -246,35 +132,46 @@ describe('Designs.render', () => {
 		expect(calledOptions?.body).toBe('{}');
 
 		expect(mockLog).toHaveBeenCalledWith(
-			renderCtx,
+			ctx,
 			'imejisio.designs.render',
-			{
-				designId: 'des_456',
-				format: 'jpeg',
-				delivery: 'stream',
-			},
+			{ designId: 'des_456', format: 'jpeg', delivery: 'stream' },
 			'completed',
 		);
 	});
 
-	it('renders hosted mode returning JSON URL response', async () => {
-		const hostedPayload = {
-			success: true,
-			delivery: 'hosted',
-			url: 'https://cdn.imejis.io/renders/hosted-123.png',
-			format: 'png',
-			file: { size: 1024 },
-		};
-
+	it('falls back to a format-derived content type when the header is absent', async () => {
 		mockFetch().mockResolvedValueOnce({
 			ok: true,
 			status: 200,
-			headers: new Headers({ 'content-type': 'application/json' }),
-			json: async () => hostedPayload,
-			text: async () => JSON.stringify(hostedPayload),
+			headers: new Headers(),
+			arrayBuffer: async () => new ArrayBuffer(4),
+			text: async () => '',
 		} as Response);
 
-		const result = await Designs.render(renderCtx, {
+		const result = await Designs.render(ctx, {
+			designId: 'des_1',
+			format: 'pdf',
+		});
+
+		expect(result).toMatchObject({
+			delivery: 'stream',
+			format: 'pdf',
+			contentType: 'application/pdf',
+		});
+	});
+
+	it('renders hosted mode returning a JSON URL response', async () => {
+		mockFetch().mockResolvedValueOnce(
+			jsonResponse({
+				success: true,
+				delivery: 'hosted',
+				url: 'https://cdn.imejis.io/renders/hosted-123.png',
+				format: 'png',
+				file: { size: 1024 },
+			}),
+		);
+
+		const result = await Designs.render(ctx, {
 			designId: 'des_456',
 			format: 'png',
 			delivery: 'hosted',
@@ -288,136 +185,59 @@ describe('Designs.render', () => {
 			file: { size: 1024 },
 		});
 
-		const [calledUrl, calledOptions] = mockFetch().mock.calls[0]!;
+		const [calledUrl] = mockFetch().mock.calls[0]!;
 		expect(calledUrl).toBe(
 			'https://render.imejis.io/v1/des_456?format=png&delivery=hosted',
 		);
-		expect(calledOptions?.headers).toEqual({
-			'dma-api-key': TEST_RENDER_KEY,
-			'Content-Type': 'application/json',
-		});
 	});
 
-	it('renders signed mode with expiresIn parameter and dynamic overrides body', async () => {
-		const signedPayload = {
-			success: true,
-			delivery: 'signed',
-			url: 'https://cdn.imejis.io/renders/signed-123.jpeg?token=xyz',
-			expiresAt: '2026-09-07T12:00:00.000Z',
-			format: 'jpeg',
-		};
+	it('renders signed mode with expiresIn and dynamic overrides body', async () => {
+		mockFetch().mockResolvedValueOnce(
+			jsonResponse({
+				success: true,
+				delivery: 'signed',
+				url: 'https://cdn.imejis.io/renders/signed-123.jpeg?token=xyz',
+				expiresAt: '2026-09-07T12:00:00.000Z',
+				format: 'jpeg',
+			}),
+		);
 
-		mockFetch().mockResolvedValueOnce({
-			ok: true,
-			status: 200,
-			headers: new Headers({ 'content-type': 'application/json' }),
-			json: async () => signedPayload,
-			text: async () => JSON.stringify(signedPayload),
-		} as Response);
-
-		const result = await Designs.render(renderCtx, {
+		const result = await Designs.render(ctx, {
 			designId: 'des_456',
 			delivery: 'signed',
 			quality: 85,
 			expiresIn: 120,
-			overrides: {
-				headline: 'Flash Sale',
-				discount: 50,
-			},
+			overrides: { headline: 'Flash Sale', discount: 50 },
 		});
 
-		expect(result).toEqual({
+		expect(result).toMatchObject({
 			delivery: 'signed',
-			success: true,
 			url: 'https://cdn.imejis.io/renders/signed-123.jpeg?token=xyz',
 			expiresAt: '2026-09-07T12:00:00.000Z',
-			format: 'jpeg',
 		});
 
 		const [calledUrl, calledOptions] = mockFetch().mock.calls[0]!;
 		expect(calledUrl).toBe(
 			'https://render.imejis.io/v1/des_456?format=jpeg&delivery=signed&quality=85&expiresIn=120',
 		);
-		expect(calledOptions?.headers).toEqual({
-			'dma-api-key': TEST_RENDER_KEY,
-			'Content-Type': 'application/json',
-		});
 		expect(calledOptions?.body).toBe(
 			JSON.stringify({ headline: 'Flash Sale', discount: 50 }),
 		);
 	});
 
-	it('uses options.renderKey for dma-api-key authentication', async () => {
-		const ctxWithOptions = {
-			key: TEST_API_KEY,
-			options: {
-				renderKey: 'custom-options-render-key',
-			},
-		} as unknown as ImejisioContext;
+	it('percent-encodes the design id into the render path', async () => {
+		mockFetch().mockResolvedValueOnce(streamResponse(Buffer.from('x')));
 
-		mockFetch().mockResolvedValueOnce({
-			ok: true,
-			status: 200,
-			headers: new Headers({ 'content-type': 'image/jpeg' }),
-			arrayBuffer: async () => new ArrayBuffer(8),
-			text: async () => '',
-		} as Response);
+		await Designs.render(ctx, { designId: 'des/../admin' });
 
-		await Designs.render(ctxWithOptions, { designId: 'des_1' });
-
-		const [, calledOptions] = mockFetch().mock.calls[0]!;
-		expect(calledOptions?.headers).toEqual(
-			expect.objectContaining({
-				'dma-api-key': 'custom-options-render-key',
-			}),
+		const [calledUrl] = mockFetch().mock.calls[0]!;
+		expect(calledUrl).toBe(
+			'https://render.imejis.io/v1/des%2F..%2Fadmin?format=jpeg&delivery=stream',
 		);
 	});
 
-	it('resolves render_key from ctx.keys.get_render_key() when options.renderKey is omitted', async () => {
-		const ctxWithStoredKey = {
-			key: TEST_API_KEY,
-			options: {},
-			keys: {
-				get_render_key: jest.fn().mockResolvedValue('stored-render-key-789'),
-			},
-		} as unknown as ImejisioContext;
-
-		mockFetch().mockResolvedValueOnce({
-			ok: true,
-			status: 200,
-			headers: new Headers({ 'content-type': 'image/jpeg' }),
-			arrayBuffer: async () => new ArrayBuffer(8),
-			text: async () => '',
-		} as Response);
-
-		await Designs.render(ctxWithStoredKey, { designId: 'des_1' });
-
-		const [, calledOptions] = mockFetch().mock.calls[0]!;
-		expect(calledOptions?.headers).toEqual(
-			expect.objectContaining({
-				'dma-api-key': 'stored-render-key-789',
-			}),
-		);
-	});
-
-	it('throws AuthMissingError and does NOT call fetch when ctx.key exists but no renderKey is configured', async () => {
-		const ctxWithOnlyManagementKey = {
-			key: TEST_API_KEY,
-			options: {},
-		} as unknown as ImejisioContext;
-
-		await expect(
-			Designs.render(ctxWithOnlyManagementKey, { designId: 'des_1' }),
-		).rejects.toBeInstanceOf(AuthMissingError);
-
-		expect(mockFetch()).not.toHaveBeenCalled();
-	});
-
-	it('throws AuthMissingError when no credentials are provided at all', async () => {
-		const emptyCtx = {
-			key: '',
-			options: {},
-		} as unknown as ImejisioContext;
+	it('throws AuthMissingError without calling fetch when no key is resolved', async () => {
+		const emptyCtx = { key: '', options: {} } as unknown as ImejisioContext;
 
 		await expect(
 			Designs.render(emptyCtx, { designId: 'des_1' }),
@@ -426,72 +246,253 @@ describe('Designs.render', () => {
 		expect(mockFetch()).not.toHaveBeenCalled();
 	});
 
-	it('throws ImejisioAPIError on non-200 HTTP response', async () => {
-		mockFetch().mockResolvedValueOnce({
-			ok: false,
-			status: 404,
-			text: async () => JSON.stringify({ message: 'Design not found' }),
-		} as Response);
-
-		await expect(
-			Designs.render(renderCtx, { designId: 'nonexistent' }),
-		).rejects.toThrow('Design not found');
-	});
-
 	it('enforces runtime input validation on invalid parameters', async () => {
-		// Empty designId
-		await expect(Designs.render(renderCtx, { designId: '' })).rejects.toThrow();
-
-		// Invalid format
+		await expect(Designs.render(ctx, { designId: '' })).rejects.toThrow();
 		await expect(
-			Designs.render(renderCtx, { designId: 'des_1', format: 'svg' as never }),
+			Designs.render(ctx, { designId: 'des_1', format: 'svg' as never }),
+		).rejects.toThrow();
+		await expect(
+			Designs.render(ctx, { designId: 'des_1', quality: 200 }),
+		).rejects.toThrow();
+		await expect(
+			Designs.render(ctx, { designId: 'des_1', expiresIn: 10081 }),
 		).rejects.toThrow();
 
-		// Invalid quality
+		expect(mockFetch()).not.toHaveBeenCalled();
+	});
+
+	it('enforces runtime output validation on a malformed provider payload', async () => {
+		// delivery=hosted with no `url` — fails the discriminated union.
+		mockFetch().mockResolvedValueOnce(jsonResponse({ delivery: 'hosted' }));
+
 		await expect(
-			Designs.render(renderCtx, { designId: 'des_1', quality: 200 }),
+			Designs.render(ctx, { designId: 'des_1', delivery: 'hosted' }),
 		).rejects.toThrow();
 	});
 
-	it('enforces runtime output validation on malformed provider payload', async () => {
-		mockFetch().mockResolvedValueOnce({
-			ok: true,
-			status: 200,
-			headers: new Headers({ 'content-type': 'application/json' }),
-			json: async () => ({
-				delivery: 'hosted',
-				// Missing required 'url'
-			}),
-			text: async () => '',
-		} as Response);
+	it('does NOT log the render key or dynamic overrides', async () => {
+		mockFetch().mockResolvedValueOnce(streamResponse(Buffer.from('img')));
 
-		await expect(
-			Designs.render(renderCtx, { designId: 'des_1', delivery: 'hosted' }),
-		).rejects.toThrow();
-	});
-
-	it('does NOT log renderKey or sensitive dynamic overrides', async () => {
-		mockFetch().mockResolvedValueOnce({
-			ok: true,
-			status: 200,
-			headers: new Headers({ 'content-type': 'image/jpeg' }),
-			arrayBuffer: async () => new ArrayBuffer(4),
-			text: async () => '',
-		} as Response);
-
-		await Designs.render(renderCtx, {
+		await Designs.render(ctx, {
 			designId: 'des_safe',
 			overrides: { secretField: 'top-secret-val' },
 		});
 
 		expect(mockLog).toHaveBeenCalledTimes(1);
 		const loggedMeta = mockLog.mock.calls[0]![2] as Record<string, unknown>;
-		expect(loggedMeta.designId).toBe('des_safe');
-		expect(loggedMeta.format).toBe('jpeg');
-		expect(loggedMeta.delivery).toBe('stream');
+		expect(loggedMeta).toEqual({
+			designId: 'des_safe',
+			format: 'jpeg',
+			delivery: 'stream',
+		});
 		expect(loggedMeta.secretField).toBeUndefined();
 		expect(loggedMeta.overrides).toBeUndefined();
-		expect(loggedMeta.renderKey).toBeUndefined();
-		expect(loggedMeta['dma-api-key']).toBeUndefined();
+	});
+});
+
+describe('Designs.render persistence', () => {
+	it('mirrors a hosted render into the renders entity', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const dbCtx = {
+			key: TEST_RENDER_KEY,
+			options: {},
+			db: { renders: { upsertByEntityId } },
+		} as unknown as ImejisioContext;
+
+		mockFetch().mockResolvedValueOnce(
+			jsonResponse({
+				success: true,
+				delivery: 'hosted',
+				url: 'https://cdn.imejis.io/renders/hosted-9.png',
+				format: 'png',
+				file: { size: 2048 },
+			}),
+		);
+
+		await Designs.render(dbCtx, {
+			designId: 'des_9',
+			format: 'png',
+			delivery: 'hosted',
+		});
+
+		expect(upsertByEntityId).toHaveBeenCalledTimes(1);
+		const [entityId, row] = upsertByEntityId.mock.calls[0]!;
+		expect(entityId).toBe('https://cdn.imejis.io/renders/hosted-9.png');
+		expect(row).toMatchObject({
+			designId: 'des_9',
+			delivery: 'hosted',
+			url: 'https://cdn.imejis.io/renders/hosted-9.png',
+			format: 'png',
+			expiresAt: null,
+			file: { size: 2048 },
+		});
+		expect(row.renderedAt).toBeInstanceOf(Date);
+	});
+
+	it('records the expiry of a signed render', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const dbCtx = {
+			key: TEST_RENDER_KEY,
+			options: {},
+			db: { renders: { upsertByEntityId } },
+		} as unknown as ImejisioContext;
+
+		mockFetch().mockResolvedValueOnce(
+			jsonResponse({
+				delivery: 'signed',
+				url: 'https://cdn.imejis.io/renders/signed-9.jpeg?token=abc',
+				expiresAt: '2026-09-14T12:00:00.000Z',
+			}),
+		);
+
+		await Designs.render(dbCtx, { designId: 'des_9', delivery: 'signed' });
+
+		expect(upsertByEntityId.mock.calls[0]![1]).toMatchObject({
+			delivery: 'signed',
+			expiresAt: '2026-09-14T12:00:00.000Z',
+		});
+	});
+
+	it('does not persist stream renders, which Imejis never stores', async () => {
+		const upsertByEntityId = jest.fn();
+		const dbCtx = {
+			key: TEST_RENDER_KEY,
+			options: {},
+			db: { renders: { upsertByEntityId } },
+		} as unknown as ImejisioContext;
+
+		mockFetch().mockResolvedValueOnce(streamResponse(Buffer.from('img')));
+
+		await Designs.render(dbCtx, { designId: 'des_9' });
+
+		expect(upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('still returns the render when the database write fails', async () => {
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		const dbCtx = {
+			key: TEST_RENDER_KEY,
+			options: {},
+			db: {
+				renders: {
+					upsertByEntityId: jest.fn().mockRejectedValue(new Error('db down')),
+				},
+			},
+		} as unknown as ImejisioContext;
+
+		mockFetch().mockResolvedValueOnce(
+			jsonResponse({
+				delivery: 'hosted',
+				url: 'https://cdn.imejis.io/renders/hosted-10.png',
+			}),
+		);
+
+		const result = await Designs.render(dbCtx, {
+			designId: 'des_10',
+			delivery: 'hosted',
+		});
+
+		expect(result).toMatchObject({ delivery: 'hosted' });
+		expect(warn).toHaveBeenCalled();
+		warn.mockRestore();
+	});
+});
+
+describe('Designs.render error mapping', () => {
+	it('surfaces the provider message from a JSON error body', async () => {
+		mockFetch().mockResolvedValueOnce(
+			jsonResponse({ success: false, message: 'Design not found' }, 404),
+		);
+
+		await expect(
+			Designs.render(ctx, { designId: 'nonexistent' }),
+		).rejects.toThrow('Design not found');
+	});
+
+	it('carries status, reason and quota reset off a real 429 body', async () => {
+		// Verbatim body returned by render.imejis.io for an out-of-quota workspace.
+		const resetAt = new Date(Date.now() + 60_000).toISOString();
+		mockFetch().mockResolvedValueOnce(
+			jsonResponse(
+				{
+					success: false,
+					message:
+						'Your workspace has no active plan. Choose a plan to start generating images.',
+					reason: 'no-plan',
+					data: { usage: 0, limit: 0, remaining: 0, resetAt },
+					requestId: '320766a0-d2ad-4f00-8b3e-16e076ef166c',
+				},
+				429,
+			),
+		);
+
+		const error = await Designs.render(ctx, { designId: 'des_1' }).catch(
+			(e: unknown) => e,
+		);
+
+		expect(error).toBeInstanceOf(ImejisioAPIError);
+		const apiError = error as ImejisioAPIError;
+		expect(apiError.status).toBe(429);
+		expect(apiError.code).toBe('no-plan');
+		expect(apiError.retryAfter).toBeGreaterThan(0);
+		expect(apiError.retryAfter).toBeLessThanOrEqual(60_000);
+	});
+
+	it('surfaces the `error` field used by auth failures', async () => {
+		// Verbatim 404 body returned by render.imejis.io for an unknown key.
+		mockFetch().mockResolvedValueOnce(
+			jsonResponse({ success: false, error: 'Key not found' }, 404),
+		);
+
+		await expect(Designs.render(ctx, { designId: 'des_1' })).rejects.toThrow(
+			'Key not found',
+		);
+	});
+
+	it('surfaces the `error` field on a 401 from a missing key', async () => {
+		mockFetch().mockResolvedValueOnce(
+			jsonResponse({ success: false, error: 'Unauthorized' }, 401),
+		);
+
+		const error = (await Designs.render(ctx, { designId: 'des_1' }).catch(
+			(e: unknown) => e,
+		)) as ImejisioAPIError;
+
+		expect(error.status).toBe(401);
+		expect(error.message).toBe('Unauthorized');
+	});
+
+	it('falls back to the raw body when the error is not JSON', async () => {
+		mockFetch().mockResolvedValueOnce({
+			ok: false,
+			status: 502,
+			headers: new Headers(),
+			text: async () => '  upstream unavailable  ',
+		} as Response);
+
+		await expect(Designs.render(ctx, { designId: 'des_1' })).rejects.toThrow(
+			'upstream unavailable',
+		);
+	});
+
+	it('falls back to a status message when the error body is empty', async () => {
+		mockFetch().mockResolvedValueOnce({
+			ok: false,
+			status: 500,
+			headers: new Headers(),
+			text: async () => '',
+		} as Response);
+
+		await expect(Designs.render(ctx, { designId: 'des_1' })).rejects.toThrow(
+			'Imejis render request failed with status 500',
+		);
+	});
+
+	it('wraps transport failures in ImejisioAPIError', async () => {
+		mockFetch().mockRejectedValueOnce(new Error('Network failure'));
+
+		await expect(Designs.render(ctx, { designId: 'des_1' })).rejects.toThrow(
+			'Failed to connect to Imejis render service: Network failure',
+		);
 	});
 });
