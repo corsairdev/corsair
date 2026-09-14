@@ -1,7 +1,6 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
@@ -14,7 +13,8 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Databases } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import { Changes, Regions, Tokens } from './endpoints';
 import type {
 	TursoEndpointInputs,
 	TursoEndpointOutputs,
@@ -26,21 +26,56 @@ import {
 import { errorHandlers } from './error-handlers';
 import { TursoSchema } from './schema';
 
+/**
+ * Options accepted by the Turso Corsair plugin.
+ */
 export type TursoPluginOptions = {
+	/** Authentication type, defaults to 'api_key'. */
 	authType?: PickAuth<'api_key'>;
+	/**
+	 * A Turso API token, bypassing Corsair's stored credentials. Create one with
+	 * `turso auth api-tokens mint`.
+	 */
 	key?: string;
+	/** Lifecycle hooks for plugin execution. */
 	hooks?: InternalTursoPlugin['hooks'];
+	/** Optional custom error handlers. */
 	errorHandlers?: CorsairErrorHandler;
+	/** Permissions configuration for plugin endpoints. */
 	permissions?: PluginPermissionsConfig<typeof tursoEndpointsNested>;
 };
 
+/**
+ * Auth configuration. Turso issues a single platform API token, stored in the
+ * standard `api_key` account field.
+ */
+export const tursoAuthConfig = {
+	api_key: {
+		account: [] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
+/**
+ * Context type available to Turso endpoint functions.
+ */
 export type TursoContext = CorsairPluginContext<
 	typeof TursoSchema,
-	TursoPluginOptions
+	TursoPluginOptions,
+	undefined,
+	typeof tursoAuthConfig
 >;
 
-export type TursoKeyBuilderContext = KeyBuilderContext<TursoPluginOptions>;
+/**
+ * Key builder context type for Turso credential resolution.
+ */
+export type TursoKeyBuilderContext = KeyBuilderContext<
+	TursoPluginOptions,
+	typeof tursoAuthConfig
+>;
 
+/**
+ * Bound endpoints type for Turso.
+ */
 export type TursoBoundEndpoints = BindEndpoints<typeof tursoEndpointsNested>;
 
 type TursoEndpoint<K extends keyof TursoEndpointOutputs> = CorsairEndpoint<
@@ -49,38 +84,49 @@ type TursoEndpoint<K extends keyof TursoEndpointOutputs> = CorsairEndpoint<
 	TursoEndpointOutputs[K]
 >;
 
+/**
+ * Map of Turso endpoint operations.
+ */
 export type TursoEndpoints = {
-	listDatabases: TursoEndpoint<'listDatabases'>;
-	createDatabase: TursoEndpoint<'createDatabase'>;
-	deleteDatabase: TursoEndpoint<'deleteDatabase'>;
+	closestRegion: TursoEndpoint<'closestRegion'>;
+	validateApiToken: TursoEndpoint<'validateApiToken'>;
+	listenToChanges: TursoEndpoint<'listenToChanges'>;
 };
 
-export type TursoWebhooks = {};
-
-export type TursoBoundWebhooks = BindWebhooks<TursoWebhooks>;
+/**
+ * Webhooks type for Turso (no webhook surface).
+ */
+export type TursoWebhooks = Record<string, never>;
 
 const tursoEndpointsNested = {
-	database: {
-		list: Databases.list,
-		create: Databases.create,
-		delete: Databases.delete,
+	regions: {
+		closest: Regions.closest,
+	},
+	tokens: {
+		validate: Tokens.validate,
+	},
+	changes: {
+		listen: Changes.listen,
 	},
 } as const;
 
 const tursoWebhooksNested = {} as const;
 
+/**
+ * Zod input and output schemas for all Turso endpoints.
+ */
 export const tursoEndpointSchemas = {
-	'database.list': {
-		input: TursoEndpointInputSchemas.listDatabases,
-		output: TursoEndpointOutputSchemas.listDatabases,
+	'regions.closest': {
+		input: TursoEndpointInputSchemas.closestRegion,
+		output: TursoEndpointOutputSchemas.closestRegion,
 	},
-	'database.create': {
-		input: TursoEndpointInputSchemas.createDatabase,
-		output: TursoEndpointOutputSchemas.createDatabase,
+	'tokens.validate': {
+		input: TursoEndpointInputSchemas.validateApiToken,
+		output: TursoEndpointOutputSchemas.validateApiToken,
 	},
-	'database.delete': {
-		input: TursoEndpointInputSchemas.deleteDatabase,
-		output: TursoEndpointOutputSchemas.deleteDatabase,
+	'changes.listen': {
+		input: TursoEndpointInputSchemas.listenToChanges,
+		output: TursoEndpointOutputSchemas.listenToChanges,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof tursoEndpointsNested>;
 
@@ -88,43 +134,59 @@ const tursoWebhookSchemas = {} as const satisfies RequiredPluginWebhookSchemas<
 	typeof tursoWebhooksNested
 >;
 
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType: AuthTypes = 'api_key' as const;
 
+/**
+ * Endpoint metadata including risk levels and descriptions for permission evaluation.
+ */
 const tursoEndpointMeta = {
-	'database.list': {
+	'regions.closest': {
 		riskLevel: 'read',
-		description: 'List Turso databases',
+		description:
+			'Get the closest Turso region based on client location, to minimize latency',
 	},
-	'database.create': {
-		riskLevel: 'write',
-		description: 'Create a Turso database',
+	'tokens.validate': {
+		riskLevel: 'read',
+		description:
+			'Validate a Turso API token and retrieve its expiration time (-1 when it never expires)',
 	},
-	'database.delete': {
-		riskLevel: 'write',
-		description: 'Delete a Turso database',
+	'changes.listen': {
+		riskLevel: 'read',
+		description:
+			'Listen to committed insert/update/delete events for a table in a Turso database',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof tursoEndpointsNested>;
 
-export const tursoAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-} as const satisfies PluginAuthConfig;
-
+/**
+ * Base plugin type for Turso.
+ */
 export type BaseTursoPlugin<T extends TursoPluginOptions> = CorsairPlugin<
 	'turso',
 	typeof TursoSchema,
 	typeof tursoEndpointsNested,
 	typeof tursoWebhooksNested,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof tursoAuthConfig
 >;
 
+/**
+ * Internal plugin representation.
+ */
 export type InternalTursoPlugin = BaseTursoPlugin<TursoPluginOptions>;
 
+/**
+ * External plugin representation returned by the factory function.
+ */
 export type ExternalTursoPlugin<T extends TursoPluginOptions> =
 	BaseTursoPlugin<T>;
 
+/**
+ * Creates an instance of the Turso Corsair integration plugin.
+ *
+ * @param incomingOptions - Configuration options including the API token.
+ * @returns The configured Turso plugin instance.
+ */
 export function turso<const T extends TursoPluginOptions>(
 	incomingOptions: TursoPluginOptions & T = {} as TursoPluginOptions & T,
 ): ExternalTursoPlugin<T> {
@@ -139,11 +201,13 @@ export function turso<const T extends TursoPluginOptions>(
 		schema: TursoSchema,
 		options,
 		hooks: options.hooks,
+		webhookHooks: undefined,
 		endpoints: tursoEndpointsNested,
 		webhooks: tursoWebhooksNested,
 		endpointMeta: tursoEndpointMeta,
 		endpointSchemas: tursoEndpointSchemas,
 		webhookSchemas: tursoWebhookSchemas,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -155,22 +219,49 @@ export function turso<const T extends TursoPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('turso', 'api_key');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('turso', 'api_key');
 		},
 	} satisfies InternalTursoPlugin;
 }
 
+export type { SseEvent } from './client';
+export {
+	parseSseBuffer,
+	TURSO_API_BASE,
+	TURSO_REGION_BASE,
+	TursoAPIError,
+	tursoFetchJson,
+	tursoPipelineHealthCheck,
+} from './client';
 export type {
-	CreateDatabaseInput,
-	CreateDatabaseResponse,
-	Database,
-	DeleteDatabaseInput,
-	DeleteDatabaseResponse,
-	ListDatabasesInput,
-	ListDatabasesResponse,
+	ChangeAction,
+	ChangeEvent,
+	ClosestRegionInput,
+	ClosestRegionResponse,
+	ListenHealthCheckResult,
+	ListenStreamResult,
+	ListenToChangesInput,
+	ListenToChangesResponse,
 	TursoEndpointInputs,
 	TursoEndpointOutputs,
+	ValidateApiTokenInput,
+	ValidateApiTokenResponse,
+} from './endpoints/types';
+export {
+	ChangeActionSchema,
+	ChangeEventSchema,
+	ClosestRegionInputSchema,
+	ClosestRegionResponseSchema,
+	ListenToChangesInputSchema,
+	ListenToChangesResponseSchema,
+	TursoEndpointInputSchemas,
+	TursoEndpointOutputSchemas,
+	ValidateApiTokenInputSchema,
+	ValidateApiTokenResponseSchema,
 } from './endpoints/types';

@@ -1,9 +1,21 @@
 import { z } from 'zod';
 
-// TODO: Define your database entities here
-// export const TursoExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type TursoExample = z.infer<typeof TursoExample>;
+/**
+ * A committed table change observed on the database change stream.
+ *
+ * API: GET https://{database}-{org}.turso.io/beta/listen?table=&action=
+ * Docs: https://docs.turso.tech/sdk/http/reference
+ *
+ * Only streamed events are persisted. When /beta/listen is unavailable the
+ * endpoint falls back to a health check, which produces no events to mirror.
+ */
+export const TursoChangeEvent = z.object({
+	databaseUrl: z.string().url(),
+	table: z.string(),
+	action: z.enum(['insert', 'update', 'delete']),
+	receivedAt: z.string(),
+	/** Event payload as sent by Turso, passed through as-is. */
+	data: z.record(z.string(), z.unknown()).nullable().optional(),
+});
+
+export type TursoChangeEvent = z.infer<typeof TursoChangeEvent>;
