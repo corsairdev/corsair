@@ -9,7 +9,7 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { TursoAPIError } from './client';
 import { Changes, Regions, Tokens } from './endpoints';
-import type { TursoContext, TursoKeyBuilderContext } from './index';
+import type { TursoContext } from './index';
 import { turso } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -24,6 +24,7 @@ const mockLog = logEventFromContext as jest.MockedFunction<
 const TEST_TOKEN = 'test-turso-token-123';
 const DB_URL = 'https://mydb-myorg.turso.io';
 
+// Using unknown type assertion for test context mock to provide only the fields needed by unit tests
 const ctx: TursoContext = {
 	key: TEST_TOKEN,
 	options: {},
@@ -46,7 +47,7 @@ const mockFetch = (): jest.MockedFunction<typeof fetch> =>
 /**
  * Creates a mock JSON Response object.
  *
- * @param payload - The response body to serialize as JSON.
+ * @param payload - The response body to serialize as JSON. Using unknown because test responses mock arbitrary API response shapes.
  * @param status - The HTTP response status code (default: 200).
  * @returns A mocked Response instance.
  */
@@ -55,6 +56,7 @@ function jsonResponse(payload: unknown, status: number = 200): Response {
 		ok: status >= 200 && status < 300,
 		status,
 		headers: new Headers({ 'content-type': 'application/json' }),
+		// Using unknown return type to match Response.json() spec for untyped JSON parsing
 		json: async (): Promise<unknown> => payload,
 		text: async (): Promise<string> => JSON.stringify(payload),
 	} as Response;
@@ -69,6 +71,7 @@ function jsonResponse(payload: unknown, status: number = 200): Response {
 function sseResponse(chunks: string[]): Response {
 	const encoder = new TextEncoder();
 	let i = 0;
+	// Using unknown type assertion to cast mock stream structure to Response
 	return {
 		ok: true,
 		status: 200,
@@ -123,11 +126,9 @@ describe('plugin shape', () => {
 			authType: 'api_key',
 			keys: { get_api_key: jest.fn().mockResolvedValue(TEST_TOKEN) },
 		};
+		// Using unknown type assertion for test context mock with mocked key manager
 		await expect(
-			plugin.keyBuilder?.(
-				stored as unknown as TursoKeyBuilderContext,
-				'endpoint',
-			),
+			plugin.keyBuilder?.(stored as unknown as never, 'endpoint'),
 		).resolves.toBe(TEST_TOKEN);
 
 		// A missing credential must raise, not resolve to an empty string.
@@ -135,13 +136,12 @@ describe('plugin shape', () => {
 			authType: 'api_key',
 			keys: { get_api_key: jest.fn().mockResolvedValue(null) },
 		};
+		// Using unknown type assertion for empty key test context mock
 		await expect(
-			plugin.keyBuilder?.(
-				empty as unknown as TursoKeyBuilderContext,
-				'endpoint',
-			),
+			plugin.keyBuilder?.(empty as unknown as never, 'endpoint'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 
+		// Using unknown type assertion to cast keyBuilder for testing invalid source handling
 		await expect(
 			(
 				plugin.keyBuilder as unknown as (
@@ -212,12 +212,14 @@ describe('Tokens.validate', () => {
 
 		await Tokens.validate(ctx, {});
 
+		// Using unknown values because log event metadata carries arbitrary telemetry records
 		const meta = mockLog.mock.calls[0]![2] as Record<string, unknown>;
 		expect(meta).toEqual({ exp: -1 });
 		expect(JSON.stringify(meta)).not.toContain(TEST_TOKEN);
 	});
 
 	it('throws AuthMissingError without calling fetch when no key is resolved', async () => {
+		// Using unknown type assertion for empty key test context mock
 		const empty = { key: '', options: {} } as unknown as TursoContext;
 		await expect(Tokens.validate(empty, {})).rejects.toBeInstanceOf(
 			AuthMissingError,
@@ -423,6 +425,7 @@ describe('Changes.listen', () => {
 	});
 
 	it('throws AuthMissingError without calling fetch when no key is resolved', async () => {
+		// Using unknown type assertion for empty key test context mock
 		const empty = { key: '', options: {} } as unknown as TursoContext;
 		await expect(
 			Changes.listen(empty, {
@@ -435,6 +438,7 @@ describe('Changes.listen', () => {
 	});
 
 	it('uses a database auth token for the database host when configured', async () => {
+		// Using unknown type assertion for database-token test context mock
 		const dbCtx = {
 			key: TEST_TOKEN,
 			options: { databaseToken: 'db-scoped-token' },
@@ -455,6 +459,7 @@ describe('Changes.listen', () => {
 	});
 
 	it('uses a stored tenant-scoped database token when configured in key manager', async () => {
+		// Using unknown type assertion for stored database-token test context mock
 		const dbCtx = {
 			key: TEST_TOKEN,
 			options: {},
@@ -500,6 +505,7 @@ describe('Changes.listen', () => {
 
 	it('gives every received event its own identity', async () => {
 		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		// Using unknown type assertion for database-persistence test context mock
 		const dbCtx = {
 			key: TEST_TOKEN,
 			options: {},
@@ -532,6 +538,7 @@ describe('Changes.listen', () => {
 
 	it('mirrors streamed events into the changeEvents entity', async () => {
 		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		// Using unknown type assertion for database-persistence test context mock
 		const dbCtx = {
 			key: TEST_TOKEN,
 			options: {},
@@ -571,6 +578,7 @@ describe('Changes.listen', () => {
 			action: 'insert',
 		});
 
+		// Using unknown values because log event metadata carries arbitrary telemetry records
 		const meta = mockLog.mock.calls[0]![2] as Record<string, unknown>;
 		expect(meta).toEqual({
 			table: 'people',
