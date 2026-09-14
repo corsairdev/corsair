@@ -107,9 +107,11 @@ export const ChangeEventSchema = z
 		receivedAt: z
 			.string()
 			.describe('ISO timestamp of when this client received the event'),
+		/**
+		 * Decoded event payload as sent by Turso.
+		 * Using unknown for record values because Turso change event row payloads have user-defined table schemas.
+		 */
 		data: z
-			// z.unknown(): Turso's event payload is caller-defined row data with no
-			// fixed shape, so values are preserved without asserting a type.
 			.record(z.string(), z.unknown())
 			.optional()
 			.describe('Decoded event payload as sent by Turso'),

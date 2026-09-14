@@ -31,8 +31,8 @@ function toChangeEvent(
 ): ChangeEvent {
 	const receivedAt = new Date().toISOString();
 	try {
-		// `unknown` because the SSE payload is provider-shaped and unvalidated;
-		// asRecord narrows it before it is used.
+		// Using unknown because the parsed SSE stream payload is unvalidated external data,
+		// narrowed with asRecord before mapping to the ChangeEvent object.
 		const parsed: unknown = JSON.parse(payload);
 		const record = asRecord(parsed);
 		if (record) {

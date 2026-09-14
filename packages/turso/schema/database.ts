@@ -26,8 +26,8 @@ export const TursoChangeEvent = z.object({
 		.string()
 		.describe('ISO 8601 timestamp when the event was received by the client'),
 	/**
-	 * Event payload as sent by Turso, passed through as-is. `z.unknown()`
-	 * because the row shape is defined by the user's own table, not by Turso.
+	 * Event payload as sent by Turso, passed through as-is.
+	 * Using unknown for record values because the row shape is defined by the user's own database table, not fixed by Turso.
 	 */
 	data: z
 		.record(z.string(), z.unknown())
