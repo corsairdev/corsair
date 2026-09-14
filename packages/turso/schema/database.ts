@@ -14,7 +14,10 @@ export const TursoChangeEvent = z.object({
 	table: z.string(),
 	action: z.enum(['insert', 'update', 'delete']),
 	receivedAt: z.string(),
-	/** Event payload as sent by Turso, passed through as-is. */
+	/**
+	 * Event payload as sent by Turso, passed through as-is. `z.unknown()`
+	 * because the row shape is defined by the user's own table, not by Turso.
+	 */
 	data: z.record(z.string(), z.unknown()).nullable().optional(),
 });
 

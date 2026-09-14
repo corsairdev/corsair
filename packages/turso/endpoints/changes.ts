@@ -1,6 +1,7 @@
 import { AuthMissingError, asRecord, logEventFromContext } from 'corsair/core';
 import {
 	parseSseBuffer,
+	TRANSPORT_ERROR_CODE,
 	TursoAPIError,
 	tursoPipelineHealthCheck,
 } from '../client';
@@ -27,6 +28,8 @@ function toChangeEvent(
 ): ChangeEvent {
 	const receivedAt = new Date().toISOString();
 	try {
+		// `unknown` because the SSE payload is provider-shaped and unvalidated;
+		// asRecord narrows it before it is used.
 		const parsed: unknown = JSON.parse(payload);
 		const record = asRecord(parsed);
 		if (record) {
@@ -68,6 +71,13 @@ export const listen: TursoEndpoints['listenToChanges'] = async (
 	const input = ListenToChangesInputSchema.parse(rawInput);
 	const base = input.databaseUrl.replace(/\/$/, '');
 
+	// The database host takes a database auth token, not the platform API token.
+	// Fall back to ctx.key so a single-credential setup still works.
+	const databaseToken =
+		ctx.options?.databaseToken ??
+		(await ctx.keys?.get_database_token?.().catch(() => undefined)) ??
+		ctx.key;
+
 	const url = new URL(`${base}/beta/listen`);
 	url.searchParams.set('table', input.table);
 	url.searchParams.set('action', input.action);
@@ -84,7 +94,7 @@ export const listen: TursoEndpoints['listenToChanges'] = async (
 		action: input.action,
 		listenAvailable: false,
 		reason,
-		databaseReachable: await tursoPipelineHealthCheck(base, ctx.key),
+		databaseReachable: await tursoPipelineHealthCheck(base, databaseToken),
 	});
 
 	let result: ListenToChangesResponse;
@@ -92,7 +102,7 @@ export const listen: TursoEndpoints['listenToChanges'] = async (
 		const response = await fetch(url.toString(), {
 			method: 'GET',
 			headers: {
-				Authorization: `Bearer ${ctx.key}`,
+				Authorization: `Bearer ${databaseToken}`,
 				Accept: 'text/event-stream',
 			},
 			redirect: 'error',
@@ -165,7 +175,10 @@ export const listen: TursoEndpoints['listenToChanges'] = async (
 			throw err;
 		} else {
 			const detail = err instanceof Error ? `: ${err.message}` : '';
-			throw new TursoAPIError(`Failed to reach Turso listen stream${detail}`);
+			throw new TursoAPIError(
+				`Failed to reach Turso listen stream${detail}`,
+				TRANSPORT_ERROR_CODE,
+			);
 		}
 	} finally {
 		clearTimeout(timer);
@@ -174,10 +187,18 @@ export const listen: TursoEndpoints['listenToChanges'] = async (
 	const parsed = ListenToChangesResponseSchema.parse(result);
 
 	if (parsed.mode === 'stream' && ctx.db?.changeEvents) {
-		for (const event of parsed.events) {
+		for (const [index, event] of parsed.events.entries()) {
+			// receivedAt is only millisecond-precise, so frames decoded in the
+			// same tick would collide. Prefer a provider row id when the payload
+			// carries one, and fall back to the position within this batch.
+			const rowId = event.data?.id;
+			const suffix =
+				typeof rowId === 'string' || typeof rowId === 'number'
+					? String(rowId)
+					: `${event.receivedAt}:${index}`;
 			try {
 				await ctx.db.changeEvents.upsertByEntityId(
-					`${base}:${event.table}:${event.action}:${event.receivedAt}`,
+					`${base}:${event.table}:${event.action}:${suffix}`,
 					{
 						databaseUrl: base,
 						table: event.table,

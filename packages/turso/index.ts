@@ -33,10 +33,17 @@ export type TursoPluginOptions = {
 	/** Authentication type, defaults to 'api_key'. */
 	authType?: PickAuth<'api_key'>;
 	/**
-	 * A Turso API token, bypassing Corsair's stored credentials. Create one with
-	 * `turso auth api-tokens mint`.
+	 * A Turso platform API token, bypassing Corsair's stored credentials. Create
+	 * one with `turso auth api-tokens mint`.
 	 */
 	key?: string;
+	/**
+	 * A database auth token for the database host, used by `changes.listen` and
+	 * its `/v2/pipeline` fallback. Turso scopes these separately from the
+	 * platform API token (`turso db tokens create <db>`). Falls back to the
+	 * platform token when omitted.
+	 */
+	databaseToken?: string;
 	/** Lifecycle hooks for plugin execution. */
 	hooks?: InternalTursoPlugin['hooks'];
 	/** Optional custom error handlers. */
@@ -51,7 +58,9 @@ export type TursoPluginOptions = {
  */
 export const tursoAuthConfig = {
 	api_key: {
-		account: [] as const,
+		// Turso issues database auth tokens separately from the platform API
+		// token; the database host rejects the latter.
+		account: ['database_token'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

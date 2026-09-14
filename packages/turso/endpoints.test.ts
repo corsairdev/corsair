@@ -396,6 +396,86 @@ describe('Changes.listen', () => {
 		expect(mockFetch()).not.toHaveBeenCalled();
 	});
 
+	it('uses a database auth token for the database host when configured', async () => {
+		const dbCtx = {
+			key: TEST_TOKEN,
+			options: { databaseToken: 'db-scoped-token' },
+		} as unknown as TursoContext;
+
+		mockFetch().mockResolvedValueOnce(sseResponse([]));
+
+		await Changes.listen(dbCtx, {
+			databaseUrl: DB_URL,
+			table: 'users',
+			action: 'insert',
+		});
+
+		const [, opts] = mockFetch().mock.calls[0]!;
+		expect((opts?.headers as Record<string, string>).Authorization).toBe(
+			'Bearer db-scoped-token',
+		);
+	});
+
+	it('falls back to the platform token when no database token is set', async () => {
+		mockFetch().mockResolvedValueOnce(sseResponse([]));
+
+		await Changes.listen(ctx, {
+			databaseUrl: DB_URL,
+			table: 'users',
+			action: 'insert',
+		});
+
+		const [, opts] = mockFetch().mock.calls[0]!;
+		expect((opts?.headers as Record<string, string>).Authorization).toBe(
+			`Bearer ${TEST_TOKEN}`,
+		);
+	});
+
+	it('gives same-millisecond events distinct ids', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const dbCtx = {
+			key: TEST_TOKEN,
+			options: {},
+			db: { changeEvents: { upsertByEntityId } },
+		} as unknown as TursoContext;
+
+		// Two payloads with no row id, decoded in the same tick.
+		mockFetch().mockResolvedValueOnce(
+			sseResponse(['data: {"a":1}\n\ndata: {"a":2}\n\n']),
+		);
+
+		await Changes.listen(dbCtx, {
+			databaseUrl: DB_URL,
+			table: 'users',
+			action: 'insert',
+		});
+
+		expect(upsertByEntityId).toHaveBeenCalledTimes(2);
+		const ids = upsertByEntityId.mock.calls.map((c) => c[0]);
+		expect(new Set(ids).size).toBe(2);
+	});
+
+	it('keys a change event by its provider row id when present', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const dbCtx = {
+			key: TEST_TOKEN,
+			options: {},
+			db: { changeEvents: { upsertByEntityId } },
+		} as unknown as TursoContext;
+
+		mockFetch().mockResolvedValueOnce(sseResponse(['data: {"id":42}\n\n']));
+
+		await Changes.listen(dbCtx, {
+			databaseUrl: DB_URL,
+			table: 'users',
+			action: 'insert',
+		});
+
+		expect(upsertByEntityId.mock.calls[0]![0]).toBe(
+			`${DB_URL}:users:insert:42`,
+		);
+	});
+
 	it('mirrors streamed events into the changeEvents entity', async () => {
 		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
 		const dbCtx = {
