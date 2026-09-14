@@ -41,7 +41,7 @@ export type TursoPluginOptions = {
 	 * A database auth token for the database host, used by `changes.listen` and
 	 * its `/v2/pipeline` fallback. Turso scopes these separately from the
 	 * platform API token (`turso db tokens create <db>`). Falls back to the
-	 * platform token when omitted.
+	 * stored `database_token` credential or platform token when omitted.
 	 */
 	databaseToken?: string;
 	/** Lifecycle hooks for plugin execution. */
@@ -53,17 +53,12 @@ export type TursoPluginOptions = {
 };
 
 /**
- * Auth configuration. Turso issues a single platform API token, stored in the
- * standard `api_key` account field.
- *
- * The database-scoped token stays out of `account` on purpose: declaring it
- * here would make Corsair's setup and auth-status flows treat it as required,
- * reporting a working single-token configuration as incomplete. It is supplied
- * through the optional `databaseToken` option instead.
+ * Auth configuration. Turso issues a platform API token stored in `api_key`.
+ * Multi-tenant setups can also store an optional tenant-scoped `database_token`.
  */
 export const tursoAuthConfig = {
 	api_key: {
-		account: [] as const,
+		account: ['database_token'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -247,10 +242,13 @@ export function turso<const T extends TursoPluginOptions>(
 
 export type { SseEvent } from './client';
 export {
+	isTursoDatabaseUrl,
+	isTursoHost,
 	parseSseBuffer,
 	TURSO_API_BASE,
 	TURSO_REGION_BASE,
 	TursoAPIError,
+	tryGetStoredKey,
 	tursoFetchJson,
 	tursoPipelineHealthCheck,
 } from './client';

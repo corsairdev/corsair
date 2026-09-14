@@ -1,4 +1,11 @@
-import { isTursoDatabaseUrl, parseSseBuffer } from './client';
+import {
+	isTursoDatabaseUrl,
+	isTursoHost,
+	parseSseBuffer,
+	tryGetStoredKey,
+	tursoFetchJson,
+	tursoPipelineHealthCheck,
+} from './client';
 
 describe('parseSseBuffer', () => {
 	it('returns complete frames and keeps the partial tail', () => {
@@ -59,5 +66,58 @@ describe('isTursoDatabaseUrl', () => {
 	it('rejects malformed input', () => {
 		expect(isTursoDatabaseUrl('not-a-url')).toBe(false);
 		expect(isTursoDatabaseUrl('')).toBe(false);
+	});
+});
+
+describe('isTursoHost', () => {
+	it('accepts platform API, region, and database hosts', () => {
+		expect(isTursoHost('https://api.turso.tech/v1/auth/validate')).toBe(true);
+		expect(isTursoHost('https://region.turso.io')).toBe(true);
+		expect(isTursoHost('https://mydb-myorg.turso.io/beta/listen')).toBe(true);
+	});
+
+	it('rejects non-Turso hosts', () => {
+		expect(isTursoHost('https://attacker.com')).toBe(false);
+		expect(isTursoHost('http://api.turso.tech')).toBe(false);
+	});
+});
+
+describe('tursoFetchJson security', () => {
+	it('refuses to send bearer token to non-Turso host', async () => {
+		await expect(
+			tursoFetchJson('https://evil.com/leak', { apiKey: 'secret-token' }),
+		).rejects.toThrow('Refusing to send bearer token to non-Turso host');
+	});
+});
+
+describe('tursoPipelineHealthCheck security', () => {
+	it('rejects non-Turso database URL immediately', async () => {
+		const result = await tursoPipelineHealthCheck(
+			'https://evil.com',
+			'secret-token',
+		);
+		expect(result).toBe(false);
+	});
+});
+
+describe('tryGetStoredKey', () => {
+	it('returns value when getter succeeds', async () => {
+		const result = await tryGetStoredKey(async () => 'stored-secret');
+		expect(result).toBe('stored-secret');
+	});
+
+	it('returns undefined when no DEK is found', async () => {
+		const result = await tryGetStoredKey(async () => {
+			throw new Error('No DEK found for account');
+		});
+		expect(result).toBeUndefined();
+	});
+
+	it('propagates real operational errors', async () => {
+		await expect(
+			tryGetStoredKey(async () => {
+				throw new Error('Database connection failed');
+			}),
+		).rejects.toThrow('Database connection failed');
 	});
 });

@@ -1,9 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import { AuthMissingError, asRecord, logEventFromContext } from 'corsair/core';
 import {
+	isTursoDatabaseUrl,
 	parseSseBuffer,
 	TRANSPORT_ERROR_CODE,
 	TursoAPIError,
+	tryGetStoredKey,
 	tursoPipelineHealthCheck,
 } from '../client';
 import type { TursoEndpoints } from '../index';
@@ -72,10 +74,21 @@ export const listen: TursoEndpoints['listenToChanges'] = async (
 	const input = ListenToChangesInputSchema.parse(rawInput);
 	const base = input.databaseUrl.replace(/\/$/, '');
 
-	// The database host takes a database auth token, not the platform API token.
-	// Optional by design: falls back to ctx.key so a single-credential setup
-	// keeps working rather than being reported as incomplete.
-	const databaseToken = ctx.options?.databaseToken ?? ctx.key;
+	if (!isTursoDatabaseUrl(base)) {
+		throw new TursoAPIError(
+			'databaseUrl must be an https Turso host (*.turso.io)',
+		);
+	}
+
+	// The database host takes a database auth token.
+	// Resolution order:
+	// 1. Explicit plugin-level option (ctx.options?.databaseToken)
+	// 2. Tenant-scoped stored credential (ctx.keys.get_database_token())
+	// 3. Fallback to platform API key (ctx.key)
+	const databaseToken =
+		ctx.options?.databaseToken ??
+		(await tryGetStoredKey(() => ctx.keys?.get_database_token?.())) ??
+		ctx.key;
 
 	const url = new URL(`${base}/beta/listen`);
 	url.searchParams.set('table', input.table);

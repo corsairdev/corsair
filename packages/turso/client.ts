@@ -53,10 +53,54 @@ export function isTursoDatabaseUrl(value: string): boolean {
 		return false;
 	}
 	if (parsed.protocol !== 'https:') return false;
+	const host = parsed.hostname.toLowerCase();
+	return host === 'turso.io' || host.endsWith(TURSO_DATABASE_SUFFIX);
+}
+
+/**
+ * Reports whether a URL is a valid Turso host for API or database requests.
+ *
+ * @param value - Candidate URL.
+ * @returns True when the host is a legitimate Turso endpoint.
+ */
+export function isTursoHost(value: string): boolean {
+	let parsed: URL;
+	try {
+		parsed = new URL(value);
+	} catch {
+		return false;
+	}
+	if (parsed.protocol !== 'https:') return false;
+	const host = parsed.hostname.toLowerCase();
 	return (
-		parsed.hostname === 'turso.io' ||
-		parsed.hostname.endsWith(TURSO_DATABASE_SUFFIX)
+		host === 'api.turso.tech' ||
+		host === 'region.turso.io' ||
+		host === 'turso.io' ||
+		host.endsWith(TURSO_DATABASE_SUFFIX)
 	);
+}
+
+// Matches only corsair's "no DEK on this account" error pattern.
+const NO_DEK_ERROR_PATTERN = /no dek found/i;
+
+/**
+ * Safely reads a stored credential from the account key manager.
+ *
+ * @param getter - Async getter function for the key.
+ * @returns The resolved key or undefined if not configured.
+ */
+export async function tryGetStoredKey(
+	getter: () => Promise<string | null | undefined>,
+): Promise<string | undefined> {
+	try {
+		const value = await getter();
+		return value ?? undefined;
+	} catch (error) {
+		if (error instanceof Error && NO_DEK_ERROR_PATTERN.test(error.message)) {
+			return undefined;
+		}
+		throw error;
+	}
 }
 
 /**
@@ -134,6 +178,12 @@ export async function tursoFetchJson(
 ): Promise<unknown> {
 	const { method = 'GET', apiKey, body } = options;
 
+	if (apiKey && !isTursoHost(url)) {
+		throw new TursoAPIError(
+			`Refusing to send bearer token to non-Turso host: ${url}`,
+		);
+	}
+
 	const headers: Record<string, string> = {
 		'Content-Type': 'application/json',
 	};
@@ -149,6 +199,7 @@ export async function tursoFetchJson(
 			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
 		});
 	} catch (err) {
+		if (err instanceof TursoAPIError) throw err;
 		const detail = err instanceof Error ? `: ${err.message}` : '';
 		throw new TursoAPIError(
 			`Failed to reach Turso${detail}`,
@@ -221,6 +272,9 @@ export async function tursoPipelineHealthCheck(
 	databaseUrl: string,
 	apiKey: string,
 ): Promise<boolean> {
+	if (!isTursoDatabaseUrl(databaseUrl)) {
+		return false;
+	}
 	try {
 		await tursoFetchJson(`${databaseUrl.replace(/\/$/, '')}/v2/pipeline`, {
 			method: 'POST',

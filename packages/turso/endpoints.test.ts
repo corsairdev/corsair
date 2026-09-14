@@ -416,10 +416,33 @@ describe('Changes.listen', () => {
 		);
 	});
 
-	it('does not require a database token in the account fields', () => {
-		// Declaring it would make Corsair report a working single-token setup as
-		// incomplete.
-		expect(turso().authConfig?.api_key?.account).toEqual([]);
+	it('uses a stored tenant-scoped database token when configured in key manager', async () => {
+		const dbCtx = {
+			key: TEST_TOKEN,
+			options: {},
+			keys: {
+				get_database_token: jest
+					.fn()
+					.mockResolvedValue('stored-tenant-db-token'),
+			},
+		} as unknown as TursoContext;
+
+		mockFetch().mockResolvedValueOnce(sseResponse([]));
+
+		await Changes.listen(dbCtx, {
+			databaseUrl: DB_URL,
+			table: 'users',
+			action: 'insert',
+		});
+
+		const [, opts] = mockFetch().mock.calls[0]!;
+		expect((opts?.headers as Record<string, string>).Authorization).toBe(
+			'Bearer stored-tenant-db-token',
+		);
+	});
+
+	it('declares database_token in account fields for tenant-scoped credentials', () => {
+		expect(turso().authConfig?.api_key?.account).toEqual(['database_token']);
 	});
 
 	it('falls back to the platform token when no database token is set', async () => {
