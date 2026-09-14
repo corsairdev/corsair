@@ -7,12 +7,28 @@ export function matchCloudcartTenantWebhook(
 	const body = readBodyRecord(request);
 	if (!body) return null;
 
-	const externalId = firstString([
+	const headers = (request.headers ?? {}) as Record<string, unknown>;
+	const query = (request.query ?? {}) as Record<string, unknown>;
+
+	const storeUrl = firstString([
+		body.store_url,
+		asRecord(body.data)?.store_url,
+		headers['x-cloudcart-store-url'],
+		query.store_url,
+	]);
+	if (storeUrl) {
+		return { linkType: 'store_url', externalId: storeUrl };
+	}
+
+	const storeId = firstString([
 		body.store_id,
 		asRecord(body.data)?.store_id,
+		headers['x-cloudcart-store-id'],
+		query.store_id,
 	]);
+	if (storeId) {
+		return { linkType: 'store_id', externalId: storeId };
+	}
 
-	if (!externalId) return null;
-
-	return { linkType: 'store_url', externalId };
+	return null;
 }
