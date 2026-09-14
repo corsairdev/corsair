@@ -1,0 +1,2670 @@
+---
+title: API
+description: "API reference for FinerWorks: every `finerworks.api.*` operation with input and output types."
+---
+
+Every `finerworks.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getCompanyInfo
+
+`account.getCompanyInfo`
+
+Get FinerWorks' site identifier, company address and business hours
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.account.getCompanyInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `site_id` | `number` | No | — |
+| `address` | `object` | No | — |
+| `lobby_hours` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  company_name?: string | null,
+  address_1?: string | null,
+  address_2?: string | null,
+  address_3?: string | null,
+  city?: string | null,
+  state_code?: string | null,
+  province?: string | null,
+  zip_postal_code?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  email?: string | null,
+  address_order_po?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUser
+
+`account.getUser`
+
+Get the authenticated FinerWorks account profile, including billing and business addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.account.getUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `user_account` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="user_account full type">
+
+```ts
+{
+  account_id?: number | null,
+  account_username?: string | null,
+  account_email?: string | null,
+  account_title?: string | null,
+  account_firstname?: string | null,
+  account_lastname?: string | null,
+  billing_info?: {
+    first_name?: string | null,
+    last_name?: string | null,
+    company_name?: string | null,
+    address_1?: string | null,
+    address_2?: string | null,
+    address_3?: string | null,
+    city?: string | null,
+    state_code?: string | null,
+    province?: string | null,
+    zip_postal_code?: string | null,
+    country_code?: string | null,
+    phone?: string | null,
+    email?: string | null,
+    address_order_po?: string | null
+  } | null,
+  business_info?: {
+    first_name?: string | null,
+    last_name?: string | null,
+    company_name?: string | null,
+    address_1?: string | null,
+    address_2?: string | null,
+    address_3?: string | null,
+    city?: string | null,
+    state_code?: string | null,
+    province?: string | null,
+    zip_postal_code?: string | null,
+    country_code?: string | null,
+    phone?: string | null,
+    email?: string | null,
+    address_order_po?: string | null
+  } | null,
+  logo_url?: string | null,
+  payment_profile_id?: string | null,
+  shipping_preferences?: number[] | null,
+  connections?: {
+    name?: string | null,
+    id?: string | null,
+    data?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateAppDetails
+
+`account.updateAppDetails`
+
+Update the calling application's name, description and live mode
+
+**Risk:** `write`
+
+```ts
+await corsair.finerworks.api.account.updateAppDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `app_details` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="app_details full type">
+
+```ts
+{
+  app_key?: string | null,
+  app_name?: string | null,
+  app_description?: string | null,
+  app_misc_data?: string | null,
+  app_live_mode?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateUser
+
+`account.updateUser`
+
+Update the FinerWorks account profile, including billing and payment information
+
+**Risk:** `write`
+
+```ts
+await corsair.finerworks.api.account.updateUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_key` | `string` | No | — |
+| `billing_info` | `object` | No | — |
+| `business_info` | `object` | No | — |
+| `logo_url` | `string` | No | — |
+| `logo_data` | `string` | No | — |
+| `portrait_data` | `string` | No | — |
+| `payment_profile_id` | `string` | No | — |
+| `shipping_preferences` | `number[]` | No | — |
+| `connections` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing_info full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  company_name?: string | null,
+  address_1?: string | null,
+  address_2?: string | null,
+  address_3?: string | null,
+  city?: string | null,
+  state_code?: string | null,
+  province?: string | null,
+  zip_postal_code?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  email?: string | null,
+  address_order_po?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="business_info full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  company_name?: string | null,
+  address_1?: string | null,
+  address_2?: string | null,
+  address_3?: string | null,
+  city?: string | null,
+  state_code?: string | null,
+  province?: string | null,
+  zip_postal_code?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  email?: string | null,
+  address_order_po?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="connections full type">
+
+```ts
+{
+  name?: string | null,
+  id?: string | null,
+  data?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Framing
+
+### getFrameDetails
+
+`framing.getFrameDetails`
+
+Get dimensions, pricing, materials and imagery for a specific frame
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.framing.getFrameDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `frame` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="frame full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  thickness?: number | null,
+  depth?: number | null,
+  float_offset?: number | null,
+  rabbet?: number | null,
+  lip?: number | null,
+  profile_svg_url?: string | null,
+  sample_image_url_1?: string | null,
+  sample_image_url_2?: string | null,
+  sample_image_url_3?: string | null,
+  min_width?: number | null,
+  min_height?: number | null,
+  max_width?: number | null,
+  max_height?: number | null,
+  price_level?: number | null,
+  allow_glazing?: boolean | null,
+  allow_matting?: boolean | null,
+  color?: string | null,
+  composite?: string | null,
+  segment_url?: string | null,
+  sample_length?: number | null,
+  class_alias?: string | null,
+  starting_price?: number | null,
+  type?: string | null,
+  type_description?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listCollections
+
+`framing.listCollections`
+
+List available frame collections and categories
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.framing.listCollections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `product_code` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `collections` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="collections full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  alias?: string | null,
+  icon_url_1?: string | null,
+  icon_url_2?: string | null,
+  icon_url_3?: string | null,
+  starting_price?: number | null,
+  frames?: {
+    id?: number | null,
+    name?: string | null,
+    thickness?: number | null,
+    depth?: number | null,
+    float_offset?: number | null,
+    rabbet?: number | null,
+    lip?: number | null,
+    profile_svg_url?: string | null,
+    sample_image_url_1?: string | null,
+    sample_image_url_2?: string | null,
+    sample_image_url_3?: string | null,
+    min_width?: number | null,
+    min_height?: number | null,
+    max_width?: number | null,
+    max_height?: number | null,
+    price_level?: number | null,
+    allow_glazing?: boolean | null,
+    allow_matting?: boolean | null,
+    color?: string | null,
+    composite?: string | null,
+    segment_url?: string | null,
+    sample_length?: number | null,
+    class_alias?: string | null,
+    starting_price?: number | null,
+    type?: string | null,
+    type_description?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listGlazing
+
+`framing.listGlazing`
+
+List available glazing and glass options
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.framing.listGlazing({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `glazing` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="glazing full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  composite?: number | null,
+  image_1?: string | null,
+  starting_price?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMats
+
+`framing.listMats`
+
+List matting specifications, colours and pricing
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.framing.listMats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `mats` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="mats full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  color?: string | null,
+  core_color?: string | null,
+  thickness?: number | null,
+  min_width?: number | null,
+  min_height?: number | null,
+  max_width?: number | null,
+  max_height?: number | null,
+  composite?: string | null,
+  starting_price?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Galleries
+
+### addOrUpdateCollection
+
+`galleries.addOrUpdateCollection`
+
+Create a personal gallery collection, or update one by supplying its id
+
+**Risk:** `write`
+
+```ts
+await corsair.finerworks.api.galleries.addOrUpdateCollection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `visible` | `boolean` | No | — |
+| `account_key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `id` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`galleries.list`
+
+List GeoGalleries.com galleries, with optional filtering
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.galleries.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_key` | `string` | No | — |
+| `personal` | `boolean` | No | — |
+| `gallery_ids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `galleries` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="galleries full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  alias?: string | null,
+  personal?: boolean | null,
+  visible?: boolean | null,
+  url?: string | null,
+  description?: string | null,
+  keywords?: string | null,
+  image_count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listThemes
+
+`galleries.listThemes`
+
+List the theme options available for gallery customisation
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.galleries.listThemes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `themes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="themes full type">
+
+```ts
+{
+  slug?: string | null,
+  name?: string | null,
+  background?: string | null,
+  foreground?: string | null,
+  primary_color?: string | null,
+  secondary_color?: string | null,
+  accent_color?: string | null,
+  surface?: string | null,
+  muted?: string | null,
+  description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### add
+
+`images.add`
+
+Add up to five prepared images to a FinerWorks library
+
+**Risk:** `write`
+
+```ts
+await corsair.finerworks.api.images.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+| `library` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  title?: string | null,
+  description?: string | null,
+  file_name?: string | null,
+  file_size?: number | null,
+  thumbnail_file_name?: string | null,
+  preview_file_name?: string | null,
+  hires_file_name?: string | null,
+  public_thumbnail_uri?: string | null,
+  public_preview_uri?: string | null,
+  private_hires_uri?: string | null,
+  pix_w?: number | null,
+  pix_h?: number | null,
+  guid?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="library full type">
+
+```ts
+{
+  name: string,
+  session_id?: string | null,
+  account_key?: string | null,
+  site_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `images` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  id?: number | null,
+  guid?: string | null,
+  title?: string | null,
+  description?: string | null,
+  file_name?: string | null,
+  file_size?: number | null,
+  thumbnail_file_name?: string | null,
+  preview_file_name?: string | null,
+  hires_file_name?: string | null,
+  public_thumbnail_uri?: string | null,
+  public_preview_uri?: string | null,
+  private_hires_uri?: string | null,
+  personal_gallery_title?: string | null,
+  members_gallery_category?: string | null,
+  pix_w?: number | null,
+  pix_h?: number | null,
+  date_added?: string | null,
+  date_updated?: string | null,
+  date_expires?: string | null,
+  active?: boolean | null,
+  assigned_gallery_subcategory_ids?: number[] | null,
+  assigned_personal_gallery_ids?: number[] | null,
+  username?: string | null,
+  account_key?: string | null,
+  artistname?: string | null,
+  rank?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`images.delete`
+
+Delete image files by GUID, along with any virtual inventory products assigned to them
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.finerworks.api.images.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `guids` | `string[]` | Yes | — |
+| `library` | `object` | No | — |
+| `account_key` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="library full type">
+
+```ts
+{
+  name: string,
+  session_id?: string | null,
+  account_key?: string | null,
+  site_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`images.list`
+
+List image files uploaded to the FinerWorks account, with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.images.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `library` | `object` | Yes | — |
+| `search_filter` | `string` | No | — |
+| `guid_filter` | `string[]` | No | — |
+| `personal_gallery_id_filter` | `number[]` | No | — |
+| `public_gallery_id_filter` | `number[]` | No | — |
+| `page_number` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `sort_field` | `string` | No | — |
+| `sort_direction` | `ASC \| DESC` | No | — |
+| `upload_date_from` | `string` | No | — |
+| `upload_date_to` | `string` | No | — |
+| `list_products` | `boolean` | No | — |
+| `active` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="library full type">
+
+```ts
+{
+  name: string,
+  session_id?: string | null,
+  account_key?: string | null,
+  site_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `images` | `object[]` | No | — |
+| `page_number` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  id?: number | null,
+  guid?: string | null,
+  title?: string | null,
+  description?: string | null,
+  file_name?: string | null,
+  file_size?: number | null,
+  thumbnail_file_name?: string | null,
+  preview_file_name?: string | null,
+  hires_file_name?: string | null,
+  public_thumbnail_uri?: string | null,
+  public_preview_uri?: string | null,
+  private_hires_uri?: string | null,
+  personal_gallery_title?: string | null,
+  members_gallery_category?: string | null,
+  pix_w?: number | null,
+  pix_h?: number | null,
+  date_added?: string | null,
+  date_updated?: string | null,
+  date_expires?: string | null,
+  active?: boolean | null,
+  assigned_gallery_subcategory_ids?: number[] | null,
+  assigned_personal_gallery_ids?: number[] | null,
+  username?: string | null,
+  account_key?: string | null,
+  artistname?: string | null,
+  rank?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFileSelection
+
+`images.listFileSelection`
+
+List the image GUIDs grouped under a file-selection key
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.images.listFileSelection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `guid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `guids` | `string[]` | No | — |
+| `guid` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`images.update`
+
+Update image metadata by GUID
+
+**Risk:** `write`
+
+```ts
+await corsair.finerworks.api.images.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+| `account_key` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  guid: string,
+  title?: string | null,
+  description?: string | null,
+  visible?: boolean | null,
+  assigned_gallery_subcategory_ids?: number[] | null,
+  assigned_personal_gallery_ids?: number[] | null,
+  rank?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `images` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  id?: number | null,
+  guid?: string | null,
+  title?: string | null,
+  description?: string | null,
+  file_name?: string | null,
+  file_size?: number | null,
+  thumbnail_file_name?: string | null,
+  preview_file_name?: string | null,
+  hires_file_name?: string | null,
+  public_thumbnail_uri?: string | null,
+  public_preview_uri?: string | null,
+  private_hires_uri?: string | null,
+  personal_gallery_title?: string | null,
+  members_gallery_category?: string | null,
+  pix_w?: number | null,
+  pix_h?: number | null,
+  date_added?: string | null,
+  date_updated?: string | null,
+  date_expires?: string | null,
+  active?: boolean | null,
+  assigned_gallery_subcategory_ids?: number[] | null,
+  assigned_personal_gallery_ids?: number[] | null,
+  username?: string | null,
+  account_key?: string | null,
+  artistname?: string | null,
+  rank?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateFileSelection
+
+`images.updateFileSelection`
+
+Replace the image files held under a selection GUID
+
+**Risk:** `write`
+
+```ts
+await corsair.finerworks.api.images.updateFileSelection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `guids` | `string[]` | Yes | — |
+| `guid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `guid` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Inventory
+
+### delete
+
+`inventory.delete`
+
+Delete virtual inventory products by SKU and disconnect their third-party sync
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.finerworks.api.inventory.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skus` | `string[]` | Yes | — |
+| `account_key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### disconnect
+
+`inventory.disconnect`
+
+Disconnect every virtual inventory item from a third-party platform
+
+**Risk:** `write`
+
+```ts
+await corsair.finerworks.api.inventory.disconnect({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `platform` | `string` | Yes | — |
+| `account_key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`inventory.list`
+
+List the virtual inventory products on the account, with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.inventory.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_filter` | `string` | No | — |
+| `third_party_connections_filter` | `string[]` | No | — |
+| `sku_filter` | `string[]` | No | — |
+| `product_code_filter` | `string[]` | No | — |
+| `product_type_ids_filter` | `number[]` | No | — |
+| `guid_filter` | `string[]` | No | — |
+| `page_number` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `sort_field` | `string` | No | — |
+| `sort_direction` | `ASC \| DESC` | No | — |
+| `created_date_from` | `string` | No | — |
+| `created_date_to` | `string` | No | — |
+| `account_key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `products` | `object[]` | No | — |
+| `page_number` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="products full type">
+
+```ts
+{
+  id?: number | null,
+  sku?: string | null,
+  product_code?: string | null,
+  product_guid?: string | null,
+  image_guid?: string | null,
+  name?: string | null,
+  description_short?: string | null,
+  description_long?: string | null,
+  artist?: string | null,
+  monetary_format?: string | null,
+  quantity?: number | null,
+  quantity_in_stock?: number | null,
+  track_inventory?: boolean | null,
+  per_item_price?: number | null,
+  total_price?: number | null,
+  asking_price?: number | null,
+  geo_price?: number | null,
+  third_party_integrations?: {
+    etsy_product_id?: number | null,
+    shopify_product_id?: number | null,
+    shopify_variant_id?: number | null,
+    shopify_graphql_product_id?: string | null,
+    shopify_graphql_variant_id?: string | null,
+    squarespace_product_id?: string | null,
+    squarespace_variant_id?: string | null,
+    square_product_id?: string | null,
+    square_variant_id?: string | null,
+    bigcommerce_id?: number | null,
+    bigcommerce_variant_id?: number | null,
+    wix_inventory_id?: string | null,
+    wix_product_id?: string | null,
+    wix_variant_id?: string | null,
+    woocommerce_product_id?: number | null,
+    woocommerce_variant_id?: number | null
+  } | null,
+  price_details?: any | null,
+  framing_options?: any | null,
+  product_size?: any | null,
+  updated?: string | null,
+  valid?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`inventory.update`
+
+Update virtual inventory pricing, stock and third-party integrations
+
+**Risk:** `write`
+
+```ts
+await corsair.finerworks.api.inventory.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `virtual_inventory` | `object[]` | Yes | — |
+| `account_key` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="virtual_inventory full type">
+
+```ts
+{
+  sku: string,
+  asking_price?: number | null,
+  name?: string | null,
+  description?: string | null,
+  quantity_in_stock?: number | null,
+  track_inventory?: boolean | null,
+  third_party_integrations?: {
+    etsy_product_id?: number | null,
+    shopify_product_id?: number | null,
+    shopify_variant_id?: number | null,
+    shopify_graphql_product_id?: string | null,
+    shopify_graphql_variant_id?: string | null,
+    squarespace_product_id?: string | null,
+    squarespace_variant_id?: string | null,
+    square_product_id?: string | null,
+    square_variant_id?: string | null,
+    bigcommerce_id?: number | null,
+    bigcommerce_variant_id?: number | null,
+    wix_inventory_id?: string | null,
+    wix_product_id?: string | null,
+    wix_variant_id?: string | null,
+    woocommerce_product_id?: number | null,
+    woocommerce_variant_id?: number | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `products` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="products full type">
+
+```ts
+{
+  id?: number | null,
+  sku?: string | null,
+  product_code?: string | null,
+  product_guid?: string | null,
+  image_guid?: string | null,
+  name?: string | null,
+  description_short?: string | null,
+  description_long?: string | null,
+  artist?: string | null,
+  monetary_format?: string | null,
+  quantity?: number | null,
+  quantity_in_stock?: number | null,
+  track_inventory?: boolean | null,
+  per_item_price?: number | null,
+  total_price?: number | null,
+  asking_price?: number | null,
+  geo_price?: number | null,
+  third_party_integrations?: {
+    etsy_product_id?: number | null,
+    shopify_product_id?: number | null,
+    shopify_variant_id?: number | null,
+    shopify_graphql_product_id?: string | null,
+    shopify_graphql_variant_id?: string | null,
+    squarespace_product_id?: string | null,
+    squarespace_variant_id?: string | null,
+    square_product_id?: string | null,
+    square_variant_id?: string | null,
+    bigcommerce_id?: number | null,
+    bigcommerce_variant_id?: number | null,
+    wix_inventory_id?: string | null,
+    wix_product_id?: string | null,
+    wix_variant_id?: string | null,
+    woocommerce_product_id?: number | null,
+    woocommerce_variant_id?: number | null
+  } | null,
+  price_details?: any | null,
+  framing_options?: any | null,
+  product_size?: any | null,
+  updated?: string | null,
+  valid?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Orders
+
+### deletePending
+
+`orders.deletePending`
+
+Remove orders that were saved as pending
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.finerworks.api.orders.deletePending({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `number[]` | Yes | — |
+| `account_key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fetchStatus
+
+`orders.fetchStatus`
+
+Get production status and tracking information for orders
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.orders.fetchStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_pos` | `string[]` | No | — |
+| `order_ids` | `number[]` | No | — |
+| `account_key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `orders` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="orders full type">
+
+```ts
+{
+  order_confirmation_id?: number | null,
+  order_po?: string | null,
+  order_id?: number | null,
+  order_status_id?: number | null,
+  order_status_label?: string | null,
+  order_source?: string | null,
+  shipments?: {
+    creation_date?: string | null,
+    shipment_date?: string | null,
+    eta_date?: string | null,
+    delivery_date?: string | null,
+    weight?: number | null,
+    width?: number | null,
+    height?: number | null,
+    depth?: number | null,
+    tracking_number?: string | null,
+    tracking_url?: string | null,
+    carrier?: string | null,
+    service?: string | null,
+    history?: any | null
+  }[] | null,
+  processing?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listStatusDefinitions
+
+`orders.listStatusDefinitions`
+
+List every production status an order can have
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.orders.listStatusDefinitions({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `definitions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="definitions full type">
+
+```ts
+{
+  order_status_id?: number | null,
+  order_status_label?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### savePending
+
+`orders.savePending`
+
+Save orders to temporary storage for review before submission
+
+**Risk:** `write`
+
+```ts
+await corsair.finerworks.api.orders.savePending({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orders` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="orders full type">
+
+```ts
+{
+  order_po: string,
+  order_key?: string | null,
+  recipient: {
+    first_name: string,
+    last_name: string,
+    company_name?: string | null,
+    address_1: string,
+    address_2?: string | null,
+    address_3?: string | null,
+    city: string,
+    state_code?: string | null,
+    province?: string | null,
+    zip_postal_code: string,
+    country_code: string,
+    phone?: string | null,
+    email?: string | null,
+    address_order_po?: string | null
+  },
+  order_items: {
+    product_order_po?: string | null,
+    product_qty: number,
+    product_sku: string,
+    product_image?: any | null,
+    product_title?: string | null,
+    template?: any | null,
+    product_guid?: string | null,
+    custom_data_1?: string | null,
+    custom_data_2?: string | null,
+    custom_data_3?: string | null,
+    coa?: any | null
+  }[],
+  shipping_code?: string | null,
+  ship_by_date?: string | null,
+  customs_tax_info?: any | null,
+  gift_message?: string | null,
+  test_mode?: boolean,
+  webhook_order_status_url?: string | null,
+  webhook_url?: string | null,
+  document_url?: string | null,
+  acct_number_ups?: string | null,
+  acct_number_fedex?: string | null,
+  custom_data_1?: string | null,
+  custom_data_2?: string | null,
+  custom_data_3?: string | null,
+  source?: string | null,
+  fulfillment_id?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `orders` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="orders full type">
+
+```ts
+{
+  order_po?: string | null,
+  order_id?: number | null,
+  order_confirmation_id?: number | null,
+  order_guid?: string | null,
+  order_email?: string | null,
+  order_confirmation_datetime?: string | null,
+  order_source?: string | null,
+  order_status?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### submit
+
+`orders.submit`
+
+Submit up to five new orders for production
+
+**Risk:** `write`
+
+```ts
+await corsair.finerworks.api.orders.submit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orders` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="orders full type">
+
+```ts
+{
+  order_po: string,
+  order_key?: string | null,
+  recipient: {
+    first_name: string,
+    last_name: string,
+    company_name?: string | null,
+    address_1: string,
+    address_2?: string | null,
+    address_3?: string | null,
+    city: string,
+    state_code?: string | null,
+    province?: string | null,
+    zip_postal_code: string,
+    country_code: string,
+    phone?: string | null,
+    email?: string | null,
+    address_order_po?: string | null
+  },
+  order_items: {
+    product_order_po?: string | null,
+    product_qty: number,
+    product_sku: string,
+    product_image?: any | null,
+    product_title?: string | null,
+    template?: any | null,
+    product_guid?: string | null,
+    custom_data_1?: string | null,
+    custom_data_2?: string | null,
+    custom_data_3?: string | null,
+    coa?: any | null
+  }[],
+  shipping_code?: string | null,
+  ship_by_date?: string | null,
+  customs_tax_info?: any | null,
+  gift_message?: string | null,
+  test_mode?: boolean,
+  webhook_order_status_url?: string | null,
+  webhook_url?: string | null,
+  document_url?: string | null,
+  acct_number_ups?: string | null,
+  acct_number_fedex?: string | null,
+  custom_data_1?: string | null,
+  custom_data_2?: string | null,
+  custom_data_3?: string | null,
+  source?: string | null,
+  fulfillment_id?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `orders` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="orders full type">
+
+```ts
+{
+  order_po?: string | null,
+  order_id?: number | null,
+  order_confirmation_id?: number | null,
+  order_guid?: string | null,
+  order_email?: string | null,
+  order_confirmation_datetime?: string | null,
+  order_source?: string | null,
+  order_status?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validateRecipientAddress
+
+`orders.validateRecipientAddress`
+
+Validate a recipient address before submitting an order
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.orders.validateRecipientAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipient` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="recipient full type">
+
+```ts
+{
+  first_name: string,
+  last_name: string,
+  company_name?: string | null,
+  address_1: string,
+  address_2?: string | null,
+  address_3?: string | null,
+  city: string,
+  state_code?: string | null,
+  province?: string | null,
+  zip_postal_code: string,
+  country_code: string,
+  phone?: string | null,
+  email?: string | null,
+  address_order_po?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `address` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  company_name?: string | null,
+  address_1?: string | null,
+  address_2?: string | null,
+  address_3?: string | null,
+  city?: string | null,
+  state_code?: string | null,
+  province?: string | null,
+  zip_postal_code?: string | null,
+  country_code?: string | null,
+  phone?: string | null,
+  email?: string | null,
+  address_order_po?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### getPrices
+
+`products.getPrices`
+
+Get pricing for a set of FinerWorks product SKUs
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.products.getPrices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[]` | Yes | — |
+| `account_key` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  product_qty: number,
+  product_sku: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `prices` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="prices full type">
+
+```ts
+{
+  product_qty?: number | null,
+  product_sku?: string | null,
+  product_code?: string | null,
+  product_price?: number | null,
+  add_frame_price?: number | null,
+  add_mat_1_price?: number | null,
+  add_mat_2_price?: number | null,
+  add_glazing_price?: number | null,
+  add_color_correct_price?: number | null,
+  total_price?: number | null,
+  geo_price?: number | null,
+  info?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMediaTypes
+
+`products.listMediaTypes`
+
+List printing substrates (canvas, paper, vinyl) and their product information
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.products.listMediaTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `number[]` | No | — |
+| `site_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `media_types` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="media_types full type">
+
+```ts
+{
+  id?: number | null,
+  product_type_id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  style_ids?: number[] | null,
+  icon_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProductTypes
+
+`products.listProductTypes`
+
+List printing categories such as Canvas Prints and Metal Prints
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.products.listProductTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `product_types` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="product_types full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  media_ids?: number[] | null,
+  printable_ids?: number[] | null,
+  icon_url?: string | null,
+  color_code?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listStyleTypes
+
+`products.listStyleTypes`
+
+List print formatting options including borders and canvas wraps
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.products.listStyleTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `style_types` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="style_types full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  can_frame?: boolean | null,
+  can_mat?: boolean | null,
+  can_glaze?: boolean | null,
+  frame_class_ids?: number[] | null,
+  custom_sizing?: boolean | null,
+  min?: {
+    width?: number | null,
+    height?: number | null
+  } | null,
+  max?: {
+    width?: number | null,
+    height?: number | null
+  } | null,
+  available_sizes?: {
+    width?: number | null,
+    height?: number | null
+  }[] | null,
+  border_size?: number | null,
+  bleed_amt?: number | null,
+  corner_radius?: number | null,
+  depth?: number | null,
+  icon_url?: string | null,
+  allow_decimal?: boolean | null,
+  mounting_add_ons?: {
+    id?: number | null,
+    name?: string | null,
+    description?: string | null,
+    icon_url?: string | null,
+    rate?: number | null,
+    price?: number | null,
+    min?: {
+      width?: number | null,
+      height?: number | null
+    } | null,
+    max?: {
+      width?: number | null,
+      height?: number | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Shipping
+
+### getOptionIds
+
+`shipping.getOptionIds`
+
+List shipping method identifiers for cross-reference
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.shipping.getOptionIds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `shipping_options` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="shipping_options full type">
+
+```ts
+{
+  id?: number | null,
+  shipping_method?: string | null,
+  shipping_code?: string | null,
+  shipping_class_code?: string | null,
+  is_international?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listOptionsMultiple
+
+`shipping.listOptionsMultiple`
+
+Get shipping options and rates for a batch of orders
+
+**Risk:** `read`
+
+```ts
+await corsair.finerworks.api.shipping.listOptionsMultiple({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orders` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="orders full type">
+
+```ts
+{
+  order_po: string,
+  order_key?: string | null,
+  recipient: {
+    first_name: string,
+    last_name: string,
+    company_name?: string | null,
+    address_1: string,
+    address_2?: string | null,
+    address_3?: string | null,
+    city: string,
+    state_code?: string | null,
+    province?: string | null,
+    zip_postal_code: string,
+    country_code: string,
+    phone?: string | null,
+    email?: string | null,
+    address_order_po?: string | null
+  },
+  order_items: {
+    product_order_po?: string | null,
+    product_qty: number,
+    product_sku: string,
+    product_image?: any | null,
+    product_title?: string | null,
+    template?: any | null,
+    product_guid?: string | null,
+    custom_data_1?: string | null,
+    custom_data_2?: string | null,
+    custom_data_3?: string | null,
+    coa?: any | null
+  }[],
+  shipping_code?: string | null,
+  ship_by_date?: string | null,
+  customs_tax_info?: any | null,
+  gift_message?: string | null,
+  test_mode?: boolean,
+  webhook_order_status_url?: string | null,
+  webhook_url?: string | null,
+  document_url?: string | null,
+  acct_number_ups?: string | null,
+  acct_number_fedex?: string | null,
+  custom_data_1?: string | null,
+  custom_data_2?: string | null,
+  custom_data_3?: string | null,
+  source?: string | null,
+  fulfillment_id?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `object` | No | — |
+| `orders` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  success?: boolean,
+  status_code?: number,
+  message?: string | null,
+  debug?: any | null,
+  reference_id?: string | null,
+  domain?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="orders full type">
+
+```ts
+{
+  order_po?: string | null,
+  options?: {
+    id?: number | null,
+    rate?: number | null,
+    shipping_method?: string | null,
+    shipping_code?: string | null,
+    shipping_class_code?: string | null,
+    calculated_total?: {
+      order_po?: string | null,
+      order_subtotal?: number | null,
+      order_shipping_rate?: number | null,
+      order_discount?: number | null,
+      order_sales_tax?: number | null,
+      order_sales_tax_rate?: number | null,
+      order_expedite_fee?: number | null,
+      order_credits_used?: number | null,
+      order_grand_total?: number | null,
+      product_pricing?: {
+        product_qty?: number | null,
+        product_sku?: string | null
+      }[] | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
