@@ -12,6 +12,7 @@ export class RedditAPIError extends Error {
 }
 
 const REDDIT_BASE = 'https://www.reddit.com';
+const REDDIT_OAUTH_BASE = 'https://oauth.reddit.com';
 const USER_AGENT = 'corsair-reddit';
 
 export async function makeRedditRequest<T>(
@@ -19,15 +20,22 @@ export async function makeRedditRequest<T>(
 	options: {
 		method?: 'GET';
 		query?: Record<string, string | number | boolean | undefined>;
+		token?: string;
+		authType?: 'api_key' | 'oauth_2' | 'managed';
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', query } = options;
+	const { method = 'GET', query, token, authType = 'api_key' } = options;
+
+	// OAuth and managed credentials hit the authenticated oauth.reddit.com host
+	// with a bearer token; api_key usage stays anonymous against www.reddit.com.
+	const useBearer = authType !== 'api_key';
 
 	const config: OpenAPIConfig = {
-		BASE: REDDIT_BASE,
+		BASE: useBearer ? REDDIT_OAUTH_BASE : REDDIT_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		TOKEN: useBearer ? token : undefined,
 		HEADERS: {
 			'User-Agent': USER_AGENT,
 			Accept: 'application/json',

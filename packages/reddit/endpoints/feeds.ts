@@ -14,6 +14,8 @@ export const getAllFeed: RedditEndpoints['feedsGetAll'] = async (
 	input,
 ) => {
 	const raw = await makeRedditRequest<RedditListingRaw>('/r/all.json', {
+		token: ctx.key,
+		authType: ctx.options.authType,
 		query: input,
 	});
 
@@ -40,6 +42,8 @@ export const getPopularFeed: RedditEndpoints['feedsGetPopular'] = async (
 	input,
 ) => {
 	const raw = await makeRedditRequest<RedditListingRaw>('/r/popular.json', {
+		token: ctx.key,
+		authType: ctx.options.authType,
 		query: input,
 	});
 
@@ -66,6 +70,8 @@ export const getSubredditsPopular: RedditEndpoints['listingsSubredditsPopular'] 
 		const raw = await makeRedditRequest<RedditListingRaw>(
 			'/subreddits/popular.json',
 			{
+				token: ctx.key,
+				authType: ctx.options.authType,
 				query: input,
 			},
 		);
@@ -93,6 +99,8 @@ export const getSubredditsNew: RedditEndpoints['listingsSubredditsNew'] =
 		const raw = await makeRedditRequest<RedditListingRaw>(
 			'/subreddits/new.json',
 			{
+				token: ctx.key,
+				authType: ctx.options.authType,
 				query: input,
 			},
 		);

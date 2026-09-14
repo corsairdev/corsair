@@ -8,7 +8,11 @@ export const getJSON: FigmaEndpoints['filesGetJSON'] = async (ctx, input) => {
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['filesGetJSON']>(
 		`v1/files/${file_key}`,
 		ctx.key,
-		{ method: 'GET', query: { ...queryParams } },
+		{
+			method: 'GET',
+			query: { ...queryParams },
+			authType: ctx.options.authType,
+		},
 	);
 
 	if (ctx.db.fileMetadata) {
@@ -42,7 +46,10 @@ export const getMetadata: FigmaEndpoints['filesGetMetadata'] = async (
 ) => {
 	const result = await makeFigmaRequest<
 		FigmaEndpointOutputs['filesGetMetadata']
-	>(`v1/files/${input.file_key}`, ctx.key, { method: 'GET' });
+	>(`v1/files/${input.file_key}`, ctx.key, {
+		method: 'GET',
+		authType: ctx.options.authType,
+	});
 
 	if (ctx.db.fileMetadata) {
 		try {
@@ -69,7 +76,11 @@ export const getNodes: FigmaEndpoints['filesGetNodes'] = async (ctx, input) => {
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['filesGetNodes']>(
 		`v1/files/${file_key}/nodes`,
 		ctx.key,
-		{ method: 'GET', query: { ...queryParams } },
+		{
+			method: 'GET',
+			query: { ...queryParams },
+			authType: ctx.options.authType,
+		},
 	);
 
 	await logEventFromContext(
@@ -88,7 +99,7 @@ export const getStyles: FigmaEndpoints['filesGetStyles'] = async (
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['filesGetStyles']>(
 		`v1/files/${input.file_key}/styles`,
 		ctx.key,
-		{ method: 'GET' },
+		{ method: 'GET', authType: ctx.options.authType },
 	);
 
 	await logEventFromContext(
@@ -106,7 +117,10 @@ export const getImageFills: FigmaEndpoints['filesGetImageFills'] = async (
 ) => {
 	const result = await makeFigmaRequest<
 		FigmaEndpointOutputs['filesGetImageFills']
-	>(`v1/files/${input.file_key}/images`, ctx.key, { method: 'GET' });
+	>(`v1/files/${input.file_key}/images`, ctx.key, {
+		method: 'GET',
+		authType: ctx.options.authType,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -127,6 +141,7 @@ export const getVersions: FigmaEndpoints['filesGetVersions'] = async (
 	>(`v1/files/${file_key}/versions`, ctx.key, {
 		method: 'GET',
 		query: { ...queryParams },
+		authType: ctx.options.authType,
 	});
 
 	if (result.versions && ctx.db.versions) {
@@ -166,6 +181,7 @@ export const renderImages: FigmaEndpoints['filesRenderImages'] = async (
 	>(`v1/images/${file_key}`, ctx.key, {
 		method: 'GET',
 		query: { ...queryParams },
+		authType: ctx.options.authType,
 	});
 
 	await logEventFromContext(
@@ -187,6 +203,7 @@ export const getProjectFiles: FigmaEndpoints['filesGetProjectFiles'] = async (
 	>(`v1/projects/${project_id}/files`, ctx.key, {
 		method: 'GET',
 		query: { ...queryParams },
+		authType: ctx.options.authType,
 	});
 
 	if (result.files && ctx.db.fileMetadata) {

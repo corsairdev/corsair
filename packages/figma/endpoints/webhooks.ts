@@ -7,7 +7,7 @@ export const create: FigmaEndpoints['webhooksCreate'] = async (ctx, input) => {
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['webhooksCreate']>(
 		`v2/webhooks`,
 		ctx.key,
-		{ method: 'POST', body: { ...input } },
+		{ method: 'POST', body: { ...input }, authType: ctx.options.authType },
 	);
 
 	if (result.id && ctx.db.webhookConfigs) {
@@ -34,7 +34,7 @@ export const deleteWebhook: FigmaEndpoints['webhooksDelete'] = async (
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['webhooksDelete']>(
 		`v2/webhooks/${input.webhook_id}`,
 		ctx.key,
-		{ method: 'DELETE' },
+		{ method: 'DELETE', authType: ctx.options.authType },
 	);
 
 	if (result.id && ctx.db.webhookConfigs) {
@@ -64,7 +64,7 @@ export const get: FigmaEndpoints['webhooksGet'] = async (ctx, input) => {
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['webhooksGet']>(
 		`v2/webhooks/${input.webhook_id}`,
 		ctx.key,
-		{ method: 'GET' },
+		{ method: 'GET', authType: ctx.options.authType },
 	);
 
 	if (result.id && ctx.db.webhookConfigs) {
@@ -88,7 +88,7 @@ export const list: FigmaEndpoints['webhooksList'] = async (ctx, input) => {
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['webhooksList']>(
 		`v2/webhooks`,
 		ctx.key,
-		{ method: 'GET', query: { ...input } },
+		{ method: 'GET', query: { ...input }, authType: ctx.options.authType },
 	);
 
 	if (result.webhooks && ctx.db.webhookConfigs) {
@@ -120,7 +120,10 @@ export const getRequests: FigmaEndpoints['webhooksGetRequests'] = async (
 ) => {
 	const result = await makeFigmaRequest<
 		FigmaEndpointOutputs['webhooksGetRequests']
-	>(`v2/webhooks/${input.webhook_id}/requests`, ctx.key, { method: 'GET' });
+	>(`v2/webhooks/${input.webhook_id}/requests`, ctx.key, {
+		method: 'GET',
+		authType: ctx.options.authType,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -136,7 +139,7 @@ export const update: FigmaEndpoints['webhooksUpdate'] = async (ctx, input) => {
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['webhooksUpdate']>(
 		`v2/webhooks/${webhook_id}`,
 		ctx.key,
-		{ method: 'PUT', body: { ...body } },
+		{ method: 'PUT', body: { ...body }, authType: ctx.options.authType },
 	);
 
 	if (result.id && ctx.db.webhookConfigs) {

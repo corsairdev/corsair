@@ -11,6 +11,8 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { Feeds, Listings, Posts, Search, Subreddits, Users } from './endpoints';
 import type {
 	RedditEndpointInputs,
@@ -25,7 +27,7 @@ import { RedditSchema } from './schema';
 import { matchRedditTenantWebhook } from './webhooks/tenant-matcher';
 
 export type RedditPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalRedditPlugin['hooks'];
 	webhookHooks?: InternalRedditPlugin['webhookHooks'];
@@ -338,6 +340,12 @@ export const redditAuthConfig = {
 	api_key: {
 		account: ['subreddit_id'] as const,
 	},
+	oauth_2: {
+		account: ['subreddit_id'] as const,
+	},
+	managed: {
+		account: ['subreddit_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseRedditPlugin<T extends RedditPluginOptions> = CorsairPlugin<
@@ -364,6 +372,14 @@ export function reddit<const T extends RedditPluginOptions>(
 	return {
 		id: 'reddit',
 		authConfig: redditAuthConfig,
+		oauthConfig: {
+			providerName: 'Reddit',
+			authUrl: 'https://www.reddit.com/api/v1/authorize',
+			tokenUrl: 'https://www.reddit.com/api/v1/access_token',
+			scopes: ['read'],
+			tokenAuthMethod: 'basic',
+			authParams: { duration: 'permanent' },
+		},
 		schema: RedditSchema,
 		options,
 		hooks: options.hooks,
@@ -378,9 +394,48 @@ export function reddit<const T extends RedditPluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-		keyBuilder: async (_ctx: RedditKeyBuilderContext, _source) => {
-			// not necessary since this is a public api
-			return '';
+		keyBuilder: async (ctx: RedditKeyBuilderContext, source) => {
+			if (source === 'webhook') {
+				return '';
+			}
+
+			if (source === 'endpoint' && options.key) {
+				return options.key;
+			}
+
+			// Reddit's public JSON API is anonymous; api_key auth has no credential
+			// to send, so stay anonymous (the client omits Authorization for it).
+			if (ctx.authType === 'api_key') {
+				return (await ctx.keys.get_api_key()) ?? '';
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+				return getOAuthAccessToken(ctx, {
+					plugin: 'reddit',
+					tokenUrl: 'https://www.reddit.com/api/v1/access_token',
+				});
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:reddit:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'reddit',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
+			}
+
+			throw new AuthMissingError('reddit', 'oauth_2');
 		},
 	} satisfies InternalRedditPlugin;
 }

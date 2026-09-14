@@ -17,6 +17,7 @@ export const getAbout: RedditEndpoints['usersGetAbout'] = async (
 ) => {
 	const raw = await makeRedditRequest<RedditEntityEnvelopeRaw>(
 		`/user/${input.username}/about.json`,
+		{ token: ctx.key, authType: ctx.options.authType },
 	);
 
 	const user = UserDataSchema.parse(raw.data);
@@ -39,7 +40,7 @@ export const getSubmitted: RedditEndpoints['usersGetSubmitted'] = async (
 	const { username, ...query } = input;
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/user/${username}/submitted.json`,
-		{ query },
+		{ token: ctx.key, authType: ctx.options.authType, query },
 	);
 
 	const posts = extractPosts(raw);
@@ -67,7 +68,7 @@ export const getComments: RedditEndpoints['usersGetComments'] = async (
 	const { username, ...query } = input;
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/user/${username}/comments.json`,
-		{ query },
+		{ token: ctx.key, authType: ctx.options.authType, query },
 	);
 
 	const comments = extractComments(raw);
@@ -95,7 +96,7 @@ export const getOverview: RedditEndpoints['usersGetOverview'] = async (
 	const { username, ...query } = input;
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/user/${username}/overview.json`,
-		{ query },
+		{ token: ctx.key, authType: ctx.options.authType, query },
 	);
 
 	const items = raw.data.children.map((child) => {

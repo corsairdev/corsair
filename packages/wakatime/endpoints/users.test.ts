@@ -15,7 +15,10 @@ const mockRequest = makeWakaTimeRequest as jest.MockedFunction<
 	typeof makeWakaTimeRequest
 >;
 
-const mockContext = { key: 'test-key' } as never;
+const mockContext = {
+	key: 'test-key',
+	options: { authType: 'api_key' },
+} as never;
 
 beforeEach(() => {
 	mockRequest.mockReset();
@@ -31,7 +34,9 @@ describe('getCurrentUser', () => {
 		await expect(getCurrentUser(mockContext, {})).resolves.toEqual({
 			data: { id: 'user-1', username: 'user' },
 		});
-		expect(mockRequest).toHaveBeenCalledWith('users/current', 'test-key');
+		expect(mockRequest).toHaveBeenCalledWith('users/current', 'test-key', {
+			authType: 'api_key',
+		});
 		expect(logEventFromContext).toHaveBeenCalled();
 	});
 
