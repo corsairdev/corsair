@@ -1,0 +1,2456 @@
+{
+  "id": "typeform",
+  "displayName": "Typeform",
+  "description": "Conversational form builder for surveys, quizzes, lead capture, and interactive questionnaires.",
+  "npmPackageName": "@corsair-dev/typeform",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 35,
+    "webhooks": 1,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "form_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "typeform.api.forms.create",
+      "shortPath": "forms.create",
+      "description": "Create a new form",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ id?: string, ref?: string, type?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { fields?: any[], choices?: any[], randomize?: boolean, hide_marks?: boolean, button_text?: string, description?: string, allow_other_choice?: boolean, alphabetical_order?: boolean, vertical_alignment?: boolean, allow_multiple_selection?: boolean }, validations?: { required?: boolean, max_value?: number, min_value?: number, max_length?: number, min_length?: number } }[]"
+          },
+          {
+            "key": "logic",
+            "optional": true,
+            "type": "{ ref?: string, type?: string, actions?: any[] }[]"
+          },
+          {
+            "key": "theme",
+            "optional": true,
+            "type": "{ href: string }"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ is_trial?: boolean, language?: string, is_public?: boolean, progress_bar?: string, facebook_pixel?: string, hide_navigation?: boolean, google_analytics?: string, autosave_progress?: boolean, show_progress_bar?: boolean, are_uploads_public?: boolean, google_tag_manager?: string, show_cookie_consent?: boolean, free_form_navigation?: boolean, show_question_number?: boolean, pro_subdomain_enabled?: boolean, show_time_to_complete?: boolean, show_typeform_branding?: boolean, show_key_hint_on_choices?: boolean, redirect_after_submit_url?: string, show_number_of_submissions?: boolean, capabilities?: {}, notifications?: {} }"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ href: string }"
+          },
+          {
+            "key": "welcome_screens",
+            "optional": true,
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, show_button?: boolean, description?: string } }[]"
+          },
+          {
+            "key": "thankyou_screens",
+            "optional": true,
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, button_mode?: string, redirect_url?: string, show_button?: boolean, description?: string, share_icons?: boolean } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ id?: string, ref?: string, type?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { fields?: any[], choices?: any[], randomize?: boolean, hide_marks?: boolean, button_text?: string, description?: string, allow_other_choice?: boolean, alphabetical_order?: boolean, vertical_alignment?: boolean, allow_multiple_selection?: boolean }, validations?: { required?: boolean, max_value?: number, min_value?: number, max_length?: number, min_length?: number } }[]"
+          },
+          {
+            "key": "logic",
+            "optional": true,
+            "type": "{ ref?: string, type?: string, actions?: any[] }[]"
+          },
+          {
+            "key": "theme",
+            "optional": true,
+            "type": "{ href?: string }"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ is_trial?: boolean, language?: string, is_public?: boolean, progress_bar?: string, facebook_pixel?: string, hide_navigation?: boolean, google_analytics?: string, autosave_progress?: boolean, show_progress_bar?: boolean, are_uploads_public?: boolean, google_tag_manager?: string, show_cookie_consent?: boolean, free_form_navigation?: boolean, show_question_number?: boolean, pro_subdomain_enabled?: boolean, show_time_to_complete?: boolean, show_typeform_branding?: boolean, show_key_hint_on_choices?: boolean, redirect_after_submit_url?: string, show_number_of_submissions?: boolean, capabilities?: {}, notifications?: {} }"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ href?: string }"
+          },
+          {
+            "key": "welcome_screens",
+            "optional": true,
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, show_button?: boolean, description?: string } }[]"
+          },
+          {
+            "key": "thankyou_screens",
+            "optional": true,
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, button_mode?: string, redirect_url?: string, show_button?: boolean, description?: string, share_icons?: boolean } }[]"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "cui_settings",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "captcha",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duplicate_prevention",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.forms.delete",
+      "shortPath": "forms.delete",
+      "description": "Permanently delete a form",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "typeform.api.forms.get",
+      "shortPath": "forms.get",
+      "description": "Get a form by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ id?: string, ref?: string, type?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { fields?: any[], choices?: any[], randomize?: boolean, hide_marks?: boolean, button_text?: string, description?: string, allow_other_choice?: boolean, alphabetical_order?: boolean, vertical_alignment?: boolean, allow_multiple_selection?: boolean }, validations?: { required?: boolean, max_value?: number, min_value?: number, max_length?: number, min_length?: number } }[]"
+          },
+          {
+            "key": "logic",
+            "optional": true,
+            "type": "{ ref?: string, type?: string, actions?: any[] }[]"
+          },
+          {
+            "key": "theme",
+            "optional": true,
+            "type": "{ href?: string }"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ is_trial?: boolean, language?: string, is_public?: boolean, progress_bar?: string, facebook_pixel?: string, hide_navigation?: boolean, google_analytics?: string, autosave_progress?: boolean, show_progress_bar?: boolean, are_uploads_public?: boolean, google_tag_manager?: string, show_cookie_consent?: boolean, free_form_navigation?: boolean, show_question_number?: boolean, pro_subdomain_enabled?: boolean, show_time_to_complete?: boolean, show_typeform_branding?: boolean, show_key_hint_on_choices?: boolean, redirect_after_submit_url?: string, show_number_of_submissions?: boolean, capabilities?: {}, notifications?: {} }"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ href?: string }"
+          },
+          {
+            "key": "welcome_screens",
+            "optional": true,
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, show_button?: boolean, description?: string } }[]"
+          },
+          {
+            "key": "thankyou_screens",
+            "optional": true,
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, button_mode?: string, redirect_url?: string, show_button?: boolean, description?: string, share_icons?: boolean } }[]"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "cui_settings",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "captcha",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duplicate_prevention",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.forms.getMessages",
+      "shortPath": "forms.getMessages",
+      "description": "Get custom messages for a form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "block",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.forms.list",
+      "shortPath": "forms.list",
+      "description": "List all forms in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "created_at | last_updated_at"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, title?: string, created_at?: string, last_updated_at?: string, settings?: { is_public?: boolean }, theme?: { href?: string }, _links?: {} }[]"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_items",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.forms.patch",
+      "shortPath": "forms.patch",
+      "description": "Partially update a form using JSON Patch operations",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "operations",
+            "optional": false,
+            "type": "{ op: add | remove | replace | move | copy | test, path: string, value?: any, from?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "typeform.api.forms.update",
+      "shortPath": "forms.update",
+      "description": "Replace a form with a new version (PUT)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ id?: string, ref?: string, type?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { fields?: any[], choices?: any[], randomize?: boolean, hide_marks?: boolean, button_text?: string, description?: string, allow_other_choice?: boolean, alphabetical_order?: boolean, vertical_alignment?: boolean, allow_multiple_selection?: boolean }, validations?: { required?: boolean, max_value?: number, min_value?: number, max_length?: number, min_length?: number } }[]"
+          },
+          {
+            "key": "logic",
+            "optional": true,
+            "type": "{ ref?: string, type?: string, actions?: any[] }[]"
+          },
+          {
+            "key": "theme",
+            "optional": true,
+            "type": "{ href: string }"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ is_trial?: boolean, language?: string, is_public?: boolean, progress_bar?: string, facebook_pixel?: string, hide_navigation?: boolean, google_analytics?: string, autosave_progress?: boolean, show_progress_bar?: boolean, are_uploads_public?: boolean, google_tag_manager?: string, show_cookie_consent?: boolean, free_form_navigation?: boolean, show_question_number?: boolean, pro_subdomain_enabled?: boolean, show_time_to_complete?: boolean, show_typeform_branding?: boolean, show_key_hint_on_choices?: boolean, redirect_after_submit_url?: string, show_number_of_submissions?: boolean, capabilities?: {}, notifications?: {} }"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ href: string }"
+          },
+          {
+            "key": "welcome_screens",
+            "optional": true,
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, show_button?: boolean, description?: string } }[]"
+          },
+          {
+            "key": "thankyou_screens",
+            "optional": true,
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, button_mode?: string, redirect_url?: string, show_button?: boolean, description?: string, share_icons?: boolean } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ id?: string, ref?: string, type?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { fields?: any[], choices?: any[], randomize?: boolean, hide_marks?: boolean, button_text?: string, description?: string, allow_other_choice?: boolean, alphabetical_order?: boolean, vertical_alignment?: boolean, allow_multiple_selection?: boolean }, validations?: { required?: boolean, max_value?: number, min_value?: number, max_length?: number, min_length?: number } }[]"
+          },
+          {
+            "key": "logic",
+            "optional": true,
+            "type": "{ ref?: string, type?: string, actions?: any[] }[]"
+          },
+          {
+            "key": "theme",
+            "optional": true,
+            "type": "{ href?: string }"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ is_trial?: boolean, language?: string, is_public?: boolean, progress_bar?: string, facebook_pixel?: string, hide_navigation?: boolean, google_analytics?: string, autosave_progress?: boolean, show_progress_bar?: boolean, are_uploads_public?: boolean, google_tag_manager?: string, show_cookie_consent?: boolean, free_form_navigation?: boolean, show_question_number?: boolean, pro_subdomain_enabled?: boolean, show_time_to_complete?: boolean, show_typeform_branding?: boolean, show_key_hint_on_choices?: boolean, redirect_after_submit_url?: string, show_number_of_submissions?: boolean, capabilities?: {}, notifications?: {} }"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ href?: string }"
+          },
+          {
+            "key": "welcome_screens",
+            "optional": true,
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, show_button?: boolean, description?: string } }[]"
+          },
+          {
+            "key": "thankyou_screens",
+            "optional": true,
+            "type": "{ ref?: string, title?: string, attachment?: { href?: string, type?: string, scale?: number, properties?: {} }, properties?: { button_text?: string, button_mode?: string, redirect_url?: string, show_button?: boolean, description?: string, share_icons?: boolean } }[]"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "cui_settings",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "captcha",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duplicate_prevention",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.forms.updateMessages",
+      "shortPath": "forms.updateMessages",
+      "description": "Update custom messages for a form",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label_button_submit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label_error_required",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label_buttonHint_default",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "block_shortText_placeholder",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label_buttonNoAnswer_default",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.images.create",
+      "shortPath": "images.create",
+      "description": "Upload a new image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "src",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "avg_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_alpha",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "media_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.images.delete",
+      "shortPath": "images.delete",
+      "description": "Permanently delete an image",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "typeform.api.images.getBackgroundBySize",
+      "shortPath": "images.getBackgroundBySize",
+      "description": "Get a background image at a specific size",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "src",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "avg_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_alpha",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "media_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.images.getBySize",
+      "shortPath": "images.getBySize",
+      "description": "Get an image at a specific size",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "src",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "avg_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_alpha",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "media_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.images.getChoiceImageBySize",
+      "shortPath": "images.getChoiceImageBySize",
+      "description": "Get a choice image at a specific size",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "src",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "avg_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_alpha",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "media_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.images.list",
+      "shortPath": "images.list",
+      "description": "List all images in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, src?: string, width?: number, height?: number, avg_color?: string, file_name?: string, has_alpha?: boolean, media_type?: string }[]"
+      }
+    },
+    {
+      "path": "typeform.api.me.get",
+      "shortPath": "me.get",
+      "description": "Get information about the authenticated Typeform account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.responses.delete",
+      "shortPath": "responses.delete",
+      "description": "Delete specific responses from a form",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "included_response_ids",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.responses.getAllFiles",
+      "shortPath": "responses.getAllFiles",
+      "description": "Get a ZIP archive of all files uploaded in responses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "typeform.api.responses.list",
+      "shortPath": "responses.list",
+      "description": "List responses submitted to a form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "response_type",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "answered_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "excluded_response_ids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "included_response_ids",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ token?: string, response_id?: string, submitted_at?: string, landed_at?: string, answers?: { type?: string, text?: string, email?: string, url?: string, date?: string, number?: number, boolean?: boolean, phone_number?: string, file_url?: string, choice?: { id?: string, ref?: string, label?: string, other?: string }, choices?: { ids?: string[], refs?: string[], labels?: string[], other?: string }, field?: { id?: string, ref?: string, type?: string }, payment?: {}, multi_format?: {} }[], calculated?: { score?: number }, metadata?: { browser?: string, referer?: string, platform?: string, network_id?: string, user_agent?: string }, hidden?: {}, variables?: { key?: string, type?: string, text?: string, number?: number }[] }[]"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_items",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.themes.create",
+      "shortPath": "themes.create",
+      "description": "Create a new theme",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "font",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "colors",
+            "optional": false,
+            "type": "{ answer?: string, button?: string, question?: string, background?: string }"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ alignment?: left | center, font_size?: small | medium | large }"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "background",
+            "optional": true,
+            "type": "{ href?: string, layout?: fullscreen | repeat | no-repeat, brightness?: number }"
+          },
+          {
+            "key": "rounded_corners",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_transparent_button",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "font",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rounded_corners",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_transparent_button",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "colors",
+            "optional": true,
+            "type": "{ answer?: string, button?: string, question?: string, background?: string }"
+          },
+          {
+            "key": "background",
+            "optional": true,
+            "type": "{ href?: string, layout?: fullscreen | repeat | no-repeat, brightness?: number }"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ alignment?: left | center, font_size?: small | medium | large }"
+          },
+          {
+            "key": "screens",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.themes.delete",
+      "shortPath": "themes.delete",
+      "description": "Permanently delete a theme",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "theme_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "typeform.api.themes.get",
+      "shortPath": "themes.get",
+      "description": "Get a theme by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "theme_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "font",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rounded_corners",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_transparent_button",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "colors",
+            "optional": true,
+            "type": "{ answer?: string, button?: string, question?: string, background?: string }"
+          },
+          {
+            "key": "background",
+            "optional": true,
+            "type": "{ href?: string, layout?: fullscreen | repeat | no-repeat, brightness?: number }"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ alignment?: left | center, font_size?: small | medium | large }"
+          },
+          {
+            "key": "screens",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.themes.list",
+      "shortPath": "themes.list",
+      "description": "List all themes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, name?: string, font?: string, visibility?: string, rounded_corners?: string, has_transparent_button?: boolean, colors?: { answer?: string, button?: string, question?: string, background?: string }, background?: { href?: string, layout?: fullscreen | repeat | no-repeat, brightness?: number }, fields?: { alignment?: left | center, font_size?: small | medium | large }, screens?: {} }[]"
+          },
+          {
+            "key": "page_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_items",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.themes.patch",
+      "shortPath": "themes.patch",
+      "description": "Partially update a theme",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "theme_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "font",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "colors",
+            "optional": true,
+            "type": "{ answer?: string, button?: string, question?: string, background?: string }"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ alignment?: left | center, font_size?: small | medium | large }"
+          },
+          {
+            "key": "screens",
+            "optional": true,
+            "type": "{ font_size?: string, alignment?: string }"
+          },
+          {
+            "key": "background",
+            "optional": true,
+            "type": "{ href?: string, layout?: fullscreen | repeat | no-repeat, brightness?: number }"
+          },
+          {
+            "key": "rounded_corners",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_transparent_button",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "font",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rounded_corners",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_transparent_button",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "colors",
+            "optional": true,
+            "type": "{ answer?: string, button?: string, question?: string, background?: string }"
+          },
+          {
+            "key": "background",
+            "optional": true,
+            "type": "{ href?: string, layout?: fullscreen | repeat | no-repeat, brightness?: number }"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ alignment?: left | center, font_size?: small | medium | large }"
+          },
+          {
+            "key": "screens",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.themes.update",
+      "shortPath": "themes.update",
+      "description": "Replace a theme with a new version (PUT)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "theme_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "font",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "colors",
+            "optional": false,
+            "type": "{ answer?: string, button?: string, question?: string, background?: string }"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ alignment?: left | center, font_size?: small | medium | large }"
+          },
+          {
+            "key": "screens",
+            "optional": true,
+            "type": "{ font_size?: string, alignment?: string }"
+          },
+          {
+            "key": "background",
+            "optional": true,
+            "type": "{ href?: string, layout?: fullscreen | repeat | no-repeat, brightness?: number }"
+          },
+          {
+            "key": "rounded_corners",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_transparent_button",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "font",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rounded_corners",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_transparent_button",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "colors",
+            "optional": true,
+            "type": "{ answer?: string, button?: string, question?: string, background?: string }"
+          },
+          {
+            "key": "background",
+            "optional": true,
+            "type": "{ href?: string, layout?: fullscreen | repeat | no-repeat, brightness?: number }"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ alignment?: left | center, font_size?: small | medium | large }"
+          },
+          {
+            "key": "screens",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.videos.upload",
+      "shortPath": "videos.upload",
+      "description": "Get a signed URL to upload a video for a form field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "upload_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transcode_status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.webhooksConfig.createOrUpdate",
+      "shortPath": "webhooksConfig.createOrUpdate",
+      "description": "Create or update a webhook configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verify_ssl",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "event_types",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verify_ssl",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "event_types",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.webhooksConfig.delete",
+      "shortPath": "webhooksConfig.delete",
+      "description": "Delete a webhook configuration",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.webhooksConfig.get",
+      "shortPath": "webhooksConfig.get",
+      "description": "Get a webhook configuration by tag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "form_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verify_ssl",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "event_types",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.webhooksConfig.list",
+      "shortPath": "webhooksConfig.list",
+      "description": "List all webhook configurations for a form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "form_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": true,
+            "type": "{ id?: string, tag?: string, url?: string, secret?: string, enabled?: boolean, form_id?: string, created_at?: string, updated_at?: string, verify_ssl?: boolean, event_types?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.workspaces.create",
+      "shortPath": "workspaces.create",
+      "description": "Create a new workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "{ href?: string }"
+          },
+          {
+            "key": "forms",
+            "optional": true,
+            "type": "{ href?: string, count?: number }"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ name?: string, role?: string, email?: string }[]"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.workspaces.createForAccount",
+      "shortPath": "workspaces.createForAccount",
+      "description": "Create a new workspace within a specific account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "{ href?: string }"
+          },
+          {
+            "key": "forms",
+            "optional": true,
+            "type": "{ href?: string, count?: number }"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ name?: string, role?: string, email?: string }[]"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.workspaces.delete",
+      "shortPath": "workspaces.delete",
+      "description": "Permanently delete a workspace",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "typeform.api.workspaces.get",
+      "shortPath": "workspaces.get",
+      "description": "Get a workspace by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "forms",
+            "optional": true,
+            "type": "{ href?: string, count?: number }"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ name?: string, role?: string, email?: string }[]"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.workspaces.list",
+      "shortPath": "workspaces.list",
+      "description": "List all workspaces",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaces",
+            "optional": true,
+            "type": "{ id?: string, href?: string, name?: string, forms?: { href?: string, count?: number }, members?: { name?: string, role?: string, email?: string }[], shared?: boolean, default?: boolean, account_id?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "typeform.api.workspaces.update",
+      "shortPath": "workspaces.update",
+      "description": "Update a workspace using JSON Patch operations",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "operations",
+            "optional": false,
+            "type": "{ op: add | remove | replace | move | copy | test, path: string, value?: any, from?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "typeform.webhooks.forms.formResponse",
+      "shortPath": "forms.formResponse",
+      "description": "A form was submitted — Typeform delivers the full response payload",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "form_response",
+            "optional": false,
+            "type": "{ form_id: string, token: string, submitted_at: string, landed_at: string, hidden?: {}, calculated?: { score?: number }, definition?: { id?: string, title?: string, fields?: {}[] }, answers?: {}[], variables?: { key?: string, type?: string, text?: string, number?: number }[], metadata?: { browser?: string, referer?: string, platform?: string, network_id?: string, user_agent?: string } }"
+          }
+        ]
+      },
+      "responseType": "{ event_id: string, event_type: string, form_response: { form_id: string, token: string, submitted_at: string, landed_at: string, hidden?: {}, calculated?: { score?: number }, definition?: { id?: string, title?: string, fields?: {}[] }, answers?: {}[], variables?: { key?: string, type?: string, text?: string, number?: number }[], metadata?: { browser?: string, referer?: string, platform?: string, network_id?: string, user_agent?: string } } }",
+      "usageExample": "typeform({\n    webhookHooks: {\n        forms: {\n            formResponse: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "typeform.db.forms.search",
+      "entityName": "forms",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "typeform.db.images.search",
+      "entityName": "images",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "src",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "width",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "height",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "avg_color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "file_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "has_alpha",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "media_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "typeform.db.responses.search",
+      "entityName": "responses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "response_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "form_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "submitted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "landed_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "typeform.db.themes.search",
+      "entityName": "themes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "font",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rounded_corners",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "has_transparent_button",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "typeform.db.webhookConfigs.search",
+      "entityName": "webhookConfigs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "form_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "verify_ssl",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "typeform.db.workspaces.search",
+      "entityName": "workspaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "href",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shared",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "default",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "account_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

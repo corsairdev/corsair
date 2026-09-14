@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "Field service management software for scheduling jobs, technicians, and service businesses."
+---
+
+Use **Ascora** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 22 typed API operations
+- 10 synced entities (`contacts`, `customers`, `inventoryCategories`, `jobs`, `kits`, `labourRoles`, and 4 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/ascora
+```
+```bash yarn
+yarn add corsair @corsair-dev/ascora
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/ascora
+```
+```bash bun
+bun add corsair @corsair-dev/ascora
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { ascora } from '@corsair-dev/ascora';
+
+export const corsair = createCorsair({
+	plugins: [
+		ascora(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+ascora()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'ascora',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`contacts.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ascora.api.contacts.get({});
+```
+
+
+**`attachments.upload`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ascora.api.attachments.upload({});
+```
+
+
+See the full list on the [API](/plugins/ascora/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.ascora.db.<entity>.search()` and `.list()`: `contacts`, `customers`, `inventoryCategories`, `jobs`, `kits`, `labourRoles`, `quotes`, `supplierInvoices`, `suppliers`, `supplies`.
+
+See [Database](/plugins/ascora/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/ascora/api">
+    Every `ascora.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/ascora/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

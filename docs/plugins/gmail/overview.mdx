@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Gmail plugin for Corsair"
+description: "Google email service for sending, reading, organizing messages, labels, and inbox automation."
 ---
 
 Use **Gmail** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -46,8 +46,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```
@@ -92,19 +92,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`drafts.get`**
+**List messages**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.gmail.api.drafts.get({});
+await tenant.gmail.api.messages.list({});
 ```
 
 
-**`drafts.create`**
+**Send an email**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.gmail.api.drafts.create({});
+await tenant.gmail.api.messages.send({ raw: 'RnJvbTogbWVAZXhhbXBsZS5jb20NClRvOiB0ZWFtbWF0ZUBleGFtcGxlLmNvbQ0KU3ViamVjdDogSGVsbG8gZnJvbSBDb3JzYWlyDQpDb250ZW50LVR5cGU6IHRleHQvcGxhaW47IGNoYXJzZXQ9dXRmLTgNCg0KSGVsbG8gZnJvbSBDb3JzYWly' });
 ```
 
 
@@ -112,15 +112,35 @@ See the full list on the [API](/plugins/gmail/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.gmail.db.<entity>.search()` and `.list()`: `drafts`, `labels`, `messages`, `threads`.
+Search synced messages without hitting Gmail.
 
-See [Database](/plugins/gmail/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.gmail.db.messages.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `drafts`, `labels`, `messages`, `threads`. See [Database](/plugins/gmail/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a Gmail message is received, deleted, or has its labels changed.
 
-See [Webhooks](/plugins/gmail/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+gmail({
+    webhookHooks: {
+        messageChanged: {
+            after: async (ctx, result) => {
+                console.log('Gmail event:', result.data);
+            }
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/gmail/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 
