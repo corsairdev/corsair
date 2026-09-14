@@ -1,7 +1,15 @@
+/**
+ * Unit test suite for Turso integration plugin endpoints.
+ *
+ * Tests all registered endpoint operations (`regions.closest`, `tokens.validate`,
+ * `changes.listen`), credential resolution, host security, fallback behaviors,
+ * and database change event mirroring.
+ */
+
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { TursoAPIError } from './client';
 import { Changes, Regions, Tokens } from './endpoints';
-import type { TursoContext } from './index';
+import type { TursoContext, TursoKeyBuilderContext } from './index';
 import { turso } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -16,7 +24,10 @@ const mockLog = logEventFromContext as jest.MockedFunction<
 const TEST_TOKEN = 'test-turso-token-123';
 const DB_URL = 'https://mydb-myorg.turso.io';
 
-const ctx = { key: TEST_TOKEN, options: {} } as unknown as TursoContext;
+const ctx: TursoContext = {
+	key: TEST_TOKEN,
+	options: {},
+} as unknown as TursoContext;
 
 const originalFetch = global.fetch;
 
@@ -29,20 +40,33 @@ afterAll(() => {
 	global.fetch = originalFetch;
 });
 
-const mockFetch = () => global.fetch as jest.MockedFunction<typeof fetch>;
+const mockFetch = (): jest.MockedFunction<typeof fetch> =>
+	global.fetch as jest.MockedFunction<typeof fetch>;
 
-function jsonResponse(payload: unknown, status = 200) {
+/**
+ * Creates a mock JSON Response object.
+ *
+ * @param payload - The response body to serialize as JSON.
+ * @param status - The HTTP response status code (default: 200).
+ * @returns A mocked Response instance.
+ */
+function jsonResponse(payload: unknown, status: number = 200): Response {
 	return {
 		ok: status >= 200 && status < 300,
 		status,
 		headers: new Headers({ 'content-type': 'application/json' }),
-		json: async () => payload,
-		text: async () => JSON.stringify(payload),
+		json: async (): Promise<unknown> => payload,
+		text: async (): Promise<string> => JSON.stringify(payload),
 	} as Response;
 }
 
-/** Builds a Response whose body streams the given SSE chunks. */
-function sseResponse(chunks: string[]) {
+/**
+ * Builds a Response whose body streams the given SSE chunks.
+ *
+ * @param chunks - Array of raw SSE text chunks to stream.
+ * @returns A mocked Response with a readable stream body.
+ */
+function sseResponse(chunks: string[]): Response {
 	const encoder = new TextEncoder();
 	let i = 0;
 	return {
@@ -51,11 +75,14 @@ function sseResponse(chunks: string[]) {
 		headers: new Headers({ 'content-type': 'text/event-stream' }),
 		body: {
 			getReader: () => ({
-				read: async () =>
+				read: async (): Promise<{
+					done: boolean;
+					value: Uint8Array | undefined;
+				}> =>
 					i < chunks.length
 						? { done: false, value: encoder.encode(chunks[i++]) }
 						: { done: true, value: undefined },
-				cancel: async () => undefined,
+				cancel: async (): Promise<void> => undefined,
 			}),
 		},
 	} as unknown as Response;
@@ -97,7 +124,10 @@ describe('plugin shape', () => {
 			keys: { get_api_key: jest.fn().mockResolvedValue(TEST_TOKEN) },
 		};
 		await expect(
-			plugin.keyBuilder?.(stored as never, 'endpoint'),
+			plugin.keyBuilder?.(
+				stored as unknown as TursoKeyBuilderContext,
+				'endpoint',
+			),
 		).resolves.toBe(TEST_TOKEN);
 
 		// A missing credential must raise, not resolve to an empty string.
@@ -106,11 +136,19 @@ describe('plugin shape', () => {
 			keys: { get_api_key: jest.fn().mockResolvedValue(null) },
 		};
 		await expect(
-			plugin.keyBuilder?.(empty as never, 'endpoint'),
+			plugin.keyBuilder?.(
+				empty as unknown as TursoKeyBuilderContext,
+				'endpoint',
+			),
 		).rejects.toBeInstanceOf(AuthMissingError);
 
 		await expect(
-			plugin.keyBuilder?.(stored as never, 'webhook' as never),
+			(
+				plugin.keyBuilder as unknown as (
+					ctx: unknown,
+					source: string,
+				) => Promise<string>
+			)?.(stored, 'webhook'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 });
@@ -485,9 +523,11 @@ describe('Changes.listen', () => {
 		const ids = upsertByEntityId.mock.calls.map((c) => c[0]);
 		expect(new Set(ids).size).toBe(3);
 		// Each row is still persisted in full.
-		expect(upsertByEntityId.mock.calls.map((c) => c[1].data.n)).toEqual([
-			1, 2, 3,
-		]);
+		expect(
+			upsertByEntityId.mock.calls.map(
+				(c) => (c[1] as { data: { n: number } }).data.n,
+			),
+		).toEqual([1, 2, 3]);
 	});
 
 	it('mirrors streamed events into the changeEvents entity', async () => {
