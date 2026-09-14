@@ -1521,9 +1521,7 @@ export function cloudcart<const T extends CloudcartPluginOptions>(
 			if (source === 'webhook') {
 				const secret =
 					options.webhookSecret ??
-					(await ctx.keys?.get_webhook_signature?.()) ??
-					options.key ??
-					(await ctx.keys?.get_api_key?.());
+					(await ctx.keys?.get_webhook_signature?.());
 				if (!secret) {
 					throw new AuthMissingError('cloudcart', 'webhook_signature');
 				}

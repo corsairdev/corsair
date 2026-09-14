@@ -4,7 +4,7 @@ import { ApiError } from 'corsair/http';
 export const errorHandlers = {
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			if (error instanceof ApiError) return error.status === 401;
 			const msg = error.message.toLowerCase();
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
 		},
@@ -12,25 +12,22 @@ export const errorHandlers = {
 	},
 	PERMISSION_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 403) return true;
+			if (error instanceof ApiError) return error.status === 403;
 			return error.message.toLowerCase().includes('forbidden');
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	NOT_FOUND_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 404) return true;
+			if (error instanceof ApiError) return error.status === 404;
 			return error.message.toLowerCase().includes('not found');
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
-			if (
-				error instanceof ApiError &&
-				(error.status === 400 || error.status === 422)
-			) {
-				return true;
+			if (error instanceof ApiError) {
+				return error.status === 400 || error.status === 422;
 			}
 			const msg = error.message.toLowerCase();
 			return msg.includes('unprocessable') || msg.includes('validation');
@@ -39,7 +36,7 @@ export const errorHandlers = {
 	},
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (error instanceof ApiError) return error.status === 429;
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
@@ -47,7 +44,7 @@ export const errorHandlers = {
 	},
 	SERVER_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status >= 500) return true;
+			if (error instanceof ApiError) return error.status >= 500;
 			const msg = error.message.toLowerCase();
 			return msg.includes('internal server') || msg.includes('unavailable');
 		},
