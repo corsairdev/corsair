@@ -225,6 +225,15 @@ describe('Designs.render', () => {
 		);
 	});
 
+	it('refuses redirects so the render key cannot leak cross-origin', async () => {
+		mockFetch().mockResolvedValueOnce(streamResponse(Buffer.from('x')));
+
+		await Designs.render(ctx, { designId: 'des_1' });
+
+		const [, calledOptions] = mockFetch().mock.calls[0]!;
+		expect(calledOptions?.redirect).toBe('error');
+	});
+
 	it('percent-encodes the design id into the render path', async () => {
 		mockFetch().mockResolvedValueOnce(streamResponse(Buffer.from('x')));
 

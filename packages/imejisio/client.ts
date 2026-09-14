@@ -154,6 +154,10 @@ export async function makeImejisioRenderRequest<T>(
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify(options.overrides ?? {}),
+			// undici keeps custom headers across a cross-origin redirect, which
+			// would hand the render key to whatever host the redirect names. No
+			// documented render response redirects, so refuse them outright.
+			redirect: 'error',
 			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
 		});
 	} catch (err) {
