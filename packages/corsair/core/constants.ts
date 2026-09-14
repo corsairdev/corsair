@@ -123,6 +123,7 @@ export const BaseProviders = [
 	'chatfai',
 	'chmeetings',
 	'circleci',
+	'classmarker',
 	'clickhouse',
 	'clientary',
 	'clockify',
@@ -412,6 +413,7 @@ export const ProviderDisplayNames = {
 	chatfai: 'ChatFAI',
 	chmeetings: 'ChMeetings',
 	circleci: 'CircleCI',
+	classmarker: 'ClassMarker',
 	clickhouse: 'Clickhouse',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
@@ -708,6 +710,7 @@ export type AllProviders =
 	| 'chatfai'
 	| 'chmeetings'
 	| 'circleci'
+	| 'classmarker'
 	| 'clickhouse'
 	| 'clientary'
 	| 'clockify'
