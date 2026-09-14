@@ -32,7 +32,7 @@ Closed integration platforms keep your users' tokens and data on infrastructure 
 
 We welcome PRs for the core library, docs, tooling, and new integration plugins. Read [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow.
 
-For a new integration, claim it on the [OSS Integrations page](https://corsair.dev/oss) before you start, then open an issue with the API you want to add. Questions? Ask in [Discord](https://discord.gg/uNgCP3mSzU).
+For a new integration, claim it on the [OSS Integrations page](https://corsair.dev/oss) before you start, then open an integration issue (it assigns to you). Questions? Ask in [Discord](https://discord.gg/uNgCP3mSzU).
 
 ---
 ## License
