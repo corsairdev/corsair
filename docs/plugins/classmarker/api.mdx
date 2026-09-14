@@ -20,10 +20,7 @@ Add access-list codes for a link exam.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.accessLists.addCodes({
-  access_list_id: 123456,
-  access_codes: ['USER-001', 'USER-002'],
-});
+await corsair.classmarker.api.accessLists.addCodes({});
 ```
 
 **Input**
@@ -91,10 +88,7 @@ Delete access-list codes for a link exam.
 **Risk:** `destructive`
 
 ```ts
-await corsair.classmarker.api.accessLists.deleteCodes({
-  access_list_id: 123456,
-  access_codes: ['USER-001'],
-});
+await corsair.classmarker.api.accessLists.deleteCodes({});
 ```
 
 **Input**
@@ -164,9 +158,7 @@ Delete a ClassMarker API key by id.
 **Risk:** `destructive`
 
 ```ts
-await corsair.classmarker.api.apiKeys.delete({
-  api_key_id: 42,
-});
+await corsair.classmarker.api.apiKeys.delete({});
 ```
 
 **Input**
@@ -219,10 +211,7 @@ Create a category under a parent category.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.categories.create({
-  category_name: 'Algebra',
-  parent_category_id: 12,
-});
+await corsair.classmarker.api.categories.create({});
 ```
 
 **Input**
@@ -292,9 +281,7 @@ Create a parent category in the question bank.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.categories.createParent({
-  parent_category_name: 'Mathematics',
-});
+await corsair.classmarker.api.categories.createParent({});
 ```
 
 **Input**
@@ -427,11 +414,7 @@ Update a category and optionally re-parent it.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.categories.update({
-  category_id: 34,
-  category_name: 'Advanced Algebra',
-  parent_category_id: 12,
-});
+await corsair.classmarker.api.categories.update({});
 ```
 
 **Input**
@@ -502,10 +485,7 @@ Update a parent category in the question bank.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.categories.updateParent({
-  parent_category_id: 12,
-  parent_category_name: 'Mathematics and Logic',
-});
+await corsair.classmarker.api.categories.updateParent({});
 ```
 
 **Input**
@@ -634,9 +614,7 @@ Create a new ClassMarker group.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.groups.create({
-  group_name: 'Internal Accounts Department',
-});
+await corsair.classmarker.api.groups.create({});
 ```
 
 **Input**
@@ -687,9 +665,7 @@ Delete a ClassMarker group.
 **Risk:** `destructive`
 
 ```ts
-await corsair.classmarker.api.groups.delete({
-  group_id: 29765,
-});
+await corsair.classmarker.api.groups.delete({});
 ```
 
 **Input**
@@ -740,9 +716,7 @@ Get details for a specific ClassMarker group.
 **Risk:** `read`
 
 ```ts
-await corsair.classmarker.api.groups.get({
-  group_id: 29765,
-});
+await corsair.classmarker.api.groups.get({});
 ```
 
 **Input**
@@ -883,19 +857,7 @@ Create a new question in the question bank.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.questions.create({
-  question: {
-    question: 'What is 2 + 2?',
-    question_type: 'multiplechoice',
-    category_id: 34,
-    points: 1,
-    options: {
-      A: { content: '3' },
-      B: { content: '4' },
-    },
-    correct_options: ['B'],
-  },
-});
+await corsair.classmarker.api.questions.create({});
 ```
 
 **Input**
@@ -992,9 +954,7 @@ Get one question from the question bank.
 **Risk:** `read`
 
 ```ts
-await corsair.classmarker.api.questions.get({
-  question_id: 53353998,
-});
+await corsair.classmarker.api.questions.get({});
 ```
 
 **Input**
@@ -1132,20 +1092,7 @@ Update an existing question in the question bank.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.questions.update({
-  question_id: 53353998,
-  question: {
-    question: 'What is 3 + 3?',
-    question_type: 'multiplechoice',
-    category_id: 34,
-    points: 1,
-    options: {
-      A: { content: '5' },
-      B: { content: '6' },
-    },
-    correct_options: ['B'],
-  },
-});
+await corsair.classmarker.api.questions.update({});
 ```
 
 **Input**
@@ -1509,10 +1456,7 @@ Fetch recent results for one group/test pair.
 **Risk:** `read`
 
 ```ts
-await corsair.classmarker.api.recentResults.forGroupExam({
-  group_id: 29765,
-  test_id: 64776,
-});
+await corsair.classmarker.api.recentResults.forGroupExam({});
 ```
 
 **Input**
@@ -1641,10 +1585,7 @@ Fetch recent results for one link/test pair.
 **Risk:** `read`
 
 ```ts
-await corsair.classmarker.api.recentResults.forLinkExam({
-  link_id: 38676,
-  test_id: 48756,
-});
+await corsair.classmarker.api.recentResults.forLinkExam({});
 ```
 
 **Input**
@@ -1785,10 +1726,7 @@ Delete one link assignment from a test.
 **Risk:** `destructive`
 
 ```ts
-await corsair.classmarker.api.tests.deleteLink({
-  link_id: 38676,
-  test_id: 48756,
-});
+await corsair.classmarker.api.tests.deleteLink({});
 ```
 
 **Input**
@@ -1840,9 +1778,7 @@ Get details for a specific ClassMarker test.
 **Risk:** `read`
 
 ```ts
-await corsair.classmarker.api.tests.get({
-  test_id: 48756,
-});
+await corsair.classmarker.api.tests.get({});
 ```
 
 **Input**
@@ -1960,12 +1896,7 @@ Create a new ClassMarker user.
 **Risk:** `write`
 
 ```ts
-await corsair.classmarker.api.users.create({
-  first_name: 'Ada',
-  last_name: 'Lovelace',
-  email: 'ada@example.com',
-  group_ids: [29765],
-});
+await corsair.classmarker.api.users.create({});
 ```
 
 **Input**
@@ -2019,9 +1950,7 @@ Delete an existing ClassMarker user.
 **Risk:** `destructive`
 
 ```ts
-await corsair.classmarker.api.users.delete({
-  user_id: 1024,
-});
+await corsair.classmarker.api.users.delete({});
 ```
 
 **Input**
@@ -2072,9 +2001,7 @@ Get details for one ClassMarker user.
 **Risk:** `read`
 
 ```ts
-await corsair.classmarker.api.users.get({
-  user_id: 1024,
-});
+await corsair.classmarker.api.users.get({});
 ```
 
 **Input**
@@ -2133,9 +2060,7 @@ List users in your ClassMarker account.
 **Risk:** `read`
 
 ```ts
-await corsair.classmarker.api.users.list({
-  page: 1,
-});
+await corsair.classmarker.api.users.list({});
 ```
 
 **Input**
@@ -2230,9 +2155,7 @@ Delete a ClassMarker webhook.
 **Risk:** `destructive`
 
 ```ts
-await corsair.classmarker.api.webhooks.delete({
-  webhook_id: 77,
-});
+await corsair.classmarker.api.webhooks.delete({});
 ```
 
 **Input**
@@ -2328,3 +2251,4 @@ await corsair.classmarker.api.webhooks.list({});
 
 
 ---
+
