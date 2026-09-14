@@ -193,12 +193,11 @@ describe('Docupost endpoints', () => {
 		);
 	});
 
-	it('maps letters to sendletter with query params and html body', async () => {
-		await docupost({ key: 'test-api-token' }).endpoints!.send.letter(mockCtx, {
-			...letterInput,
-			pdf_url: undefined,
-			html: '<p>Hello</p>',
-		} as never);
+	it('maps letters to sendletter with query params', async () => {
+		await docupost({ key: 'test-api-token' }).endpoints!.send.letter(
+			mockCtx,
+			letterInput,
+		);
 
 		const call = mockRequest.mock.calls[0]?.[1];
 		expect(call.method).toBe('POST');
@@ -215,8 +214,8 @@ describe('Docupost endpoints', () => {
 				api_token: 'test-api-token',
 			}),
 		);
-		expect(call.query.pdf).toBeUndefined();
-		expect(call.body).toEqual({ html: '<p>Hello</p>' });
+		expect(call.query.pdf).toBe('https://example.com/letter.pdf');
+		expect(call.body).toBeUndefined();
 	});
 
 	it('maps postcards to sendpostcard with image urls', async () => {
@@ -237,7 +236,7 @@ describe('Docupost endpoints', () => {
 		);
 	});
 
-	it('rejects a letter with neither pdf nor html', async () => {
+	it('rejects a letter without pdf', async () => {
 		await expect(async () => {
 			await docupost({ key: 'test-api-token' }).endpoints!.send.letter(
 				mockCtx,
@@ -247,11 +246,15 @@ describe('Docupost endpoints', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
-	it('rejects a letter with both pdf and html', async () => {
+	it('rejects a letter with html only because provider requires pdf', async () => {
 		await expect(async () => {
 			await docupost({ key: 'test-api-token' }).endpoints!.send.letter(
 				mockCtx,
-				{ ...letterInput, html: '<p>Hello</p>' },
+				{
+					...letterInput,
+					pdf_url: undefined,
+					html: '<p>Hello</p>',
+				} as never,
 			);
 		}).rejects.toThrow(/input validation failed/i);
 	});
@@ -269,16 +272,14 @@ describe('Docupost endpoints', () => {
 	});
 
 	it('does not log letter html or addresses in the event payload', async () => {
-		await docupost({ key: 'test-api-token' }).endpoints!.send.letter(mockCtx, {
-			...letterInput,
-			pdf_url: undefined,
-			html: '<p>Secret content</p>',
-		} as never);
+		await docupost({ key: 'test-api-token' }).endpoints!.send.letter(
+			mockCtx,
+			letterInput,
+		);
 
 		expect(mockLogEvent).toHaveBeenCalledTimes(1);
 		const payload = mockLogEvent.mock.calls[0]?.[2] as Record<string, unknown>;
-		expect(payload).toEqual({ operation: 'sendletter', has_pdf: false });
-		expect(JSON.stringify(payload)).not.toContain('Secret content');
+		expect(payload).toEqual({ operation: 'sendletter', has_pdf: true });
 		expect(JSON.stringify(payload)).not.toContain('John Doe');
 		expect(JSON.stringify(payload)).not.toContain('123 Main St');
 		expect(mockRequest.mock.calls.length).toBe(1);

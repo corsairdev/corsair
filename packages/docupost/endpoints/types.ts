@@ -31,12 +31,9 @@ const AddressFields = {
 const SendLetterInputSchema = z
 	.object({
 		...AddressFields,
-		pdf_url: z.string().url().optional(),
-		html: z.string().max(9000).optional(),
+		pdf_url: z.string().url(),
 	})
-	.refine((value) => Boolean(value.pdf_url) !== Boolean(value.html), {
-		message: 'exactly one of pdf_url or html is required',
-	});
+	.loose();
 
 export type SendLetterInput = z.infer<typeof SendLetterInputSchema>;
 

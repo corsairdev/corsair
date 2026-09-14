@@ -83,7 +83,6 @@ export const sendLetter = async (
 		from_state,
 		from_zip,
 		pdf_url,
-		html,
 	} = parsed;
 
 	const query: Record<string, string | undefined> = {
@@ -105,7 +104,6 @@ export const sendLetter = async (
 	>('sendletter', ctx.key, {
 		method: 'POST',
 		query,
-		body: html ? { html } : undefined,
 		outputSchema: DocupostEndpointOutputSchemas.sendLetter,
 	});
 
