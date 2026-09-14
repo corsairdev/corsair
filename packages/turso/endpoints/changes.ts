@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { AuthMissingError, asRecord, logEventFromContext } from 'corsair/core';
 import {
 	parseSseBuffer,
@@ -72,11 +73,9 @@ export const listen: TursoEndpoints['listenToChanges'] = async (
 	const base = input.databaseUrl.replace(/\/$/, '');
 
 	// The database host takes a database auth token, not the platform API token.
-	// Fall back to ctx.key so a single-credential setup still works.
-	const databaseToken =
-		ctx.options?.databaseToken ??
-		(await ctx.keys?.get_database_token?.().catch(() => undefined)) ??
-		ctx.key;
+	// Optional by design: falls back to ctx.key so a single-credential setup
+	// keeps working rather than being reported as incomplete.
+	const databaseToken = ctx.options?.databaseToken ?? ctx.key;
 
 	const url = new URL(`${base}/beta/listen`);
 	url.searchParams.set('table', input.table);
@@ -187,26 +186,19 @@ export const listen: TursoEndpoints['listenToChanges'] = async (
 	const parsed = ListenToChangesResponseSchema.parse(result);
 
 	if (parsed.mode === 'stream' && ctx.db?.changeEvents) {
-		for (const [index, event] of parsed.events.entries()) {
-			// receivedAt is only millisecond-precise, so frames decoded in the
-			// same tick would collide. Prefer a provider row id when the payload
-			// carries one, and fall back to the position within this batch.
-			const rowId = event.data?.id;
-			const suffix =
-				typeof rowId === 'string' || typeof rowId === 'number'
-					? String(rowId)
-					: `${event.receivedAt}:${index}`;
+		for (const event of parsed.events) {
+			// Each received event is a distinct observation, so it gets its own
+			// identity. A row id would key by row — repeated changes to the same
+			// row would overwrite each other — and a timestamp/index pair can
+			// repeat across separate listener calls.
 			try {
-				await ctx.db.changeEvents.upsertByEntityId(
-					`${base}:${event.table}:${event.action}:${suffix}`,
-					{
-						databaseUrl: base,
-						table: event.table,
-						action: event.action,
-						receivedAt: event.receivedAt,
-						data: event.data ?? null,
-					},
-				);
+				await ctx.db.changeEvents.upsertByEntityId(randomUUID(), {
+					databaseUrl: base,
+					table: event.table,
+					action: event.action,
+					receivedAt: event.receivedAt,
+					data: event.data ?? null,
+				});
 			} catch (error) {
 				console.warn('Failed to save Turso change event to database:', error);
 			}

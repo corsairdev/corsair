@@ -55,12 +55,15 @@ export type TursoPluginOptions = {
 /**
  * Auth configuration. Turso issues a single platform API token, stored in the
  * standard `api_key` account field.
+ *
+ * The database-scoped token stays out of `account` on purpose: declaring it
+ * here would make Corsair's setup and auth-status flows treat it as required,
+ * reporting a working single-token configuration as incomplete. It is supplied
+ * through the optional `databaseToken` option instead.
  */
 export const tursoAuthConfig = {
 	api_key: {
-		// Turso issues database auth tokens separately from the platform API
-		// token; the database host rejects the latter.
-		account: ['database_token'] as const,
+		account: [] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
