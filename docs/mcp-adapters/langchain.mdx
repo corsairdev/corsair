@@ -1,0 +1,157 @@
+---
+title: LangChain
+icon: "/icons/langchain.svg"
+description: Expose Corsair's 200+ integrations to LangChain.js and LangGraph agents as tools.
+---
+
+`corsairTools` turns a Corsair instance into [LangChain.js](https://docs.langchain.com/oss/javascript) tools, one tool per API operation. Hand them to `createReactAgent({ tools })` or `model.bindTools(...)` and the model can call Slack, GitHub, Gmail, Linear, Stripe, and the rest of the [plugin catalog](/guides/plugins).
+
+The credentials never leave your database. Corsair runs OAuth server-side, stores the encrypted tokens under your own key, and the tool call reads them at execution time. The model sees tool names and results, never a token.
+
+## Install
+
+<CodeGroup>
+```bash npm
+npm install @corsair-dev/langchain @langchain/core corsair
+```
+```bash pnpm
+pnpm add @corsair-dev/langchain @langchain/core corsair
+```
+```bash yarn
+yarn add @corsair-dev/langchain @langchain/core corsair
+```
+</CodeGroup>
+
+Then add one `@corsair-dev/*` package per service you connect, plus your LangChain model and agent runtime:
+
+```bash
+npm install @corsair-dev/slack        # one per integration
+npm install @langchain/openai @langchain/langgraph
+```
+
+<Note>
+`@langchain/core` is a peer dependency. The adapter imports it lazily, so installing `@corsair-dev/langchain` alone never pulls LangChain into a project that does not use this entrypoint.
+</Note>
+
+## Quickstart
+
+<Steps>
+<Step title="Create the Corsair instance">
+Build it once and reuse it. `authType: 'managed'` lets Corsair hold the OAuth connection; the tokens stay encrypted in your database under your `kek`.
+
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { slack } from '@corsair-dev/slack';
+import { database } from './db';
+
+export const corsair = createCorsair({
+  plugins: [slack({ authType: 'managed' })],
+  database,
+  kek: process.env.CORSAIR_KEK,
+  hub: { projectApiKey: process.env.CORSAIR_API_KEY },
+});
+```
+</Step>
+
+<Step title="Build the tools">
+`corsairTools` is async. It returns one `DynamicStructuredTool` per operation, ready for any LangChain agent.
+
+```ts
+import { corsairTools } from '@corsair-dev/langchain';
+import { corsair } from './corsair';
+
+const tools = await corsairTools({ corsair, plugin: 'slack' });
+```
+</Step>
+
+<Step title="Give them to an agent">
+```ts agent.ts
+import { ChatOpenAI } from '@langchain/openai';
+import { createReactAgent } from '@langchain/langgraph/prebuilt';
+import { corsairTools } from '@corsair-dev/langchain';
+import { corsair } from './corsair';
+
+const tools = await corsairTools({ corsair, plugin: 'slack' });
+
+const llm = new ChatOpenAI({
+  model: 'gpt-4.1-mini',
+  configuration: {
+    baseURL: 'https://llm.corsair.dev/v1',
+    apiKey: process.env.LITELLM_API_KEY,
+  },
+});
+
+const agent = createReactAgent({ llm, tools });
+
+const result = await agent.invoke({
+  messages: [{ role: 'user', content: 'List the Slack channels.' }],
+});
+console.log(result.messages.at(-1)?.content);
+```
+</Step>
+</Steps>
+
+<Tip>
+Route model calls through the Corsair LLM gateway (`llm.corsair.dev`, OpenAI-compatible) to keep spend on budget-limited keys. Point any `@langchain/openai` model at it with the `configuration.baseURL` shown above. See [LLM gateway](/llm-gateway).
+</Tip>
+
+## Choosing which tools
+
+Scope the toolset so the model only sees what the task needs. Fewer tools means cleaner prompts and fewer wrong turns.
+
+```ts
+// A whole plugin, as a toolkit:
+await corsairTools({ corsair, plugin: 'slack' });
+
+// Specific operations only:
+await corsairTools({
+  corsair,
+  operations: ['slack.api.channels.list', 'slack.api.messages.post'],
+});
+
+// Every operation of every registered plugin (omit both):
+await corsairTools({ corsair });
+```
+
+## Multi-tenancy
+
+On a multi-tenant instance, pin the tenant whose stored credentials the tools should use. Each tenant owns its own connections, so the same code serves every user:
+
+```ts
+const tools = await corsairTools({
+  corsair,
+  plugin: 'slack',
+  tenantId: user.orgId,
+});
+```
+
+Single-tenant instances ignore `tenantId`.
+
+## API
+
+```ts
+function corsairTools(options: CorsairToolsOptions): Promise<DynamicStructuredTool[]>
+```
+
+<ParamField path="corsair" type="CorsairInstance" required>
+  The value from `createCorsair()` (or `corsair.withTenant(...)`).
+</ParamField>
+<ParamField path="plugin" type="string">
+  Include every operation of one plugin. Omit `plugin` and `operations` to include all registered plugins.
+</ParamField>
+<ParamField path="operations" type="string[]">
+  Include only these operation paths, e.g. `slack.api.channels.list`.
+</ParamField>
+<ParamField path="tenantId" type="string">
+  Use the stored credentials of this tenant. Ignored on single-tenant instances.
+</ParamField>
+
+## Notes
+
+- **Tool names.** The operation path becomes the tool name with `.` replaced by `_` (`slack.api.channels.list` becomes `slack_api_channels_list`), so it satisfies the model's function-name constraint.
+- **Schemas.** Corsair is on Zod v4, which current `@langchain/core` accepts directly. No JSON Schema conversion step.
+- **Results.** String results pass through; anything else is JSON-encoded into the tool message the model reads.
+
+<Warning>
+The tool runs whatever operation the model picks with the tenant's real credentials. Scope with `plugin` or `operations` so an agent can only reach the APIs the task actually needs.
+</Warning>
