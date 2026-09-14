@@ -11,6 +11,7 @@ import { linear } from '@corsair-dev/linear';
 import { onedrive } from '@corsair-dev/onedrive';
 import { sharepoint } from '@corsair-dev/sharepoint';
 import { slack } from '@corsair-dev/slack';
+import { tpscheck } from '@corsair-dev/tpscheck';
 import { twilio } from '@corsair-dev/twilio';
 import { vapi } from '@corsair-dev/vapi';
 import { createCorsair } from 'corsair';
@@ -62,5 +63,8 @@ export const corsair = createCorsair({
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
 		}),
 		instagram(),
+		tpscheck({
+			key: process.env.TPSCHECK_API_KEY,
+		}),
 	],
 });

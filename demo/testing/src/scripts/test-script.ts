@@ -18,6 +18,26 @@ async function setInstagramCredentials() {
 	}
 }
 
+async function runTpscheckExamples() {
+	// 1. Health check (public)
+	const status = await corsair.tpscheck.api.status.get({});
+	console.log('TPSCheck status:', status);
+
+	// 2. Check remaining credits (requires TPSCHECK_API_KEY)
+	// const credits = await corsair.tpscheck.api.credits.get({});
+	// console.log('TPSCheck credits:', credits);
+
+	// 3. Single number check (requires TPSCHECK_API_KEY)
+	// const check = await corsair.tpscheck.api.check.post({ phone: '01829 830730' });
+	// console.log('TPSCheck check result:', check);
+
+	// 4. Batch check (requires TPSCHECK_API_KEY)
+	// const batch = await corsair.tpscheck.api.batch.post({
+	// 	phones: ['01564 331484', '01953 498974'],
+	// });
+	// console.log('TPSCheck batch result:', batch);
+}
+
 const main = async () => {
 	const res = await corsair.slack.api.messages.post({
 		channel: 'general',

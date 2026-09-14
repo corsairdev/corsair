@@ -81,7 +81,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:api": "jest --testPathPattern=api\\.test\\.ts",
-    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsup",
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && node --max-old-space-size=4096 ./node_modules/tsup/dist/cli-default.js",
     "build:watch": "tsup --watch",
     "postinstall": "node scripts/postinstall-frpc.mjs",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
