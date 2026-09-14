@@ -416,6 +416,12 @@ describe('Changes.listen', () => {
 		);
 	});
 
+	it('does not require a database token in the account fields', () => {
+		// Declaring it would make Corsair report a working single-token setup as
+		// incomplete.
+		expect(turso().authConfig?.api_key?.account).toEqual([]);
+	});
+
 	it('falls back to the platform token when no database token is set', async () => {
 		mockFetch().mockResolvedValueOnce(sseResponse([]));
 
@@ -431,7 +437,7 @@ describe('Changes.listen', () => {
 		);
 	});
 
-	it('gives same-millisecond events distinct ids', async () => {
+	it('gives every received event its own identity', async () => {
 		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
 		const dbCtx = {
 			key: TEST_TOKEN,
@@ -439,41 +445,26 @@ describe('Changes.listen', () => {
 			db: { changeEvents: { upsertByEntityId } },
 		} as unknown as TursoContext;
 
-		// Two payloads with no row id, decoded in the same tick.
+		// Three changes to the SAME row — keying by row id would collapse them.
 		mockFetch().mockResolvedValueOnce(
-			sseResponse(['data: {"a":1}\n\ndata: {"a":2}\n\n']),
+			sseResponse([
+				'data: {"id":42,"n":1}\n\ndata: {"id":42,"n":2}\n\ndata: {"id":42,"n":3}\n\n',
+			]),
 		);
 
 		await Changes.listen(dbCtx, {
 			databaseUrl: DB_URL,
 			table: 'users',
-			action: 'insert',
+			action: 'update',
 		});
 
-		expect(upsertByEntityId).toHaveBeenCalledTimes(2);
+		expect(upsertByEntityId).toHaveBeenCalledTimes(3);
 		const ids = upsertByEntityId.mock.calls.map((c) => c[0]);
-		expect(new Set(ids).size).toBe(2);
-	});
-
-	it('keys a change event by its provider row id when present', async () => {
-		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
-		const dbCtx = {
-			key: TEST_TOKEN,
-			options: {},
-			db: { changeEvents: { upsertByEntityId } },
-		} as unknown as TursoContext;
-
-		mockFetch().mockResolvedValueOnce(sseResponse(['data: {"id":42}\n\n']));
-
-		await Changes.listen(dbCtx, {
-			databaseUrl: DB_URL,
-			table: 'users',
-			action: 'insert',
-		});
-
-		expect(upsertByEntityId.mock.calls[0]![0]).toBe(
-			`${DB_URL}:users:insert:42`,
-		);
+		expect(new Set(ids).size).toBe(3);
+		// Each row is still persisted in full.
+		expect(upsertByEntityId.mock.calls.map((c) => c[1].data.n)).toEqual([
+			1, 2, 3,
+		]);
 	});
 
 	it('mirrors streamed events into the changeEvents entity', async () => {
@@ -494,7 +485,10 @@ describe('Changes.listen', () => {
 
 		expect(upsertByEntityId).toHaveBeenCalledTimes(1);
 		const [entityId, row] = upsertByEntityId.mock.calls[0]!;
-		expect(entityId).toContain('orders:insert');
+		// Identity is per received event, not derived from the row.
+		expect(entityId).toMatch(
+			/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+		);
 		expect(row).toMatchObject({
 			databaseUrl: DB_URL,
 			table: 'orders',
