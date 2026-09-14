@@ -44,11 +44,22 @@ describe('errorHandlers routing', () => {
 });
 
 describe('errorHandlers retry strategies', () => {
-	it('backs off on rate limits', async () => {
-		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
+	it('backs off on rate limits and keeps the Retry-After metadata', async () => {
+		const error = new TursoAPIError('slow down', undefined, 429, 30_000);
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
+		).resolves.toEqual({
 			maxRetries: 5,
 			retryStrategy: 'exponential_backoff',
+			headersRetryAfterMs: 30_000,
 		});
+	});
+
+	it('backs off without a hint when Retry-After was absent', async () => {
+		const error = new TursoAPIError('slow down', undefined, 429);
+		const strategy = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
+		expect(strategy.maxRetries).toBe(5);
+		expect(strategy.headersRetryAfterMs).toBeUndefined();
 	});
 
 	it('retries server errors a bounded number of times', async () => {

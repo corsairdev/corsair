@@ -331,6 +331,36 @@ describe('Changes.listen', () => {
 		expect(mockFetch()).not.toHaveBeenCalled();
 	});
 
+	it('refuses to send the bearer token to a non-Turso host', async () => {
+		// The token is attached to databaseUrl, so an attacker-named host would
+		// otherwise harvest it.
+		const hostile = [
+			'https://evil.com',
+			'https://evil-turso.io',
+			'https://turso.io.evil.com',
+			'http://mydb-myorg.turso.io',
+			'https://mydb-myorg.turso.io.attacker.net',
+		];
+		for (const databaseUrl of hostile) {
+			await expect(
+				Changes.listen(ctx, { databaseUrl, table: 'users', action: 'insert' }),
+			).rejects.toThrow();
+		}
+		expect(mockFetch()).not.toHaveBeenCalled();
+	});
+
+	it('accepts legitimate Turso database hosts', async () => {
+		for (const databaseUrl of [
+			'https://mydb-myorg.turso.io',
+			'https://abc123-mydb-myorg.turso.io',
+		]) {
+			mockFetch().mockResolvedValueOnce(sseResponse([]));
+			await expect(
+				Changes.listen(ctx, { databaseUrl, table: 'users', action: 'insert' }),
+			).resolves.toMatchObject({ mode: 'stream' });
+		}
+	});
+
 	it('enforces input validation on table, action and bounds', async () => {
 		const bad = [
 			{ databaseUrl: DB_URL, table: '', action: 'insert' as const },

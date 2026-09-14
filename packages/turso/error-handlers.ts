@@ -16,9 +16,11 @@ export const errorHandlers = {
 			const msg = messageOf(error);
 			return msg.includes('rate_limited') || msg.includes('too many requests');
 		},
-		handler: async () => ({
+		handler: async (error: Error) => ({
 			maxRetries: 5,
 			retryStrategy: 'exponential_backoff' as const,
+			headersRetryAfterMs:
+				error instanceof TursoAPIError ? error.retryAfter : undefined,
 		}),
 	},
 	AUTH_ERROR: {

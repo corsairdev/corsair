@@ -6,6 +6,8 @@ export class TursoAPIError extends Error {
 		message: string,
 		public readonly code?: string,
 		public readonly status?: number,
+		/** Milliseconds to wait before retrying, from the Retry-After header. */
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'TursoAPIError';
@@ -27,6 +29,35 @@ export const TURSO_API_BASE = 'https://api.turso.tech';
  */
 export const TURSO_REGION_BASE = 'https://region.turso.io';
 
+/**
+ * Hosts that may receive an authenticated Turso request.
+ *
+ * `databaseUrl` is caller-supplied and the change stream sends the tenant's
+ * bearer token to it, so the destination is pinned to Turso's own domain.
+ * Without this a caller could name any host and harvest the credential.
+ */
+const TURSO_DATABASE_SUFFIX = '.turso.io';
+
+/**
+ * Reports whether a URL is an https Turso database host.
+ *
+ * @param value - Candidate database URL.
+ * @returns True when the URL is safe to send a credential to.
+ */
+export function isTursoDatabaseUrl(value: string): boolean {
+	let parsed: URL;
+	try {
+		parsed = new URL(value);
+	} catch {
+		return false;
+	}
+	if (parsed.protocol !== 'https:') return false;
+	return (
+		parsed.hostname === 'turso.io' ||
+		parsed.hostname.endsWith(TURSO_DATABASE_SUFFIX)
+	);
+}
+
 /** Request timeout for non-streaming Turso calls. */
 const REQUEST_TIMEOUT_MS = 30_000;
 
@@ -38,7 +69,11 @@ const REQUEST_TIMEOUT_MS = 30_000;
  * @param rawText - Raw response body.
  * @returns The error to throw.
  */
-function tursoError(status: number, rawText: string): TursoAPIError {
+function tursoError(
+	status: number,
+	rawText: string,
+	retryAfter?: number,
+): TursoAPIError {
 	let message = `Turso request failed with status ${status}`;
 	try {
 		const parsed: unknown = JSON.parse(rawText);
@@ -55,7 +90,22 @@ function tursoError(status: number, rawText: string): TursoAPIError {
 	} catch {
 		if (rawText.trim().length > 0) message = rawText.trim();
 	}
-	return new TursoAPIError(message, undefined, status);
+	return new TursoAPIError(message, undefined, status, retryAfter);
+}
+
+/**
+ * Reads a `Retry-After` header, which Turso sends in seconds on a 429.
+ *
+ * @param response - The rate-limited response.
+ * @returns The delay in milliseconds, or undefined when absent.
+ */
+export function retryAfterMs(response: Response): number | undefined {
+	const raw = response.headers.get('retry-after');
+	if (!raw) return undefined;
+	const seconds = Number(raw);
+	if (Number.isFinite(seconds)) return Math.max(0, seconds * 1000);
+	const at = Date.parse(raw);
+	return Number.isNaN(at) ? undefined : Math.max(0, at - Date.now());
 }
 
 /**
@@ -95,7 +145,11 @@ export async function tursoFetchJson(
 	}
 
 	if (!response.ok) {
-		throw tursoError(response.status, await response.text());
+		throw tursoError(
+			response.status,
+			await response.text(),
+			retryAfterMs(response),
+		);
 	}
 
 	return response.json();
