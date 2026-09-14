@@ -118,17 +118,18 @@ function renderError(status: number, rawText: string): ImejisioAPIError {
  * scheme) and normalizes binary stream responses to base64, leaving
  * hosted/signed JSON responses intact.
  *
- * @template T - Expected normalized response shape.
  * @param designId - The unique design render code.
  * @param renderKey - The render API key required by the render service.
  * @param options - Render options including format, quality, delivery, expiresIn, and overrides.
- * @returns The normalized response object ready for Zod validation.
+ * @returns The normalized response, shaped for `RenderDesignResponseSchema` to
+ * parse. Deliberately `unknown`: the provider's body is untrusted until Zod
+ * validates it at the endpoint.
  */
-export async function makeImejisioRenderRequest<T>(
+export async function makeImejisioRenderRequest(
 	designId: string,
 	renderKey: string,
 	options: ImejisioRenderOptions = {},
-): Promise<T> {
+): Promise<unknown> {
 	const format = options.format ?? 'jpeg';
 	const delivery = options.delivery ?? 'stream';
 
@@ -179,7 +180,7 @@ export async function makeImejisioRenderRequest<T>(
 
 	if (isJson) {
 		const json = (await response.json()) as Record<string, unknown>;
-		return { ...json, delivery } as unknown as T;
+		return { ...json, delivery };
 	}
 
 	const arrayBuffer = await response.arrayBuffer();
@@ -191,5 +192,5 @@ export async function makeImejisioRenderRequest<T>(
 		contentType:
 			firstPart || (format === 'pdf' ? 'application/pdf' : `image/${format}`),
 		base64: Buffer.from(arrayBuffer).toString('base64'),
-	} as unknown as T;
+	};
 }

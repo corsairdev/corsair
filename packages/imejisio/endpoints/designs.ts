@@ -24,17 +24,13 @@ export const render: ImejisioEndpoints['renderDesign'] = async (
 
 	const input = RenderDesignInputSchema.parse(rawInput);
 
-	const rawResponse = await makeImejisioRenderRequest<unknown>(
-		input.designId,
-		ctx.key,
-		{
-			format: input.format,
-			quality: input.quality,
-			delivery: input.delivery,
-			expiresIn: input.expiresIn,
-			overrides: input.overrides,
-		},
-	);
+	const rawResponse = await makeImejisioRenderRequest(input.designId, ctx.key, {
+		format: input.format,
+		quality: input.quality,
+		delivery: input.delivery,
+		expiresIn: input.expiresIn,
+		overrides: input.overrides,
+	});
 
 	const response = RenderDesignResponseSchema.parse(rawResponse);
 
