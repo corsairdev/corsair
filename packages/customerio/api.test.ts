@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { makeAppRequest } from './client';
 import type {
 	GetMessagesResponse,
