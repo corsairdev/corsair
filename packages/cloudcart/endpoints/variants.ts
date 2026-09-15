@@ -30,7 +30,8 @@ export const createVariant: CloudcartEndpoints['createVariant'] = (
 		inputSchema: CreateVariantInputSchema,
 		outputSchema: CloudcartEndpointOutputSchemas.createVariant,
 		method: 'POST',
-		path: (parsed) => `products/${pathId(parsed.product_id)}/variants`,
+		path: 'variants',
+		omit: ['product_id'],
 	});
 
 export const getVariant: CloudcartEndpoints['getVariant'] = (ctx, input) =>
@@ -82,7 +83,8 @@ export const createVariantOption: CloudcartEndpoints['createVariantOption'] = (
 		inputSchema: CreateVariantOptionInputSchema,
 		outputSchema: CloudcartEndpointOutputSchemas.createVariantOption,
 		method: 'POST',
-		path: (parsed) => `variants/${pathId(parsed.variant_id)}/options`,
+		path: 'variant-options',
+		omit: ['parameter_id'],
 	});
 
 export const createVariantOptions: CloudcartEndpoints['createVariantOptions'] =
@@ -92,8 +94,8 @@ export const createVariantOptions: CloudcartEndpoints['createVariantOptions'] =
 			inputSchema: CreateVariantOptionsInputSchema,
 			outputSchema: CloudcartEndpointOutputSchemas.createVariantOptions,
 			method: 'POST',
-			path: (parsed) =>
-				`variant-parameters/${pathId(parsed.parameter_id)}/options`,
+			path: 'variant-options',
+			omit: ['parameter_id'],
 		});
 
 export const getVariantOption: CloudcartEndpoints['getVariantOption'] = (
@@ -160,7 +162,8 @@ export const createVariantParameterForVariant: CloudcartEndpoints['createVariant
 			outputSchema:
 				CloudcartEndpointOutputSchemas.createVariantParameterForVariant,
 			method: 'POST',
-			path: (parsed) => `variants/${pathId(parsed.id)}/parameters`,
+			path: 'variant-parameters',
+			omit: ['id'],
 		});
 
 export const getVariantParameter: CloudcartEndpoints['getVariantParameter'] = (

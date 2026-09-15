@@ -72,7 +72,8 @@ export const getCategoryProperties: CloudcartEndpoints['getCategoryProperties'] 
 			event: 'cloudcart.categories.getCategoryProperties',
 			inputSchema: GetCategoryPropertiesInputSchema,
 			outputSchema: CloudcartEndpointOutputSchemas.getCategoryProperties,
-			path: (parsed) => `categories/${pathId(parsed.id)}/properties`,
+			path: (parsed) =>
+				`categories/${pathId(parsed.id)}/relationships/properties`,
 		});
 
 export const addCategoryProperties: CloudcartEndpoints['addCategoryProperties'] =
@@ -82,5 +83,6 @@ export const addCategoryProperties: CloudcartEndpoints['addCategoryProperties'] 
 			inputSchema: AddCategoryPropertiesInputSchema,
 			outputSchema: CloudcartEndpointOutputSchemas.addCategoryProperties,
 			method: 'POST',
-			path: (parsed) => `categories/${pathId(parsed.id)}/properties`,
+			path: (parsed) =>
+				`categories/${pathId(parsed.id)}/relationships/properties`,
 		});

@@ -94,11 +94,22 @@ export async function runCloudcart<TIn, TOut>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		path: string | ((parsed: TIn) => string);
 		send?: 'query' | 'body' | 'none';
+		/**
+		 * Extra input keys to exclude from the query/body payload. Parent
+		 * ids consumed only for documentation (e.g. noted in descriptions)
+		 * rather than the path belong here so they never leak into a
+		 * JSON:API request body. Path-function-touched keys are omitted
+		 * automatically; this covers static paths.
+		 */
+		omit?: string[];
 	},
 ): Promise<TOut> {
 	const parsed = options.inputSchema.parse(input);
 	const record = parsed as Record<string, unknown>;
 	const resolved = resolvePath(parsed as TIn & object, options.path);
+	for (const key of options.omit ?? []) {
+		resolved.omit.add(key);
+	}
 	const method = options.method ?? 'GET';
 	const send =
 		options.send ??

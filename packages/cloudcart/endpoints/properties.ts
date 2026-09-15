@@ -78,7 +78,8 @@ export const createPropertyOption: CloudcartEndpoints['createPropertyOption'] =
 			inputSchema: CreatePropertyOptionInputSchema,
 			outputSchema: CloudcartEndpointOutputSchemas.createPropertyOption,
 			method: 'POST',
-			path: (parsed) => `properties/${pathId(parsed.property_id)}/options`,
+			path: 'property-options',
+			omit: ['property_id'],
 		});
 
 export const getPropertyOption: CloudcartEndpoints['getPropertyOption'] = (
@@ -89,7 +90,7 @@ export const getPropertyOption: CloudcartEndpoints['getPropertyOption'] = (
 		event: 'cloudcart.properties.getPropertyOption',
 		inputSchema: GetPropertyOptionInputSchema,
 		outputSchema: CloudcartEndpointOutputSchemas.getPropertyOption,
-		path: (parsed) => `properties/options/${pathId(parsed.id)}`,
+		path: (parsed) => `property-options/${pathId(parsed.id)}`,
 	});
 
 export const listPropertyOptions: CloudcartEndpoints['listPropertyOptions'] = (
@@ -100,7 +101,7 @@ export const listPropertyOptions: CloudcartEndpoints['listPropertyOptions'] = (
 		event: 'cloudcart.properties.listPropertyOptions',
 		inputSchema: ListPropertyOptionsInputSchema,
 		outputSchema: CloudcartEndpointOutputSchemas.listPropertyOptions,
-		path: 'properties/options',
+		path: 'property-options',
 	});
 
 export const updatePropertyOption: CloudcartEndpoints['updatePropertyOption'] =
@@ -110,7 +111,7 @@ export const updatePropertyOption: CloudcartEndpoints['updatePropertyOption'] =
 			inputSchema: UpdatePropertyOptionInputSchema,
 			outputSchema: CloudcartEndpointOutputSchemas.updatePropertyOption,
 			method: 'PATCH',
-			path: (parsed) => `properties/options/${pathId(parsed.id)}`,
+			path: (parsed) => `property-options/${pathId(parsed.id)}`,
 		});
 
 export const deletePropertyOption: CloudcartEndpoints['deletePropertyOption'] =
@@ -120,7 +121,7 @@ export const deletePropertyOption: CloudcartEndpoints['deletePropertyOption'] =
 			inputSchema: DeletePropertyOptionInputSchema,
 			outputSchema: CloudcartEndpointOutputSchemas.deletePropertyOption,
 			method: 'DELETE',
-			path: (parsed) => `properties/options/${pathId(parsed.id)}`,
+			path: (parsed) => `property-options/${pathId(parsed.id)}`,
 		});
 
 export const createProductsPropertyOptions: CloudcartEndpoints['createProductsPropertyOptions'] =
@@ -131,7 +132,8 @@ export const createProductsPropertyOptions: CloudcartEndpoints['createProductsPr
 			outputSchema:
 				CloudcartEndpointOutputSchemas.createProductsPropertyOptions,
 			method: 'POST',
-			path: (parsed) => `products/${pathId(parsed.id)}/property-options`,
+			path: (parsed) =>
+				`products/${pathId(parsed.id)}/relationships/property-options`,
 		});
 
 export const getPropertyOptionsRelationship: CloudcartEndpoints['getPropertyOptionsRelationship'] =
@@ -141,5 +143,6 @@ export const getPropertyOptionsRelationship: CloudcartEndpoints['getPropertyOpti
 			inputSchema: GetPropertyOptionsRelationshipInputSchema,
 			outputSchema:
 				CloudcartEndpointOutputSchemas.getPropertyOptionsRelationship,
-			path: (parsed) => `products/${pathId(parsed.id)}/property-options`,
+			path: (parsed) =>
+				`products/${pathId(parsed.id)}/relationships/property-options`,
 		});

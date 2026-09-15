@@ -45,7 +45,7 @@ export const getProductWithRelations: CloudcartEndpoints['getProductWithRelation
 			event: 'cloudcart.products.getProductWithRelations',
 			inputSchema: GetProductWithRelationsInputSchema,
 			outputSchema: CloudcartEndpointOutputSchemas.getProductWithRelations,
-			path: (parsed) => `products/${pathId(parsed.id)}/relations`,
+			path: (parsed) => `products/${pathId(parsed.id)}`,
 		});
 
 export const listProducts: CloudcartEndpoints['listProducts'] = (ctx, input) =>
@@ -87,7 +87,8 @@ export const createLinkedProducts: CloudcartEndpoints['createLinkedProducts'] =
 			inputSchema: CreateLinkedProductsInputSchema,
 			outputSchema: CloudcartEndpointOutputSchemas.createLinkedProducts,
 			method: 'POST',
-			path: (parsed) => `products/${pathId(parsed.id)}/linked-products`,
+			path: (parsed) =>
+				`products/${pathId(parsed.id)}/relationships/linked-products`,
 		});
 
 export const getProductsLinkedProduct: CloudcartEndpoints['getProductsLinkedProduct'] =
@@ -96,7 +97,8 @@ export const getProductsLinkedProduct: CloudcartEndpoints['getProductsLinkedProd
 			event: 'cloudcart.products.getProductsLinkedProduct',
 			inputSchema: GetProductsLinkedProductInputSchema,
 			outputSchema: CloudcartEndpointOutputSchemas.getProductsLinkedProduct,
-			path: (parsed) => `products/${pathId(parsed.id)}/linked-product`,
+			path: (parsed) =>
+				`products/${pathId(parsed.id)}/relationships/linked-products`,
 		});
 
 export const getProductsLinkedProducts: CloudcartEndpoints['getProductsLinkedProducts'] =
@@ -105,7 +107,8 @@ export const getProductsLinkedProducts: CloudcartEndpoints['getProductsLinkedPro
 			event: 'cloudcart.products.getProductsLinkedProducts',
 			inputSchema: GetProductsLinkedProductsInputSchema,
 			outputSchema: CloudcartEndpointOutputSchemas.getProductsLinkedProducts,
-			path: (parsed) => `products/${pathId(parsed.id)}/linked-products`,
+			path: (parsed) =>
+				`products/${pathId(parsed.id)}/relationships/linked-products`,
 		});
 
 export const updateLinkedProduct: CloudcartEndpoints['updateLinkedProduct'] = (
@@ -117,7 +120,8 @@ export const updateLinkedProduct: CloudcartEndpoints['updateLinkedProduct'] = (
 		inputSchema: UpdateLinkedProductInputSchema,
 		outputSchema: CloudcartEndpointOutputSchemas.updateLinkedProduct,
 		method: 'PUT',
-		path: (parsed) => `products/${pathId(parsed.id)}/linked-products`,
+		path: (parsed) =>
+			`products/${pathId(parsed.id)}/relationships/linked-products`,
 	});
 
 export const deleteLinkedProducts: CloudcartEndpoints['deleteLinkedProducts'] =
@@ -127,7 +131,8 @@ export const deleteLinkedProducts: CloudcartEndpoints['deleteLinkedProducts'] =
 			inputSchema: DeleteLinkedProductsInputSchema,
 			outputSchema: CloudcartEndpointOutputSchemas.deleteLinkedProducts,
 			method: 'DELETE',
-			path: (parsed) => `products/${pathId(parsed.id)}/linked-products`,
+			path: (parsed) =>
+				`products/${pathId(parsed.id)}/relationships/linked-products`,
 		});
 
 export const createImage: CloudcartEndpoints['createImage'] = (ctx, input) =>

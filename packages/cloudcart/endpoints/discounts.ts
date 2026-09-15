@@ -101,7 +101,8 @@ export const createProductToDiscount: CloudcartEndpoints['createProductToDiscoun
 			inputSchema: CreateProductToDiscountInputSchema,
 			outputSchema: CloudcartEndpointOutputSchemas.createProductToDiscount,
 			method: 'POST',
-			path: (parsed) => `products/${pathId(parsed.id)}/discounts`,
+			path: 'product-to-discount',
+			omit: ['id'],
 		});
 
 export const deleteProductToDiscount: CloudcartEndpoints['deleteProductToDiscount'] =
@@ -111,6 +112,6 @@ export const deleteProductToDiscount: CloudcartEndpoints['deleteProductToDiscoun
 			inputSchema: DeleteProductToDiscountInputSchema,
 			outputSchema: CloudcartEndpointOutputSchemas.deleteProductToDiscount,
 			method: 'DELETE',
-			path: (parsed) =>
-				`products/${pathId(parsed.id)}/discounts/${pathId(parsed.discount_id)}`,
+			path: (parsed) => `product-to-discount/${pathId(parsed.discount_id)}`,
+			omit: ['id'],
 		});
