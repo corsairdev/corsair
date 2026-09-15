@@ -78,12 +78,12 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		? createCorsairDatabase(config.database)
 		: undefined;
 
-	if (!config.kek) {
+	if ((resolvedDatabase || config.hub || config.manual) && !config.kek) {
 		throw new Error(
-			'createCorsair: kek is required for dev/prod integrations (ck_dev_/ck_prod_). It encrypts credentials and signs OAuth state.',
+			'createCorsair: kek is required when database, hub, or manual is configured. It encrypts credentials and signs OAuth state.',
 		);
 	}
-	const kek = config.kek;
+	const kek = config.kek ?? '';
 
 	// Build integration-level keys when database + KEK are configured;
 	// otherwise a proxy throws a clear error on first key access.

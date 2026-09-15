@@ -305,10 +305,16 @@ components:
               hasCredentials: { type: boolean }
     PluginInfo:
       type: object
-      description: "Shape follows the SDK's describePlugin; treated as open."
+      description: "Shape follows the SDK's management PluginInfo type; treated as open."
       properties:
         id: { type: string }
-        authTypes: { type: array, items: { type: string } }
-        modes: { type: array, items: { type: string } }
-        ops: { type: array, items: { type: string } }
+        authType: { type: [string, "null"], enum: [oauth_2, api_key, bot_token, managed, null] }
+        configured: { type: boolean }
+        missingFields: { type: array, items: { type: string } }
+        oauth:
+          type: [object, "null"]
+          properties:
+            providerName: { type: string }
+            scopes: { type: array, items: { type: string } }
+            requiresRegisteredRedirect: { type: boolean }
       additionalProperties: true

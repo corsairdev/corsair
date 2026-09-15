@@ -35,15 +35,5 @@ export function buildCloudManagement(transport: CloudTransport) {
 		},
 		disconnect: (input: { tenantId: string; plugin: string }) =>
 			cloudRequest(transport, 'POST', CLOUD_ROUTES.disconnect, input),
-		plugins: {
-			list: () => cloudRequest(transport, 'GET', CLOUD_ROUTES.plugins),
-			get: (id: string) =>
-				cloudRequest(
-					transport,
-					'GET',
-					CLOUD_ROUTES.plugin.replace(':id', encodeURIComponent(id)),
-				),
-		},
-		discover: () => cloudRequest(transport, 'GET', CLOUD_ROUTES.discover),
 	};
 }

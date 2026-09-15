@@ -14,8 +14,20 @@ type CloudErrorEnvelope = {
 	[key: string]: unknown;
 };
 
+function stripTrailingSlashes(s: string): string {
+	let end = s.length;
+	while (end > 0 && s[end - 1] === '/') end--;
+	return s.slice(0, end);
+}
+
+function stripLeadingSlashes(s: string): string {
+	let start = 0;
+	while (start < s.length && s[start] === '/') start++;
+	return s.slice(start);
+}
+
 function joinUrl(baseUrl: string, path: string): string {
-	return `${baseUrl.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
+	return `${stripTrailingSlashes(baseUrl)}/${stripLeadingSlashes(path)}`;
 }
 
 // The runtime envelope is exactly ManagementApiError's serialized shape

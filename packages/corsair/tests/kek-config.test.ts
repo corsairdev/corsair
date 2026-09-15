@@ -19,7 +19,7 @@ describe('createCorsair — KEK validation', () => {
 				kek: '',
 				multiTenancy: false,
 			}),
-		).toThrow(/kek is required for dev\/prod integrations/);
+		).toThrow(/kek is required when database, hub, or manual is configured/);
 	});
 
 	it('throws a clear error at construction when the KEK is omitted', () => {
@@ -30,7 +30,26 @@ describe('createCorsair — KEK validation', () => {
 				database: env.db,
 				multiTenancy: false,
 			}),
-		).toThrow(/kek is required for dev\/prod integrations/);
+		).toThrow(/kek is required when database, hub, or manual is configured/);
+	});
+
+	it('throws a clear error at construction when hub is configured without a KEK', () => {
+		expect(() =>
+			createCorsair({
+				plugins: [slack({ authType: 'api_key', key: 'fake-key' })],
+				hub: { projectApiKey: 'ck_dev_fake' },
+				multiTenancy: false,
+			}),
+		).toThrow(/kek is required when database, hub, or manual is configured/);
+	});
+
+	it('constructs successfully with plugin-only config (no database, no kek)', () => {
+		expect(() =>
+			createCorsair({
+				plugins: [slack({ authType: 'api_key', key: 'fake-key' })],
+				multiTenancy: false,
+			}),
+		).not.toThrow();
 	});
 
 	it('stores the byte-exact KEK on the internal config', () => {

@@ -37,7 +37,10 @@ function buildCloudManageNamespace(
 	return {
 		ok: () => deferredCloudError('manage.ok'),
 		tenants: cloud.tenants,
-		plugins: cloud.plugins,
+		plugins: {
+			list: () => deferredCloudError('manage.plugins.list'),
+			get: () => deferredCloudError('manage.plugins.get'),
+		},
 		connectionStatus: {
 			get: (query?: { tenantId?: string }) =>
 				cloud.connectionStatus.get({

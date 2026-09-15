@@ -91,30 +91,4 @@ describe('buildCloudManagement', () => {
 			plugin: 'slack',
 		});
 	});
-
-	it('plugins.list gets /plugins', async () => {
-		const t = transportWith(ok([{ id: 'slack' }]));
-		const m = buildCloudManagement(t);
-		await m.plugins.list();
-		const [url, init] = t.fetch.mock.calls[0];
-		expect(url).toBe('https://vm/p/api/corsair/plugins');
-		expect(init.method).toBe('GET');
-	});
-
-	it('plugins.get hits /plugins/:id with the id encoded', async () => {
-		const t = transportWith(ok({ id: 'slack' }));
-		const m = buildCloudManagement(t);
-		await m.plugins.get('a/b');
-		const [url] = t.fetch.mock.calls[0];
-		expect(url).toBe('https://vm/p/api/corsair/plugins/a%2Fb');
-	});
-
-	it('discover gets /call', async () => {
-		const t = transportWith(ok({ slack: {} }));
-		const m = buildCloudManagement(t);
-		await m.discover();
-		const [url, init] = t.fetch.mock.calls[0];
-		expect(url).toBe('https://vm/p/api/corsair/call');
-		expect(init.method).toBe('GET');
-	});
 });

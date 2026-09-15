@@ -7,7 +7,4 @@ export const CLOUD_ROUTES = {
 	tenant: '/tenants/:id',
 	connectionStatus: '/connection-status',
 	disconnect: '/disconnect',
-	plugins: '/plugins',
-	plugin: '/plugins/:id',
-	discover: '/call',
 } as const;
