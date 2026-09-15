@@ -9,6 +9,7 @@ import {
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
+import { buildCloudCorsair } from './cloud';
 import { resolveRootPermissionsConfig } from './config/resolve-root-permissions';
 import { buildManagementNamespace } from './management';
 import { buildPermissionsNamespace } from './permissions';
@@ -69,11 +70,18 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	config: CorsairIntegration<Plugins>,
 ): CorsairSingleTenantClient<Plugins> | CorsairTenantWrapper<Plugins> {
+	if (config.hub?.projectApiKey?.startsWith('ck_cloud_')) {
+		return buildCloudCorsair(config);
+	}
+
 	const resolvedDatabase = config.database
 		? createCorsairDatabase(config.database)
 		: undefined;
 
-	const kek = config.kek;
+	// Empty kek is tolerated at construction (plugin-only clients, env-less build
+	// steps); it's rejected where used — key access via createMissingConfigProxy,
+	// OAuth state signing/verification in core/auth/state.ts.
+	const kek = config.kek ?? '';
 
 	// Build integration-level keys when database + KEK are configured;
 	// otherwise a proxy throws a clear error on first key access.
