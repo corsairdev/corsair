@@ -13,6 +13,7 @@ export const generateReport: CarboneEndpoints['generateReport'] = async (
 	const response = assertCarboneSuccess(
 		await makeCarboneRequest<GenerateReportOutput>(`/render/${templateId}`, {
 			apiKey: ctx.key,
+			version: ctx.options?.version,
 			method: 'POST',
 			body: renderOptions as Record<string, unknown>,
 		}),
@@ -39,6 +40,7 @@ export const renderDirect: CarboneEndpoints['renderDirect'] = async (
 	const response = assertCarboneSuccess(
 		await makeCarboneRequest<RenderTemplateDirectOutput>('/render/template', {
 			apiKey: ctx.key,
+			version: ctx.options?.version,
 			method: 'POST',
 			body: input as unknown as Record<string, unknown>,
 		}),

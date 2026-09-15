@@ -6,6 +6,10 @@ export const setApiVersion: CarboneEndpoints['setApiVersion'] = async (
 	ctx,
 	input,
 ) => {
+	if (ctx.options) {
+		ctx.options.version = input.version;
+	}
+
 	await logEventFromContext(
 		ctx,
 		'carbone.version.set',

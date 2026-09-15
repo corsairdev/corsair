@@ -7,6 +7,7 @@ export const getStatus: CarboneEndpoints['getStatus'] = async (ctx) => {
 	const response = assertCarboneSuccess(
 		await makeCarboneRequest<GetStatusOutput>('/status', {
 			apiKey: ctx.key,
+			version: ctx.options?.version,
 			method: 'GET',
 		}),
 	);

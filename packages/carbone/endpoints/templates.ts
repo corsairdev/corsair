@@ -18,6 +18,7 @@ export const uploadTemplate: CarboneEndpoints['uploadTemplate'] = async (
 	const response = assertCarboneSuccess(
 		await makeCarboneRequest<UploadTemplateOutput>('/template', {
 			apiKey: ctx.key,
+			version: ctx.options?.version,
 			method: 'POST',
 			body: {
 				template: input.template,
@@ -67,6 +68,7 @@ export const listTemplates: CarboneEndpoints['listTemplates'] = async (
 	const response = assertCarboneSuccess(
 		await makeCarboneRequest<ListTemplatesOutput>('/templates', {
 			apiKey: ctx.key,
+			version: ctx.options?.version,
 			method: 'GET',
 			query,
 		}),
@@ -118,6 +120,7 @@ export const downloadTemplate: CarboneEndpoints['downloadTemplate'] = async (
 	const templateId = encodeURIComponent(input.templateId);
 	const content = await makeCarboneRequest<string>(`/template/${templateId}`, {
 		apiKey: ctx.key,
+		version: ctx.options?.version,
 		method: 'GET',
 	});
 
@@ -145,6 +148,7 @@ export const updateTemplate: CarboneEndpoints['updateTemplate'] = async (
 	const response = assertCarboneSuccess(
 		await makeCarboneRequest<UpdateTemplateOutput>(`/template/${templateId}`, {
 			apiKey: ctx.key,
+			version: ctx.options?.version,
 			method: 'PATCH',
 			body: patchBody as Record<string, unknown>,
 		}),
@@ -187,6 +191,7 @@ export const deleteTemplate: CarboneEndpoints['deleteTemplate'] = async (
 	const response = assertCarboneSuccess(
 		await makeCarboneRequest<DeleteTemplateOutput>(`/template/${templateId}`, {
 			apiKey: ctx.key,
+			version: ctx.options?.version,
 			method: 'DELETE',
 		}),
 	);
@@ -220,6 +225,7 @@ export const listCategories: CarboneEndpoints['listCategories'] = async (
 			'/templates/categories',
 			{
 				apiKey: ctx.key,
+				version: ctx.options?.version,
 				method: 'GET',
 			},
 		),
@@ -256,6 +262,7 @@ export const listTags: CarboneEndpoints['listTags'] = async (ctx) => {
 	const response = assertCarboneSuccess(
 		await makeCarboneRequest<ListTemplateTagsOutput>('/templates/tags', {
 			apiKey: ctx.key,
+			version: ctx.options?.version,
 			method: 'GET',
 		}),
 	);

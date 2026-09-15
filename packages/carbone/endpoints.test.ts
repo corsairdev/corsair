@@ -359,14 +359,31 @@ describe('Carbone endpoints execution', () => {
 	});
 
 	describe('version', () => {
-		it('setApiVersion sets and confirms API version', async () => {
-			const res = await VersionEndpoints.setApiVersion(createMockContext(), {
-				version: '5',
+		it('setApiVersion updates context options and applies to subsequent requests', async () => {
+			const ctx = createMockContext();
+			const res = await VersionEndpoints.setApiVersion(ctx, {
+				version: '5.14',
 			});
 
 			expect(res.success).toBe(true);
-			expect(res.version).toBe('5');
-			expect(res.message).toBe('Carbone API version set to 5');
+			expect(res.version).toBe('5.14');
+			expect(ctx.options.version).toBe('5.14');
+
+			mockRequest.mockResolvedValueOnce({
+				success: true,
+				code: 200,
+				message: 'OK',
+			});
+
+			await StatusEndpoints.getStatus(ctx, {});
+			expect(mockRequest).toHaveBeenCalledWith(
+				expect.objectContaining({
+					HEADERS: expect.objectContaining({
+						'carbone-version': '5.14',
+					}),
+				}),
+				expect.anything(),
+			);
 		});
 	});
 });
