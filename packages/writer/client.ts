@@ -6,6 +6,7 @@ export class WriterAPIError extends Error {
 		message: string,
 		public readonly status?: number,
 		public readonly code?: string,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'WriterAPIError';
@@ -18,30 +19,40 @@ export async function makeWriterRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
-	body?: Record<string, unknown>,
+	body?: unknown,
+	query?: Record<string, unknown>,
+	mediaType?: string,
+	base = WRITER_API_BASE,
 ): Promise<T> {
 	const config: OpenAPIConfig = {
-		BASE: WRITER_API_BASE,
+		BASE: base,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
 		HEADERS: {
-			'Content-Type': 'application/json',
 			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 
+	let effectiveMediaType = mediaType;
+	if (!effectiveMediaType && !(body instanceof FormData)) {
+		effectiveMediaType = 'application/json; charset=utf-8';
+	}
+	const isJsonBody = Boolean(effectiveMediaType?.includes('/json'));
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
 		body: method !== 'GET' ? body : undefined,
-		mediaType: 'application/json; charset=utf-8',
+		mediaType: method !== 'GET' ? effectiveMediaType : undefined,
 		query:
 			method === 'GET'
-				? (body as
-						| Record<string, string | number | boolean | undefined>
-						| undefined)
+				? (query ??
+					(isJsonBody
+						? (body as
+								| Record<string, string | number | boolean | undefined>
+								| undefined)
+						: undefined))
 				: undefined,
 	};
 
@@ -49,7 +60,17 @@ export async function makeWriterRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw error;
+			const maybeCode =
+				typeof error.body === 'object' && error.body !== null
+					? ((error.body as { code?: unknown }).code ??
+						(error.body as { error?: { code?: unknown } }).error?.code)
+					: undefined;
+			throw new WriterAPIError(
+				error.message,
+				error.status,
+				typeof maybeCode === 'string' ? maybeCode : undefined,
+				error.retryAfter,
+			);
 		}
 		if (error instanceof Error) {
 			throw new WriterAPIError(error.message);
