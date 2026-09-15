@@ -76,7 +76,7 @@ export const listTemplates: CarboneEndpoints['listTemplates'] = async (
 
 	if (ctx.db?.templates && Array.isArray(response.data)) {
 		for (const tmpl of response.data) {
-			const id = tmpl.versionId ?? tmpl.id;
+			const id = tmpl.id ?? tmpl.versionId;
 			if (id) {
 				try {
 					await ctx.db.templates.upsertByEntityId(id, {

@@ -155,7 +155,7 @@ describe('Carbone endpoints execution', () => {
 				}),
 			);
 			expect(ctx.db.templates.upsertByEntityId).toHaveBeenCalledWith(
-				'v100',
+				't100',
 				expect.objectContaining({
 					name: 'Invoice',
 					category: 'Finance',
