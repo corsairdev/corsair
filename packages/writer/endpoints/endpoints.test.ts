@@ -76,6 +76,10 @@ describe('Writer endpoints', () => {
 			ctx.key,
 			'GET',
 			input,
+			undefined,
+			undefined,
+			client.LLM_GATEWAY_BASE,
+			false,
 		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
@@ -106,6 +110,10 @@ describe('Writer endpoints', () => {
 			ctx.key,
 			'POST',
 			input,
+			undefined,
+			undefined,
+			client.LLM_GATEWAY_BASE,
+			false,
 		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
@@ -146,7 +154,16 @@ describe('Writer endpoints', () => {
 		const result = await createChat(ctx, input);
 
 		expect(result).toEqual(response);
-		expect(mockedRequest).toHaveBeenCalledWith('/chat', ctx.key, 'POST', input);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/chat',
+			ctx.key,
+			'POST',
+			input,
+			undefined,
+			undefined,
+			client.LLM_GATEWAY_BASE,
+			false,
+		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'writer.chat.create',

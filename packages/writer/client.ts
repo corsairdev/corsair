@@ -13,7 +13,8 @@ export class WriterAPIError extends Error {
 	}
 }
 
-const WRITER_API_BASE = 'https://api.writer.com/v1';
+export const WRITER_API_BASE = 'https://api.writer.com/v1';
+export const LLM_GATEWAY_BASE = 'https://llm.corsair.dev/v1';
 
 export async function makeWriterRequest<T>(
 	endpoint: string,
@@ -23,16 +24,21 @@ export async function makeWriterRequest<T>(
 	query?: Record<string, unknown>,
 	mediaType?: string,
 	base = WRITER_API_BASE,
+	sendApiKey = true,
 ): Promise<T> {
 	const config: OpenAPIConfig = {
 		BASE: base,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
-		HEADERS: {
-			Authorization: `Bearer ${apiKey}`,
-		},
+		...(sendApiKey
+			? {
+					TOKEN: apiKey,
+					HEADERS: {
+						Authorization: `Bearer ${apiKey}`,
+					},
+				}
+			: {}),
 	};
 
 	let effectiveMediaType = mediaType;

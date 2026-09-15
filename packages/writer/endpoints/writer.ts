@@ -1,6 +1,6 @@
 import type { EventLoggingContext } from 'corsair/core';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { makeWriterRequest } from '../client';
+import { LLM_GATEWAY_BASE, makeWriterRequest } from '../client';
 import type { WriterEndpointInputs, WriterEndpointOutputs } from './types';
 
 type WriterContext = EventLoggingContext & {
@@ -27,6 +27,10 @@ export const listModels = async (
 		key,
 		'GET',
 		input,
+		undefined,
+		undefined,
+		LLM_GATEWAY_BASE,
+		false,
 	);
 	await logEventFromContext(ctx, 'writer.models.list', {}, COMPLETED);
 	return response;
@@ -39,7 +43,16 @@ export const createCompletion = async (
 	const key = requireKey(ctx);
 	const response = await makeWriterRequest<
 		WriterEndpointOutputs['createCompletion']
-	>('/completions', key, 'POST', input);
+	>(
+		'/completions',
+		key,
+		'POST',
+		input,
+		undefined,
+		undefined,
+		LLM_GATEWAY_BASE,
+		false,
+	);
 	await logEventFromContext(
 		ctx,
 		'writer.completions.create',
@@ -59,6 +72,10 @@ export const createChat = async (
 		key,
 		'POST',
 		input,
+		undefined,
+		undefined,
+		LLM_GATEWAY_BASE,
+		false,
 	);
 	await logEventFromContext(
 		ctx,
