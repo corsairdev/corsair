@@ -80,6 +80,8 @@
                   "mcp-adapters/claude-sdk",
                   "mcp-adapters/vercel-ai",
                   "mcp-adapters/mastra",
+                  "mcp-adapters/langchain",
+                  "mcp-adapters/llamaindex",
                   "mcp-adapters/openai"
                 ]
               },
@@ -643,6 +645,14 @@
                 ]
               },
               {
+                "group": "BenchmarkEmail",
+                "pages": [
+                  "plugins/benchmarkemail/overview",
+                  "plugins/benchmarkemail/api",
+                  "plugins/benchmarkemail/database"
+                ]
+              },
+              {
                 "group": "Best Buy Remix API",
                 "pages": [
                   "plugins/bestbuy/overview",
@@ -739,6 +749,14 @@
                 ]
               },
               {
+                "group": "Boldsign",
+                "pages": [
+                  "plugins/boldsign/overview",
+                  "plugins/boldsign/api",
+                  "plugins/boldsign/database"
+                ]
+              },
+              {
                 "group": "BoloForms",
                 "pages": [
                   "plugins/boloforms/overview",
@@ -768,6 +786,14 @@
                   "plugins/bookingmood/overview",
                   "plugins/bookingmood/api",
                   "plugins/bookingmood/database"
+                ]
+              },
+              {
+                "group": "Borneo",
+                "pages": [
+                  "plugins/borneo/overview",
+                  "plugins/borneo/api",
+                  "plugins/borneo/database"
                 ]
               },
               {
@@ -906,6 +932,14 @@
                   "plugins/buildkite/overview",
                   "plugins/buildkite/api",
                   "plugins/buildkite/database"
+                ]
+              },
+              {
+                "group": "Bunnycdn",
+                "pages": [
+                  "plugins/bunnycdn/overview",
+                  "plugins/bunnycdn/api",
+                  "plugins/bunnycdn/database"
                 ]
               },
               {
@@ -1097,6 +1131,14 @@
                   "plugins/contextsevenmcp/overview",
                   "plugins/contextsevenmcp/api",
                   "plugins/contextsevenmcp/database"
+                ]
+              },
+              {
+                "group": "ConvoloAi",
+                "pages": [
+                  "plugins/convoloai/overview",
+                  "plugins/convoloai/api",
+                  "plugins/convoloai/database"
                 ]
               },
               {
@@ -1301,6 +1343,14 @@
                 ]
               },
               {
+                "group": "Exist",
+                "pages": [
+                  "plugins/exist/overview",
+                  "plugins/exist/api",
+                  "plugins/exist/database"
+                ]
+              },
+              {
                 "group": "Facebook",
                 "pages": [
                   "plugins/facebook/overview",
@@ -1394,6 +1444,14 @@
                   "plugins/gitlab/api",
                   "plugins/gitlab/database",
                   "plugins/gitlab/webhooks"
+                ]
+              },
+              {
+                "group": "Gladia",
+                "pages": [
+                  "plugins/gladia/overview",
+                  "plugins/gladia/api",
+                  "plugins/gladia/database"
                 ]
               },
               {
@@ -1499,6 +1557,14 @@
                   "plugins/grafana/overview",
                   "plugins/grafana/api",
                   "plugins/grafana/database"
+                ]
+              },
+              {
+                "group": "Griptape",
+                "pages": [
+                  "plugins/griptape/overview",
+                  "plugins/griptape/api",
+                  "plugins/griptape/database"
                 ]
               },
               {
@@ -2336,6 +2402,14 @@
                   "plugins/witai/overview",
                   "plugins/witai/api",
                   "plugins/witai/database"
+                ]
+              },
+              {
+                "group": "Wix",
+                "pages": [
+                  "plugins/wix/overview",
+                  "plugins/wix/api",
+                  "plugins/wix/database"
                 ]
               },
               {
