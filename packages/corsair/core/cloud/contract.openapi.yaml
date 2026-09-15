@@ -1,0 +1,313 @@
+# Source of truth: corsairdev/hub apps/cloud-runtime/openapi.yaml — sync by hand on contract change.
+# Vendored into the SDK so the cloud client's route table can be contract-tested
+# without a cross-repo dependency. The generated language clients also read this.
+openapi: 3.1.0
+info:
+  title: Corsair hosted runtime — management API
+  version: 0.1.0
+  description: >
+    The REST surface a hosted Corsair project serves (the SDK management
+    handler). Language clients (Swift/Python/Go/TS) are GENERATED from this
+    file; the Hub control plane provisions the runtime but does not proxy these
+    calls. Authoritative prose: docs/corsair-cloud/rest-management-contract.md.
+
+servers:
+  - url: "{baseUrl}"
+    description: A hosted project's base URL.
+    variables:
+      baseUrl:
+        default: https://VM.corsair.cloud/PROJECT/api/corsair
+        description: https://<vm-slug>.corsair.cloud/<project-slug>/api/corsair
+
+security:
+  - projectKey: []          # default: every operation needs the project key…
+
+tags:
+  - name: discovery
+    description: What can I call — plugins and their ops.
+  - name: connect
+    description: Managed-OAuth connect, status, and disconnect.
+  - name: tenants
+    description: Tenant management (admin/server mode).
+  - name: permissions
+    description: Permission records and approval lookups.
+  - name: invoke
+    description: Invoke a plugin operation.
+  - name: health
+    description: Liveness.
+
+paths:
+  /ok:
+    get:
+      operationId: health
+      tags: [health]
+      security: []          # …public capability legs override with []
+      summary: Liveness probe.
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, properties: { ok: { type: boolean } } } } } }
+
+  /call:
+    get:
+      operationId: discover
+      tags: [discovery]
+      summary: List every callable op, keyed by plugin.
+      responses:
+        "200":
+          description: Op tree.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  plugins:
+                    type: object
+                    additionalProperties: { type: array, items: { type: string } }
+                    example: { slack: ["messages.post", "users.list"], linear: ["issues.create"] }
+        "403": { $ref: "#/components/responses/Error" }
+
+  /plugins:
+    get:
+      operationId: listPlugins
+      tags: [discovery]
+      summary: Plugin metadata — auth types, modes, op arg schemas.
+      responses:
+        "200": { description: Plugins, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/PluginInfo" } } } } }
+
+  /plugins/{id}:
+    get:
+      operationId: getPlugin
+      tags: [discovery]
+      summary: Describe one plugin.
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        "200": { description: Plugin, content: { application/json: { schema: { $ref: "#/components/schemas/PluginInfo" } } } }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /connection-status:
+    get:
+      operationId: connectionStatus
+      tags: [connect]
+      summary: Which plugins a tenant is connected to.
+      parameters: [{ name: tenantId, in: query, required: true, schema: { type: string } }]
+      responses:
+        "200": { description: Status, content: { application/json: { schema: { $ref: "#/components/schemas/ConnectionStatus" } } } }
+
+  /connect/links:
+    post:
+      operationId: connect
+      tags: [connect]
+      summary: Create a managed-OAuth connect link for a tenant + plugin.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenantId, plugin]
+              properties:
+                tenantId: { type: string }
+                plugin: { type: string }
+                redirectUri: { type: string }
+      responses:
+        "200":
+          description: Connect link — hand url to the end user.
+          content: { application/json: { schema: { $ref: "#/components/schemas/ConnectLink" } } }
+
+  /connect/request:
+    get:
+      operationId: getConnectRequest
+      tags: [connect]
+      summary: Get a tenant's pending connect request.
+      parameters: [{ name: tenantId, in: query, schema: { type: string } }]
+      responses:
+        "200": { description: Pending connect request (or null), content: { application/json: { schema: { type: object, properties: { request: { type: [object, "null"] } } } } } }
+
+  /connect/request/clear:
+    post:
+      operationId: clearConnectRequest
+      tags: [connect]
+      summary: Clear a tenant's pending connect request.
+      requestBody:
+        content: { application/json: { schema: { type: object, properties: { tenantId: { type: string }, plugin: { type: string } } } } }
+      responses:
+        "200": { $ref: "#/components/responses/Ok" }
+
+  /connect/resolve:
+    get:
+      operationId: resolveConnect
+      tags: [connect]
+      summary: Resolve a connect state to its connect-page payload.
+      security: []          # public: the state IS the capability
+      parameters: [{ name: state, in: query, required: true, schema: { type: string } }]
+      responses:
+        "200": { description: Connect-page payload for the state, content: { application/json: { schema: { type: object } } } }
+
+  /connect/oauth/callback:
+    post:
+      operationId: completeOAuthCallback
+      tags: [connect]
+      summary: Complete the managed-OAuth callback.
+      security: []          # public: provider/browser callback, no project key
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object } } }
+      responses:
+        "200": { description: Callback completed; token stored on the VM, content: { application/json: { schema: { type: object } } } }
+
+  /disconnect:
+    post:
+      operationId: disconnect
+      tags: [connect]
+      summary: Disconnect a tenant from a plugin.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenantId, plugin]
+              properties: { tenantId: { type: string }, plugin: { type: string } }
+      responses:
+        "200": { description: Disconnected, content: { application/json: { schema: { type: object } } } }
+        "400": { $ref: "#/components/responses/Error" }
+
+  /tenants:
+    get:
+      operationId: listTenants
+      tags: [tenants]
+      summary: All tenants (admin/server mode only).
+      responses:
+        "200": { description: Tenants, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/Tenant" } } } } }
+        "403": { $ref: "#/components/responses/Error" }
+    post:
+      operationId: createTenant
+      tags: [tenants]
+      summary: Create a tenant (admin/server mode).
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [id], properties: { id: { type: string } } } } }
+      responses:
+        "201": { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/Tenant" } } } }
+        "403": { $ref: "#/components/responses/Error" }
+
+  /tenants/{id}:
+    get:
+      operationId: getTenant
+      tags: [tenants]
+      summary: Get a tenant (admin/server mode).
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        "200": { description: Tenant, content: { application/json: { schema: { $ref: "#/components/schemas/Tenant" } } } }
+        "403": { $ref: "#/components/responses/Error" }
+
+  /permissions/{id}:
+    get:
+      operationId: getPermission
+      tags: [permissions]
+      summary: Get a permission record (admin/server mode).
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        "200": { description: Permission record, content: { application/json: { schema: { type: object } } } }
+        "403": { $ref: "#/components/responses/Error" }
+
+  /permissions/lookup-by-token:
+    post:
+      operationId: lookupPermissionByToken
+      tags: [permissions]
+      summary: Look up a permission by approval token.
+      security: []          # public: the token IS the capability
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [token], properties: { token: { type: string } } } } }
+      responses:
+        "200": { description: Permission record, content: { application/json: { schema: { type: object } } } }
+        "400": { $ref: "#/components/responses/Error" }
+
+  /{tenant}/{plugin}/call/{op}:
+    post:
+      operationId: call
+      tags: [invoke]
+      summary: Invoke a plugin op for a tenant.
+      parameters:
+        - { name: tenant, in: path, required: true, schema: { type: string } }
+        - { name: plugin, in: path, required: true, schema: { type: string } }
+        - { name: op, in: path, required: true, schema: { type: string }, description: "Dot-path, e.g. messages.post" }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                args:
+                  type: object
+                  additionalProperties: true
+                  description: "Op arguments. Per-op schema is discovered at runtime via GET /plugins."
+      responses:
+        "200": { description: Result, content: { application/json: { schema: { type: object, properties: { data: {} } } } } }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+        "502": { $ref: "#/components/responses/Error" }
+        "500": { $ref: "#/components/responses/Error" }
+
+components:
+  securitySchemes:
+    projectKey:
+      type: http
+      scheme: bearer
+      description: The hosted project key (ck_...).
+  responses:
+    Ok:
+      description: Success.
+      content: { application/json: { schema: { type: object, properties: { ok: { type: boolean } } } } }
+    Error:
+      description: Error envelope.
+      content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } }
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          description: >
+            Machine code: bad_request, unauthorized, unauthenticated,
+            not_connected, forbidden, call_disabled, permission_denied,
+            approval_required, unknown_plugin, unknown_op, not_found,
+            provider_error, internal_error.
+        message: { type: string }
+        reason: { type: string, description: "permission_denied/approval_required: denied|policy|timeout|pending" }
+        providerStatus: { type: integer, description: "provider_error: upstream HTTP status" }
+      additionalProperties: true
+    ConnectLink:
+      type: object
+      properties:
+        url: { type: string, description: "Hand to the end user to authorize." }
+        state: { type: string }
+    ConnectionStatus:
+      type: object
+      additionalProperties:
+        type: object
+        properties: { connected: { type: boolean } }
+      description: "Keyed by plugin id."
+    Tenant:
+      type: object
+      properties:
+        id: { type: string }
+        connectedPlugins: { type: array, items: { type: string } }
+        accounts:
+          type: array
+          items:
+            type: object
+            properties:
+              integrationName: { type: string }
+              hasCredentials: { type: boolean }
+    PluginInfo:
+      type: object
+      description: "Shape follows the SDK's describePlugin; treated as open."
+      properties:
+        id: { type: string }
+        authTypes: { type: array, items: { type: string } }
+        modes: { type: array, items: { type: string } }
+        ops: { type: array, items: { type: string } }
+      additionalProperties: true

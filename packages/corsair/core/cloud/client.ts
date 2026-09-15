@@ -2,6 +2,7 @@ import type { CorsairClient } from '../client';
 import type { CorsairPlugin } from '../plugins';
 import type { CloudTransport } from './http';
 import { cloudRequest } from './http';
+import { CLOUD_ROUTES } from './routes';
 
 const DEFERRED = new Set(['db', 'keys', 'webhooks']);
 
@@ -15,7 +16,10 @@ function buildInvokeProxy(
 		cloudRequest(
 			transport,
 			'POST',
-			`/${encodeURIComponent(tenantId)}/${encodeURIComponent(pluginId)}/call/${path.map(encodeURIComponent).join('.')}`,
+			CLOUD_ROUTES.invoke
+				.replace(':tenant', encodeURIComponent(tenantId))
+				.replace(':plugin', encodeURIComponent(pluginId))
+				.replace(':op', path.map(encodeURIComponent).join('.')),
 			{ args: args[0] },
 		).then((res: any) => res.data);
 
