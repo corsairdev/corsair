@@ -52,14 +52,12 @@ export async function makeWriterRequest<T>(
 		body: method !== 'GET' ? body : undefined,
 		mediaType: method !== 'GET' ? effectiveMediaType : undefined,
 		query:
-			method === 'GET'
-				? (query ??
-					(isJsonBody
-						? (body as
-								| Record<string, string | number | boolean | undefined>
-								| undefined)
-						: undefined))
-				: undefined,
+			query ??
+			(method === 'GET' && isJsonBody
+				? (body as
+						| Record<string, string | number | boolean | undefined>
+						| undefined)
+				: undefined),
 	};
 
 	try {

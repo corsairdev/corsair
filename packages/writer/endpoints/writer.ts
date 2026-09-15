@@ -30,7 +30,7 @@ export const listModels = async (
 		undefined,
 		undefined,
 		LLM_GATEWAY_BASE,
-		false,
+		true,
 	);
 	await logEventFromContext(ctx, 'writer.models.list', {}, COMPLETED);
 	return response;
@@ -51,7 +51,7 @@ export const createCompletion = async (
 		undefined,
 		undefined,
 		LLM_GATEWAY_BASE,
-		false,
+		true,
 	);
 	await logEventFromContext(
 		ctx,
@@ -75,7 +75,7 @@ export const createChat = async (
 		undefined,
 		undefined,
 		LLM_GATEWAY_BASE,
-		false,
+		true,
 	);
 	await logEventFromContext(
 		ctx,

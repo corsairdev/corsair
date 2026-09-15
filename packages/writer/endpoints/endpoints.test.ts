@@ -79,7 +79,7 @@ describe('Writer endpoints', () => {
 			undefined,
 			undefined,
 			client.LLM_GATEWAY_BASE,
-			false,
+			true,
 		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
@@ -113,7 +113,7 @@ describe('Writer endpoints', () => {
 			undefined,
 			undefined,
 			client.LLM_GATEWAY_BASE,
-			false,
+			true,
 		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
@@ -162,7 +162,7 @@ describe('Writer endpoints', () => {
 			undefined,
 			undefined,
 			client.LLM_GATEWAY_BASE,
-			false,
+			true,
 		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
