@@ -1,6 +1,6 @@
 # Source of truth: corsairdev/hub apps/cloud-runtime/openapi.yaml — sync by hand on contract change.
 # Vendored into the SDK so the cloud client's route table can be contract-tested
-# without a cross-repo dependency. The generated language clients also read this.
+# without a cross-repo dependency.
 openapi: 3.1.0
 info:
   title: Corsair hosted runtime — management API

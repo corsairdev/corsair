@@ -19,7 +19,6 @@
     "generate:plugin": "node --experimental-strip-types scripts/generate-plugin.ts",
     "generate:plugin-from-json": "node --experimental-strip-types scripts/generate-plugin-from-json.ts",
     "generate:labeler-config": "node scripts/generate-labeler-config.mjs",
-    "generate:clients": "node scripts/generate-clients.mjs",
     "generate:docs": "tsx --conditions=dev-source scripts/generate-plugin-docs.ts",
     "generate:docs:all": "tsx --conditions=dev-source scripts/generate-plugin-docs.ts --all",
     "generate:readmes": "tsx --conditions=dev-source scripts/generate-plugin-readmes.ts",
