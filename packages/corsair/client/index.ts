@@ -122,6 +122,17 @@ export function createCorsairClient(
 			clear: (input) =>
 				postJson<{ ok: true }>('/connect/request/clear', input ?? {}),
 		},
+		call<T = unknown>(
+			plugin: string,
+			op: string,
+			tenantId: string,
+			args?: unknown,
+		) {
+			return postJson<{ data: T }>(
+				`/${enc(tenantId)}/${enc(plugin)}/call/${enc(op)}`,
+				{ args },
+			).then((r) => r.data);
+		},
 	};
 }
 

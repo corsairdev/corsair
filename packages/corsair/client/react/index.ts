@@ -14,6 +14,7 @@ import type {
 } from '../../core/management/types';
 import { createCorsairClient } from '../index';
 import type { CorsairClientOptions, CorsairManagementClient } from '../types';
+import { useCorsairContext } from './provider';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // createCorsairReactClient — React hooks wrapping the vanilla management client.
@@ -322,6 +323,50 @@ export {
 	type UseConnectionsResult,
 	useConnections,
 } from './provider';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// useCorsair — call a plugin op and subscribe to its result, e.g.
+// `api('notion.pages.searchPage', { query: 'roadmap' })`. Shares the
+// CorsairProvider's client, so it must render under <CorsairProvider>.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type ApiResult<T> = AsyncState<T> & { refetch: () => void };
+
+export type UseCorsairResult = {
+	/**
+	 * `pluginOp` splits on the first `.`: plugin is the segment before it, op is
+	 * everything after (e.g. `"notion.pages.searchPage"` → plugin `notion`, op
+	 * `pages.searchPage`). Tenant defaults to `'default'`.
+	 */
+	api: <T = unknown>(
+		pluginOp: string,
+		args?: unknown,
+		opts?: { tenantId?: string },
+	) => ApiResult<T>;
+	/** Reserved for a future typed query layer — no `/db` route exists yet. */
+	db: undefined;
+};
+
+export function useCorsair(): UseCorsairResult {
+	const { client } = useCorsairContext();
+
+	function api<T = unknown>(
+		pluginOp: string,
+		args?: unknown,
+		opts?: { tenantId?: string },
+	): ApiResult<T> {
+		const dot = pluginOp.indexOf('.');
+		const plugin = dot === -1 ? pluginOp : pluginOp.slice(0, dot);
+		const op = dot === -1 ? '' : pluginOp.slice(dot + 1);
+		const tenantId = opts?.tenantId ?? 'default';
+		return useAsync<T>(
+			() => client.call<T>(plugin, op, tenantId, args),
+			[client, plugin, op, tenantId, JSON.stringify(args)],
+		);
+	}
+
+	return { api, db: undefined };
+}
 
 // Re-export types that hook consumers need
 export type {
