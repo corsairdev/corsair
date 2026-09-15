@@ -22,18 +22,14 @@ export class CustomerioAPIError extends Error {
 // Track API lives on track.customer.io with Basic siteId:apiKey auth.
 // CDP/Pipelines API lives on cdp.customer.io with Basic writeKey: auth.
 //
-// A connection stores a single api_key string, but the three families need
-// incompatible credentials — so the key supports two shapes:
-// - Legacy single credential: the whole string is reused for every family
-//   (Bearer for App, base64(siteId:apiKey) for Track, base64(writeKey:)
-//   for CDP). Track callers store "siteId:apiKey"; CDP callers store the
-//   write key. Only one family is usable per connection in this shape.
-// - Family-scoped compound key:
-//   "app=<app-key>;track=<siteId:apiKey>;cdp=<writeKey>"
-//   Each transport selects its own segment, so one connection serves all
-//   families. Segments for unused families may be omitted; calling a family
-//   without its segment fails fast before any request is sent. Values must
-//   not contain ';' (Customer.io keys and site IDs never do).
+// The plugin follows the standard Corsair api_key pattern: a single opaque
+// `key` string is returned verbatim by the keyBuilder and forwarded
+// unchanged to the transport that needs it (Bearer for App, base64-encoded
+// for Track/CDP — see toBasicCredential). No `;`/`=` parsing, no JSON
+// packing, no multi-credential string. Callers that need more than one
+// family create separate `customerio()` instances with the appropriate
+// credential for that family (the same pattern every other api_key plugin
+// uses), or standard `region` handling for EU bases.
 export const CUSTOMERIO_APP_BASE = 'https://api.customer.io';
 export const CUSTOMERIO_TRACK_BASE = 'https://track.customer.io';
 export const CUSTOMERIO_CDP_BASE = 'https://cdp.customer.io';
@@ -101,57 +97,6 @@ function toBasicCredential(apiKey: string): string {
 	// otherwise a trailing colon supplies the empty password segment.
 	const raw: string = apiKey.includes(':') ? apiKey : `${apiKey}:`;
 	return Buffer.from(raw, 'utf-8').toString('base64');
-}
-
-export type CustomerioApiFamily = 'app' | 'track' | 'cdp';
-
-// Splits a family-scoped compound key into per-family segments. Returns
-// undefined for legacy single credentials (no recognized segment), which
-// keep the historical reuse-everywhere behavior. String splitting only —
-// no JSON parsing, keeping the module free of `any`/`unknown`.
-function parseCompoundKey(
-	apiKey: string,
-): Record<CustomerioApiFamily, string | undefined> | undefined {
-	const segments: Record<CustomerioApiFamily, string | undefined> = {
-		app: undefined,
-		track: undefined,
-		cdp: undefined,
-	};
-	let found = false;
-	for (const part of apiKey.split(';')) {
-		const eq: number = part.indexOf('=');
-		if (eq <= 0) {
-			continue;
-		}
-		const name: string = part.slice(0, eq).trim();
-		const value: string = part.slice(eq + 1).trim();
-		if (value.length === 0) {
-			continue;
-		}
-		if (name === 'app' || name === 'track' || name === 'cdp') {
-			segments[name] = value;
-			found = true;
-		}
-	}
-	return found ? segments : undefined;
-}
-
-// Selects the credential for one API family. Legacy keys are returned
-// verbatim; compound keys must carry the family's segment, otherwise the
-// call fails fast here — before any request is attempted — instead of
-// authenticating with another family's credential and failing remotely.
-function selectFamilyKey(apiKey: string, family: CustomerioApiFamily): string {
-	const segments = parseCompoundKey(apiKey);
-	if (segments === undefined) {
-		return apiKey;
-	}
-	const selected: string | undefined = segments[family];
-	if (selected === undefined) {
-		throw new CustomerioAPIError(
-			`Missing ${family} credential in the Customer.io key. Use a family-scoped key like "app=<app-key>;track=<siteId:apiKey>;cdp=<writeKey>" or configure a connection holding that family's credential.`,
-		);
-	}
-	return selected;
 }
 
 function buildConfig(
@@ -223,7 +168,7 @@ export async function makeAppRequest<T>(
 	const config: OpenAPIConfig = buildConfig(
 		resolveBaseUrl(CUSTOMERIO_APP_BASE, CUSTOMERIO_APP_BASE_EU, options.region),
 		{
-			Authorization: `Bearer ${selectFamilyKey(apiKey, 'app')}`,
+			Authorization: `Bearer ${apiKey}`,
 		},
 	);
 	return runRequest<T>(config, endpoint, options);
@@ -243,7 +188,7 @@ export async function makeTrackRequest<T>(
 			options.region,
 		),
 		{
-			Authorization: `Basic ${toBasicCredential(selectFamilyKey(apiKey, 'track'))}`,
+			Authorization: `Basic ${toBasicCredential(apiKey)}`,
 		},
 	);
 	return runRequest<T>(config, endpoint, options);
@@ -264,7 +209,7 @@ export async function makeCdpRequest<T>(
 	const config: OpenAPIConfig = buildConfig(
 		resolveBaseUrl(CUSTOMERIO_CDP_BASE, CUSTOMERIO_CDP_BASE_EU, options.region),
 		{
-			Authorization: `Basic ${toBasicCredential(selectFamilyKey(apiKey, 'cdp'))}`,
+			Authorization: `Basic ${toBasicCredential(apiKey)}`,
 			'X-Strict-Mode': '1',
 		},
 	);

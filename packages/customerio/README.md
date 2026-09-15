@@ -38,19 +38,15 @@ const corsair = createCorsair({
 });
 ```
 
-One plugin instance carries a single key, but App, Track v1, and CDP each
-need a different key format (see table above). Use a family-scoped compound
-key so one connection serves all families:
-
-```
-app=<app-key>;track=<siteId:apiKey>;cdp=<write-key>
-```
-
-Each transport selects its own segment (`app`, `track`, `cdp`); omit
-families you never call. Calling a family without its segment fails fast
-with a clear error instead of authenticating with the wrong credential.
-Plain single keys keep working as before (the same value is sent to every
-family), as do separate single-family `customerio()` instances.
+One `customerio()` instance carries one opaque `key` (standard Corsair
+`api_key` pattern — see `brevo` `packages/brevo/index.ts:28-32`, `sendgrid`
+`packages/sendgrid/index.ts:41-43`, scaffold
+`scripts/generate-plugin.ts:204-206,327-344`). The key is forwarded
+verbatim to the transport that needs it (Bearer for App, Basic for Track/CDP).
+Because the three families need incompatible credentials, create a separate
+`customerio()` instance per family you call — for example one with the App
+API key for App endpoints and another with `siteId:apiKey` for Track
+endpoints. No `;`/`=` parsing and no compound string.
 
 ## Endpoints
 
