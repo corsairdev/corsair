@@ -19,7 +19,6 @@ import { AuthMissingError } from 'corsair/core';
 import { buildCloudcartStoreUrl, packCloudcartKey } from './client';
 import {
 	Blogs,
-	Cart,
 	Categories,
 	Customers,
 	Discounts,
@@ -211,16 +210,8 @@ const cloudcartEndpointsNested = {
 		listOrderProducts: Orders.listOrderProducts,
 		listOrderProductsOptions: Orders.listOrderProductsOptions,
 		listOrderPayments: Orders.listOrderPayments,
-		listOrderPaymentV2: Orders.listOrderPaymentV2,
 		listOrderShipping: Orders.listOrderShipping,
 		listOrderStatus: Orders.listOrderStatus,
-	},
-	cart: {
-		getCart: Cart.getCart,
-		addToCart: Cart.addToCart,
-		updateCartItem: Cart.updateCartItem,
-		removeFromCart: Cart.removeFromCart,
-		clearCart: Cart.clearCart,
 	},
 	discounts: {
 		createDiscount: Discounts.createDiscount,
@@ -653,10 +644,6 @@ export const cloudcartEndpointSchemas = {
 		input: CloudcartEndpointInputSchemas.listOrderPayments,
 		output: CloudcartEndpointOutputSchemas.listOrderPayments,
 	},
-	'orders.listOrderPaymentV2': {
-		input: CloudcartEndpointInputSchemas.listOrderPaymentV2,
-		output: CloudcartEndpointOutputSchemas.listOrderPaymentV2,
-	},
 	'orders.listOrderShipping': {
 		input: CloudcartEndpointInputSchemas.listOrderShipping,
 		output: CloudcartEndpointOutputSchemas.listOrderShipping,
@@ -664,27 +651,6 @@ export const cloudcartEndpointSchemas = {
 	'orders.listOrderStatus': {
 		input: CloudcartEndpointInputSchemas.listOrderStatus,
 		output: CloudcartEndpointOutputSchemas.listOrderStatus,
-	},
-
-	'cart.getCart': {
-		input: CloudcartEndpointInputSchemas.getCart,
-		output: CloudcartEndpointOutputSchemas.getCart,
-	},
-	'cart.addToCart': {
-		input: CloudcartEndpointInputSchemas.addToCart,
-		output: CloudcartEndpointOutputSchemas.addToCart,
-	},
-	'cart.updateCartItem': {
-		input: CloudcartEndpointInputSchemas.updateCartItem,
-		output: CloudcartEndpointOutputSchemas.updateCartItem,
-	},
-	'cart.removeFromCart': {
-		input: CloudcartEndpointInputSchemas.removeFromCart,
-		output: CloudcartEndpointOutputSchemas.removeFromCart,
-	},
-	'cart.clearCart': {
-		input: CloudcartEndpointInputSchemas.clearCart,
-		output: CloudcartEndpointOutputSchemas.clearCart,
 	},
 
 	'discounts.createDiscount': {
@@ -953,7 +919,8 @@ const cloudcartEndpointMeta = {
 	'products.getProduct': { riskLevel: 'read', description: 'Get product' },
 	'products.getProductWithRelations': {
 		riskLevel: 'read',
-		description: 'Get product with relations',
+		description:
+			'Get product with relations. Pass documented include params (e.g. include=category) to sideload related resources.',
 	},
 	'products.listProducts': { riskLevel: 'read', description: 'List products' },
 	'products.updateProduct': {
@@ -1256,10 +1223,6 @@ const cloudcartEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List order payments',
 	},
-	'orders.listOrderPaymentV2': {
-		riskLevel: 'read',
-		description: 'List order payment v2',
-	},
 	'orders.listOrderShipping': {
 		riskLevel: 'read',
 		description: 'List order shipping',
@@ -1268,18 +1231,6 @@ const cloudcartEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List order statuses',
 	},
-
-	'cart.getCart': { riskLevel: 'read', description: 'Get cart' },
-	'cart.addToCart': { riskLevel: 'write', description: 'Add item to cart' },
-	'cart.updateCartItem': {
-		riskLevel: 'write',
-		description: 'Update cart item',
-	},
-	'cart.removeFromCart': {
-		riskLevel: 'destructive',
-		description: 'Remove item from cart',
-	},
-	'cart.clearCart': { riskLevel: 'destructive', description: 'Clear cart' },
 
 	'discounts.createDiscount': {
 		riskLevel: 'write',
@@ -1518,15 +1469,10 @@ export function cloudcart<const T extends CloudcartPluginOptions>(
 			DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
 		},
 		keyBuilder: async (ctx: CloudcartKeyBuilderContext, source) => {
-			if (source === 'webhook') {
-				const secret =
-					options.webhookSecret ?? (await ctx.keys?.get_webhook_signature?.());
-				if (!secret) {
-					throw new AuthMissingError('cloudcart', 'webhook_signature');
-				}
-				return secret;
-			}
-
+			// Event deliveries are unsigned (CloudCart publishes no webhook
+			// signature scheme), so webhook handling must not require a
+			// secret: handlers verify only Hub-verified or explicitly signed
+			// deliveries. Credentials resolve the same way for every source.
 			const apiKey =
 				options.key ??
 				(ctx.authType === 'api_key'

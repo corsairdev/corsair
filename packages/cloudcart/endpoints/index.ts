@@ -1,5 +1,4 @@
 import * as BlogsExports from './blogs';
-import * as CartExports from './cart';
 import * as CategoriesExports from './categories';
 import * as CustomersExports from './customers';
 import * as DiscountsExports from './discounts';
@@ -17,7 +16,6 @@ export const Properties = PropertiesExports;
 export const Variants = VariantsExports;
 export const Customers = CustomersExports;
 export const Orders = OrdersExports;
-export const Cart = CartExports;
 export const Discounts = DiscountsExports;
 export const Subscribers = SubscribersExports;
 export const Blogs = BlogsExports;

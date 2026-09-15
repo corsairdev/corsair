@@ -6,7 +6,6 @@ import {
 	DeleteOrderInputSchema,
 	ListOrderBillingAddressesInputSchema,
 	ListOrderPaymentsInputSchema,
-	ListOrderPaymentV2InputSchema,
 	ListOrderProductsInputSchema,
 	ListOrderProductsOptionsInputSchema,
 	ListOrderShippingAddressesInputSchema,
@@ -98,17 +97,6 @@ export const listOrderPayments: CloudcartEndpoints['listOrderPayments'] = (
 		inputSchema: ListOrderPaymentsInputSchema,
 		outputSchema: CloudcartEndpointOutputSchemas.listOrderPayments,
 		path: 'order-payments',
-	});
-
-export const listOrderPaymentV2: CloudcartEndpoints['listOrderPaymentV2'] = (
-	ctx,
-	input,
-) =>
-	runCloudcart(ctx, input, {
-		event: 'cloudcart.orders.listOrderPaymentV2',
-		inputSchema: ListOrderPaymentV2InputSchema,
-		outputSchema: CloudcartEndpointOutputSchemas.listOrderPaymentV2,
-		path: 'order-payments/v2',
 	});
 
 export const listOrderShipping: CloudcartEndpoints['listOrderShipping'] = (

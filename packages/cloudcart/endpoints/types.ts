@@ -37,8 +37,7 @@ const IdAndDiscountIdInputSchema = BaseEntityInputSchema.extend({
 	discount_id: RequiredIdSchema,
 });
 const VariantOptionCreateInputSchema = BaseEntityInputSchema.extend({
-	variant_id: RequiredIdSchema,
-	product_id: RequiredIdSchema,
+	parameter_id: RequiredIdSchema,
 });
 const ParameterIdRequiredInputSchema = BaseEntityInputSchema.extend({
 	parameter_id: RequiredIdSchema,
@@ -143,15 +142,8 @@ export const ListOrderShippingAddressesInputSchema = BaseEntityInputSchema;
 export const ListOrderProductsInputSchema = BaseEntityInputSchema;
 export const ListOrderProductsOptionsInputSchema = BaseEntityInputSchema;
 export const ListOrderPaymentsInputSchema = BaseEntityInputSchema;
-export const ListOrderPaymentV2InputSchema = BaseEntityInputSchema;
 export const ListOrderShippingInputSchema = BaseEntityInputSchema;
 export const ListOrderStatusInputSchema = BaseEntityInputSchema;
-
-export const GetCartInputSchema = BaseEntityInputSchema;
-export const AddToCartInputSchema = BaseEntityInputSchema;
-export const UpdateCartItemInputSchema = IdRequiredInputSchema;
-export const RemoveFromCartInputSchema = IdRequiredInputSchema;
-export const ClearCartInputSchema = BaseEntityInputSchema;
 
 export const CreateDiscountInputSchema = BaseEntityInputSchema;
 export const DeleteDiscountInputSchema = IdRequiredInputSchema;
@@ -341,15 +333,8 @@ export type CloudcartEndpointInputs = {
 	listOrderProducts: z.infer<typeof ListOrderProductsInputSchema>;
 	listOrderProductsOptions: z.infer<typeof ListOrderProductsOptionsInputSchema>;
 	listOrderPayments: z.infer<typeof ListOrderPaymentsInputSchema>;
-	listOrderPaymentV2: z.infer<typeof ListOrderPaymentV2InputSchema>;
 	listOrderShipping: z.infer<typeof ListOrderShippingInputSchema>;
 	listOrderStatus: z.infer<typeof ListOrderStatusInputSchema>;
-
-	getCart: z.infer<typeof GetCartInputSchema>;
-	addToCart: z.infer<typeof AddToCartInputSchema>;
-	updateCartItem: z.infer<typeof UpdateCartItemInputSchema>;
-	removeFromCart: z.infer<typeof RemoveFromCartInputSchema>;
-	clearCart: z.infer<typeof ClearCartInputSchema>;
 
 	createDiscount: z.infer<typeof CreateDiscountInputSchema>;
 	deleteDiscount: z.infer<typeof DeleteDiscountInputSchema>;
@@ -510,15 +495,8 @@ export const CloudcartEndpointInputSchemas = {
 	listOrderProducts: ListOrderProductsInputSchema,
 	listOrderProductsOptions: ListOrderProductsOptionsInputSchema,
 	listOrderPayments: ListOrderPaymentsInputSchema,
-	listOrderPaymentV2: ListOrderPaymentV2InputSchema,
 	listOrderShipping: ListOrderShippingInputSchema,
 	listOrderStatus: ListOrderStatusInputSchema,
-
-	getCart: GetCartInputSchema,
-	addToCart: AddToCartInputSchema,
-	updateCartItem: UpdateCartItemInputSchema,
-	removeFromCart: RemoveFromCartInputSchema,
-	clearCart: ClearCartInputSchema,
 
 	createDiscount: CreateDiscountInputSchema,
 	deleteDiscount: DeleteDiscountInputSchema,
@@ -675,15 +653,8 @@ export const CloudcartEndpointOutputSchemas = {
 	listOrderProducts: GenericResponseSchema,
 	listOrderProductsOptions: GenericResponseSchema,
 	listOrderPayments: GenericResponseSchema,
-	listOrderPaymentV2: GenericResponseSchema,
 	listOrderShipping: GenericResponseSchema,
 	listOrderStatus: GenericResponseSchema,
-
-	getCart: GenericResponseSchema,
-	addToCart: GenericResponseSchema,
-	updateCartItem: GenericResponseSchema,
-	removeFromCart: GenericResponseSchema,
-	clearCart: GenericResponseSchema,
 
 	createDiscount: GenericResponseSchema,
 	deleteDiscount: GenericResponseSchema,
