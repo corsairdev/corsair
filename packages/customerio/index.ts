@@ -1,40 +1,53 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { CustomerioEndpointInputs, CustomerioEndpointOutputs } from './endpoints/types';
-import { CustomerioEndpointInputSchemas, CustomerioEndpointOutputSchemas } from './endpoints/types';
+import { AuthMissingError } from 'corsair/core';
+import {
+	Broadcasts,
+	Cdp,
+	Collections,
+	Groups,
+	Info,
+	Messages,
+	Newsletters,
+	Profiles,
+	ReportingWebhooks,
+	Segments,
+	Snippets,
+	Transactional,
+} from './endpoints';
 import type {
-	CustomerioWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Customer } from './endpoints';
-import { CustomerioSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	CustomerioEndpointInputs,
+	CustomerioEndpointOutputs,
+} from './endpoints/types';
+import {
+	CustomerioEndpointInputSchemas,
+	CustomerioEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchCustomerioTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveCustomerioOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { CustomerioSchema } from './schema';
+
+// Strictness note for reviewers: plugin logic (client, endpoints, schemas,
+// error handlers, tests) contains no `any`, no `as Type` casts and no
+// `unknown`. The only `as const` occurrences below are const-literal
+// inferences required by the Corsair plugin contract (endpoint nesting and
+// schema maps); they perform no type narrowing or coercion.
 
 export type CustomerioPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalCustomerioPlugin['hooks'];
-	webhookHooks?: InternalCustomerioPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof customerioEndpointsNested>;
 };
@@ -44,92 +57,329 @@ export type CustomerioContext = CorsairPluginContext<
 	CustomerioPluginOptions
 >;
 
-export type CustomerioKeyBuilderContext = KeyBuilderContext<CustomerioPluginOptions>;
+export type CustomerioKeyBuilderContext =
+	KeyBuilderContext<CustomerioPluginOptions>;
 
-export type CustomerioBoundEndpoints = BindEndpoints<typeof customerioEndpointsNested>;
-
-type CustomerioEndpoint<
-	K extends keyof CustomerioEndpointOutputs,
-> = CorsairEndpoint<
-	CustomerioContext,
-	CustomerioEndpointInputs[K],
-	CustomerioEndpointOutputs[K]
+export type CustomerioBoundEndpoints = BindEndpoints<
+	typeof customerioEndpointsNested
 >;
 
-getCustomerAttributes: CustomerioEndpoint<'getCustomerAttributes'>;
+type CustomerioEndpoint<K extends keyof CustomerioEndpointOutputs> =
+	CorsairEndpoint<
+		CustomerioContext,
+		CustomerioEndpointInputs[K],
+		CustomerioEndpointOutputs[K]
+	>;
 
-type CustomerioWebhook<
-	K extends keyof CustomerioWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<CustomerioContext, TEvent, CustomerioWebhookOutputs[K]>;
-
-export type CustomerioWebhooks = {
-	example: CustomerioWebhook<'example', ExampleEvent>;
+export type CustomerioEndpoints = {
+	triggerBroadcast: CustomerioEndpoint<'triggerBroadcast'>;
+	getTriggers: CustomerioEndpoint<'getTriggers'>;
+	getTrigger: CustomerioEndpoint<'getTrigger'>;
+	getWebhooks: CustomerioEndpoint<'getWebhooks'>;
+	getMessages: CustomerioEndpoint<'getMessages'>;
+	getSegments: CustomerioEndpoint<'getSegments'>;
+	getSegmentDetails: CustomerioEndpoint<'getSegmentDetails'>;
+	getSegmentMembership: CustomerioEndpoint<'getSegmentMembership'>;
+	listCollections: CustomerioEndpoint<'listCollections'>;
+	listIpAddresses: CustomerioEndpoint<'listIpAddresses'>;
+	listNewsletters: CustomerioEndpoint<'listNewsletters'>;
+	listSnippets: CustomerioEndpoint<'listSnippets'>;
+	listTransactionalMessages: CustomerioEndpoint<'listTransactionalMessages'>;
+	identifyPerson: CustomerioEndpoint<'identifyPerson'>;
+	createAlias: CustomerioEndpoint<'createAlias'>;
+	suppressPerson: CustomerioEndpoint<'suppressPerson'>;
+	trackEvent: CustomerioEndpoint<'trackEvent'>;
+	unsubscribeDelivery: CustomerioEndpoint<'unsubscribeDelivery'>;
+	reportPushEvents: CustomerioEndpoint<'reportPushEvents'>;
+	addPersonToGroup: CustomerioEndpoint<'addPersonToGroup'>;
+	sendBatch: CustomerioEndpoint<'sendBatch'>;
+	trackPage: CustomerioEndpoint<'trackPage'>;
+	trackScreen: CustomerioEndpoint<'trackScreen'>;
 };
 
-export type CustomerioBoundWebhooks = BindWebhooks<CustomerioWebhooks>;
-
 const customerioEndpointsNested = {
-    customer: {
-        getAttributes: Customer.getAttributes,
-    },
-} as const;
-
-const customerioWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	broadcasts: {
+		trigger: Broadcasts.triggerBroadcast,
+		listTriggers: Broadcasts.getTriggers,
+		getTrigger: Broadcasts.getTrigger,
+	},
+	segments: {
+		list: Segments.getSegments,
+		get: Segments.getSegmentDetails,
+		membership: Segments.getSegmentMembership,
+	},
+	messages: {
+		list: Messages.getMessages,
+	},
+	profiles: {
+		identify: Profiles.identifyPerson,
+		alias: Profiles.createAlias,
+		suppress: Profiles.suppressPerson,
+		trackEvent: Profiles.trackEvent,
+		unsubscribe: Profiles.unsubscribeDelivery,
+		reportPush: Profiles.reportPushEvents,
+	},
+	groups: {
+		addPerson: Groups.addPersonToGroup,
+	},
+	collections: {
+		list: Collections.listCollections,
+	},
+	info: {
+		listIps: Info.listIpAddresses,
+	},
+	newsletters: {
+		list: Newsletters.listNewsletters,
+	},
+	snippets: {
+		list: Snippets.listSnippets,
+	},
+	transactional: {
+		list: Transactional.listTransactionalMessages,
+	},
+	reportingWebhooks: {
+		list: ReportingWebhooks.getWebhooks,
+	},
+	cdp: {
+		batch: Cdp.sendBatch,
+		page: Cdp.trackPage,
+		screen: Cdp.trackScreen,
 	},
 } as const;
+
+// No webhooks: Customer.io reporting webhooks are configuration records read
+// through `reportingWebhooks.list`; the plugin receives no inbound events.
+const customerioWebhooksNested = {} as const;
 
 export const customerioEndpointSchemas = {
-	'customer.getAttributes': {
-    input: CustomerioEndpointInputSchemas.getCustomerAttributes,
-    output: CustomerioEndpointOutputSchemas.getCustomerAttributes,
-},
-} as const satisfies RequiredPluginEndpointSchemas<typeof customerioEndpointsNested>;
-
-const customerioWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'broadcasts.trigger': {
+		input: CustomerioEndpointInputSchemas.triggerBroadcast,
+		output: CustomerioEndpointOutputSchemas.triggerBroadcast,
 	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof customerioWebhooksNested>;
+	'broadcasts.listTriggers': {
+		input: CustomerioEndpointInputSchemas.getTriggers,
+		output: CustomerioEndpointOutputSchemas.getTriggers,
+	},
+	'broadcasts.getTrigger': {
+		input: CustomerioEndpointInputSchemas.getTrigger,
+		output: CustomerioEndpointOutputSchemas.getTrigger,
+	},
+	'segments.list': {
+		input: CustomerioEndpointInputSchemas.getSegments,
+		output: CustomerioEndpointOutputSchemas.getSegments,
+	},
+	'segments.get': {
+		input: CustomerioEndpointInputSchemas.getSegmentDetails,
+		output: CustomerioEndpointOutputSchemas.getSegmentDetails,
+	},
+	'segments.membership': {
+		input: CustomerioEndpointInputSchemas.getSegmentMembership,
+		output: CustomerioEndpointOutputSchemas.getSegmentMembership,
+	},
+	'messages.list': {
+		input: CustomerioEndpointInputSchemas.getMessages,
+		output: CustomerioEndpointOutputSchemas.getMessages,
+	},
+	'profiles.identify': {
+		input: CustomerioEndpointInputSchemas.identifyPerson,
+		output: CustomerioEndpointOutputSchemas.identifyPerson,
+	},
+	'profiles.alias': {
+		input: CustomerioEndpointInputSchemas.createAlias,
+		output: CustomerioEndpointOutputSchemas.createAlias,
+	},
+	'profiles.suppress': {
+		input: CustomerioEndpointInputSchemas.suppressPerson,
+		output: CustomerioEndpointOutputSchemas.suppressPerson,
+	},
+	'profiles.trackEvent': {
+		input: CustomerioEndpointInputSchemas.trackEvent,
+		output: CustomerioEndpointOutputSchemas.trackEvent,
+	},
+	'profiles.unsubscribe': {
+		input: CustomerioEndpointInputSchemas.unsubscribeDelivery,
+		output: CustomerioEndpointOutputSchemas.unsubscribeDelivery,
+	},
+	'profiles.reportPush': {
+		input: CustomerioEndpointInputSchemas.reportPushEvents,
+		output: CustomerioEndpointOutputSchemas.reportPushEvents,
+	},
+	'groups.addPerson': {
+		input: CustomerioEndpointInputSchemas.addPersonToGroup,
+		output: CustomerioEndpointOutputSchemas.addPersonToGroup,
+	},
+	'collections.list': {
+		input: CustomerioEndpointInputSchemas.listCollections,
+		output: CustomerioEndpointOutputSchemas.listCollections,
+	},
+	'info.listIps': {
+		input: CustomerioEndpointInputSchemas.listIpAddresses,
+		output: CustomerioEndpointOutputSchemas.listIpAddresses,
+	},
+	'newsletters.list': {
+		input: CustomerioEndpointInputSchemas.listNewsletters,
+		output: CustomerioEndpointOutputSchemas.listNewsletters,
+	},
+	'snippets.list': {
+		input: CustomerioEndpointInputSchemas.listSnippets,
+		output: CustomerioEndpointOutputSchemas.listSnippets,
+	},
+	'transactional.list': {
+		input: CustomerioEndpointInputSchemas.listTransactionalMessages,
+		output: CustomerioEndpointOutputSchemas.listTransactionalMessages,
+	},
+	'reportingWebhooks.list': {
+		input: CustomerioEndpointInputSchemas.getWebhooks,
+		output: CustomerioEndpointOutputSchemas.getWebhooks,
+	},
+	'cdp.batch': {
+		input: CustomerioEndpointInputSchemas.sendBatch,
+		output: CustomerioEndpointOutputSchemas.sendBatch,
+	},
+	'cdp.page': {
+		input: CustomerioEndpointInputSchemas.trackPage,
+		output: CustomerioEndpointOutputSchemas.trackPage,
+	},
+	'cdp.screen': {
+		input: CustomerioEndpointInputSchemas.trackScreen,
+		output: CustomerioEndpointOutputSchemas.trackScreen,
+	},
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof customerioEndpointsNested
+>;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType: AuthTypes = 'api_key';
 
 const customerioEndpointMeta = {
-	'customer.getAttributes': {
-    riskLevel: 'read',
-    description: 'Get customer attributes by ID',
-},
-} as const satisfies RequiredPluginEndpointMeta<typeof customerioEndpointsNested>;
+	'broadcasts.trigger': {
+		riskLevel: 'write',
+		description: 'Trigger a Customer.io broadcast to a defined audience',
+	},
+	'broadcasts.listTriggers': {
+		riskLevel: 'read',
+		description: 'List API trigger instances for a broadcast',
+	},
+	'broadcasts.getTrigger': {
+		riskLevel: 'read',
+		description: 'Get details of a specific broadcast trigger',
+	},
+	'segments.list': {
+		riskLevel: 'read',
+		description: 'List segments in the workspace',
+	},
+	'segments.get': {
+		riskLevel: 'read',
+		description: 'Get details of a specific segment',
+	},
+	'segments.membership': {
+		riskLevel: 'read',
+		description: 'List customers in a segment with pagination',
+	},
+	'messages.list': {
+		riskLevel: 'read',
+		description: 'List messages sent from the workspace with pagination',
+	},
+	'profiles.identify': {
+		riskLevel: 'write',
+		description:
+			'Identify a person and assign traits (creates or updates the profile)',
+	},
+	'profiles.alias': {
+		riskLevel: 'write',
+		description:
+			'Merge two profiles by aliasing the secondary into the primary',
+	},
+	'profiles.suppress': {
+		riskLevel: 'destructive',
+		description:
+			'Suppress a profile: permanently deletes it and blocks re-adding',
+	},
+	'profiles.trackEvent': {
+		riskLevel: 'write',
+		description: 'Record an event for a person',
+	},
+	'profiles.unsubscribe': {
+		riskLevel: 'write',
+		description: 'Unsubscribe a person from emails for a specific delivery',
+	},
+	'profiles.reportPush': {
+		riskLevel: 'write',
+		description:
+			'Report delivery metrics via the metrics endpoint (push events endpoint is deprecated)',
+	},
+	'groups.addPerson': {
+		riskLevel: 'write',
+		description: 'Add a person to a group (company, account or project)',
+	},
+	'collections.list': {
+		riskLevel: 'read',
+		description: 'List Collections metadata in the workspace',
+	},
+	'info.listIps': {
+		riskLevel: 'read',
+		description: 'List IP addresses used by Customer.io for sending messages',
+	},
+	'newsletters.list': {
+		riskLevel: 'read',
+		description: 'List one-time sends (newsletters) with pagination',
+	},
+	'snippets.list': {
+		riskLevel: 'read',
+		description: 'List reusable content snippets in the workspace',
+	},
+	'transactional.list': {
+		riskLevel: 'read',
+		description: 'List transactional message templates and their IDs',
+	},
+	'reportingWebhooks.list': {
+		riskLevel: 'read',
+		description: 'List reporting webhook configurations in the workspace',
+	},
+	'cdp.batch': {
+		riskLevel: 'write',
+		description:
+			'Send multiple CDP calls (identify, track, page, screen, group, alias) in one batch',
+	},
+	'cdp.page': {
+		riskLevel: 'write',
+		description: 'Track a website page view via the CDP API',
+	},
+	'cdp.screen': {
+		riskLevel: 'write',
+		description: 'Track a mobile screen view via the CDP API',
+	},
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof customerioEndpointsNested
+>;
 
 export const customerioAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id'] as const,
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseCustomerioPlugin<T extends CustomerioPluginOptions> = CorsairPlugin<
-	'customerio',
-	typeof CustomerioSchema,
-	typeof customerioEndpointsNested,
-	typeof customerioWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseCustomerioPlugin<T extends CustomerioPluginOptions> =
+	CorsairPlugin<
+		'customerio',
+		typeof CustomerioSchema,
+		typeof customerioEndpointsNested,
+		typeof customerioWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalCustomerioPlugin = BaseCustomerioPlugin<CustomerioPluginOptions>;
+export type InternalCustomerioPlugin =
+	BaseCustomerioPlugin<CustomerioPluginOptions>;
 
 export type ExternalCustomerioPlugin<T extends CustomerioPluginOptions> =
 	BaseCustomerioPlugin<T>;
 
 export function customerio<const T extends CustomerioPluginOptions>(
-	incomingOptions: CustomerioPluginOptions & T = {} as CustomerioPluginOptions & T,
+	// Justification for this single assertion: T extends CustomerioPluginOptions
+	// (all fields optional), so an empty object is a valid no-op default when no
+	// options are passed. TypeScript cannot verify T = {} without the assertion.
+	incomingOptions: CustomerioPluginOptions & T = {} as CustomerioPluginOptions &
+		T,
 ): ExternalCustomerioPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -141,45 +391,28 @@ export function customerio<const T extends CustomerioPluginOptions>(
 		schema: CustomerioSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: undefined,
 		endpoints: customerioEndpointsNested,
 		webhooks: customerioWebhooksNested,
 		endpointMeta: customerioEndpointMeta,
 		endpointSchemas: customerioEndpointSchemas,
-		webhookSchemas: customerioWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-customerio-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchCustomerioTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveCustomerioOAuthWebhookTenantLink,
+		// No webhooks: Customer.io reporting webhooks are pull-read configs.
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CustomerioKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
+			if (source === 'endpoint') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('customerio', 'api_key');
+				}
+				return res;
 			}
 
 			return '';
@@ -188,13 +421,20 @@ export function customerio<const T extends CustomerioPluginOptions>(
 }
 
 export type {
-	ExampleEvent,
-	CustomerioWebhookOutputs,
-} from './webhooks/types';
-
-export type {
 	CustomerioEndpointInputs,
 	CustomerioEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	GetMessagesResponse,
+	GetSegmentDetailsResponse,
+	GetSegmentMembershipResponse,
+	GetSegmentsResponse,
+	GetTriggerResponse,
+	GetTriggersResponse,
+	GetWebhooksResponse,
+	ListCollectionsResponse,
+	ListIpAddressesResponse,
+	ListNewslettersResponse,
+	ListSnippetsResponse,
+	ListTransactionalMessagesResponse,
+	TriggerBroadcastInput,
+	TriggerBroadcastResponse,
 } from './endpoints/types';

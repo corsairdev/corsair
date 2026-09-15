@@ -1,9 +1,10 @@
 import { z } from 'zod';
 
-// TODO: Define your database entities here
-// export const CustomerioExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type CustomerioExample = z.infer<typeof CustomerioExample>;
+// The Customer.io plugin is a live-read/write API wrapper with no local
+// persistence: every endpoint calls the App, Track or CDP API directly and
+// returns the provider response. There are intentionally no database entities.
+export const CustomerioDatabaseEntities = z.object({});
+
+export type CustomerioDatabaseEntities = z.infer<
+	typeof CustomerioDatabaseEntities
+>;

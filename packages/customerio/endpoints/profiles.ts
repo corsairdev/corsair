@@ -1,0 +1,179 @@
+import { logEventFromContext } from 'corsair/core';
+import type { CustomerioEndpoints } from '..';
+import type { CustomerioJsonObject } from '../client';
+import { makeTrackRequest } from '../client';
+import type { CustomerioEndpointOutputs } from './types';
+
+// PUT /api/v1/customers/{identifier}
+// Docs: https://docs.customer.io/integrations/api/track/
+// Creates the person profile when it does not exist, otherwise updates it.
+export const identifyPerson: CustomerioEndpoints['identifyPerson'] = async (
+	ctx,
+	input,
+) => {
+	const body: CustomerioJsonObject = {
+		...input.attributes,
+	};
+	if (input.email !== undefined) {
+		body.email = input.email;
+	}
+	if (input.id !== undefined) {
+		body.id = input.id;
+	}
+	if (input.created_at !== undefined) {
+		body.created_at = input.created_at;
+	}
+	const response = await makeTrackRequest<
+		CustomerioEndpointOutputs['identifyPerson']
+	>(`/api/v1/customers/${encodeURIComponent(input.identifier)}`, ctx.key, {
+		method: 'PUT',
+		body,
+	});
+	await logEventFromContext(
+		ctx,
+		'customerio.profiles.identifyPerson',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+// POST /api/v1/merge_customers
+// Docs: https://docs.customer.io/integrations/api/track/
+// Moves all data from the secondary profile into the primary profile.
+export const createAlias: CustomerioEndpoints['createAlias'] = async (
+	ctx,
+	input,
+) => {
+	const body: CustomerioJsonObject = {
+		primary: input.primary,
+		secondary: input.secondary,
+	};
+	const response = await makeTrackRequest<
+		CustomerioEndpointOutputs['createAlias']
+	>('/api/v1/merge_customers', ctx.key, { method: 'POST', body });
+	await logEventFromContext(
+		ctx,
+		'customerio.profiles.createAlias',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+// POST /api/v1/customers/{identifier}/suppress
+// Docs: https://docs.customer.io/integrations/api/track/
+// Permanently deletes the profile and blocks re-adding the same identifier.
+export const suppressPerson: CustomerioEndpoints['suppressPerson'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeTrackRequest<
+		CustomerioEndpointOutputs['suppressPerson']
+	>(
+		`/api/v1/customers/${encodeURIComponent(input.identifier)}/suppress`,
+		ctx.key,
+		{ method: 'POST', body: {} },
+	);
+	await logEventFromContext(
+		ctx,
+		'customerio.profiles.suppressPerson',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+// POST /api/v1/customers/{identifier}/events
+// Docs: https://docs.customer.io/integrations/api/track/
+export const trackEvent: CustomerioEndpoints['trackEvent'] = async (
+	ctx,
+	input,
+) => {
+	const body: CustomerioJsonObject = {
+		name: input.name,
+	};
+	if (input.data !== undefined) {
+		body.data = input.data;
+	}
+	if (input.timestamp !== undefined) {
+		body.timestamp = input.timestamp;
+	}
+	if (input.type !== undefined) {
+		body.type = input.type;
+	}
+	if (input.anonymous_id !== undefined) {
+		body.anonymous_id = input.anonymous_id;
+	}
+	const response = await makeTrackRequest<
+		CustomerioEndpointOutputs['trackEvent']
+	>(
+		`/api/v1/customers/${encodeURIComponent(input.identifier)}/events`,
+		ctx.key,
+		{ method: 'POST', body },
+	);
+	await logEventFromContext(
+		ctx,
+		'customerio.profiles.trackEvent',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+// POST /unsubscribe/{delivery_id} (host root, no /api/v1 prefix)
+// Docs: https://docs.customer.io/integrations/api/track/
+export const unsubscribeDelivery: CustomerioEndpoints['unsubscribeDelivery'] =
+	async (ctx, input) => {
+		const body: CustomerioJsonObject = {};
+		if (input.unsubscribe !== undefined) {
+			body.unsubscribe = input.unsubscribe;
+		}
+		const response = await makeTrackRequest<
+			CustomerioEndpointOutputs['unsubscribeDelivery']
+		>(`/unsubscribe/${encodeURIComponent(input.delivery_id)}`, ctx.key, {
+			method: 'POST',
+			body,
+		});
+		await logEventFromContext(
+			ctx,
+			'customerio.profiles.unsubscribeDelivery',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
+
+// POST /api/v1/metrics (supported replacement for deprecated POST /api/v1/push/events)
+// Docs: https://docs.customer.io/integrations/api/track/
+export const reportPushEvents: CustomerioEndpoints['reportPushEvents'] = async (
+	ctx,
+	input,
+) => {
+	const body: CustomerioJsonObject = {
+		delivery_id: input.delivery_id,
+		metric: input.metric ?? input.event ?? 'opened',
+	};
+	if (input.href !== undefined) {
+		body.href = input.href;
+	}
+	if (input.reason !== undefined) {
+		body.reason = input.reason;
+	}
+	if (input.timestamp !== undefined) {
+		body.timestamp = input.timestamp;
+	}
+	if (input.recipient !== undefined) {
+		body.recipient = input.recipient;
+	}
+	const response = await makeTrackRequest<
+		CustomerioEndpointOutputs['reportPushEvents']
+	>('/api/v1/metrics', ctx.key, { method: 'POST', body });
+	await logEventFromContext(
+		ctx,
+		'customerio.profiles.reportPushEvents',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
