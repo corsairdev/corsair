@@ -6,7 +6,8 @@ export const DEFAULT_HUB_API_URL = 'https://auth.corsair.dev';
 
 export type HubConfigInput = {
 	projectApiKey: string;
-	signingSecret: string;
+	/** Required for dev/prod keys — validated by `resolveHubConfigInput`. Not used in cloud mode (`ck_cloud_`). */
+	signingSecret?: string;
 	apiUrl?: string;
 	/**
 	 * Corsair Cloud VM base URL (`ck_cloud_` keys only) — distinct from `apiUrl`,

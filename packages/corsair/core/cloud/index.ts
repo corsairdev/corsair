@@ -84,7 +84,7 @@ export function buildCloudCorsair<Plugins extends readonly CorsairPlugin[]>(
 				return deferredCloudError('permissions');
 			},
 			manage,
-		} as unknown as CorsairTenantWrapper<Plugins>;
+		};
 	}
 
 	const client = buildCloudClient(config.plugins, {
@@ -112,5 +112,8 @@ export function buildCloudCorsair<Plugins extends readonly CorsairPlugin[]>(
 			return Reflect.get(target, prop, receiver);
 		},
 	});
+	// The Proxy handler's `get` widens to `object` (it forwards to two shapes),
+	// so it can't infer CorsairSingleTenantClient<Plugins> on its own — one cast
+	// still needed here, unlike the tenant-wrapper branch above.
 	return singleTenant as unknown as CorsairSingleTenantClient<Plugins>;
 }

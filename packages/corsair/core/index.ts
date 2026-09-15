@@ -100,7 +100,11 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	const internalConfig: CorsairInternalConfig = {
 		plugins: config.plugins,
 		database: resolvedDatabase,
-		kek,
+		// Omitted kek behaves like an empty one: createMissingConfigProxy already
+		// treats a falsy kek as "not configured" for integration keys, and
+		// downstream dev/prod flows (state signing, key managers) that need a
+		// real kek simply fail to decode/verify against ''.
+		kek: kek ?? '',
 		multiTenancy: !!config.multiTenancy,
 		permissions: rootPermissions,
 		manual: config.manual,

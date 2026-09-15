@@ -20,9 +20,9 @@ describe('createCorsair with a ck_cloud_ key', () => {
 				projectApiKey: 'ck_cloud_x',
 				baseUrl: 'https://vm/p/api/corsair',
 			},
-		} as any);
+		});
 
-		const out = await (corsair as any)
+		const out = await corsair
 			.withTenant('acme')
 			.slack.api.messages.post({ channel: '#g', text: 'hi' });
 
@@ -47,9 +47,9 @@ describe('createCorsair with a ck_cloud_ key', () => {
 				projectApiKey: 'ck_cloud_x',
 				baseUrl: 'https://vm/p/api/corsair',
 			},
-		} as any);
+		});
 
-		const out = await (corsair as any).slack.api.messages.post({
+		const out = await corsair.slack.api.messages.post({
 			channel: '#g',
 			text: 'hi',
 		});
@@ -61,7 +61,7 @@ describe('createCorsair with a ck_cloud_ key', () => {
 			createCorsair({
 				plugins: [slack()],
 				hub: { projectApiKey: 'ck_cloud_x' },
-			} as any),
+			}),
 		).toThrow(/baseUrl|CORSAIR_CLOUD_URL/);
 	});
 
@@ -76,8 +76,8 @@ describe('createCorsair with a ck_cloud_ key', () => {
 			const corsair = createCorsair({
 				plugins: [slack()],
 				hub: { projectApiKey: 'ck_cloud_x' },
-			} as any);
-			await (corsair as any).slack.api.messages.post({});
+			});
+			await corsair.slack.api.messages.post({ channel: '#g' });
 			const [url] = (globalThis.fetch as jest.Mock).mock.calls[0];
 			expect(url).toBe(
 				'https://env-vm/p/api/corsair/default/slack/call/messages.post',
@@ -94,9 +94,9 @@ describe('createCorsair with a ck_cloud_ key', () => {
 				projectApiKey: 'ck_cloud_x',
 				baseUrl: 'https://vm/p/api/corsair',
 			},
-		} as any);
+		});
 
-		expect(() => (corsair as any).keys).toThrow(/cloud mode/);
-		expect(() => (corsair as any).permissions).toThrow(/cloud mode/);
+		expect(() => corsair.keys).toThrow(/cloud mode/);
+		expect(() => corsair.permissions).toThrow(/cloud mode/);
 	});
 });
