@@ -10,7 +10,7 @@ describe('createCorsair — KEK validation', () => {
 	let env: ReturnType<typeof createTestDatabase>;
 	afterEach(() => env.cleanup());
 
-	it('does not throw at construction when the KEK is empty', () => {
+	it('throws a clear error at construction when the KEK is empty', () => {
 		env = createTestDatabase();
 		expect(() =>
 			createCorsair({
@@ -19,7 +19,18 @@ describe('createCorsair — KEK validation', () => {
 				kek: '',
 				multiTenancy: false,
 			}),
-		).not.toThrow();
+		).toThrow(/kek is required for dev\/prod integrations/);
+	});
+
+	it('throws a clear error at construction when the KEK is omitted', () => {
+		env = createTestDatabase();
+		expect(() =>
+			createCorsair({
+				plugins: [slack({ authType: 'api_key', key: 'fake-key' })],
+				database: env.db,
+				multiTenancy: false,
+			}),
+		).toThrow(/kek is required for dev\/prod integrations/);
 	});
 
 	it('stores the byte-exact KEK on the internal config', () => {

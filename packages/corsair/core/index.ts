@@ -1,7 +1,7 @@
 import type { CorsairDatabase } from '../db/kysely/database';
 import { createCorsairDatabase } from '../db/kysely/database';
 import type { HubConfig } from '../hub';
-import { inferHubEnvironmentSlug, resolveHubConfigInput } from '../hub';
+import { resolveHubConfigInput } from '../hub';
 import {
 	CORSAIR_TUNNEL_PATH,
 	CORSAIR_TUNNEL_ZONE,
@@ -70,10 +70,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	config: CorsairIntegration<Plugins>,
 ): CorsairSingleTenantClient<Plugins> | CorsairTenantWrapper<Plugins> {
-	if (
-		config.hub?.projectApiKey &&
-		inferHubEnvironmentSlug(config.hub.projectApiKey) === 'cloud'
-	) {
+	if (config.hub?.projectApiKey?.startsWith('ck_cloud_')) {
 		return buildCloudCorsair(config);
 	}
 
@@ -81,6 +78,11 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		? createCorsairDatabase(config.database)
 		: undefined;
 
+	if (!config.kek) {
+		throw new Error(
+			'createCorsair: kek is required for dev/prod integrations (ck_dev_/ck_prod_). It encrypts credentials and signs OAuth state.',
+		);
+	}
 	const kek = config.kek;
 
 	// Build integration-level keys when database + KEK are configured;
@@ -100,11 +102,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	const internalConfig: CorsairInternalConfig = {
 		plugins: config.plugins,
 		database: resolvedDatabase,
-		// Omitted kek behaves like an empty one: createMissingConfigProxy already
-		// treats a falsy kek as "not configured" for integration keys, and
-		// downstream dev/prod flows (state signing, key managers) that need a
-		// real kek simply fail to decode/verify against ''.
-		kek: kek ?? '',
+		kek,
 		multiTenancy: !!config.multiTenancy,
 		permissions: rootPermissions,
 		manual: config.manual,

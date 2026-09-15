@@ -87,6 +87,26 @@ describe('createCorsair with a ck_cloud_ key', () => {
 		}
 	});
 
+	it('single-tenant connectionStatus.get() defaults tenantId to "default", matching where calls route', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(
+				new Response(JSON.stringify({ data: {} }), { status: 200 }),
+			);
+
+		const corsair = createCorsair({
+			plugins: [slack()],
+			hub: {
+				projectApiKey: 'ck_cloud_x',
+				baseUrl: 'https://vm/p/api/corsair',
+			},
+		});
+
+		await corsair.manage.connectionStatus.get();
+		const [url] = (globalThis.fetch as jest.Mock).mock.calls[0];
+		expect(url).toContain('tenantId=default');
+	});
+
 	it('throws a deferred error for keys and permissions in cloud mode', () => {
 		const corsair = createCorsair({
 			plugins: [slack()],

@@ -31,6 +31,7 @@ function resolveCloudBaseUrl(hub: HubConfigInput | undefined): string {
 // review and OAuth callback handling stay a deferred track.
 function buildCloudManageNamespace(
 	transport: CloudTransport,
+	multiTenancy: boolean,
 ): CorsairManageNamespace {
 	const cloud = buildCloudManagement(transport);
 	return {
@@ -39,7 +40,10 @@ function buildCloudManageNamespace(
 		plugins: cloud.plugins,
 		connectionStatus: {
 			get: (query?: { tenantId?: string }) =>
-				cloud.connectionStatus.get({ tenantId: query?.tenantId ?? '' }),
+				cloud.connectionStatus.get({
+					tenantId:
+						query?.tenantId ?? (multiTenancy ? '' : CLOUD_SINGLE_TENANT_ID),
+				}),
 		},
 		permissions: {
 			get: () => deferredCloudError('manage.permissions'),
@@ -65,7 +69,7 @@ export function buildCloudCorsair<Plugins extends readonly CorsairPlugin[]>(
 		baseUrl: resolveCloudBaseUrl(config.hub),
 		apiKey: config.hub!.projectApiKey,
 	};
-	const manage = buildCloudManageNamespace(transport);
+	const manage = buildCloudManageNamespace(transport, !!config.multiTenancy);
 
 	if (config.multiTenancy) {
 		return {
