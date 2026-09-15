@@ -126,6 +126,7 @@ export const BaseProviders = [
 	'clickhouse',
 	'clientary',
 	'clockify',
+	'close',
 	'cloudflare',
 	'cloudinary',
 	'collegefootballdata',
@@ -415,6 +416,7 @@ export const ProviderDisplayNames = {
 	clickhouse: 'Clickhouse',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
+	close: 'Close',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
@@ -711,6 +713,7 @@ export type AllProviders =
 	| 'clickhouse'
 	| 'clientary'
 	| 'clockify'
+	| 'close'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'collegefootballdata'
