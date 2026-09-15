@@ -476,10 +476,25 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	const doUpdateConfig = async (
 		updates: Record<string, string | null>,
 	): Promise<void> => {
-		const dek = await getDecryptedDek();
+		// Read the row ONCE and derive both the DEK and the current config from that
+		// same snapshot. Reading them via two separate getAccount() calls lets a DEK
+		// rotation land between them, so we'd re-encrypt with a DEK that no longer
+		// matches the row — the next read then fails to decrypt and the catch below
+		// discards the config. One read keeps DEK and config consistent.
+		const account = await ctx.getAccount();
+		if (!account.dek) {
+			throw new Error(
+				`No DEK found for account (tenant: "${tenantId}", integration: "${integrationName}"). Initialize the account first.`,
+			);
+		}
+		const dek = await decryptDEK(account.dek, kek);
 		let currentConfig: Record<string, string>;
 		try {
-			currentConfig = await getDecryptedConfig();
+			const config = account.config as Record<string, string>;
+			currentConfig =
+				!config || Object.keys(config).length === 0
+					? {}
+					: decryptConfig(config, dek);
 		} catch (err) {
 			console.error(
 				`[corsair] Failed to decrypt config for account (tenant: "${tenantId}", integration: "${integrationName}"), starting fresh:`,

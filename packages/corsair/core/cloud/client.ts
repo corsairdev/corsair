@@ -8,6 +8,10 @@ const DEFERRED = new Set(['db', 'keys', 'webhooks']);
 const TOP_LEVEL_DEFERRED = new Set(['chats', 'workflows']);
 const THENABLE_KEYS = new Set(['then', 'catch', 'finally']);
 
+// Dynamic op proxy: `client.slack.messages.post(args)` builds the dot-path and
+// POSTs it. Intentionally loose — the op set and arg/return shapes live on the
+// VM (discovered at runtime), so they can't be statically typed here. The typed
+// layer is CorsairCloudRegistry (index.ts); this is the runtime that backs it.
 function buildInvokeProxy(
 	transport: CloudTransport,
 	tenantId: string,
@@ -23,6 +27,7 @@ function buildInvokeProxy(
 				.replace(':plugin', encodeURIComponent(pluginId))
 				.replace(':op', path.map(encodeURIComponent).join('.')),
 			{ args: args[0] },
+			// res is the { data } envelope; data is the dynamic, VM-defined op result.
 		).then((res: any) => res.data);
 
 	return new Proxy(invoke, {
