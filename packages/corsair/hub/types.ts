@@ -1,4 +1,4 @@
-export type HubEnvironmentSlug = 'development' | 'production';
+export type HubEnvironmentSlug = 'development' | 'production' | 'cloud';
 
 export type HubOAuthMode = 'byo' | 'managed';
 
@@ -31,7 +31,7 @@ export type HubConfigInput = {
  * with the SDK (override with `CORSAIR_FRP_BIN`); this only tunes the URL zone.
  */
 export type TunnelConfig = {
-	/** DNS zone of the tunnel URL, e.g. `'corsair.cloud'` (the default). */
+	/** DNS zone of the tunnel URL, e.g. `'corsair.run'` (the default). */
 	shareHost?: string;
 };
 

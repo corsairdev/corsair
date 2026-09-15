@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/botpress",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Botpress plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -36,9 +36,15 @@
     "botpress",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/botpress"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/botpress"
 }
