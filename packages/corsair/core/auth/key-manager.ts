@@ -301,12 +301,9 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		...extraAccountFields,
 	];
 
-	// Cache for account lookup
-	let cachedAccount: {
-		id: string;
-		config: Record<string, unknown>;
-		dek: string | null;
-	} | null = null;
+	// Not cached across calls: the /call route keeps one manager per (instance,
+	// tenant) alive for the whole process, and a tenant's token is rewritten
+	// out-of-band on reconnect / Hub delivery. A cached row served a revoked token.
 
 	// Cache for integration lookup
 	let cachedIntegration: {
@@ -357,8 +354,6 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		getIntegration,
 
 		getAccount: async () => {
-			if (cachedAccount) return cachedAccount;
-
 			let provisionAttempted = false;
 
 			while (true) {
@@ -383,13 +378,11 @@ export function createAccountKeyManager<T extends AuthTypes>(
 					);
 				}
 
-				cachedAccount = {
+				return {
 					id: account.id,
 					config: parseConfig(account.config),
 					dek: account.dek ?? null,
 				};
-
-				return cachedAccount;
 			}
 		},
 
@@ -404,19 +397,16 @@ export function createAccountKeyManager<T extends AuthTypes>(
 				})
 				.where('id', '=', account.id)
 				.execute();
-
-			// Invalidate cache
-			cachedAccount = null;
 		},
 	};
 
-	// DEK caches
+	// DEK cache keyed to its encrypted source: since the row is re-read each call,
+	// a DEK rotated out-of-band must re-decrypt, not reuse a stale key.
 	let cachedDek: string | null = null;
+	let cachedDekSource: string | null = null;
 	let cachedIntegrationDek: string | null = null;
 
 	const getDecryptedDek = async (): Promise<string> => {
-		if (cachedDek) return cachedDek;
-
 		const account = await ctx.getAccount();
 		if (!account.dek) {
 			throw new Error(
@@ -424,7 +414,10 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			);
 		}
 
+		if (cachedDek && cachedDekSource === account.dek) return cachedDek;
+
 		cachedDek = await decryptDEK(account.dek, kek);
+		cachedDekSource = account.dek;
 		return cachedDek;
 	};
 
@@ -534,6 +527,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			});
 
 			cachedDek = newDek;
+			cachedDekSource = encryptedNewDek;
 			return newDek;
 		},
 

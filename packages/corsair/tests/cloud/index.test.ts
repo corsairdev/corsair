@@ -1,5 +1,5 @@
 import { slack } from '@corsair-dev/slack';
-import { createCorsair } from 'corsair';
+import { createCorsair, createCorsairCloud } from 'corsair';
 
 describe('createCorsair with a ck_cloud_ key', () => {
 	const originalCloudUrl = process.env.CORSAIR_CLOUD_URL;
@@ -213,5 +213,78 @@ describe('createCorsair with a ck_cloud_ key', () => {
 
 		expect(() => corsair.keys).toThrow(/cloud mode/);
 		expect(() => corsair.permissions).toThrow(/cloud mode/);
+	});
+});
+
+describe('createCorsairCloud', () => {
+	afterEach(() => jest.restoreAllMocks());
+
+	it('routes a call over HTTP with no plugin list, multi-tenant by default', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(
+				new Response(JSON.stringify({ data: { ok: true } }), { status: 200 }),
+			);
+
+		const corsair = createCorsairCloud({
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
+		});
+
+		const out = await corsair
+			.withTenant('acme')
+			.notion.api.pages.searchPage({});
+
+		expect(out).toEqual({ ok: true });
+		const [url, init] = (globalThis.fetch as jest.Mock).mock.calls[0];
+		expect(url).toBe(
+			'https://vm/p/api/corsair/acme/notion/call/pages.searchPage',
+		);
+		expect((init.headers as Record<string, string>).authorization).toBe(
+			'Bearer ck_cloud_x',
+		);
+	});
+
+	it('accepts any plugin id dynamically (the VM is the authority)', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(
+				new Response(JSON.stringify({ data: {} }), { status: 200 }),
+			);
+		const corsair = createCorsairCloud({
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
+		});
+		// A plugin no client-side list would know still resolves to an HTTP call.
+		await expect(
+			corsair.withTenant('acme').anyplugin.api.some.op({}),
+		).resolves.toBeDefined();
+	});
+
+	it('requires apiKey and url, and rejects a non-loopback http url', () => {
+		expect(() =>
+			createCorsairCloud({ apiKey: '', url: 'https://vm/p' }),
+		).toThrow(/apiKey/);
+		expect(() => createCorsairCloud({ apiKey: 'ck_cloud_x', url: '' })).toThrow(
+			/url/,
+		);
+		expect(() =>
+			createCorsairCloud({ apiKey: 'ck_cloud_x', url: 'http://evil.example' }),
+		).toThrow(/https/);
+	});
+
+	it('exposes manage.connectionStatus scoped to a tenant', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(
+				new Response(JSON.stringify({ data: {} }), { status: 200 }),
+			);
+		const corsair = createCorsairCloud({
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
+		});
+		await corsair.manage.connectionStatus.get({ tenantId: 'acme' });
+		const [url] = (globalThis.fetch as jest.Mock).mock.calls[0];
+		expect(url).toContain('tenantId=acme');
 	});
 });

@@ -35,11 +35,15 @@ function buildInvokeProxy(
 	});
 }
 
+// `plugins` typed the client and guarded unknown ids. In cloud mode both are
+// optional: pass them (createCorsair auto-detect) to keep the typed client, or
+// omit them (createCorsairCloud) for a dynamic client whose plugin set lives on
+// the VM — the runtime returns 404 unknown_plugin for a bad id.
 export function buildCloudClient<Plugins extends readonly CorsairPlugin[]>(
-	plugins: Plugins,
+	plugins: Plugins | undefined,
 	opts: { transport: CloudTransport; tenantId: string },
 ): CorsairClient<Plugins> {
-	const pluginIds = new Set(plugins.map((p) => p.id));
+	const pluginIds = plugins ? new Set(plugins.map((p) => p.id)) : null;
 
 	return new Proxy(
 		{},
@@ -53,7 +57,7 @@ export function buildCloudClient<Plugins extends readonly CorsairPlugin[]>(
 						`"${pluginId}" is not available in cloud mode (deferred)`,
 					);
 				}
-				if (!pluginIds.has(pluginId)) {
+				if (pluginIds && !pluginIds.has(pluginId)) {
 					throw new Error(`Unknown plugin "${pluginId}"`);
 				}
 				return new Proxy(
