@@ -9,7 +9,12 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { TursoAPIError } from './client';
 import { Changes, Regions, Tokens } from './endpoints';
-import type { TursoContext } from './index';
+import type { ChangeAction } from './endpoints/types';
+import type {
+	TursoContext,
+	TursoKeyBuilderContext,
+	TursoPluginOptions,
+} from './index';
 import { turso } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -24,11 +29,83 @@ const mockLog = logEventFromContext as jest.MockedFunction<
 const TEST_TOKEN = 'test-turso-token-123';
 const DB_URL = 'https://mydb-myorg.turso.io';
 
-// Using unknown type assertion for test context mock to provide only the fields needed by unit tests
-const ctx: TursoContext = {
-	key: TEST_TOKEN,
-	options: {},
-} as unknown as TursoContext;
+/**
+ * Creates an explicitly typed mock repository for the `changeEvents` entity table.
+ *
+ * @param overrides - Optional partial overrides for repository methods.
+ * @returns A fully typed `TursoContext['db']['changeEvents']` repository client.
+ */
+function createMockChangeEventsRepository(
+	overrides?: Partial<TursoContext['db']['changeEvents']>,
+): TursoContext['db']['changeEvents'] {
+	return {
+		findByEntityId: jest.fn().mockResolvedValue(null),
+		existsByEntityId: jest.fn().mockResolvedValue(false),
+		findIdByEntityId: jest.fn().mockResolvedValue(null),
+		findById: jest.fn().mockResolvedValue(null),
+		findManyByEntityIds: jest.fn().mockResolvedValue([]),
+		list: jest.fn().mockResolvedValue([]),
+		search: jest.fn().mockResolvedValue([]),
+		upsertByEntityId: jest.fn().mockResolvedValue({
+			id: 'mock-uuid-1',
+			account_id: 'test-account',
+			entity_type: 'changeEvents',
+			entity_id: 'mock-event-1',
+			version: '1.0.0',
+			data: {
+				databaseUrl: DB_URL,
+				table: 'users',
+				action: 'insert',
+				receivedAt: '2026-09-14T00:00:00.000Z',
+				data: null,
+			},
+			created_at: new Date(),
+			updated_at: new Date(),
+		}),
+		deleteById: jest.fn().mockResolvedValue(true),
+		deleteByEntityId: jest.fn().mockResolvedValue(true),
+		count: jest.fn().mockResolvedValue(0),
+		...overrides,
+	};
+}
+
+/**
+ * Creates a strongly typed `TursoContext` mock fixture for endpoint unit tests.
+ *
+ * @param overrides - Partial options, credentials, key managers, or repository overrides.
+ * @returns A typed `TursoContext` instance.
+ */
+function createTestContext(
+	overrides: {
+		key?: string;
+		options?: TursoPluginOptions;
+		keys?: Partial<TursoContext['keys']>;
+		db?: Partial<TursoContext['db']>;
+	} = {},
+): TursoContext {
+	const defaultChangeEvents = createMockChangeEventsRepository();
+	return {
+		id: 'turso',
+		key: overrides.key ?? TEST_TOKEN,
+		options: overrides.options ?? {},
+		keys: {
+			get_api_key: jest.fn().mockResolvedValue(TEST_TOKEN),
+			get_database_token: jest.fn().mockResolvedValue(undefined),
+			set_api_key: jest.fn().mockResolvedValue(undefined),
+			set_database_token: jest.fn().mockResolvedValue(undefined),
+			get_dek: jest.fn().mockResolvedValue('test-dek'),
+			issue_new_dek: jest.fn().mockResolvedValue('new-dek'),
+			...overrides.keys,
+		},
+		db: {
+			changeEvents: overrides.db?.changeEvents ?? defaultChangeEvents,
+		},
+		$getAccountId: jest.fn().mockResolvedValue('test-account-id'),
+		endpoints: {},
+	} as unknown as TursoContext;
+}
+
+const ctx: TursoContext = createTestContext();
 
 const originalFetch = global.fetch;
 
@@ -114,41 +191,49 @@ describe('plugin shape', () => {
 	});
 
 	it('resolves the token from options or context and rejects webhook lookup', async () => {
+		const makeKeyBuilderCtx = (
+			apiKeyVal: string | null = TEST_TOKEN,
+		): TursoKeyBuilderContext =>
+			({
+				authType: 'api_key' as const,
+				options: {},
+				tenantId: 'test-tenant',
+				keys: {
+					get_api_key: jest.fn().mockResolvedValue(apiKeyVal),
+					get_database_token: jest.fn().mockResolvedValue(undefined),
+					set_api_key: jest.fn().mockResolvedValue(undefined),
+					set_database_token: jest.fn().mockResolvedValue(undefined),
+					get_dek: jest.fn().mockResolvedValue('test-dek'),
+					issue_new_dek: jest.fn().mockResolvedValue('new-dek'),
+				},
+			}) as unknown as TursoKeyBuilderContext;
+
+		const pluginWithKey = turso({ key: TEST_TOKEN });
 		await expect(
-			turso({ key: TEST_TOKEN }).keyBuilder?.(
-				{ authType: 'api_key' } as never,
-				'endpoint',
-			),
+			(
+				pluginWithKey.keyBuilder as (
+					c: TursoKeyBuilderContext,
+					s: 'endpoint' | 'webhook',
+				) => Promise<string>
+			)?.(makeKeyBuilderCtx(), 'endpoint'),
 		).resolves.toBe(TEST_TOKEN);
 
 		const plugin = turso();
-		const stored = {
-			authType: 'api_key',
-			keys: { get_api_key: jest.fn().mockResolvedValue(TEST_TOKEN) },
-		};
-		// Using unknown type assertion for test context mock with mocked key manager
 		await expect(
-			plugin.keyBuilder?.(stored as unknown as never, 'endpoint'),
+			plugin.keyBuilder?.(makeKeyBuilderCtx(TEST_TOKEN), 'endpoint'),
 		).resolves.toBe(TEST_TOKEN);
 
 		// A missing credential must raise, not resolve to an empty string.
-		const empty = {
-			authType: 'api_key',
-			keys: { get_api_key: jest.fn().mockResolvedValue(null) },
-		};
-		// Using unknown type assertion for empty key test context mock
 		await expect(
-			plugin.keyBuilder?.(empty as unknown as never, 'endpoint'),
+			plugin.keyBuilder?.(makeKeyBuilderCtx(null), 'endpoint'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 
-		// Using unknown type assertion to cast keyBuilder for testing invalid source handling
+		// KeyBuilder only supports endpoint calls, webhook source must reject.
 		await expect(
-			(
-				plugin.keyBuilder as unknown as (
-					ctx: unknown,
-					source: string,
-				) => Promise<string>
-			)?.(stored, 'webhook'),
+			plugin.keyBuilder?.(
+				makeKeyBuilderCtx(TEST_TOKEN),
+				'webhook' as 'endpoint',
+			),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 });
@@ -219,8 +304,7 @@ describe('Tokens.validate', () => {
 	});
 
 	it('throws AuthMissingError without calling fetch when no key is resolved', async () => {
-		// Using unknown type assertion for empty key test context mock
-		const empty = { key: '', options: {} } as unknown as TursoContext;
+		const empty = createTestContext({ key: '' });
 		await expect(Tokens.validate(empty, {})).rejects.toBeInstanceOf(
 			AuthMissingError,
 		);
@@ -403,18 +487,18 @@ describe('Changes.listen', () => {
 
 	it('enforces input validation on table, action and bounds', async () => {
 		const bad = [
-			{ databaseUrl: DB_URL, table: '', action: 'insert' as const },
-			{ databaseUrl: DB_URL, table: 'users', action: 'upsert' as never },
+			{ databaseUrl: DB_URL, table: '', action: 'insert' as ChangeAction },
+			{ databaseUrl: DB_URL, table: 'users', action: 'upsert' as ChangeAction },
 			{
 				databaseUrl: DB_URL,
 				table: 'users',
-				action: 'insert' as const,
+				action: 'insert' as ChangeAction,
 				maxEvents: 0,
 			},
 			{
 				databaseUrl: DB_URL,
 				table: 'users',
-				action: 'insert' as const,
+				action: 'insert' as ChangeAction,
 				timeoutMs: 100,
 			},
 		];
@@ -425,8 +509,7 @@ describe('Changes.listen', () => {
 	});
 
 	it('throws AuthMissingError without calling fetch when no key is resolved', async () => {
-		// Using unknown type assertion for empty key test context mock
-		const empty = { key: '', options: {} } as unknown as TursoContext;
+		const empty = createTestContext({ key: '' });
 		await expect(
 			Changes.listen(empty, {
 				databaseUrl: DB_URL,
@@ -438,11 +521,9 @@ describe('Changes.listen', () => {
 	});
 
 	it('uses a database auth token for the database host when configured', async () => {
-		// Using unknown type assertion for database-token test context mock
-		const dbCtx = {
-			key: TEST_TOKEN,
+		const dbCtx = createTestContext({
 			options: { databaseToken: 'db-scoped-token' },
-		} as unknown as TursoContext;
+		});
 
 		mockFetch().mockResolvedValueOnce(sseResponse([]));
 
@@ -459,16 +540,16 @@ describe('Changes.listen', () => {
 	});
 
 	it('uses a stored tenant-scoped database token when configured in key manager', async () => {
-		// Using unknown type assertion for stored database-token test context mock
-		const dbCtx = {
-			key: TEST_TOKEN,
-			options: {},
+		const dbCtx = createTestContext({
 			keys: {
+				get_api_key: jest.fn().mockResolvedValue(TEST_TOKEN),
 				get_database_token: jest
 					.fn()
 					.mockResolvedValue('stored-tenant-db-token'),
+				set_api_key: jest.fn().mockResolvedValue(undefined),
+				set_database_token: jest.fn().mockResolvedValue(undefined),
 			},
-		} as unknown as TursoContext;
+		});
 
 		mockFetch().mockResolvedValueOnce(sseResponse([]));
 
@@ -504,13 +585,33 @@ describe('Changes.listen', () => {
 	});
 
 	it('gives every received event its own identity', async () => {
-		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
-		// Using unknown type assertion for database-persistence test context mock
-		const dbCtx = {
-			key: TEST_TOKEN,
-			options: {},
-			db: { changeEvents: { upsertByEntityId } },
-		} as unknown as TursoContext;
+		const upsertByEntityId = jest
+			.fn<
+				ReturnType<TursoContext['db']['changeEvents']['upsertByEntityId']>,
+				Parameters<TursoContext['db']['changeEvents']['upsertByEntityId']>
+			>()
+			.mockResolvedValue({
+				id: 'mock-uuid-1',
+				account_id: 'test-account',
+				entity_type: 'changeEvents',
+				entity_id: 'mock-event-1',
+				version: '1.0.0',
+				data: {
+					databaseUrl: DB_URL,
+					table: 'users',
+					action: 'update',
+					receivedAt: '2026-09-14T00:00:00.000Z',
+					data: null,
+				},
+				created_at: new Date(),
+				updated_at: new Date(),
+			});
+		const changeEventsRepo = createMockChangeEventsRepository({
+			upsertByEntityId,
+		});
+		const dbCtx = createTestContext({
+			db: { changeEvents: changeEventsRepo },
+		});
 
 		// Three changes to the SAME row — keying by row id would collapse them.
 		mockFetch().mockResolvedValueOnce(
@@ -531,19 +632,39 @@ describe('Changes.listen', () => {
 		// Each row is still persisted in full.
 		expect(
 			upsertByEntityId.mock.calls.map(
-				(c) => (c[1] as { data: { n: number } }).data.n,
+				(c) => (c[1].data as Record<string, unknown> | null)?.n as number,
 			),
 		).toEqual([1, 2, 3]);
 	});
 
 	it('mirrors streamed events into the changeEvents entity', async () => {
-		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
-		// Using unknown type assertion for database-persistence test context mock
-		const dbCtx = {
-			key: TEST_TOKEN,
-			options: {},
-			db: { changeEvents: { upsertByEntityId } },
-		} as unknown as TursoContext;
+		const upsertByEntityId = jest
+			.fn<
+				ReturnType<TursoContext['db']['changeEvents']['upsertByEntityId']>,
+				Parameters<TursoContext['db']['changeEvents']['upsertByEntityId']>
+			>()
+			.mockResolvedValue({
+				id: 'mock-uuid-1',
+				account_id: 'test-account',
+				entity_type: 'changeEvents',
+				entity_id: 'mock-event-1',
+				version: '1.0.0',
+				data: {
+					databaseUrl: DB_URL,
+					table: 'orders',
+					action: 'insert',
+					receivedAt: '2026-09-14T00:00:00.000Z',
+					data: { id: 7 },
+				},
+				created_at: new Date(),
+				updated_at: new Date(),
+			});
+		const changeEventsRepo = createMockChangeEventsRepository({
+			upsertByEntityId,
+		});
+		const dbCtx = createTestContext({
+			db: { changeEvents: changeEventsRepo },
+		});
 
 		mockFetch().mockResolvedValueOnce(sseResponse(['data: {"id":7}\n\n']));
 
