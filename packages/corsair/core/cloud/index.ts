@@ -15,6 +15,27 @@ function deferredCloudError(name: string): never {
 	throw new Error(`"${name}" is not available in cloud mode (deferred)`);
 }
 
+const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
+
+// The cloud transport sends the project key as a bearer token (http.ts), so
+// http:// would leak it in cleartext — allowed only for loopback, where the
+// mock-runtime tests run.
+function assertCloudUrlIsSecure(baseUrl: string): void {
+	let parsed: URL;
+	try {
+		parsed = new URL(baseUrl);
+	} catch {
+		throw new Error(`Cloud base URL is not a valid URL: "${baseUrl}"`);
+	}
+	if (parsed.protocol === 'https:') return;
+	if (parsed.protocol === 'http:' && LOOPBACK_HOSTS.has(parsed.hostname)) {
+		return;
+	}
+	throw new Error(
+		`Cloud mode requires an https:// base URL (got "${baseUrl}") — http:// is only allowed for localhost/127.0.0.1, since the project key is sent as a bearer token.`,
+	);
+}
+
 function resolveCloudBaseUrl(hub: HubConfigInput | undefined): string {
 	const baseUrl = hub?.baseUrl?.trim() || process.env.CORSAIR_CLOUD_URL?.trim();
 	if (!baseUrl) {
@@ -22,6 +43,7 @@ function resolveCloudBaseUrl(hub: HubConfigInput | undefined): string {
 			'Cloud mode (ck_cloud_ key) requires a base URL — set hub.baseUrl or CORSAIR_CLOUD_URL.',
 		);
 	}
+	assertCloudUrlIsSecure(baseUrl);
 	return baseUrl;
 }
 
@@ -42,11 +64,17 @@ function buildCloudManageNamespace(
 			get: () => deferredCloudError('manage.plugins.get'),
 		},
 		connectionStatus: {
-			get: (query?: { tenantId?: string }) =>
-				cloud.connectionStatus.get({
-					tenantId:
-						query?.tenantId ?? (multiTenancy ? '' : CLOUD_SINGLE_TENANT_ID),
-				}),
+			get: (query?: { tenantId?: string }) => {
+				const tenantId = query?.tenantId || undefined;
+				if (!tenantId && multiTenancy) {
+					throw new Error(
+						'connectionStatus.get requires a tenantId in multi-tenant mode',
+					);
+				}
+				return cloud.connectionStatus.get({
+					tenantId: tenantId ?? CLOUD_SINGLE_TENANT_ID,
+				});
+			},
 		},
 		permissions: {
 			get: () => deferredCloudError('manage.permissions'),
