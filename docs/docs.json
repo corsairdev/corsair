@@ -31,6 +31,7 @@
             "pages": [
               "introduction",
               "quick-start",
+              "cloud/overview",
               {
                 "group": "Use cases",
                 "pages": [

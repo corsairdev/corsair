@@ -1,0 +1,105 @@
+---
+title: Corsair Cloud
+description: A hosted runtime for your integrations. You get a URL and a key; every tool call is an HTTP request.
+---
+
+Corsair Cloud runs your integration layer for you. Each project gets its own
+hosted runtime (a VM that runs Corsair), reachable at a URL. You connect your
+users' accounts through managed OAuth, then call any plugin operation over HTTP.
+There is no integration server for you to build or deploy.
+
+You need two values, both on your project's Overview page:
+
+- an **API key** (`ck_cloud_…`), sent as a bearer token
+- a **URL**, like `https://<vm>.corsair.cloud/<project>/api/corsair`
+
+## Two ways to use it
+
+Corsair Cloud has one runtime and two client surfaces:
+
+- **Server** — `createCorsairCloud({ apiKey, url })`. Holds the key. Use it from
+  a backend or an agent. Every call is a direct HTTP request to the runtime.
+- **Client (React)** — `CorsairProvider`. Runs in the browser and never sees the
+  key: it talks to a same-origin route in your own app that adds the bearer
+  server-side. Use it to render the connect flow and read connection state.
+
+The key is a server secret. Do not ship it to a browser. The React path exists so
+you never have to.
+
+## Call a plugin op
+
+```ts
+import { createCorsairCloud } from "corsair";
+
+const corsair = createCorsairCloud({
+  apiKey: process.env.CORSAIR_CLOUD_KEY!,
+  url: process.env.CORSAIR_CLOUD_URL!,
+});
+
+const pages = await corsair.withTenant("acme").notion.api.pages.searchPage({});
+```
+
+`withTenant("acme")` scopes the call to one of your users. A call maps to
+`POST {url}/acme/notion/call/pages.searchPage` with `{ "args": {...} }` and
+returns the operation's result. The same request from `curl`:
+
+```bash
+curl -X POST "$CORSAIR_CLOUD_URL/acme/notion/call/pages.searchPage" \
+  -H "authorization: Bearer $CORSAIR_CLOUD_KEY" \
+  -H "content-type: application/json" \
+  -d '{"args":{}}'
+```
+
+Other languages (Swift, Python, Go) use the same two values and the same shape;
+they are thin clients over the one HTTP contract.
+
+## Connect a user's account
+
+Managed OAuth runs on the runtime. Create a connect link for a tenant and hand
+the URL to that user:
+
+```ts
+const link = await corsair.manage.connect.createLink({
+  plugin: "notion",
+  tenantId: "acme",
+});
+// redirect the user to link.connectUrl
+```
+
+After they authorize, the runtime stores the token and the tenant shows as
+connected:
+
+```ts
+const status = await corsair.manage.connectionStatus.get({ tenantId: "acme" });
+// { notion: "connected" }
+```
+
+Tokens are encrypted at rest on the runtime with a key Corsair holds, so your
+runtime's store keeps ciphertext, not raw provider tokens.
+
+## Multi-tenant by default
+
+One runtime serves many tenants. `withTenant(id)` picks which user a call acts
+for. A single-user setup is just one tenant. You do not pass a tenant list or
+manage tenant infrastructure; the runtime tracks them.
+
+## Types without a plugin list (TypeScript)
+
+`createCorsairCloud` takes no plugin array, because the plugin set lives on the
+runtime. By default the client is dynamic, so `corsair.withTenant(t).notion.api…`
+has `any` types. To get editor autocomplete, run the CLI once:
+
+```bash
+pnpm corsair pull
+```
+
+It reads the plugins and operations your runtime actually has (down to the scopes
+you allowed) and writes a local `corsair-env.d.ts`. TypeScript merges those types
+in, so the same code autocompletes with no plugin import. Coding agents can skip
+this and list operations with `pnpm corsair list`.
+
+## What runs where
+
+Your calls go to the runtime, not through the Hub dashboard. The dashboard mints
+and configures the runtime; it does not sit in the request path. So a plugin call
+is one hop: your code to the runtime, then the runtime to the provider.
