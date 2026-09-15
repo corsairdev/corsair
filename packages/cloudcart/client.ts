@@ -3,7 +3,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import { request } from 'corsair/http';
 
 export class CloudcartAPIError extends Error {
 	constructor(
@@ -27,7 +27,7 @@ const CLOUDCART_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 export function packCloudcartKey(apiKey: string, storeUrl: string): string {
-	return JSON.stringify({ apiKey, storeUrl });
+	return JSON.stringify({ apiKey, storeUrl: normalizeStoreUrl(storeUrl) });
 }
 
 export function unpackCloudcartKey(packed: string): {
@@ -61,6 +61,14 @@ export function unpackCloudcartKey(packed: string): {
 		'CloudCart credentials must include an API key and store URL',
 		'INVALID_CREDENTIALS',
 	);
+}
+
+/**
+ * Normalizes a store URL for credential packing so the same store always
+ * packs to the same key regardless of trailing slashes or casing.
+ */
+function normalizeStoreUrl(storeUrl: string): string {
+	return storeUrl.trim().replace(/\/+$/, '');
 }
 
 export function buildCloudcartStoreUrl(storeUrl: string): string {
@@ -98,12 +106,22 @@ export function buildCloudcartStoreUrl(storeUrl: string): string {
 
 	const path = parsed.pathname.replace(/\/+$/, '');
 	if (path === '' || path === '/') {
-		return `${parsed.origin}/api/v1`;
+		return `${parsed.origin}/api/v2`;
 	}
-	if (path === '/v1' || path.endsWith('/v1') || path.includes('/api')) {
+	if (path.endsWith('/api/v2') || path.endsWith('/v2')) {
 		return `${parsed.origin}${path}`;
 	}
-	return `${parsed.origin}${path}/api/v1`;
+	if (path === '/api' || path.endsWith('/api')) {
+		return `${parsed.origin}${path}/v2`;
+	}
+	// Migrate legacy v1 base paths forward to the current v2 API.
+	if (path.endsWith('/api/v1')) {
+		return `${parsed.origin}${path.slice(0, -'/api/v1'.length)}/api/v2`;
+	}
+	if (path.endsWith('/v1')) {
+		return `${parsed.origin}${path.slice(0, -'/v1'.length)}/v2`;
+	}
+	return `${parsed.origin}${path}/api/v2`;
 }
 
 export async function makeCloudcartRequest<T>(
@@ -127,12 +145,15 @@ export async function makeCloudcartRequest<T>(
 
 	const config: OpenAPIConfig = {
 		BASE: buildCloudcartStoreUrl(storeUrl),
-		VERSION: '1.0.0',
+		VERSION: '2.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		// Auth is the X-CloudCart-ApiKey header only. TOKEN must stay
+		// undefined: any truthy value also sends Authorization: Bearer,
+		// which the CloudCart API does not document or expect.
+		TOKEN: undefined,
 		HEADERS: {
-			'Content-Type': 'application/json',
+			'Content-Type': 'application/vnd.api+json',
 			Accept: 'application/json',
 			'X-CloudCart-ApiKey': apiKey,
 		},
@@ -145,21 +166,14 @@ export async function makeCloudcartRequest<T>(
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
 				? body
 				: undefined,
-		mediaType: 'application/json; charset=utf-8',
+		mediaType: 'application/vnd.api+json',
 		query: method === 'GET' ? query : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions, {
-			rateLimitConfig:
-				method === 'GET'
-					? CLOUDCART_RATE_LIMIT_CONFIG
-					: { ...CLOUDCART_RATE_LIMIT_CONFIG, enabled: false, maxRetries: 0 },
-		});
-	} catch (error) {
-		if (error instanceof ApiError || error instanceof CloudcartAPIError) {
-			throw error;
-		}
-		throw error;
-	}
+	return request<T>(config, requestOptions, {
+		rateLimitConfig:
+			method === 'GET'
+				? CLOUDCART_RATE_LIMIT_CONFIG
+				: { ...CLOUDCART_RATE_LIMIT_CONFIG, enabled: false, maxRetries: 0 },
+	});
 }
