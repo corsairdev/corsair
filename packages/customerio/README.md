@@ -25,6 +25,12 @@ const corsair = createCorsair({
 });
 ```
 
+One plugin instance carries a single key, but App, Track v1, and CDP each
+need a different key format (see table above). Register a separate
+`customerio()` instance per API family you call — for example one instance
+with the App API key for App endpoints and another with `siteId:apiKey` for
+Track endpoints.
+
 ## Endpoints
 
 ### Broadcasts (`broadcasts.*`, App API)
@@ -78,7 +84,7 @@ const corsair = createCorsair({
 
 | Endpoint | Call |
 |---|---|
-| `cdp.batch` | `POST /v1/batch` — discriminated `identify/track/page/screen/group/alias` calls (32KB per call, 500KB total) |
+| `cdp.batch` | `POST /v1/batch` — discriminated `identify/track/page/screen/group/alias` calls (64KB per call, 1MB total) |
 | `cdp.page` | `POST /v1/page` — requires `userId` or `anonymousId` |
 | `cdp.screen` | `POST /v1/screen` — requires `userId` or `anonymousId`, plus `name` |
 

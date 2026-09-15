@@ -29,31 +29,52 @@ export const CustomerioJsonObjectSchema: z.ZodType<CustomerioJsonObject> =
 // Docs: https://docs.customer.io/integrations/api/app/tag/broadcasts/
 // Trigger: https://docs.customer.io/integrations/api/app/tag/send-messages/triggerBroadcast/
 
-const TriggerBroadcastInputSchema = z.object({
-	broadcast_id: z.number().int().positive(),
-	data: CustomerioJsonObjectSchema.optional(),
-	recipients: z
-		.object({
-			ids: z.array(z.string()).optional(),
-			emails: z.array(z.string().email()).optional(),
-		})
-		.optional(),
-	ids: z.array(z.string()).optional(),
-	emails: z.array(z.string().email()).optional(),
-	per_user_data: z
-		.array(
-			z.object({
-				id: z.string().optional(),
-				email: z.string().email().optional(),
-				data: CustomerioJsonObjectSchema.optional(),
-			}),
-		)
-		.optional(),
-	data_file_url: z.string().url().optional(),
-	email_add_duplicates: z.boolean().optional(),
-	email_ignore_missing: z.boolean().optional(),
-	id_ignore_missing: z.boolean().optional(),
-});
+const TriggerBroadcastPerUserDataSchema = z
+	.object({
+		id: z.string().optional(),
+		email: z.string().email().optional(),
+		data: CustomerioJsonObjectSchema.optional(),
+	})
+	.refine((entry) => entry.id !== undefined || entry.email !== undefined, {
+		message: 'Each per_user_data entry must include an id or an email',
+	});
+
+const TriggerBroadcastInputSchema = z
+	.object({
+		broadcast_id: z.number().int().positive(),
+		data: CustomerioJsonObjectSchema.optional(),
+		recipients: z
+			.object({
+				ids: z.array(z.string()).optional(),
+				emails: z.array(z.string().email()).optional(),
+			})
+			.optional(),
+		ids: z.array(z.string()).optional(),
+		emails: z.array(z.string().email()).optional(),
+		per_user_data: z.array(TriggerBroadcastPerUserDataSchema).optional(),
+		data_file_url: z.string().url().optional(),
+		email_add_duplicates: z.boolean().optional(),
+		email_ignore_missing: z.boolean().optional(),
+		id_ignore_missing: z.boolean().optional(),
+	})
+	// The published spec models the audience as oneOf: either the default
+	// audience (no audience field at all) or exactly one of recipients, ids,
+	// emails, per_user_data, data_file_url. Combinations match no branch, so
+	// at most one mode is accepted here — zero modes is the valid default.
+	.refine(
+		(data) =>
+			[
+				data.recipients,
+				data.ids,
+				data.emails,
+				data.per_user_data,
+				data.data_file_url,
+			].filter((mode) => mode !== undefined).length <= 1,
+		{
+			message:
+				'Provide at most one audience mode among recipients, ids, emails, per_user_data and data_file_url',
+		},
+	);
 
 const TriggerBroadcastResponseSchema = z.object({
 	id: z.number().optional(),
@@ -276,11 +297,18 @@ const IdentifyPersonInputSchema = z.object({
 	attributes: CustomerioJsonObjectSchema.optional(),
 });
 
-const CustomerIdentifierSchema = z.object({
-	id: z.union([z.string(), z.number()]).optional(),
-	email: z.string().email().optional(),
-	cio_id: z.string().optional(),
-});
+const CustomerIdentifierSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		email: z.string().email().optional(),
+		cio_id: z.string().optional(),
+	})
+	.refine(
+		(data) =>
+			[data.id, data.email, data.cio_id].filter((value) => value !== undefined)
+				.length === 1,
+		{ message: 'Provide exactly one of id, email or cio_id' },
+	);
 
 const CreateAliasInputSchema = z.object({
 	primary: CustomerIdentifierSchema,
@@ -346,9 +374,26 @@ const AddPersonToGroupInputSchema = z.object({
 
 // ─── CDP batch / page / screen ────────────────────────────────────────
 // Docs: https://docs.customer.io/integrations/api/cdp/
-// Limits: 32KB per call, 500KB total per batch request.
+// Limits: 64KB per call, 1MB total per batch request.
+// See https://docs.customer.io/integrations/api/track-vs-cdp-api
 
 const CdpContextSchema = CustomerioJsonObjectSchema.optional();
+
+// In strict mode (which makeCdpRequest enables), identify, track, page,
+// screen and alias calls require userId or anonymousId; group calls require
+// groupId (already min(1) below) and alias additionally requires previousId
+// (already min(1) below). The batch call schemas participate in a
+// discriminatedUnion, which cannot hold refined schemas, so the identity
+// rule is enforced once on SendBatchInputSchema instead of per call.
+function cdpCallHasIdentity(data: {
+	userId?: string;
+	anonymousId?: string;
+}): boolean {
+	return (
+		(data.userId !== undefined && data.userId.length > 0) ||
+		(data.anonymousId !== undefined && data.anonymousId.length > 0)
+	);
+}
 
 const CdpIdentifyCallSchema = z.object({
 	type: z.literal('identify'),
@@ -407,21 +452,29 @@ const CdpAliasCallSchema = z.object({
 	timestamp: z.string().optional(),
 });
 
-const SendBatchInputSchema = z.object({
-	batch: z
-		.array(
-			z.discriminatedUnion('type', [
-				CdpIdentifyCallSchema,
-				CdpTrackCallSchema,
-				CdpPageCallSchema,
-				CdpScreenCallSchema,
-				CdpGroupCallSchema,
-				CdpAliasCallSchema,
-			]),
-		)
-		.min(1),
-	context: CdpContextSchema,
-});
+const SendBatchInputSchema = z
+	.object({
+		batch: z
+			.array(
+				z.discriminatedUnion('type', [
+					CdpIdentifyCallSchema,
+					CdpTrackCallSchema,
+					CdpPageCallSchema,
+					CdpScreenCallSchema,
+					CdpGroupCallSchema,
+					CdpAliasCallSchema,
+				]),
+			)
+			.min(1),
+		context: CdpContextSchema,
+	})
+	.refine(
+		(data) =>
+			data.batch.every(
+				(call) => call.type === 'group' || cdpCallHasIdentity(call),
+			),
+		{ message: 'CDP calls (except group) require userId or anonymousId' },
+	);
 
 const TrackPageInputSchema = z
 	.object({
@@ -432,10 +485,9 @@ const TrackPageInputSchema = z
 		context: CdpContextSchema,
 		timestamp: z.string().optional(),
 	})
-	.refine(
-		(data) => data.userId !== undefined || data.anonymousId !== undefined,
-		{ message: 'Either userId or anonymousId must be provided' },
-	);
+	.refine(cdpCallHasIdentity, {
+		message: 'Either userId or anonymousId must be provided',
+	});
 
 const TrackScreenInputSchema = z
 	.object({
@@ -446,10 +498,9 @@ const TrackScreenInputSchema = z
 		context: CdpContextSchema,
 		timestamp: z.string().optional(),
 	})
-	.refine(
-		(data) => data.userId !== undefined || data.anonymousId !== undefined,
-		{ message: 'Either userId or anonymousId must be provided' },
-	);
+	.refine(cdpCallHasIdentity, {
+		message: 'Either userId or anonymousId must be provided',
+	});
 
 // ─── Endpoint maps ────────────────────────────────────────────────────
 

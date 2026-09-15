@@ -25,15 +25,41 @@ describe('broadcast input schemas', () => {
 		expect(parsed.broadcast_id).toBe(42);
 	});
 
-	it('accepts recipients, per-user data and file audience overrides', () => {
+	it('accepts per-user data and file audience overrides', () => {
 		const parsed = CustomerioEndpointInputSchemas.triggerBroadcast.parse({
 			broadcast_id: 7,
 			data: { plan: 'pro' },
-			recipients: { ids: ['u_1'], emails: ['a@example.com'] },
 			per_user_data: [{ id: 'u_1', data: { first_name: 'Ada' } }],
 		});
-		expect(parsed.recipients?.ids).toEqual(['u_1']);
 		expect(parsed.per_user_data).toHaveLength(1);
+	});
+
+	it('rejects triggerBroadcast with conflicting audience modes', () => {
+		// The spec models the audience as oneOf: default (no mode) or exactly
+		// one of recipients/ids/emails/per_user_data/data_file_url.
+		expect(() =>
+			CustomerioEndpointInputSchemas.triggerBroadcast.parse({
+				broadcast_id: 7,
+				recipients: { ids: ['u_1'] },
+				emails: ['a@example.com'],
+			}),
+		).toThrow();
+		expect(() =>
+			CustomerioEndpointInputSchemas.triggerBroadcast.parse({
+				broadcast_id: 7,
+				ids: ['u_1'],
+				data_file_url: 'https://example.com/audience.jsonl',
+			}),
+		).toThrow();
+	});
+
+	it('rejects per_user_data entries without an id or email', () => {
+		expect(() =>
+			CustomerioEndpointInputSchemas.triggerBroadcast.parse({
+				broadcast_id: 7,
+				per_user_data: [{ data: { first_name: 'Ada' } }],
+			}),
+		).toThrow();
 	});
 
 	it('rejects triggerBroadcast without broadcast_id', () => {
@@ -172,6 +198,22 @@ describe('track profile schemas', () => {
 		expect(event.name).toBe('purchased');
 	});
 
+	it('rejects alias participants that are empty or multi-identified', () => {
+		// The spec models each side as oneOf id/email/cio_id (maxProperties 1).
+		expect(() =>
+			CustomerioEndpointInputSchemas.createAlias.parse({
+				primary: {},
+				secondary: { email: 'old@example.com' },
+			}),
+		).toThrow();
+		expect(() =>
+			CustomerioEndpointInputSchemas.createAlias.parse({
+				primary: { id: 'u_1', email: 'a@example.com' },
+				secondary: { email: 'old@example.com' },
+			}),
+		).toThrow();
+	});
+
 	it('rejects track events without identifier or name', () => {
 		expect(() =>
 			CustomerioEndpointInputSchemas.trackEvent.parse({ identifier: 'u_1' }),
@@ -252,6 +294,29 @@ describe('cdp schemas', () => {
 		expect(() =>
 			CustomerioEndpointInputSchemas.sendBatch.parse({ batch: [] }),
 		).toThrow();
+	});
+
+	it('rejects batch calls without userId or anonymousId', () => {
+		// Strict-mode docs require an identity on identify/track/page/screen.
+		for (const call of [
+			{ type: 'identify', traits: { plan: 'pro' } },
+			{ type: 'track', event: 'signed_up' },
+			{ type: 'page', name: 'Pricing' },
+			{ type: 'screen', name: 'Home' },
+		]) {
+			expect(() =>
+				CustomerioEndpointInputSchemas.sendBatch.parse({ batch: [call] }),
+			).toThrow();
+		}
+		const identified = CustomerioEndpointInputSchemas.sendBatch.parse({
+			batch: [{ type: 'identify', anonymousId: 'a_1' }],
+		});
+		expect(identified.batch).toHaveLength(1);
+		// Group calls only require groupId per the strict-mode field list.
+		const grouped = CustomerioEndpointInputSchemas.sendBatch.parse({
+			batch: [{ type: 'group', groupId: 'acme' }],
+		});
+		expect(grouped.batch).toHaveLength(1);
 	});
 
 	it('requires userId or anonymousId for page and screen calls', () => {

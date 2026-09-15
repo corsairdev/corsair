@@ -64,10 +64,12 @@ describe('broadcast endpoints', () => {
 			},
 		);
 		expect(result.id).toBe(11);
+		// PII minimization: only the broadcast identifier is logged, never
+		// the audience (emails, ids, per-user data).
 		expect(mockLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'customerio.broadcasts.trigger',
-			{ broadcast_id: 5, data: { plan: 'pro' }, emails: ['a@example.com'] },
+			{ broadcast_id: 5 },
 			'completed',
 		);
 	});
@@ -382,5 +384,64 @@ describe('cdp endpoints', () => {
 			method: 'POST',
 			body: { name: 'Home', userId: 'u_1' },
 		});
+	});
+
+	it('rejects batches with an over-limit single call before sending', async () => {
+		const batch: CustomerioEndpointInputs['sendBatch']['batch'] = [
+			{ type: 'track', userId: 'u_1', event: 'x'.repeat(70 * 1024) },
+		];
+		await expect(Cdp.sendBatch(ctx, { batch })).rejects.toMatchObject({
+			name: 'CustomerioAPIError',
+		});
+		expect(mockCdp).not.toHaveBeenCalled();
+		expect(mockLogEvent).not.toHaveBeenCalled();
+	});
+
+	it('rejects batches whose total payload exceeds the batch limit', async () => {
+		const batch: CustomerioEndpointInputs['sendBatch']['batch'] = Array.from(
+			{ length: 20 },
+			(_, index) => ({
+				type: 'track' as const,
+				userId: 'u_1',
+				event: `event_${index}_${'x'.repeat(60 * 1024)}`,
+			}),
+		);
+		await expect(Cdp.sendBatch(ctx, { batch })).rejects.toMatchObject({
+			name: 'CustomerioAPIError',
+		});
+		expect(mockCdp).not.toHaveBeenCalled();
+		expect(mockLogEvent).not.toHaveBeenCalled();
+	});
+});
+
+describe('endpoint failure propagation', () => {
+	it('propagates App request failures without emitting a completed event', async () => {
+		const failure = new Error('app-request-failed');
+		mockApp.mockRejectedValue(failure);
+		await expect(
+			Broadcasts.triggerBroadcast(ctx, {
+				broadcast_id: 5,
+				emails: ['a@example.com'],
+			}),
+		).rejects.toBe(failure);
+		expect(mockLogEvent).not.toHaveBeenCalled();
+	});
+
+	it('propagates Track request failures without emitting a completed event', async () => {
+		const failure = new Error('track-request-failed');
+		mockTrack.mockRejectedValue(failure);
+		await expect(
+			Profiles.trackEvent(ctx, { identifier: 'u_1', name: 'purchased' }),
+		).rejects.toBe(failure);
+		expect(mockLogEvent).not.toHaveBeenCalled();
+	});
+
+	it('propagates CDP request failures without emitting a completed event', async () => {
+		const failure = new Error('cdp-request-failed');
+		mockCdp.mockRejectedValue(failure);
+		await expect(
+			Cdp.trackPage(ctx, { anonymousId: 'a_1', name: 'Pricing' }),
+		).rejects.toBe(failure);
+		expect(mockLogEvent).not.toHaveBeenCalled();
 	});
 });

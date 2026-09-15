@@ -110,7 +110,7 @@ describe('makeTrackRequest', () => {
 });
 
 describe('makeCdpRequest', () => {
-	it('sends Basic auth against the CDP base URL', async () => {
+	it('sends Basic auth and strict-mode validation against the CDP base URL', async () => {
 		mockRequest.mockResolvedValue({});
 		await makeCdpRequest('/v1/page', 'write-key-9', {
 			method: 'POST',
@@ -122,6 +122,9 @@ describe('makeCdpRequest', () => {
 				BASE: CUSTOMERIO_CDP_BASE,
 				HEADERS: expect.objectContaining({
 					Authorization: `Basic ${expected}`,
+					// Strict mode turns silent server-side logging into real
+					// 400/401 responses; without it failures look like success.
+					'X-Strict-Mode': '1',
 				}),
 			}),
 			expect.objectContaining({ method: 'POST', url: '/v1/page' }),

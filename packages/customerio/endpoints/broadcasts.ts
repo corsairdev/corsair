@@ -46,10 +46,12 @@ export const triggerBroadcast: CustomerioEndpoints['triggerBroadcast'] = async (
 		ctx.key,
 		{ method: 'POST', body },
 	);
+	// Minimal logging: the audience (emails, ids, per-user data) is PII, so
+	// only the broadcast identifier is persisted.
 	await logEventFromContext(
 		ctx,
 		'customerio.broadcasts.trigger',
-		{ ...input },
+		{ broadcast_id: input.broadcast_id },
 		'completed',
 	);
 	return response;

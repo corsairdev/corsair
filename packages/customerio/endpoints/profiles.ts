@@ -29,10 +29,12 @@ export const identifyPerson: CustomerioEndpoints['identifyPerson'] = async (
 		method: 'PUT',
 		body,
 	});
+	// Minimal logging: identifier, email and attributes are PII, so no input
+	// payload is persisted.
 	await logEventFromContext(
 		ctx,
 		'customerio.profiles.identifyPerson',
-		{ ...input },
+		{},
 		'completed',
 	);
 	return response;
@@ -52,10 +54,12 @@ export const createAlias: CustomerioEndpoints['createAlias'] = async (
 	const response = await makeTrackRequest<
 		CustomerioEndpointOutputs['createAlias']
 	>('/api/v1/merge_customers', ctx.key, { method: 'POST', body });
+	// Minimal logging: primary/secondary are profile identifiers, so no
+	// input payload is persisted.
 	await logEventFromContext(
 		ctx,
 		'customerio.profiles.createAlias',
-		{ ...input },
+		{},
 		'completed',
 	);
 	return response;
@@ -75,10 +79,11 @@ export const suppressPerson: CustomerioEndpoints['suppressPerson'] = async (
 		ctx.key,
 		{ method: 'POST', body: {} },
 	);
+	// Minimal logging: the identifier is PII, so no input payload is persisted.
 	await logEventFromContext(
 		ctx,
 		'customerio.profiles.suppressPerson',
-		{ ...input },
+		{},
 		'completed',
 	);
 	return response;
@@ -112,10 +117,12 @@ export const trackEvent: CustomerioEndpoints['trackEvent'] = async (
 		ctx.key,
 		{ method: 'POST', body },
 	);
+	// Minimal logging: only the developer-defined event name is persisted;
+	// the identifier and event data are excluded.
 	await logEventFromContext(
 		ctx,
 		'customerio.profiles.trackEvent',
-		{ ...input },
+		{ name: input.name },
 		'completed',
 	);
 	return response;
@@ -135,10 +142,12 @@ export const unsubscribeDelivery: CustomerioEndpoints['unsubscribeDelivery'] =
 			method: 'POST',
 			body,
 		});
+		// Minimal logging: the delivery id identifies a message recipient,
+		// so no input payload is persisted.
 		await logEventFromContext(
 			ctx,
 			'customerio.profiles.unsubscribeDelivery',
-			{ ...input },
+			{},
 			'completed',
 		);
 		return response;
@@ -169,10 +178,12 @@ export const reportPushEvents: CustomerioEndpoints['reportPushEvents'] = async (
 	const response = await makeTrackRequest<
 		CustomerioEndpointOutputs['reportPushEvents']
 	>('/api/v1/metrics', ctx.key, { method: 'POST', body });
+	// Minimal logging: only the closed-enum metric name is persisted;
+	// delivery id, recipient, URL and reason are excluded.
 	await logEventFromContext(
 		ctx,
 		'customerio.profiles.reportPushEvents',
-		{ ...input },
+		{ metric: input.metric ?? input.event },
 		'completed',
 	);
 	return response;

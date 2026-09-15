@@ -158,6 +158,11 @@ export async function makeTrackRequest<T>(
 
 // CDP/Pipelines API request with Basic writeKey auth.
 // Docs: https://docs.customer.io/integrations/api/cdp/
+// Without X-Strict-Mode the CDP API returns HTTP 200 for almost everything
+// (auth/size/validation failures are only logged server-side), which would
+// surface as false successes. Strict mode returns real 400/401 codes that
+// runRequest and the error handlers can act on.
+// See https://docs.customer.io/integrations/api/track-vs-cdp-api
 export async function makeCdpRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -165,6 +170,7 @@ export async function makeCdpRequest<T>(
 ): Promise<T> {
 	const config: OpenAPIConfig = buildConfig(CUSTOMERIO_CDP_BASE, {
 		Authorization: `Basic ${toBasicCredential(apiKey)}`,
+		'X-Strict-Mode': '1',
 	});
 	return runRequest<T>(config, endpoint, options);
 }
