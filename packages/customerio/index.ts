@@ -47,6 +47,10 @@ import { CustomerioSchema } from './schema';
 
 export type CustomerioPluginOptions = {
 	authType?: PickAuth<'api_key'>;
+	// Single credential slot. Either a legacy single-family key (App key,
+	// "siteId:apiKey" for Track, write key for CDP) or a family-scoped
+	// compound key "app=<app-key>;track=<siteId:apiKey>;cdp=<writeKey>"
+	// serving all families from one connection (see client.ts).
 	key?: string;
 	// Account region. EU workspaces must set 'eu' so App, Track and CDP
 	// requests use the EU bases (api-eu/track-eu/cdp-eu.customer.io);

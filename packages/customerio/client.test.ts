@@ -192,6 +192,92 @@ describe('regional base URLs', () => {
 	});
 });
 
+describe('family-scoped compound keys', () => {
+	const COMPOUND = 'app=APPK-1;track=SITE-9:TKEY-2;cdp=CDPW-3';
+
+	it('sends the app segment as the App Bearer credential', async () => {
+		mockRequest.mockResolvedValue({ segments: [] });
+		await makeAppRequest('/v1/segments', COMPOUND, { method: 'GET' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				HEADERS: expect.objectContaining({
+					Authorization: 'Bearer APPK-1',
+				}),
+			}),
+			expect.anything(),
+			expect.anything(),
+		);
+	});
+
+	it('sends the track segment as Basic siteId:apiKey credentials', async () => {
+		mockRequest.mockResolvedValue({});
+		await makeTrackRequest('/api/v1/customers/u_1', COMPOUND, {
+			method: 'PUT',
+			body: {},
+		});
+		const expected = Buffer.from('SITE-9:TKEY-2', 'utf-8').toString('base64');
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				HEADERS: expect.objectContaining({
+					Authorization: `Basic ${expected}`,
+				}),
+			}),
+			expect.anything(),
+			expect.anything(),
+		);
+	});
+
+	it('sends a lone cdp segment as Basic write-key credentials', async () => {
+		mockRequest.mockResolvedValue({});
+		await makeCdpRequest('/v1/page', 'cdp=CDPW-3', {
+			method: 'POST',
+			body: {},
+		});
+		const expected = Buffer.from('CDPW-3:', 'utf-8').toString('base64');
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				HEADERS: expect.objectContaining({
+					Authorization: `Basic ${expected}`,
+					'X-Strict-Mode': '1',
+				}),
+			}),
+			expect.anything(),
+			expect.anything(),
+		);
+	});
+
+	it('fails fast without a request when the family segment is missing', async () => {
+		await expect(
+			makeTrackRequest('/api/v1/customers/u_1', 'app=APPK-1', {
+				method: 'PUT',
+				body: {},
+			}),
+		).rejects.toMatchObject({ name: 'CustomerioAPIError' });
+		expect(mockRequest).not.toHaveBeenCalled();
+		await expect(
+			makeCdpRequest('/v1/page', 'app=APPK-1;track=S:T', {
+				method: 'POST',
+				body: {},
+			}),
+		).rejects.toMatchObject({ name: 'CustomerioAPIError' });
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('keeps legacy single keys working for every family', async () => {
+		mockRequest.mockResolvedValue({});
+		await makeAppRequest('/v1/segments', 'app-key-123', { method: 'GET' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				HEADERS: expect.objectContaining({
+					Authorization: 'Bearer app-key-123',
+				}),
+			}),
+			expect.anything(),
+			expect.anything(),
+		);
+	});
+});
+
 describe('client error mapping', () => {
 	it('rethrows ApiError unwrapped so error handlers see the status code', async () => {
 		const apiError = new ApiError(

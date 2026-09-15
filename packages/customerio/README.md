@@ -39,10 +39,18 @@ const corsair = createCorsair({
 ```
 
 One plugin instance carries a single key, but App, Track v1, and CDP each
-need a different key format (see table above). Register a separate
-`customerio()` instance per API family you call — for example one instance
-with the App API key for App endpoints and another with `siteId:apiKey` for
-Track endpoints.
+need a different key format (see table above). Use a family-scoped compound
+key so one connection serves all families:
+
+```
+app=<app-key>;track=<siteId:apiKey>;cdp=<write-key>
+```
+
+Each transport selects its own segment (`app`, `track`, `cdp`); omit
+families you never call. Calling a family without its segment fails fast
+with a clear error instead of authenticating with the wrong credential.
+Plain single keys keep working as before (the same value is sent to every
+family), as do separate single-family `customerio()` instances.
 
 ## Endpoints
 
