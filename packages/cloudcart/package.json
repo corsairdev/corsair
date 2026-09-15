@@ -2,6 +2,13 @@
   "name": "@corsair-dev/cloudcart",
   "version": "0.1.0",
   "description": "Cloudcart plugin for Corsair",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/cloudcart"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/cloudcart",
+  "author": "Corsair (https://corsair.dev)",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -36,7 +43,6 @@
     "cloudcart",
     "plugin"
   ],
-  "author": "",
   "license": "Apache-2.0",
   "files": [
     "dist"
