@@ -1,3 +1,4 @@
+import { errorHandlers } from './error-handlers';
 import { carbone, carboneEndpointSchemas } from './index';
 
 jest.mock('corsair/core', () => {
@@ -177,22 +178,12 @@ describe('carbone plugin registration', () => {
 		expect(handlers?.SERVER_ERROR).toBeDefined();
 		expect(handlers?.DEFAULT).toBeDefined();
 
-		const dummyContext = {} as any;
+		const rateLimitRes = await errorHandlers.RATE_LIMIT_ERROR.handler(
+			new Error('Rate limit 429'),
+		);
+		expect(rateLimitRes.maxRetries).toBe(3);
 
-		if (handlers?.RATE_LIMIT_ERROR) {
-			const rateLimitRes = await handlers.RATE_LIMIT_ERROR.handler(
-				new Error('Rate limit 429'),
-				dummyContext,
-			);
-			expect(rateLimitRes.maxRetries).toBe(3);
-		}
-
-		if (handlers?.AUTH_ERROR) {
-			const authRes = await handlers.AUTH_ERROR.handler(
-				new Error('401 unauthorized'),
-				dummyContext,
-			);
-			expect(authRes.maxRetries).toBe(0);
-		}
+		const authRes = await errorHandlers.AUTH_ERROR.handler();
+		expect(authRes.maxRetries).toBe(0);
 	});
 });

@@ -359,7 +359,7 @@ describe('Carbone endpoints execution', () => {
 	});
 
 	describe('version', () => {
-		it('setApiVersion updates context options and applies to subsequent requests', async () => {
+		it('setApiVersion validates and confirms requested version without mutating shared options', async () => {
 			const ctx = createMockContext();
 			const res = await VersionEndpoints.setApiVersion(ctx, {
 				version: '5.14',
@@ -367,7 +367,12 @@ describe('Carbone endpoints execution', () => {
 
 			expect(res.success).toBe(true);
 			expect(res.version).toBe('5.14');
-			expect(ctx.options.version).toBe('5.14');
+			expect(res.message).toBe('Carbone API version set to 5.14');
+		});
+
+		it('uses configured options version when present on context', async () => {
+			const ctx = createMockContext();
+			ctx.options.version = '5.14';
 
 			mockRequest.mockResolvedValueOnce({
 				success: true,

@@ -2,14 +2,14 @@ import { logEventFromContext } from 'corsair/core';
 import type { CarboneEndpoints } from '../index';
 import type { SetApiVersionOutput } from './types';
 
+/**
+ * Validates and confirms the requested Carbone API version.
+ * Does not mutate shared plugin options to prevent cross-tenant state leakage.
+ */
 export const setApiVersion: CarboneEndpoints['setApiVersion'] = async (
 	ctx,
 	input,
 ) => {
-	if (ctx.options) {
-		ctx.options.version = input.version;
-	}
-
 	await logEventFromContext(
 		ctx,
 		'carbone.version.set',
