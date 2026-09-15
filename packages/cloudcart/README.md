@@ -98,14 +98,8 @@ pnpm add @corsair-dev/cloudcart
 | `orders.listOrderProducts` | `cloudcart.api.orders.listOrderProducts` | `read` | List order products |
 | `orders.listOrderProductsOptions` | `cloudcart.api.orders.listOrderProductsOptions` | `read` | List order products options |
 | `orders.listOrderPayments` | `cloudcart.api.orders.listOrderPayments` | `read` | List order payments |
-| `orders.listOrderPaymentV2` | `cloudcart.api.orders.listOrderPaymentV2` | `read` | List order payment v2 |
 | `orders.listOrderShipping` | `cloudcart.api.orders.listOrderShipping` | `read` | List order shipping |
 | `orders.listOrderStatus` | `cloudcart.api.orders.listOrderStatus` | `read` | List order statuses |
-| `cart.getCart` | `cloudcart.api.cart.getCart` | `read` | Get cart |
-| `cart.addToCart` | `cloudcart.api.cart.addToCart` | `write` | Add item to cart |
-| `cart.updateCartItem` | `cloudcart.api.cart.updateCartItem` | `write` | Update cart item |
-| `cart.removeFromCart` | `cloudcart.api.cart.removeFromCart` | `destructive` | Remove item from cart |
-| `cart.clearCart` | `cloudcart.api.cart.clearCart` | `destructive` | Clear cart |
 | `discounts.createDiscount` | `cloudcart.api.discounts.createDiscount` | `write` | Create discount |
 | `discounts.deleteDiscount` | `cloudcart.api.discounts.deleteDiscount` | `destructive` | Delete discount |
 | `discounts.createDiscountCode` | `cloudcart.api.discounts.createDiscountCode` | `write` | Create discount code |
@@ -174,6 +168,10 @@ Webhooks supported:
 - `order.created`: Triggered when an order is created.
 - `product.created`: Triggered when a product is created.
 - `customer.created`: Triggered when a customer is created.
+
+Event payloads are the CloudCart store objects themselves. Deliveries are
+unsigned (CloudCart publishes no webhook signature scheme), so configure one
+webhook URL per action in the store admin.
 
 ## Reference
 
