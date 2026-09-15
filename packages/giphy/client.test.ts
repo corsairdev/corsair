@@ -175,6 +175,19 @@ describe('Giphy API client', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('rejects plaintext HTTP analytics URLs on the allow-listed host', async () => {
+		await expect(
+			makeGiphyAnalyticsRequest(
+				`http://${GIPHY_ANALYTICS_HOST}/v2/pingback_simple?analytics_response_payload=abc&action_type=SEEN`,
+				{
+					customer_id: 'user-1',
+					ts: 1700000000000,
+				},
+			),
+		).rejects.toThrow(GiphyAPIError);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
 	it('rejects malformed analytics URLs without a network call', async () => {
 		await expect(
 			makeGiphyAnalyticsRequest('not a url', {

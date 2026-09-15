@@ -213,7 +213,7 @@ export const getById: GiphyEndpoints['gifsGetById'] = async (ctx, input) => {
 
 	const rawResponse = await makeGiphyRequest<
 		GiphyEndpointOutputs['gifsGetById']
-	>(`/gifs/${input.gif_id}`, apiKey, { query });
+	>(`/gifs/${encodeURIComponent(input.gif_id)}`, apiKey, { query });
 
 	const response = GiphySingleResponseSchema.parse(rawResponse);
 

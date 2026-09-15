@@ -193,13 +193,18 @@ export const GiphyAnalyticsRegisterResponseSchema = z
 // omitted — the docs only require them for proxied server-side requests,
 // and this plugin calls GIPHY directly.
 export const GifsSearchInputSchema = z.object({
-	q: z.string().describe('Search query term or phrase'),
+	// `q` is capped at 50 chars and pagination is integer-only per
+	// https://developers.giphy.com/docs/api/endpoint/#search (offset max 4999).
+	q: z.string().max(50).describe('Search query term or phrase'),
 	limit: z
 		.number()
+		.int()
 		.optional()
 		.describe('The maximum number of objects to return. Default: 25'),
 	offset: z
 		.number()
+		.int()
+		.max(4999)
 		.optional()
 		.describe('Specifies the starting position of the results. Default: 0'),
 	rating: GiphyRatingSchema.optional().describe(
@@ -222,6 +227,15 @@ export const GifsSearchInputSchema = z.object({
 	channel_ids: z
 		.string()
 		.optional()
+		.refine(
+			(value) =>
+				value === undefined ||
+				value
+					.split(',')
+					.map((id) => id.trim())
+					.filter((id) => id.length > 0).length <= 5,
+			{ message: 'A maximum of 5 channel IDs is allowed' },
+		)
 		.describe(
 			'Filters results by specified channel IDs, separated by commas. Maximum: 5',
 		),
@@ -229,12 +243,16 @@ export const GifsSearchInputSchema = z.object({
 });
 
 export const GifsTrendingInputSchema = z.object({
+	// Integer-only pagination per the docs; offset max is 499 for trending.
 	limit: z
 		.number()
+		.int()
 		.optional()
 		.describe('The maximum number of objects to return. Default: 25'),
 	offset: z
 		.number()
+		.int()
+		.max(499)
 		.optional()
 		.describe('Specifies the starting position of the results. Default: 0'),
 	rating: GiphyRatingSchema.optional().describe(
@@ -319,8 +337,10 @@ export const GifsUploadInputSchema = z
 		// Binary input follows the repo convention (base64 string at the
 		// endpoint boundary, e.g. bigmailer suppression-list upload) and is
 		// decoded to a File for the multipart `file` part in endpoints/gifs.ts.
+		// `z.base64()` (not a bare string) rejects values `Buffer.from`
+		// would otherwise silently decode into partial or empty bytes.
 		file_base64: z
-			.string()
+			.base64()
 			.min(1)
 			.optional()
 			.describe(
@@ -359,13 +379,17 @@ export const GifsUploadInputSchema = z
 	);
 
 export const StickersSearchInputSchema = z.object({
-	q: z.string().describe('Search query term or phrase'),
+	// Same documented contract as GIF search: q max 50 chars, offset max 4999.
+	q: z.string().max(50).describe('Search query term or phrase'),
 	limit: z
 		.number()
+		.int()
 		.optional()
 		.describe('The maximum number of objects to return. Default: 25'),
 	offset: z
 		.number()
+		.int()
+		.max(4999)
 		.optional()
 		.describe('Specifies the starting position of the results. Default: 0'),
 	rating: GiphyRatingSchema.optional().describe(
@@ -382,12 +406,16 @@ export const StickersSearchInputSchema = z.object({
 });
 
 export const StickersTrendingInputSchema = z.object({
+	// Integer-only pagination per the docs; offset max is 499 for trending.
 	limit: z
 		.number()
+		.int()
 		.optional()
 		.describe('The maximum number of objects to return. Default: 25'),
 	offset: z
 		.number()
+		.int()
+		.max(499)
 		.optional()
 		.describe('Specifies the starting position of the results. Default: 0'),
 	rating: GiphyRatingSchema.optional().describe(
@@ -432,10 +460,12 @@ export const StickersRandomInputSchema = z.object({
 export const EmojiGetInputSchema = z.object({
 	limit: z
 		.number()
+		.int()
 		.optional()
 		.describe('The maximum number of objects to return. Default: 25'),
 	offset: z
 		.number()
+		.int()
 		.optional()
 		.describe('Specifies the starting position of the results. Default: 0'),
 	customer_id: z
@@ -488,10 +518,12 @@ export const CategoriesGifsInputSchema = z.object({
 		),
 	limit: z
 		.number()
+		.int()
 		.optional()
 		.describe('The maximum number of objects to return. Default: 25'),
 	offset: z
 		.number()
+		.int()
 		.optional()
 		.describe('Specifies the starting position of the results. Default: 0'),
 	rating: GiphyRatingSchema.optional().describe(
@@ -508,10 +540,12 @@ export const TagsAutocompleteInputSchema = z.object({
 	q: z.string().describe('Tag term to autocomplete'),
 	limit: z
 		.number()
+		.int()
 		.optional()
 		.describe('The maximum number of objects to return. Default: 5'),
 	offset: z
 		.number()
+		.int()
 		.optional()
 		.describe('Specifies the starting position of the results. Default: 0'),
 	customer_id: z
@@ -545,6 +579,7 @@ export const ChannelsSearchInputSchema = z.object({
 	q: z.string().describe('Term to search through GIPHY channels'),
 	limit: z
 		.number()
+		.int()
 		.max(50)
 		.optional()
 		.describe(
@@ -552,6 +587,7 @@ export const ChannelsSearchInputSchema = z.object({
 		),
 	offset: z
 		.number()
+		.int()
 		.optional()
 		.describe('Specifies the starting position of the results. Default: 0'),
 	customer_id: z
@@ -575,8 +611,10 @@ export const AnalyticsRegisterInputSchema = z.object({
 		.refine(
 			(url) => {
 				try {
+					const parsed = new URL(url);
 					return (
-						new URL(url).hostname.toLowerCase() === 'giphy-analytics.giphy.com'
+						parsed.protocol === 'https:' &&
+						parsed.hostname.toLowerCase() === 'giphy-analytics.giphy.com'
 					);
 				} catch {
 					return false;
@@ -584,7 +622,7 @@ export const AnalyticsRegisterInputSchema = z.object({
 			},
 			{
 				message:
-					'pingback_url must be a GIPHY analytics URL from a GIF response analytics object',
+					'pingback_url must be an HTTPS GIPHY analytics URL from a GIF response analytics object',
 			},
 		)
 		.describe(

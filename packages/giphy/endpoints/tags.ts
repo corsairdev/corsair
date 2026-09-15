@@ -70,7 +70,7 @@ export const related: GiphyEndpoints['tagsRelated'] = async (ctx, input) => {
 
 	const rawResponse = await makeGiphyRequest<
 		GiphyEndpointOutputs['tagsRelated']
-	>(`/tags/related/${input.term}`, apiKey, { query });
+	>(`/tags/related/${encodeURIComponent(input.term)}`, apiKey, { query });
 
 	const response = GiphyTermsResponseSchema.parse(rawResponse);
 

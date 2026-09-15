@@ -5,6 +5,7 @@ import {
 	ChannelsSearchInputSchema,
 	GifsSearchInputSchema,
 	GifsTranslateInputSchema,
+	GifsTrendingInputSchema,
 	GifsUploadInputSchema,
 	GiphyChannelsResponseSchema,
 	GiphyRandomIdResponseSchema,
@@ -62,6 +63,35 @@ describe('Giphy shared schemas', () => {
 	it('requires a query for gif search', () => {
 		expect(GifsSearchInputSchema.parse({ q: 'cats' }).q).toBe('cats');
 		expect(() => GifsSearchInputSchema.parse({})).toThrow();
+	});
+
+	it('enforces the documented search contract', () => {
+		// q max 50 chars, integer pagination, search offset max 4999.
+		expect(() => GifsSearchInputSchema.parse({ q: 'x'.repeat(51) })).toThrow();
+		expect(() =>
+			GifsSearchInputSchema.parse({ q: 'cats', limit: 2.5 }),
+		).toThrow();
+		expect(() =>
+			GifsSearchInputSchema.parse({ q: 'cats', offset: 5000 }),
+		).toThrow();
+		expect(
+			GifsSearchInputSchema.parse({ q: 'cats', limit: 10, offset: 20 }).limit,
+		).toBe(10);
+	});
+
+	it('caps trending offset at the documented 499', () => {
+		expect(() => GifsTrendingInputSchema.parse({ offset: 500 })).toThrow();
+		expect(GifsTrendingInputSchema.parse({ offset: 100 }).offset).toBe(100);
+	});
+
+	it('rejects more than five channel ids', () => {
+		expect(
+			GifsSearchInputSchema.parse({ q: 'cats', channel_ids: '1,2,3,4,5' })
+				.channel_ids,
+		).toBe('1,2,3,4,5');
+		expect(() =>
+			GifsSearchInputSchema.parse({ q: 'cats', channel_ids: '1,2,3,4,5,6' }),
+		).toThrow();
 	});
 
 	it('bounds translate weirdness to 0-10', () => {
@@ -161,7 +191,7 @@ describe('Giphy shared schemas', () => {
 		expect(parsed.data.id).toBe('new-gif-id');
 	});
 
-	it('only accepts GIPHY analytics pingback urls', () => {
+	it('only accepts HTTPS GIPHY analytics pingback urls', () => {
 		expect(
 			AnalyticsRegisterInputSchema.parse({
 				pingback_url:
@@ -174,6 +204,19 @@ describe('Giphy shared schemas', () => {
 				pingback_url: 'https://example.com/ping',
 				customer_id: 'user-1',
 			}),
+		).toThrow();
+		expect(() =>
+			AnalyticsRegisterInputSchema.parse({
+				pingback_url:
+					'http://giphy-analytics.giphy.com/v2/pingback_simple?analytics_response_payload=abc&action_type=SEEN',
+				customer_id: 'user-1',
+			}),
+		).toThrow();
+	});
+
+	it('rejects non-base64 upload content', () => {
+		expect(() =>
+			GifsUploadInputSchema.parse({ file_base64: 'not-base64!!!' }),
 		).toThrow();
 	});
 });

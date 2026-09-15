@@ -169,9 +169,14 @@ export async function makeGiphyAnalyticsRequest(
 	} catch {
 		throw new GiphyAPIError('Invalid analytics pingback URL');
 	}
-	if (parsed.hostname.toLowerCase() !== GIPHY_ANALYTICS_HOST) {
+	// Host and scheme are both enforced: the tracking identifiers must
+	// never travel over plaintext HTTP (CWE-319).
+	if (
+		parsed.protocol !== 'https:' ||
+		parsed.hostname.toLowerCase() !== GIPHY_ANALYTICS_HOST
+	) {
 		throw new GiphyAPIError(
-			'Analytics pingback URL must point to giphy-analytics.giphy.com',
+			'Analytics pingback URL must be an HTTPS URL on giphy-analytics.giphy.com',
 		);
 	}
 

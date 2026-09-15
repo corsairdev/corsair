@@ -1,5 +1,6 @@
 import type { ApiRequestOptions } from 'corsair/http';
 import { ApiError } from 'corsair/http';
+import { GiphyAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
 function apiError(status: number, message: string): ApiError {
@@ -61,6 +62,24 @@ describe('Giphy error handlers', () => {
 		);
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(err);
 		expect(result).toEqual({ maxRetries: 5, headersRetryAfterMs: 2000 });
+	});
+
+	it('matches a wrapped 429 without rate-limit text and keeps retryAfter', async () => {
+		// Endpoints throw GiphyAPIError (never the raw ApiError), so the
+		// matcher must read through the wrapper even when the message
+		// carries no rate-limit marker.
+		const wrapped = new GiphyAPIError('Too Many Requests', {
+			status: 429,
+			retryAfter: 2000,
+		});
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(wrapped)).toBe(true);
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(wrapped);
+		expect(result).toEqual({ maxRetries: 5, headersRetryAfterMs: 2000 });
+	});
+
+	it('matches a wrapped 401 as an auth error', () => {
+		const wrapped = new GiphyAPIError('Unauthorized', { status: 401 });
+		expect(errorHandlers.AUTH_ERROR.match(wrapped)).toBe(true);
 	});
 
 	it('matches a 401 unauthorized error as an auth error', () => {

@@ -511,6 +511,19 @@ describe('Giphy tag endpoints', () => {
 		expect(result.data[0]?.name).toBe('funny cats');
 	});
 
+	it('encodes reserved characters in the related-tag path', async () => {
+		mockRequest.mockResolvedValue({
+			data: [{ name: 'funny cats' }],
+			meta: { status: 200, msg: 'OK' },
+		});
+		await Tags.related(makeCtx(), { term: 'funny cats' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/tags/related/funny%20cats',
+			'test-api-key',
+			expect.anything(),
+		);
+	});
+
 	it('rejects related tags without an api key', async () => {
 		await expect(
 			Tags.related(makeKeylessCtx(), { term: 'cat' }),
