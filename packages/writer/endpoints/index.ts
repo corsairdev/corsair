@@ -1,1 +1,26 @@
-export { createChat, createCompletion, listModels } from './writer';
+export * from './types';
+export {
+	addFileToGraph,
+	analyzeImages,
+	askQuestionToKnowledgeGraph,
+	createChat,
+	createCompletion,
+	createKnowledgeGraph,
+	deleteFile,
+	deleteKnowledgeGraph,
+	detectAiContent,
+	downloadFile,
+	getFile,
+	listApplications,
+	listFiles,
+	listKnowledgeGraphs,
+	listModels,
+	medicalComprehend,
+	parsePdf,
+	removeFileFromGraph,
+	retrieveKnowledgeGraph,
+	translateText,
+	updateKnowledgeGraph,
+	uploadFile,
+	webSearch,
+} from './writer';
