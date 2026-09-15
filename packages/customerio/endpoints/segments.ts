@@ -11,7 +11,7 @@ export const getSegments: CustomerioEndpoints['getSegments'] = async (
 ) => {
 	const response = await makeAppRequest<
 		CustomerioEndpointOutputs['getSegments']
-	>('/v1/segments', ctx.key, { method: 'GET' });
+	>('/v1/segments', ctx.key, { method: 'GET', region: ctx.options.region });
 	await logEventFromContext(
 		ctx,
 		'customerio.segments.getSegments',
@@ -29,6 +29,7 @@ export const getSegmentDetails: CustomerioEndpoints['getSegmentDetails'] =
 			CustomerioEndpointOutputs['getSegmentDetails']
 		>(`/v1/segments/${encodeURIComponent(String(input.segment_id))}`, ctx.key, {
 			method: 'GET',
+			region: ctx.options.region,
 		});
 		await logEventFromContext(
 			ctx,
@@ -50,6 +51,7 @@ export const getSegmentMembership: CustomerioEndpoints['getSegmentMembership'] =
 			ctx.key,
 			{
 				method: 'GET',
+				region: ctx.options.region,
 				query: {
 					limit: input.limit,
 					start: input.start,

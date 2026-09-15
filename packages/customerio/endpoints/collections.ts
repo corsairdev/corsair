@@ -11,7 +11,7 @@ export const listCollections: CustomerioEndpoints['listCollections'] = async (
 ) => {
 	const response = await makeAppRequest<
 		CustomerioEndpointOutputs['listCollections']
-	>('/v1/collections', ctx.key, { method: 'GET' });
+	>('/v1/collections', ctx.key, { method: 'GET', region: ctx.options.region });
 	await logEventFromContext(
 		ctx,
 		'customerio.collections.listCollections',

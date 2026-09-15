@@ -20,7 +20,7 @@ export const addPersonToGroup: CustomerioEndpoints['addPersonToGroup'] = async (
 	}
 	const response = await makeCdpRequest<
 		CustomerioEndpointOutputs['addPersonToGroup']
-	>('/v1/group', ctx.key, { method: 'POST', body });
+	>('/v1/group', ctx.key, { method: 'POST', body, region: ctx.options.region });
 	// Minimal logging: userId, groupId and traits identify people and
 	// companies, so no input payload is persisted.
 	await logEventFromContext(

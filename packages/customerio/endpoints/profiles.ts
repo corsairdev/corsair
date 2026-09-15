@@ -28,6 +28,7 @@ export const identifyPerson: CustomerioEndpoints['identifyPerson'] = async (
 	>(`/api/v1/customers/${encodeURIComponent(input.identifier)}`, ctx.key, {
 		method: 'PUT',
 		body,
+		region: ctx.options.region,
 	});
 	// Minimal logging: identifier, email and attributes are PII, so no input
 	// payload is persisted.
@@ -53,7 +54,11 @@ export const createAlias: CustomerioEndpoints['createAlias'] = async (
 	};
 	const response = await makeTrackRequest<
 		CustomerioEndpointOutputs['createAlias']
-	>('/api/v1/merge_customers', ctx.key, { method: 'POST', body });
+	>('/api/v1/merge_customers', ctx.key, {
+		method: 'POST',
+		body,
+		region: ctx.options.region,
+	});
 	// Minimal logging: primary/secondary are profile identifiers, so no
 	// input payload is persisted.
 	await logEventFromContext(
@@ -77,7 +82,7 @@ export const suppressPerson: CustomerioEndpoints['suppressPerson'] = async (
 	>(
 		`/api/v1/customers/${encodeURIComponent(input.identifier)}/suppress`,
 		ctx.key,
-		{ method: 'POST', body: {} },
+		{ method: 'POST', body: {}, region: ctx.options.region },
 	);
 	// Minimal logging: the identifier is PII, so no input payload is persisted.
 	await logEventFromContext(
@@ -115,7 +120,7 @@ export const trackEvent: CustomerioEndpoints['trackEvent'] = async (
 	>(
 		`/api/v1/customers/${encodeURIComponent(input.identifier)}/events`,
 		ctx.key,
-		{ method: 'POST', body },
+		{ method: 'POST', body, region: ctx.options.region },
 	);
 	// Minimal logging: only the developer-defined event name is persisted;
 	// the identifier and event data are excluded.
@@ -141,6 +146,7 @@ export const unsubscribeDelivery: CustomerioEndpoints['unsubscribeDelivery'] =
 		>(`/unsubscribe/${encodeURIComponent(input.delivery_id)}`, ctx.key, {
 			method: 'POST',
 			body,
+			region: ctx.options.region,
 		});
 		// Minimal logging: the delivery id identifies a message recipient,
 		// so no input payload is persisted.
@@ -177,7 +183,11 @@ export const reportPushEvents: CustomerioEndpoints['reportPushEvents'] = async (
 	}
 	const response = await makeTrackRequest<
 		CustomerioEndpointOutputs['reportPushEvents']
-	>('/api/v1/metrics', ctx.key, { method: 'POST', body });
+	>('/api/v1/metrics', ctx.key, {
+		method: 'POST',
+		body,
+		region: ctx.options.region,
+	});
 	// Minimal logging: only the closed-enum metric name is persisted;
 	// delivery id, recipient, URL and reason are excluded.
 	await logEventFromContext(

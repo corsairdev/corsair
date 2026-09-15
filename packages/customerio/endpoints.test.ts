@@ -35,10 +35,14 @@ const mockCdp = jest.mocked(makeCdpRequest);
 const mockLogEvent = jest.mocked(logEventFromContext);
 
 // Justification for this single assertion (same pattern as the merged campayn
-// plugin): endpoint handlers only read ctx.key at runtime; the full
-// CustomerioContext is assembled by the Corsair runtime and cannot be built
-// by hand without stubbing the entire framework.
-const ctx = { key: 'customerio-test-key' } as CustomerioContext;
+// plugin): endpoint handlers only read ctx.key and ctx.options at runtime;
+// the full CustomerioContext is assembled by the Corsair runtime and cannot
+// be built by hand without stubbing the entire framework.
+const ctx = { key: 'customerio-test-key', options: {} } as CustomerioContext;
+const ctxEu = {
+	key: 'customerio-test-key',
+	options: { region: 'eu' },
+} as CustomerioContext;
 
 beforeEach(() => {
 	mockApp.mockReset();
@@ -92,6 +96,47 @@ describe('broadcast endpoints', () => {
 			'customerio-test-key',
 			{ method: 'GET' },
 		);
+	});
+
+	it('forwards the EU region from plugin options to App requests', async () => {
+		mockApp.mockResolvedValue({ id: 11 });
+		await Broadcasts.triggerBroadcast(ctxEu, {
+			broadcast_id: 5,
+			emails: ['a@example.com'],
+		});
+		expect(mockApp).toHaveBeenCalledWith(
+			'/v1/campaigns/5/triggers',
+			'customerio-test-key',
+			{
+				method: 'POST',
+				body: { emails: ['a@example.com'] },
+				region: 'eu',
+			},
+		);
+	});
+
+	it('forwards the EU region from plugin options to Track requests', async () => {
+		mockTrack.mockResolvedValue({});
+		await Profiles.trackEvent(ctxEu, { identifier: 'u_1', name: 'purchased' });
+		expect(mockTrack).toHaveBeenCalledWith(
+			'/api/v1/customers/u_1/events',
+			'customerio-test-key',
+			{
+				method: 'POST',
+				body: { name: 'purchased' },
+				region: 'eu',
+			},
+		);
+	});
+
+	it('forwards the EU region from plugin options to CDP requests', async () => {
+		mockCdp.mockResolvedValue({});
+		await Cdp.trackScreen(ctxEu, { userId: 'u_1', name: 'Home' });
+		expect(mockCdp).toHaveBeenCalledWith('/v1/screen', 'customerio-test-key', {
+			method: 'POST',
+			body: { name: 'Home', userId: 'u_1' },
+			region: 'eu',
+		});
 	});
 });
 

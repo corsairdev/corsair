@@ -1,8 +1,11 @@
 import { ApiError, request } from 'corsair/http';
 import {
 	CUSTOMERIO_APP_BASE,
+	CUSTOMERIO_APP_BASE_EU,
 	CUSTOMERIO_CDP_BASE,
+	CUSTOMERIO_CDP_BASE_EU,
 	CUSTOMERIO_TRACK_BASE,
+	CUSTOMERIO_TRACK_BASE_EU,
 	CustomerioAPIError,
 	makeAppRequest,
 	makeCdpRequest,
@@ -128,6 +131,62 @@ describe('makeCdpRequest', () => {
 				}),
 			}),
 			expect.objectContaining({ method: 'POST', url: '/v1/page' }),
+			expect.anything(),
+		);
+	});
+});
+
+describe('regional base URLs', () => {
+	it('routes App requests to the EU base when region is eu', async () => {
+		mockRequest.mockResolvedValue({ segments: [] });
+		await makeAppRequest('/v1/segments', 'app-key-123', {
+			method: 'GET',
+			region: 'eu',
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({ BASE: CUSTOMERIO_APP_BASE_EU }),
+			expect.anything(),
+			expect.anything(),
+		);
+	});
+
+	it('routes Track requests to the EU base when region is eu', async () => {
+		mockRequest.mockResolvedValue({});
+		await makeTrackRequest('/api/v1/customers/u_1', 'site:key', {
+			method: 'PUT',
+			body: {},
+			region: 'eu',
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({ BASE: CUSTOMERIO_TRACK_BASE_EU }),
+			expect.anything(),
+			expect.anything(),
+		);
+	});
+
+	it('routes CDP requests to the EU base when region is eu', async () => {
+		mockRequest.mockResolvedValue({});
+		await makeCdpRequest('/v1/page', 'write-key', {
+			method: 'POST',
+			body: {},
+			region: 'eu',
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: CUSTOMERIO_CDP_BASE_EU,
+				HEADERS: expect.objectContaining({ 'X-Strict-Mode': '1' }),
+			}),
+			expect.anything(),
+			expect.anything(),
+		);
+	});
+
+	it('defaults to the US bases when region is omitted', async () => {
+		mockRequest.mockResolvedValue({});
+		await makeAppRequest('/v1/segments', 'k', { method: 'GET' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({ BASE: CUSTOMERIO_APP_BASE }),
+			expect.anything(),
 			expect.anything(),
 		);
 	});

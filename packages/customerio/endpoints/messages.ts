@@ -13,6 +13,7 @@ export const getMessages: CustomerioEndpoints['getMessages'] = async (
 		CustomerioEndpointOutputs['getMessages']
 	>('/v1/messages', ctx.key, {
 		method: 'GET',
+		region: ctx.options.region,
 		query: {
 			limit: input.limit,
 			start: input.start,

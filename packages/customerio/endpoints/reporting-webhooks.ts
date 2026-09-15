@@ -13,7 +13,10 @@ export const getWebhooks: CustomerioEndpoints['getWebhooks'] = async (
 ) => {
 	const response = await makeAppRequest<
 		CustomerioEndpointOutputs['getWebhooks']
-	>('/v1/reporting_webhooks', ctx.key, { method: 'GET' });
+	>('/v1/reporting_webhooks', ctx.key, {
+		method: 'GET',
+		region: ctx.options.region,
+	});
 	await logEventFromContext(
 		ctx,
 		'customerio.reportingWebhooks.getWebhooks',

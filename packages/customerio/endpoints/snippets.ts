@@ -11,7 +11,7 @@ export const listSnippets: CustomerioEndpoints['listSnippets'] = async (
 ) => {
 	const response = await makeAppRequest<
 		CustomerioEndpointOutputs['listSnippets']
-	>('/v1/snippets', ctx.key, { method: 'GET' });
+	>('/v1/snippets', ctx.key, { method: 'GET', region: ctx.options.region });
 	await logEventFromContext(
 		ctx,
 		'customerio.snippets.listSnippets',

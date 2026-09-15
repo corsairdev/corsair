@@ -29,6 +29,25 @@ export const CUSTOMERIO_APP_BASE = 'https://api.customer.io';
 export const CUSTOMERIO_TRACK_BASE = 'https://track.customer.io';
 export const CUSTOMERIO_CDP_BASE = 'https://cdp.customer.io';
 
+// EU region bases. Docs: https://docs.customer.io/integrations/api/app/?region=eu,
+// https://docs.customer.io/integrations/api/track?region=eu and
+// https://docs.customer.io/integrations/data-in/connections/http-api
+// (September 2026). EU workspaces must use these; US traffic sent to the
+// default bases above would cross regions.
+export const CUSTOMERIO_APP_BASE_EU = 'https://api-eu.customer.io';
+export const CUSTOMERIO_TRACK_BASE_EU = 'https://track-eu.customer.io';
+export const CUSTOMERIO_CDP_BASE_EU = 'https://cdp-eu.customer.io';
+
+export type CustomerioRegion = 'us' | 'eu';
+
+function resolveBaseUrl(
+	usBase: string,
+	euBase: string,
+	region?: CustomerioRegion,
+): string {
+	return region === 'eu' ? euBase : usBase;
+}
+
 // Fully type-safe JSON value without `unknown` or `any`.
 // Customer.io traits, properties and personalization data are free-form JSON,
 // so every endpoint body reuses these explicit recursive types.
@@ -51,6 +70,10 @@ export type CustomerioRequestOptions = {
 	method?: CustomerioHttpMethod;
 	body?: CustomerioJsonObject;
 	query?: Record<string, string | number | boolean | undefined>;
+	// Account region. EU workspaces must pass 'eu' so requests stay in the
+	// EU data center; defaults to 'us'. Endpoint handlers forward
+	// ctx.options.region here (same pattern as gitlab's ctx.options.baseUrl).
+	region?: CustomerioRegion;
 };
 
 const CUSTOMERIO_RATE_LIMIT: RateLimitConfig = {
@@ -137,9 +160,12 @@ export async function makeAppRequest<T>(
 	apiKey: string,
 	options: CustomerioRequestOptions = {},
 ): Promise<T> {
-	const config: OpenAPIConfig = buildConfig(CUSTOMERIO_APP_BASE, {
-		Authorization: `Bearer ${apiKey}`,
-	});
+	const config: OpenAPIConfig = buildConfig(
+		resolveBaseUrl(CUSTOMERIO_APP_BASE, CUSTOMERIO_APP_BASE_EU, options.region),
+		{
+			Authorization: `Bearer ${apiKey}`,
+		},
+	);
 	return runRequest<T>(config, endpoint, options);
 }
 
@@ -150,9 +176,16 @@ export async function makeTrackRequest<T>(
 	apiKey: string,
 	options: CustomerioRequestOptions = {},
 ): Promise<T> {
-	const config: OpenAPIConfig = buildConfig(CUSTOMERIO_TRACK_BASE, {
-		Authorization: `Basic ${toBasicCredential(apiKey)}`,
-	});
+	const config: OpenAPIConfig = buildConfig(
+		resolveBaseUrl(
+			CUSTOMERIO_TRACK_BASE,
+			CUSTOMERIO_TRACK_BASE_EU,
+			options.region,
+		),
+		{
+			Authorization: `Basic ${toBasicCredential(apiKey)}`,
+		},
+	);
 	return runRequest<T>(config, endpoint, options);
 }
 
@@ -168,9 +201,12 @@ export async function makeCdpRequest<T>(
 	apiKey: string,
 	options: CustomerioRequestOptions = {},
 ): Promise<T> {
-	const config: OpenAPIConfig = buildConfig(CUSTOMERIO_CDP_BASE, {
-		Authorization: `Basic ${toBasicCredential(apiKey)}`,
-		'X-Strict-Mode': '1',
-	});
+	const config: OpenAPIConfig = buildConfig(
+		resolveBaseUrl(CUSTOMERIO_CDP_BASE, CUSTOMERIO_CDP_BASE_EU, options.region),
+		{
+			Authorization: `Basic ${toBasicCredential(apiKey)}`,
+			'X-Strict-Mode': '1',
+		},
+	);
 	return runRequest<T>(config, endpoint, options);
 }

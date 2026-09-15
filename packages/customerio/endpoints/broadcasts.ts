@@ -44,7 +44,7 @@ export const triggerBroadcast: CustomerioEndpoints['triggerBroadcast'] = async (
 	>(
 		`/v1/campaigns/${encodeURIComponent(String(input.broadcast_id))}/triggers`,
 		ctx.key,
-		{ method: 'POST', body },
+		{ method: 'POST', body, region: ctx.options.region },
 	);
 	// Minimal logging: the audience (emails, ids, per-user data) is PII, so
 	// only the broadcast identifier is persisted.
@@ -68,7 +68,7 @@ export const getTriggers: CustomerioEndpoints['getTriggers'] = async (
 	>(
 		`/v1/broadcasts/${encodeURIComponent(String(input.broadcast_id))}/triggers`,
 		ctx.key,
-		{ method: 'GET' },
+		{ method: 'GET', region: ctx.options.region },
 	);
 	await logEventFromContext(
 		ctx,
@@ -90,7 +90,7 @@ export const getTrigger: CustomerioEndpoints['getTrigger'] = async (
 	>(
 		`/v1/campaigns/${encodeURIComponent(String(input.broadcast_id))}/triggers/${encodeURIComponent(String(input.trigger_id))}`,
 		ctx.key,
-		{ method: 'GET' },
+		{ method: 'GET', region: ctx.options.region },
 	);
 	await logEventFromContext(
 		ctx,

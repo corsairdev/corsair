@@ -10,7 +10,10 @@ export const listTransactionalMessages: CustomerioEndpoints['listTransactionalMe
 	async (ctx, input) => {
 		const response = await makeAppRequest<
 			CustomerioEndpointOutputs['listTransactionalMessages']
-		>('/v1/transactional', ctx.key, { method: 'GET' });
+		>('/v1/transactional', ctx.key, {
+			method: 'GET',
+			region: ctx.options.region,
+		});
 		await logEventFromContext(
 			ctx,
 			'customerio.transactional.listTransactionalMessages',

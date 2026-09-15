@@ -11,7 +11,10 @@ export const listIpAddresses: CustomerioEndpoints['listIpAddresses'] = async (
 ) => {
 	const response = await makeAppRequest<
 		CustomerioEndpointOutputs['listIpAddresses']
-	>('/v1/info/ip_addresses', ctx.key, { method: 'GET' });
+	>('/v1/info/ip_addresses', ctx.key, {
+		method: 'GET',
+		region: ctx.options.region,
+	});
 	await logEventFromContext(
 		ctx,
 		'customerio.info.listIpAddresses',

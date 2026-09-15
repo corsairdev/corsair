@@ -47,7 +47,7 @@ export const sendBatch: CustomerioEndpoints['sendBatch'] = async (
 	const response = await makeCdpRequest<CustomerioEndpointOutputs['sendBatch']>(
 		'/v1/batch',
 		ctx.key,
-		{ method: 'POST', body },
+		{ method: 'POST', body, region: ctx.options.region },
 	);
 	// Minimal logging: batch contents carry user identities and traits, so
 	// only the aggregate count is persisted.
@@ -89,7 +89,7 @@ export const trackPage: CustomerioEndpoints['trackPage'] = async (
 	const response = await makeCdpRequest<CustomerioEndpointOutputs['trackPage']>(
 		'/v1/page',
 		ctx.key,
-		{ method: 'POST', body },
+		{ method: 'POST', body, region: ctx.options.region },
 	);
 	// Minimal logging: only the page name is persisted; identifiers,
 	// properties and context are excluded.
@@ -129,7 +129,11 @@ export const trackScreen: CustomerioEndpoints['trackScreen'] = async (
 	assertCdpCallSize(body);
 	const response = await makeCdpRequest<
 		CustomerioEndpointOutputs['trackScreen']
-	>('/v1/screen', ctx.key, { method: 'POST', body });
+	>('/v1/screen', ctx.key, {
+		method: 'POST',
+		body,
+		region: ctx.options.region,
+	});
 	// Minimal logging: only the screen name is persisted; identifiers,
 	// properties and context are excluded.
 	await logEventFromContext(

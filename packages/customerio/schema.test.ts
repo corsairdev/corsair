@@ -62,6 +62,44 @@ describe('broadcast input schemas', () => {
 		).toThrow();
 	});
 
+	it('preserves segment and attribute audience filters instead of stripping them', () => {
+		// Regression: recipients previously declared only ids/emails, so zod
+		// silently dropped filter objects and mistargeted broadcasts.
+		const recipients = {
+			and: [
+				{ segment: { id: 3 } },
+				{
+					or: [
+						{
+							attribute: {
+								field: 'interest',
+								operator: 'eq',
+								value: 'roadrunners',
+							},
+						},
+					],
+				},
+			],
+			not: { attribute: { field: 'species', operator: 'exists' } },
+		};
+		const parsed = CustomerioEndpointInputSchemas.triggerBroadcast.parse({
+			broadcast_id: 7,
+			recipients,
+		});
+		expect(parsed.recipients).toEqual(recipients);
+	});
+
+	it('retains ids and emails as top-level recipients fields', () => {
+		const parsed = CustomerioEndpointInputSchemas.triggerBroadcast.parse({
+			broadcast_id: 7,
+			recipients: { ids: ['u_1'], emails: ['a@example.com'] },
+		});
+		expect(parsed.recipients).toEqual({
+			ids: ['u_1'],
+			emails: ['a@example.com'],
+		});
+	});
+
 	it('rejects triggerBroadcast without broadcast_id', () => {
 		expect(() =>
 			CustomerioEndpointInputSchemas.triggerBroadcast.parse({}),

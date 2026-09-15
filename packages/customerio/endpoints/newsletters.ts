@@ -13,6 +13,7 @@ export const listNewsletters: CustomerioEndpoints['listNewsletters'] = async (
 		CustomerioEndpointOutputs['listNewsletters']
 	>('/v1/newsletters', ctx.key, {
 		method: 'GET',
+		region: ctx.options.region,
 		query: {
 			limit: input.limit,
 			start: input.start,

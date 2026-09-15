@@ -39,16 +39,52 @@ const TriggerBroadcastPerUserDataSchema = z
 		message: 'Each per_user_data entry must include an id or an email',
 	});
 
+// Audience filter conditions for the "Custom recipients" trigger branch.
+// Docs: triggerBroadcast "Custom recipients" (Audience Filter). Conditions
+// recurse: `and`/`or` nest arrays of conditions, `not` nests a single
+// condition, leaves are `segment` or `attribute` filters. Every field is
+// declared (never stripped): previously only ids/emails were declared, so
+// zod silently dropped segment/attribute filter objects and broadcasts
+// targeted the wrong audience.
+const BroadcastAudienceAttributeSchema = z.object({
+	field: z.string(),
+	operator: z.enum(['eq', 'exists']),
+	// The spec declares a string, but its own example uses a boolean —
+	// accept JSON scalars so real payloads are not rejected.
+	value: z.union([z.string(), z.number(), z.boolean()]).optional(),
+});
+
+export type BroadcastAudienceFilter = {
+	ids?: Array<string>;
+	emails?: Array<string>;
+	segment?: { id: number };
+	attribute?: z.infer<typeof BroadcastAudienceAttributeSchema>;
+	and?: Array<BroadcastAudienceFilter>;
+	or?: Array<BroadcastAudienceFilter>;
+	not?: BroadcastAudienceFilter;
+};
+
+// The explicit `ZodType` annotation below is a type annotation (not a type
+// assertion): it is required for recursive `z.lazy` schemas to terminate,
+// same as CustomerioJsonValueSchema above.
+const BroadcastAudienceFilterSchema: z.ZodType<BroadcastAudienceFilter> =
+	z.lazy(() =>
+		z.object({
+			ids: z.array(z.string()).optional(),
+			emails: z.array(z.string().email()).optional(),
+			segment: z.object({ id: z.number().int() }).optional(),
+			attribute: BroadcastAudienceAttributeSchema.optional(),
+			and: z.array(BroadcastAudienceFilterSchema).optional(),
+			or: z.array(BroadcastAudienceFilterSchema).optional(),
+			not: BroadcastAudienceFilterSchema.optional(),
+		}),
+	);
+
 const TriggerBroadcastInputSchema = z
 	.object({
 		broadcast_id: z.number().int().positive(),
 		data: CustomerioJsonObjectSchema.optional(),
-		recipients: z
-			.object({
-				ids: z.array(z.string()).optional(),
-				emails: z.array(z.string().email()).optional(),
-			})
-			.optional(),
+		recipients: BroadcastAudienceFilterSchema.optional(),
 		ids: z.array(z.string()).optional(),
 		emails: z.array(z.string().email()).optional(),
 		per_user_data: z.array(TriggerBroadcastPerUserDataSchema).optional(),

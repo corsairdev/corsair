@@ -25,6 +25,19 @@ const corsair = createCorsair({
 });
 ```
 
+EU workspaces must set `region: 'eu'` so App, Track, and CDP requests use
+the EU bases (`https://api-eu.customer.io`, `https://track-eu.customer.io`,
+`https://cdp-eu.customer.io`) instead of the US defaults — US traffic sent
+to the wrong region still passes through US servers:
+
+```ts
+const corsair = createCorsair({
+	plugins: [
+		customerio({ key: process.env.CUSTOMERIO_API_KEY, region: 'eu' }),
+	],
+});
+```
+
 One plugin instance carries a single key, but App, Track v1, and CDP each
 need a different key format (see table above). Register a separate
 `customerio()` instance per API family you call — for example one instance

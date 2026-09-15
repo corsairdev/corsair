@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import type { CustomerioRegion } from './client';
 import {
 	Broadcasts,
 	Cdp,
@@ -47,6 +48,10 @@ import { CustomerioSchema } from './schema';
 export type CustomerioPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	// Account region. EU workspaces must set 'eu' so App, Track and CDP
+	// requests use the EU bases (api-eu/track-eu/cdp-eu.customer.io);
+	// defaults to 'us'. Handlers forward this via ctx.options.region.
+	region?: CustomerioRegion;
 	hooks?: InternalCustomerioPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof customerioEndpointsNested>;
