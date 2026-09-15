@@ -490,3 +490,138 @@ describe('endpoint failure propagation', () => {
 		expect(mockLogEvent).not.toHaveBeenCalled();
 	});
 });
+
+describe('event log minimization', () => {
+	it('identifyPerson persists no identity payload', async () => {
+		mockTrack.mockResolvedValue({});
+		await Profiles.identifyPerson(ctx, {
+			identifier: 'user@example.com',
+			email: 'user@example.com',
+			attributes: { plan: 'pro' },
+		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'customerio.profiles.identifyPerson',
+			{},
+			'completed',
+		);
+	});
+
+	it('createAlias and suppressPerson persist no identifier payload', async () => {
+		mockTrack.mockResolvedValue({});
+		await Profiles.createAlias(ctx, {
+			primary: { id: 'u_1' },
+			secondary: { email: 'old@example.com' },
+		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'customerio.profiles.createAlias',
+			{},
+			'completed',
+		);
+		mockLogEvent.mockClear();
+		await Profiles.suppressPerson(ctx, { identifier: 'u_1' });
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'customerio.profiles.suppressPerson',
+			{},
+			'completed',
+		);
+	});
+
+	it('trackEvent persists only the event name', async () => {
+		mockTrack.mockResolvedValue({});
+		await Profiles.trackEvent(ctx, {
+			identifier: 'u_1',
+			name: 'purchased',
+			data: { total: 99 },
+		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'customerio.profiles.trackEvent',
+			{ name: 'purchased' },
+			'completed',
+		);
+	});
+
+	it('reportPushEvents persists only the metric name', async () => {
+		mockTrack.mockResolvedValue({});
+		await Profiles.reportPushEvents(ctx, {
+			delivery_id: 'd_1',
+			metric: 'opened',
+			href: 'https://example.com/offer',
+			recipient: 'user@example.com',
+		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'customerio.profiles.reportPushEvents',
+			{ metric: 'opened' },
+			'completed',
+		);
+	});
+
+	it('addPersonToGroup persists no identity payload', async () => {
+		mockCdp.mockResolvedValue({});
+		await Groups.addPersonToGroup(ctx, {
+			userId: 'u_1',
+			groupId: 'acme',
+			traits: { plan: 'team' },
+		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'customerio.groups.addPersonToGroup',
+			{},
+			'completed',
+		);
+	});
+
+	it('sendBatch persists only the aggregate batch size', async () => {
+		mockCdp.mockResolvedValue({});
+		await Cdp.sendBatch(ctx, {
+			batch: [
+				{ type: 'identify', userId: 'u_1', traits: { plan: 'pro' } },
+				{ type: 'track', userId: 'u_1', event: 'signed_up' },
+			],
+		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'customerio.cdp.sendBatch',
+			{ batch_size: 2 },
+			'completed',
+		);
+	});
+
+	it('trackPage and trackScreen persist only the page or screen name', async () => {
+		mockCdp.mockResolvedValue({});
+		await Cdp.trackPage(ctx, {
+			anonymousId: 'a_1',
+			name: 'Pricing',
+			properties: { url: 'https://example.com/pricing' },
+		});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'customerio.cdp.trackPage',
+			{ name: 'Pricing' },
+			'completed',
+		);
+		mockLogEvent.mockClear();
+		await Cdp.trackScreen(ctx, { userId: 'u_1', name: 'Home' });
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'customerio.cdp.trackScreen',
+			{ name: 'Home' },
+			'completed',
+		);
+	});
+
+	it('unsubscribeDelivery persists no delivery payload', async () => {
+		mockTrack.mockResolvedValue({});
+		await Profiles.unsubscribeDelivery(ctx, { delivery_id: 'd_1' });
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'customerio.profiles.unsubscribeDelivery',
+			{},
+			'completed',
+		);
+	});
+});

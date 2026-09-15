@@ -1,4 +1,4 @@
-# Customer.io plugin for Corsair
+# @corsair-dev/customerio
 
 Customer engagement platform for targeted email, SMS, and push messages.
 Implements 23 operations across the Customer.io **App API**, **Track API (v1)**,
