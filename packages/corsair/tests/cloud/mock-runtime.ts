@@ -24,7 +24,7 @@ async function readBody(req: IncomingMessage): Promise<unknown> {
 	return JSON.parse(Buffer.concat(chunks).toString('utf8'));
 }
 
-export function startMockRuntime(): MockRuntime {
+export async function startMockRuntime(): Promise<MockRuntime> {
 	const calls: MockCall[] = [];
 
 	const server = createServer((req, res) => {
@@ -69,7 +69,7 @@ export function startMockRuntime(): MockRuntime {
 		})();
 	});
 
-	server.listen(0);
+	await new Promise<void>((resolve) => server.listen(0, resolve));
 
 	return {
 		get url() {

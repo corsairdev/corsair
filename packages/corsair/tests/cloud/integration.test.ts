@@ -3,10 +3,10 @@ import { createCorsair } from 'corsair';
 import { startMockRuntime } from './mock-runtime';
 
 describe('cloud client against a mock runtime', () => {
-	let mock: ReturnType<typeof startMockRuntime>;
+	let mock: Awaited<ReturnType<typeof startMockRuntime>>;
 
-	beforeEach(() => {
-		mock = startMockRuntime();
+	beforeEach(async () => {
+		mock = await startMockRuntime();
 	});
 
 	afterEach(async () => {

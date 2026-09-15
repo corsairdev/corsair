@@ -2,8 +2,16 @@ import { slack } from '@corsair-dev/slack';
 import { createCorsair } from 'corsair';
 
 describe('createCorsair with a ck_cloud_ key', () => {
+	const originalCloudUrl = process.env.CORSAIR_CLOUD_URL;
+
 	afterEach(() => {
 		jest.restoreAllMocks();
+		if (originalCloudUrl === undefined) {
+			// biome-ignore lint/performance/noDelete: assigning undefined leaves the string "undefined"
+			delete process.env.CORSAIR_CLOUD_URL;
+		} else {
+			process.env.CORSAIR_CLOUD_URL = originalCloudUrl;
+		}
 	});
 
 	it('returns a cloud tenant wrapper that issues HTTP calls', async () => {
@@ -83,7 +91,8 @@ describe('createCorsair with a ck_cloud_ key', () => {
 				'https://env-vm/p/api/corsair/default/slack/call/messages.post',
 			);
 		} finally {
-			process.env.CORSAIR_CLOUD_URL = undefined;
+			// biome-ignore lint/performance/noDelete: assigning undefined leaves the string "undefined"
+			delete process.env.CORSAIR_CLOUD_URL;
 		}
 	});
 

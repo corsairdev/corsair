@@ -24,12 +24,15 @@ function checkJava() {
 	}
 }
 
+// Pinned as a devDependency (see root package.json) so this resolves the
+// exact same generator-cli build in CI and locally instead of "latest".
 function generate(name, { generatorName, output, packageName }) {
 	console.log(`generating ${name} client -> ${output}`);
 	execFileSync(
-		'npx',
+		'pnpm',
 		[
-			'@openapitools/openapi-generator-cli',
+			'exec',
+			'openapi-generator-cli',
 			'generate',
 			'-i',
 			config.inputSpec,

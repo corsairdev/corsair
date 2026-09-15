@@ -33,6 +33,24 @@ describe('buildCloudManagement', () => {
 		});
 	});
 
+	it('connect.createLink throws before issuing a request when plugin is missing', async () => {
+		const t = transportWith(ok({}));
+		const m = buildCloudManagement(t);
+		expect(() => m.connect.createLink({ tenantId: 'acme' } as never)).toThrow(
+			/plugin/,
+		);
+		expect(t.fetch).not.toHaveBeenCalled();
+	});
+
+	it('connect.createLink throws before issuing a request when tenantId is missing', async () => {
+		const t = transportWith(ok({}));
+		const m = buildCloudManagement(t);
+		expect(() => m.connect.createLink({ plugin: 'slack' } as never)).toThrow(
+			/tenantId/,
+		);
+		expect(t.fetch).not.toHaveBeenCalled();
+	});
+
 	it('tenants.create posts to /tenants', async () => {
 		const t = transportWith(ok({ id: 'acme' }));
 		const m = buildCloudManagement(t);

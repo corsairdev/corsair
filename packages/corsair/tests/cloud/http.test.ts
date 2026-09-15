@@ -58,4 +58,35 @@ describe('cloudRequest', () => {
 			'https://vm.example/proj/api/corsair/default/slack/status',
 		);
 	});
+
+	it('throws a typed error for a 2xx response with an empty body', async () => {
+		const t = transportWith(new Response('', { status: 200 }));
+		await expect(
+			cloudRequest(t, 'GET', '/default/slack/status'),
+		).rejects.toMatchObject({ status: 200, code: 'internal_error' });
+	});
+
+	it('throws a typed error for a 2xx response with unparseable JSON', async () => {
+		const t = transportWith(new Response('not json', { status: 200 }));
+		await expect(
+			cloudRequest(t, 'GET', '/default/slack/status'),
+		).rejects.toMatchObject({ status: 200, code: 'internal_error' });
+	});
+
+	it('maps a request timeout to a typed error, not a raw AbortError', async () => {
+		const t: CloudTransport = {
+			baseUrl: 'https://vm.example/proj/api/corsair',
+			apiKey: 'ck_cloud_x',
+			timeoutMs: 5,
+			fetch: jest.fn(
+				() =>
+					new Promise<Response>(() => {
+						/* never resolves */
+					}),
+			),
+		};
+		await expect(
+			cloudRequest(t, 'GET', '/default/slack/status'),
+		).rejects.toMatchObject({ code: 'internal_error', status: 0 });
+	});
 });
