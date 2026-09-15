@@ -6,42 +6,39 @@ import type {
 } from 'corsair/core';
 import { z } from 'zod';
 
-export const CloudcartWebhookPayloadSchema = z.object({
-	type: z.string(),
-	created_at: z.string().optional(),
-	data: z.record(z.string(), z.unknown()),
-});
+/**
+ * CloudCart store-event payloads are the store objects themselves: flat JSON
+ * objects with no `type` envelope and no `data` wrapper. Verified against the
+ * official order webhook example (help.cloudcart.com webhook article), which
+ * is a flat order object carrying keys like `order_total`, `status`,
+ * `customer_email`, and nested `products`/`payments` arrays.
+ *
+ * An explicit `{ type: 'order.created' | ... }` envelope is still accepted
+ * wherever it appears so Hub-normalized deliveries keep working.
+ */
 
-export type CloudcartWebhookPayload = z.infer<
-	typeof CloudcartWebhookPayloadSchema
->;
+const StoreIdSchema = z.union([z.string(), z.number()]);
 
-export const OrderCreatedEventSchema = CloudcartWebhookPayloadSchema.extend({
-	type: z.literal('order.created'),
-	data: z
-		.object({
-			id: z.union([z.string(), z.number()]),
-		})
-		.loose(),
-});
+export const OrderCreatedEventSchema = z
+	.object({
+		id: StoreIdSchema,
+		order_total: z.unknown(),
+	})
+	.catchall(z.unknown());
 
-export const ProductCreatedEventSchema = CloudcartWebhookPayloadSchema.extend({
-	type: z.literal('product.created'),
-	data: z
-		.object({
-			id: z.union([z.string(), z.number()]),
-		})
-		.loose(),
-});
+export const ProductCreatedEventSchema = z
+	.object({
+		id: StoreIdSchema,
+		sku: z.unknown(),
+	})
+	.catchall(z.unknown());
 
-export const CustomerCreatedEventSchema = CloudcartWebhookPayloadSchema.extend({
-	type: z.literal('customer.created'),
-	data: z
-		.object({
-			id: z.union([z.string(), z.number()]),
-		})
-		.loose(),
-});
+export const CustomerCreatedEventSchema = z
+	.object({
+		id: StoreIdSchema,
+		email: z.unknown(),
+	})
+	.catchall(z.unknown());
 
 export type OrderCreatedEvent = z.infer<typeof OrderCreatedEventSchema>;
 export type ProductCreatedEvent = z.infer<typeof ProductCreatedEventSchema>;
@@ -77,42 +74,95 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 		: null;
 }
 
-function headerString(
-	headers: Record<string, unknown>,
+function bodyType(body: Record<string, unknown>): string | undefined {
+	return typeof body.type === 'string' ? body.type : undefined;
+}
+
+/**
+ * Fully case-insensitive header lookup. Runtime header casing varies
+ * (`X-CloudCart-Signature` vs `x-cloudcart-signature`), so every key is
+ * compared lowercased instead of probing one spelling.
+ */
+function headerValue(
+	headers: Record<string, string | string[] | undefined>,
 	name: string,
 ): string | undefined {
-	const value = headers[name];
-	if (typeof value === 'string' && value.length > 0) return value;
-	if (
-		Array.isArray(value) &&
-		typeof value[0] === 'string' &&
-		value[0].length > 0
-	) {
-		return value[0];
+	const lower = name.toLowerCase();
+	for (const [key, value] of Object.entries(headers)) {
+		if (key.toLowerCase() !== lower) continue;
+		if (typeof value === 'string' && value.length > 0) return value;
+		if (
+			Array.isArray(value) &&
+			typeof value[0] === 'string' &&
+			value[0].length > 0
+		) {
+			return value[0];
+		}
 	}
 	return undefined;
 }
 
-export function createCloudcartMatch(eventType: string): CorsairWebhookMatcher {
+/** Flat order object as delivered by CloudCart (see official Order.json example). */
+export function isOrderPayload(body: Record<string, unknown>): boolean {
+	if (bodyType(body) === 'order.created') return true;
+	return 'order_total' in body || 'status_fulfillment' in body;
+}
+
+/** Standalone customer object. Checked after orders: orders also carry customer fields. */
+export function isCustomerPayload(body: Record<string, unknown>): boolean {
+	if (bodyType(body) === 'customer.created') return true;
+	if ('order_total' in body || 'status_fulfillment' in body) return false;
+	return 'email' in body;
+}
+
+/** Standalone product object. Checked after orders and customers. */
+export function isProductPayload(body: Record<string, unknown>): boolean {
+	if (bodyType(body) === 'product.created') return true;
+	if ('order_total' in body || 'status_fulfillment' in body) return false;
+	if ('email' in body) return false;
+	return 'sku' in body;
+}
+
+function eventMatcher(
+	eventType: 'order.created' | 'product.created' | 'customer.created',
+	check: (body: Record<string, unknown>) => boolean,
+): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body);
-		return parsedBody !== null && parsedBody.type === eventType;
+		if (parsedBody === null) return false;
+		if (bodyType(parsedBody) === eventType) return true;
+		return check(parsedBody);
+	};
+}
+
+export function createCloudcartMatch(eventType: string): CorsairWebhookMatcher {
+	if (eventType === 'order.created')
+		return eventMatcher(eventType, isOrderPayload);
+	if (eventType === 'customer.created')
+		return eventMatcher(eventType, isCustomerPayload);
+	if (eventType === 'product.created')
+		return eventMatcher(eventType, isProductPayload);
+	return (request: RawWebhookRequest) => {
+		const parsedBody = parseBody(request.body);
+		return parsedBody !== null && bodyType(parsedBody) === eventType;
 	};
 }
 
 export function matchCloudcartWebhook(request: RawWebhookRequest): boolean {
-	const headers = request.headers as Record<string, unknown>;
+	const parsed = parseBody(request.body);
+	if (parsed === null) return false;
 	if (
-		headerString(headers, 'x-cloudcart-apikey') ||
-		headerString(headers, 'x-cloudcart-api-key')
+		typeof parsed.type === 'string' &&
+		CLOUDCART_EVENT_TYPES.has(parsed.type)
 	) {
 		return true;
 	}
-	const parsed = parseBody(request.body);
+	// Headers alone never match: any probe carrying an API key header without
+	// a CloudCart-shaped body must not route here.
 	return (
-		parsed !== null &&
-		typeof parsed.type === 'string' &&
-		CLOUDCART_EVENT_TYPES.has(parsed.type)
+		isOrderPayload(parsed) ||
+		isCustomerPayload(parsed) ||
+		isProductPayload(parsed)
 	);
 }
 
@@ -124,8 +174,29 @@ export function verifyCloudcartWebhookSignature(
 		return { valid: true };
 	}
 
+	const headers = request.headers as Record<
+		string,
+		string | string[] | undefined
+	>;
+	const presented =
+		headerValue(headers, 'x-cloudcart-signature') ??
+		headerValue(headers, 'x-hub-signature-256') ??
+		headerValue(headers, 'x-cloudcart-hmac-sha256');
+
+	if (!presented) {
+		// CloudCart publishes no signature scheme for event webhooks, so real
+		// deliveries are unsigned. Failing here would answer 401, and
+		// CloudCart deactivates webhooks that answer 401. Only deliveries
+		// carrying a signature are verified, and only against a configured
+		// secret.
+		return { valid: true };
+	}
 	if (!secret) {
-		return { valid: false, error: 'Missing webhook secret' };
+		return {
+			valid: false,
+			error:
+				'Signed delivery received but no webhook secret is configured (set options.webhookSecret or the webhook_signature key)',
+		};
 	}
 
 	const rawBody = request.rawBody;
@@ -134,16 +205,6 @@ export function verifyCloudcartWebhookSignature(
 			valid: false,
 			error: 'Missing raw body for signature verification',
 		};
-	}
-
-	const headers = request.headers as Record<string, unknown>;
-	const presented =
-		headerString(headers, 'x-cloudcart-signature') ??
-		headerString(headers, 'x-hub-signature-256') ??
-		headerString(headers, 'x-cloudcart-hmac-sha256');
-
-	if (!presented) {
-		return { valid: false, error: 'Missing CloudCart HMAC signature' };
 	}
 
 	const receivedHex = presented.startsWith('sha256=')
@@ -164,3 +225,13 @@ export function verifyCloudcartWebhookSignature(
 
 	return { valid: true };
 }
+
+export const CloudcartWebhookPayloadSchema = z
+	.object({
+		id: StoreIdSchema,
+	})
+	.catchall(z.unknown());
+
+export type CloudcartWebhookPayload = z.infer<
+	typeof CloudcartWebhookPayloadSchema
+>;
