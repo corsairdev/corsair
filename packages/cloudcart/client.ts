@@ -68,7 +68,19 @@ export function unpackCloudcartKey(packed: string): {
  * packs to the same key regardless of trailing slashes or casing.
  */
 function normalizeStoreUrl(storeUrl: string): string {
-	return storeUrl.trim().replace(/\/+$/, '');
+	return stripTrailingSlashes(storeUrl.trim());
+}
+
+/**
+ * Strips trailing slashes without a regex: avoids polynomial-backtracking
+ * warnings on uncontrolled input and keeps the intent obvious.
+ */
+function stripTrailingSlashes(value: string): string {
+	let end = value.length;
+	while (end > 0 && value[end - 1] === '/') {
+		end -= 1;
+	}
+	return value.slice(0, end);
 }
 
 export function buildCloudcartStoreUrl(storeUrl: string): string {
@@ -104,7 +116,7 @@ export function buildCloudcartStoreUrl(storeUrl: string): string {
 		);
 	}
 
-	const path = parsed.pathname.replace(/\/+$/, '');
+	const path = stripTrailingSlashes(parsed.pathname);
 	if (path === '' || path === '/') {
 		return `${parsed.origin}/api/v2`;
 	}
