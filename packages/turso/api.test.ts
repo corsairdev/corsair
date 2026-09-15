@@ -6,6 +6,7 @@ import {
 } from './client';
 import { Changes, Regions, Tokens } from './endpoints';
 import { TursoEndpointOutputSchemas } from './endpoints/types';
+import type { TursoContext } from './index';
 
 const API_KEY = process.env.TURSO_API_KEY;
 const DATABASE_URL = process.env.TURSO_DATABASE_URL;
@@ -34,45 +35,81 @@ describeLive('Turso live API integration tests', () => {
 		expect(typeof parsed.exp).toBe('number');
 		expect(Number.isInteger(parsed.exp)).toBe(true);
 
-		const endpointResult = await Tokens.validate(
-			{
-				id: 'turso',
-				authType: 'api_key',
-				key,
-				keys: { get_api_key: async () => key } as never,
-				options: { key },
-				$getAccountId: async () => 'acc_test',
-				database: null as never,
-			} as never,
-			{},
-		);
+		const liveCtx = {
+			id: 'turso',
+			key,
+			options: { key },
+			keys: {
+				get_api_key: async () => key,
+				get_database_token: async () => undefined,
+				set_api_key: async () => undefined,
+				set_database_token: async () => undefined,
+			},
+			$getAccountId: async () => 'acc_test',
+			db: {
+				changeEvents: {
+					findByEntityId: async () => null,
+					existsByEntityId: async () => false,
+					findIdByEntityId: async () => null,
+					findById: async () => null,
+					findManyByEntityIds: async () => [],
+					list: async () => [],
+					search: async () => [],
+					upsertByEntityId: async () => ({}) as never,
+					deleteById: async () => true,
+					deleteByEntityId: async () => true,
+					count: async () => 0,
+				},
+			},
+			endpoints: {},
+		} as unknown as TursoContext;
+
+		const endpointResult = await Tokens.validate(liveCtx, {});
 		expect(endpointResult.exp).toBe(parsed.exp);
 	});
 
 	if (DATABASE_URL) {
 		it('3. TURSO_LISTEN_TO_CHANGES - queries database changes or health check fallback', async () => {
 			const key = API_KEY as string;
-			const endpointResult = await Changes.listen(
-				{
-					id: 'turso',
-					authType: 'api_key',
+			const liveCtx = {
+				id: 'turso',
+				key,
+				options: {
 					key,
-					keys: { get_api_key: async () => key } as never,
-					options: {
-						key,
-						databaseToken: DATABASE_TOKEN,
-					},
-					$getAccountId: async () => 'acc_test',
-					database: null as never,
-				} as never,
-				{
-					databaseUrl: DATABASE_URL,
-					table: 'users',
-					action: 'insert',
-					maxEvents: 5,
-					timeoutMs: 5000,
+					databaseToken: DATABASE_TOKEN,
 				},
-			);
+				keys: {
+					get_api_key: async () => key,
+					get_database_token: async () => DATABASE_TOKEN,
+					set_api_key: async () => undefined,
+					set_database_token: async () => undefined,
+				},
+				$getAccountId: async () => 'acc_test',
+				db: {
+					changeEvents: {
+						findByEntityId: async () => null,
+						existsByEntityId: async () => false,
+						findIdByEntityId: async () => null,
+						findById: async () => null,
+						findManyByEntityIds: async () => [],
+						list: async () => [],
+						search: async () => [],
+						upsertByEntityId: async () => ({}) as never,
+						deleteById: async () => true,
+						deleteByEntityId: async () => true,
+						count: async () => 0,
+					},
+				},
+				endpoints: {},
+			} as unknown as TursoContext;
+
+			const endpointResult = await Changes.listen(liveCtx, {
+				databaseUrl: DATABASE_URL,
+				table: 'users',
+				action: 'insert',
+				maxEvents: 5,
+				timeoutMs: 5000,
+			});
 
 			const parsed =
 				TursoEndpointOutputSchemas.listenToChanges.parse(endpointResult);
