@@ -30,6 +30,28 @@ describe('buildCloudClient', () => {
 		});
 	});
 
+	it('URL-encodes tenantId while preserving dots in the op path', async () => {
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValue(
+				new Response(JSON.stringify({ data: {} }), { status: 200 }),
+			);
+		const transport = {
+			baseUrl: 'https://vm/proj/api/corsair',
+			apiKey: 'ck_cloud_x',
+			fetch: fetchMock,
+		};
+		const client = buildCloudClient([{ id: 'slack' } as any], {
+			transport,
+			tenantId: 'a/b',
+		});
+		await (client as any).slack.api.messages.post({});
+		const [url] = fetchMock.mock.calls[0];
+		expect(url).toBe(
+			'https://vm/proj/api/corsair/a%2Fb/slack/call/messages.post',
+		);
+	});
+
 	it('rejects a call to a plugin not in the client', () => {
 		const client = buildCloudClient([{ id: 'slack' } as any], {
 			transport: {} as any,

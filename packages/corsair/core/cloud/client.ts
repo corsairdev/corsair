@@ -15,7 +15,7 @@ function buildInvokeProxy(
 		cloudRequest(
 			transport,
 			'POST',
-			`/${tenantId}/${pluginId}/call/${path.join('.')}`,
+			`/${encodeURIComponent(tenantId)}/${encodeURIComponent(pluginId)}/call/${path.map(encodeURIComponent).join('.')}`,
 			{ args: args[0] },
 		).then((res: any) => res.data);
 
