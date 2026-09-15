@@ -7,7 +7,11 @@ import {
 	makeCloudcartRequest,
 	packCloudcartKey,
 } from './client';
-import { CloudcartEndpointInputSchemas } from './endpoints/types';
+import {
+	CloudcartEndpointInputSchemas,
+	CloudcartEndpointOutputSchemas,
+	JsonApiMutationResponseSchema,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import type { CloudcartContext, CloudcartKeyBuilderContext } from './index';
 import { cloudcart } from './index';
@@ -560,6 +564,40 @@ describe('cloudcart webhooks', () => {
 			} as never,
 		);
 		expect(result).toEqual({ success: true, data: payload });
+	});
+});
+
+describe('cloudcart output contracts', () => {
+	const entries = Object.entries(CloudcartEndpointOutputSchemas);
+	expect(entries.length).toBeGreaterThan(0);
+
+	it('rejects empty objects and error envelopes on content endpoints', () => {
+		for (const [name, schema] of entries) {
+			if (schema === JsonApiMutationResponseSchema) continue;
+			expect(schema.safeParse({}).success).toBe(false);
+			expect(schema.safeParse({ errors: [{ status: '500' }] }).success).toBe(
+				false,
+			);
+			expect(schema.safeParse({ data: { type: 'x', id: '1' } }).success).toBe(
+				true,
+			);
+		}
+	});
+
+	it('accepts empty 204 bodies on mutation endpoints but still rejects errors', () => {
+		let covered = 0;
+		for (const [name, schema] of entries) {
+			if (schema !== JsonApiMutationResponseSchema) continue;
+			covered += 1;
+			expect(schema.safeParse({}).success).toBe(true);
+			expect(schema.safeParse({ data: { type: 'x', id: '1' } }).success).toBe(
+				true,
+			);
+			expect(schema.safeParse({ errors: [{ status: '500' }] }).success).toBe(
+				false,
+			);
+		}
+		expect(covered).toBeGreaterThan(0);
 	});
 });
 
