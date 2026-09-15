@@ -8,6 +8,11 @@ export type HubConfigInput = {
 	projectApiKey: string;
 	signingSecret: string;
 	apiUrl?: string;
+	/**
+	 * Corsair Cloud VM base URL (`ck_cloud_` keys only) — distinct from `apiUrl`,
+	 * which is the Hub API host. Falls back to `CORSAIR_CLOUD_URL` when omitted.
+	 */
+	baseUrl?: string;
 	oauthCallbackUrl?: string;
 	/** URL the connect/approve pages send the user back to when they're done. */
 	redirectURL?: string;

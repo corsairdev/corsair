@@ -1,7 +1,7 @@
 import type { CorsairDatabase } from '../db/kysely/database';
 import { createCorsairDatabase } from '../db/kysely/database';
 import type { HubConfig } from '../hub';
-import { resolveHubConfigInput } from '../hub';
+import { inferHubEnvironmentSlug, resolveHubConfigInput } from '../hub';
 import {
 	CORSAIR_TUNNEL_PATH,
 	CORSAIR_TUNNEL_ZONE,
@@ -9,6 +9,7 @@ import {
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
+import { buildCloudCorsair } from './cloud';
 import { resolveRootPermissionsConfig } from './config/resolve-root-permissions';
 import { buildManagementNamespace } from './management';
 import { buildPermissionsNamespace } from './permissions';
@@ -69,6 +70,13 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	config: CorsairIntegration<Plugins>,
 ): CorsairSingleTenantClient<Plugins> | CorsairTenantWrapper<Plugins> {
+	if (
+		config.hub?.projectApiKey &&
+		inferHubEnvironmentSlug(config.hub.projectApiKey) === 'cloud'
+	) {
+		return buildCloudCorsair(config);
+	}
+
 	const resolvedDatabase = config.database
 		? createCorsairDatabase(config.database)
 		: undefined;
