@@ -159,6 +159,7 @@ export const BaseProviders = [
 	'epicgames',
 	'exa',
 	'exist',
+	'extractaai',
 	'facebook',
 	'faraday',
 	'figma',
@@ -448,6 +449,7 @@ export const ProviderDisplayNames = {
 	epicgames: 'Epic Games',
 	exa: 'Exa',
 	exist: 'Exist',
+	extractaai: 'Extracta.ai',
 	facebook: 'Facebook',
 	faraday: 'Faraday',
 	figma: 'Figma',
@@ -744,6 +746,7 @@ export type AllProviders =
 	| 'epicgames'
 	| 'exa'
 	| 'exist'
+	| 'extractaai'
 	| 'facebook'
 	| 'faraday'
 	| 'figma'
