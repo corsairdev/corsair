@@ -14,7 +14,12 @@ import { cloudcart } from './index';
 import { CloudcartSchema } from './schema';
 import { CloudcartWebhooks } from './webhooks';
 import {
+	createCloudcartMatch,
+	isCustomerPayload,
+	isOrderPayload,
+	isProductPayload,
 	matchCloudcartWebhook,
+	OrderCreatedEventSchema,
 	verifyCloudcartWebhookSignature,
 } from './webhooks/types';
 
@@ -65,9 +70,9 @@ function classify(error: Error): string {
 
 function httpError(status: number, message: string): ApiError {
 	return new ApiError(
-		{ method: 'GET', url: 'https://shop.cloudcart.com/api/v1/products' },
+		{ method: 'GET', url: 'https://shop.cloudcart.com/api/v2/products' },
 		{
-			url: 'https://shop.cloudcart.com/api/v1/products',
+			url: 'https://shop.cloudcart.com/api/v2/products',
 			ok: false,
 			status,
 			statusText: 'Error',
@@ -133,25 +138,24 @@ describe('cloudcart keyBuilder', () => {
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
-	it('uses webhookSecret and not the api key for webhook hmac', async () => {
-		const instance = cloudcart({
-			key: 'cc_test_key',
-			webhookSecret: 'whsec',
-		});
+	it('resolves packed credentials for webhook deliveries without a secret', async () => {
+		// Event deliveries are unsigned, so the webhook path must not demand
+		// a webhook secret: it resolves the same packed credential as calls.
+		const instance = cloudcart({ key: 'cc_test_key', storeUrl: STORE });
 		await expect(
 			(
 				instance.keyBuilder as (ctx: unknown, source: string) => Promise<string>
 			)({ authType: 'api_key' }, 'webhook'),
-		).resolves.toBe('whsec');
+		).resolves.toBe(PACKED);
 	});
 
-	it('throws when webhook secret is missing even if an api key exists', async () => {
+	it('throws when credentials are missing for webhook deliveries', async () => {
 		const instance = cloudcart({ key: 'cc_test_key' });
 		const ctx = {
 			authType: 'api_key',
 			keys: {
-				get_webhook_signature: async () => null,
 				get_api_key: async () => 'cc_test_key',
+				get_store_url: async () => null,
 			},
 		} as unknown as CloudcartKeyBuilderContext;
 
@@ -160,23 +164,6 @@ describe('cloudcart keyBuilder', () => {
 				instance.keyBuilder as (ctx: unknown, source: string) => Promise<string>
 			)(ctx, 'webhook'),
 		).rejects.toBeInstanceOf(AuthMissingError);
-	});
-
-	it('uses the stored webhook signature when webhookSecret is unset', async () => {
-		const instance = cloudcart({ key: 'cc_test_key' });
-		const ctx = {
-			authType: 'api_key',
-			keys: {
-				get_webhook_signature: async () => 'stored_whsec',
-				get_api_key: async () => 'cc_test_key',
-			},
-		} as unknown as CloudcartKeyBuilderContext;
-
-		await expect(
-			(
-				instance.keyBuilder as (ctx: unknown, source: string) => Promise<string>
-			)(ctx, 'webhook'),
-		).resolves.toBe('stored_whsec');
 	});
 });
 
@@ -191,7 +178,7 @@ describe('cloudcart request client', () => {
 
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
-				BASE: 'https://shop.cloudcart.com/api/v1',
+				BASE: 'https://shop.cloudcart.com/api/v2',
 				HEADERS: expect.objectContaining({
 					'X-CloudCart-ApiKey': 'cc_test_key',
 				}),
@@ -220,9 +207,38 @@ describe('cloudcart request client', () => {
 		).toThrow(CloudcartAPIError);
 	});
 
-	it('keeps an already versioned /v1 store url', () => {
+	it('builds the v2 base url and migrates legacy paths forward', () => {
+		expect(buildCloudcartStoreUrl('https://shop.cloudcart.com')).toBe(
+			'https://shop.cloudcart.com/api/v2',
+		);
+		expect(buildCloudcartStoreUrl('https://shop.cloudcart.com/api')).toBe(
+			'https://shop.cloudcart.com/api/v2',
+		);
+		expect(buildCloudcartStoreUrl('https://shop.cloudcart.com/api/v2')).toBe(
+			'https://shop.cloudcart.com/api/v2',
+		);
 		expect(buildCloudcartStoreUrl('https://api.cloudcart.com/v1')).toBe(
-			'https://api.cloudcart.com/v1',
+			'https://api.cloudcart.com/v2',
+		);
+	});
+
+	it('does not send an Authorization Bearer header', async () => {
+		await makeCloudcartRequest('products', PACKED, { method: 'GET' });
+
+		const config = mockRequest.mock.calls[0]?.[0] as {
+			TOKEN?: unknown;
+			HEADERS?: Record<string, unknown>;
+		};
+		expect(config.TOKEN).toBeUndefined();
+		expect(config.HEADERS).toMatchObject({
+			'Content-Type': 'application/vnd.api+json',
+			'X-CloudCart-ApiKey': 'cc_test_key',
+		});
+	});
+
+	it('packs the same store to the same key regardless of trailing slash', () => {
+		expect(packCloudcartKey('cc_test_key', 'https://shop.cloudcart.com/')).toBe(
+			packCloudcartKey('cc_test_key', 'https://shop.cloudcart.com'),
 		);
 	});
 
@@ -328,17 +344,16 @@ describe('cloudcart endpoints', () => {
 		);
 	});
 
-	it('creates variant options with parent ids in the path', async () => {
+	it('creates variant options against the flat variant-options resource', async () => {
 		await endpoints().variants.createVariantOption(mockCtx, {
-			product_id: 'p1',
-			variant_id: 'v1',
+			parameter_id: 'p1',
 			data: { name: 'Blue' },
 		});
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.anything(),
 			expect.objectContaining({
 				method: 'POST',
-				url: 'variants/v1/options',
+				url: 'variant-options',
 				body: { name: 'Blue' },
 			}),
 			expect.anything(),
@@ -353,7 +368,7 @@ describe('cloudcart endpoints', () => {
 			expect.anything(),
 			expect.objectContaining({
 				method: 'POST',
-				url: 'variant-parameters/param1/options',
+				url: 'variant-options',
 				body: { name: 'Medium' },
 			}),
 			expect.anything(),
@@ -382,64 +397,109 @@ describe('cloudcart schemas', () => {
 });
 
 describe('cloudcart webhooks', () => {
-	it('matches CloudCart event payloads without a signature header', () => {
+	// Flat order object shaped like the official CloudCart webhook example:
+	// no `type` envelope and no `data` wrapper.
+	const officialOrder = {
+		id: 1,
+		status: 'pending',
+		order_total: 49.7,
+		customer_email: 'john@example.com',
+		customer_first_name: 'John',
+		quantity: 1,
+		products: [{ sku: 'CN202ZF', price: 79.9 }],
+		payments: [{ status: 'requested', amount: 49.7 }],
+	};
+	const customerPayload = {
+		id: 'ctm_1',
+		email: 'jo@example.com',
+		first_name: 'Jo',
+	};
+	const productPayload = { id: 'p_1', sku: 'SKU-1', name: 'Shirt' };
+
+	it('matches the official flat order payload shape', () => {
+		expect(isOrderPayload(officialOrder)).toBe(true);
+		expect(isCustomerPayload(officialOrder)).toBe(false);
+		expect(isProductPayload(officialOrder)).toBe(false);
+		expect(OrderCreatedEventSchema.safeParse(officialOrder).success).toBe(true);
 		expect(
-			matchCloudcartWebhook({
+			matchCloudcartWebhook({ headers: {}, body: officialOrder } as never),
+		).toBe(true);
+		expect(
+			createCloudcartMatch('order.created')({
 				headers: {},
-				body: { type: 'order.created', data: { id: 1 } },
+				body: officialOrder,
 			} as never),
 		).toBe(true);
+		expect(
+			createCloudcartMatch('product.created')({
+				headers: {},
+				body: officialOrder,
+			} as never),
+		).toBe(false);
+	});
+
+	it('classifies standalone customer and product payloads', () => {
+		expect(isCustomerPayload(customerPayload)).toBe(true);
+		expect(isOrderPayload(customerPayload)).toBe(false);
+		expect(isProductPayload(productPayload)).toBe(true);
+		expect(isOrderPayload(productPayload)).toBe(false);
+		expect(
+			matchCloudcartWebhook({ headers: {}, body: customerPayload } as never),
+		).toBe(true);
+		expect(
+			matchCloudcartWebhook({ headers: {}, body: productPayload } as never),
+		).toBe(true);
+	});
+
+	it('does not match header-only probes without a body', () => {
+		expect(
+			matchCloudcartWebhook({
+				headers: { 'x-cloudcart-apikey': 'cc_test_key' },
+				body: {},
+			} as never),
+		).toBe(false);
+		expect(
+			matchCloudcartWebhook({
+				headers: { 'x-cloudcart-apikey': 'cc_test_key' },
+				body: 'not-json',
+			} as never),
+		).toBe(false);
 		expect(
 			plugin().pluginWebhookMatcher?.({
 				headers: { 'x-cloudcart-apikey': 'cc_test_key' },
-				body: { type: 'product.created', data: { id: 2 } },
+				body: officialOrder,
 			} as never),
 		).toBe(true);
 	});
 
-	it('rejects missing secret, raw body, or hmac header', () => {
-		const rawBody = '{"type":"order.created","data":{"id":1}}';
+	it('accepts unsigned deliveries so real traffic never 401s', () => {
+		// CloudCart publishes no signature scheme: an unsigned delivery must
+		// stay accepted even when a secret is configured, otherwise every
+		// event answers 401 and CloudCart deactivates the webhook.
 		expect(
 			verifyCloudcartWebhookSignature(
-				{
-					headers: { 'x-cloudcart-signature': 'deadbeef' },
-					payload: { type: 'order.created', data: { id: 1 } },
-					rawBody,
-				} as never,
-				'',
-			).valid,
-		).toBe(false);
-		expect(
-			verifyCloudcartWebhookSignature(
-				{
-					headers: { 'x-cloudcart-signature': 'deadbeef' },
-					payload: { type: 'order.created', data: { id: 1 } },
-				} as never,
+				{ headers: {}, payload: officialOrder } as never,
 				'cc_test_key',
 			).valid,
-		).toBe(false);
+		).toBe(true);
 		expect(
 			verifyCloudcartWebhookSignature(
-				{
-					headers: { 'x-cloudcart-apikey': 'cc_test_key' },
-					payload: { type: 'order.created', data: { id: 1 } },
-					rawBody,
-				} as never,
-				'cc_test_key',
+				{ headers: {}, payload: officialOrder } as never,
+				undefined,
 			).valid,
-		).toBe(false);
+		).toBe(true);
 	});
 
-	it('accepts an hmac over the raw body', () => {
-		const rawBody = '{"type":"order.created","data":{"id":1}}';
+	it('verifies a presented signature case-insensitively', () => {
+		const rawBody = JSON.stringify(officialOrder);
 		const signature = createHmac('sha256', 'cc_test_key')
 			.update(rawBody)
 			.digest('hex');
 		expect(
 			verifyCloudcartWebhookSignature(
 				{
-					headers: { 'x-cloudcart-signature': signature },
-					payload: { type: 'order.created', data: { id: 1 } },
+					headers: { 'X-CloudCart-Signature': signature },
+					payload: officialOrder,
 					rawBody,
 				} as never,
 				'cc_test_key',
@@ -448,13 +508,34 @@ describe('cloudcart webhooks', () => {
 		expect(
 			verifyCloudcartWebhookSignature(
 				{
-					headers: { 'x-cloudcart-signature': 'aa'.repeat(32) },
-					payload: { type: 'order.created', data: { id: 1 } },
+					headers: { 'X-CloudCart-Signature': 'aa'.repeat(32) },
+					payload: officialOrder,
 					rawBody,
 				} as never,
 				'cc_test_key',
 			).valid,
 		).toBe(false);
+	});
+
+	it('rejects a presented signature without a configured secret', () => {
+		expect(
+			verifyCloudcartWebhookSignature(
+				{
+					headers: { 'x-cloudcart-signature': 'deadbeef' },
+					payload: officialOrder,
+					rawBody: JSON.stringify(officialOrder),
+				} as never,
+				'',
+			).valid,
+		).toBe(false);
+	});
+
+	it('handles the official order payload end to end without a secret', async () => {
+		const result = await CloudcartWebhooks.orderCreated.handler(
+			{ ...mockCtx, key: undefined } as unknown as CloudcartContext,
+			{ headers: {}, payload: officialOrder } as never,
+		);
+		expect(result).toEqual({ success: true, data: officialOrder });
 	});
 
 	it('accepts hubVerified deliveries without a local secret', async () => {
@@ -496,9 +577,9 @@ describe('cloudcart error classification', () => {
 
 	it('does not retry mutating requests after a 5xx', async () => {
 		const postError = new ApiError(
-			{ method: 'POST', url: 'https://shop.cloudcart.com/api/v1/customers' },
+			{ method: 'POST', url: 'https://shop.cloudcart.com/api/v2/customers' },
 			{
-				url: 'https://shop.cloudcart.com/api/v1/customers',
+				url: 'https://shop.cloudcart.com/api/v2/customers',
 				ok: false,
 				status: 500,
 				statusText: 'Error',

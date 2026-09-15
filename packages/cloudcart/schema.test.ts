@@ -35,7 +35,6 @@ describe('Cloudcart schema and plugin', () => {
 		expect(typeof plugin.endpoints?.variants.listVariants).toBe('function');
 		expect(typeof plugin.endpoints?.customers.listCustomers).toBe('function');
 		expect(typeof plugin.endpoints?.orders.listOrders).toBe('function');
-		expect(typeof plugin.endpoints?.cart.getCart).toBe('function');
 		expect(typeof plugin.endpoints?.discounts.listDiscountCodes).toBe(
 			'function',
 		);
