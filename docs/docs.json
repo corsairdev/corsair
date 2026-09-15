@@ -1378,14 +1378,6 @@
                 ]
               },
               {
-                "group": "GIPHY",
-                "pages": [
-                  "plugins/giphy/overview",
-                  "plugins/giphy/api",
-                  "plugins/giphy/database"
-                ]
-              },
-              {
                 "group": "GitHub",
                 "pages": [
                   "plugins/github/overview",

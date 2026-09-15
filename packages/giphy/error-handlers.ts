@@ -18,9 +18,19 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			// GIPHY surfaces key problems as 401 (invalid key) and 403
+			// (e.g. uploads from unapproved keys); both are non-retryable.
+			if (
+				error instanceof ApiError &&
+				(error.status === 401 || error.status === 403)
+			)
+				return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('forbidden') ||
+				msg.includes('invalid_auth')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

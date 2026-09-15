@@ -1,14 +1,12 @@
-import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { logEventFromContext } from 'corsair/core';
 import { makeGiphyRequest } from '../client';
 import type { GiphyEndpoints } from '../index';
+import { resolveApiKey } from './auth';
 import type { GiphyEndpointOutputs } from './types';
 import { GiphyListResponseSchema, GiphySingleResponseSchema } from './types';
 
 export const search: GiphyEndpoints['stickersSearch'] = async (ctx, input) => {
-	const apiKey = ctx.options.key ?? (await ctx.keys?.get_api_key()) ?? ctx.key;
-	if (!apiKey) {
-		throw new AuthMissingError('giphy', 'api_key');
-	}
+	const apiKey = await resolveApiKey(ctx);
 
 	const query: Record<string, string | number | boolean | undefined> = {
 		q: input.q,
@@ -16,6 +14,7 @@ export const search: GiphyEndpoints['stickersSearch'] = async (ctx, input) => {
 		offset: input.offset,
 		rating: input.rating,
 		lang: input.lang,
+		customer_id: input.customer_id,
 	};
 
 	const rawResponse = await makeGiphyRequest<
@@ -39,7 +38,7 @@ export const search: GiphyEndpoints['stickersSearch'] = async (ctx, input) => {
 					importedAt: sticker.import_datetime,
 					createdAt: new Date(),
 				});
-			} catch (err) {
+			} catch {
 				// Ignore individual db write failures
 			}
 		}
@@ -59,15 +58,13 @@ export const trending: GiphyEndpoints['stickersTrending'] = async (
 	ctx,
 	input,
 ) => {
-	const apiKey = ctx.options.key ?? (await ctx.keys?.get_api_key()) ?? ctx.key;
-	if (!apiKey) {
-		throw new AuthMissingError('giphy', 'api_key');
-	}
+	const apiKey = await resolveApiKey(ctx);
 
 	const query: Record<string, string | number | boolean | undefined> = {
 		limit: input?.limit,
 		offset: input?.offset,
 		rating: input?.rating,
+		customer_id: input?.customer_id,
 	};
 
 	const rawResponse = await makeGiphyRequest<
@@ -91,7 +88,7 @@ export const trending: GiphyEndpoints['stickersTrending'] = async (
 					importedAt: sticker.import_datetime,
 					createdAt: new Date(),
 				});
-			} catch (err) {
+			} catch {
 				// Ignore individual db write failures
 			}
 		}
@@ -111,14 +108,13 @@ export const translate: GiphyEndpoints['stickersTranslate'] = async (
 	ctx,
 	input,
 ) => {
-	const apiKey = ctx.options.key ?? (await ctx.keys?.get_api_key()) ?? ctx.key;
-	if (!apiKey) {
-		throw new AuthMissingError('giphy', 'api_key');
-	}
+	const apiKey = await resolveApiKey(ctx);
 
 	const query: Record<string, string | number | boolean | undefined> = {
 		s: input.s,
 		weirdness: input.weirdness,
+		rating: input.rating,
+		customer_id: input.customer_id,
 	};
 
 	const rawResponse = await makeGiphyRequest<
@@ -141,7 +137,7 @@ export const translate: GiphyEndpoints['stickersTranslate'] = async (
 				importedAt: response.data.import_datetime,
 				createdAt: new Date(),
 			});
-		} catch (err) {
+		} catch {
 			// Ignore db write failure
 		}
 	}
@@ -157,14 +153,12 @@ export const translate: GiphyEndpoints['stickersTranslate'] = async (
 };
 
 export const random: GiphyEndpoints['stickersRandom'] = async (ctx, input) => {
-	const apiKey = ctx.options.key ?? (await ctx.keys?.get_api_key()) ?? ctx.key;
-	if (!apiKey) {
-		throw new AuthMissingError('giphy', 'api_key');
-	}
+	const apiKey = await resolveApiKey(ctx);
 
 	const query: Record<string, string | number | boolean | undefined> = {
 		tag: input?.tag,
 		rating: input?.rating,
+		customer_id: input?.customer_id,
 	};
 
 	const rawResponse = await makeGiphyRequest<
@@ -187,7 +181,7 @@ export const random: GiphyEndpoints['stickersRandom'] = async (ctx, input) => {
 				importedAt: response.data.import_datetime,
 				createdAt: new Date(),
 			});
-		} catch (err) {
+		} catch {
 			// Ignore db write failure
 		}
 	}

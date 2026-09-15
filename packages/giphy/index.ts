@@ -12,7 +12,16 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { Categories, Emoji, Gifs, Stickers } from './endpoints';
+import {
+	Analytics,
+	Categories,
+	Channels,
+	Emoji,
+	Gifs,
+	RandomId,
+	Stickers,
+	Tags,
+} from './endpoints';
 import type {
 	GiphyEndpointInputs,
 	GiphyEndpointOutputs,
@@ -59,6 +68,7 @@ export type GiphyEndpoints = {
 	gifsRandom: GiphyEndpoint<'gifsRandom'>;
 	gifsGetById: GiphyEndpoint<'gifsGetById'>;
 	gifsGetByIds: GiphyEndpoint<'gifsGetByIds'>;
+	gifsUpload: GiphyEndpoint<'gifsUpload'>;
 	stickersSearch: GiphyEndpoint<'stickersSearch'>;
 	stickersTrending: GiphyEndpoint<'stickersTrending'>;
 	stickersTranslate: GiphyEndpoint<'stickersTranslate'>;
@@ -66,6 +76,14 @@ export type GiphyEndpoints = {
 	emojiGet: GiphyEndpoint<'emojiGet'>;
 	emojiVariations: GiphyEndpoint<'emojiVariations'>;
 	categoriesList: GiphyEndpoint<'categoriesList'>;
+	categoriesGetById: GiphyEndpoint<'categoriesGetById'>;
+	categoriesGifs: GiphyEndpoint<'categoriesGifs'>;
+	tagsAutocomplete: GiphyEndpoint<'tagsAutocomplete'>;
+	tagsTrending: GiphyEndpoint<'tagsTrending'>;
+	tagsRelated: GiphyEndpoint<'tagsRelated'>;
+	channelsSearch: GiphyEndpoint<'channelsSearch'>;
+	randomIdGet: GiphyEndpoint<'randomIdGet'>;
+	analyticsRegister: GiphyEndpoint<'analyticsRegister'>;
 };
 
 const giphyEndpointsNested = {
@@ -76,6 +94,7 @@ const giphyEndpointsNested = {
 		random: Gifs.random,
 		getById: Gifs.getById,
 		getByIds: Gifs.getByIds,
+		upload: Gifs.upload,
 	},
 	stickers: {
 		search: Stickers.search,
@@ -89,6 +108,22 @@ const giphyEndpointsNested = {
 	},
 	categories: {
 		list: Categories.list,
+		getById: Categories.getById,
+		gifs: Categories.gifs,
+	},
+	tags: {
+		autocomplete: Tags.autocomplete,
+		trending: Tags.trending,
+		related: Tags.related,
+	},
+	channels: {
+		search: Channels.search,
+	},
+	randomId: {
+		get: RandomId.get,
+	},
+	analytics: {
+		register: Analytics.register,
 	},
 } as const;
 
@@ -119,6 +154,10 @@ export const giphyEndpointSchemas = {
 		input: GiphyEndpointInputSchemas.gifsGetByIds,
 		output: GiphyEndpointOutputSchemas.gifsGetByIds,
 	},
+	'gifs.upload': {
+		input: GiphyEndpointInputSchemas.gifsUpload,
+		output: GiphyEndpointOutputSchemas.gifsUpload,
+	},
 	'stickers.search': {
 		input: GiphyEndpointInputSchemas.stickersSearch,
 		output: GiphyEndpointOutputSchemas.stickersSearch,
@@ -146,6 +185,38 @@ export const giphyEndpointSchemas = {
 	'categories.list': {
 		input: GiphyEndpointInputSchemas.categoriesList,
 		output: GiphyEndpointOutputSchemas.categoriesList,
+	},
+	'categories.getById': {
+		input: GiphyEndpointInputSchemas.categoriesGetById,
+		output: GiphyEndpointOutputSchemas.categoriesGetById,
+	},
+	'categories.gifs': {
+		input: GiphyEndpointInputSchemas.categoriesGifs,
+		output: GiphyEndpointOutputSchemas.categoriesGifs,
+	},
+	'tags.autocomplete': {
+		input: GiphyEndpointInputSchemas.tagsAutocomplete,
+		output: GiphyEndpointOutputSchemas.tagsAutocomplete,
+	},
+	'tags.trending': {
+		input: GiphyEndpointInputSchemas.tagsTrending,
+		output: GiphyEndpointOutputSchemas.tagsTrending,
+	},
+	'tags.related': {
+		input: GiphyEndpointInputSchemas.tagsRelated,
+		output: GiphyEndpointOutputSchemas.tagsRelated,
+	},
+	'channels.search': {
+		input: GiphyEndpointInputSchemas.channelsSearch,
+		output: GiphyEndpointOutputSchemas.channelsSearch,
+	},
+	'randomId.get': {
+		input: GiphyEndpointInputSchemas.randomIdGet,
+		output: GiphyEndpointOutputSchemas.randomIdGet,
+	},
+	'analytics.register': {
+		input: GiphyEndpointInputSchemas.analyticsRegister,
+		output: GiphyEndpointOutputSchemas.analyticsRegister,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof giphyEndpointsNested>;
 
@@ -177,6 +248,11 @@ const giphyEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get details and renditions for multiple GIFs by their IDs',
 	},
+	'gifs.upload': {
+		riskLevel: 'write',
+		description:
+			'Upload an animated GIF or video to GIPHY from a file or a public URL',
+	},
 	'stickers.search': {
 		riskLevel: 'read',
 		description: 'Search GIPHY animated stickers for a word or phrase',
@@ -204,6 +280,40 @@ const giphyEndpointMeta = {
 	'categories.list': {
 		riskLevel: 'read',
 		description: 'List all categories and subcategories on GIPHY',
+	},
+	'categories.getById': {
+		riskLevel: 'read',
+		description: 'Get subcategories of a specific GIPHY category by ID',
+	},
+	'categories.gifs': {
+		riskLevel: 'read',
+		description: 'Fetch GIFs associated with a specific GIPHY category',
+	},
+	'tags.autocomplete': {
+		riskLevel: 'read',
+		description: 'Autocomplete a tag term on the GIPHY network',
+	},
+	'tags.trending': {
+		riskLevel: 'read',
+		description: 'List the most popular trending search terms on GIPHY',
+	},
+	'tags.related': {
+		riskLevel: 'read',
+		description: 'List tag terms related to the given tag on GIPHY',
+	},
+	'channels.search': {
+		riskLevel: 'read',
+		description: 'Search GIPHY channels matching a query term',
+	},
+	'randomId.get': {
+		riskLevel: 'read',
+		description:
+			'Generate a privacy-safe random ID to use as customer_id on other endpoints',
+	},
+	'analytics.register': {
+		riskLevel: 'write',
+		description:
+			'Register a GIF view, click, or send via its analytics pingback URL',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof giphyEndpointsNested>;
 
@@ -272,7 +382,11 @@ export function giphy<const T extends GiphyPluginOptions>(
 }
 
 export type {
+	AnalyticsRegisterInput,
+	CategoriesGetByIdInput,
+	CategoriesGifsInput,
 	CategoriesListInput,
+	ChannelsSearchInput,
 	EmojiGetInput,
 	EmojiVariationsInput,
 	GifsGetByIdInput,
@@ -281,22 +395,39 @@ export type {
 	GifsSearchInput,
 	GifsTranslateInput,
 	GifsTrendingInput,
+	GifsUploadInput,
+	GiphyAnalyticsRegisterResponse,
 	GiphyCategoriesResponse,
+	GiphyChannel,
+	GiphyChannelsResponse,
 	GiphyEndpointInputs,
 	GiphyEndpointOutputs,
 	GiphyGif,
 	GiphyImageRendition,
 	GiphyListResponse,
+	GiphyRandomIdResponse,
 	GiphySingleResponse,
+	GiphyTerm,
+	GiphyTermsResponse,
+	GiphyTrendingSearchesResponse,
+	GiphyUploadResponse,
 	GiphyUser,
+	RandomIdGetInput,
 	StickersRandomInput,
 	StickersSearchInput,
 	StickersTranslateInput,
 	StickersTrendingInput,
+	TagsAutocompleteInput,
+	TagsRelatedInput,
+	TagsTrendingInput,
 } from './endpoints/types';
 
 export {
+	AnalyticsRegisterInputSchema,
+	CategoriesGetByIdInputSchema,
+	CategoriesGifsInputSchema,
 	CategoriesListInputSchema,
+	ChannelsSearchInputSchema,
 	EmojiGetInputSchema,
 	EmojiVariationsInputSchema,
 	GifsGetByIdInputSchema,
@@ -305,9 +436,13 @@ export {
 	GifsSearchInputSchema,
 	GifsTranslateInputSchema,
 	GifsTrendingInputSchema,
+	GifsUploadInputSchema,
+	GiphyAnalyticsRegisterResponseSchema,
 	GiphyCategoriesResponseSchema,
 	GiphyCategoryItemSchema,
 	GiphyCategorySubcategorySchema,
+	GiphyChannelSchema,
+	GiphyChannelsResponseSchema,
 	GiphyEndpointInputSchemas,
 	GiphyEndpointOutputSchemas,
 	GiphyGifSchema,
@@ -315,10 +450,20 @@ export {
 	GiphyListResponseSchema,
 	GiphyMetaSchema,
 	GiphyPaginationSchema,
+	GiphyRandomIdResponseSchema,
+	GiphyRatingSchema,
 	GiphySingleResponseSchema,
+	GiphyTermSchema,
+	GiphyTermsResponseSchema,
+	GiphyTrendingSearchesResponseSchema,
+	GiphyUploadResponseSchema,
 	GiphyUserSchema,
+	RandomIdGetInputSchema,
 	StickersRandomInputSchema,
 	StickersSearchInputSchema,
 	StickersTranslateInputSchema,
 	StickersTrendingInputSchema,
+	TagsAutocompleteInputSchema,
+	TagsRelatedInputSchema,
+	TagsTrendingInputSchema,
 } from './endpoints/types';

@@ -1,14 +1,16 @@
-import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { logEventFromContext } from 'corsair/core';
 import { makeGiphyRequest } from '../client';
 import type { GiphyEndpoints } from '../index';
+import { resolveApiKey } from './auth';
 import type { GiphyEndpointOutputs } from './types';
-import { GiphyListResponseSchema, GiphySingleResponseSchema } from './types';
+import {
+	GiphyListResponseSchema,
+	GiphySingleResponseSchema,
+	GiphyUploadResponseSchema,
+} from './types';
 
 export const search: GiphyEndpoints['gifsSearch'] = async (ctx, input) => {
-	const apiKey = ctx.options.key ?? (await ctx.keys?.get_api_key()) ?? ctx.key;
-	if (!apiKey) {
-		throw new AuthMissingError('giphy', 'api_key');
-	}
+	const apiKey = await resolveApiKey(ctx);
 
 	const query: Record<string, string | number | boolean | undefined> = {
 		q: input.q,
@@ -17,6 +19,8 @@ export const search: GiphyEndpoints['gifsSearch'] = async (ctx, input) => {
 		rating: input.rating,
 		lang: input.lang,
 		random_id: input.random_id,
+		customer_id: input.customer_id,
+		channel_ids: input.channel_ids,
 		bundle: input.bundle,
 	};
 
@@ -41,7 +45,7 @@ export const search: GiphyEndpoints['gifsSearch'] = async (ctx, input) => {
 					importedAt: gif.import_datetime,
 					createdAt: new Date(),
 				});
-			} catch (err) {
+			} catch {
 				// Ignore individual db write failures
 			}
 		}
@@ -58,16 +62,14 @@ export const search: GiphyEndpoints['gifsSearch'] = async (ctx, input) => {
 };
 
 export const trending: GiphyEndpoints['gifsTrending'] = async (ctx, input) => {
-	const apiKey = ctx.options.key ?? (await ctx.keys?.get_api_key()) ?? ctx.key;
-	if (!apiKey) {
-		throw new AuthMissingError('giphy', 'api_key');
-	}
+	const apiKey = await resolveApiKey(ctx);
 
 	const query: Record<string, string | number | boolean | undefined> = {
 		limit: input?.limit,
 		offset: input?.offset,
 		rating: input?.rating,
 		random_id: input?.random_id,
+		customer_id: input?.customer_id,
 		bundle: input?.bundle,
 	};
 
@@ -92,7 +94,7 @@ export const trending: GiphyEndpoints['gifsTrending'] = async (ctx, input) => {
 					importedAt: gif.import_datetime,
 					createdAt: new Date(),
 				});
-			} catch (err) {
+			} catch {
 				// Ignore individual db write failures
 			}
 		}
@@ -112,14 +114,13 @@ export const translate: GiphyEndpoints['gifsTranslate'] = async (
 	ctx,
 	input,
 ) => {
-	const apiKey = ctx.options.key ?? (await ctx.keys?.get_api_key()) ?? ctx.key;
-	if (!apiKey) {
-		throw new AuthMissingError('giphy', 'api_key');
-	}
+	const apiKey = await resolveApiKey(ctx);
 
 	const query: Record<string, string | number | boolean | undefined> = {
 		s: input.s,
 		weirdness: input.weirdness,
+		rating: input.rating,
+		customer_id: input.customer_id,
 	};
 
 	const rawResponse = await makeGiphyRequest<
@@ -142,7 +143,7 @@ export const translate: GiphyEndpoints['gifsTranslate'] = async (
 				importedAt: response.data.import_datetime,
 				createdAt: new Date(),
 			});
-		} catch (err) {
+		} catch {
 			// Ignore db write failure
 		}
 	}
@@ -158,15 +159,13 @@ export const translate: GiphyEndpoints['gifsTranslate'] = async (
 };
 
 export const random: GiphyEndpoints['gifsRandom'] = async (ctx, input) => {
-	const apiKey = ctx.options.key ?? (await ctx.keys?.get_api_key()) ?? ctx.key;
-	if (!apiKey) {
-		throw new AuthMissingError('giphy', 'api_key');
-	}
+	const apiKey = await resolveApiKey(ctx);
 
 	const query: Record<string, string | number | boolean | undefined> = {
 		tag: input?.tag,
 		rating: input?.rating,
 		random_id: input?.random_id,
+		customer_id: input?.customer_id,
 	};
 
 	const rawResponse = await makeGiphyRequest<
@@ -189,7 +188,7 @@ export const random: GiphyEndpoints['gifsRandom'] = async (ctx, input) => {
 				importedAt: response.data.import_datetime,
 				createdAt: new Date(),
 			});
-		} catch (err) {
+		} catch {
 			// Ignore db write failure
 		}
 	}
@@ -205,14 +204,16 @@ export const random: GiphyEndpoints['gifsRandom'] = async (ctx, input) => {
 };
 
 export const getById: GiphyEndpoints['gifsGetById'] = async (ctx, input) => {
-	const apiKey = ctx.options.key ?? (await ctx.keys?.get_api_key()) ?? ctx.key;
-	if (!apiKey) {
-		throw new AuthMissingError('giphy', 'api_key');
-	}
+	const apiKey = await resolveApiKey(ctx);
+
+	const query: Record<string, string | number | boolean | undefined> = {
+		rating: input.rating,
+		customer_id: input.customer_id,
+	};
 
 	const rawResponse = await makeGiphyRequest<
 		GiphyEndpointOutputs['gifsGetById']
-	>(`/gifs/${input.gif_id}`, apiKey);
+	>(`/gifs/${input.gif_id}`, apiKey, { query });
 
 	const response = GiphySingleResponseSchema.parse(rawResponse);
 
@@ -230,7 +231,7 @@ export const getById: GiphyEndpoints['gifsGetById'] = async (ctx, input) => {
 				importedAt: response.data.import_datetime,
 				createdAt: new Date(),
 			});
-		} catch (err) {
+		} catch {
 			// Ignore db write failure
 		}
 	}
@@ -246,16 +247,19 @@ export const getById: GiphyEndpoints['gifsGetById'] = async (ctx, input) => {
 };
 
 export const getByIds: GiphyEndpoints['gifsGetByIds'] = async (ctx, input) => {
-	const apiKey = ctx.options.key ?? (await ctx.keys?.get_api_key()) ?? ctx.key;
-	if (!apiKey) {
-		throw new AuthMissingError('giphy', 'api_key');
-	}
+	const apiKey = await resolveApiKey(ctx);
 
 	const idsString = Array.isArray(input.ids) ? input.ids.join(',') : input.ids;
 
 	const rawResponse = await makeGiphyRequest<
 		GiphyEndpointOutputs['gifsGetByIds']
-	>('/gifs', apiKey, { query: { ids: idsString } });
+	>('/gifs', apiKey, {
+		query: {
+			ids: idsString,
+			rating: input.rating,
+			customer_id: input.customer_id,
+		},
+	});
 
 	const response = GiphyListResponseSchema.parse(rawResponse);
 
@@ -274,7 +278,7 @@ export const getByIds: GiphyEndpoints['gifsGetByIds'] = async (ctx, input) => {
 					importedAt: gif.import_datetime,
 					createdAt: new Date(),
 				});
-			} catch (err) {
+			} catch {
 				// Ignore individual db write failures
 			}
 		}
@@ -290,6 +294,48 @@ export const getByIds: GiphyEndpoints['gifsGetByIds'] = async (ctx, input) => {
 	return response;
 };
 
+// Upload endpoint — https://developers.giphy.com/docs/api/endpoint/#upload
+// POSTs to the dedicated upload host (not api.giphy.com). Exactly one of
+// `file_base64` (multipart `file` part) or `source_image_url` is accepted;
+// the input schema's refine enforces this before any network call.
+export const upload: GiphyEndpoints['gifsUpload'] = async (ctx, input) => {
+	const apiKey = await resolveApiKey(ctx);
+
+	const query: Record<string, string | number | boolean | undefined> = {
+		source_image_url: input.source_image_url,
+		tags: input.tags,
+		source_post_url: input.source_post_url,
+		username: input.username,
+	};
+
+	const rawResponse = await makeGiphyRequest<
+		GiphyEndpointOutputs['gifsUpload']
+	>('/gifs', apiKey, {
+		method: 'POST',
+		base: 'upload',
+		query,
+		formData: input.file_base64
+			? {
+					file: new File(
+						[Buffer.from(input.file_base64, 'base64')],
+						input.file_name ?? 'upload.gif',
+					),
+				}
+			: undefined,
+	});
+
+	const response = GiphyUploadResponseSchema.parse(rawResponse);
+
+	await logEventFromContext(
+		ctx,
+		'giphy.gifs.upload',
+		{ id: response.data.id },
+		'completed',
+	);
+
+	return response;
+};
+
 export const Gifs = {
 	search,
 	trending,
@@ -297,4 +343,5 @@ export const Gifs = {
 	random,
 	getById,
 	getByIds,
+	upload,
 };
