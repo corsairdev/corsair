@@ -1,0 +1,747 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.1 (swiftlang-6.1.0.110.21 clang-1700.0.13.3)
+// swift-module-flags: -target arm64-apple-macos14.0 -target-variant arm64-apple-ios16.0-macabi -enable-objc-interop -enable-library-evolution -swift-version 6 -enforce-exclusivity=checked -O -enable-upcoming-feature ExistentialAny -enable-experimental-feature AccessLevelOnImport -enable-upcoming-feature InternalImportsByDefault -enable-experimental-feature DebugDescriptionMacro -user-module-version 124 -module-name Testing -package-name swift_testing
+// swift-module-flags-ignorable:  -interface-compiler-version 6.1
+public import ObjectiveC
+public import Swift
+public import _Concurrency
+public import _StringProcessing
+public import _SwiftConcurrencyShims
+@usableFromInline
+@_disfavoredOverload internal func confirmation<R>(_ comment: Testing.Comment? = nil, expectedCount: Swift.Int = 1, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ body: (Testing.Confirmation) async throws -> R) async rethrows -> R
+public protocol CustomTestArgumentEncodable : Swift.Sendable {
+  func encodeTestArgument(to encoder: some Encoder) throws
+}
+public struct Comment : Swift.RawRepresentable, Swift.Sendable {
+  public var rawValue: Swift.String
+  public init(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+}
+extension Testing.Comment : Swift.ExpressibleByStringLiteral, Swift.ExpressibleByStringInterpolation, Swift.CustomStringConvertible {
+  public init(stringLiteral: Swift.String)
+  public var description: Swift.String {
+    get
+  }
+  public typealias ExtendedGraphemeClusterLiteralType = Swift.String
+  public typealias StringInterpolation = Swift.DefaultStringInterpolation
+  public typealias StringLiteralType = Swift.String
+  public typealias UnicodeScalarLiteralType = Swift.String
+}
+extension Testing.Comment : Swift.Equatable, Swift.Hashable {
+}
+extension Testing.Comment : Swift.Codable {
+}
+extension Testing.Comment : Testing.TestTrait, Testing.SuiteTrait {
+  public var comments: [Testing.Comment] {
+    get
+  }
+  public typealias TestScopeProvider = Swift.Never
+}
+extension Testing.Test {
+  public var comments: [Testing.Comment] {
+    get
+  }
+}
+@_cdecl("swt_abiv0_getEntryPoint")
+@usableFromInline
+internal func abiv0_getEntryPoint() -> Swift.UnsafeRawPointer
+@available(*, deprecated, message: "Use ABIv0.entryPoint (swt_abiv0_getEntryPoint()) instead.")
+@_cdecl("swt_copyABIEntryPoint_v0")
+@usableFromInline
+internal func copyABIEntryPoint_v0() -> Swift.UnsafeMutableRawPointer
+extension Testing.Test : Swift.Identifiable {
+  public struct ID : Swift.Sendable, Swift.Equatable, Swift.Hashable {
+    public var moduleName: Swift.String
+    public var nameComponents: [Swift.String]
+    public var sourceLocation: Testing.SourceLocation?
+    public var parent: Testing.Test.ID? {
+      get
+    }
+    public static func == (a: Testing.Test.ID, b: Testing.Test.ID) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public var id: Testing.Test.ID {
+    get
+  }
+}
+extension Testing.Test.ID : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension Testing.Test.ID : Swift.Codable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public typealias __XCTestCompatibleSelector = ObjectiveC.Selector
+@inlinable public func __xcTestCompatibleSelector(_ selector: Swift.String) -> Testing.__XCTestCompatibleSelector? {
+  __XCTestCompatibleSelector(selector)
+}
+@attached(member) @attached(peer) @_documentation(visibility: private) public macro Suite(_ traits: any Testing.SuiteTrait...) = #externalMacro(module: "TestingMacros", type: "SuiteDeclarationMacro")
+@attached(member) @attached(peer) public macro Suite(_ displayName: _const Swift.String? = nil, _ traits: any Testing.SuiteTrait...) = #externalMacro(module: "TestingMacros", type: "SuiteDeclarationMacro")
+extension Testing.Test {
+  public static func __type(_ containingType: any ~Copyable.Type, displayName: Swift.String? = nil, traits: [any Testing.SuiteTrait], sourceLocation: Testing.SourceLocation) -> Testing.Test
+}
+@attached(peer) @_documentation(visibility: private) public macro Test(_ traits: any Testing.TestTrait...) = #externalMacro(module: "TestingMacros", type: "TestDeclarationMacro")
+@attached(peer) public macro Test(_ displayName: _const Swift.String? = nil, _ traits: any Testing.TestTrait...) = #externalMacro(module: "TestingMacros", type: "TestDeclarationMacro")
+extension Testing.Test {
+  public typealias __Parameter = (firstName: Swift.String, secondName: Swift.String?, type: any Any.Type)
+  public static func __function(named testFunctionName: Swift.String, in containingType: (any ~Copyable.Type)?, xcTestCompatibleSelector: Testing.__XCTestCompatibleSelector?, displayName: Swift.String? = nil, traits: [any Testing.TestTrait], sourceLocation: Testing.SourceLocation, parameters: [Testing.Test.__Parameter] = [], testFunction: @escaping @Sendable () async throws -> Swift.Void) -> Testing.Test
+}
+@attached(peer) @_documentation(visibility: private) public macro Test<C>(_ traits: any Testing.TestTrait..., arguments collection: C) = #externalMacro(module: "TestingMacros", type: "TestDeclarationMacro") where C : Swift.Collection, C : Swift.Sendable, C.Element : Swift.Sendable
+@attached(peer) public macro Test<C>(_ displayName: _const Swift.String? = nil, _ traits: any Testing.TestTrait..., arguments collection: C) = #externalMacro(module: "TestingMacros", type: "TestDeclarationMacro") where C : Swift.Collection, C : Swift.Sendable, C.Element : Swift.Sendable
+extension Testing.Test {
+  public static func __function<C>(named testFunctionName: Swift.String, in containingType: (any ~Copyable.Type)?, xcTestCompatibleSelector: Testing.__XCTestCompatibleSelector?, displayName: Swift.String? = nil, traits: [any Testing.TestTrait], arguments collection: @escaping @Sendable () async throws -> C, sourceLocation: Testing.SourceLocation, parameters paramTuples: [Testing.Test.__Parameter], testFunction: @escaping @Sendable (C.Element) async throws -> Swift.Void) -> Testing.Test where C : Swift.Collection, C : Swift.Sendable, C.Element : Swift.Sendable
+}
+@attached(peer) @_documentation(visibility: private) public macro Test<C1, C2>(_ traits: any Testing.TestTrait..., arguments collection1: C1, _ collection2: C2) = #externalMacro(module: "TestingMacros", type: "TestDeclarationMacro") where C1 : Swift.Collection, C1 : Swift.Sendable, C2 : Swift.Collection, C2 : Swift.Sendable, C1.Element : Swift.Sendable, C2.Element : Swift.Sendable
+@attached(peer) public macro Test<C1, C2>(_ displayName: _const Swift.String? = nil, _ traits: any Testing.TestTrait..., arguments collection1: C1, _ collection2: C2) = #externalMacro(module: "TestingMacros", type: "TestDeclarationMacro") where C1 : Swift.Collection, C1 : Swift.Sendable, C2 : Swift.Collection, C2 : Swift.Sendable, C1.Element : Swift.Sendable, C2.Element : Swift.Sendable
+@attached(peer) @_documentation(visibility: private) public macro Test<C1, C2>(_ traits: any Testing.TestTrait..., arguments zippedCollections: Swift.Zip2Sequence<C1, C2>) = #externalMacro(module: "TestingMacros", type: "TestDeclarationMacro") where C1 : Swift.Collection, C1 : Swift.Sendable, C2 : Swift.Collection, C2 : Swift.Sendable, C1.Element : Swift.Sendable, C2.Element : Swift.Sendable
+@attached(peer) public macro Test<C1, C2>(_ displayName: _const Swift.String? = nil, _ traits: any Testing.TestTrait..., arguments zippedCollections: Swift.Zip2Sequence<C1, C2>) = #externalMacro(module: "TestingMacros", type: "TestDeclarationMacro") where C1 : Swift.Collection, C1 : Swift.Sendable, C2 : Swift.Collection, C2 : Swift.Sendable, C1.Element : Swift.Sendable, C2.Element : Swift.Sendable
+extension Testing.Test {
+  public static func __function<C1, C2>(named testFunctionName: Swift.String, in containingType: (any ~Copyable.Type)?, xcTestCompatibleSelector: Testing.__XCTestCompatibleSelector?, displayName: Swift.String? = nil, traits: [any Testing.TestTrait], arguments collection1: @escaping @Sendable () async throws -> C1, _ collection2: @escaping @Sendable () async throws -> C2, sourceLocation: Testing.SourceLocation, parameters paramTuples: [Testing.Test.__Parameter], testFunction: @escaping @Sendable (C1.Element, C2.Element) async throws -> Swift.Void) -> Testing.Test where C1 : Swift.Collection, C1 : Swift.Sendable, C2 : Swift.Collection, C2 : Swift.Sendable, C1.Element : Swift.Sendable, C2.Element : Swift.Sendable
+  public static func __function<C, E1, E2>(named testFunctionName: Swift.String, in containingType: (any ~Copyable.Type)?, xcTestCompatibleSelector: Testing.__XCTestCompatibleSelector?, displayName: Swift.String? = nil, traits: [any Testing.TestTrait], arguments collection: @escaping @Sendable () async throws -> C, sourceLocation: Testing.SourceLocation, parameters paramTuples: [Testing.Test.__Parameter], testFunction: @escaping @Sendable ((E1, E2)) async throws -> Swift.Void) -> Testing.Test where C : Swift.Collection, C : Swift.Sendable, E1 : Swift.Sendable, E2 : Swift.Sendable, C.Element == (E1, E2)
+  public static func __function<Key, Value>(named testFunctionName: Swift.String, in containingType: (any ~Copyable.Type)?, xcTestCompatibleSelector: Testing.__XCTestCompatibleSelector?, displayName: Swift.String? = nil, traits: [any Testing.TestTrait], arguments dictionary: @escaping @Sendable () async throws -> Swift.Dictionary<Key, Value>, sourceLocation: Testing.SourceLocation, parameters paramTuples: [Testing.Test.__Parameter], testFunction: @escaping @Sendable ((Key, Value)) async throws -> Swift.Void) -> Testing.Test where Key : Swift.Hashable, Key : Swift.Sendable, Value : Swift.Sendable
+  public static func __function<C1, C2>(named testFunctionName: Swift.String, in containingType: (any ~Copyable.Type)?, xcTestCompatibleSelector: Testing.__XCTestCompatibleSelector?, displayName: Swift.String? = nil, traits: [any Testing.TestTrait], arguments zippedCollections: @escaping @Sendable () async throws -> Swift.Zip2Sequence<C1, C2>, sourceLocation: Testing.SourceLocation, parameters paramTuples: [Testing.Test.__Parameter], testFunction: @escaping @Sendable (C1.Element, C2.Element) async throws -> Swift.Void) -> Testing.Test where C1 : Swift.Collection, C1 : Swift.Sendable, C2 : Swift.Collection, C2 : Swift.Sendable, C1.Element : Swift.Sendable, C2.Element : Swift.Sendable
+}
+@inlinable public func __requiringTry<T>(_ value: consuming T) throws -> T where T : ~Copyable {
+  value
+}
+@inlinable public func __requiringAwait<T>(_ value: consuming T, isolation: isolated (any _Concurrency.Actor)? = #isolation) async -> T where T : ~Copyable {
+  value
+}
+public var __defaultSynchronousIsolationContext: (any _Concurrency.Actor)? {
+  get
+}
+@inlinable public func __invokeXCTestCaseMethod<T>(_ selector: Testing.__XCTestCompatibleSelector?, onInstanceOf type: T.Type, sourceLocation: Testing.SourceLocation) async throws -> Swift.Bool where T : ~Copyable {
+  false
+}
+public func __invokeXCTestCaseMethod<T>(_ selector: Testing.__XCTestCompatibleSelector?, onInstanceOf xcTestCaseSubclass: T.Type, sourceLocation: Testing.SourceLocation) async throws -> Swift.Bool where T : AnyObject
+public struct ParallelizationTrait : Testing.TestTrait, Testing.SuiteTrait {
+  public var isRecursive: Swift.Bool {
+    get
+  }
+  public typealias TestScopeProvider = Swift.Never
+}
+extension Testing.Trait where Self == Testing.ParallelizationTrait {
+  public static var serialized: Testing.ParallelizationTrait {
+    get
+  }
+}
+extension Testing.Test {
+  public struct Case : Swift.Sendable {
+    public var isParameterized: Swift.Bool {
+      get
+    }
+  }
+}
+public struct Bug {
+  public var url: Swift.String?
+  public var id: Swift.String?
+  public var title: Testing.Comment?
+}
+extension Testing.Bug : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: Testing.Bug, rhs: Testing.Bug) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Testing.Bug : Swift.Codable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension Testing.Bug : Testing.TestTrait, Testing.SuiteTrait {
+  public var comments: [Testing.Comment] {
+    get
+  }
+  public typealias TestScopeProvider = Swift.Never
+}
+extension Testing.Trait where Self == Testing.Bug {
+  public static func bug(_ url: _const Swift.String, _ title: Testing.Comment? = nil) -> Self
+  public static func bug(_ url: _const Swift.String? = nil, id: some Numeric, _ title: Testing.Comment? = nil) -> Self
+  public static func bug(_ url: _const Swift.String? = nil, id: _const Swift.String, _ title: Testing.Comment? = nil) -> Self
+}
+extension Testing.Test {
+  public var associatedBugs: [Testing.Bug] {
+    get
+  }
+}
+public struct Confirmation : Swift.Sendable {
+  public func confirm(count: Swift.Int = 1)
+}
+extension Testing.Confirmation {
+  public func callAsFunction(count: Swift.Int = 1)
+}
+#if compiler(>=5.3) && $SendingArgsAndResults
+public func confirmation<R>(_ comment: Testing.Comment? = nil, expectedCount: Swift.Int = 1, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ body: (Testing.Confirmation) async throws -> sending R) async rethrows -> R
+#else
+public func confirmation<R>(_ comment: Testing.Comment? = nil, expectedCount: Swift.Int = 1, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ body: (Testing.Confirmation) async throws -> R) async rethrows -> R
+#endif
+#if compiler(>=5.3) && $SendingArgsAndResults
+public func confirmation<R>(_ comment: Testing.Comment? = nil, expectedCount: some RangeExpression<Int> & Sequence<Int> & Sendable, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ body: (Testing.Confirmation) async throws -> sending R) async rethrows -> R
+#else
+public func confirmation<R>(_ comment: Testing.Comment? = nil, expectedCount: some RangeExpression<Int> & Sequence<Int> & Sendable, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ body: (Testing.Confirmation) async throws -> R) async rethrows -> R
+#endif
+@available(*, unavailable, message: "Unbounded range '...' has no effect when used with a confirmation.")
+public func confirmation<R>(_ comment: Testing.Comment? = nil, expectedCount: (Swift.UnboundedRange_) -> (), isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ body: (Testing.Confirmation) async throws -> R) async rethrows -> R
+@available(*, unavailable, message: "Range expression '...n' is ambiguous without an explicit lower bound")
+public func confirmation<R>(_ comment: Testing.Comment? = nil, expectedCount: Swift.PartialRangeThrough<Swift.Int>, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ body: (Testing.Confirmation) async throws -> R) async rethrows -> R
+@available(*, unavailable, message: "Range expression '..<n' is ambiguous without an explicit lower bound")
+public func confirmation<R>(_ comment: Testing.Comment? = nil, expectedCount: Swift.PartialRangeUpTo<Swift.Int>, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ body: (Testing.Confirmation) async throws -> R) async rethrows -> R
+public struct Tag : Swift.Sendable {
+}
+extension Testing.Tag : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension Testing.Tag : Swift.Equatable, Swift.Hashable, Swift.Comparable {
+  public static func < (lhs: Testing.Tag, rhs: Testing.Tag) -> Swift.Bool
+  public static func == (a: Testing.Tag, b: Testing.Tag) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Testing.Tag : Swift.Codable, Swift.CodingKeyRepresentable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+  @available(macOS 12.3, iOS 15.4, watchOS 8.5, tvOS 15.4, *)
+  public var codingKey: any Swift.CodingKey {
+    get
+  }
+  @available(macOS 12.3, iOS 15.4, watchOS 8.5, tvOS 15.4, *)
+  public init?<T>(codingKey: T) where T : Swift.CodingKey
+}
+extension Testing.Test {
+  public var tags: Swift.Set<Testing.Tag> {
+    get
+  }
+}
+public protocol CustomTestStringConvertible {
+  var testDescription: Swift.String { get }
+}
+extension Swift.String {
+  public init(describingForTest value: some Any)
+}
+extension Swift.Optional : Testing.CustomTestStringConvertible {
+  public var testDescription: Swift.String {
+    get
+  }
+}
+extension Swift._OptionalNilComparisonType : Testing.CustomTestStringConvertible {
+  public var testDescription: Swift.String {
+    get
+  }
+}
+extension Testing.CustomTestStringConvertible where Self : Swift.StringProtocol {
+  public var testDescription: Swift.String {
+    get
+  }
+}
+extension Swift.String : Testing.CustomTestStringConvertible {
+}
+extension Swift.Substring : Testing.CustomTestStringConvertible {
+}
+extension Swift.ClosedRange : Testing.CustomTestStringConvertible {
+  public var testDescription: Swift.String {
+    get
+  }
+}
+extension Swift.PartialRangeFrom : Testing.CustomTestStringConvertible {
+  public var testDescription: Swift.String {
+    get
+  }
+}
+extension Swift.PartialRangeThrough : Testing.CustomTestStringConvertible {
+  public var testDescription: Swift.String {
+    get
+  }
+}
+extension Swift.PartialRangeUpTo : Testing.CustomTestStringConvertible {
+  public var testDescription: Swift.String {
+    get
+  }
+}
+extension Swift.Range : Testing.CustomTestStringConvertible {
+  public var testDescription: Swift.String {
+    get
+  }
+}
+extension Testing.Test {
+  public static var current: Testing.Test? {
+    get
+  }
+}
+extension Testing.Test.Case {
+  public static var current: Testing.Test.Case? {
+    get
+  }
+}
+public struct Test : Swift.Sendable {
+  public var name: Swift.String
+  public var displayName: Swift.String?
+  public var traits: [any Testing.Trait] {
+    get
+    set
+  }
+  public var sourceLocation: Testing.SourceLocation
+  public var isParameterized: Swift.Bool {
+    get
+  }
+  public var isSuite: Swift.Bool {
+    get
+  }
+}
+extension Testing.Test : Swift.Equatable, Swift.Hashable {
+  public static func == (lhs: Testing.Test, rhs: Testing.Test) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@_alwaysEmitConformanceMetadata public protocol __TestContainer {
+  static var __tests: [Testing.Test] { get async }
+}
+@usableFromInline
+@_disfavoredOverload internal func __checkClosureCall<E>(throws errorType: E.Type, performing body: () async throws -> some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) async -> Swift.Result<Swift.Void, any Swift.Error> where E : Swift.Error
+@usableFromInline
+@_disfavoredOverload internal func __checkClosureCall(throws _: Swift.Never.Type, performing body: () async throws -> some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) async -> Swift.Result<Swift.Void, any Swift.Error>
+@usableFromInline
+@_disfavoredOverload internal func __checkClosureCall<E>(throws error: E, performing body: () async throws -> some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) async -> Swift.Result<Swift.Void, any Swift.Error> where E : Swift.Equatable, E : Swift.Error
+@usableFromInline
+@_disfavoredOverload internal func __checkClosureCall<R>(performing body: () async throws -> R, throws errorMatcher: (any Swift.Error) async throws -> Swift.Bool, mismatchExplanation: ((any Swift.Error) -> Swift.String)? = nil, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) async -> Swift.Result<Swift.Void, any Swift.Error>
+@usableFromInline
+@_disfavoredOverload internal func __checkClosureCall<E>(throws errorType: E.Type, performing body: () throws -> some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<Swift.Void, any Swift.Error> where E : Swift.Error
+#if compiler(>=5.3) && $SendingArgsAndResults
+@usableFromInline
+@_disfavoredOverload internal func __checkClosureCall<E>(throws errorType: E.Type, performing body: () async throws -> sending some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation) async -> Swift.Result<Swift.Void, any Swift.Error> where E : Swift.Error
+#else
+@usableFromInline
+@_disfavoredOverload internal func __checkClosureCall<E>(throws errorType: E.Type, performing body: () async throws -> some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation) async -> Swift.Result<Swift.Void, any Swift.Error> where E : Swift.Error
+#endif
+@usableFromInline
+@_disfavoredOverload internal func __checkClosureCall<E>(throws error: E, performing body: () throws -> some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<Swift.Void, any Swift.Error> where E : Swift.Equatable, E : Swift.Error
+#if compiler(>=5.3) && $SendingArgsAndResults
+@usableFromInline
+@_disfavoredOverload internal func __checkClosureCall<E>(throws error: E, performing body: () async throws -> sending some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation) async -> Swift.Result<Swift.Void, any Swift.Error> where E : Swift.Equatable, E : Swift.Error
+#else
+@usableFromInline
+@_disfavoredOverload internal func __checkClosureCall<E>(throws error: E, performing body: () async throws -> some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation) async -> Swift.Result<Swift.Void, any Swift.Error> where E : Swift.Equatable, E : Swift.Error
+#endif
+@usableFromInline
+@_disfavoredOverload internal func __checkClosureCall<R>(performing body: () throws -> R, throws errorMatcher: (any Swift.Error) throws -> Swift.Bool, mismatchExplanation: ((any Swift.Error) -> Swift.String)? = nil, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<Swift.Void, any Swift.Error>
+#if compiler(>=5.3) && $SendingArgsAndResults
+@usableFromInline
+@_disfavoredOverload internal func __checkClosureCall<R>(performing body: () async throws -> sending R, throws errorMatcher: (any Swift.Error) async throws -> Swift.Bool, mismatchExplanation: ((any Swift.Error) -> Swift.String)? = nil, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation) async -> Swift.Result<Swift.Void, any Swift.Error>
+#else
+@usableFromInline
+@_disfavoredOverload internal func __checkClosureCall<R>(performing body: () async throws -> R, throws errorMatcher: (any Swift.Error) async throws -> Swift.Bool, mismatchExplanation: ((any Swift.Error) -> Swift.String)? = nil, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation) async -> Swift.Result<Swift.Void, any Swift.Error>
+#endif
+@usableFromInline
+internal var __requiringTry: Swift.Void {
+  get throws
+}
+@usableFromInline
+internal var __requiringAwait: Swift.Void {
+  get async
+}
+extension Testing.Test {
+  @usableFromInline
+  internal static func __type(_ containingType: any Any.Type, displayName: Swift.String? = nil, traits: [any Testing.SuiteTrait], sourceLocation: Testing.SourceLocation) -> Testing.Test
+  @usableFromInline
+  internal static func __function(named testFunctionName: Swift.String, in containingType: (any Any.Type)?, xcTestCompatibleSelector: Testing.__XCTestCompatibleSelector?, displayName: Swift.String? = nil, traits: [any Testing.TestTrait], sourceLocation: Testing.SourceLocation, parameters: [Testing.Test.__Parameter] = [], testFunction: @escaping @Sendable () async throws -> Swift.Void) -> Testing.Test
+  @usableFromInline
+  internal static func __function<C>(named testFunctionName: Swift.String, in containingType: (any Any.Type)?, xcTestCompatibleSelector: Testing.__XCTestCompatibleSelector?, displayName: Swift.String? = nil, traits: [any Testing.TestTrait], arguments collection: @escaping @Sendable () async throws -> C, sourceLocation: Testing.SourceLocation, parameters paramTuples: [Testing.Test.__Parameter], testFunction: @escaping @Sendable (C.Element) async throws -> Swift.Void) -> Testing.Test where C : Swift.Collection, C : Swift.Sendable, C.Element : Swift.Sendable
+  @usableFromInline
+  internal static func __function<C1, C2>(named testFunctionName: Swift.String, in containingType: (any Any.Type)?, xcTestCompatibleSelector: Testing.__XCTestCompatibleSelector?, displayName: Swift.String? = nil, traits: [any Testing.TestTrait], arguments collection1: @escaping @Sendable () async throws -> C1, _ collection2: @escaping @Sendable () async throws -> C2, sourceLocation: Testing.SourceLocation, parameters paramTuples: [Testing.Test.__Parameter], testFunction: @escaping @Sendable (C1.Element, C2.Element) async throws -> Swift.Void) -> Testing.Test where C1 : Swift.Collection, C1 : Swift.Sendable, C2 : Swift.Collection, C2 : Swift.Sendable, C1.Element : Swift.Sendable, C2.Element : Swift.Sendable
+  @usableFromInline
+  internal static func __function<C, E1, E2>(named testFunctionName: Swift.String, in containingType: (any Any.Type)?, xcTestCompatibleSelector: Testing.__XCTestCompatibleSelector?, displayName: Swift.String? = nil, traits: [any Testing.TestTrait], arguments collection: @escaping @Sendable () async throws -> C, sourceLocation: Testing.SourceLocation, parameters paramTuples: [Testing.Test.__Parameter], testFunction: @escaping @Sendable ((E1, E2)) async throws -> Swift.Void) -> Testing.Test where C : Swift.Collection, C : Swift.Sendable, E1 : Swift.Sendable, E2 : Swift.Sendable, C.Element == (E1, E2)
+  @usableFromInline
+  internal static func __function<Key, Value>(named testFunctionName: Swift.String, in containingType: (any Any.Type)?, xcTestCompatibleSelector: Testing.__XCTestCompatibleSelector?, displayName: Swift.String? = nil, traits: [any Testing.TestTrait], arguments dictionary: @escaping @Sendable () async throws -> Swift.Dictionary<Key, Value>, sourceLocation: Testing.SourceLocation, parameters paramTuples: [Testing.Test.__Parameter], testFunction: @escaping @Sendable ((Key, Value)) async throws -> Swift.Void) -> Testing.Test where Key : Swift.Hashable, Key : Swift.Sendable, Value : Swift.Sendable
+  @usableFromInline
+  internal static func __function<C1, C2>(named testFunctionName: Swift.String, in containingType: (any Any.Type)?, xcTestCompatibleSelector: Testing.__XCTestCompatibleSelector?, displayName: Swift.String? = nil, traits: [any Testing.TestTrait], arguments zippedCollections: @escaping @Sendable () async throws -> Swift.Zip2Sequence<C1, C2>, sourceLocation: Testing.SourceLocation, parameters paramTuples: [Testing.Test.__Parameter], testFunction: @escaping @Sendable (C1.Element, C2.Element) async throws -> Swift.Void) -> Testing.Test where C1 : Swift.Collection, C1 : Swift.Sendable, C2 : Swift.Collection, C2 : Swift.Sendable, C1.Element : Swift.Sendable, C2.Element : Swift.Sendable
+}
+@usableFromInline
+internal func __invokeXCTestCaseMethod<T>(_ selector: Testing.__XCTestCompatibleSelector?, onInstanceOf type: T.Type, sourceLocation: Testing.SourceLocation) async throws -> Swift.Bool
+@usableFromInline
+internal func __ifMainActorIsolationEnforced<R>(_ thenBody: @_Concurrency.MainActor @Sendable () async throws -> R, else elseBody: @Sendable () async throws -> R) async throws -> R where R : Swift.Sendable
+extension Swift.Result {
+  @usableFromInline
+  internal func __expected()
+}
+public struct __Expression : Swift.Sendable {
+}
+extension Testing.__Expression : Swift.Codable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension Testing.__Expression : Swift.CustomStringConvertible, Swift.CustomDebugStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+  public var debugDescription: Swift.String {
+    get
+  }
+}
+extension Testing.Trait where Self == Testing.ConditionTrait {
+  public static func __available(_ platformName: Swift.String, introduced version: (major: Swift.UInt64, minor: Swift.UInt64?, patch: Swift.UInt64?)?, message: Testing.Comment?, sourceLocation: Testing.SourceLocation, _ condition: @escaping @Sendable () -> Swift.Bool) -> Self
+  public static func __available(_ platformName: Swift.String, obsoleted version: (major: Swift.UInt64, minor: Swift.UInt64?, patch: Swift.UInt64?)?, message: Testing.Comment?, sourceLocation: Testing.SourceLocation, _ condition: @escaping @Sendable () -> Swift.Bool) -> Self
+  public static func __unavailable(message: Testing.Comment?, sourceLocation: Testing.SourceLocation) -> Self
+}
+public typealias KnownIssueMatcher = @Sendable (_ issue: Testing.Issue) -> Swift.Bool
+public func withKnownIssue(_ comment: Testing.Comment? = nil, isIntermittent: Swift.Bool = false, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ body: () throws -> Swift.Void)
+public func withKnownIssue(_ comment: Testing.Comment? = nil, isIntermittent: Swift.Bool = false, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ body: () throws -> Swift.Void, when precondition: () -> Swift.Bool = { true }, matching issueMatcher: @escaping Testing.KnownIssueMatcher = { _ in true }) rethrows
+public func withKnownIssue(_ comment: Testing.Comment? = nil, isIntermittent: Swift.Bool = false, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ body: () async throws -> Swift.Void) async
+public func withKnownIssue(_ comment: Testing.Comment? = nil, isIntermittent: Swift.Bool = false, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ body: () async throws -> Swift.Void, when precondition: () async -> Swift.Bool = { true }, matching issueMatcher: @escaping Testing.KnownIssueMatcher = { _ in true }) async rethrows
+extension Testing.Tag {
+  public static func __fromStaticMember(of type: any Any.Type, _ name: _const Swift.String) -> Testing.Tag
+}
+@attached(accessor) @attached(peer) public macro Tag() = #externalMacro(module: "TestingMacros", type: "TagMacro")
+public func __checkValue(_ condition: Swift.Bool, expression: Testing.__Expression, expressionWithCapturedRuntimeValues: @autoclosure () -> Testing.__Expression? = nil, mismatchedErrorDescription: @autoclosure () -> Swift.String? = nil, difference: @autoclosure () -> Swift.String? = nil, mismatchedExitConditionDescription: @autoclosure () -> Swift.String? = nil, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<Swift.Void, any Swift.Error>
+@_disfavoredOverload public func __checkBinaryOperation<T, U>(_ lhs: T, _ op: (T, () -> U) -> Swift.Bool, _ rhs: @autoclosure () -> U, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<Swift.Void, any Swift.Error>
+public func __checkFunctionCall<T, each U>(_ lhs: T, calling functionCall: (T, repeat each U) throws -> Swift.Bool, _ arguments: repeat each U, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) rethrows -> Swift.Result<Swift.Void, any Swift.Error>
+public func __checkFunctionCall<T, Arg0>(_ lhs: T, calling functionCall: (T, Arg0) throws -> Swift.Bool, _ argument0: Arg0, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) rethrows -> Swift.Result<Swift.Void, any Swift.Error>
+public func __checkFunctionCall<T, Arg0, Arg1>(_ lhs: T, calling functionCall: (T, Arg0, Arg1) throws -> Swift.Bool, _ argument0: Arg0, _ argument1: Arg1, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) rethrows -> Swift.Result<Swift.Void, any Swift.Error>
+public func __checkFunctionCall<T, Arg0, Arg1, Arg2>(_ lhs: T, calling functionCall: (T, Arg0, Arg1, Arg2) throws -> Swift.Bool, _ argument0: Arg0, _ argument1: Arg1, _ argument2: Arg2, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) rethrows -> Swift.Result<Swift.Void, any Swift.Error>
+public func __checkFunctionCall<T, Arg0, Arg1, Arg2, Arg3>(_ lhs: T, calling functionCall: (T, Arg0, Arg1, Arg2, Arg3) throws -> Swift.Bool, _ argument0: Arg0, _ argument1: Arg1, _ argument2: Arg2, _ argument3: Arg3, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) rethrows -> Swift.Result<Swift.Void, any Swift.Error>
+public func __checkInoutFunctionCall<T, U>(_ lhs: T, calling functionCall: (T, inout U) throws -> Swift.Bool, _ arguments: inout U, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) rethrows -> Swift.Result<Swift.Void, any Swift.Error>
+public func __checkFunctionCall<T, each U, R>(_ lhs: T, calling functionCall: (T, repeat each U) throws -> R?, _ arguments: repeat each U, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) rethrows -> Swift.Result<R, any Swift.Error>
+public func __checkFunctionCall<T, Arg0, R>(_ lhs: T, calling functionCall: (T, Arg0) throws -> R?, _ argument0: Arg0, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) rethrows -> Swift.Result<R, any Swift.Error>
+public func __checkFunctionCall<T, Arg0, Arg1, R>(_ lhs: T, calling functionCall: (T, Arg0, Arg1) throws -> R?, _ argument0: Arg0, _ argument1: Arg1, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) rethrows -> Swift.Result<R, any Swift.Error>
+public func __checkFunctionCall<T, Arg0, Arg1, Arg2, R>(_ lhs: T, calling functionCall: (T, Arg0, Arg1, Arg2) throws -> R?, _ argument0: Arg0, _ argument1: Arg1, _ argument2: Arg2, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) rethrows -> Swift.Result<R, any Swift.Error>
+public func __checkFunctionCall<T, Arg0, Arg1, Arg2, Arg3, R>(_ lhs: T, calling functionCall: (T, Arg0, Arg1, Arg2, Arg3) throws -> R?, _ argument0: Arg0, _ argument1: Arg1, _ argument2: Arg2, _ argument3: Arg3, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) rethrows -> Swift.Result<R, any Swift.Error>
+public func __checkInoutFunctionCall<T, U, R>(_ lhs: T, calling functionCall: (T, inout U) throws -> R?, _ arguments: inout U, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) rethrows -> Swift.Result<R, any Swift.Error>
+public func __checkPropertyAccess<T>(_ lhs: T, getting memberAccess: (T) -> Swift.Bool, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<Swift.Void, any Swift.Error>
+public func __checkPropertyAccess<T, U>(_ lhs: T, getting memberAccess: (T) -> U?, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<U, any Swift.Error>
+@_disfavoredOverload public func __checkBinaryOperation<T>(_ lhs: T, _ op: (T, () -> T) -> Swift.Bool, _ rhs: @autoclosure () -> T, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<Swift.Void, any Swift.Error> where T : Swift.BidirectionalCollection, T.Element : Swift.Equatable
+public func __checkBinaryOperation(_ lhs: Swift.String, _ op: (Swift.String, () -> Swift.String) -> Swift.Bool, _ rhs: @autoclosure () -> Swift.String, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<Swift.Void, any Swift.Error>
+public func __checkBinaryOperation<T, U>(_ lhs: T, _ op: (T, () -> U) -> Swift.Bool, _ rhs: @autoclosure () -> U, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<Swift.Void, any Swift.Error> where T : Swift.RangeExpression, U : Swift.RangeExpression
+public func __checkCast<V, T>(_ value: V, is _: T.Type, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<Swift.Void, any Swift.Error>
+public func __checkValue<T>(_ optionalValue: T?, expression: Testing.__Expression, expressionWithCapturedRuntimeValues: @autoclosure () -> Testing.__Expression? = nil, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<T, any Swift.Error>
+@_disfavoredOverload public func __checkBinaryOperation<T>(_ lhs: T?, _ op: (T?, () -> T?) -> T?, _ rhs: @autoclosure () -> T?, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<T, any Swift.Error>
+public func __checkCast<V, T>(_ value: V, as _: T.Type, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<T, any Swift.Error>
+public func __checkClosureCall<E>(throws errorType: E.Type, performing body: () throws -> some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<E?, any Swift.Error> where E : Swift.Error
+#if compiler(>=5.3) && $SendingArgsAndResults
+public func __checkClosureCall<E>(throws errorType: E.Type, performing body: () async throws -> sending some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation) async -> Swift.Result<E?, any Swift.Error> where E : Swift.Error
+#else
+public func __checkClosureCall<E>(throws errorType: E.Type, performing body: () async throws -> some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation) async -> Swift.Result<E?, any Swift.Error> where E : Swift.Error
+#endif
+public func __checkClosureCall(throws _: Swift.Never.Type, performing body: () throws -> some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<Swift.Void, any Swift.Error>
+#if compiler(>=5.3) && $SendingArgsAndResults
+public func __checkClosureCall(throws _: Swift.Never.Type, performing body: () async throws -> sending some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation) async -> Swift.Result<Swift.Void, any Swift.Error>
+#else
+public func __checkClosureCall(throws _: Swift.Never.Type, performing body: () async throws -> some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation) async -> Swift.Result<Swift.Void, any Swift.Error>
+#endif
+public func __checkClosureCall<E>(throws error: E, performing body: () throws -> some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<E?, any Swift.Error> where E : Swift.Equatable, E : Swift.Error
+#if compiler(>=5.3) && $SendingArgsAndResults
+public func __checkClosureCall<E>(throws error: E, performing body: () async throws -> sending some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation) async -> Swift.Result<E?, any Swift.Error> where E : Swift.Equatable, E : Swift.Error
+#else
+public func __checkClosureCall<E>(throws error: E, performing body: () async throws -> some Any, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation) async -> Swift.Result<E?, any Swift.Error> where E : Swift.Equatable, E : Swift.Error
+#endif
+public func __checkClosureCall<R>(performing body: () throws -> R, throws errorMatcher: (any Swift.Error) throws -> Swift.Bool, mismatchExplanation: ((any Swift.Error) -> Swift.String)? = nil, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, sourceLocation: Testing.SourceLocation) -> Swift.Result<(any Swift.Error)?, any Swift.Error>
+#if compiler(>=5.3) && $SendingArgsAndResults
+public func __checkClosureCall<R>(performing body: () async throws -> sending R, throws errorMatcher: (any Swift.Error) async throws -> Swift.Bool, mismatchExplanation: ((any Swift.Error) -> Swift.String)? = nil, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation) async -> Swift.Result<(any Swift.Error)?, any Swift.Error>
+#else
+public func __checkClosureCall<R>(performing body: () async throws -> R, throws errorMatcher: (any Swift.Error) async throws -> Swift.Bool, mismatchExplanation: ((any Swift.Error) -> Swift.String)? = nil, expression: Testing.__Expression, comments: @autoclosure () -> [Testing.Comment], isRequired: Swift.Bool, isolation: isolated (any _Concurrency.Actor)? = #isolation, sourceLocation: Testing.SourceLocation) async -> Swift.Result<(any Swift.Error)?, any Swift.Error>
+#endif
+@freestanding(expression) public macro _sourceLocation() -> Testing.SourceLocation = #externalMacro(module: "TestingMacros", type: "SourceLocationMacro")
+extension Testing.SourceLocation {
+  public static func __here(fileID: Swift.String = #fileID, filePath: Swift.String = #filePath, line: Swift.Int = #line, column: Swift.Int = #column) -> Testing.SourceLocation
+}
+extension Testing.__Expression {
+  public static func __fromSyntaxNode(_ syntaxNode: Swift.String) -> Testing.__Expression
+  public static func __fromStringLiteral(_ sourceCode: Swift.String, _ stringValue: Swift.String) -> Testing.__Expression
+  public static func __fromBinaryOperation(_ lhs: Testing.__Expression, _ op: Swift.String, _ rhs: Testing.__Expression) -> Testing.__Expression
+  public static func __fromFunctionCall(_ value: Testing.__Expression?, _ functionName: Swift.String, _ arguments: (label: Swift.String?, value: Testing.__Expression)...) -> Testing.__Expression
+  public static func __fromPropertyAccess(_ value: Testing.__Expression, _ keyPath: Testing.__Expression) -> Testing.__Expression
+  public static func __fromNegation(_ expression: Testing.__Expression, _ isParenthetical: Swift.Bool) -> Testing.__Expression
+}
+public protocol Trait : Swift.Sendable {
+  func prepare(for test: Testing.Test) async throws
+  var comments: [Testing.Comment] { get }
+  associatedtype TestScopeProvider : Testing.TestScoping = Swift.Never
+  func scopeProvider(for test: Testing.Test, testCase: Testing.Test.Case?) -> Self.TestScopeProvider?
+}
+public protocol TestScoping : Swift.Sendable {
+  func provideScope(for test: Testing.Test, testCase: Testing.Test.Case?, performing function: @Sendable () async throws -> Swift.Void) async throws
+}
+extension Testing.Trait where Self : Testing.TestScoping {
+  public func scopeProvider(for test: Testing.Test, testCase: Testing.Test.Case?) -> Self?
+}
+extension Testing.SuiteTrait where Self : Testing.TestScoping {
+  public func scopeProvider(for test: Testing.Test, testCase: Testing.Test.Case?) -> Self?
+}
+extension Swift.Never : Testing.TestScoping {
+  public func provideScope(for test: Testing.Test, testCase: Testing.Test.Case?, performing function: @Sendable () async throws -> Swift.Void) async throws
+}
+public protocol TestTrait : Testing.Trait {
+}
+public protocol SuiteTrait : Testing.Trait {
+  var isRecursive: Swift.Bool { get }
+}
+extension Testing.Trait {
+  public func prepare(for test: Testing.Test) async throws
+  public var comments: [Testing.Comment] {
+    get
+  }
+}
+extension Testing.Trait where Self.TestScopeProvider == Swift.Never {
+  public func scopeProvider(for test: Testing.Test, testCase: Testing.Test.Case?) -> Swift.Never?
+}
+extension Testing.SuiteTrait {
+  public var isRecursive: Swift.Bool {
+    get
+  }
+}
+public struct ConditionTrait : Testing.TestTrait, Testing.SuiteTrait {
+  public var comments: [Testing.Comment]
+  public var sourceLocation: Testing.SourceLocation
+  public func prepare(for test: Testing.Test) async throws
+  public var isRecursive: Swift.Bool {
+    get
+  }
+  public typealias TestScopeProvider = Swift.Never
+}
+extension Testing.Trait where Self == Testing.ConditionTrait {
+  public static func enabled(if condition: @autoclosure @escaping @Sendable () throws -> Swift.Bool, _ comment: Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation) -> Self
+  public static func enabled(_ comment: Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ condition: @escaping @Sendable () async throws -> Swift.Bool) -> Self
+  public static func disabled(_ comment: Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation) -> Self
+  public static func disabled(if condition: @autoclosure @escaping @Sendable () throws -> Swift.Bool, _ comment: Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation) -> Self
+  public static func disabled(_ comment: Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ condition: @escaping @Sendable () async throws -> Swift.Bool) -> Self
+}
+extension Testing.Issue {
+  @discardableResult
+  public static func record(_ comment: Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation) -> Testing.Issue
+}
+extension Testing.Issue {
+  @discardableResult
+  public static func record(_ error: any Swift.Error, _ comment: Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation) -> Testing.Issue
+}
+@usableFromInline
+@exclusivity(unchecked) nonisolated(unsafe) internal var failureBreakpointValue: Swift.Int
+@usableFromInline
+@inline(never) internal func failureBreakpoint()
+extension Testing.Tag {
+  public struct List {
+    public var tags: [Testing.Tag]
+  }
+}
+extension Testing.Tag.List : Swift.Equatable, Swift.Hashable {
+  public static func == (a: Testing.Tag.List, b: Testing.Tag.List) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Testing.Tag.List : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension Testing.Tag.List : Testing.TestTrait, Testing.SuiteTrait {
+  public var isRecursive: Swift.Bool {
+    get
+  }
+  public typealias TestScopeProvider = Swift.Never
+}
+extension Testing.Trait where Self == Testing.Tag.List {
+  public static func tags(_ tags: Testing.Tag...) -> Self
+}
+public func __swiftPMEntryPoint(passing args: Testing.__CommandLineArguments_v0? = nil) async -> Swift.CInt
+public func __swiftPMEntryPoint(passing args: Testing.__CommandLineArguments_v0? = nil) async -> Swift.Never
+public struct Expectation : Swift.Sendable {
+  public var isPassing: Swift.Bool
+  public var isRequired: Swift.Bool
+  public var sourceLocation: Testing.SourceLocation
+}
+public struct ExpectationFailedError : Swift.Error {
+  public var expectation: Testing.Expectation
+}
+public struct SourceLocation : Swift.Sendable {
+  public var fileID: Swift.String {
+    get
+    set
+  }
+  public var fileName: Swift.String {
+    get
+  }
+  public var moduleName: Swift.String {
+    get
+  }
+  public var _filePath: Swift.String
+  public var line: Swift.Int {
+    get
+    set
+  }
+  public var column: Swift.Int {
+    get
+    set
+  }
+  public init(fileID: Swift.String, filePath: Swift.String, line: Swift.Int, column: Swift.Int)
+}
+extension Testing.SourceLocation : Swift.Equatable, Swift.Hashable, Swift.Comparable {
+  public static func == (lhs: Testing.SourceLocation, rhs: Testing.SourceLocation) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public static func < (lhs: Testing.SourceLocation, rhs: Testing.SourceLocation) -> Swift.Bool
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension Testing.SourceLocation : Swift.CustomStringConvertible, Swift.CustomDebugStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+  public var debugDescription: Swift.String {
+    get
+  }
+}
+extension Testing.SourceLocation : Swift.Codable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+@usableFromInline
+@_disfavoredOverload internal func withKnownIssue(_ comment: Testing.Comment? = nil, isIntermittent: Swift.Bool = false, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ body: () async throws -> Swift.Void) async
+@usableFromInline
+@_disfavoredOverload internal func withKnownIssue(_ comment: Testing.Comment? = nil, isIntermittent: Swift.Bool = false, sourceLocation: Testing.SourceLocation = #_sourceLocation, _ body: () async throws -> Swift.Void, when precondition: () async -> Swift.Bool = { true }, matching issueMatcher: @escaping Testing.KnownIssueMatcher = { _ in true }) async rethrows
+@available(macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0, *)
+public struct TimeLimitTrait : Testing.TestTrait, Testing.SuiteTrait {
+  public struct Duration : Swift.Sendable {
+    public static func minutes(_ minutes: some BinaryInteger) -> Testing.TimeLimitTrait.Duration
+  }
+  public var timeLimit: Swift.Duration
+  public var isRecursive: Swift.Bool {
+    get
+  }
+  @available(iOS 16.0, tvOS 16.0, watchOS 9.0, macOS 13.0, *)
+  public typealias TestScopeProvider = Swift.Never
+}
+@available(macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0, *)
+extension Testing.Trait where Self == Testing.TimeLimitTrait {
+  public static func timeLimit(_ timeLimit: Testing.TimeLimitTrait.Duration) -> Self
+}
+@available(macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0, *)
+extension Testing.TimeLimitTrait.Duration {
+  @available(*, unavailable, message: "Time limit must be specified in minutes")
+  public static func seconds(_ seconds: some BinaryInteger) -> Testing.TimeLimitTrait.Duration
+  @available(*, unavailable, message: "Time limit must be specified in minutes")
+  public static func seconds(_ seconds: Swift.Double) -> Testing.TimeLimitTrait.Duration
+  @available(*, unavailable, message: "Time limit must be specified in minutes")
+  public static func milliseconds(_ milliseconds: some BinaryInteger) -> Testing.TimeLimitTrait.Duration
+  @available(*, unavailable, message: "Time limit must be specified in minutes")
+  public static func milliseconds(_ milliseconds: Swift.Double) -> Testing.TimeLimitTrait.Duration
+  @available(*, unavailable, message: "Time limit must be specified in minutes")
+  public static func microseconds(_ microseconds: some BinaryInteger) -> Testing.TimeLimitTrait.Duration
+  @available(*, unavailable, message: "Time limit must be specified in minutes")
+  public static func microseconds(_ microseconds: Swift.Double) -> Testing.TimeLimitTrait.Duration
+  @available(*, unavailable, message: "Time limit must be specified in minutes")
+  public static func nanoseconds(_ nanoseconds: some BinaryInteger) -> Testing.TimeLimitTrait.Duration
+}
+@available(macOS 13.0, iOS 16.0, tvOS 16.0, watchOS 9.0, *)
+extension Testing.Test {
+  public var timeLimit: Swift.Duration? {
+    get
+  }
+}
+extension Testing.Trait where Self == Testing.Comment {
+  public static func __line(_ comment: Swift.String) -> Self
+  public static func __block(_ comment: Swift.String) -> Self
+  public static func __documentationLine(_ comment: Swift.String) -> Self
+  public static func __documentationBlock(_ comment: Swift.String) -> Self
+}
+public struct Issue : Swift.Sendable {
+  public enum Kind : Swift.Sendable {
+    case unconditional
+    indirect case expectationFailed(_: Testing.Expectation)
+    indirect case confirmationMiscounted(actual: Swift.Int, expected: any Swift.RangeExpression & Swift.Sendable)
+    indirect case errorCaught(_: any Swift.Error)
+    indirect case timeLimitExceeded(timeLimitComponents: (seconds: Swift.Int64, attoseconds: Swift.Int64))
+    case knownIssueNotRecorded
+    case apiMisused
+    case system
+  }
+  public var kind: Testing.Issue.Kind
+  public var comments: [Testing.Comment]
+  public var error: (any Swift.Error)? {
+    get
+  }
+  public var sourceLocation: Testing.SourceLocation? {
+    get
+    set
+  }
+}
+extension Testing.Issue : Swift.CustomStringConvertible, Swift.CustomDebugStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+  public var debugDescription: Swift.String {
+    get
+  }
+}
+extension Testing.Issue.Kind : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension Swift.Result {
+  @inlinable public func __expected() where Success == () {}
+  @inlinable public func __required() throws -> Success {
+    try get()
+  }
+}
+extension Swift.Result {
+  @discardableResult
+  @inlinable public func __expected<T>() -> Success where Success == T? {
+    try? get()
+  }
+  @discardableResult
+  public func __required<T>() throws -> T where Success == T?
+}
+public struct __CommandLineArguments_v0 : Swift.Sendable {
+  public init()
+  public var listTests: Swift.Bool?
+  public var parallel: Swift.Bool?
+  public var symbolicateBacktraces: Swift.String?
+  public var verbose: Swift.Bool?
+  public var veryVerbose: Swift.Bool?
+  public var quiet: Swift.Bool?
+  public var verbosity: Swift.Int {
+    get
+    set
+  }
+  public var xunitOutput: Swift.String?
+  public var eventStreamOutputPath: Swift.String?
+  public var eventStreamVersion: Swift.Int?
+  public var filter: [Swift.String]?
+  public var skip: [Swift.String]?
+  public var repetitions: Swift.Int?
+  public var repeatUntil: Swift.String?
+  public var experimentalAttachmentsPath: Swift.String?
+}
+extension Testing.__CommandLineArguments_v0 : Swift.Codable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+@freestanding(expression) public macro expect(_ condition: Swift.Bool, _ comment: @autoclosure () -> Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation) = #externalMacro(module: "TestingMacros", type: "ExpectMacro")
+@freestanding(expression) public macro require(_ condition: Swift.Bool, _ comment: @autoclosure () -> Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation) = #externalMacro(module: "TestingMacros", type: "RequireMacro")
+@freestanding(expression) public macro require<T>(_ optionalValue: T?, _ comment: @autoclosure () -> Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation) -> T = #externalMacro(module: "TestingMacros", type: "RequireMacro")
+@freestanding(expression) @_documentation(visibility: private) public macro require(_ optionalValue: Swift.Bool?, _ comment: @autoclosure () -> Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation) -> Swift.Bool = #externalMacro(module: "TestingMacros", type: "AmbiguousRequireMacro")
+@freestanding(expression) @_documentation(visibility: private) public macro require<T>(_ optionalValue: T, _ comment: @autoclosure () -> Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation) -> T = #externalMacro(module: "TestingMacros", type: "NonOptionalRequireMacro")
+@discardableResult
+@freestanding(expression) public macro expect<E, R>(throws errorType: E.Type, _ comment: @autoclosure () -> Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation, performing expression: () async throws -> R) -> E? = #externalMacro(module: "TestingMacros", type: "ExpectMacro") where E : Swift.Error
+@discardableResult
+@freestanding(expression) public macro require<E, R>(throws errorType: E.Type, _ comment: @autoclosure () -> Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation, performing expression: () async throws -> R) -> E = #externalMacro(module: "TestingMacros", type: "RequireThrowsMacro") where E : Swift.Error
+@freestanding(expression) @_documentation(visibility: private) public macro require<R>(throws _: Swift.Never.Type, _ comment: @autoclosure () -> Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation, performing expression: () async throws -> R) = #externalMacro(module: "TestingMacros", type: "RequireThrowsNeverMacro")
+@discardableResult
+@freestanding(expression) public macro expect<E, R>(throws error: E, _ comment: @autoclosure () -> Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation, performing expression: () async throws -> R) -> E? = #externalMacro(module: "TestingMacros", type: "ExpectMacro") where E : Swift.Equatable, E : Swift.Error
+@discardableResult
+@freestanding(expression) public macro require<E, R>(throws error: E, _ comment: @autoclosure () -> Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation, performing expression: () async throws -> R) -> E = #externalMacro(module: "TestingMacros", type: "RequireMacro") where E : Swift.Equatable, E : Swift.Error
+@available(swift, deprecated: 100000.0, message: "Examine the result of '#expect(throws:)' instead.")
+@discardableResult
+@freestanding(expression) public macro expect<R>(_ comment: @autoclosure () -> Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation, performing expression: () async throws -> R, throws errorMatcher: (any Swift.Error) async throws -> Swift.Bool) -> (any Swift.Error)? = #externalMacro(module: "TestingMacros", type: "ExpectMacro")
+@available(swift, deprecated: 100000.0, message: "Examine the result of '#require(throws:)' instead.")
+@discardableResult
+@freestanding(expression) public macro require<R>(_ comment: @autoclosure () -> Testing.Comment? = nil, sourceLocation: Testing.SourceLocation = #_sourceLocation, performing expression: () async throws -> R, throws errorMatcher: (any Swift.Error) async throws -> Swift.Bool) -> any Swift.Error = #externalMacro(module: "TestingMacros", type: "RequireMacro")

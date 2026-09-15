@@ -1,0 +1,11 @@
+{
+  "": {
+    "swift-dependencies": "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/master.swiftdeps"
+  },
+  "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/Sources/CorsairCloud/CorsairCloud.swift": {
+    "dependencies": "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/CorsairCloud.d",
+    "object": "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/CorsairCloud.swift.o",
+    "swiftmodule": "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/CorsairCloud~partial.swiftmodule",
+    "swift-dependencies": "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/CorsairCloud.swiftdeps"
+  }
+}

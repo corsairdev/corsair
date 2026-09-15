@@ -1,0 +1,525 @@
+{
+  "builtTestProducts" : [
+    {
+      "binaryPath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.xctest/Contents/MacOS/CorsairCloudPackageTests",
+      "packagePath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift",
+      "productName" : "CorsairCloudPackageTests"
+    }
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.CorsairCloud-arm64-apple-macosx16.0-debug.module" : {
+      "executable" : "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "fileList" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/sources",
+      "importPath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/Sources/CorsairCloud/CorsairCloud.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "CorsairCloud",
+      "moduleOutputPath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/Modules/CorsairCloud.swiftmodule",
+      "objects" : [
+        "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/CorsairCloud.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx12.0",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/CorsairCloud-Swift.h",
+        "-swift-version",
+        "5",
+        "-F",
+        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+        "-sdk",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "swift"
+      ],
+      "outputFileMapPath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/CorsairCloud.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/Modules/CorsairCloud.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/Sources/CorsairCloud/CorsairCloud.swift"
+      ],
+      "tempsPath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.CorsairCloudPackageTests-arm64-apple-macosx16.0-debug.module" : {
+      "executable" : "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "fileList" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.build/sources",
+      "importPath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.derived/runner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/Modules/CorsairCloudTests.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "CorsairCloudPackageTests",
+      "moduleOutputPath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/Modules/CorsairCloudPackageTests.swiftmodule",
+      "objects" : [
+        "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.build/runner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx12.0",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.build/CorsairCloudPackageTests-Swift.h",
+        "-F",
+        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+        "-sdk",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "swift"
+      ],
+      "outputFileMapPath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/Modules/CorsairCloudPackageTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.derived/runner.swift"
+      ],
+      "tempsPath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.CorsairCloudTests-arm64-apple-macosx16.0-debug.module" : {
+      "executable" : "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "fileList" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudTests.build/sources",
+      "importPath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/Tests/CorsairCloudTests/CorsairCloudTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/Modules/CorsairCloud.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "CorsairCloudTests",
+      "moduleOutputPath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/Modules/CorsairCloudTests.swiftmodule",
+      "objects" : [
+        "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudTests.build/CorsairCloudTests.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx12.0",
+        "-enable-batch-mode",
+        "-index-store-path",
+        "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j10",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-module-cache-path",
+        "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-swift-version",
+        "5",
+        "-F",
+        "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+        "-sdk",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "swift"
+      ],
+      "outputFileMapPath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudTests.build/CorsairCloudTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/Modules/CorsairCloudTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/Tests/CorsairCloudTests/CorsairCloudTests.swift"
+      ],
+      "tempsPath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudTests.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "CorsairCloud" : [
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "-module-name",
+      "CorsairCloud",
+      "-package-name",
+      "swift",
+      "-incremental",
+      "-c",
+      "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/Sources/CorsairCloud/CorsairCloud.swift",
+      "-I",
+      "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx12.0",
+      "-enable-batch-mode",
+      "-index-store-path",
+      "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/CorsairCloud-Swift.h",
+      "-swift-version",
+      "5",
+      "-F",
+      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+      "-sdk",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "swift",
+      "-driver-use-frontend-path",
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+    ],
+    "CorsairCloudPackageTests" : [
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "-module-name",
+      "CorsairCloudPackageTests",
+      "-package-name",
+      "swift",
+      "-incremental",
+      "-c",
+      "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.derived/runner.swift",
+      "-I",
+      "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx12.0",
+      "-enable-batch-mode",
+      "-index-store-path",
+      "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.build/CorsairCloudPackageTests-Swift.h",
+      "-F",
+      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+      "-sdk",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "swift",
+      "-driver-use-frontend-path",
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+    ],
+    "CorsairCloudTests" : [
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc",
+      "-module-name",
+      "CorsairCloudTests",
+      "-package-name",
+      "swift",
+      "-incremental",
+      "-c",
+      "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/Tests/CorsairCloudTests/CorsairCloudTests.swift",
+      "-I",
+      "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx12.0",
+      "-enable-batch-mode",
+      "-index-store-path",
+      "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j10",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-module-cache-path",
+      "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-swift-version",
+      "5",
+      "-F",
+      "/Library/Developer/CommandLineTools/Library/Developer/Frameworks",
+      "-sdk",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "swift",
+      "-driver-use-frontend-path",
+      "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "CorsairCloud" : [
+
+    ],
+    "CorsairCloudPackageTests" : [
+      "CorsairCloudTests",
+      "CorsairCloud"
+    ],
+    "CorsairCloudTests" : [
+      "CorsairCloud"
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+    "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.derived/runner.swift" : {
+      "inputs" : [
+
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.derived/runner.swift"
+        }
+      ]
+    }
+  },
+  "traitConfiguration" : {
+    "enableAllTraits" : false
+  },
+  "writeCommands" : {
+    "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/Sources/CorsairCloud/CorsairCloud.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/sources"
+    },
+    "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.derived/runner.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.build/sources"
+    },
+    "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/CorsairCloud.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudTests.build/CorsairCloudTests.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudPackageTests.product/Objects.LinkFileList"
+    },
+    "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/Tests/CorsairCloudTests/CorsairCloudTests.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloudTests.build/sources"
+    },
+    "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Library/Developer/CommandLineTools/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/swift-version--1AB21518FC5DEDBE.txt"
+    }
+  }
+}
