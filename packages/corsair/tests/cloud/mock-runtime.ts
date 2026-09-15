@@ -54,7 +54,7 @@ export function startMockRuntime(): MockRuntime {
 			}
 
 			if (method === 'GET' && pathname === '/connection-status') {
-				send(res, 200, { slack: { connected: true } });
+				send(res, 200, { slack: 'connected' });
 				return;
 			}
 

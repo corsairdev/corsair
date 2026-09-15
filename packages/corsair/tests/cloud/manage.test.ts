@@ -61,12 +61,13 @@ describe('buildCloudManagement', () => {
 	});
 
 	it('connectionStatus.get hits the query route', async () => {
-		const t = transportWith(ok({ slack: { connected: true } }));
+		const t = transportWith(ok({ slack: 'connected' }));
 		const m = buildCloudManagement(t);
-		await m.connectionStatus.get({ tenantId: 'acme' });
+		const status = await m.connectionStatus.get({ tenantId: 'acme' });
 		expect(t.fetch.mock.calls[0][0]).toBe(
 			'https://vm/p/api/corsair/connection-status?tenantId=acme',
 		);
+		expect(status).toEqual({ slack: 'connected' });
 	});
 
 	it('connectionStatus.get URL-encodes a special-char tenantId in the query string', async () => {

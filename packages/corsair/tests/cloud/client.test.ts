@@ -69,4 +69,38 @@ describe('buildCloudClient', () => {
 		expect(() => (client as any).slack.keys).toThrow(/cloud mode/);
 		expect(() => (client as any).slack.webhooks).toThrow(/cloud mode/);
 	});
+
+	it('rejects chats/workflows as not available in cloud mode', () => {
+		const client = buildCloudClient([{ id: 'slack' } as any], {
+			transport: {} as any,
+			tenantId: 'acme',
+		});
+		expect(() => (client as any).chats).toThrow(/cloud mode/);
+		expect(() => (client as any).workflows).toThrow(/cloud mode/);
+	});
+
+	it('a partial path is not thenable, so awaiting it issues no request', async () => {
+		const fetchMock = jest.fn();
+		const client = buildCloudClient([{ id: 'slack' } as any], {
+			transport: {
+				baseUrl: 'https://vm/p/api/corsair',
+				apiKey: 'k',
+				fetch: fetchMock,
+			},
+			tenantId: 'acme',
+		});
+		const partial = (client as any).slack.api.messages;
+		expect(partial.then).toBeUndefined();
+		await partial;
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('the client itself is not thenable', async () => {
+		const client = buildCloudClient([{ id: 'slack' } as any], {
+			transport: {} as any,
+			tenantId: 'acme',
+		});
+		expect((client as any).then).toBeUndefined();
+		await client;
+	});
 });

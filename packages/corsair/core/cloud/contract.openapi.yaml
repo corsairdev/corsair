@@ -282,13 +282,14 @@ components:
     ConnectLink:
       type: object
       properties:
-        url: { type: string, description: "Hand to the end user to authorize." }
-        state: { type: string }
+        connectUrl: { type: string, description: "Hand to the end user to authorize." }
+        expiresAt: { type: string }
+        tenantId: { type: string }
     ConnectionStatus:
       type: object
       additionalProperties:
-        type: object
-        properties: { connected: { type: boolean } }
+        type: string
+        enum: [connected, missing_credentials, not_connected]
       description: "Keyed by plugin id."
     Tenant:
       type: object

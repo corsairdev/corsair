@@ -5,6 +5,8 @@ import { cloudRequest } from './http';
 import { CLOUD_ROUTES } from './routes';
 
 const DEFERRED = new Set(['db', 'keys', 'webhooks']);
+const TOP_LEVEL_DEFERRED = new Set(['chats', 'workflows']);
+const THENABLE_KEYS = new Set(['then', 'catch', 'finally']);
 
 function buildInvokeProxy(
 	transport: CloudTransport,
@@ -25,7 +27,9 @@ function buildInvokeProxy(
 
 	return new Proxy(invoke, {
 		get(_target, prop) {
-			if (typeof prop !== 'string') return undefined;
+			if (typeof prop !== 'string' || THENABLE_KEYS.has(prop)) {
+				return undefined;
+			}
 			return buildInvokeProxy(transport, tenantId, pluginId, [...path, prop]);
 		},
 	});
@@ -41,7 +45,14 @@ export function buildCloudClient<Plugins extends readonly CorsairPlugin[]>(
 		{},
 		{
 			get(_target, pluginId) {
-				if (typeof pluginId !== 'string') return undefined;
+				if (typeof pluginId !== 'string' || THENABLE_KEYS.has(pluginId)) {
+					return undefined;
+				}
+				if (TOP_LEVEL_DEFERRED.has(pluginId)) {
+					throw new Error(
+						`"${pluginId}" is not available in cloud mode (deferred)`,
+					);
+				}
 				if (!pluginIds.has(pluginId)) {
 					throw new Error(`Unknown plugin "${pluginId}"`);
 				}

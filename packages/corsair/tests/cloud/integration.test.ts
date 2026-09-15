@@ -32,7 +32,7 @@ describe('cloud client against a mock runtime', () => {
 		const status = await corsair.manage.connectionStatus.get({
 			tenantId: 'acme',
 		});
-		expect(status).toEqual({ slack: { connected: true } });
+		expect(status).toEqual({ slack: 'connected' });
 
 		const result = await corsair
 			.withTenant('acme')
