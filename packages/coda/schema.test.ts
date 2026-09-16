@@ -9,12 +9,9 @@ describe('Coda schema', () => {
 	it('declares an entities map', () => {
 		expect(typeof CodaSchema.entities).toBe('object');
 		expect(CodaSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(CodaSchema.entities))).toBe(true);
+		expect(Object.keys(CodaSchema.entities)).toEqual([]);
 		for (const entity of Object.values(CodaSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

@@ -3,6 +3,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { verifyHmacSignature } from 'corsair/http';
 import { z } from 'zod';
 
 export const CodaWebhookPayloadSchema = z.object({
@@ -57,6 +58,36 @@ export function verifyCodaWebhookSignature(
 	request: WebhookRequest<CodaWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
+	if (!secret) {
+		return { valid: false, error: 'No secret provided' };
+	}
+
+	const signature = request.headers['x-coda-signature'];
+	const normalizedSignature = Array.isArray(signature)
+		? signature[0]
+		: signature;
+
+	if (!normalizedSignature) {
+		return { valid: false, error: 'Missing x-coda-signature header' };
+	}
+
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
+	const isValid = verifyHmacSignature(
+		rawBody,
+		secret,
+		normalizedSignature,
+		'sha256',
+	);
+	if (!isValid) {
+		return { valid: false, error: 'Invalid signature' };
+	}
+
 	return { valid: true };
 }
