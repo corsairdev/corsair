@@ -21,7 +21,8 @@ export function getChatModel(): string {
 export function createLlmRunner(): Runner {
 	const modelProvider = new OpenAIProvider({
 		apiKey: getLlmApiKey(),
-		baseURL: process.env.LITELLM_BASE_URL ?? 'https://llm.corsair.dev/v1',
+		// Pinned to Corsair's gateway so the API key can't be pointed at another host.
+		baseURL: 'https://llm.corsair.dev/v1',
 		useResponses: false,
 	});
 
