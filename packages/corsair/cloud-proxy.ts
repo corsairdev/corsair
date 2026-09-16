@@ -75,6 +75,11 @@ export function createCloudProxy(
 	options: CloudProxyOptions,
 ): (req: Request) => Promise<Response> {
 	assertSecureCloudUrl(options.url);
+	if (!options.authorize && process.env.NODE_ENV !== 'production') {
+		console.warn(
+			'[corsair] createCloudProxy has no `authorize` — this route forwards any tenant/plugin/op with your cloud key. Add `authorize` before exposing it.',
+		);
+	}
 	const upstream = options.url.endsWith('/')
 		? options.url.slice(0, -1)
 		: options.url;
