@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "ChMeetings plugin for Corsair"
+---
+
+Use **ChMeetings** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 28 typed API operations
+- 3 synced entities (`events`, `organizations`, `people`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/chmeetings
+```
+```bash yarn
+yarn add corsair @corsair-dev/chmeetings
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/chmeetings
+```
+```bash bun
+bun add corsair @corsair-dev/chmeetings
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { chmeetings } from '@corsair-dev/chmeetings';
+
+export const corsair = createCorsair({
+	plugins: [
+		chmeetings(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+chmeetings()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'chmeetings',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`attendance.list`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.chmeetings.api.attendance.list({});
+```
+
+
+**`families.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.chmeetings.api.families.create({});
+```
+
+
+See the full list on the [API](/plugins/chmeetings/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.chmeetings.db.<entity>.search()` and `.list()`: `events`, `organizations`, `people`.
+
+See [Database](/plugins/chmeetings/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/chmeetings/api">
+    Every `chmeetings.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/chmeetings/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
