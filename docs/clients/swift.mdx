@@ -8,12 +8,15 @@ HTTP, with the plugin set living on the runtime, not in the package.
 
 ## Install
 
-The package lives in the `corsair` monorepo, under `clients/swift`. Point SPM
-at it with a branch or tag reference:
+The package lives in the `corsair` monorepo, under `clients/swift` — not at
+the repository root, so SPM's `.package(url:)` can't resolve it as a remote
+dependency yet (that needs a dedicated mirror repo or a root-level manifest).
+Until then, add it as a local path dependency from within a checkout of
+`corsair`:
 
 ```swift
-.package(url: "https://github.com/corsairdev/corsair", branch: "main"),
-// target: .product(name: "CorsairCloud", package: "corsair")
+.package(path: "../corsair/clients/swift"),
+// target: .product(name: "CorsairCloud", package: "CorsairCloud")
 ```
 
 ## The two values

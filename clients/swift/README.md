@@ -5,9 +5,12 @@ A thin client for a hosted Corsair Cloud project. Mirrors the TS
 
 ## Install
 
+Not yet resolvable as a remote SPM dependency — see "Distribution status"
+below. For in-repo or vendored use:
+
 ```swift
-.package(url: "https://github.com/corsairdev/corsair", branch: "main"),
-// target: .product(name: "CorsairCloud", package: "corsair")
+.package(path: "../corsair/clients/swift"),
+// target: .product(name: "CorsairCloud", package: "CorsairCloud")
 ```
 
 ## Use

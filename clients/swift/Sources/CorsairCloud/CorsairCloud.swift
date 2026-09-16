@@ -61,6 +61,28 @@ public struct CorsairError: Error, Equatable, Sendable {
 	public let providerStatus: Int?
 }
 
+/// Thrown at call time when `baseURL` isn't https:// (loopback excepted) — the
+/// API key is sent as a bearer token, so http:// would leak it in cleartext.
+public struct InsecureBaseURLError: Error, Equatable, Sendable {
+	public let url: String
+}
+
+private let loopbackHosts: Set<String> = ["localhost", "127.0.0.1", "::1"]
+
+private func assertSecureBaseURL(_ url: URL) throws {
+	if url.scheme == "https" { return }
+	if url.scheme == "http", let host = url.host, loopbackHosts.contains(host) { return }
+	throw InsecureBaseURLError(url: url.absoluteString)
+}
+
+private func encodedPathSegment(_ segment: String) -> String {
+	segment.addingPercentEncoding(withAllowedCharacters: .urlPathSegmentAllowed) ?? segment
+}
+
+extension CharacterSet {
+	fileprivate static let urlPathSegmentAllowed = CharacterSet.urlPathAllowed.subtracting(CharacterSet(charactersIn: "/"))
+}
+
 public struct ConnectLink: Codable, Sendable {
 	public let connectUrl: String?
 	public let expiresAt: String?
@@ -97,8 +119,9 @@ public struct CorsairCloud: Sendable {
 		query: [String: String] = [:],
 		body: JSONValue? = nil
 	) async throws -> Data {
+		try assertSecureBaseURL(baseURL)
 		var comps = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
-		comps.path += "/" + path.joined(separator: "/")
+		comps.percentEncodedPath += "/" + path.map(encodedPathSegment).joined(separator: "/")
 		if !query.isEmpty {
 			comps.queryItems = query.map { URLQueryItem(name: $0.key, value: $0.value) }
 		}

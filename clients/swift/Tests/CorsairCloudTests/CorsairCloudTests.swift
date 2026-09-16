@@ -92,6 +92,43 @@ struct CorsairCloudTests {
 		#expect(status["slack"] == "not_connected")
 	}
 
+	@Test func rejectsNonHttpsNonLoopbackBaseURL() async throws {
+		let insecure = URL(string: "http://attacker.example")!
+		let client = CorsairCloud(apiKey: "ck_cloud_x", url: insecure)
+		do {
+			_ = try await client.tenant("acme").call("notion", "pages.searchPage")
+			Issue.record("expected throw")
+		} catch is InsecureBaseURLError {
+			// expected
+		}
+	}
+
+	@Test func allowsHttpForLoopbackHost() async throws {
+		let loopback = URL(string: "http://localhost:4000")!
+		let config = URLSessionConfiguration.ephemeral
+		config.protocolClasses = [MockURLProtocol.self]
+		let client = CorsairCloud(apiKey: "ck_cloud_x", url: loopback, session: URLSession(configuration: config))
+		MockURLProtocol.handler = { req in
+			let body = #"{"data":{}}"#.data(using: .utf8)!
+			return (HTTPURLResponse(url: req.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, body)
+		}
+		_ = try await client.tenant("acme").call("notion", "pages.searchPage")
+	}
+
+	@Test func callEscapesReservedCharactersInPathSegments() async throws {
+		var seenURL: URL?
+		MockURLProtocol.handler = { req in
+			seenURL = req.url
+			let body = #"{"data":{}}"#.data(using: .utf8)!
+			return (HTTPURLResponse(url: req.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, body)
+		}
+		_ = try await makeClient().tenant("a/b").call("notion", "pages.searchPage")
+
+		#expect(
+			seenURL?.absoluteString
+				== "https://vm.corsair.cloud/env/api/corsair/a%2Fb/notion/call/pages.searchPage")
+	}
+
 	@Test func errorEnvelopeThrowsTypedError() async throws {
 		MockURLProtocol.handler = { req in
 			let body = #"{"error":"not_connected","message":"reconnect"}"#.data(using: .utf8)!
