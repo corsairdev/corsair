@@ -36,9 +36,15 @@
     "leexi",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/leexi"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/leexi"
 }
