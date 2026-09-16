@@ -7,6 +7,8 @@ export const list: LeexiEndpoints['usersList'] = async (ctx, input) => {
 	const parsed = LeexiEndpointInputSchemas.usersList.parse(input);
 	const credentials = await resolveLeexiCredentials(ctx);
 
+	// `unknown`: unvalidated wire JSON — the output schema below is the
+	// only thing allowed to shape it into a typed response.
 	const raw = await makeLeexiRequest<unknown>('users', credentials, {
 		method: 'GET',
 		query: parsed,

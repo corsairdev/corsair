@@ -205,6 +205,9 @@ export type ExternalLeexiPlugin<T extends LeexiPluginOptions> =
 	BaseLeexiPlugin<T>;
 
 export function leexi<const T extends LeexiPluginOptions>(
+	// `as` here only supplies the generic default for the no-arg call
+	// `leexi()`; any real options object is checked against `T` by the
+	// compiler. This mirrors the generator scaffold used by every plugin.
 	incomingOptions: LeexiPluginOptions & T = {} as LeexiPluginOptions & T,
 ): ExternalLeexiPlugin<T> {
 	const options = {

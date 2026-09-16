@@ -6,6 +6,9 @@ import type { LeexiContext } from './index';
 export class LeexiAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// Provider error payloads are untyped JSON (object, string, or null
+	// depending on the endpoint), so `unknown` forces callers to narrow
+	// before use instead of trusting `any`.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 
@@ -31,12 +34,18 @@ export type LeexiCredentials = {
 /**
  * Leexi authenticates with HTTP Basic auth using an API Key ID + Key Secret
  * pair (Authorization: Basic base64(KEY_ID:KEY_SECRET)), not a bearer token.
+ *
+ * `T` defaults to `unknown` at call sites on purpose: the raw JSON is never
+ * trusted — every endpoint validates it with its zod output schema before
+ * returning, so `unknown` keeps the transport layer honest.
  */
 export async function makeLeexiRequest<T>(
 	endpoint: string,
 	credentials: LeexiCredentials,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// JSON-serializable request body. `unknown` values force each
+		// endpoint to pass only zod-parsed input (see calls.ts etc.).
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | string[] | undefined>;
 	} = {},

@@ -11,6 +11,10 @@ const PaginationSchema = z.object({
 	page: z.number(),
 	items: z.number(),
 	count: z.number(),
+	// Docs return `pages` (total pages) on every list response
+	// (meeting_events, calls, teams, users). Optional so cached/older
+	// payloads without it still parse; new responses preserve it.
+	pages: z.number().optional(),
 });
 
 const UuidInputSchema = z.object({
@@ -277,6 +281,22 @@ const CallSchema = z.object({
 	recording_url: z.string().nullable().optional(),
 	transcript_url: z.string().nullable().optional(),
 	simple_transcript: z.string().nullable().optional(),
+	summary: z.string().nullable().optional(),
+	// Free-form key/value pairs for custom integrations (list-calls.md:
+	// additionalProperties string | number | boolean | null). Unknown is
+	// avoided here because the docs pin the exact value union.
+	custom_fields: z
+		.record(
+			z.string(),
+			z.union([z.string(), z.number(), z.boolean(), z.null()]),
+		)
+		.nullable()
+		.optional(),
+	// Deprecated aliases for `customers[].email` / `customers[].phone_number`
+	// (list-calls.md: kept for backward compatibility). Optional so both
+	// old and new payloads parse.
+	customer_email_addresses: z.array(z.string()).optional(),
+	customer_phone_numbers: z.array(z.string()).optional(),
 	audio_archived_at: z.string().nullable().optional(),
 	video_archived_at: z.string().nullable().optional(),
 	transcript_archived_at: z.string().nullable().optional(),
@@ -316,14 +336,64 @@ const CallTopicSchema = z.object({
 	updated_at: z.string().nullable().optional(),
 });
 
+// AI-detected topic occurrence on GET /calls/{uuid} (get-call.md).
+// This is the live field; `call_topics` below is the deprecated legacy
+// keyword field the docs say is always an empty array.
+const CallAiTopicLabelSchema = z.object({
+	uuid: z.string(),
+	name: z.string().nullable().optional(),
+	color: z.string().nullable().optional(),
+});
+
+const CallAiTopicSpeakerSchema = z.object({
+	uuid: z.string(),
+	name: z.string().nullable().optional(),
+	index: z.number().nullable().optional(),
+	is_user: z.boolean().optional(),
+	email_address: z.string().nullable().optional(),
+	phone_number: z.string().nullable().optional(),
+});
+
+const CallAiTopicSchema = z.object({
+	uuid: z.string(),
+	ai_topics: z.array(CallAiTopicLabelSchema).optional(),
+	sentence: z.string().nullable().optional(),
+	start_time: z.number().nullable().optional(),
+	end_time: z.number().nullable().optional(),
+	speaker: CallAiTopicSpeakerSchema.nullable().optional(),
+	created_at: z.string().nullable().optional(),
+	updated_at: z.string().nullable().optional(),
+});
+
 const CallDetailSchema = CallSchema.extend({
 	transcript: z.array(TranscriptSegmentSchema).optional(),
 	call_topics: z.array(CallTopicSchema).optional(),
+	call_ai_topics: z.array(CallAiTopicSchema).optional(),
 	summary: z.string().nullable().optional(),
+	// `deal` / `meeting_event` are free-form objects in the OpenAPI spec
+	// (empty `{}` schemas = any JSON object). z.unknown() keeps them
+	// type-safe (forces narrowing before use) instead of `any`.
 	deal: z.record(z.string(), z.unknown()).nullable().optional(),
 	meeting_event: z.record(z.string(), z.unknown()).nullable().optional(),
+	// Same free-form-object reasoning as `deal` above: the provider
+	// returns open-ended scorecard/feedback payloads, so each entry is a
+	// string-keyed record of unknown values rather than `any`.
 	feedbacks: z.array(z.record(z.string(), z.unknown())).optional(),
 	scorecards: z.array(z.record(z.string(), z.unknown())).optional(),
+	// Free-form key/value pairs sent at creation for custom integrations
+	// (docs: additionalProperties string | number | boolean | null).
+	custom_fields: z
+		.record(
+			z.string(),
+			z.union([z.string(), z.number(), z.boolean(), z.null()]),
+		)
+		.nullable()
+		.optional(),
+	// Deprecated aliases for `customers[].email` / `customers[].phone_number`,
+	// kept for backward compatibility per list-calls.md. Optional so both
+	// old and new payloads parse.
+	customer_email_addresses: z.array(z.string()).optional(),
+	customer_phone_numbers: z.array(z.string()).optional(),
 });
 
 const CallsListInputSchema = PaginationInputSchema.extend({
@@ -362,6 +432,8 @@ const CallsGetResponseSchema = z.object({
 });
 export type CallsGetResponse = z.infer<typeof CallsGetResponseSchema>;
 
+// Verified against request-a-presigned-url.md: 9 video + 20 audio = 29
+// extensions, matching the docs list exactly.
 const PRESIGNED_URL_EXTENSIONS = [
 	'.mp4',
 	'.mkv',
@@ -395,6 +467,9 @@ const PRESIGNED_URL_EXTENSIONS = [
 ] as const;
 
 const CallsRequestPresignedUrlInputSchema = z.object({
+	// Docs list `extension` as required with default ".mp4". Optional here
+	// for DX; the endpoint always sends an explicit value
+	// (`parsed.extension ?? '.mp4'`), so the wire request matches docs.
 	extension: z.enum(PRESIGNED_URL_EXTENSIONS).optional(),
 });
 export type CallsRequestPresignedUrlInput = z.infer<

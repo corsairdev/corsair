@@ -121,12 +121,17 @@ describe('makeLeexiRequest', () => {
 	it('wraps ApiError rejections preserving status and retry-after', async () => {
 		mockRequest.mockRejectedValueOnce(apiError(429, 'Too Many Requests', 30));
 
+		// `caught: unknown`: the rejection value is untyped by definition —
+		// `unknown` forces the `toBeInstanceOf` narrowing below instead of
+		// assuming the error shape.
 		const error = await makeLeexiRequest('calls', {
 			keyId: 'k',
 			keySecret: 's',
 		}).catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(LeexiAPIError);
+		// `as`: narrows the `unknown` rejection to the proven class for
+		// field assertions. Safe — guarded by `toBeInstanceOf` above.
 		expect((error as LeexiAPIError).status).toBe(429);
 		expect((error as LeexiAPIError).retryAfter).toBe(30);
 	});

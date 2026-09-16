@@ -28,6 +28,10 @@ function createMockContext(
 	keyId = 'test-key-id',
 	keySecret: string | null = 'test-key-secret',
 ): LeexiContext {
+	// Test-only mock: only `key`, `options`, and `keys.get_key_secret` are
+	// read by `resolveLeexiCredentials`. The full context carries many more
+	// fields (tenantId, db, hooks, …) this test never touches, so the object
+	// is deliberately partial. No real credentials — dummy values only.
 	return {
 		key: keyId,
 		options: {},
@@ -213,6 +217,9 @@ describe('Leexi Meeting Events endpoints', () => {
 
 	it('rejects create input missing required fields before calling the API', async () => {
 		const ctx = createMockContext();
+		// `as never`: intentionally invalid input to prove zod rejects it
+		// before any network call. Type-safe negative test, not a cast of
+		// real data.
 		await expect(
 			MeetingEvents.create(ctx, { organizer: 'not-an-email' } as never),
 		).rejects.toThrow();
@@ -318,6 +325,8 @@ describe('Leexi Calls endpoints', () => {
 
 	it('rejects an unsupported file extension before calling the API', async () => {
 		const ctx = createMockContext();
+		// `as never`: intentionally invalid enum value to prove the zod
+		// enum rejects it before any network call.
 		await expect(
 			Calls.requestPresignedUrl(ctx, { extension: '.exe' as never }),
 		).rejects.toThrow();
@@ -386,6 +395,8 @@ describe('Leexi Basic auth credentials', () => {
 
 		const expectedHeader = `Basic ${Buffer.from('key-id-abc:key-secret-xyz').toString('base64')}`;
 		const { config } = lastRequestOptions();
+		// `as`: narrows the open `HEADERS` record type for the assertion.
+		// Safe — the client always sets `Authorization` (see client.ts).
 		const headers = config.HEADERS as Record<string, string>;
 		expect(headers.Authorization).toBe(expectedHeader);
 	});

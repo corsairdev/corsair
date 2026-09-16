@@ -22,6 +22,8 @@ export const list: LeexiEndpoints['meetingEventsList'] = async (ctx, input) => {
 	const parsed = LeexiEndpointInputSchemas.meetingEventsList.parse(input);
 	const credentials = await resolveLeexiCredentials(ctx);
 
+	// `unknown`: unvalidated wire JSON — the output schema below is the
+	// only thing allowed to shape it into a typed response.
 	const raw = await makeLeexiRequest<unknown>('meeting_events', credentials, {
 		method: 'GET',
 		query: parsed,
@@ -41,6 +43,8 @@ export const get: LeexiEndpoints['meetingEventsGet'] = async (ctx, input) => {
 	const parsed = LeexiEndpointInputSchemas.meetingEventsGet.parse(input);
 	const credentials = await resolveLeexiCredentials(ctx);
 
+	// `unknown`: unvalidated wire JSON — the output schema below is the
+	// only thing allowed to shape it into a typed response.
 	const raw = await makeLeexiRequest<unknown>(
 		`meeting_events/${parsed.uuid}`,
 		credentials,
@@ -64,6 +68,8 @@ export const create: LeexiEndpoints['meetingEventsCreate'] = async (
 	const parsed = LeexiEndpointInputSchemas.meetingEventsCreate.parse(input);
 	const credentials = await resolveLeexiCredentials(ctx);
 
+	// `unknown`: unvalidated wire JSON — the output schema below is the
+	// only thing allowed to shape it into a typed response.
 	const raw = await makeLeexiRequest<unknown>('meeting_events', credentials, {
 		method: 'POST',
 		body: parsed,
@@ -90,6 +96,8 @@ export const deleteMeetingEvent: LeexiEndpoints['meetingEventsDelete'] = async (
 	const parsed = LeexiEndpointInputSchemas.meetingEventsDelete.parse(input);
 	const credentials = await resolveLeexiCredentials(ctx);
 
+	// `unknown`: unvalidated wire JSON — the output schema below is the
+	// only thing allowed to shape it into a typed response.
 	const raw = await makeLeexiRequest<unknown>(
 		`meeting_events/${parsed.uuid}`,
 		credentials,

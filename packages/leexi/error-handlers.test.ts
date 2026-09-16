@@ -2,6 +2,10 @@ import { ApiError } from 'corsair/http';
 import { LeexiAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
+// Test-only stub: a real `ApiError` needs transport internals, so the
+// tests swap the prototype onto a plain object carrying exactly the fields
+// the matchers read (`status`, `statusText`, `retryAfter`). The `as`
+// narrows that stub to the class type; production code never does this.
 function apiError429(retryAfter = 12): ApiError {
 	return Object.setPrototypeOf(
 		{ status: 429, statusText: 'Too Many Requests', retryAfter },
@@ -43,6 +47,9 @@ describe('Leexi error handlers', () => {
 	});
 
 	it('routes 401 and 403 auth failures to zero retries', async () => {
+		// Same prototype-swap stub as `apiError429` above: only `status`
+		// is read by the AUTH_ERROR matcher, so a full response object
+		// would add nothing. Test-only narrowing.
 		const unauthorized = new LeexiAPIError('Unauthorized', {
 			cause: Object.setPrototypeOf(
 				{ status: 401 },
@@ -63,6 +70,7 @@ describe('Leexi error handlers', () => {
 	});
 
 	it('routes 402 payment-required errors to zero retries', async () => {
+		// Same prototype-swap stub rationale as above; only `status` is read.
 		const paymentRequired = new LeexiAPIError('Payment Required', {
 			cause: Object.setPrototypeOf(
 				{ status: 402 },
