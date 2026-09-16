@@ -1,0 +1,59 @@
+name: Publish CorsairCloud (Swift) to the mirror repo
+
+# clients/swift is a root-valid SwiftPM package, but SPM can only resolve a
+# package whose Package.swift sits at the repo root. This copies clients/swift
+# verbatim into corsairdev/corsair-swift and tags it, so consumers can pin
+# `.package(url: ".../corsair-swift", from: "X.Y.Z")`.
+#
+# Trigger: push a tag `corsair-swift-vX.Y.Z` on this repo.
+# Needs secret SWIFT_MIRROR_TOKEN: a PAT with contents:write on corsair-swift.
+
+on:
+  push:
+    tags:
+      - 'corsair-swift-v*'
+
+permissions:
+  contents: read
+
+jobs:
+  mirror:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout monorepo
+        uses: actions/checkout@v4
+
+      - name: Derive version
+        id: version
+        run: echo "value=${GITHUB_REF_NAME#corsair-swift-v}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout mirror
+        uses: actions/checkout@v4
+        with:
+          repository: corsairdev/corsair-swift
+          token: ${{ secrets.SWIFT_MIRROR_TOKEN }}
+          path: mirror
+
+      - name: Sync clients/swift into the mirror
+        run: |
+          rsync -a --delete \
+            --exclude '.git' --exclude '.build' \
+            clients/swift/ mirror/
+
+      - name: Commit and tag
+        working-directory: mirror
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          git config user.name 'corsair-bot'
+          git config user.email 'bot@corsair.dev'
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to publish for $VERSION"
+          else
+            git commit -m "release: $VERSION (synced from corsair@$GITHUB_SHA)"
+            git push origin HEAD:main
+          fi
+          git tag "$VERSION"
+          git push origin "$VERSION"
