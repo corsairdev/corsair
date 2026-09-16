@@ -81,6 +81,26 @@ struct CorsairCloudTests {
 		#expect(out == .object(["ok": .bool(true)]))
 	}
 
+	@Test func trailingSlashInBaseUrlDoesNotDoubleSlashPath() async throws {
+		var seenURL: URL?
+		let config = URLSessionConfiguration.ephemeral
+		config.protocolClasses = [MockURLProtocol.self]
+		let client = CorsairCloud(
+			apiKey: "ck_cloud_x",
+			url: URL(string: "https://vm.corsair.cloud/env/api/corsair/")!,
+			session: URLSession(configuration: config))
+		MockURLProtocol.handler = { req in
+			seenURL = req.url
+			let body = #"{"data":{}}"#.data(using: .utf8)!
+			return (HTTPURLResponse(url: req.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!, body)
+		}
+		_ = try await client.tenant("acme").call("notion", "pages.searchPage")
+
+		#expect(
+			seenURL?.absoluteString
+				== "https://vm.corsair.cloud/env/api/corsair/acme/notion/call/pages.searchPage")
+	}
+
 	@Test func connectionStatusParsesPluginMap() async throws {
 		MockURLProtocol.handler = { req in
 			#expect(req.url!.absoluteString.contains("connection-status?tenantId=acme"))

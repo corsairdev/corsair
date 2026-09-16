@@ -103,7 +103,10 @@ public struct CorsairCloud: Sendable {
 
 	public init(apiKey: String, url: URL, session: URLSession = .shared) {
 		self.apiKey = apiKey
-		baseURL = url
+		// Strip a trailing slash so a console-copied base URL doesn't produce a
+		// "//" in the request path, matching the Python/Go/TS clients.
+		let s = url.absoluteString
+		baseURL = URL(string: s.hasSuffix("/") ? String(s.dropLast()) : s) ?? url
 		self.session = session
 	}
 

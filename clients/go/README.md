@@ -1,22 +1,26 @@
 # corsaircloud
 
-Go client for a hosted Corsair Cloud project.
+Go client for a hosted [Corsair Cloud](https://docs.corsair.dev/cloud/overview)
+project. Standard library only.
 
 ```go
-import "github.com/corsairdev/corsair/clients/go"
+import corsaircloud "github.com/corsairdev/corsair/clients/go"
 
 corsair := corsaircloud.New("ck_cloud_…", "https://vm.corsair.cloud/env/api/corsair")
 
+// Call any operation on any plugin your runtime has, as user "acme":
 raw, err := corsair.Tenant("acme").Call(ctx, "notion", "pages.searchPage", map[string]any{})
-
 var pages NotionPages
 _ = json.Unmarshal(raw, &pages)
 
+// Connect a user's account, then check status:
+link, _ := corsair.CreateConnectLink(ctx, "notion", "acme", "") // last arg: optional redirectURI
 status, _ := corsair.ConnectionStatus(ctx, "acme")
-link, _ := corsair.CreateConnectLink(ctx, "notion", "acme", "") // redirectURI optional
 ```
 
-Errors from non-2xx responses are `*corsaircloud.CorsairError` (`Code`, `Message`, `Reason`, `ProviderStatus`).
+A non-2xx response comes back as `*corsaircloud.CorsairError` (`Code`, `Message`,
+`Reason`, `ProviderStatus`). Full guide:
+[docs.corsair.dev/clients/go](https://docs.corsair.dev/clients/go).
 
 ## Versioning
 
@@ -34,5 +38,5 @@ Consumers then pin:
 go get github.com/corsairdev/corsair/clients/go@v0.1.0
 ```
 
-`go get ...@latest` resolves to the highest `clients/go/vX.Y.Z` tag; a bare
+`go get ...@latest` resolves to the highest `clients/go/vX.Y.Z` tag. A bare
 `@main` tracks the branch HEAD instead.

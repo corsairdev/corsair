@@ -137,6 +137,24 @@ func TestSendAllowsLoopbackHTTP(t *testing.T) {
 	}
 }
 
+func TestCallNilArgsSendsEmptyObject(t *testing.T) {
+	var gotBody map[string]json.RawMessage
+	c, close := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
+		body, _ := io.ReadAll(r.Body)
+		_ = json.Unmarshal(body, &gotBody)
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"data":{}}`))
+	})
+	defer close()
+
+	if _, err := c.Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", nil); err != nil {
+		t.Fatalf("Call returned error: %v", err)
+	}
+	if string(gotBody["args"]) != "{}" {
+		t.Errorf("args = %s, want {}", gotBody["args"])
+	}
+}
+
 func TestCallEscapesPathSegments(t *testing.T) {
 	var gotRequestURI string
 	c, close := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {

@@ -45,10 +45,6 @@
             ]
           },
           {
-            "group": "Client libraries",
-            "pages": ["clients/swift", "clients/python", "clients/go"]
-          },
-          {
             "group": "Frameworks",
             "pages": [
               {
@@ -71,6 +67,10 @@
                   "frameworks/hono",
                   "frameworks/nestjs"
                 ]
+              },
+              {
+                "group": "Clients",
+                "pages": ["clients/python", "clients/go", "clients/swift"]
               }
             ]
           },

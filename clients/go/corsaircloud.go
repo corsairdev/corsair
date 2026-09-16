@@ -141,6 +141,11 @@ type TenantClient struct {
 
 // Call invokes a plugin op and returns the response's data field.
 func (t *TenantClient) Call(ctx context.Context, plugin, op string, args any) (json.RawMessage, error) {
+	if args == nil {
+		// Send {"args":{}} rather than {"args":null}; the contract types args as
+		// an object, matching the Python/Swift clients' empty-object default.
+		args = map[string]any{}
+	}
 	raw, err := t.client.send(ctx, http.MethodPost, []string{t.tenantID, plugin, "call", op}, nil, map[string]any{"args": args})
 	if err != nil {
 		return nil, err

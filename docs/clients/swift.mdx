@@ -1,61 +1,89 @@
 ---
 title: Swift
-description: Thin Swift client for a hosted Corsair Cloud project.
+description: Call your hosted Corsair Cloud project from Swift, with async/await and typed decoding.
 ---
 
-`CorsairCloud` mirrors the TypeScript `createCorsairCloud`: dynamic calls over
-HTTP, with the plugin set living on the runtime, not in the package.
+`CorsairCloud` is a small Swift client for a hosted [Corsair Cloud](/cloud/overview)
+project. It uses `URLSession` and `async`/`await`. You give it two values, and
+every plugin your runtime has is callable over HTTP.
 
-## Install
+## 1. Install
 
-The package lives in the `corsair` monorepo, under `clients/swift` — not at
-the repository root, so SPM's `.package(url:)` can't resolve it as a remote
-dependency yet (that needs a dedicated mirror repo or a root-level manifest).
-Until then, add it as a local path dependency from within a checkout of
-`corsair`:
+Add it to your `Package.swift`. The package lives under `clients/swift` in the
+`corsair` monorepo. Until a root-level Swift mirror ships, add it as a local path
+dependency from a checkout of `corsair`:
 
 ```swift
 .package(path: "../corsair/clients/swift"),
-// target: .product(name: "CorsairCloud", package: "CorsairCloud")
+// then in your target: .product(name: "CorsairCloud", package: "CorsairCloud")
 ```
 
-## The two values
+## 2. Get your two values
 
-Every project has an **API key** (`ck_cloud_…`) and a **URL**
-(`https://<vm>.corsair.cloud/<env>/api/corsair`), both on the project's
-Overview page.
+From your project's **Overview** page in the dashboard, copy the **API key**
+(`ck_cloud_…`) and the **URL** (`https://<vm>.corsair.cloud/<env>/api/corsair`).
+Keep the key on a server. Do not ship it inside an app you distribute.
 
 ```swift
 import CorsairCloud
 
 let corsair = CorsairCloud(
-	apiKey: "ck_cloud_…",
-	url: URL(string: "https://<vm>.corsair.cloud/<env>/api/corsair")!)
+    apiKey: ProcessInfo.processInfo.environment["CORSAIR_CLOUD_KEY"]!,
+    url: URL(string: ProcessInfo.processInfo.environment["CORSAIR_CLOUD_URL"]!)!)
 ```
 
-## Call a plugin op
+## 3. Make a call
+
+Pick a user (a "tenant"), then call any operation on any plugin your runtime has:
 
 ```swift
-let result = try await corsair.tenant("acme").call("notion", "pages.searchPage", args: ["query": "hi"])
+let result = try await corsair.tenant("acme").call("notion", "pages.searchPage", args: ["query": "roadmap"])
 ```
 
-Decode straight into your own type instead of `JSONValue`:
+`tenant("acme")` runs the call as your user "acme". By default `result` is a
+`JSONValue`. To get a typed result, pass your own `Decodable` and Corsair decodes
+it for you:
 
 ```swift
 struct Page: Decodable { let id: String }
 struct SearchResult: Decodable { let results: [Page] }
 
 let typed = try await corsair.tenant("acme")
-	.call("notion", "pages.searchPage", as: SearchResult.self)
+    .call("notion", "pages.searchPage", as: SearchResult.self)
 ```
 
-## Management
+## 4. Connect a user's account
+
+A tenant can only call Notion after they have connected their Notion account.
+Create a connect link and send the user to it:
 
 ```swift
-let status = try await corsair.manage.connectionStatus(tenantId: "acme")   // ["notion": "connected"]
 let link = try await corsair.manage.createConnectLink(plugin: "notion", tenantId: "acme")
+// open link.connectUrl
+```
+
+After they authorize, check who is connected:
+
+```swift
+let status = try await corsair.manage.connectionStatus(tenantId: "acme")
+// ["notion": "connected"]
+
 try await corsair.manage.disconnect(plugin: "notion", tenantId: "acme")
 ```
 
-Errors throw `CorsairError` (`.code` is the machine code — `not_connected`,
-`provider_error`, …; `.status` is the HTTP status).
+## Handle errors
+
+Any non-2xx response throws `CorsairError`:
+
+```swift
+do {
+    _ = try await corsair.tenant("acme").call("notion", "pages.searchPage", args: [:])
+} catch let error as CorsairError {
+    if error.code == "not_connected" {
+        // send the user through createConnectLink first
+    }
+}
+```
+
+Its fields: `code` (machine reason, branch on this), `status` (HTTP status),
+`message`, and the upstream provider's status when the error came from them.

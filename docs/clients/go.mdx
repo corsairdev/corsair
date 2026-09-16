@@ -1,49 +1,93 @@
 ---
 title: Go
-description: Thin Go client for a hosted Corsair Cloud project.
+description: Call your hosted Corsair Cloud project from Go. Standard library only.
 ---
 
-`corsaircloud` mirrors the TypeScript `createCorsairCloud`: dynamic calls
-over HTTP, with the plugin set living on the runtime, not in the module.
-Stdlib only — no dependencies.
+`corsaircloud` is a small Go client for a hosted [Corsair Cloud](/cloud/overview)
+project. It uses only the standard library. You give it two values, and every
+plugin your runtime has is callable over HTTP.
 
-## Install
+## 1. Install
 
 ```bash
 go get github.com/corsairdev/corsair/clients/go
 ```
 
-Since the module lives in a subdirectory of the `corsair` monorepo, `go get`
-resolves it against subdirectory-scoped tags — see the package README for the
-tag convention.
+The module lives in a subdirectory of the `corsair` monorepo, so `go get`
+resolves it against subdirectory-scoped tags (`clients/go/vX.Y.Z`). To pin an
+exact version:
 
-## The two values
-
-Every project has an **API key** (`ck_cloud_…`) and a **URL**
-(`https://<vm>.corsair.cloud/<env>/api/corsair`), both on the project's
-Overview page.
-
-```go
-import "github.com/corsairdev/corsair/clients/go"
-
-corsair := corsaircloud.New("ck_cloud_…", "https://<vm>.corsair.cloud/<env>/api/corsair")
+```bash
+go get github.com/corsairdev/corsair/clients/go@v0.1.0
 ```
 
-## Call a plugin op
+## 2. Get your two values
+
+From your project's **Overview** page in the dashboard, copy the **API key**
+(`ck_cloud_…`) and the **URL** (`https://<vm>.corsair.cloud/<env>/api/corsair`).
+Keep the key in an environment variable, not in source:
 
 ```go
-raw, err := corsair.Tenant("acme").Call(ctx, "notion", "pages.searchPage", map[string]any{"query": "hi"})
+import (
+    "os"
+    corsaircloud "github.com/corsairdev/corsair/clients/go"
+)
+
+corsair := corsaircloud.New(
+    os.Getenv("CORSAIR_CLOUD_KEY"),
+    os.Getenv("CORSAIR_CLOUD_URL"),
+)
+```
+
+## 3. Make a call
+
+Pick a user (a "tenant"), then call any operation on any plugin your runtime has.
+`Call` returns the raw JSON result, which you unmarshal into your own type:
+
+```go
+raw, err := corsair.Tenant("acme").Call(ctx, "notion", "pages.searchPage", map[string]any{"query": "roadmap"})
+if err != nil {
+    return err
+}
 
 var pages NotionPages
-_ = json.Unmarshal(raw, &pages)
+if err := json.Unmarshal(raw, &pages); err != nil {
+    return err
+}
 ```
 
-## Management
+`Tenant("acme")` runs the call as your user "acme". The arguments map onto one
+request: `POST {url}/acme/notion/call/pages.searchPage` with body
+`{"args": {"query": "roadmap"}}`.
+
+## 4. Connect a user's account
+
+A tenant can only call Notion after they have connected their Notion account.
+Create a connect link and send the user to it:
 
 ```go
-status, _ := corsair.ConnectionStatus(ctx, "acme")
-link, _ := corsair.CreateConnectLink(ctx, "notion", "acme", "") // redirectURI optional
+link, err := corsair.CreateConnectLink(ctx, "notion", "acme", "") // last arg: optional redirectURI
+// redirect the user to link.ConnectURL
 ```
 
-Errors from non-2xx responses are `*corsaircloud.CorsairError`
-(`Code`, `Message`, `Reason`, `ProviderStatus`).
+After they authorize, check who is connected:
+
+```go
+status, err := corsair.ConnectionStatus(ctx, "acme")
+// map[string]string{"notion": "connected"}
+```
+
+## Handle errors
+
+A non-2xx response comes back as `*corsaircloud.CorsairError`:
+
+```go
+raw, err := corsair.Tenant("acme").Call(ctx, "notion", "pages.searchPage", nil)
+var cerr *corsaircloud.CorsairError
+if errors.As(err, &cerr) && cerr.Code == "not_connected" {
+    // send the user through CreateConnectLink first
+}
+```
+
+Its fields: `Code` (machine reason, branch on this), `Message`, `Reason`, and
+`ProviderStatus` (the upstream provider's status, when the error came from them).
