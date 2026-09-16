@@ -368,7 +368,7 @@ const typeformEndpointMeta = {
 	},
 	'forms.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a form [DESTRUCTIVE]',
+		description: 'Permanently delete a form',
 	},
 	'forms.getMessages': {
 		riskLevel: 'read',
@@ -384,7 +384,7 @@ const typeformEndpointMeta = {
 	},
 	'responses.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete specific responses from a form [DESTRUCTIVE]',
+		description: 'Delete specific responses from a form',
 	},
 	'responses.getAllFiles': {
 		riskLevel: 'read',
@@ -406,7 +406,7 @@ const typeformEndpointMeta = {
 	},
 	'workspaces.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a workspace [DESTRUCTIVE]',
+		description: 'Permanently delete a workspace',
 	},
 	'images.list': {
 		riskLevel: 'read',
@@ -415,7 +415,7 @@ const typeformEndpointMeta = {
 	'images.create': { riskLevel: 'write', description: 'Upload a new image' },
 	'images.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete an image [DESTRUCTIVE]',
+		description: 'Permanently delete an image',
 	},
 	'images.getBySize': {
 		riskLevel: 'read',
@@ -442,7 +442,7 @@ const typeformEndpointMeta = {
 	},
 	'themes.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a theme [DESTRUCTIVE]',
+		description: 'Permanently delete a theme',
 	},
 	'webhooksConfig.list': {
 		riskLevel: 'read',
@@ -458,7 +458,7 @@ const typeformEndpointMeta = {
 	},
 	'webhooksConfig.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a webhook configuration [DESTRUCTIVE]',
+		description: 'Delete a webhook configuration',
 	},
 	'videos.upload': {
 		riskLevel: 'write',

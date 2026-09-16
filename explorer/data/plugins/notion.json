@@ -1,0 +1,1542 @@
+{
+  "id": "notion",
+  "displayName": "Notion",
+  "description": "All-in-one workspace for notes, databases, wikis, tasks, and team documentation.",
+  "npmPackageName": "@corsair-dev/notion",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 14,
+    "webhooks": 3,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "workspace_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "workspace_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "notion.api.blocks.appendBlock",
+      "shortPath": "blocks.appendBlock",
+      "description": "Append new blocks to a block or page",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "block_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "children",
+            "optional": false,
+            "type": "{ object: block, id: string, type: string, created_time?: string, created_by?: { object: user, id: string }, last_edited_time?: string, last_edited_by?: { object: user, id: string }, archived?: boolean, has_children?: boolean, parent?: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ object: block, id: string, type: string, created_time?: string, created_by?: { object: user, id: string }, last_edited_time?: string, last_edited_by?: { object: user, id: string }, archived?: boolean, has_children?: boolean, parent?: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string } }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_or_database",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "notion.api.blocks.getManyChildBlocks",
+      "shortPath": "blocks.getManyChildBlocks",
+      "description": "Retrieve child blocks of a block or page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "block_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ object: block, id: string, type: string, created_time?: string, created_by?: { object: user, id: string }, last_edited_time?: string, last_edited_by?: { object: user, id: string }, archived?: boolean, has_children?: boolean, parent?: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string } }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_or_database",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "notion.api.databasePages.createDatabasePage",
+      "shortPath": "databasePages.createDatabasePage",
+      "description": "Create a new page in a database",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "page"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ object: user, id: string }"
+          },
+          {
+            "key": "last_edited_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_edited_by",
+            "optional": true,
+            "type": "{ object: user, id: string }"
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "{ type: string, external?: { url: string }, file?: { url: string } }"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "{ type: string, external?: { url: string }, emoji?: string }"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "{ type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }"
+          },
+          {
+            "key": "archived",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "in_trash",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "public_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "notion.api.databasePages.getDatabasePage",
+      "shortPath": "databasePages.getDatabasePage",
+      "description": "Get a page from a database",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "page"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ object: user, id: string }"
+          },
+          {
+            "key": "last_edited_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_edited_by",
+            "optional": true,
+            "type": "{ object: user, id: string }"
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "{ type: string, external?: { url: string }, file?: { url: string } }"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "{ type: string, external?: { url: string }, emoji?: string }"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "{ type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }"
+          },
+          {
+            "key": "archived",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "in_trash",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "public_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "notion.api.databasePages.getManyDatabasePages",
+      "shortPath": "databasePages.getManyDatabasePages",
+      "description": "List and filter pages in a database",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "sorts",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "start_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ object: page, id: string, created_time: string, created_by?: { object: user, id: string }, last_edited_time: string, last_edited_by?: { object: user, id: string }, cover?: { type: string, external?: { url: string }, file?: { url: string } } | null, icon?: { type: string, external?: { url: string }, emoji?: string } | null, parent: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }, archived: boolean, in_trash?: boolean, is_locked?: boolean, properties: {}, url: string, public_url?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_or_database",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "notion.api.databasePages.updateDatabasePage",
+      "shortPath": "databasePages.updateDatabasePage",
+      "description": "Update properties of a database page",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "page"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ object: user, id: string }"
+          },
+          {
+            "key": "last_edited_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_edited_by",
+            "optional": true,
+            "type": "{ object: user, id: string }"
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "{ type: string, external?: { url: string }, file?: { url: string } }"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "{ type: string, external?: { url: string }, emoji?: string }"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "{ type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }"
+          },
+          {
+            "key": "archived",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "in_trash",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "public_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "notion.api.databases.getDatabase",
+      "shortPath": "databases.getDatabase",
+      "description": "Get info about a database",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "database"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "{ type: string, external?: { url: string } }"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "{ type: string, external?: { url: string }, emoji?: string }"
+          },
+          {
+            "key": "created_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ object: user, id: string }"
+          },
+          {
+            "key": "last_edited_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_edited_by",
+            "optional": true,
+            "type": "{ object: user, id: string }"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "{ type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[]"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "{ type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[]"
+          },
+          {
+            "key": "is_inline",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "{ type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "public_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "in_trash",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "notion.api.databases.getManyDatabases",
+      "shortPath": "databases.getManyDatabases",
+      "description": "List databases accessible to the integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ object: database, id: string, cover?: { type: string, external?: { url: string } } | null, icon?: { type: string, external?: { url: string }, emoji?: string } | null, created_time: string, created_by?: { object: user, id: string }, last_edited_time: string, last_edited_by?: { object: user, id: string }, title: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], description: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], is_inline: boolean, properties: {}, parent: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }, url: string, public_url?: string | null, archived: boolean, in_trash?: boolean }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_or_database",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "notion.api.databases.searchDatabase",
+      "shortPath": "databases.searchDatabase",
+      "description": "Search and filter databases",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "start_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ object: database, id: string, cover?: { type: string, external?: { url: string } } | null, icon?: { type: string, external?: { url: string }, emoji?: string } | null, created_time: string, created_by?: { object: user, id: string }, last_edited_time: string, last_edited_by?: { object: user, id: string }, title: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], description: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], is_inline: boolean, properties: {}, parent: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }, url: string, public_url?: string | null, archived: boolean, in_trash?: boolean }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_or_database",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "notion.api.pages.archivePage",
+      "shortPath": "pages.archivePage",
+      "description": "Archive (trash) a page",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "page"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ object: user, id: string }"
+          },
+          {
+            "key": "last_edited_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_edited_by",
+            "optional": true,
+            "type": "{ object: user, id: string }"
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "{ type: string, external?: { url: string }, file?: { url: string } }"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "{ type: string, external?: { url: string }, emoji?: string }"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "{ type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }"
+          },
+          {
+            "key": "archived",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "in_trash",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "public_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "notion.api.pages.createPage",
+      "shortPath": "pages.createPage",
+      "description": "Create a new page",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "{ type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: workspace, workspace: boolean }"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "children",
+            "optional": true,
+            "type": "{ object: block, id: string, type: string, created_time?: string, created_by?: { object: user, id: string }, last_edited_time?: string, last_edited_by?: { object: user, id: string }, archived?: boolean, has_children?: boolean, parent?: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "page"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ object: user, id: string }"
+          },
+          {
+            "key": "last_edited_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_edited_by",
+            "optional": true,
+            "type": "{ object: user, id: string }"
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "{ type: string, external?: { url: string }, file?: { url: string } }"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "{ type: string, external?: { url: string }, emoji?: string }"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "{ type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }"
+          },
+          {
+            "key": "archived",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "in_trash",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "public_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "notion.api.pages.searchPage",
+      "shortPath": "pages.searchPage",
+      "description": "Search pages and databases by title",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "start_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "({ object: page, id: string, created_time: string, created_by?: { object: user, id: string }, last_edited_time: string, last_edited_by?: { object: user, id: string }, cover?: { type: string, external?: { url: string }, file?: { url: string } } | null, icon?: { type: string, external?: { url: string }, emoji?: string } | null, parent: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }, archived: boolean, in_trash?: boolean, is_locked?: boolean, properties: {}, url: string, public_url?: string | null } | { object: database, id: string, cover?: { type: string, external?: { url: string } } | null, icon?: { type: string, external?: { url: string }, emoji?: string } | null, created_time: string, created_by?: { object: user, id: string }, last_edited_time: string, last_edited_by?: { object: user, id: string }, title: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], description: { type: string, text?: { content: string, link?: { url: string } | null }, annotations?: { bold?: boolean, italic?: boolean, strikethrough?: boolean, underline?: boolean, code?: boolean, color?: string }, plain_text?: string, href?: string | null }[], is_inline: boolean, properties: {}, parent: { type: workspace, workspace: boolean } | { type: page_id, page_id: string } | { type: database_id, database_id: string } | { type: block_id, block_id: string }, url: string, public_url?: string | null, archived: boolean, in_trash?: boolean })[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_or_database",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "notion.api.users.getManyUsers",
+      "shortPath": "users.getManyUsers",
+      "description": "List all users in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ object: user, id: string, type: person | bot, name?: string | null, avatar_url?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_or_database",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "notion.api.users.getUser",
+      "shortPath": "users.getUser",
+      "description": "Get info about a user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "user"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "person | bot"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "notion.webhooks.databasePages.pageCreated",
+      "shortPath": "databasePages.pageCreated",
+      "description": "A page was created in a database",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscription_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integration_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "page.created"
+          },
+          {
+            "key": "authors",
+            "optional": false,
+            "type": "{ id: string, object: string, type?: string, name?: string, avatar_url?: string }[]"
+          },
+          {
+            "key": "accessible_by",
+            "optional": false,
+            "type": "{ id: string, object: string, type?: string, name?: string, avatar_url?: string }[]"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "{ id: string, object: string }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ page_id: string, database_id: string }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, timestamp: string, workspace_id: string, subscription_id: string, integration_id: string, type: page.created, authors: { id: string, object: string, type?: string, name?: string, avatar_url?: string }[], accessible_by: { id: string, object: string, type?: string, name?: string, avatar_url?: string }[], entity: { id: string, object: string }, data: { page_id: string, database_id: string } }",
+      "usageExample": "notion({\n    webhookHooks: {\n        databasePages: {\n            pageCreated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "notion.webhooks.databasePages.pageUpdated",
+      "shortPath": "databasePages.pageUpdated",
+      "description": "A page was updated in a database",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscription_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integration_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "page.updated"
+          },
+          {
+            "key": "authors",
+            "optional": false,
+            "type": "{ id: string, object: string, type?: string, name?: string, avatar_url?: string }[]"
+          },
+          {
+            "key": "accessible_by",
+            "optional": false,
+            "type": "{ id: string, object: string, type?: string, name?: string, avatar_url?: string }[]"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "{ id: string, object: string }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ page_id: string, database_id: string }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, timestamp: string, workspace_id: string, subscription_id: string, integration_id: string, type: page.updated, authors: { id: string, object: string, type?: string, name?: string, avatar_url?: string }[], accessible_by: { id: string, object: string, type?: string, name?: string, avatar_url?: string }[], entity: { id: string, object: string }, data: { page_id: string, database_id: string } }",
+      "usageExample": "notion({\n    webhookHooks: {\n        databasePages: {\n            pageUpdated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "notion.webhooks.verification",
+      "shortPath": "verification",
+      "description": "Notion URL verification — respond to confirm the webhook endpoint",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "verification_token",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ type: url_verification, verification_token: string }",
+      "usageExample": "notion({\n    webhookHooks: {\n        verification: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "notion.db.blocks.search",
+      "entityName": "blocks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "object",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_edited_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "has_children",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "parent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "notion.db.databases.search",
+      "entityName": "databases",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "object",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_edited_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_inline",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "properties_json",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "notion.db.pages.search",
+      "entityName": "pages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "object",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_edited_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_locked",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "public_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "database_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "properties_json",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "notion.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "object",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}
