@@ -1,9 +1,13 @@
 ```ts app/api/corsair/[...path]/route.ts
 import { createCloudProxy } from 'corsair/cloud-proxy';
+import { getSession } from '@/lib/auth';
 
 const proxy = createCloudProxy({
     apiKey: process.env.CORSAIR_CLOUD_KEY!,
     url: process.env.CORSAIR_CLOUD_URL!,
+    // Runs before every forwarded request — the caller's own credentials
+    // never reach this handler, so this is where you check who's asking.
+    authorize: async (req) => Boolean(await getSession(req)),
 });
 
 export const GET = proxy;
@@ -12,3 +16,7 @@ export const POST = proxy;
 
 Pair it with `<CorsairProvider baseURL="/api/corsair">` in the browser — the
 provider only ever calls this same-origin route and never sees the key.
+
+`authorize` is required in practice: without it, anyone who can reach this
+route can invoke any tenant/plugin/operation the project key is allowed to
+call.
