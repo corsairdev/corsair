@@ -136,6 +136,67 @@ await corsair.instagram.api.comments.get({});
 
 ---
 
+### getReplies
+
+`comments.getReplies`
+
+get comment replies.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.comments.getReplies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string` | Yes | The Instagram Comment ID. |
+| `fields` | `string` | No | Optional fields to query. |
+| `after` | `string` | No | Cursor for the next page of results. |
+| `before` | `string` | No | Cursor for the previous page of results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | The replies. |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string,
+  timestamp?: string,
+  username?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### list
 
 `comments.list`
@@ -154,6 +215,8 @@ await corsair.instagram.api.comments.list({});
 |------|------|----------|-------------|
 | `media_id` | `string` | Yes | The Instagram Media ID of the post, Reel, video, or carousel whose comments should be retrieved. |
 | `q` | `string` | No | Optional search query used to filter comments by text, username, or other supported criteria. |
+| `after` | `string` | No | Cursor for the next page of results. |
+| `before` | `string` | No | Cursor for the previous page of results. |
 
 
 
@@ -325,6 +388,8 @@ await corsair.instagram.api.conversations.get({});
 | `conversation_id` | `string` | Yes | The Instagram conversation or message thread ID whose messages should be retrieved. |
 | `page_id` | `string` | Yes | The Facebook Page ID connected to the Instagram professional account that owns the conversation. |
 | `q` | `string` | No | Optional search query used to filter messages within the conversation. |
+| `after` | `string` | No | Cursor for the next page of results. |
+| `before` | `string` | No | Cursor for the previous page of results. |
 
 
 
@@ -367,6 +432,41 @@ await corsair.instagram.api.conversations.get({});
 
 ---
 
+### getConversation
+
+`conversations.getConversation`
+
+get conversation details.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.conversations.getConversation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | The Facebook Page ID. |
+| `conversation_id` | `string` | Yes | The DM conversation ID. |
+| `fields` | `string` | No | Optional fields to query. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The DM conversation ID. |
+| `updated_time` | `string` | No | Last updated timestamp. |
+| `message_count` | `number` | No | Total message count. |
+| `unread_count` | `number` | No | Unread message count. |
+
+
+
+---
+
 ### list
 
 `conversations.list`
@@ -385,6 +485,8 @@ await corsair.instagram.api.conversations.list({});
 |------|------|----------|-------------|
 | `page_id` | `string` | Yes | The Facebook Page ID connected to the Instagram professional account whose conversations should be retrieved. |
 | `q` | `string` | No | Optional search query used to filter conversations by participant, message content, or other supported criteria. |
+| `after` | `string` | No | Cursor for the next page of results. |
+| `before` | `string` | No | Cursor for the previous page of results. |
 
 
 
@@ -506,6 +608,66 @@ await corsair.instagram.api.image.story({});
 
 ## Media
 
+### children
+
+`media.children`
+
+get children media.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.media.children({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media_id` | `string` | Yes | The Instagram Media ID (parent carousel/album). |
+| `fields` | `string` | No | Optional fields to query. |
+| `after` | `string` | No | Cursor for the next page of results. |
+| `before` | `string` | No | Cursor for the previous page of results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Media children items. |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  media_type?: IMAGE | VIDEO,
+  media_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### get
 
 `media.get`
@@ -533,15 +695,15 @@ await corsair.instagram.api.media.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | The unique Instagram Media ID. |
 | `caption` | `string` | No | The caption text associated with the media. |
-| `media_type` | `IMAGE \| VIDEO \| CAROUSEL_ALBUM` | Yes | The type of Instagram media, such as IMAGE, VIDEO, REELS, STORY, or CAROUSEL_ALBUM. |
+| `media_type` | `IMAGE \| VIDEO \| CAROUSEL_ALBUM` | No | The type of Instagram media, such as IMAGE, VIDEO, REELS, STORY, or CAROUSEL_ALBUM. |
 | `media_url` | `string` | No | The URL of the media asset. May be null or unavailable for certain media types. |
 | `thumbnail_url` | `string` | No | The URL of the media thumbnail image, typically available for videos and reels. |
-| `permalink` | `string` | Yes | The permanent public URL to view the media on Instagram. |
-| `timestamp` | `string` | Yes | The ISO 8601 timestamp indicating when the media was created. |
-| `username` | `string` | Yes | The Instagram username that published the media. |
+| `permalink` | `string` | No | The permanent public URL to view the media on Instagram. |
+| `timestamp` | `string` | No | The ISO 8601 timestamp indicating when the media was created. |
+| `username` | `string` | No | The Instagram username that published the media. |
 | `like_count` | `number` | Yes | The total number of likes received by the media. |
 | `comments_count` | `number` | Yes | The total number of comments on the media. |
-| `is_comment_enabled` | `boolean` | Yes | Indicates whether commenting is enabled for the media. |
+| `is_comment_enabled` | `boolean` | No | Indicates whether commenting is enabled for the media. |
 | `children` | `object` | No | Carousel child media items. Present only for carousel posts. |
 | `createdAt` | `Date` | No | The date and time when this record was created in the local system. |
 | `updatedAt` | `Date` | No | The date and time when this record was last updated in the local system. |
@@ -598,6 +760,16 @@ await corsair.instagram.api.media.insights({});
 
 ```ts
 {
+  name: string,
+  period?: string,
+  title?: string,
+  description?: string,
+  id?: string,
+  values?: {
+    value: number | string | {
+    },
+    end_time?: string
+  }[]
 }[]
 ```
 </Accordion>
@@ -625,6 +797,8 @@ await corsair.instagram.api.media.list({});
 |------|------|----------|-------------|
 | `ig_id` | `string` | Yes | The Instagram User ID (IG User ID) of the Instagram professional account or createro account whose media should be retrieved. |
 | `q` | `string` | No | Optional search keyword or filter to narrow the media results. |
+| `after` | `string` | No | Cursor for the next page of results. |
+| `before` | `string` | No | Cursor for the previous page of results. |
 
 
 
@@ -642,15 +816,15 @@ await corsair.instagram.api.media.list({});
 {
   id: string,
   caption?: string,
-  media_type: IMAGE | VIDEO | CAROUSEL_ALBUM,
+  media_type?: IMAGE | VIDEO | CAROUSEL_ALBUM,
   media_url?: string | null,
   thumbnail_url?: string | null,
-  permalink: string,
-  timestamp: string,
-  username: string,
+  permalink?: string,
+  timestamp?: string,
+  username?: string,
   like_count: number,
   comments_count: number,
-  is_comment_enabled: boolean,
+  is_comment_enabled?: boolean,
   children?: {
     data: {
       id: string,
@@ -707,7 +881,7 @@ await corsair.instagram.api.media.status({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | The Instagram media container ID whose status was requested. |
-| `status_code` | `IN_PROGRESS \| FINISHED \| ERROR \| EXPIRED` | Yes | The current processing status of the media container. IN_PROGRESS indicates processing is ongoing, FINISHED indicates the media is ready to publish, ERROR indicates processing failed, and EXPIRED indicates the container is no longer valid. |
+| `status_code` | `IN_PROGRESS \| FINISHED \| ERROR \| EXPIRED \| PUBLISHED` | Yes | The current processing status of the media container. IN_PROGRESS indicates processing is ongoing, FINISHED indicates the media is ready to publish, PUBLISHED indicates it was already published, ERROR indicates processing failed, and EXPIRED indicates the container is no longer valid. |
 
 
 
@@ -781,6 +955,37 @@ await corsair.instagram.api.messages.get({});
 
 ---
 
+### markSeen
+
+`messages.markSeen`
+
+mark messages as seen.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.messages.markSeen({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | The Facebook Page ID. |
+| `recipient_id` | `string` | Yes | The recipient user ID to mark messages as seen. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Whether action succeeded. |
+
+
+
+---
+
 ### send
 
 `messages.send`
@@ -843,7 +1048,232 @@ await corsair.instagram.api.messages.send({});
 
 ---
 
+### sendImage
+
+`messages.sendImage`
+
+send image via DM.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.messages.sendImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | The Facebook Page ID. |
+| `recipient_id` | `string` | Yes | The recipient ID. |
+| `image_url` | `string` | Yes | The URL of the image to send via DM. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `string` | Yes | The message ID. |
+
+
+
+---
+
+## Messenger
+
+### deleteProfile
+
+`messenger.deleteProfile`
+
+delete messenger profile.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.messenger.deleteProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | The Facebook Page ID. |
+| `fields` | `persistent_menu \| ice_breakers[]` | No | The Instagram Messenger Profile fields to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | The API status response, typically "success". |
+
+
+
+---
+
+### getProfile
+
+`messenger.getProfile`
+
+get messenger profile.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.messenger.getProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | The Facebook Page ID. |
+| `fields` | `persistent_menu \| ice_breakers[]` | No | Instagram Messenger Profile fields to query. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Messenger Profile options. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  persistent_menu?: {
+    locale: string,
+    composer_input_disabled?: boolean,
+    call_to_actions?: {
+      type: string,
+      title: string,
+      url?: string,
+      payload?: string
+    }[]
+  }[],
+  ice_breakers?: {
+    question: string,
+    payload: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateProfile
+
+`messenger.updateProfile`
+
+update messenger profile.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.messenger.updateProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_id` | `string` | Yes | The Facebook Page ID. |
+| `persistent_menu` | `object[]` | No | Persistent menu configuration. |
+| `ice_breakers` | `object[]` | No | Ice breaker configuration. |
+
+<AccordionGroup>
+<Accordion title="persistent_menu full type">
+
+```ts
+{
+  locale: string,
+  composer_input_disabled?: boolean,
+  call_to_actions?: {
+    type: string,
+    title: string,
+    url?: string,
+    payload?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="ice_breakers full type">
+
+```ts
+{
+  question: string,
+  payload: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `string` | Yes | The API response result, typically "success". |
+
+
+
+---
+
 ## Profile
+
+### contentPublishingLimit
+
+`profile.contentPublishingLimit`
+
+get user content publishing limit.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.profile.contentPublishingLimit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ig_id` | `string` | Yes | The Instagram User ID (Instagram Business Account ID). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  quota_usage?: number,
+  config?: {
+    quota_total: number,
+    quota_duration: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### get
 
@@ -925,7 +1355,279 @@ await corsair.instagram.api.profile.insights({});
 
 ```ts
 {
+  name: string,
+  period?: string,
+  title?: string,
+  description?: string,
+  id?: string,
+  values?: {
+    value: number | string | {
+    },
+    end_time?: string
+  }[]
 }[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### liveMedia
+
+`profile.liveMedia`
+
+get user live media.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.profile.liveMedia({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ig_id` | `string` | Yes | The Instagram User ID. |
+| `fields` | `string` | No | Optional fields to query. |
+| `after` | `string` | No | Cursor for the next page of results. |
+| `before` | `string` | No | Cursor for the previous page of results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Live media items. |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  caption?: string,
+  media_type?: IMAGE | VIDEO | CAROUSEL_ALBUM,
+  media_url?: string | null,
+  thumbnail_url?: string | null,
+  permalink?: string,
+  timestamp?: string,
+  username?: string,
+  like_count: number,
+  comments_count: number,
+  is_comment_enabled?: boolean,
+  children?: {
+    data: {
+      id: string,
+      media_type: IMAGE | VIDEO,
+      media_url: string
+    }[]
+  },
+  createdAt?: Date | null,
+  updatedAt?: Date | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replyMentions
+
+`profile.replyMentions`
+
+reply to mentions.
+
+**Risk:** `write`
+
+```ts
+await corsair.instagram.api.profile.replyMentions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mention_id` | `string` | Yes | The mention ID (media or comment ID). |
+| `message` | `string` | Yes | The text of the reply. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The created comment reply ID. |
+
+
+
+---
+
+### stories
+
+`profile.stories`
+
+get user stories.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.profile.stories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ig_id` | `string` | Yes | The Instagram User ID. |
+| `fields` | `string` | No | Optional fields to query. |
+| `after` | `string` | No | Cursor for the next page of results. |
+| `before` | `string` | No | Cursor for the previous page of results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Stories list. |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  caption?: string,
+  media_type?: IMAGE | VIDEO | CAROUSEL_ALBUM,
+  media_url?: string | null,
+  thumbnail_url?: string | null,
+  permalink?: string,
+  timestamp?: string,
+  username?: string,
+  like_count: number,
+  comments_count: number,
+  is_comment_enabled?: boolean,
+  children?: {
+    data: {
+      id: string,
+      media_type: IMAGE | VIDEO,
+      media_url: string
+    }[]
+  },
+  createdAt?: Date | null,
+  updatedAt?: Date | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### tags
+
+`profile.tags`
+
+get user tags.
+
+**Risk:** `read`
+
+```ts
+await corsair.instagram.api.profile.tags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ig_id` | `string` | Yes | The Instagram User ID. |
+| `fields` | `string` | No | Optional fields to query. |
+| `after` | `string` | No | Cursor for the next page of results. |
+| `before` | `string` | No | Cursor for the previous page of results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Tagged media list. |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  caption?: string,
+  media_type?: IMAGE | VIDEO | CAROUSEL_ALBUM,
+  media_url?: string | null,
+  thumbnail_url?: string | null,
+  permalink?: string,
+  timestamp?: string,
+  username?: string,
+  like_count: number,
+  comments_count: number,
+  is_comment_enabled?: boolean,
+  children?: {
+    data: {
+      id: string,
+      media_type: IMAGE | VIDEO,
+      media_url: string
+    }[]
+  },
+  createdAt?: Date | null,
+  updatedAt?: Date | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  next?: string
+}
 ```
 </Accordion>
 </AccordionGroup>
