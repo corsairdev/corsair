@@ -1,4 +1,0 @@
-module CorsairCloud {
-    header "/Users/yuvrxj/corsair/wt-corsair-wrappers/clients/swift/.build/arm64-apple-macosx/debug/CorsairCloud.build/CorsairCloud-Swift.h"
-    requires objc
-}
