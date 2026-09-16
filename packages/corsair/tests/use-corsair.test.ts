@@ -38,11 +38,11 @@ function makeClient(): CorsairManagementClient {
 }
 
 let client: CorsairManagementClient;
-let latest: ReturnType<ReturnType<typeof useCorsair>['api']> | undefined;
+let latest: ReturnType<ReturnType<typeof useCorsair>['useApi']> | undefined;
 
 function Capture(): null {
-	const { api } = useCorsair();
-	latest = api('notion.pages.searchPage', { query: 'roadmap' });
+	const { useApi } = useCorsair();
+	latest = useApi('notion.pages.searchPage', { query: 'roadmap' });
 	return null;
 }
 
@@ -70,7 +70,7 @@ afterEach(() => {
 	jest.clearAllMocks();
 });
 
-describe('useCorsair — api', () => {
+describe('useCorsair — useApi', () => {
 	it('splits pluginOp into plugin/op, posts through the client, and resolves data', async () => {
 		const result = { title: 'Roadmap' };
 		(client.call as jest.Mock).mockResolvedValue(result);

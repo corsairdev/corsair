@@ -67,8 +67,8 @@ auth + arg metadata. Wrappers expose these as `discover()` / `plugins.list()`.
 ## Browser / React (separate, secret-safe)
 The `ck_cloud_` key must **never** reach the browser. React uses `CorsairProvider`
 pointed at the app's **own same-origin backend proxy** (`/api/corsair/*`) that
-injects the bearer server-side; the provider exposes `useCorsair() → { api, db }`
-(`api(pluginOp, args)` = a `useQuery`-shaped hook over `/call`; `db` reserved).
+injects the bearer server-side; the provider exposes `useCorsair() → { useApi, db }`
+(`useApi(pluginOp, args)` = a `useQuery`-shaped hook over `/call`; `db` reserved).
 See `clients/react` (todo).
 
 ## Build order

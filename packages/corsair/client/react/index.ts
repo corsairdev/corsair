@@ -326,8 +326,11 @@ export {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // useCorsair — call a plugin op and subscribe to its result, e.g.
-// `api('notion.pages.searchPage', { query: 'roadmap' })`. Shares the
+// `useApi('notion.pages.searchPage', { query: 'roadmap' })`. Shares the
 // CorsairProvider's client, so it must render under <CorsairProvider>.
+//
+// useApi is a real hook (calls useAsync internally), not a plain function —
+// it must be called unconditionally at the top of a component, like any hook.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type ApiResult<T> = AsyncState<T> & { refetch: () => void };
@@ -338,7 +341,7 @@ export type UseCorsairResult = {
 	 * everything after (e.g. `"notion.pages.searchPage"` → plugin `notion`, op
 	 * `pages.searchPage`). Tenant defaults to `'default'`.
 	 */
-	api: <T = unknown>(
+	useApi: <T = unknown>(
 		pluginOp: string,
 		args?: unknown,
 		opts?: { tenantId?: string },
@@ -350,7 +353,7 @@ export type UseCorsairResult = {
 export function useCorsair(): UseCorsairResult {
 	const { client } = useCorsairContext();
 
-	function api<T = unknown>(
+	function useApi<T = unknown>(
 		pluginOp: string,
 		args?: unknown,
 		opts?: { tenantId?: string },
@@ -365,7 +368,7 @@ export function useCorsair(): UseCorsairResult {
 		);
 	}
 
-	return { api, db: undefined };
+	return { useApi, db: undefined };
 }
 
 // Re-export types that hook consumers need
