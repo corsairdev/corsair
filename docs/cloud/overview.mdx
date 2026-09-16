@@ -95,13 +95,13 @@ runtime. By default the client is dynamic, so `corsair.withTenant(t).notion.apiâ
 has `any` types. To get editor autocomplete, run the CLI once:
 
 ```bash
-pnpm corsair pull
+pnpm corsair cloud pull
 ```
 
 It reads the plugins and operations your runtime actually has (down to the scopes
 you allowed) and writes a local `corsair-env.d.ts`. TypeScript merges those types
 in, so the same code autocompletes with no plugin import. Coding agents can skip
-this and list operations with `pnpm corsair list`.
+this and list operations with `pnpm corsair cloud list`.
 
 ## What runs where
 
