@@ -31,7 +31,11 @@ export function normalizeHubConfig(input: HubConfigInput): HubConfig {
 	const projectApiKey = input.projectApiKey?.trim() ?? '';
 	const signingSecret = input.signingSecret?.trim() ?? '';
 
-	if (!projectApiKey || !signingSecret) {
+	// ck_cloud_ keys don't sign anything Hub-side (the hosted runtime itself
+	// holds the key) — signingSecret is only required for ck_dev_/ck_prod_.
+	const isCloudKey = projectApiKey.startsWith('ck_cloud_');
+
+	if (!projectApiKey || (!signingSecret && !isCloudKey)) {
 		throw new HubCredentialsMissingError();
 	}
 
