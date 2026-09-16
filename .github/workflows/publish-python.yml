@@ -1,0 +1,34 @@
+name: Publish corsair-cloud to PyPI
+
+on:
+  push:
+    tags:
+      - 'corsair-cloud-py-v*'
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install build tools
+        run: pip install build twine
+
+      - name: Build
+        run: python -m build
+        working-directory: clients/python
+
+      - name: Upload to PyPI
+        run: twine upload dist/*
+        working-directory: clients/python
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}

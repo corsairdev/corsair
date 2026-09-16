@@ -38,3 +38,18 @@ try await corsair.manage.disconnect(plugin: "notion", tenantId: "acme")
 
 Errors throw `CorsairError` (`.code` is the machine code — `not_connected`,
 `provider_error`, …; `.status` is the HTTP status).
+
+## Distribution status
+
+SPM's `.package(url:)` expects `Package.swift` at the repo root of the URL it
+fetches. `corsair` is a monorepo with `Package.swift` at `clients/swift`, which
+SPM cannot resolve directly — the snippet above (`.package(url: ".../corsair",
+branch: "main")`) will fail to fetch until one of these ships:
+
+- a dedicated `corsairdev/corsair-swift` mirror repo (root-level `Package.swift`,
+  synced from `clients/swift` on release) — the standard fix for a monorepo
+  Swift package, recommended
+- a path or local package dependency pointing straight at `clients/swift`, for
+  in-repo or vendored use only
+
+No decision has been made yet; `Package.swift` itself needs no change either way.

@@ -1,0 +1,49 @@
+---
+title: Go
+description: Thin Go client for a hosted Corsair Cloud project.
+---
+
+`corsaircloud` mirrors the TypeScript `createCorsairCloud`: dynamic calls
+over HTTP, with the plugin set living on the runtime, not in the module.
+Stdlib only — no dependencies.
+
+## Install
+
+```bash
+go get github.com/corsairdev/corsair/clients/go
+```
+
+Since the module lives in a subdirectory of the `corsair` monorepo, `go get`
+resolves it against subdirectory-scoped tags — see the package README for the
+tag convention.
+
+## The two values
+
+Every project has an **API key** (`ck_cloud_…`) and a **URL**
+(`https://<vm>.corsair.cloud/<env>/api/corsair`), both on the project's
+Overview page.
+
+```go
+import "github.com/corsairdev/corsair/clients/go"
+
+corsair := corsaircloud.New("ck_cloud_…", "https://<vm>.corsair.cloud/<env>/api/corsair")
+```
+
+## Call a plugin op
+
+```go
+raw, err := corsair.Tenant("acme").Call(ctx, "notion", "pages.searchPage", map[string]any{"query": "hi"})
+
+var pages NotionPages
+_ = json.Unmarshal(raw, &pages)
+```
+
+## Management
+
+```go
+status, _ := corsair.ConnectionStatus(ctx, "acme")
+link, _ := corsair.CreateConnectLink(ctx, "notion", "acme")
+```
+
+Errors from non-2xx responses are `*corsaircloud.CorsairError`
+(`Code`, `Message`, `Reason`, `ProviderStatus`).

@@ -45,6 +45,10 @@
             ]
           },
           {
+            "group": "Client libraries",
+            "pages": ["clients/swift", "clients/python", "clients/go"]
+          },
+          {
             "group": "Frameworks",
             "pages": [
               {

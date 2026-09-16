@@ -1,0 +1,58 @@
+---
+title: Swift
+description: Thin Swift client for a hosted Corsair Cloud project.
+---
+
+`CorsairCloud` mirrors the TypeScript `createCorsairCloud`: dynamic calls over
+HTTP, with the plugin set living on the runtime, not in the package.
+
+## Install
+
+The package lives in the `corsair` monorepo, under `clients/swift`. Point SPM
+at it with a branch or tag reference:
+
+```swift
+.package(url: "https://github.com/corsairdev/corsair", branch: "main"),
+// target: .product(name: "CorsairCloud", package: "corsair")
+```
+
+## The two values
+
+Every project has an **API key** (`ck_cloud_…`) and a **URL**
+(`https://<vm>.corsair.cloud/<env>/api/corsair`), both on the project's
+Overview page.
+
+```swift
+import CorsairCloud
+
+let corsair = CorsairCloud(
+	apiKey: "ck_cloud_…",
+	url: URL(string: "https://<vm>.corsair.cloud/<env>/api/corsair")!)
+```
+
+## Call a plugin op
+
+```swift
+let result = try await corsair.tenant("acme").call("notion", "pages.searchPage", args: ["query": "hi"])
+```
+
+Decode straight into your own type instead of `JSONValue`:
+
+```swift
+struct Page: Decodable { let id: String }
+struct SearchResult: Decodable { let results: [Page] }
+
+let typed = try await corsair.tenant("acme")
+	.call("notion", "pages.searchPage", as: SearchResult.self)
+```
+
+## Management
+
+```swift
+let status = try await corsair.manage.connectionStatus(tenantId: "acme")   // ["notion": "connected"]
+let link = try await corsair.manage.createConnectLink(plugin: "notion", tenantId: "acme")
+try await corsair.manage.disconnect(plugin: "notion", tenantId: "acme")
+```
+
+Errors throw `CorsairError` (`.code` is the machine code — `not_connected`,
+`provider_error`, …; `.status` is the HTTP status).

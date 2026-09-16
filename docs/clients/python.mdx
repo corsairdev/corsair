@@ -1,0 +1,46 @@
+---
+title: Python
+description: Thin Python client for a hosted Corsair Cloud project.
+---
+
+`corsair-cloud` mirrors the TypeScript `createCorsairCloud`: dynamic calls
+over HTTP, with the plugin set living on the runtime, not in the package.
+Stdlib only — no dependencies.
+
+## Install
+
+```bash
+pip install corsair-cloud
+```
+
+## The two values
+
+Every project has an **API key** (`ck_cloud_…`) and a **URL**
+(`https://<vm>.corsair.cloud/<env>/api/corsair`), both on the project's
+Overview page.
+
+```python
+from corsair_cloud import CorsairCloud
+
+corsair = CorsairCloud(
+    api_key="ck_cloud_…",
+    url="https://<vm>.corsair.cloud/<env>/api/corsair",
+)
+```
+
+## Call a plugin op
+
+```python
+result = corsair.with_tenant("acme").call("notion", "pages.searchPage", {"query": "hi"})
+```
+
+## Management
+
+```python
+status = corsair.manage.connection_status("acme")               # {"notion": "connected"}
+link = corsair.manage.create_connect_link("notion", "acme")
+corsair.manage.disconnect("notion", "acme")
+```
+
+Errors raise `CorsairError` (`.code` is the machine code — `not_connected`,
+`provider_error`, …; `.status` is the HTTP status).
