@@ -156,15 +156,24 @@ export type GetRecordsCountResponse = z.infer<
 	typeof GetRecordsCountResponseSchema
 >;
 
-export const SearchRecordsInputSchema = z.object({
-	module: z.string(),
-	criteria: z.string().optional(),
-	email: z.string().optional(),
-	phone: z.string().optional(),
-	word: z.string().optional(),
-	page: z.number().optional(),
-	per_page: z.number().optional(),
-});
+export const SearchRecordsInputSchema = z
+	.object({
+		module: z.string(),
+		criteria: z.string().optional(),
+		email: z.string().optional(),
+		phone: z.string().optional(),
+		word: z.string().optional(),
+		page: z.number().optional(),
+		per_page: z.number().optional(),
+	})
+	.refine(
+		({ criteria, email, phone, word }) =>
+			criteria !== undefined ||
+			email !== undefined ||
+			phone !== undefined ||
+			word !== undefined,
+		{ message: 'Provide a search filter' },
+	);
 export type SearchRecordsInput = z.infer<typeof SearchRecordsInputSchema>;
 export const SearchRecordsResponseSchema = GetRecordsResponseSchema;
 export type SearchRecordsResponse = z.infer<typeof SearchRecordsResponseSchema>;

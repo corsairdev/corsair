@@ -287,10 +287,11 @@ export const upsertRecords: ZohoBiginEndpoints['upsertRecords'] = async (
 		ZohoBiginEndpointOutputs['upsertRecords']
 	>(`${module}/upsert`, ctx.key, {
 		method: 'POST',
-		query: duplicate_check_fields
-			? { duplicate_check_fields: duplicate_check_fields.join(',') }
-			: undefined,
-		body: { data },
+		baseUrl: 'https://www.zohoapis.com/bigin/v2',
+		body: {
+			data,
+			...(duplicate_check_fields ? { duplicate_check_fields } : {}),
+		},
 	});
 
 	await logEventFromContext(

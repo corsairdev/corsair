@@ -597,6 +597,9 @@ describe('zohobigin endpoints', () => {
 
 	it('validates endpoint input before calling provider', async () => {
 		await expect(endpoint(plugin, 'records.get')(ctx, {})).rejects.toThrow();
+		await expect(
+			endpoint(plugin, 'records.search')(ctx, { module: 'Contacts' }),
+		).rejects.toThrow('Provide a search filter');
 		expect(globalThis.fetch).not.toHaveBeenCalled();
 	});
 
