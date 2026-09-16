@@ -46,20 +46,22 @@ export async function makeWriterRequest<T>(
 		effectiveMediaType = 'application/json; charset=utf-8';
 	}
 	const isJsonBody = Boolean(effectiveMediaType?.includes('/json'));
+	const inferredGetQuery =
+		method === 'GET' && isJsonBody
+			? ((body as
+					| Record<string, string | number | boolean | undefined>
+					| undefined) ?? undefined)
+			: undefined;
+	const resolvedQuery =
+		(query as
+			| Record<string, string | number | boolean | undefined>
+			| undefined) ?? inferredGetQuery;
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
 		body: method !== 'GET' ? body : undefined,
 		mediaType: method !== 'GET' ? effectiveMediaType : undefined,
-		query:
-			method === 'GET'
-				? (query ??
-					(isJsonBody
-						? (body as
-								| Record<string, string | number | boolean | undefined>
-								| undefined)
-						: undefined))
-				: undefined,
+		query: resolvedQuery,
 	};
 
 	try {
