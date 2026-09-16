@@ -1,0 +1,1738 @@
+---
+title: API
+description: "API reference for ChMeetings: every `chmeetings.api.*` operation with input and output types."
+---
+
+Every `chmeetings.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Attendance
+
+### list
+
+`attendance.list`
+
+List attendance for an occurrence
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.attendance.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `occurrence_id` | `string` | Yes | — |
+| `status` | `absent \| attended` | No | — |
+| `group_id` | `string \| number` | No | — |
+| `ungrouped` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paging` | `object` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="paging full type">
+
+```ts
+{
+  total_count?: string | number,
+  page?: string | number,
+  page_size?: string | number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  person?: {
+    person_id?: string | number | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    full_name?: string | null,
+    mobile?: string | null,
+    email?: string | null
+  },
+  status?: absent | attended,
+  checked_in_at?: string | null,
+  checked_out_at?: string | null,
+  check_in_code?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### get
+
+`events.get`
+
+Get an event by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.events.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `schedule` | `object` | No | — |
+| `recurrence` | `object` | No | — |
+| `location` | `object` | No | — |
+| `visibility` | `string` | No | — |
+| `image_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="schedule full type">
+
+```ts
+{
+  all_day?: boolean,
+  start_time?: string | null,
+  end_time?: string | null,
+  duration_days?: string | number
+}
+```
+</Accordion>
+
+<Accordion title="recurrence full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  name?: string | null,
+  formatted_address?: string | null,
+  latitude?: number | string | null,
+  longitude?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`events.list`
+
+List events in a date range (max 366 days)
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.events.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paging` | `object` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="paging full type">
+
+```ts
+{
+  total_count?: string | number,
+  page?: string | number,
+  page_size?: string | number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  title?: string | null,
+  description?: string | null,
+  start_date?: string | null,
+  schedule?: {
+    all_day?: boolean,
+    start_time?: string | null,
+    end_time?: string | null,
+    duration_days?: string | number
+  },
+  recurrence?: {
+  } | null,
+  location?: {
+    name?: string | null,
+    formatted_address?: string | null,
+    latitude?: number | string | null,
+    longitude?: number | string | null
+  } | null,
+  visibility?: string | null,
+  image_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listOccurrences
+
+`events.listOccurrences`
+
+List occurrences for an event in a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.events.listOccurrences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paging` | `object` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="paging full type">
+
+```ts
+{
+  total_count?: string | number,
+  page?: string | number,
+  page_size?: string | number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  occurrence_id?: string | null,
+  event_id?: string | number,
+  title?: string | null,
+  description?: string | null,
+  start?: string | null,
+  end?: string | null,
+  materialized?: boolean,
+  image_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Families
+
+### create
+
+`families.create`
+
+Create a family with members
+
+**Risk:** `write`
+
+```ts
+await corsair.chmeetings.api.families.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  person_id: string | number,
+  family_role: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `family_id` | `string \| number` | No | — |
+| `members` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id?: string | number,
+  person_id?: string | number,
+  first_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  family_role?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`families.delete`
+
+Delete a family
+
+**Risk:** `destructive`
+
+```ts
+await corsair.chmeetings.api.families.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`families.get`
+
+Get a family by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.families.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `family_id` | `string \| number` | No | — |
+| `members` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id?: string | number,
+  person_id?: string | number,
+  first_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  family_role?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`families.list`
+
+List families
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.families.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_text` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paging` | `object` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="paging full type">
+
+```ts
+{
+  total_count?: string | number,
+  page?: string | number,
+  page_size?: string | number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  family_id?: string | number,
+  members?: {
+    id?: string | number,
+    person_id?: string | number,
+    first_name?: string | null,
+    last_name?: string | null,
+    full_name?: string | null,
+    family_role?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### addMember
+
+`groups.addMember`
+
+Add a person to a group
+
+**Risk:** `write`
+
+```ts
+await corsair.chmeetings.api.groups.addMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string \| number` | Yes | — |
+| `person_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### create
+
+`groups.create`
+
+Create a group
+
+**Risk:** `write`
+
+```ts
+await corsair.chmeetings.api.groups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `privacy` | `internal \| members \| public` | No | — |
+| `join_request_option` | `open \| closed \| approval_required` | No | — |
+| `is_visible_to_non_members` | `boolean` | No | — |
+| `is_members_visible` | `boolean` | No | — |
+| `is_group_leaders_visible` | `boolean` | No | — |
+| `is_chat_enabled` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `privacy` | `internal \| members \| public` | No | — |
+| `join_request_option` | `open \| closed \| approval_required` | No | — |
+| `is_visible_to_non_members` | `boolean` | No | — |
+| `is_members_visible` | `boolean` | No | — |
+| `is_group_leaders_visible` | `boolean` | No | — |
+| `is_chat_enabled` | `boolean` | No | — |
+| `created_on` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`groups.delete`
+
+Delete a group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.chmeetings.api.groups.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`groups.get`
+
+Get a group by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.groups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `privacy` | `internal \| members \| public` | No | — |
+| `join_request_option` | `open \| closed \| approval_required` | No | — |
+| `is_visible_to_non_members` | `boolean` | No | — |
+| `is_members_visible` | `boolean` | No | — |
+| `is_group_leaders_visible` | `boolean` | No | — |
+| `is_chat_enabled` | `boolean` | No | — |
+| `created_on` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List groups
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.groups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_text` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string | null,
+  description?: string | null,
+  privacy?: internal | members | public,
+  join_request_option?: open | closed | approval_required,
+  is_visible_to_non_members?: boolean,
+  is_members_visible?: boolean,
+  is_group_leaders_visible?: boolean,
+  is_chat_enabled?: boolean,
+  created_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### removeMember
+
+`groups.removeMember`
+
+Remove a person from a group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.chmeetings.api.groups.removeMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string \| number` | Yes | — |
+| `person_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### update
+
+`groups.update`
+
+Update a group
+
+**Risk:** `write`
+
+```ts
+await corsair.chmeetings.api.groups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `privacy` | `internal \| members \| public` | No | — |
+| `join_request_option` | `open \| closed \| approval_required` | No | — |
+| `is_visible_to_non_members` | `boolean` | No | — |
+| `is_members_visible` | `boolean` | No | — |
+| `is_group_leaders_visible` | `boolean` | No | — |
+| `is_chat_enabled` | `boolean` | No | — |
+| `group_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `privacy` | `internal \| members \| public` | No | — |
+| `join_request_option` | `open \| closed \| approval_required` | No | — |
+| `is_visible_to_non_members` | `boolean` | No | — |
+| `is_members_visible` | `boolean` | No | — |
+| `is_group_leaders_visible` | `boolean` | No | — |
+| `is_chat_enabled` | `boolean` | No | — |
+| `created_on` | `string` | No | — |
+
+
+
+---
+
+## Notes
+
+### list
+
+`notes.list`
+
+List notes for a person
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.notes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `person_id` | `string \| number` | Yes | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paging` | `object` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="paging full type">
+
+```ts
+{
+  total_count?: string | number,
+  page?: string | number,
+  page_size?: string | number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  note?: string | null,
+  person_id?: string | number,
+  created_on?: string | null,
+  updated_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### addPerson
+
+`organizations.addPerson`
+
+Add a person to an organization
+
+**Risk:** `write`
+
+```ts
+await corsair.chmeetings.api.organizations.addPerson({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | — |
+| `person_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`organizations.get`
+
+Get an organization by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.organizations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `type` | `diocese \| church \| ministry` | No | — |
+| `name` | `string` | No | — |
+| `parent_id` | `string` | No | — |
+| `created_on` | `string` | No | — |
+| `is_main` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`organizations.list`
+
+List organizations from GET /api/v1/organizations
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.organizations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_text` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paging` | `object` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="paging full type">
+
+```ts
+{
+  total_count?: string | number,
+  page?: string | number,
+  page_size?: string | number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  type?: diocese | church | ministry,
+  name?: string | null,
+  parent_id?: string | null,
+  created_on?: string | null,
+  is_main?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPeople
+
+`organizations.listPeople`
+
+List people in an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.organizations.listPeople({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | — |
+| `include_family_members` | `boolean` | No | — |
+| `include_additional_fields` | `boolean` | No | — |
+| `include_organizations` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paging` | `object` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="paging full type">
+
+```ts
+{
+  total_count?: string | number,
+  page?: string | number,
+  page_size?: string | number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  first_name?: string | null,
+  middle_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  nick_name?: string | null,
+  native_name?: string | null,
+  email?: string | null,
+  photo?: string | null,
+  birth_date?: string | null,
+  mobile?: string | null,
+  do_not_text?: boolean | null,
+  do_not_email?: boolean | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  facebook?: string | null,
+  gender?: string | null,
+  social_status?: string | null,
+  marriage_date?: string | null,
+  engagement_date?: string | null,
+  job_title?: string | null,
+  work_place?: string | null,
+  qualification?: string | null,
+  education_level?: string | null,
+  school?: string | null,
+  father_name?: string | null,
+  church?: string | null,
+  is_deacon?: boolean | null,
+  rank?: string | null,
+  bishop_donor?: string | null,
+  family_role?: string | null,
+  family?: {
+    id?: string | number,
+    person_id?: string | number,
+    first_name?: string | null,
+    last_name?: string | null,
+    full_name?: string | null,
+    family_role?: string | null
+  }[] | null,
+  baptism_date?: string | null,
+  baptism_location?: string | null,
+  grade?: string | null,
+  graduation_year?: string | number | null,
+  telephone?: string | null,
+  talents_and_hobbies?: string | null,
+  is_archived?: boolean,
+  archived_at?: string | null,
+  address?: {
+    country?: string | null,
+    state?: string | null,
+    city?: string | null,
+    building?: string | null,
+    address_line?: string | null,
+    address_line2?: string | null,
+    floor?: string | null,
+    flat?: string | null,
+    zip_code?: string | null
+  } | null,
+  additional_fields?: {
+    field_type: string
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removePerson
+
+`organizations.removePerson`
+
+Remove a person from an organization
+
+**Risk:** `destructive`
+
+```ts
+await corsair.chmeetings.api.organizations.removePerson({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string` | Yes | — |
+| `person_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## People
+
+### create
+
+`people.create`
+
+Create a person via POST /api/v1/people
+
+**Risk:** `write`
+
+```ts
+await corsair.chmeetings.api.people.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | Yes | — |
+| `middle_name` | `string` | No | — |
+| `nick_name` | `string` | No | — |
+| `native_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `birth_date` | `string` | No | — |
+| `mobile` | `string` | No | — |
+| `do_not_text` | `boolean` | No | — |
+| `do_not_email` | `boolean` | No | — |
+| `facebook` | `string` | No | — |
+| `gender` | `string` | No | — |
+| `social_status` | `string` | No | — |
+| `engagement_date` | `string` | No | — |
+| `marriage_date` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `work_place` | `string` | No | — |
+| `qualification` | `string` | No | — |
+| `education_level` | `string` | No | — |
+| `school` | `string` | No | — |
+| `father_name` | `string` | No | — |
+| `church` | `string` | No | — |
+| `is_deacon` | `boolean` | No | — |
+| `rank` | `string` | No | — |
+| `bishop_donor` | `string` | No | — |
+| `baptism_date` | `string` | No | — |
+| `baptism_location` | `string` | No | — |
+| `grade` | `string` | No | — |
+| `graduation_year` | `string \| number` | No | — |
+| `telephone` | `string` | No | — |
+| `talents_and_hobbies` | `string` | No | — |
+| `address` | `object` | No | — |
+| `additional_fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  country?: string | null,
+  state?: string | null,
+  city?: string | null,
+  building?: string | null,
+  address_line?: string | null,
+  address_line2?: string | null,
+  floor?: string | null,
+  flat?: string | null,
+  zip_code?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="additional_fields full type">
+
+```ts
+{
+  field_type: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `first_name` | `string` | No | — |
+| `middle_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `full_name` | `string` | No | — |
+| `nick_name` | `string` | No | — |
+| `native_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `photo` | `string` | No | — |
+| `birth_date` | `string` | No | — |
+| `mobile` | `string` | No | — |
+| `do_not_text` | `boolean` | No | — |
+| `do_not_email` | `boolean` | No | — |
+| `created_on` | `string` | No | — |
+| `updated_on` | `string` | No | — |
+| `facebook` | `string` | No | — |
+| `gender` | `string` | No | — |
+| `social_status` | `string` | No | — |
+| `marriage_date` | `string` | No | — |
+| `engagement_date` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `work_place` | `string` | No | — |
+| `qualification` | `string` | No | — |
+| `education_level` | `string` | No | — |
+| `school` | `string` | No | — |
+| `father_name` | `string` | No | — |
+| `church` | `string` | No | — |
+| `is_deacon` | `boolean` | No | — |
+| `rank` | `string` | No | — |
+| `bishop_donor` | `string` | No | — |
+| `family_role` | `string` | No | — |
+| `family` | `object[]` | No | — |
+| `baptism_date` | `string` | No | — |
+| `baptism_location` | `string` | No | — |
+| `grade` | `string` | No | — |
+| `graduation_year` | `string \| number` | No | — |
+| `telephone` | `string` | No | — |
+| `talents_and_hobbies` | `string` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `archived_at` | `string` | No | — |
+| `address` | `object` | No | — |
+| `additional_fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="family full type">
+
+```ts
+{
+  id?: string | number,
+  person_id?: string | number,
+  first_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  family_role?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  country?: string | null,
+  state?: string | null,
+  city?: string | null,
+  building?: string | null,
+  address_line?: string | null,
+  address_line2?: string | null,
+  floor?: string | null,
+  flat?: string | null,
+  zip_code?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="additional_fields full type">
+
+```ts
+{
+  field_type: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`people.delete`
+
+Delete a person via DELETE /api/v1/people/{id}
+
+**Risk:** `destructive`
+
+```ts
+await corsair.chmeetings.api.people.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`people.get`
+
+Get a person by ID from GET /api/v1/people/{id}
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.people.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `first_name` | `string` | No | — |
+| `middle_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `full_name` | `string` | No | — |
+| `nick_name` | `string` | No | — |
+| `native_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `photo` | `string` | No | — |
+| `birth_date` | `string` | No | — |
+| `mobile` | `string` | No | — |
+| `do_not_text` | `boolean` | No | — |
+| `do_not_email` | `boolean` | No | — |
+| `created_on` | `string` | No | — |
+| `updated_on` | `string` | No | — |
+| `facebook` | `string` | No | — |
+| `gender` | `string` | No | — |
+| `social_status` | `string` | No | — |
+| `marriage_date` | `string` | No | — |
+| `engagement_date` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `work_place` | `string` | No | — |
+| `qualification` | `string` | No | — |
+| `education_level` | `string` | No | — |
+| `school` | `string` | No | — |
+| `father_name` | `string` | No | — |
+| `church` | `string` | No | — |
+| `is_deacon` | `boolean` | No | — |
+| `rank` | `string` | No | — |
+| `bishop_donor` | `string` | No | — |
+| `family_role` | `string` | No | — |
+| `family` | `object[]` | No | — |
+| `baptism_date` | `string` | No | — |
+| `baptism_location` | `string` | No | — |
+| `grade` | `string` | No | — |
+| `graduation_year` | `string \| number` | No | — |
+| `telephone` | `string` | No | — |
+| `talents_and_hobbies` | `string` | No | — |
+| `is_archived` | `boolean` | No | — |
+| `archived_at` | `string` | No | — |
+| `address` | `object` | No | — |
+| `additional_fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="family full type">
+
+```ts
+{
+  id?: string | number,
+  person_id?: string | number,
+  first_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  family_role?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="address full type">
+
+```ts
+{
+  country?: string | null,
+  state?: string | null,
+  city?: string | null,
+  building?: string | null,
+  address_line?: string | null,
+  address_line2?: string | null,
+  floor?: string | null,
+  flat?: string | null,
+  zip_code?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="additional_fields full type">
+
+```ts
+{
+  field_type: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`people.list`
+
+List people from GET /api/v1/people
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.people.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_family_members` | `boolean` | No | — |
+| `include_additional_fields` | `boolean` | No | — |
+| `include_organizations` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `mobile` | `string` | No | — |
+| `email` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paging` | `object` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="paging full type">
+
+```ts
+{
+  total_count?: string | number,
+  page?: string | number,
+  page_size?: string | number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  first_name?: string | null,
+  middle_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  nick_name?: string | null,
+  native_name?: string | null,
+  email?: string | null,
+  photo?: string | null,
+  birth_date?: string | null,
+  mobile?: string | null,
+  do_not_text?: boolean | null,
+  do_not_email?: boolean | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  facebook?: string | null,
+  gender?: string | null,
+  social_status?: string | null,
+  marriage_date?: string | null,
+  engagement_date?: string | null,
+  job_title?: string | null,
+  work_place?: string | null,
+  qualification?: string | null,
+  education_level?: string | null,
+  school?: string | null,
+  father_name?: string | null,
+  church?: string | null,
+  is_deacon?: boolean | null,
+  rank?: string | null,
+  bishop_donor?: string | null,
+  family_role?: string | null,
+  family?: {
+    id?: string | number,
+    person_id?: string | number,
+    first_name?: string | null,
+    last_name?: string | null,
+    full_name?: string | null,
+    family_role?: string | null
+  }[] | null,
+  baptism_date?: string | null,
+  baptism_location?: string | null,
+  grade?: string | null,
+  graduation_year?: string | number | null,
+  telephone?: string | null,
+  talents_and_hobbies?: string | null,
+  is_archived?: boolean,
+  archived_at?: string | null,
+  address?: {
+    country?: string | null,
+    state?: string | null,
+    city?: string | null,
+    building?: string | null,
+    address_line?: string | null,
+    address_line2?: string | null,
+    floor?: string | null,
+    flat?: string | null,
+    zip_code?: string | null
+  } | null,
+  additional_fields?: {
+    field_type: string
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listOrganizations
+
+`people.listOrganizations`
+
+List a person organizations
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.people.listOrganizations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `person_id` | `string \| number` | Yes | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paging` | `object` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="paging full type">
+
+```ts
+{
+  total_count?: string | number,
+  page?: string | number,
+  page_size?: string | number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  type?: diocese | church | ministry,
+  name?: string | null,
+  parent_id?: string | null,
+  created_on?: string | null,
+  is_main?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`people.update`
+
+Update a person via PUT /api/v1/people/{id}
+
+**Risk:** `write`
+
+```ts
+await corsair.chmeetings.api.people.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | Yes | — |
+| `middle_name` | `string` | No | — |
+| `nick_name` | `string` | No | — |
+| `native_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `birth_date` | `string` | No | — |
+| `mobile` | `string` | No | — |
+| `do_not_text` | `boolean` | No | — |
+| `do_not_email` | `boolean` | No | — |
+| `facebook` | `string` | No | — |
+| `gender` | `string` | No | — |
+| `social_status` | `string` | No | — |
+| `engagement_date` | `string` | No | — |
+| `marriage_date` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `work_place` | `string` | No | — |
+| `qualification` | `string` | No | — |
+| `education_level` | `string` | No | — |
+| `school` | `string` | No | — |
+| `father_name` | `string` | No | — |
+| `church` | `string` | No | — |
+| `is_deacon` | `boolean` | No | — |
+| `rank` | `string` | No | — |
+| `bishop_donor` | `string` | No | — |
+| `baptism_date` | `string` | No | — |
+| `baptism_location` | `string` | No | — |
+| `grade` | `string` | No | — |
+| `graduation_year` | `string \| number` | No | — |
+| `telephone` | `string` | No | — |
+| `talents_and_hobbies` | `string` | No | — |
+| `address` | `object` | No | — |
+| `additional_fields` | `object[]` | No | — |
+| `id` | `string \| number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  country?: string | null,
+  state?: string | null,
+  city?: string | null,
+  building?: string | null,
+  address_line?: string | null,
+  address_line2?: string | null,
+  floor?: string | null,
+  flat?: string | null,
+  zip_code?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="additional_fields full type">
+
+```ts
+{
+  field_type: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Settings
+
+### get
+
+`settings.get`
+
+Get genders, social statuses, grade values, family roles, and member fields
+
+**Risk:** `read`
+
+```ts
+await corsair.chmeetings.api.settings.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `genders` | `unknown[]` | Yes | — |
+| `social_statuses` | `unknown[]` | Yes | — |
+| `grade_values` | `unknown[]` | Yes | — |
+| `family_roles` | `unknown[]` | Yes | — |
+| `fields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  sections?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
