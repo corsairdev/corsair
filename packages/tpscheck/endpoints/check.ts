@@ -19,12 +19,9 @@ export const check: TpscheckEndpoints['check'] = async (ctx, input) => {
 
 	const parsed = TpscheckEndpointOutputSchemas.check.parse(response);
 
-	await logEventFromContext(
-		ctx,
-		'tpscheck.check',
-		{ phone: parsedInput.phone },
-		'completed',
-	);
+	// Never log the raw number: phone numbers are PII, so the event
+	// carries only the fact that one check completed (batch logs a count).
+	await logEventFromContext(ctx, 'tpscheck.check', { count: 1 }, 'completed');
 
 	return parsed;
 };

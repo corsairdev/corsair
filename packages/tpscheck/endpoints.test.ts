@@ -83,9 +83,26 @@ describe('check.post', () => {
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'tpscheck.check',
-			{ phone: '01829 830730' },
+			{ count: 1 },
 			'completed',
 		);
+	});
+
+	it('never logs the raw phone number', async () => {
+		mockedRequest.mockResolvedValue({
+			input: '01829 830730',
+			e164: '+441829830730',
+			valid: true,
+			tps: false,
+			ctps: false,
+		});
+
+		await Check.post(ctx, { phone: '01829 830730' });
+
+		expect(mockedLogEvent).toHaveBeenCalledTimes(1);
+		const payload = mockedLogEvent.mock.calls[0]?.[2];
+		expect(payload).toEqual({ count: 1 });
+		expect(JSON.stringify(payload)).not.toContain('01829 830730');
 	});
 
 	it('rejects invalid empty phone input before calling the API', async () => {
@@ -207,6 +224,18 @@ describe('status.get', () => {
 			{},
 			'completed',
 		);
+	});
+
+	it('works without a stored key since no credentials are sent', async () => {
+		mockedRequest.mockResolvedValue({ status: 'ok', version: '1.0.0' });
+		const keylessCtx: Ctx = { ...ctx, key: '' };
+
+		const result = await Status.get(keylessCtx, {});
+
+		expect(result).toEqual({ status: 'ok', version: '1.0.0' });
+		expect(mockedRequest).toHaveBeenCalledWith('/status', undefined, {
+			method: 'GET',
+		});
 	});
 });
 

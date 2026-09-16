@@ -12,7 +12,6 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
 import { Batch, Check, Credits, Status } from './endpoints';
 import type {
 	TpscheckEndpointInputs,
@@ -159,20 +158,20 @@ export function tpscheck<const T extends TpscheckPluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+		// /status is public (docs §4), so a missing stored key resolves to an
+		// empty key instead of throwing: status.get sends no credentials
+		// anyway, while keyed endpoints surface the provider 401 through
+		// AUTH_ERROR. Same pattern as the merged buildkite plugin.
 		keyBuilder: async (ctx: TpscheckKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (!res) {
-					throw new AuthMissingError('tpscheck', 'api_key');
-				}
-				return res;
+				return (await ctx.keys.get_api_key()) ?? '';
 			}
 
-			throw new AuthMissingError('tpscheck', 'api_key');
+			return '';
 		},
 	} satisfies InternalTpscheckPlugin;
 }
