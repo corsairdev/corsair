@@ -10,9 +10,12 @@ const NON_RETRYABLE_OPERATIONS = new Set([
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof WisepopsAPIError && error.status === 429)
-				return true;
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (error instanceof WisepopsAPIError && error.status !== undefined) {
+				return error.status === 429;
+			}
+			if (error instanceof ApiError && error.status !== undefined) {
+				return error.status === 429;
+			}
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('rate_limited') ||
@@ -35,22 +38,16 @@ export const errorHandlers = {
 				return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
 			}
 
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			return { maxRetries: 3, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (
-				error instanceof WisepopsAPIError &&
-				(error.status === 401 || error.status === 403)
-			) {
-				return true;
+			if (error instanceof WisepopsAPIError && error.status !== undefined) {
+				return error.status === 401 || error.status === 403;
 			}
-			if (
-				error instanceof ApiError &&
-				(error.status === 401 || error.status === 403)
-			) {
-				return true;
+			if (error instanceof ApiError && error.status !== undefined) {
+				return error.status === 401 || error.status === 403;
 			}
 			const msg = error.message.toLowerCase();
 			return (

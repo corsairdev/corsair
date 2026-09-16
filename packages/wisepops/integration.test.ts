@@ -5,6 +5,7 @@ describe('Wisepops Integration', () => {
 		const plugin = wisepops({ key: 'test-key' });
 		expect(plugin.id).toBe('wisepops');
 		expect(plugin.authConfig).toEqual({ api_key: {} });
+		expect(plugin.webhooks).toEqual({});
 		expect(plugin.endpoints?.contacts.get).toBeDefined();
 		expect(plugin.endpoints?.performance.get).toBeDefined();
 		expect(plugin.endpoints?.webhook.create).toBeDefined();

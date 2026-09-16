@@ -52,13 +52,7 @@ export async function makeWisepopsRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new WisepopsAPIError(
-				error.message,
-				error.status,
-				error.retryAfter,
-				undefined,
-				error.body,
-			);
+			throw error;
 		}
 		if (error instanceof Error) {
 			throw new WisepopsAPIError(error.message);
