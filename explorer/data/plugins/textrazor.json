@@ -1,0 +1,1365 @@
+{
+  "id": "textrazor",
+  "displayName": "TextRazor",
+  "description": "Natural language processing API for entity extraction, classification, and text analysis.",
+  "npmPackageName": "@corsair-dev/textrazor",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 17,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "textrazor.api.account.get",
+      "shortPath": "account.get",
+      "description": "Get the current TextRazor plan, concurrency limits, and daily usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ plan?: string, concurrentRequestLimit?: number, concurrentRequestsUsed?: number, planDailyRequestsIncluded?: number, requestsUsedToday?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.analysis.analyzeContent",
+      "shortPath": "analysis.analyzeContent",
+      "description": "Analyze text or a URL with one or more TextRazor extractors in a single call",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cleanupMode",
+            "optional": true,
+            "type": "raw | stripTags | cleanHTML"
+          },
+          {
+            "key": "cleanupReturnCleaned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cleanupReturnRaw",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cleanupUseMetadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cleanupCleanHtmlPrecision",
+            "optional": true,
+            "type": "1 | 2 | 3"
+          },
+          {
+            "key": "cleanupCleanHtmlUseTitle",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "downloadRunJavascript",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "downloadUserAgent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entitiesAllowOverlap",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "entitiesDictionaries",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "entitiesFilterDbpediaTypes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "entitiesFilterFreebaseTypes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "entitiesIncludeAddressPlaces",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "languageOverride",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "classifiers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "classifierMaxCategories",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "extractors",
+            "optional": false,
+            "type": "entities | topics | words | phrases | dependency-trees | relations | entailments | senses | spelling[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ language?: string, languageIsReliable?: boolean, cleanedText?: string, rawText?: string, customAnnotationOutput?: any, matchingRules?: string[], entities?: { id?: number, entityId?: string | null, entityEnglishId?: string | null, matchedText?: string, matchingTokens?: number[], startingPos?: number, endingPos?: number, confidenceScore?: number, relevanceScore?: number, type?: string[], freebaseTypes?: string[], freebaseId?: string | null, wikiLink?: string | null, wikidataId?: string | null, wikidataTypes?: string[], customEntityId?: string, sourceId?: string, data?: any, crunchbaseId?: string, lei?: string, figi?: string, permid?: string, unit?: string }[], topics?: { id?: number, label?: string, score?: number, wikiLink?: string | null, wikidataId?: string | null }[], coarseTopics?: { id?: number, label?: string, score?: number, wikiLink?: string | null, wikidataId?: string | null }[], categories?: { id?: number, categoryId?: string, label?: string, score?: number, classifierId?: string }[], sentences?: { position?: number, words?: { position?: number, startingPos?: number, endingPos?: number, token?: string, stem?: string, lemma?: string, partOfSpeech?: string, parentPosition?: number | null, relationToParent?: string | null, senses?: any[], spellingSuggestions?: any[] }[] }[], nounPhrases?: { wordPositions?: number[] }[], relations?: { wordPositions?: number[], params?: { wordPositions?: number[], relation?: string }[] }[], properties?: { wordPositions?: number[], propertyPositions?: number[] }[], entailments?: { wordPositions?: number[], score?: number, priorScore?: number, contextScore?: number, entailedTree?: any }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.analysis.classifyText",
+      "shortPath": "analysis.classifyText",
+      "description": "Classify text or a URL against built-in or custom TextRazor classifiers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cleanupMode",
+            "optional": true,
+            "type": "raw | stripTags | cleanHTML"
+          },
+          {
+            "key": "cleanupReturnCleaned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cleanupReturnRaw",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cleanupUseMetadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cleanupCleanHtmlPrecision",
+            "optional": true,
+            "type": "1 | 2 | 3"
+          },
+          {
+            "key": "cleanupCleanHtmlUseTitle",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "downloadRunJavascript",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "downloadUserAgent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entitiesAllowOverlap",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "entitiesDictionaries",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "entitiesFilterDbpediaTypes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "entitiesFilterFreebaseTypes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "entitiesIncludeAddressPlaces",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "languageOverride",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "classifiers",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "classifierMaxCategories",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "extractors",
+            "optional": true,
+            "type": "entities | topics | words | phrases | dependency-trees | relations | entailments | senses | spelling[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ language?: string, languageIsReliable?: boolean, cleanedText?: string, rawText?: string, customAnnotationOutput?: any, matchingRules?: string[], entities?: { id?: number, entityId?: string | null, entityEnglishId?: string | null, matchedText?: string, matchingTokens?: number[], startingPos?: number, endingPos?: number, confidenceScore?: number, relevanceScore?: number, type?: string[], freebaseTypes?: string[], freebaseId?: string | null, wikiLink?: string | null, wikidataId?: string | null, wikidataTypes?: string[], customEntityId?: string, sourceId?: string, data?: any, crunchbaseId?: string, lei?: string, figi?: string, permid?: string, unit?: string }[], topics?: { id?: number, label?: string, score?: number, wikiLink?: string | null, wikidataId?: string | null }[], coarseTopics?: { id?: number, label?: string, score?: number, wikiLink?: string | null, wikidataId?: string | null }[], categories?: { id?: number, categoryId?: string, label?: string, score?: number, classifierId?: string }[], sentences?: { position?: number, words?: { position?: number, startingPos?: number, endingPos?: number, token?: string, stem?: string, lemma?: string, partOfSpeech?: string, parentPosition?: number | null, relationToParent?: string | null, senses?: any[], spellingSuggestions?: any[] }[] }[], nounPhrases?: { wordPositions?: number[] }[], relations?: { wordPositions?: number[], params?: { wordPositions?: number[], relation?: string }[] }[], properties?: { wordPositions?: number[], propertyPositions?: number[] }[], entailments?: { wordPositions?: number[], score?: number, priorScore?: number, contextScore?: number, entailedTree?: any }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.analysis.extractEntities",
+      "shortPath": "analysis.extractEntities",
+      "description": "Extract named entities from text or a URL, optionally filtering by relevance and confidence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cleanupMode",
+            "optional": true,
+            "type": "raw | stripTags | cleanHTML"
+          },
+          {
+            "key": "cleanupReturnCleaned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cleanupReturnRaw",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cleanupUseMetadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cleanupCleanHtmlPrecision",
+            "optional": true,
+            "type": "1 | 2 | 3"
+          },
+          {
+            "key": "cleanupCleanHtmlUseTitle",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "downloadRunJavascript",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "downloadUserAgent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entitiesAllowOverlap",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "entitiesDictionaries",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "entitiesFilterDbpediaTypes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "entitiesFilterFreebaseTypes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "entitiesIncludeAddressPlaces",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "languageOverride",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "classifiers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "classifierMaxCategories",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "extractors",
+            "optional": true,
+            "type": "entities | topics | words | phrases | dependency-trees | relations | entailments | senses | spelling[]"
+          },
+          {
+            "key": "minRelevanceScore",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minConfidenceScore",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ language?: string, languageIsReliable?: boolean, cleanedText?: string, rawText?: string, customAnnotationOutput?: any, matchingRules?: string[], entities?: { id?: number, entityId?: string | null, entityEnglishId?: string | null, matchedText?: string, matchingTokens?: number[], startingPos?: number, endingPos?: number, confidenceScore?: number, relevanceScore?: number, type?: string[], freebaseTypes?: string[], freebaseId?: string | null, wikiLink?: string | null, wikidataId?: string | null, wikidataTypes?: string[], customEntityId?: string, sourceId?: string, data?: any, crunchbaseId?: string, lei?: string, figi?: string, permid?: string, unit?: string }[], topics?: { id?: number, label?: string, score?: number, wikiLink?: string | null, wikidataId?: string | null }[], coarseTopics?: { id?: number, label?: string, score?: number, wikiLink?: string | null, wikidataId?: string | null }[], categories?: { id?: number, categoryId?: string, label?: string, score?: number, classifierId?: string }[], sentences?: { position?: number, words?: { position?: number, startingPos?: number, endingPos?: number, token?: string, stem?: string, lemma?: string, partOfSpeech?: string, parentPosition?: number | null, relationToParent?: string | null, senses?: any[], spellingSuggestions?: any[] }[] }[], nounPhrases?: { wordPositions?: number[] }[], relations?: { wordPositions?: number[], params?: { wordPositions?: number[], relation?: string }[] }[], properties?: { wordPositions?: number[], propertyPositions?: number[] }[], entailments?: { wordPositions?: number[], score?: number, priorScore?: number, contextScore?: number, entailedTree?: any }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.classifiers.delete",
+      "shortPath": "classifiers.delete",
+      "description": "Delete a custom classifier and all of its categories",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.classifiers.deleteCategory",
+      "shortPath": "classifiers.deleteCategory",
+      "description": "Delete a category from a custom classifier",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "categoryId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.classifiers.getCategory",
+      "shortPath": "classifiers.getCategory",
+      "description": "Get a category from a custom classifier by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "categoryId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ categoryId: string, label?: string, query?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.classifiers.listCategories",
+      "shortPath": "classifiers.listCategories",
+      "description": "List categories for a custom classifier with limit and offset pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ categoryId: string, label?: string, query?: string }[] | { categories: { categoryId: string, label?: string, query?: string }[] }"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.classifiers.put",
+      "shortPath": "classifiers.put",
+      "description": "Create or update a custom classifier from JSON categories",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "{ categoryId: string, label?: string, query: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.dictionaries.addEntries",
+      "shortPath": "dictionaries.addEntries",
+      "description": "Add or overwrite entries in a custom entity dictionary",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ id?: string, text: string, data?: {} }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.dictionaries.create",
+      "shortPath": "dictionaries.create",
+      "description": "Create a custom entity dictionary",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "matchType",
+            "optional": true,
+            "type": "token | stem"
+          },
+          {
+            "key": "caseInsensitive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ id: string, matchType?: token | stem, caseInsensitive?: boolean, language?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.dictionaries.delete",
+      "shortPath": "dictionaries.delete",
+      "description": "Delete a custom entity dictionary and all of its entries",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.dictionaries.deleteEntry",
+      "shortPath": "dictionaries.deleteEntry",
+      "description": "Delete a dictionary entry by id",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entryId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.dictionaries.get",
+      "shortPath": "dictionaries.get",
+      "description": "Get a custom entity dictionary by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ id: string, matchType?: token | stem, caseInsensitive?: boolean, language?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.dictionaries.getEntry",
+      "shortPath": "dictionaries.getEntry",
+      "description": "Get a dictionary entry by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entryId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ id: string, text?: string, data?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.dictionaries.list",
+      "shortPath": "dictionaries.list",
+      "description": "List custom entity dictionaries on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ id: string, matchType?: token | stem, caseInsensitive?: boolean, language?: string }[] | { dictionaries: { id: string, matchType?: token | stem, caseInsensitive?: boolean, language?: string }[] }"
+          },
+          {
+            "key": "dictionaries",
+            "optional": true,
+            "type": "{ id: string, matchType?: token | stem, caseInsensitive?: boolean, language?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "textrazor.api.dictionaries.listEntries",
+      "shortPath": "dictionaries.listEntries",
+      "description": "List dictionary entries with limit and offset pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "{ id: string, text?: string, data?: {} }[] | { entries: { id: string, text?: string, data?: {} }[] }"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "textrazor.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "plan",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "concurrentRequestLimit",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "concurrentRequestsUsed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "planDailyRequestsIncluded",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "requestsUsedToday",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "textrazor.db.categories.search",
+      "entityName": "categories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "categoryId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "classifierId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "textrazor.db.dictionaries.search",
+      "entityName": "dictionaries",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "matchType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "caseInsensitive",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "textrazor.db.dictionaryEntries.search",
+      "entityName": "dictionaryEntries",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dictionaryId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "textrazor.db.entities.search",
+      "entityName": "entities",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "entityId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "matchedText",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "confidenceScore",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "relevanceScore",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "wikiLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "wikidataId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}
