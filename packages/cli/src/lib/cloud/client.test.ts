@@ -5,8 +5,18 @@ describe('resolveCloudConfig', () => {
 	const originalKey = process.env.CORSAIR_CLOUD_KEY;
 
 	afterEach(() => {
-		process.env.CORSAIR_CLOUD_URL = originalUrl;
-		process.env.CORSAIR_CLOUD_KEY = originalKey;
+		if (originalUrl === undefined) {
+			// biome-ignore lint/performance/noDelete: must be truly unset, not "undefined"
+			delete process.env.CORSAIR_CLOUD_URL;
+		} else {
+			process.env.CORSAIR_CLOUD_URL = originalUrl;
+		}
+		if (originalKey === undefined) {
+			// biome-ignore lint/performance/noDelete: must be truly unset, not "undefined"
+			delete process.env.CORSAIR_CLOUD_KEY;
+		} else {
+			process.env.CORSAIR_CLOUD_KEY = originalKey;
+		}
 	});
 
 	it('throws naming --url when neither flag nor env is set', () => {
@@ -44,6 +54,18 @@ describe('resolveCloudConfig', () => {
 			url: 'https://env.corsair.cloud',
 			key: 'ck_cloud_env',
 		});
+	});
+
+	it('rejects a non-https url', () => {
+		expect(() =>
+			resolveCloudConfig({ url: 'http://attacker.example', key: 'ck_cloud_x' }),
+		).toThrow(/https/);
+	});
+
+	it('allows http for loopback hosts', () => {
+		expect(
+			resolveCloudConfig({ url: 'http://localhost:4000', key: 'ck_cloud_x' }),
+		).toEqual({ url: 'http://localhost:4000', key: 'ck_cloud_x' });
 	});
 });
 

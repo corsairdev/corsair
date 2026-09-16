@@ -12,8 +12,18 @@ describe('CloudListCommand', () => {
 	});
 
 	afterEach(() => {
-		process.env.CORSAIR_CLOUD_URL = originalUrl;
-		process.env.CORSAIR_CLOUD_KEY = originalKey;
+		if (originalUrl === undefined) {
+			// biome-ignore lint/performance/noDelete: must be truly unset, not "undefined"
+			delete process.env.CORSAIR_CLOUD_URL;
+		} else {
+			process.env.CORSAIR_CLOUD_URL = originalUrl;
+		}
+		if (originalKey === undefined) {
+			// biome-ignore lint/performance/noDelete: must be truly unset, not "undefined"
+			delete process.env.CORSAIR_CLOUD_KEY;
+		} else {
+			process.env.CORSAIR_CLOUD_KEY = originalKey;
+		}
 		jest.restoreAllMocks();
 	});
 
