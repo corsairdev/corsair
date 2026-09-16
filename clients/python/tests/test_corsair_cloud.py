@@ -28,6 +28,7 @@ def fake_urlopen(captured: dict, response_body: dict):
         captured["method"] = req.get_method()
         captured["headers"] = req.headers
         captured["body"] = json.loads(req.data) if req.data else None
+        captured["timeout"] = kw.get("timeout")
         return FakeResponse(json.dumps(response_body).encode())
 
     return _urlopen
@@ -58,6 +59,7 @@ def test_call_builds_url_bearer_body_and_returns_data(monkeypatch):
     assert captured["method"] == "POST"
     assert captured["headers"]["Authorization"] == "Bearer ck_cloud_x"
     assert captured["body"] == {"args": {"query": "hi"}}
+    assert captured["timeout"] == corsair.timeout
 
 
 def test_connection_status_parses_plugin_map(monkeypatch):
@@ -96,3 +98,27 @@ def test_non_2xx_error_body_raises_corsair_error(monkeypatch):
     assert err.code == "not_connected"
     assert err.message == "no credentials"
     assert err.reason == "missing"
+
+
+def test_rejects_non_https_url():
+    with pytest.raises(ValueError, match="https"):
+        CorsairCloud(api_key="ck_cloud_x", url="http://attacker.example")
+
+
+def test_allows_http_for_loopback():
+    corsair = CorsairCloud(api_key="ck_cloud_x", url="http://localhost:4000")
+    assert corsair.base_url == "http://localhost:4000"
+
+
+def test_call_encodes_a_slash_containing_tenant(monkeypatch):
+    captured: dict = {}
+    monkeypatch.setattr(
+        urllib.request, "urlopen", fake_urlopen(captured, {"data": {}})
+    )
+
+    corsair = CorsairCloud(api_key="ck_cloud_x", url="https://vm.corsair.cloud/env/api/corsair")
+    corsair.with_tenant("a/b").call("notion", "pages.searchPage")
+
+    assert captured["url"] == (
+        "https://vm.corsair.cloud/env/api/corsair/a%2Fb/notion/call/pages.searchPage"
+    )

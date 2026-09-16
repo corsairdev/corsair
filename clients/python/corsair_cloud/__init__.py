@@ -11,9 +11,26 @@ import urllib.error
 import urllib.request
 from dataclasses import dataclass
 from typing import Any
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode, urlsplit
 
 __all__ = ["CorsairCloud", "CorsairError", "TenantClient", "Manage"]
+
+_LOOPBACK_HOSTS = {"localhost", "127.0.0.1", "::1"}
+_DEFAULT_TIMEOUT = 30.0
+
+
+def _assert_secure_url(url: str) -> None:
+    # The API key is sent as a bearer token, so http:// would leak it in
+    # cleartext — allowed only for loopback, matching the other clients.
+    parts = urlsplit(url)
+    if parts.scheme == "https":
+        return
+    if parts.scheme == "http" and parts.hostname in _LOOPBACK_HOSTS:
+        return
+    raise ValueError(
+        f'Corsair Cloud URL must use https:// (got "{url}") — '
+        "http:// is only allowed for localhost/127.0.0.1."
+    )
 
 
 @dataclass
@@ -29,9 +46,11 @@ class CorsairError(Exception):
 
 
 class CorsairCloud:
-    def __init__(self, api_key: str, url: str) -> None:
+    def __init__(self, api_key: str, url: str, timeout: float = _DEFAULT_TIMEOUT) -> None:
+        _assert_secure_url(url)
         self.api_key = api_key
         self.base_url = url.rstrip("/")
+        self.timeout = timeout
 
     def with_tenant(self, tenant_id: str) -> "TenantClient":
         return TenantClient(self, tenant_id)
@@ -56,7 +75,7 @@ class CorsairCloud:
             headers["Content-Type"] = "application/json"
         req = urllib.request.Request(url, data=data, headers=headers, method=method)
         try:
-            with urllib.request.urlopen(req) as resp:
+            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
                 return json.loads(resp.read() or b"{}")
         except urllib.error.HTTPError as e:
             raw = e.read()
@@ -81,7 +100,7 @@ class TenantClient:
     def call(self, plugin: str, op: str, args: dict[str, Any] | None = None) -> Any:
         result = self._client._request(
             "POST",
-            [self._tenant_id, plugin, "call", op],
+            [quote(self._tenant_id, safe=""), quote(plugin, safe=""), "call", quote(op, safe="")],
             body={"args": args or {}},
         )
         return result["data"]
