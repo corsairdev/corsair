@@ -9,7 +9,7 @@ import {
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
-import { buildCloudCorsair } from './cloud';
+import { buildCloudCorsair, hasCloudBaseUrl } from './cloud';
 import { resolveRootPermissionsConfig } from './config/resolve-root-permissions';
 import { buildManagementNamespace } from './management';
 import { buildPermissionsNamespace } from './permissions';
@@ -70,7 +70,10 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	config: CorsairIntegration<Plugins>,
 ): CorsairSingleTenantClient<Plugins> | CorsairTenantWrapper<Plugins> {
-	if (config.hub?.projectApiKey?.startsWith('ck_cloud_')) {
+	if (
+		config.hub?.projectApiKey?.startsWith('ck_cloud_') &&
+		hasCloudBaseUrl(config.hub)
+	) {
 		return buildCloudCorsair(config);
 	}
 

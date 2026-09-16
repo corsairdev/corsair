@@ -64,13 +64,18 @@ describe('createCorsair with a ck_cloud_ key', () => {
 		expect(out).toEqual({ ts: '1' });
 	});
 
-	it('throws a clear error when no base URL resolves', () => {
+	it('builds a normal (non-cloud) client for a ck_cloud_ key with no resolvable base URL', () => {
+		// This is the hosted runtime's own shape: it IS the cloud VM, so it holds
+		// a ck_cloud_ key but never sets hub.baseUrl/CORSAIR_CLOUD_URL.
 		expect(() =>
 			createCorsair({
 				plugins: [slack()],
-				hub: { projectApiKey: 'ck_cloud_x' },
+				hub: {
+					projectApiKey: 'ck_cloud_x',
+					apiUrl: 'https://auth.corsair.dev',
+				},
 			}),
-		).toThrow(/baseUrl|CORSAIR_CLOUD_URL/);
+		).not.toThrow();
 	});
 
 	it('resolves base URL from CORSAIR_CLOUD_URL when hub.baseUrl is absent', async () => {
