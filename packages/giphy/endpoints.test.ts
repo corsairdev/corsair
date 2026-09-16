@@ -8,7 +8,11 @@ import { Gifs } from './endpoints/gifs';
 import { RandomId } from './endpoints/randomid';
 import { Stickers } from './endpoints/stickers';
 import { Tags } from './endpoints/tags';
-import type { GiphyContext } from './index';
+import type {
+	GiphyContext,
+	GiphyKeyBuilderContext,
+	GiphyPluginOptions,
+} from './index';
 import { giphy, giphyAuthConfig, giphyEndpointSchemas } from './index';
 
 jest.mock('./client', () => ({
@@ -135,14 +139,40 @@ describe('Giphy plugin configuration', () => {
 		expect(plugin.options?.key).toBe('test-api-key');
 	});
 
-	// keyBuilder is not invoked here on purpose: the framework types its
-	// context as `never` for api_key plugins (KeyBuilderContext's
-	// conditional only resolves for inline auth-type unions), so calling it
-	// would require a type assertion. The `options.key` branch it serves is
-	// covered by the test above and by every endpoint's key-resolution test.
-	it('exposes a keyBuilder for endpoint key resolution', () => {
-		const plugin = giphy({ key: 'configured-key' });
+	// Pin the options type so keyBuilder's context stays fully typed: an
+	// inferred narrow T would leave that context as never.
+	it('exposes a keyBuilder for endpoint key resolution', async () => {
+		jest.clearAllMocks();
+		const plugin = giphy<GiphyPluginOptions>({ key: 'configured-key' });
 		expect(plugin.keyBuilder).toBeDefined();
+
+		const baseKeys = baseCtx().keys;
+		const optionsCtx: GiphyKeyBuilderContext = {
+			authType: 'api_key',
+			tenantId: 'test-tenant',
+			options: {},
+			keys: { ...baseKeys, get_api_key: () => Promise.resolve(null) },
+		};
+		await expect(plugin.keyBuilder?.(optionsCtx, 'endpoint')).resolves.toBe(
+			'configured-key',
+		);
+
+		const vaultPlugin = giphy<GiphyPluginOptions>();
+		const vaultCtx: GiphyKeyBuilderContext = {
+			authType: 'api_key',
+			tenantId: 'test-tenant',
+			options: {},
+			keys: { ...baseKeys, get_api_key: () => Promise.resolve('vault-key') },
+		};
+		const vaultKey = await vaultPlugin.keyBuilder?.(vaultCtx, 'endpoint');
+		expect(vaultKey).toBe('vault-key');
+
+		mockRequest.mockResolvedValue(listResponse);
+		const ctx: Ctx = { ...baseCtx(), key: vaultKey ?? '', options: {} };
+		await Gifs.search(ctx, { q: 'cats' });
+		expect(mockRequest).toHaveBeenCalledWith('/gifs/search', 'vault-key', {
+			query: expect.objectContaining({ q: 'cats' }),
+		});
 	});
 
 	it('registers every endpoint schema', () => {
