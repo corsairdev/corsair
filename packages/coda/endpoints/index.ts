@@ -1,4 +1,4 @@
-import { insertRows, listDocs, listTables, whoami } from './example';
+import { insertRows, listDocs, listTables, whoami } from './handlers';
 
 export const CodaActions = {
 	whoami,

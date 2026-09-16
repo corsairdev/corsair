@@ -6,7 +6,7 @@ export type WhoamiInput = z.infer<typeof WhoamiInputSchema>;
 
 const WhoamiResponseSchema = z.object({
 	name: z.string(),
-	email: z.string(),
+	loginId: z.string(),
 });
 export type WhoamiResponse = z.infer<typeof WhoamiResponseSchema>;
 
@@ -71,7 +71,8 @@ const InsertRowsInputSchema = z.object({
 export type InsertRowsInput = z.infer<typeof InsertRowsInputSchema>;
 
 const InsertRowsResponseSchema = z.object({
-	requestId: z.string().optional(),
+	requestId: z.string(),
+	addedRowIds: z.array(z.string()),
 });
 export type InsertRowsResponse = z.infer<typeof InsertRowsResponseSchema>;
 
