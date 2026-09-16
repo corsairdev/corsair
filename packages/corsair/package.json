@@ -37,6 +37,11 @@
       "types": "./dist/http.d.ts",
       "default": "./dist/http.js"
     },
+    "./cloud-proxy": {
+      "dev-source": "./cloud-proxy.ts",
+      "types": "./dist/cloud-proxy.d.ts",
+      "default": "./dist/cloud-proxy.js"
+    },
     "./oauth": {
       "dev-source": "./oauth.ts",
       "types": "./dist/oauth.d.ts",

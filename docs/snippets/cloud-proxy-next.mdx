@@ -1,0 +1,14 @@
+```ts app/api/corsair/[...path]/route.ts
+import { createCloudProxy } from 'corsair/cloud-proxy';
+
+const proxy = createCloudProxy({
+    apiKey: process.env.CORSAIR_CLOUD_KEY!,
+    url: process.env.CORSAIR_CLOUD_URL!,
+});
+
+export const GET = proxy;
+export const POST = proxy;
+```
+
+Pair it with `<CorsairProvider baseURL="/api/corsair">` in the browser — the
+provider only ever calls this same-origin route and never sees the key.

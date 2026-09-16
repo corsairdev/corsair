@@ -3,6 +3,8 @@ title: Corsair Cloud
 description: A hosted runtime for your integrations. You get a URL and a key; every tool call is an HTTP request.
 ---
 
+import CloudProxyNext from '/snippets/cloud-proxy-next.mdx';
+
 Corsair Cloud runs your integration layer for you. Each project gets its own
 hosted runtime (a VM that runs Corsair), reachable at a URL. You connect your
 users' accounts through managed OAuth, then call any plugin operation over HTTP.
@@ -22,6 +24,9 @@ Corsair Cloud has one runtime and two client surfaces:
 - **Client (React)** — `CorsairProvider`. Runs in the browser and never sees the
   key: it talks to a same-origin route in your own app that adds the bearer
   server-side. Use it to render the connect flow and read connection state.
+  `corsair/cloud-proxy` builds that route for you:
+
+<CloudProxyNext />
 
 The key is a server secret. Do not ship it to a browser. The React path exists so
 you never have to.
