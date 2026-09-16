@@ -62,13 +62,13 @@ export function verifyCodaWebhookSignature(
 		return { valid: false, error: 'No secret provided' };
 	}
 
-	const signature = request.headers['x-coda-signature'];
+	const signature = request.headers['x-webhook-signature'];
 	const normalizedSignature = Array.isArray(signature)
 		? signature[0]
 		: signature;
 
 	if (!normalizedSignature) {
-		return { valid: false, error: 'Missing x-coda-signature header' };
+		return { valid: false, error: 'Missing x-webhook-signature header' };
 	}
 
 	const rawBody = request.rawBody;
