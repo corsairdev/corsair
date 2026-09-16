@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 // Client talks to a Corsair Cloud project's base URL
@@ -18,6 +19,7 @@ type Client struct {
 	apiKey  string
 	baseURL string
 	http    *http.Client
+	initErr error
 }
 
 // Option configures a Client.
@@ -28,12 +30,33 @@ func WithHTTPClient(h *http.Client) Option {
 	return func(c *Client) { c.http = h }
 }
 
-// New creates a Client for the given API key and project base URL.
+var loopbackHosts = map[string]bool{"localhost": true, "127.0.0.1": true, "::1": true}
+
+// The API key is sent as a bearer token, so http:// would leak it in
+// cleartext — allowed only for loopback, matching the other language clients.
+func assertSecureBaseURL(baseURL string) error {
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		return fmt.Errorf("corsaircloud: invalid base URL %q: %w", baseURL, err)
+	}
+	if u.Scheme == "https" {
+		return nil
+	}
+	if u.Scheme == "http" && loopbackHosts[u.Hostname()] {
+		return nil
+	}
+	return fmt.Errorf("corsaircloud: base URL must use https:// (got %q) — http:// is only allowed for localhost/127.0.0.1", baseURL)
+}
+
+// New creates a Client for the given API key and project base URL. A base
+// URL that isn't https:// (loopback excepted) surfaces as an error from the
+// first call made with this client.
 func New(apiKey, baseURL string, opts ...Option) *Client {
 	c := &Client{
 		apiKey:  apiKey,
 		baseURL: strings.TrimRight(baseURL, "/"),
-		http:    http.DefaultClient,
+		http:    &http.Client{Timeout: 30 * time.Second},
+		initErr: assertSecureBaseURL(baseURL),
 	}
 	for _, opt := range opts {
 		opt(c)
@@ -60,8 +83,12 @@ func (c *Client) ConnectionStatus(ctx context.Context, tenantID string) (map[str
 }
 
 // CreateConnectLink starts an OAuth connect flow for a plugin/tenant pair.
-func (c *Client) CreateConnectLink(ctx context.Context, plugin, tenantID string) (ConnectLink, error) {
+// redirectURI is optional — pass "" to omit it.
+func (c *Client) CreateConnectLink(ctx context.Context, plugin, tenantID, redirectURI string) (ConnectLink, error) {
 	body := map[string]string{"plugin": plugin, "tenantId": tenantID}
+	if redirectURI != "" {
+		body["redirectUri"] = redirectURI
+	}
 	data, err := c.send(ctx, http.MethodPost, []string{"connect", "links"}, nil, body)
 	if err != nil {
 		return ConnectLink{}, err
@@ -167,7 +194,14 @@ type errorBody struct {
 }
 
 func (c *Client) send(ctx context.Context, method string, path []string, query url.Values, body any) (json.RawMessage, error) {
-	u := c.baseURL + "/" + strings.Join(path, "/")
+	if c.initErr != nil {
+		return nil, c.initErr
+	}
+	escaped := make([]string, len(path))
+	for i, p := range path {
+		escaped[i] = url.PathEscape(p)
+	}
+	u := c.baseURL + "/" + strings.Join(escaped, "/")
 	if len(query) > 0 {
 		u += "?" + query.Encode()
 	}

@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -116,6 +117,43 @@ func TestErrorBodyMapsToCorsairError(t *testing.T) {
 	}
 }
 
+func TestSendRejectsNonHTTPSBaseURL(t *testing.T) {
+	c := New("ck_cloud_test", "http://attacker.example")
+	_, err := c.Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", nil)
+	if err == nil {
+		t.Fatal("expected error for non-https base URL")
+	}
+}
+
+func TestSendAllowsLoopbackHTTP(t *testing.T) {
+	c, close := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"data":{}}`))
+	})
+	defer close()
+
+	if _, err := c.Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", nil); err != nil {
+		t.Fatalf("expected loopback http to be allowed, got %v", err)
+	}
+}
+
+func TestCallEscapesPathSegments(t *testing.T) {
+	var gotRequestURI string
+	c, close := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
+		gotRequestURI = r.RequestURI
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"data":{}}`))
+	})
+	defer close()
+
+	if _, err := c.Tenant("a/b").Call(context.Background(), "notion", "pages.searchPage", nil); err != nil {
+		t.Fatalf("Call returned error: %v", err)
+	}
+	if !strings.Contains(gotRequestURI, "a%2Fb") {
+		t.Errorf("request URI = %q, want the tenant segment escaped as a%%2Fb", gotRequestURI)
+	}
+}
+
 func TestCreateConnectLinkAndDisconnect(t *testing.T) {
 	c, close := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -130,7 +168,7 @@ func TestCreateConnectLinkAndDisconnect(t *testing.T) {
 	})
 	defer close()
 
-	link, err := c.CreateConnectLink(context.Background(), "notion", "acme")
+	link, err := c.CreateConnectLink(context.Background(), "notion", "acme", "")
 	if err != nil {
 		t.Fatalf("CreateConnectLink error: %v", err)
 	}

@@ -13,7 +13,7 @@ var pages NotionPages
 _ = json.Unmarshal(raw, &pages)
 
 status, _ := corsair.ConnectionStatus(ctx, "acme")
-link, _ := corsair.CreateConnectLink(ctx, "notion", "acme")
+link, _ := corsair.CreateConnectLink(ctx, "notion", "acme", "") // redirectURI optional
 ```
 
 Errors from non-2xx responses are `*corsaircloud.CorsairError` (`Code`, `Message`, `Reason`, `ProviderStatus`).
