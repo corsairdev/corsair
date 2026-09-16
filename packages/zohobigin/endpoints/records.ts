@@ -328,7 +328,7 @@ export const uploadRecordPhoto: ZohoBiginEndpoints['uploadRecordPhoto'] =
 			ZohoBiginEndpointOutputs['uploadRecordPhoto']
 		>(`${module}/${id}/photo`, ctx.key, {
 			method: 'POST',
-			body: file,
+			formData: { file },
 		});
 
 		await logEventFromContext(

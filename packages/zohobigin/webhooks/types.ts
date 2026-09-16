@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -63,14 +64,30 @@ export function verifyZohoBiginWebhookSignature(
 	request: WebhookRequest<ZohoBiginWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	if (!secret) {
-		return { valid: true };
+	if (request.hubVerified !== true) {
+		return { valid: false, error: 'Request was not hub-verified' };
 	}
+
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret configuration' };
+	}
+
 	const tokenHeader =
 		request.headers?.['x-bigin-token'] ?? request.headers?.['authorization'];
 	const payloadToken = request.payload?.token;
 
-	if (tokenHeader === secret || payloadToken === secret) {
+	const toBuffer = (value: string) => Buffer.from(value);
+	const secureEqual = (left: string, right: string) => {
+		const leftBuffer = toBuffer(left);
+		const rightBuffer = toBuffer(right);
+		if (leftBuffer.length !== rightBuffer.length) return false;
+		return timingSafeEqual(leftBuffer, rightBuffer);
+	};
+
+	if (
+		(typeof tokenHeader === 'string' && secureEqual(tokenHeader, secret)) ||
+		(typeof payloadToken === 'string' && secureEqual(payloadToken, secret))
+	) {
 		return { valid: true };
 	}
 	return { valid: false, error: 'Invalid webhook authentication token' };

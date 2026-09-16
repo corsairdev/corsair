@@ -17,6 +17,7 @@ const ZOHOBIGIN_API_BASE = 'https://www.zohoapis.com/bigin/v1';
 export type ZohoBiginRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: unknown;
+	formData?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 	headers?: Record<string, string>;
 	mediaType?: string;
@@ -28,17 +29,22 @@ export async function makeZohoBiginRequest<T>(
 	apiKey: string,
 	options: ZohoBiginRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, headers, mediaType, baseUrl } = options;
-
-	const isFormData =
-		typeof FormData !== 'undefined' && body instanceof FormData;
+	const {
+		method = 'GET',
+		body,
+		formData,
+		query,
+		headers,
+		mediaType,
+		baseUrl,
+	} = options;
 
 	const defaultHeaders: Record<string, string> = {
 		Authorization: `Zoho-oauthtoken ${apiKey}`,
 		...headers,
 	};
 
-	if (!isFormData && !defaultHeaders['Content-Type']) {
+	if (!formData && !defaultHeaders['Content-Type']) {
 		defaultHeaders['Content-Type'] = 'application/json';
 	}
 
@@ -54,11 +60,12 @@ export async function makeZohoBiginRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
+		formData,
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
 				? body
 				: undefined,
-		mediaType: isFormData
+		mediaType: formData
 			? undefined
 			: (mediaType ?? 'application/json; charset=utf-8'),
 		query,

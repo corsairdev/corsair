@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import type { ZodTypeAny } from 'zod';
 import {
 	attachments,
 	bulk,
@@ -35,9 +36,6 @@ import { ZohoBiginSchema } from './schema';
 
 export const zohoBiginAuthConfig = {
 	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
-	api_key: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -117,11 +115,9 @@ const zohoBiginEndpointsNested = {
 } as const;
 
 export type ZohoBiginPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalZohoBiginPlugin['hooks'];
-	webhookHooks?: InternalZohoBiginPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof zohoBiginEndpointsNested>;
 };
@@ -144,6 +140,39 @@ type ZohoBiginEndpoint<K extends keyof ZohoBiginEndpointOutputs> =
 		ZohoBiginEndpointInputs[K],
 		ZohoBiginEndpointOutputs[K]
 	>;
+
+type FlatSchemaEntry = { input?: ZodTypeAny; output?: ZodTypeAny };
+type EndpointTree = Record<string, unknown>;
+type EndpointHandler = (ctx: unknown, input: unknown) => Promise<unknown>;
+
+function withSchemaValidation<T extends EndpointTree>(
+	tree: T,
+	schemas: Record<string, FlatSchemaEntry>,
+	prefix = '',
+): T {
+	const validatedEntries = Object.entries(tree).map(([key, value]) => {
+		const path = prefix ? `${prefix}.${key}` : key;
+
+		if (typeof value === 'function') {
+			const handler = value as EndpointHandler;
+			const schema = schemas[path];
+			const wrapped: EndpointHandler = async (ctx, input) => {
+				const parsedInput = schema?.input ? schema.input.parse(input) : input;
+				const rawOutput = await handler(ctx, parsedInput);
+				return schema?.output ? schema.output.parse(rawOutput) : rawOutput;
+			};
+			return [key, wrapped];
+		}
+
+		if (value && typeof value === 'object') {
+			return [key, withSchemaValidation(value as EndpointTree, schemas, path)];
+		}
+
+		return [key, value];
+	});
+
+	return Object.fromEntries(validatedEntries) as T;
+}
 
 export type ZohoBiginEndpoints = {
 	addRecords: ZohoBiginEndpoint<'addRecords'>;
@@ -614,6 +643,10 @@ export function zohobigin<const T extends ZohoBiginPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	const validatedEndpoints = withSchemaValidation(
+		zohoBiginEndpointsNested as EndpointTree,
+		zohoBiginEndpointSchemas,
+	) as typeof zohoBiginEndpointsNested;
 	return {
 		id: 'zohobigin',
 		authConfig: zohoBiginAuthConfig,
@@ -623,7 +656,7 @@ export function zohobigin<const T extends ZohoBiginPluginOptions>(
 			...options.errorHandlers,
 		},
 		options,
-		endpoints: zohoBiginEndpointsNested,
+		endpoints: validatedEndpoints,
 		webhooks: zohoBiginWebhooksNested,
 		endpointMeta: zohoBiginEndpointMeta,
 		endpointSchemas: zohoBiginEndpointSchemas,
@@ -631,4 +664,3 @@ export function zohobigin<const T extends ZohoBiginPluginOptions>(
 }
 
 export * from './endpoints';
-export type { ZohoBiginWebhooks } from './webhooks';

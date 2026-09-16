@@ -98,6 +98,6 @@ export const uploadOrganizationPhoto: ZohoBiginEndpoints['uploadOrganizationPhot
 			ZohoBiginEndpointOutputs['uploadOrganizationPhoto']
 		>('org/photo', ctx.key, {
 			method: 'POST',
-			body: input.file,
+			formData: { file: input.file },
 		});
 	};

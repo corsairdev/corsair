@@ -34,8 +34,10 @@ export const addTagsToRecords: ZohoBiginEndpoints['addTagsToRecords'] = async (
 		ZohoBiginEndpointOutputs['addTagsToRecords']
 	>(`${module}/${recordId}/actions/add_tags`, ctx.key, {
 		method: 'POST',
-		query: overWrite !== undefined ? { over_write: overWrite } : undefined,
-		body: { tags },
+		query: {
+			tag_names: tags.map(({ name }) => name).join(','),
+			...(overWrite !== undefined ? { over_write: overWrite } : {}),
+		},
 	});
 
 	await logEventFromContext(

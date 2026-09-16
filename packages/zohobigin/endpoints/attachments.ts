@@ -66,12 +66,17 @@ export const uploadAttachment: ZohoBiginEndpoints['uploadAttachment'] = async (
 	ctx,
 	input,
 ) => {
-	const { module, recordId, attachment_url } = input;
+	const { module, recordId, file, attachmentUrl, attachment_url } = input;
+	const resolvedAttachmentUrl = attachmentUrl ?? attachment_url;
 	const response = await makeZohoBiginRequest<
 		ZohoBiginEndpointOutputs['uploadAttachment']
 	>(`${module}/${recordId}/Attachments`, ctx.key, {
 		method: 'POST',
-		query: attachment_url ? { attachmentUrl: attachment_url } : undefined,
+		formData: file
+			? { file }
+			: resolvedAttachmentUrl
+				? { attachmentUrl: resolvedAttachmentUrl }
+				: undefined,
 	});
 
 	await logEventFromContext(

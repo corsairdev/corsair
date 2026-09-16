@@ -1,20 +1,15 @@
 import type { CorsairWebhook } from 'corsair/core';
 import type { ZohoBiginContext } from '..';
-import { example } from './example';
-import type { ExampleEvent, ZohoBiginWebhookOutputs } from './types';
-
-export const ExampleWebhooks = {
-	example: example,
-};
+import type {
+	ZohoBiginNotificationEvent,
+	ZohoBiginWebhookOutputs,
+} from './types';
 
 export type ZohoBiginWebhooks = {
-	example: CorsairWebhook<
+	notification: CorsairWebhook<
 		ZohoBiginContext,
-		ExampleEvent,
-		ZohoBiginWebhookOutputs['example']
+		ZohoBiginNotificationEvent,
+		ZohoBiginWebhookOutputs['notification']
 	>;
 };
-
-export * from './oauth-tenant-link';
-export * from './tenant-matcher';
 export * from './types';

@@ -312,7 +312,16 @@ export const CreateTagsInputSchema = z.object({
 	tags: z.array(z.object({ name: z.string() })),
 });
 export type CreateTagsInput = z.infer<typeof CreateTagsInputSchema>;
-export const CreateTagsResponseSchema = StandardActionResponseSchema;
+export const CreateTagsResponseSchema = z.object({
+	tags: z.array(
+		z.object({
+			code: z.string(),
+			details: z.record(z.string(), z.unknown()),
+			message: z.string(),
+			status: z.string(),
+		}),
+	),
+});
 export type CreateTagsResponse = z.infer<typeof CreateTagsResponseSchema>;
 
 export const AddTagsToRecordsInputSchema = z.object({
@@ -371,11 +380,27 @@ export type GetAttachmentsResponse = z.infer<
 	typeof GetAttachmentsResponseSchema
 >;
 
-export const UploadAttachmentInputSchema = z.object({
-	module: z.string(),
-	recordId: z.string(),
-	attachment_url: z.string().optional(),
-});
+export const UploadAttachmentInputSchema = z
+	.object({
+		module: z.string(),
+		recordId: z.string(),
+		file: z.unknown().optional(),
+		attachmentUrl: z.string().url().optional(),
+		attachment_url: z.string().url().optional(),
+	})
+	.superRefine((input, ctx) => {
+		const hasFile = input.file !== undefined;
+		const hasAttachmentUrl =
+			input.attachmentUrl !== undefined || input.attachment_url !== undefined;
+
+		if (hasFile === hasAttachmentUrl) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: 'Provide exactly one of file or attachmentUrl',
+				path: ['file'],
+			});
+		}
+	});
 export type UploadAttachmentInput = z.infer<typeof UploadAttachmentInputSchema>;
 export const UploadAttachmentResponseSchema = StandardActionResponseSchema;
 export type UploadAttachmentResponse = z.infer<
@@ -393,7 +418,7 @@ export type CreateBulkReadJobResponse = z.infer<
 >;
 
 export const DownloadBulkReadResultInputSchema = z.object({
-	jobId: z.string(),
+	job_id: z.string(),
 });
 export type DownloadBulkReadResultInput = z.infer<
 	typeof DownloadBulkReadResultInputSchema
@@ -402,7 +427,7 @@ export const DownloadBulkReadResultResponseSchema = z.unknown();
 export type DownloadBulkReadResultResponse = unknown;
 
 export const GetBulkReadJobStatusInputSchema = z.object({
-	jobId: z.string(),
+	job_id: z.string(),
 });
 export type GetBulkReadJobStatusInput = z.infer<
 	typeof GetBulkReadJobStatusInputSchema
@@ -431,6 +456,7 @@ export const EnableNotificationsInputSchema = z.object({
 			events: z.array(z.string()),
 			token: z.string().optional(),
 			notify_url: z.string(),
+			channel_expiry: z.string().optional(),
 		}),
 	),
 });
@@ -590,14 +616,18 @@ export const UpdateUserInputSchema = z.object({
 	data: StandardRecordSchema,
 });
 export type UpdateUserInput = z.infer<typeof UpdateUserInputSchema>;
-export const UpdateUserResponseSchema = StandardActionResponseSchema;
+export const UpdateUserResponseSchema = z.object({
+	users: z.array(StandardRecordSchema),
+});
 export type UpdateUserResponse = z.infer<typeof UpdateUserResponseSchema>;
 
 export const UpdateUsersInputSchema = z.object({
 	users: z.array(StandardRecordSchema.and(z.object({ id: z.string() }))),
 });
 export type UpdateUsersInput = z.infer<typeof UpdateUsersInputSchema>;
-export const UpdateUsersResponseSchema = StandardActionResponseSchema;
+export const UpdateUsersResponseSchema = z.object({
+	users: z.array(StandardRecordSchema),
+});
 export type UpdateUsersResponse = z.infer<typeof UpdateUsersResponseSchema>;
 
 export const GetRolesResponseSchema = z.object({
