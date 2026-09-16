@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import { Batch, Check, Credits, Status } from './endpoints';
 import type { TpscheckContext } from './index';
+import { tpscheck, tpscheckEndpointSchemas } from './index';
 
 jest.mock('corsair/core', () => {
 	const actual = jest.requireActual('corsair/core');
@@ -206,5 +207,40 @@ describe('status.get', () => {
 			{},
 			'completed',
 		);
+	});
+});
+
+// Note: keyBuilder has no unit tests here. Its public type accepts only a
+// `never` context (a framework typing limitation shared by every plugin),
+// so calling it directly requires a type assertion. Auth behaviour is
+// covered instead by the Authorization-header tests in client.test.ts.
+
+describe('tpscheck plugin shape', () => {
+	it('exposes check.post, batch.post, credits.get and status.get', () => {
+		const plugin = tpscheck({});
+
+		expect(plugin.endpoints?.check.post).toBeDefined();
+		expect(plugin.endpoints?.batch.post).toBeDefined();
+		expect(plugin.endpoints?.credits.get).toBeDefined();
+		expect(plugin.endpoints?.status.get).toBeDefined();
+	});
+
+	it('uses api_key auth and declares no webhooks', () => {
+		const plugin = tpscheck({ authType: 'api_key' });
+
+		expect(plugin.options?.authType).toBe('api_key');
+		expect(plugin.authConfig).toEqual({ api_key: {} });
+		expect(plugin.webhooks).toEqual({});
+	});
+
+	it('wires zod input and output schemas for every endpoint', () => {
+		expect(tpscheckEndpointSchemas['check.post']?.input).toBeDefined();
+		expect(tpscheckEndpointSchemas['check.post']?.output).toBeDefined();
+		expect(tpscheckEndpointSchemas['batch.post']?.input).toBeDefined();
+		expect(tpscheckEndpointSchemas['batch.post']?.output).toBeDefined();
+		expect(tpscheckEndpointSchemas['credits.get']?.input).toBeDefined();
+		expect(tpscheckEndpointSchemas['credits.get']?.output).toBeDefined();
+		expect(tpscheckEndpointSchemas['status.get']?.input).toBeDefined();
+		expect(tpscheckEndpointSchemas['status.get']?.output).toBeDefined();
 	});
 });

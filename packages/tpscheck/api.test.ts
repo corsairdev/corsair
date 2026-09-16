@@ -1,3 +1,12 @@
+// Live TPSCheck API tests. Excluded from the default run by
+// `testPathIgnorePatterns` in `jest.config.cjs`
+// (--testPathIgnorePatterns="api\.test\.ts"); run it with:
+//
+//   TPSCHECK_API_KEY=... pnpm test:live
+//
+// Per the docs, /status and /credits are free while /check and /batch
+// consume one credit per number, so this file never runs on an exported
+// key by accident.
 import { makeTpscheckRequest } from './client';
 import type {
 	BatchResponse,
@@ -11,46 +20,7 @@ import {
 	CreditsResponseSchema,
 	StatusResponseSchema,
 } from './endpoints/types';
-import { tpscheck, tpscheckEndpointSchemas } from './index';
 
-describe('tpscheck plugin shape', () => {
-	it('exposes check.post, batch.post, credits.get and status.get', () => {
-		const plugin = tpscheck({});
-
-		expect(plugin.endpoints?.check.post).toBeDefined();
-		expect(plugin.endpoints?.batch.post).toBeDefined();
-		expect(plugin.endpoints?.credits.get).toBeDefined();
-		expect(plugin.endpoints?.status.get).toBeDefined();
-	});
-
-	it('uses api_key auth and declares no webhooks', () => {
-		const plugin = tpscheck({ authType: 'api_key' });
-
-		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.authConfig).toEqual({ api_key: {} });
-		expect(plugin.webhooks).toEqual({});
-	});
-
-	it('wires zod input and output schemas for every endpoint', () => {
-		expect(tpscheckEndpointSchemas['check.post']?.input).toBeDefined();
-		expect(tpscheckEndpointSchemas['check.post']?.output).toBeDefined();
-		expect(tpscheckEndpointSchemas['batch.post']?.input).toBeDefined();
-		expect(tpscheckEndpointSchemas['batch.post']?.output).toBeDefined();
-		expect(tpscheckEndpointSchemas['credits.get']?.input).toBeDefined();
-		expect(tpscheckEndpointSchemas['credits.get']?.output).toBeDefined();
-		expect(tpscheckEndpointSchemas['status.get']?.input).toBeDefined();
-		expect(tpscheckEndpointSchemas['status.get']?.output).toBeDefined();
-	});
-});
-
-// Note: keyBuilder has no unit tests here. Its public type accepts only a
-// `never` context (a framework typing limitation shared by every plugin),
-// so calling it directly requires a type assertion. Auth behaviour is
-// covered instead by the Authorization-header tests in client.test.ts.
-
-// Live tests run only when TPSCHECK_API_KEY is set, so CI stays hermetic
-// without credentials. Per the docs, /status and /credits are free while
-// /check and /batch consume one credit per number.
 const LIVE_KEY = process.env.TPSCHECK_API_KEY ?? '';
 const describeLive = LIVE_KEY.length > 0 ? describe : describe.skip;
 

@@ -36,9 +36,17 @@ describe('Tpscheck errorHandlers', () => {
 		});
 	});
 
+	it('routes credit exhaustion to INSUFFICIENT_CREDITS_ERROR with no retries', async () => {
+		const error = apiError(429, 'Insufficient credits for this operation');
+		expect(route(error)).toBe('INSUFFICIENT_CREDITS_ERROR');
+		await expect(
+			errorHandlers.INSUFFICIENT_CREDITS_ERROR.handler(),
+		).resolves.toEqual({ maxRetries: 0 });
+	});
+
 	it('routes text rate limit errors when status is absent', () => {
 		expect(route(new Error('insufficient credits for this operation'))).toBe(
-			'RATE_LIMIT_ERROR',
+			'INSUFFICIENT_CREDITS_ERROR',
 		);
 		expect(route(new Error('too many requests'))).toBe('RATE_LIMIT_ERROR');
 	});
