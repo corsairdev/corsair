@@ -186,7 +186,7 @@ export function coda<const T extends CodaPluginOptions>(
 		webhookSchemas: codaWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			return 'x-coda-signature' in headers;
+			return 'x-webhook-signature' in headers;
 		},
 		pluginTenantWebhookMatcher: matchCodaTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveCodaOAuthWebhookTenantLink,
