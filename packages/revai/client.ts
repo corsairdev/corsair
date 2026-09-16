@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class RevAIAPIError extends Error {
 	constructor(
@@ -11,7 +11,6 @@ export class RevAIAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
 const REVAI_API_BASE = 'https://api.rev.ai/speechtotext/v1';
 
 export async function makeRevAIRequest<T>(
@@ -53,11 +52,7 @@ export async function makeRevAIRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		if (
-			error &&
-			typeof error === 'object' &&
-			error.constructor.name === 'ApiError'
-		) {
+		if (error instanceof ApiError) {
 			throw error;
 		}
 		if (error instanceof Error) {

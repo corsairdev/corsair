@@ -40,11 +40,20 @@ export const GetTranscriptInputSchema = z.object({
 		.default('application/vnd.rev.transcript.v1.0+json'),
 });
 
+export const TranscriptJsonSchema = z
+	.object({
+		monologues: z.array(z.unknown()),
+	})
+	.passthrough();
+
+export const TranscriptTextSchema = z.string();
+
 export type SubmitJobInput = z.infer<typeof SubmitJobInputSchema>;
 export type GetJobInput = z.infer<typeof GetJobInputSchema>;
 export type GetTranscriptInput = z.infer<typeof GetTranscriptInputSchema>;
 export type JobResponse = z.infer<typeof JobSchema>;
-export type TranscriptResponse = any; // Will be typed based on requested format
+export type TranscriptJsonResponse = z.infer<typeof TranscriptJsonSchema>;
+export type TranscriptResponse = TranscriptJsonResponse | string;
 
 export type RevAIEndpointInputs = {
 	submitJob: SubmitJobInput;
@@ -67,5 +76,5 @@ export const RevAIEndpointInputSchemas = {
 export const RevAIEndpointOutputSchemas = {
 	submitJob: JobSchema,
 	getJob: JobSchema,
-	getTranscript: z.union([z.record(z.string(), z.any()), z.string()]),
+	getTranscript: z.union([TranscriptJsonSchema, TranscriptTextSchema]),
 } as const;

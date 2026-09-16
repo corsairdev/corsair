@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { Jobs } from './endpoints';
 import type {
@@ -26,18 +23,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { RevAISchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveRevAIOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchRevAITenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, RevAIWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type RevAIPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalRevAIPlugin['hooks'];
-	webhookHooks?: InternalRevAIPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof revAIEndpointsNested>;
 };
@@ -63,26 +53,8 @@ export type RevAIEndpoints = {
 	getTranscript: RevAIEndpoint<'getTranscript'>;
 };
 
-type RevAIWebhook<K extends keyof RevAIWebhookOutputs, TEvent> = CorsairWebhook<
-	RevAIContext,
-	TEvent,
-	RevAIWebhookOutputs[K]
->;
-
-export type RevAIWebhooks = {
-	example: RevAIWebhook<'example', ExampleEvent>;
-};
-
-export type RevAIBoundWebhooks = BindWebhooks<RevAIWebhooks>;
-
 const revAIEndpointsNested = {
 	jobs: Jobs,
-} as const;
-
-const revAIWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
 } as const;
 
 export const revAIEndpointSchemas = {
@@ -99,14 +71,6 @@ export const revAIEndpointSchemas = {
 		output: RevAIEndpointOutputSchemas.getTranscript,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof revAIEndpointsNested>;
-
-const revAIWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof revAIWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -138,7 +102,7 @@ export type BaseRevAIPlugin<T extends RevAIPluginOptions> = CorsairPlugin<
 	'revai',
 	typeof RevAISchema,
 	typeof revAIEndpointsNested,
-	typeof revAIWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType
 >;
@@ -161,33 +125,16 @@ export function revai<const T extends RevAIPluginOptions>(
 		schema: RevAISchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: revAIEndpointsNested,
-		webhooks: revAIWebhooksNested,
+		webhooks: {},
 		endpointMeta: revAIEndpointMeta,
 		endpointSchemas: revAIEndpointSchemas,
-		webhookSchemas: revAIWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-revai-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchRevAITenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveRevAIOAuthWebhookTenantLink,
+		webhookSchemas: {},
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: RevAIKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -216,7 +163,3 @@ export type {
 	SubmitJobInput,
 	TranscriptResponse,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	RevAIWebhookOutputs,
-} from './webhooks/types';
