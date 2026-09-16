@@ -1,0 +1,695 @@
+---
+title: API
+description: "API reference for Docmosis: every `docmosis.api.*` operation with input and output types."
+---
+
+Every `docmosis.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Admin
+
+### environmentReady
+
+`admin.environmentReady`
+
+Check whether the environment is active and ready to render
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.admin.environmentReady({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `succeeded` | `boolean` | No | — |
+| `shortMsg` | `string` | No | — |
+| `longMsg` | `string` | No | — |
+
+
+
+---
+
+### environmentSummary
+
+`admin.environmentSummary`
+
+Get environment status, plan details, and quota usage
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.admin.environmentSummary({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `succeeded` | `boolean` | No | — |
+| `shortMsg` | `string` | No | — |
+| `longMsg` | `string` | No | — |
+| `accountEnvironmentSummary` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="accountEnvironmentSummary full type">
+
+```ts
+{
+  ready?: boolean | string,
+  accountEnvDetails?: {
+    name?: string,
+    description?: string,
+    isActivated?: boolean | string,
+    isDisabled?: boolean,
+    isDeleted?: boolean,
+    auditInfo?: {
+      lastUpdatedByUser?: string,
+      lastUpdatedTime?: number
+    }
+  },
+  pageQuota?: {
+    used?: number | string,
+    quota?: number | string,
+    pctUsed?: number | string,
+    pctUsedStr?: string,
+    isHardLimited?: boolean | string
+  },
+  plan?: {
+    name?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getApiKey
+
+`admin.getApiKey`
+
+Return the currently configured Docmosis access key
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.admin.getApiKey({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiKey` | `string` | Yes | — |
+
+
+
+---
+
+### getBatchUploadStatus
+
+`admin.getBatchUploadStatus`
+
+Check status for a template batch upload job
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.admin.getBatchUploadStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userJobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `succeeded` | `boolean` | No | — |
+| `shortMsg` | `string` | No | — |
+| `longMsg` | `string` | No | — |
+| `jobStatus` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="jobStatus full type">
+
+```ts
+{
+  userJobId?: string,
+  isEnded?: boolean,
+  status?: string,
+  type?: string,
+  processingMsg?: string,
+  startedTime?: number,
+  finishedTime?: number,
+  duration?: number,
+  pctComplete?: number,
+  jobResult?: {
+    errorsDetected?: boolean,
+    uploadedIntoFolder?: string,
+    devMode?: boolean,
+    uploadedTotalCount?: number,
+    processedWithErrorsCount?: number,
+    processedWithoutErrorsCount?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRenderQueue
+
+`admin.getRenderQueue`
+
+Get current render queue utilization and delay
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.admin.getRenderQueue({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `succeeded` | `boolean` | No | — |
+| `shortMsg` | `string` | No | — |
+| `longMsg` | `string` | No | — |
+| `queue` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="queue full type">
+
+```ts
+{
+  rejected?: boolean,
+  availablePct?: number,
+  delaySeconds?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRenderTags
+
+`admin.getRenderTags`
+
+Get monthly render statistics grouped by custom tags
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.admin.getRenderTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `string` | Yes | — |
+| `year` | `number \| string` | No | — |
+| `month` | `number \| string` | No | — |
+| `nMonths` | `number \| string` | No | — |
+| `padBlanks` | `boolean \| y \| yes \| true \| n \| no \| false` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `succeeded` | `boolean` | No | — |
+| `shortMsg` | `string` | No | — |
+| `longMsg` | `string` | No | — |
+| `renderTags` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="renderTags full type">
+
+```ts
+{
+  year?: number,
+  month?: number,
+  tags?: {
+    name?: string,
+    countPages?: number,
+    countDocuments?: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ping
+
+`admin.ping`
+
+Check basic connectivity to the Docmosis API
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.admin.ping({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+### pingService
+
+`admin.pingService`
+
+Verify that Docmosis service listeners are online
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.admin.pingService({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+## Images
+
+### delete
+
+`images.delete`
+
+Delete one or more stored images
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.docmosis.api.images.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageName` | `string \| string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `succeeded` | `boolean` | No | — |
+| `shortMsg` | `string` | No | — |
+| `longMsg` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`images.get`
+
+Download one or more uploaded images
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.images.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageName` | `string \| string[]` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### list
+
+`images.list`
+
+List available stored images, optionally by folder
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.images.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder` | `string` | No | — |
+| `includeSubFolders` | `boolean \| y \| yes \| true \| n \| no \| false` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `succeeded` | `boolean` | No | — |
+| `shortMsg` | `string` | No | — |
+| `longMsg` | `string` | No | — |
+| `imageListStale` | `boolean` | No | — |
+| `imageList` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="imageList full type">
+
+```ts
+{
+  name?: string,
+  lastModifiedMillisSinceEpoch?: number,
+  lastModifiedISO8601?: string,
+  sizeBytes?: number,
+  md5?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### delete
+
+`templates.delete`
+
+Delete one or more templates from the environment
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.docmosis.api.templates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateName` | `string \| string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `succeeded` | `boolean` | No | — |
+| `shortMsg` | `string` | No | — |
+| `longMsg` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Download one or more template files
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.templates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateName` | `string \| string[]` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getDetails
+
+`templates.getDetails`
+
+Get metadata details for a specific template
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.templates.getDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateName` | `string` | Yes | — |
+| `stringify` | `boolean \| y \| yes \| true \| n \| no \| false` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `succeeded` | `boolean` | No | — |
+| `shortMsg` | `string` | No | — |
+| `longMsg` | `string` | No | — |
+| `templateDetails` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="templateDetails full type">
+
+```ts
+{
+  name?: string,
+  lastModifiedMillisSinceEpoch?: number,
+  lastModifiedISO8601?: string,
+  sizeBytes?: number,
+  md5?: string,
+  templatePlainTextFieldPrefix?: string,
+  templatePlainTextFieldSuffix?: string,
+  templateHasErrors?: boolean,
+  templateDevMode?: boolean,
+  templateDescription?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSampleData
+
+`templates.getSampleData`
+
+Generate sample JSON or XML data from a template structure
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.templates.getSampleData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateName` | `string` | Yes | — |
+| `stringify` | `boolean \| y \| yes \| true \| n \| no \| false` | No | — |
+| `format` | `json \| xml` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `succeeded` | `boolean` | No | — |
+| `shortMsg` | `string` | No | — |
+| `longMsg` | `string` | No | — |
+| `templateSampleData` | `object` | No | — |
+| `templateDetails` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="templateSampleData full type">
+
+```ts
+{
+} | string
+```
+</Accordion>
+
+<Accordion title="templateDetails full type">
+
+```ts
+{
+  templateHasErrors?: boolean,
+  templateFirstError?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStructure
+
+`templates.getStructure`
+
+Get parsed field and structure metadata for a template
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.templates.getStructure({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateName` | `string` | Yes | — |
+| `stringify` | `boolean \| y \| yes \| true \| n \| no \| false` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `succeeded` | `boolean` | No | — |
+| `shortMsg` | `string` | No | — |
+| `longMsg` | `string` | No | — |
+| `templateHasErrors` | `boolean` | No | — |
+| `templateErrorMessage` | `string` | No | — |
+| `templateStructure` | `any[]` | No | — |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List templates with optional folder and paging filters
+
+**Risk:** `read`
+
+```ts
+await corsair.docmosis.api.templates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `includeDetail` | `boolean \| y \| yes \| true \| n \| no \| false` | No | — |
+| `folder` | `string` | No | — |
+| `includeSubFolders` | `boolean \| y \| yes \| true \| n \| no \| false` | No | — |
+| `paging` | `boolean \| y \| yes \| true \| n \| no \| false` | No | — |
+| `pageToken` | `string` | No | — |
+| `pageSize` | `number \| string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `succeeded` | `boolean` | No | — |
+| `shortMsg` | `string` | No | — |
+| `longMsg` | `string` | No | — |
+| `templateListStale` | `boolean` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+| `templateList` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="templateList full type">
+
+```ts
+{
+  name?: string,
+  lastModifiedMillisSinceEpoch?: number,
+  lastModifiedISO8601?: string,
+  sizeBytes?: number,
+  md5?: string,
+  templatePlainTextFieldPrefix?: string,
+  templatePlainTextFieldSuffix?: string,
+  templateHasErrors?: boolean,
+  templateDevMode?: boolean,
+  templateDescription?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
