@@ -24,10 +24,10 @@ describe('buildCloudDeclaration', () => {
 				'import "corsair";',
 				'declare module "corsair" {',
 				'\tinterface CorsairCloudRegistry {',
-				'\t\tnotion: {',
-				'\t\t\tpages: {',
-				'\t\t\t\tsearchPage(args?: any): Promise<any>;',
-				'\t\t\t\tcreate(args?: any): Promise<any>;',
+				'\t\t"notion": {',
+				'\t\t\t"pages": {',
+				'\t\t\t\t"searchPage"(args?: any): Promise<any>;',
+				'\t\t\t\t"create"(args?: any): Promise<any>;',
 				'\t\t\t};',
 				'\t\t};',
 				'\t}',
@@ -44,14 +44,47 @@ describe('buildCloudDeclaration', () => {
 				'import "corsair";',
 				'declare module "corsair" {',
 				'\tinterface CorsairCloudRegistry {',
-				'\t\thealth: {',
-				'\t\t\tping(args?: any): Promise<any>;',
+				'\t\t"health": {',
+				'\t\t\t"ping"(args?: any): Promise<any>;',
 				'\t\t};',
 				'\t}',
 				'}',
 				'',
 			].join('\n'),
 		);
+	});
+
+	it('keeps a terminal op alongside its nested ops regardless of order', () => {
+		const forward = buildCloudDeclaration(
+			{ users: ['users', 'users.list'] },
+			'corsair',
+		);
+		const backward = buildCloudDeclaration(
+			{ users: ['users.list', 'users'] },
+			'corsair',
+		);
+		const expected = [
+			'import "corsair";',
+			'declare module "corsair" {',
+			'\tinterface CorsairCloudRegistry {',
+			'\t\t"users": {',
+			'\t\t\t"users": ((args?: any) => Promise<any>) & {\n\t\t\t\t"list"(args?: any): Promise<any>;\n\t\t\t};',
+			'\t\t};',
+			'\t}',
+			'}',
+			'',
+		].join('\n');
+		expect(forward).toBe(expected);
+		expect(backward).toBe(expected);
+	});
+
+	it('quotes generated keys that are not valid identifiers', () => {
+		const out = buildCloudDeclaration(
+			{ 'my-plugin': ['send-email'] },
+			'corsair',
+		);
+		expect(out).toContain('"my-plugin": {');
+		expect(out).toContain('"send-email"(args?: any): Promise<any>;');
 	});
 
 	it('renders multiple plugins', () => {
@@ -64,14 +97,14 @@ describe('buildCloudDeclaration', () => {
 				'import "corsair";',
 				'declare module "corsair" {',
 				'\tinterface CorsairCloudRegistry {',
-				'\t\tslack: {',
-				'\t\t\tmessages: {',
-				'\t\t\t\tpost(args?: any): Promise<any>;',
+				'\t\t"slack": {',
+				'\t\t\t"messages": {',
+				'\t\t\t\t"post"(args?: any): Promise<any>;',
 				'\t\t\t};',
 				'\t\t};',
-				'\t\tlinear: {',
-				'\t\t\tissues: {',
-				'\t\t\t\tcreate(args?: any): Promise<any>;',
+				'\t\t"linear": {',
+				'\t\t\t"issues": {',
+				'\t\t\t\t"create"(args?: any): Promise<any>;',
 				'\t\t\t};',
 				'\t\t};',
 				'\t}',

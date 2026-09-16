@@ -21,8 +21,18 @@ describe('CloudPullCommand', () => {
 	afterEach(() => {
 		process.chdir(originalCwd);
 		rmSync(dir, { recursive: true, force: true });
-		process.env.CORSAIR_CLOUD_URL = originalUrl;
-		process.env.CORSAIR_CLOUD_KEY = originalKey;
+		if (originalUrl === undefined) {
+			// biome-ignore lint/performance/noDelete: must be truly unset, not "undefined"
+			delete process.env.CORSAIR_CLOUD_URL;
+		} else {
+			process.env.CORSAIR_CLOUD_URL = originalUrl;
+		}
+		if (originalKey === undefined) {
+			// biome-ignore lint/performance/noDelete: must be truly unset, not "undefined"
+			delete process.env.CORSAIR_CLOUD_KEY;
+		} else {
+			process.env.CORSAIR_CLOUD_KEY = originalKey;
+		}
 		jest.restoreAllMocks();
 	});
 
@@ -53,7 +63,7 @@ describe('CloudPullCommand', () => {
 
 		const written = readFileSync(join(dir, 'corsair-env.d.ts'), 'utf8');
 		expect(written).toContain('declare module "corsair"');
-		expect(written).toContain('slack: {');
-		expect(written).toContain('post(args?: any): Promise<any>;');
+		expect(written).toContain('"slack": {');
+		expect(written).toContain('"post"(args?: any): Promise<any>;');
 	});
 });

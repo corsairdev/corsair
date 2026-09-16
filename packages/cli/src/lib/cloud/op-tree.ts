@@ -1,36 +1,44 @@
-interface OpTree {
-	[key: string]: OpTree | true;
+interface OpNode {
+	call: boolean;
+	children: Record<string, OpNode>;
 }
-type OpNode = OpTree | true;
 
-function insertOp(root: OpTree, op: string): void {
+function makeNode(): OpNode {
+	return { call: false, children: {} };
+}
+
+function insertOp(root: Record<string, OpNode>, op: string): void {
 	const parts = op.split('.');
-	let node = root;
+	let children = root;
 	parts.forEach((part, i) => {
+		const node = (children[part] ??= makeNode());
 		if (i === parts.length - 1) {
-			node[part] = true;
-			return;
+			node.call = true;
+		} else {
+			children = node.children;
 		}
-		const existing = node[part];
-		const child: OpTree = existing && existing !== true ? existing : {};
-		node[part] = child;
-		node = child;
 	});
 }
 
-function buildOpTree(ops: string[]): OpTree {
-	const root: OpTree = {};
+function buildOpTree(ops: string[]): Record<string, OpNode> {
+	const root: Record<string, OpNode> = {};
 	for (const op of ops) insertOp(root, op);
 	return root;
 }
 
-function renderFields(tree: OpTree, indent: string): string {
+function renderFields(tree: Record<string, OpNode>, indent: string): string {
 	return Object.entries(tree)
-		.map(([key, node]) =>
-			node === true
-				? `${indent}${key}(args?: any): Promise<any>;`
-				: `${indent}${key}: {\n${renderFields(node, `${indent}\t`)}\n${indent}};`,
-		)
+		.map(([key, node]) => {
+			const name = JSON.stringify(key);
+			const hasChildren = Object.keys(node.children).length > 0;
+			if (node.call && !hasChildren) {
+				return `${indent}${name}(args?: any): Promise<any>;`;
+			}
+			const body = `{\n${renderFields(node.children, `${indent}\t`)}\n${indent}}`;
+			if (!node.call) return `${indent}${name}: ${body};`;
+			// terminal op that also has nested ops (e.g. "users" and "users.list")
+			return `${indent}${name}: ((args?: any) => Promise<any>) & ${body};`;
+		})
 		.join('\n');
 }
 
@@ -51,7 +59,7 @@ export function buildCloudDeclaration(
 	const pluginFields = Object.entries(pluginsOps)
 		.map(([plugin, ops]) => {
 			const tree = buildOpTree(ops);
-			return `\t\t${plugin}: {\n${renderFields(tree, '\t\t\t')}\n\t\t};`;
+			return `\t\t${JSON.stringify(plugin)}: {\n${renderFields(tree, '\t\t\t')}\n\t\t};`;
 		})
 		.join('\n');
 	return [
