@@ -43,7 +43,9 @@ access, or access rules).
 
 Upload flow: call `calls.requestPresignedUrl` (default extension `.mp4`),
 `PUT` the recording to the returned URL with the returned headers
-(single-part upload), then create the call from the uploaded file. List
+(single-part upload), then create the call from the uploaded file through
+the direct Leexi API (`POST /v1/calls`) — call creation is not exposed by
+this plugin. List
 responses are paginated (`page`, `items` 1–100, `count`, `pages`).
 AI-generated content (summaries, chapters) may lag behind newly created
 calls. The API rate limit is 50 requests/minute (10/minute for call
