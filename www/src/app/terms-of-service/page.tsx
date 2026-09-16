@@ -105,14 +105,26 @@ export default function TermsOfServicePage() {
 					<p>
 						When you use Corsair Cloud, third-party integration data flows
 						through Corsair-operated servers to execute the integrations you
-						configure. You may store persisted credentials and SDK data in
-						Corsair-operated storage or in a database you provide via connection
-						settings. Corsair encrypts stored keys and credentials at rest and
-						manages encryption keys for the hosted runtime. Corsair processes
-						integration data only to provide the Service for your and your End
-						Users&apos; intended use — not for advertising, model training,
-						analytics unrelated to operating the Service, or Corsair product
-						features outside that use case, as further described in our{' '}
+						configure. Corsair Cloud{' '}
+						<strong className="font-medium text-[#1c1c1c]">
+							retains and stores
+						</strong>{' '}
+						integration credentials and SDK database contents (including OAuth
+						tokens, API keys, and connection records) in either a{' '}
+						<strong className="font-medium text-[#1c1c1c]">
+							Corsair-managed database
+						</strong>{' '}
+						or a{' '}
+						<strong className="font-medium text-[#1c1c1c]">
+							database you provide
+						</strong>{' '}
+						via connection settings. Corsair encrypts stored keys and
+						credentials at rest and manages encryption keys for the hosted
+						runtime. Corsair processes integration data only to provide the
+						Service for your and your End Users&apos; intended use — not for
+						advertising, model training, analytics unrelated to operating the
+						Service, or Corsair product features outside that use case, as
+						further described in our{' '}
 						<Link href="/privacy-policy" className={legalLinkClassName}>
 							Privacy Policy
 						</Link>
@@ -342,11 +354,12 @@ export default function TermsOfServicePage() {
 				</p>
 				<p>
 					Upon termination, Customer&apos;s access to Hub and Corsair Cloud will
-					cease. Customer Data stored in Corsair-operated Cloud storage may be
-					deleted in accordance with our Privacy Policy. Customer remains
+					cease. Customer Data stored in a Corsair-managed database for Cloud
+					may be deleted in accordance with our Privacy Policy. Customer remains
 					responsible for Customer Data in databases Customer operates or
-					provides, and for winding down use of third-party APIs in compliance
-					with applicable provider policies.
+					provides (including when Cloud is configured to use a
+					customer-provided database), and for winding down use of third-party
+					APIs in compliance with applicable provider policies.
 				</p>
 			</LegalSection>
 

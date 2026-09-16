@@ -154,38 +154,58 @@ export default function PrivacyPolicyPage() {
 						your intended use case.
 					</p>
 					<p>
-						You may configure Corsair Cloud to persist integration credentials
-						and SDK-stored data either in{' '}
+						Corsair Cloud{' '}
 						<strong className="font-medium text-[#1c1c1c]">
-							Corsair-operated storage
+							retains and stores
 						</strong>{' '}
-						(associated with your Cloud project) or in a{' '}
-						<strong className="font-medium text-[#1c1c1c]">
-							database you provide
-						</strong>{' '}
-						(for example, via a connection URL you supply). In both cases,
-						credentials and keys are{' '}
+						the integration credentials and SDK database contents your project
+						needs to operate — including OAuth access and refresh tokens, API
+						keys, connection and tenant records, and related metadata — in
+						either:
+					</p>
+					<ul className="list-disc space-y-2 pl-6">
+						<li>
+							a{' '}
+							<strong className="font-medium text-[#1c1c1c]">
+								Corsair-managed database
+							</strong>{' '}
+							on infrastructure Corsair operates (the default for many Cloud
+							projects), or
+						</li>
+						<li>
+							a{' '}
+							<strong className="font-medium text-[#1c1c1c]">
+								database you choose and provide
+							</strong>{' '}
+							(for example, via a connection URL you supply), where the hosted
+							runtime writes the same encrypted SDK data to your database.
+						</li>
+					</ul>
+					<p>
+						In both cases, credentials and keys are{' '}
 						<strong className="font-medium text-[#1c1c1c]">
 							encrypted at rest
 						</strong>
 						. For Corsair Cloud, Corsair manages the encryption keys for data
-						stored through the hosted runtime; for SDK with Hub, you manage{' '}
+						held in the hosted runtime (including Corsair-managed databases);
+						for SDK with Hub, you manage{' '}
 						<code className="text-sm">CORSAIR_KEK</code> in your environment as
 						described above.
 					</p>
 					<p>
-						Integration-related data that must remain available for your
-						Customer Application to function is{' '}
+						Stored credentials and SDK data are{' '}
 						<strong className="font-medium text-[#1c1c1c]">
 							retained until you delete the applicable Hub project or Cloud
 							environment
 						</strong>{' '}
-						(or as otherwise described in Section 9). When integration calls
-						pass through the hosted runtime, Corsair retains{' '}
+						(or as otherwise described in Section 9). This is separate from
+						operational logging: when integration calls pass through the hosted
+						runtime, Corsair also retains call{' '}
 						<strong className="font-medium text-[#1c1c1c]">metadata</strong>{' '}
-						about those calls (such as timestamps, tenant and plugin
-						identifiers, operation names, and success or error signals), not the
-						substantive payloads of third-party API requests or responses.
+						(such as timestamps, tenant and plugin identifiers, operation names,
+						and success or error signals) but does not log the substantive
+						payloads of third-party API requests or responses for diagnostic
+						retention.
 					</p>
 					<p>
 						Corsair Cloud is designed so that one Customer&apos;s data is not
@@ -264,10 +284,29 @@ export default function PrivacyPolicyPage() {
 					<p>
 						When your application refreshes an OAuth access token through Hub,
 						we transiently process the refresh token and new access token to
-						complete the exchange with the third-party provider. We do not
-						persist end-user OAuth tokens in the Hub control plane after the
-						refresh operation completes when credentials are stored in your
-						database.
+						complete the exchange with the third-party provider. For SDK with
+						Hub, we do not persist end-user OAuth tokens in the{' '}
+						<strong className="font-medium text-[#1c1c1c]">
+							Hub control plane
+						</strong>{' '}
+						after the refresh completes; tokens remain in your SDK database (or,
+						for Corsair Cloud, in the Corsair-managed or customer-provided
+						database configured for that project, as described in Section 2).
+					</p>
+				</LegalSubsection>
+
+				<LegalSubsection title="Corsair Cloud — stored credentials and SDK data">
+					<p>
+						For Corsair Cloud projects, end-user and application integration
+						credentials, tenant connection state, and other data the SDK
+						persists to serve your Customer Application are{' '}
+						<strong className="font-medium text-[#1c1c1c]">
+							stored and retained
+						</strong>{' '}
+						in your project&apos;s database — either Corsair&apos;s managed
+						database or one you provide. Corsair processes and stores this data
+						only to operate your hosted runtime, not for unrelated purposes
+						described in Section 2.
 					</p>
 				</LegalSubsection>
 
@@ -442,13 +481,21 @@ export default function PrivacyPolicyPage() {
 			<LegalSection title="9. Data Retention">
 				<p>
 					<strong className="font-medium text-[#1c1c1c]">
-						Corsair Cloud and project data:
+						Corsair Cloud — credentials and SDK database:
 					</strong>{' '}
-					Integration credentials, SDK-persisted data, and hosted-runtime call
-					metadata needed for your Customer Application to operate are retained
-					until you delete the relevant Hub project or Cloud environment (or we
-					delete them following account termination, subject to any legal
-					retention requirements).
+					OAuth tokens, API keys, connection records, and other SDK-persisted
+					data (in a Corsair-managed database or a database you provide) are
+					retained until you delete the relevant Hub project or Cloud
+					environment (or we delete them following account termination, subject
+					to any legal retention requirements).
+				</p>
+				<p>
+					<strong className="font-medium text-[#1c1c1c]">
+						Corsair Cloud — call metadata:
+					</strong>{' '}
+					Hosted-runtime call metadata described in Section 2 is retained with
+					the project for as long as the project remains active, unless a
+					shorter period applies under your agreement.
 				</p>
 				<p>
 					<strong className="font-medium text-[#1c1c1c]">
