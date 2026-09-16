@@ -1,4 +1,8 @@
+import { RevAIJob } from './database';
+
 export const RevAISchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: {
+		job: RevAIJob,
+	},
 } as const;

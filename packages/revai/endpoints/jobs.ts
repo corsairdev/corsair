@@ -2,53 +2,70 @@ import { logEventFromContext } from 'corsair/core';
 import type { RevAIEndpoints } from '..';
 import { makeRevAIRequest } from '../client';
 import type { RevAIEndpointOutputs } from './types';
+import { RevAIEndpointInputSchemas, RevAIEndpointOutputSchemas } from './types';
 
 export const submitJob: RevAIEndpoints['submitJob'] = async (ctx, input) => {
+	const parsedInput = RevAIEndpointInputSchemas.submitJob.parse(input);
 	const response = await makeRevAIRequest<RevAIEndpointOutputs['submitJob']>(
 		'/jobs',
 		ctx.key,
 		{
 			method: 'POST',
 			body: {
-				source_config: { url: input.media_url },
-				metadata: input.metadata,
-				language: input.language,
-				notification_config: input.notification_config,
+				source_config: { url: parsedInput.media_url },
+				metadata: parsedInput.metadata,
+				language: parsedInput.language,
+				notification_config: parsedInput.notification_config,
 			},
 		},
 	);
-	const { media_url, ...safeInput } = input;
+	const parsedResponse = RevAIEndpointOutputSchemas.submitJob.parse(response);
+	const { media_url, ...safeInput } = parsedInput;
 	await logEventFromContext(ctx, 'revai.jobs.submit', safeInput, 'completed');
-	return response;
+	return parsedResponse;
 };
 
 export const getJob: RevAIEndpoints['getJob'] = async (ctx, input) => {
+	const parsedInput = RevAIEndpointInputSchemas.getJob.parse(input);
 	const response = await makeRevAIRequest<RevAIEndpointOutputs['getJob']>(
-		`/jobs/${encodeURIComponent(input.id)}`,
+		`/jobs/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
-	await logEventFromContext(ctx, 'revai.jobs.get', { ...input }, 'completed');
-	return response;
+	const parsedResponse = RevAIEndpointOutputSchemas.getJob.parse(response);
+	await logEventFromContext(
+		ctx,
+		'revai.jobs.get',
+		{ ...parsedInput },
+		'completed',
+	);
+	return parsedResponse;
 };
 
 export const getTranscript: RevAIEndpoints['getTranscript'] = async (
 	ctx,
 	input,
 ) => {
+	const parsedInput = RevAIEndpointInputSchemas.getTranscript.parse(input);
 	const response = await makeRevAIRequest<
 		RevAIEndpointOutputs['getTranscript']
-	>(`/jobs/${encodeURIComponent(input.id)}/transcript`, ctx.key, {
+	>(`/jobs/${encodeURIComponent(parsedInput.id)}/transcript`, ctx.key, {
 		method: 'GET',
 		headers: {
-			Accept: input.accept || 'application/vnd.rev.transcript.v1.0+json',
+			Accept: parsedInput.accept,
 		},
 	});
+
+	const parsedResponse =
+		parsedInput.accept === 'text/plain'
+			? RevAIEndpointOutputSchemas.getTranscript.options[1].parse(response)
+			: RevAIEndpointOutputSchemas.getTranscript.options[0].parse(response);
+
 	await logEventFromContext(
 		ctx,
 		'revai.jobs.getTranscript',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
-	return response;
+	return parsedResponse;
 };
