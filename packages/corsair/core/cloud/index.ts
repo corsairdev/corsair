@@ -47,6 +47,13 @@ function resolveCloudBaseUrl(hub: HubConfigInput | undefined): string {
 	return baseUrl;
 }
 
+// A ck_cloud_ key alone isn't enough to enter cloud-client mode: the hosted
+// runtime itself holds one (it's the cloud VM) but never sets a base URL. A
+// real cloud client always has somewhere to call.
+export function hasCloudBaseUrl(hub: HubConfigInput | undefined): boolean {
+	return !!(hub?.baseUrl?.trim() || process.env.CORSAIR_CLOUD_URL?.trim());
+}
+
 // The cloud manage namespace only covers what the VM's HTTP surface exposes
 // today (tenants/plugins/connect/disconnect/connectionStatus). The rest of
 // CorsairManageNamespace is cast in, not implemented — server-side auth
