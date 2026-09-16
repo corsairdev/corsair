@@ -85,14 +85,17 @@ export function resolveHubOAuthCallbackUrl(config: HubConfig): string {
 
 export function inferHubEnvironmentSlug(
 	apiKey: string,
-): 'development' | 'production' {
+): 'development' | 'production' | 'cloud' {
 	if (apiKey.startsWith('ck_dev_')) {
 		return 'development';
 	}
 	if (apiKey.startsWith('ck_prod_')) {
 		return 'production';
 	}
+	if (apiKey.startsWith('ck_cloud_')) {
+		return 'cloud';
+	}
 	throw new Error(
-		'Hub API key must start with ck_dev_ (development) or ck_prod_ (production)',
+		'Hub API key must start with ck_dev_ (development), ck_prod_ (production), or ck_cloud_ (cloud)',
 	);
 }
