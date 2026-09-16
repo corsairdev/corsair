@@ -61,10 +61,13 @@ export function resolveHubConfigInput(input: HubConfigInput): HubConfig {
 }
 
 function isHubConfigComplete(hub: HubConfig): boolean {
+	// ck_cloud_ keys carry no signingSecret (see normalizeHubConfig) — the hosted
+	// runtime is fully configured without one, so getHubConfig must not reject it.
+	const isCloudKey = hub.projectApiKey.startsWith('ck_cloud_');
 	return (
 		hub.apiUrl.trim().length > 0 &&
 		hub.projectApiKey.trim().length > 0 &&
-		hub.signingSecret.trim().length > 0
+		(isCloudKey || hub.signingSecret.trim().length > 0)
 	);
 }
 
