@@ -1,3 +1,4 @@
+import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import { makeTpscheckRequest, TPSCHECK_API_BASE } from './client';
 import { errorHandlers } from './error-handlers';
@@ -71,6 +72,16 @@ describe('makeTpscheckRequest', () => {
 		expect(mockRequest.mock.calls[0]?.[0]?.HEADERS).not.toHaveProperty(
 			'Authorization',
 		);
+	});
+
+	it('throws AuthMissingError for an empty key without sending a request', async () => {
+		mockRequest.mockResolvedValue({ valid: true });
+
+		await expect(
+			makeTpscheckRequest('/check', '', { method: 'POST' }),
+		).rejects.toThrow(AuthMissingError);
+
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('rethrows a 429 ApiError with retryAfter intact', async () => {

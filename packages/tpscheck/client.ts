@@ -1,3 +1,4 @@
+import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
@@ -26,6 +27,14 @@ export async function makeTpscheckRequest<T>(
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
+
+	// An explicitly empty key means no credentials are configured (the
+	// keyBuilder resolves that case to ''). Public callers pass undefined
+	// instead, so only keyed endpoints hit this gate — they fail fast with
+	// Corsair's missing-auth error instead of sending a keyless request.
+	if (apiKey !== undefined && apiKey.length === 0) {
+		throw new AuthMissingError('tpscheck', 'api_key');
+	}
 
 	const authHeaders: Record<string, string> = apiKey
 		? { Authorization: `Token ${apiKey}` }

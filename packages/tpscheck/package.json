@@ -37,9 +37,15 @@
     "tpscheck",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/tpscheck"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/tpscheck"
 }
