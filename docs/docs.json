@@ -1258,6 +1258,14 @@
                 ]
               },
               {
+                "group": "Docmosis",
+                "pages": [
+                  "plugins/docmosis/overview",
+                  "plugins/docmosis/api",
+                  "plugins/docmosis/database"
+                ]
+              },
+              {
                 "group": "Dodo Payments",
                 "pages": [
                   "plugins/dodopayments/overview",
