@@ -1,0 +1,210 @@
+---
+title: Database
+description: "Best Buy Remix API local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Best Buy Remix API plugin syncs data locally. Use `corsair.bestbuy.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Categories
+
+Path: `bestbuy.db.categories.search`
+
+```ts
+const rows = await corsair.bestbuy.db.categories.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Products
+
+Path: `bestbuy.db.products.search`
+
+```ts
+const rows = await corsair.bestbuy.db.products.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `upc` | `string` | equals, contains, startsWith, endsWith, in |
+| `manufacturer` | `string` | equals, contains, startsWith, endsWith, in |
+| `modelNumber` | `string` | equals, contains, startsWith, endsWith, in |
+| `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `condition` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `longDescription` | `string` | equals, contains, startsWith, endsWith, in |
+| `longDescriptionHtml` | `string` | equals, contains, startsWith, endsWith, in |
+| `shortDescription` | `string` | equals, contains, startsWith, endsWith, in |
+| `shortDescriptionHtml` | `string` | equals, contains, startsWith, endsWith, in |
+| `customerReviewAverage` | `number` | equals, gt, gte, lt, lte, in |
+| `customerReviewCount` | `number` | equals, gt, gte, lt, lte, in |
+| `customerTopRated` | `boolean` | equals |
+| `depth` | `string` | equals, contains, startsWith, endsWith, in |
+| `height` | `string` | equals, contains, startsWith, endsWith, in |
+| `width` | `string` | equals, contains, startsWith, endsWith, in |
+| `weight` | `string` | equals, contains, startsWith, endsWith, in |
+| `digital` | `boolean` | equals |
+| `format` | `string` | equals, contains, startsWith, endsWith, in |
+| `preowned` | `boolean` | equals |
+| `quantityLimit` | `number` | equals, gt, gte, lt, lte, in |
+| `releaseDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `warrantyLabor` | `string` | equals, contains, startsWith, endsWith, in |
+| `warrantyParts` | `string` | equals, contains, startsWith, endsWith, in |
+| `proposition65WarningMessage` | `string` | equals, contains, startsWith, endsWith, in |
+| `proposition65WarningType` | `string` | equals, contains, startsWith, endsWith, in |
+| `dollarSavings` | `number` | equals, gt, gte, lt, lte, in |
+| `lowPriceGuarantee` | `boolean` | equals |
+| `onSale` | `boolean` | equals |
+| `percentSavings` | `string` | equals, contains, startsWith, endsWith, in |
+| `priceRestriction` | `string` | equals, contains, startsWith, endsWith, in |
+| `priceUpdateDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `regularPrice` | `number` | equals, gt, gte, lt, lte, in |
+| `salePrice` | `number` | equals, gt, gte, lt, lte, in |
+| `friendsAndFamilyPickup` | `boolean` | equals |
+| `homeDelivery` | `boolean` | equals |
+| `inStoreAvailability` | `boolean` | equals |
+| `inStoreAvailabilityUpdateDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `inStorePickup` | `boolean` | equals |
+| `onlineAvailability` | `boolean` | equals |
+| `onlineAvailabilityUpdateDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `orderable` | `string` | equals, contains, startsWith, endsWith, in |
+| `specialOrder` | `boolean` | equals |
+| `freeShipping` | `boolean` | equals |
+| `freeShippingEligible` | `boolean` | equals |
+| `shippingCost` | `number` | equals, gt, gte, lt, lte, in |
+| `shippingWeight` | `number` | equals, gt, gte, lt, lte, in |
+| `accessoriesImage` | `string` | equals, contains, startsWith, endsWith, in |
+| `alternateViewsImage` | `string` | equals, contains, startsWith, endsWith, in |
+| `angleImage` | `string` | equals, contains, startsWith, endsWith, in |
+| `backViewImage` | `string` | equals, contains, startsWith, endsWith, in |
+| `energyGuideImage` | `string` | equals, contains, startsWith, endsWith, in |
+| `image` | `string` | equals, contains, startsWith, endsWith, in |
+| `largeFrontImage` | `string` | equals, contains, startsWith, endsWith, in |
+| `largeImage` | `string` | equals, contains, startsWith, endsWith, in |
+| `leftViewImage` | `string` | equals, contains, startsWith, endsWith, in |
+| `mediumImage` | `string` | equals, contains, startsWith, endsWith, in |
+| `remoteControlImage` | `string` | equals, contains, startsWith, endsWith, in |
+| `rightViewImage` | `string` | equals, contains, startsWith, endsWith, in |
+| `spin360Url` | `string` | equals, contains, startsWith, endsWith, in |
+| `thumbnailImage` | `string` | equals, contains, startsWith, endsWith, in |
+| `topViewImage` | `string` | equals, contains, startsWith, endsWith, in |
+| `addToCartUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `affiliateAddToCartUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `affiliateUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `class` | `string` | equals, contains, startsWith, endsWith, in |
+| `classId` | `number` | equals, gt, gte, lt, lte, in |
+| `department` | `string` | equals, contains, startsWith, endsWith, in |
+| `departmentId` | `number` | equals, gt, gte, lt, lte, in |
+| `subclass` | `string` | equals, contains, startsWith, endsWith, in |
+| `subclassId` | `number` | equals, gt, gte, lt, lte, in |
+| `active` | `boolean` | equals |
+| `activeUpdateDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `itemUpdateDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `new` | `boolean` | equals |
+| `secondaryMarket` | `boolean` | equals |
+| `startDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Reviews
+
+Path: `bestbuy.db.reviews.search`
+
+```ts
+const rows = await corsair.bestbuy.db.reviews.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `comment` | `string` | equals, contains, startsWith, endsWith, in |
+| `rating` | `number` | equals, gt, gte, lt, lte, in |
+| `submissionTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `recommended` | `boolean` | equals |
+| `qualityRating` | `number` | equals, gt, gte, lt, lte, in |
+| `valueRating` | `number` | equals, gt, gte, lt, lte, in |
+| `easeOfUseRating` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Stores
+
+Path: `bestbuy.db.stores.search`
+
+```ts
+const rows = await corsair.bestbuy.db.stores.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `storeId` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `longName` | `string` | equals, contains, startsWith, endsWith, in |
+| `address` | `string` | equals, contains, startsWith, endsWith, in |
+| `address2` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `region` | `string` | equals, contains, startsWith, endsWith, in |
+| `postalCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `fullPostalCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `lat` | `number` | equals, gt, gte, lt, lte, in |
+| `lng` | `number` | equals, gt, gte, lt, lte, in |
+| `distance` | `number` | equals, gt, gte, lt, lte, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `locationType` | `string` | equals, contains, startsWith, endsWith, in |
+| `storeType` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `hours` | `string` | equals, contains, startsWith, endsWith, in |
+| `hoursAmPm` | `string` | equals, contains, startsWith, endsWith, in |
+| `gmtOffset` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
