@@ -1,4 +1,4 @@
-import { createHmac } from 'node:crypto';
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -108,7 +108,11 @@ function verifyHook0Signature(
 	const expected = createHmac('sha256', secret)
 		.update(`${timestamp}.${rawBody}`)
 		.digest('hex');
-	return expected === v0;
+	if (expected.length !== v0.length) {
+		return false;
+	}
+
+	return timingSafeEqual(Buffer.from(expected), Buffer.from(v0));
 }
 
 export function verifyCoinbaseWebhookSignature(

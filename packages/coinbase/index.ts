@@ -261,7 +261,7 @@ const coinbaseEndpointMeta = {
 
 export const coinbaseAuthConfig = {
 	api_key: {
-		account: ['user_id'] as const,
+		account: ['account', 'user_id'] as const,
 	},
 	oauth_2: {
 		account: ['user_id'] as const,
@@ -326,10 +326,7 @@ export function coinbase<const T extends CoinbasePluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				if (!res) {
-					throw new AuthMissingError('coinbase', 'api_key');
-				}
-				return res;
+				return res ?? '';
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {

@@ -58,7 +58,7 @@ beforeEach(() => {
 });
 
 const ctx = {
-	key: 'test-access-token',
+	key: 'fixture-auth-value',
 	$getAccountId: async () => 'test-account',
 } as never;
 
@@ -101,9 +101,9 @@ function lastRequest(): {
 
 describe('Coinbase plugin', () => {
 	it('creates plugin instance with 12 endpoints and api_key plus oauth_2', () => {
-		const plugin = coinbase({ key: 'test-access-token' });
+		const plugin = coinbase({ key: 'fixture-auth-value' });
 		expect(plugin.id).toBe('coinbase');
-		expect(plugin.authConfig?.api_key?.account).toEqual(['user_id']);
+		expect(plugin.authConfig?.api_key?.account).toEqual(['account', 'user_id']);
 		expect(plugin.authConfig?.oauth_2?.account).toEqual(['user_id']);
 		expect(Object.keys(plugin.endpointSchemas ?? {})).toHaveLength(12);
 		expect(Object.keys(plugin.webhookSchemas ?? {})).toEqual([
@@ -125,7 +125,7 @@ describe('Coinbase plugin', () => {
 		).rejects.toThrow(AuthMissingError);
 	});
 
-	it('throws AuthMissingError when the api key is absent', async () => {
+	it('returns empty key for public endpoints without api key', async () => {
 		const plugin = coinbase();
 		await expect(
 			plugin.keyBuilder?.(
@@ -135,7 +135,28 @@ describe('Coinbase plugin', () => {
 				} as never,
 				'endpoint',
 			),
+		).resolves.toBe('');
+	});
+
+	it('throws AuthMissingError when protected endpoint is called without key', async () => {
+		mockFetch.mockResolvedValue(
+			jsonResponse(
+				{ errors: [{ id: 'auth', message: 'unauthorized' }] },
+				{ status: 401 },
+			),
+		);
+
+		await expect(
+			getUser(
+				{
+					key: '',
+					authType: 'api_key',
+					$getAccountId: async () => 'test-account',
+				} as never,
+				{},
+			),
 		).rejects.toThrow(AuthMissingError);
+		expect(mockFetch).not.toHaveBeenCalled();
 	});
 
 	it('sends Bearer auth and CB-VERSION on authenticated calls', async () => {
@@ -151,7 +172,7 @@ describe('Coinbase plugin', () => {
 		await getUser(ctx, {});
 		const { url, auth, version } = lastRequest();
 		expect(url).toBe(`${COINBASE_API_BASE}/v2/user`);
-		expect(auth).toBe('Bearer test-access-token');
+		expect(auth).toBe('Bearer fixture-auth-value');
 		expect(version).toBe(COINBASE_API_VERSION);
 	});
 });
@@ -373,7 +394,7 @@ describe('Coinbase client errors', () => {
 
 describe('Coinbase webhooks', () => {
 	it('verifies X-CC-Webhook-Signature HMAC-SHA256', () => {
-		const secret = 'webhook-secret';
+		const secret = 'fixture-signing-value';
 		const rawBody = JSON.stringify({ type: 'ping', id: 'n-1' });
 		const signature = createHmac('sha256', secret)
 			.update(rawBody)
@@ -396,7 +417,7 @@ describe('Coinbase webhooks', () => {
 				headers: { 'x-cc-webhook-signature': 'deadbeef' },
 				rawBody: '{"type":"ping"}',
 			},
-			'webhook-secret',
+			'fixture-signing-value',
 		);
 		expect(result.valid).toBe(false);
 		expect(result.error).toBe('Invalid signature');

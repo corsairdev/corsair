@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { CoinbaseEndpoints } from '..';
 import { makeCoinbaseRequest } from '../client';
 import { CoinbasePagination, CoinbaseTransaction } from '../schema';
+import { requireCoinbaseEndpointKey } from './shared';
 
 const DataEnvelope = <T extends z.ZodType>(data: T) => z.object({ data });
 
@@ -13,7 +14,7 @@ export const listTransactions: CoinbaseEndpoints['transactionsList'] = async (
 	const { account_id, ...query } = input;
 	const response = await makeCoinbaseRequest(
 		`/v2/accounts/${encodeURIComponent(account_id)}/transactions`,
-		ctx.key,
+		requireCoinbaseEndpointKey(ctx),
 		{
 			schema: z.object({
 				pagination: CoinbasePagination.optional(),
@@ -42,7 +43,7 @@ export const getTransaction: CoinbaseEndpoints['transactionsGet'] = async (
 ) => {
 	const envelope = await makeCoinbaseRequest(
 		`/v2/accounts/${encodeURIComponent(input.account_id)}/transactions/${encodeURIComponent(input.transaction_id)}`,
-		ctx.key,
+		requireCoinbaseEndpointKey(ctx),
 		{ schema: DataEnvelope(CoinbaseTransaction) },
 	);
 	await logEventFromContext(
