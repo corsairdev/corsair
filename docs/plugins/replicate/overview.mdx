@@ -100,7 +100,14 @@ await tenant.replicate.api.account.get({});
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.replicate.api.deployments.create({});
+await tenant.replicate.api.deployments.create({
+	name: 'my-deployment',
+	model: 'replicate/hello-world',
+	version: '<model-version-id>',
+	hardware: 'cpu',
+	min_instances: 0,
+	max_instances: 1,
+});
 ```
 
 
