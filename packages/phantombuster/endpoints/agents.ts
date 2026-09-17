@@ -10,30 +10,36 @@ import type {
 	FetchAgentResponse,
 	FetchAllAgentsInput,
 	FetchAllAgentsResponse,
+	FetchDeletedAgentsInput,
+	FetchDeletedAgentsResponse,
 	LaunchAgentInput,
 	LaunchAgentResponse,
+	LaunchAgentSoonInput,
+	LaunchAgentSoonResponse,
 	SaveAgentInput,
 	SaveAgentResponse,
 	StopAgentInput,
 	StopAgentResponse,
+	UnscheduleAllAgentsInput,
+	UnscheduleAllAgentsResponse,
 } from './types';
 
 export const fetchAll = async (
 	ctx: PhantomBusterContext,
-	input: FetchAllAgentsInput,
+	_input: FetchAllAgentsInput,
 ): Promise<FetchAllAgentsResponse> => {
-	const { search } = input ?? {};
-
 	const response = await makePhantomBusterRequest<FetchAllAgentsResponse>(
 		'/agents/fetch-all',
 		ctx.key,
-		{
-			method: 'GET',
-			query: search ? { search } : undefined,
-		},
+		{ method: 'GET' },
 	);
 
-	await logEventFromContext(ctx, 'phantombuster.agents.fetchAll', {}, 'completed');
+	await logEventFromContext(
+		ctx,
+		'phantombuster.agents.fetchAll',
+		{},
+		'completed',
+	);
 
 	return response;
 };
@@ -53,7 +59,12 @@ export const fetch = async (
 		},
 	);
 
-	await logEventFromContext(ctx, 'phantombuster.agents.fetch', { id }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'phantombuster.agents.fetch',
+		{ id },
+		'completed',
+	);
 
 	return response;
 };
@@ -67,7 +78,7 @@ export const save = async (
 		ctx.key,
 		{
 			method: 'POST',
-			body: input as Record<string, unknown>,
+			body: { ...input },
 		},
 	);
 
@@ -111,12 +122,20 @@ export const launch = async (
 	ctx: PhantomBusterContext,
 	input: LaunchAgentInput,
 ): Promise<LaunchAgentResponse> => {
-	const { id, argument, manualCookieSession } = input;
+	const { id } = input;
 
+	// unknown: POST bodies are endpoint-specific JSON shapes accepted by makePhantomBusterRequest.
 	const body: Record<string, unknown> = { id };
-	if (argument !== undefined) body.argument = argument;
-	if (manualCookieSession !== undefined)
-		body.manualCookieSession = manualCookieSession;
+	if (input.argument !== undefined) body.argument = input.argument;
+	if (input.arguments !== undefined) body.arguments = input.arguments;
+	if (input.bonusArgument !== undefined)
+		body.bonusArgument = input.bonusArgument;
+	if (input.saveArgument !== undefined) body.saveArgument = input.saveArgument;
+	if (input.saveArguments !== undefined)
+		body.saveArguments = input.saveArguments;
+	if (input.manualLaunch !== undefined) body.manualLaunch = input.manualLaunch;
+	if (input.maxInstanceCount !== undefined)
+		body.maxInstanceCount = input.maxInstanceCount;
 
 	const response = await makePhantomBusterRequest<LaunchAgentResponse>(
 		'/agents/launch',
@@ -143,12 +162,22 @@ export const stop = async (
 ): Promise<StopAgentResponse> => {
 	const { id } = input;
 
+	// unknown: POST bodies are endpoint-specific JSON shapes accepted by makePhantomBusterRequest.
+	const body: Record<string, unknown> = { id };
+	if (input.softAbort !== undefined) body.softAbort = input.softAbort;
+	if (input.cascadeToAllSlaves !== undefined)
+		body.cascadeToAllSlaves = input.cascadeToAllSlaves;
+	if (input.dontLaunchSoon !== undefined)
+		body.dontLaunchSoon = input.dontLaunchSoon;
+	if (input.switchToManualLaunch !== undefined)
+		body.switchToManualLaunch = input.switchToManualLaunch;
+
 	const response = await makePhantomBusterRequest<StopAgentResponse>(
 		'/agents/stop',
 		ctx.key,
 		{
 			method: 'POST',
-			body: { id },
+			body,
 		},
 	);
 
@@ -162,16 +191,91 @@ export const stop = async (
 	return response;
 };
 
+export const launchSoon = async (
+	ctx: PhantomBusterContext,
+	input: LaunchAgentSoonInput,
+): Promise<LaunchAgentSoonResponse> => {
+	// unknown: POST bodies are endpoint-specific JSON shapes accepted by makePhantomBusterRequest.
+	const body: Record<string, unknown> = {
+		id: input.id,
+		minutes: input.minutes,
+	};
+	if (input.argument !== undefined) body.argument = input.argument;
+	if (input.arguments !== undefined) body.arguments = input.arguments;
+	if (input.saveArgument !== undefined) body.saveArgument = input.saveArgument;
+	if (input.saveArguments !== undefined)
+		body.saveArguments = input.saveArguments;
+
+	const response = await makePhantomBusterRequest<LaunchAgentSoonResponse>(
+		'/agents/launch-soon',
+		ctx.key,
+		{ method: 'POST', body },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'phantombuster.agents.launchSoon',
+		{ id: input.id },
+		'completed',
+	);
+
+	return response;
+};
+
+export const unscheduleAll = async (
+	ctx: PhantomBusterContext,
+	_input: UnscheduleAllAgentsInput,
+): Promise<UnscheduleAllAgentsResponse> => {
+	const response = await makePhantomBusterRequest<UnscheduleAllAgentsResponse>(
+		'/agents/unschedule-all',
+		ctx.key,
+		{ method: 'POST' },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'phantombuster.agents.unscheduleAll',
+		{},
+		'completed',
+	);
+
+	return response;
+};
+
+export const fetchDeleted = async (
+	ctx: PhantomBusterContext,
+	_input: FetchDeletedAgentsInput,
+): Promise<FetchDeletedAgentsResponse> => {
+	const response = await makePhantomBusterRequest<FetchDeletedAgentsResponse>(
+		'/agents/fetch-deleted',
+		ctx.key,
+		{ method: 'GET' },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'phantombuster.agents.fetchDeleted',
+		{},
+		'completed',
+	);
+
+	return response;
+};
+
 export const fetchOutput = async (
 	ctx: PhantomBusterContext,
 	input: FetchAgentOutputInput,
 ): Promise<FetchAgentOutputResponse> => {
-	const { id, status, mode, since } = input;
+	const { id } = input;
 
 	const query: Record<string, string | number | boolean | undefined> = { id };
-	if (status !== undefined) query.status = status;
-	if (mode !== undefined) query.mode = mode;
-	if (since !== undefined) query.since = since;
+	if (input.fromOutputPos !== undefined)
+		query.fromOutputPos = input.fromOutputPos;
+	if (input.prevContainerId !== undefined)
+		query.prevContainerId = input.prevContainerId;
+	if (input.prevStatus !== undefined) query.prevStatus = input.prevStatus;
+	if (input.prevRuntimeEventIndex !== undefined)
+		query.prevRuntimeEventIndex = input.prevRuntimeEventIndex;
 
 	const response = await makePhantomBusterRequest<FetchAgentOutputResponse>(
 		'/agents/fetch-output',

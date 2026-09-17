@@ -52,8 +52,7 @@ export async function makePhantomBusterRequest<T>(
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
-	const isWrite =
-		method === 'POST' || method === 'PUT' || method === 'PATCH';
+	const isWrite = method === 'POST' || method === 'PUT' || method === 'PATCH';
 
 	const config: OpenAPIConfig = {
 		BASE: PHANTOMBUSTER_API_BASE,

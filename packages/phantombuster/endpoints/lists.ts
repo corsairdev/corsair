@@ -22,7 +22,12 @@ export const fetchAll = async (
 		{ method: 'GET' },
 	);
 
-	await logEventFromContext(ctx, 'phantombuster.lists.fetchAll', {}, 'completed');
+	await logEventFromContext(
+		ctx,
+		'phantombuster.lists.fetchAll',
+		{},
+		'completed',
+	);
 
 	return response;
 };
@@ -61,7 +66,7 @@ export const save = async (
 		ctx.key,
 		{
 			method: 'POST',
-			body: input as Record<string, unknown>,
+			body: { ...input },
 		},
 	);
 

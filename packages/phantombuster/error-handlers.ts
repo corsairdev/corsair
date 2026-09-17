@@ -1,15 +1,20 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import type { PhantomBusterAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { PhantomBusterAPIError } from './client';
 
-// Cast to Partial<PhantomBusterAPIError> because the error handler receives a
-// base Error type from the Corsair framework; PhantomBusterAPIError fields are
-// optional extras that may not be present on every Error subclass.
+// instanceof narrowing is the repo-required idiom here: the handler receives
+// a base Error, and status/retryAfter only exist on ApiError (transport) or
+// PhantomBusterAPIError (client wrapper that copies those fields).
 function getStatus(error: Error): number | undefined {
-	return (error as Partial<PhantomBusterAPIError>).status;
+	if (error instanceof PhantomBusterAPIError) return error.status;
+	if (error instanceof ApiError) return error.status;
+	return undefined;
 }
 
 function getRetryAfter(error: Error): number | undefined {
-	return (error as Partial<PhantomBusterAPIError>).retryAfter;
+	if (error instanceof PhantomBusterAPIError) return error.retryAfter;
+	if (error instanceof ApiError) return error.retryAfter;
+	return undefined;
 }
 
 export const errorHandlers = {

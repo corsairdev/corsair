@@ -2,6 +2,8 @@ import { logEventFromContext } from 'corsair/core';
 import { makePhantomBusterRequest } from '../client';
 import type { PhantomBusterContext } from '../index';
 import type {
+	DeleteManyLeadsInput,
+	DeleteManyLeadsResponse,
 	FetchLeadsByListInput,
 	FetchLeadsByListResponse,
 	SaveLeadInput,
@@ -19,7 +21,7 @@ export const save = async (
 		ctx.key,
 		{
 			method: 'POST',
-			body: { lead: input.lead as Record<string, unknown> },
+			body: { lead: { ...input.lead } },
 		},
 	);
 
@@ -37,7 +39,7 @@ export const saveMany = async (
 		ctx.key,
 		{
 			method: 'POST',
-			body: { leads: input.leads as Record<string, unknown>[] },
+			body: { leads: input.leads.map((lead) => ({ ...lead })) },
 		},
 	);
 
@@ -55,11 +57,16 @@ export const fetchByList = async (
 	ctx: PhantomBusterContext,
 	input: FetchLeadsByListInput,
 ): Promise<FetchLeadsByListResponse> => {
-	const { listId, pageToken, limit } = input;
+	const { listId } = input;
 
-	const body: Record<string, unknown> = { listId };
-	if (pageToken !== undefined) body.pageToken = pageToken;
-	if (limit !== undefined) body.limit = limit;
+	// unknown: POST bodies are endpoint-specific JSON shapes accepted by makePhantomBusterRequest.
+	const body: Record<string, unknown> = {};
+	if (input.paginationOptions !== undefined)
+		body.paginationOptions = { ...input.paginationOptions };
+	if (input.withLeadObjectsOfTypes !== undefined)
+		body.withLeadObjectsOfTypes = [...input.withLeadObjectsOfTypes];
+	if (input.withCompanies !== undefined)
+		body.withCompanies = input.withCompanies;
 
 	const response = await makePhantomBusterRequest<FetchLeadsByListResponse>(
 		`/org-storage/leads/by-list/${listId}`,
@@ -74,6 +81,29 @@ export const fetchByList = async (
 		ctx,
 		'phantombuster.leads.fetchByList',
 		{ listId },
+		'completed',
+	);
+
+	return response;
+};
+
+export const deleteMany = async (
+	ctx: PhantomBusterContext,
+	input: DeleteManyLeadsInput,
+): Promise<DeleteManyLeadsResponse> => {
+	const response = await makePhantomBusterRequest<DeleteManyLeadsResponse>(
+		'/org-storage/leads/delete-many',
+		ctx.key,
+		{
+			method: 'POST',
+			body: { ids: [...input.ids] },
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'phantombuster.leads.deleteMany',
+		{ count: input.ids.length },
 		'completed',
 	);
 
