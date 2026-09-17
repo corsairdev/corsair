@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CannyWebhooks } from '../index';
+import { buildVoteEntityId } from '../vote-entity-id';
 import {
 	CannyVoteCreatedEventSchema,
 	createCannyMatch,
@@ -35,7 +36,7 @@ export const created: CannyWebhooks['voteCreated'] = {
 		const vote = event.object;
 		if (ctx.db.votes && vote.id) {
 			try {
-				await ctx.db.votes.upsertByEntityId(vote.id, {
+				await ctx.db.votes.upsertByEntityId(buildVoteEntityId(vote), {
 					id: vote.id,
 					created: new Date(vote.created),
 					postID: vote.post?.id,
@@ -44,6 +45,11 @@ export const created: CannyWebhooks['voteCreated'] = {
 				});
 			} catch (error) {
 				console.warn('Failed to save vote to database:', error);
+				return {
+					success: false,
+					statusCode: 500,
+					error: 'Failed to persist vote',
+				};
 			}
 		}
 

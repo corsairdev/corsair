@@ -48,6 +48,11 @@ export const created: CannyWebhooks['commentCreated'] = {
 				});
 			} catch (error) {
 				console.warn('Failed to save comment to database:', error);
+				return {
+					success: false,
+					statusCode: 500,
+					error: 'Failed to persist comment',
+				};
 			}
 		}
 

@@ -192,6 +192,31 @@ describe('Canny endpoints routing & event logging', () => {
 			);
 		});
 
+		it('posts.retrieve supports boardID and urlName lookup', async () => {
+			mockMakeCannyRequest.mockResolvedValueOnce(mockPost);
+
+			const input = {
+				boardID: 'board_123',
+				urlName: 'dark-mode',
+			};
+			const result = await Posts.retrieve(ctx, input);
+			expect(result).toEqual(mockPost);
+			expect(mockMakeCannyRequest).toHaveBeenCalledWith(
+				'posts/retrieve',
+				'canny_test_api_key',
+				{
+					method: 'POST',
+					body: input,
+				},
+			);
+			expect(mockLogEventFromContext).toHaveBeenCalledWith(
+				ctx,
+				'canny.posts.retrieve',
+				input,
+				'completed',
+			);
+		});
+
 		it('posts.create issues POST /posts/create and logs event', async () => {
 			mockMakeCannyRequest.mockResolvedValueOnce({ id: 'post_123' });
 
@@ -219,7 +244,7 @@ describe('Canny endpoints routing & event logging', () => {
 			);
 		});
 
-		it('posts.changeStatus issues POST /posts/changeStatus and logs event', async () => {
+		it('posts.changeStatus issues POST /posts/change_status and logs event', async () => {
 			const updatedPost = { ...mockPost, status: 'planned' };
 			mockMakeCannyRequest.mockResolvedValueOnce(updatedPost);
 
@@ -231,7 +256,7 @@ describe('Canny endpoints routing & event logging', () => {
 			const result = await Posts.changeStatus(ctx, input);
 			expect(result).toEqual(updatedPost);
 			expect(mockMakeCannyRequest).toHaveBeenCalledWith(
-				'posts/changeStatus',
+				'posts/change_status',
 				'canny_test_api_key',
 				{
 					method: 'POST',
@@ -369,6 +394,10 @@ describe('Canny endpoints routing & event logging', () => {
 				{ postID: 'post_123' },
 				'completed',
 			);
+			expect(ctx.db.votes.upsertByEntityId).toHaveBeenCalledWith(
+				'post_123_user_123',
+				expect.objectContaining({ id: 'vote_123' }),
+			);
 		});
 
 		it('votes.create issues POST /votes/create and logs event', async () => {
@@ -396,6 +425,26 @@ describe('Canny endpoints routing & event logging', () => {
 			);
 		});
 
+		it('votes.create forwards allowed votePriority values', async () => {
+			mockMakeCannyRequest.mockResolvedValueOnce('success');
+
+			const input = {
+				postID: 'post_123',
+				voterID: 'user_123',
+				votePriority: 10 as const,
+			};
+			const result = await Votes.create(ctx, input);
+			expect(result).toBe('success');
+			expect(mockMakeCannyRequest).toHaveBeenCalledWith(
+				'votes/create',
+				'canny_test_api_key',
+				{
+					method: 'POST',
+					body: input,
+				},
+			);
+		});
+
 		it('votes.delete issues POST /votes/delete and logs event', async () => {
 			mockMakeCannyRequest.mockResolvedValueOnce('success');
 
@@ -419,6 +468,18 @@ describe('Canny endpoints routing & event logging', () => {
 				input,
 				'completed',
 			);
+			expect(ctx.db.votes.deleteByEntityId).toHaveBeenCalledWith(
+				'post_123_user_123',
+			);
+		});
+
+		it('votes.delete rejects invalid input without voterID', async () => {
+			await expect(
+				Votes.delete(ctx, {
+					postID: 'post_123',
+				} as unknown as { postID: string; voterID: string }),
+			).rejects.toThrow();
+			expect(mockMakeCannyRequest).not.toHaveBeenCalled();
 		});
 	});
 });

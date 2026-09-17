@@ -103,7 +103,7 @@ export const changeStatus: CannyEndpoints['postsChangeStatus'] = async (
 	input,
 ) => {
 	const parsedInput = CannyEndpointInputSchemas.postsChangeStatus.parse(input);
-	const raw = await makeCannyRequest<unknown>('posts/changeStatus', ctx.key, {
+	const raw = await makeCannyRequest<unknown>('posts/change_status', ctx.key, {
 		method: 'POST',
 		body: { ...parsedInput },
 	});

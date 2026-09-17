@@ -190,6 +190,10 @@ export const PostsListInputSchema = z
 			.optional(),
 		tagID: z.string().optional(),
 	})
+	.refine((data) => data.sort !== 'relevance' || data.search !== undefined, {
+		message: 'sort: relevance requires search',
+		path: ['sort'],
+	})
 	.optional()
 	.default({});
 
@@ -205,11 +209,17 @@ export type PostsListResponse = z.infer<typeof PostsListResponseSchema>;
 export const PostsRetrieveInputSchema = z
 	.object({
 		id: z.string().optional(),
-		url: z.string().optional(),
+		boardID: z.string().optional(),
+		urlName: z.string().optional(),
 	})
-	.refine((data) => data.id !== undefined || data.url !== undefined, {
-		message: 'Either id or url must be provided',
-	});
+	.refine(
+		(data) =>
+			data.id !== undefined ||
+			(data.boardID !== undefined && data.urlName !== undefined),
+		{
+			message: 'Either id or both boardID and urlName must be provided',
+		},
+	);
 
 export type PostsRetrieveInput = z.infer<typeof PostsRetrieveInputSchema>;
 
@@ -220,6 +230,8 @@ export type PostsRetrieveResponse = z.infer<typeof PostsRetrieveResponseSchema>;
 export const PostsCreateInputSchema = z.object({
 	authorID: z.string(),
 	boardID: z.string(),
+	byID: z.string().optional(),
+	createdAt: z.string().optional(),
 	title: z.string(),
 	details: z.string().optional(),
 	categoryID: z.string().optional(),
@@ -230,8 +242,9 @@ export const PostsCreateInputSchema = z.object({
 		)
 		.optional(),
 	eta: z.string().optional(),
+	etaPublic: z.boolean().optional(),
 	imageURLs: z.array(z.string()).optional(),
-	publishedAt: z.string().optional(),
+	ownerID: z.string().optional(),
 });
 
 export type PostsCreateInput = z.infer<typeof PostsCreateInputSchema>;
@@ -247,14 +260,7 @@ export const PostsChangeStatusInputSchema = z.object({
 	commentValue: z.string().optional(),
 	postID: z.string(),
 	shouldNotifyVoters: z.boolean().optional(),
-	status: z.enum([
-		'open',
-		'under review',
-		'planned',
-		'in progress',
-		'complete',
-		'closed',
-	]),
+	status: z.string(),
 });
 
 export type PostsChangeStatusInput = z.infer<
@@ -367,6 +373,9 @@ export type VotesListResponse = z.infer<typeof VotesListResponseSchema>;
 export const VotesCreateInputSchema = z.object({
 	postID: z.string(),
 	voterID: z.string(),
+	votePriority: z
+		.union([z.literal(0), z.literal(10), z.literal(20)])
+		.optional(),
 });
 
 export type VotesCreateInput = z.infer<typeof VotesCreateInputSchema>;
@@ -379,9 +388,8 @@ export const VotesCreateResponseSchema = z.union([
 export type VotesCreateResponse = z.infer<typeof VotesCreateResponseSchema>;
 
 export const VotesDeleteInputSchema = z.object({
-	id: z.string().optional(),
-	postID: z.string().optional(),
-	voterID: z.string().optional(),
+	postID: z.string(),
+	voterID: z.string(),
 });
 
 export type VotesDeleteInput = z.infer<typeof VotesDeleteInputSchema>;

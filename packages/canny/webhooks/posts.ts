@@ -52,6 +52,11 @@ export const created: CannyWebhooks['postCreated'] = {
 				});
 			} catch (error) {
 				console.warn('Failed to save post to database:', error);
+				return {
+					success: false,
+					statusCode: 500,
+					error: 'Failed to persist post',
+				};
 			}
 		}
 
@@ -113,6 +118,11 @@ export const statusChanged: CannyWebhooks['postStatusChanged'] = {
 				});
 			} catch (error) {
 				console.warn('Failed to update post in database:', error);
+				return {
+					success: false,
+					statusCode: 500,
+					error: 'Failed to persist post',
+				};
 			}
 		}
 

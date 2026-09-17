@@ -1,4 +1,4 @@
-import { createHmac } from 'node:crypto';
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -147,7 +147,7 @@ function timingSafeEqualBase64(a: string, b: string): boolean {
 		if (bufA.length === 0 || bufB.length === 0 || bufA.length !== bufB.length) {
 			return false;
 		}
-		return bufA.equals(bufB);
+		return timingSafeEqual(bufA, bufB);
 	} catch {
 		return false;
 	}
@@ -160,13 +160,30 @@ function timingSafeEqualHex(a: string, b: string): boolean {
 		if (bufA.length === 0 || bufB.length === 0 || bufA.length !== bufB.length) {
 			return false;
 		}
-		return bufA.equals(bufB);
+		return timingSafeEqual(bufA, bufB);
 	} catch {
 		return false;
 	}
 }
 
 const TIMESTAMP_TOLERANCE_MS = 5 * 60 * 1000; // 5 minutes
+const usedNonces = new Map<string, number>();
+
+function consumeWebhookNonce(timestampMs: number, nonce: string): boolean {
+	for (const [key, expiresAt] of usedNonces) {
+		if (expiresAt <= Date.now()) {
+			usedNonces.delete(key);
+		}
+	}
+
+	const nonceKey = `${timestampMs}:${nonce}`;
+	if (usedNonces.has(nonceKey)) {
+		return false;
+	}
+
+	usedNonces.set(nonceKey, timestampMs + TIMESTAMP_TOLERANCE_MS);
+	return true;
+}
 
 /**
  * Verify a Canny webhook request using HMAC-SHA256 signature of nonce using secret API key.
@@ -196,29 +213,27 @@ export function verifyCannyWebhookSignature(
 		'x-canny-timestamp',
 	);
 
-	if (!signature || !nonce) {
+	if (!signature || !nonce || !timestamp) {
 		return {
 			valid: false,
-			error: 'Missing canny-signature or canny-nonce header',
+			error: 'Missing canny-signature, canny-nonce, or canny-timestamp header',
 		};
 	}
 
-	if (timestamp) {
-		const timestampMs = Number.parseInt(timestamp, 10);
-		if (Number.isFinite(timestampMs)) {
-			const nowMs = Date.now();
-			if (Math.abs(nowMs - timestampMs) > TIMESTAMP_TOLERANCE_MS) {
-				return {
-					valid: false,
-					error: 'Webhook timestamp outside tolerance',
-				};
-			}
-		} else {
+	const timestampMs = Number.parseInt(timestamp, 10);
+	if (Number.isFinite(timestampMs)) {
+		const nowMs = Date.now();
+		if (Math.abs(nowMs - timestampMs) > TIMESTAMP_TOLERANCE_MS) {
 			return {
 				valid: false,
-				error: 'Invalid webhook timestamp format',
+				error: 'Webhook timestamp outside tolerance',
 			};
 		}
+	} else {
+		return {
+			valid: false,
+			error: 'Invalid webhook timestamp format',
+		};
 	}
 
 	try {
@@ -231,29 +246,32 @@ export function verifyCannyWebhookSignature(
 					? JSON.stringify(reqData)
 					: '';
 
+		if (!rawBody) {
+			return { valid: false, error: 'Missing webhook payload body' };
+		}
+
 		const candidates = [
+			createHmac('sha256', webhookSecret)
+				.update(`${timestamp}.${nonce}.${rawBody}`)
+				.digest('base64'),
+			createHmac('sha256', webhookSecret)
+				.update(`${timestamp}.${nonce}.${rawBody}`)
+				.digest('hex'),
 			createHmac('sha256', webhookSecret).update(nonce).digest('base64'),
 			createHmac('sha256', webhookSecret).update(nonce).digest('hex'),
 		];
-
-		if (rawBody) {
-			candidates.push(
-				createHmac('sha256', webhookSecret)
-					.update(`${nonce}.${rawBody}`)
-					.digest('base64'),
-				createHmac('sha256', webhookSecret)
-					.update(`${timestamp ? `${timestamp}.` : ''}${nonce}.${rawBody}`)
-					.digest('base64'),
-				createHmac('sha256', webhookSecret).update(rawBody).digest('base64'),
-				createHmac('sha256', webhookSecret).update(rawBody).digest('hex'),
-			);
-		}
 
 		for (const expected of candidates) {
 			if (
 				timingSafeEqualBase64(signature, expected) ||
 				timingSafeEqualHex(signature, expected)
 			) {
+				if (!consumeWebhookNonce(timestampMs, nonce)) {
+					return {
+						valid: false,
+						error: 'Webhook nonce has already been used',
+					};
+				}
 				return { valid: true };
 			}
 		}

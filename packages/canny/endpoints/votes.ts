@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCannyRequest } from '../client';
 import type { CannyEndpoints } from '../index';
+import { buildVoteEntityId } from '../vote-entity-id';
 import { CannyEndpointInputSchemas, CannyEndpointOutputSchemas } from './types';
 
 export const list: CannyEndpoints['votesList'] = async (ctx, input) => {
@@ -14,7 +15,7 @@ export const list: CannyEndpoints['votesList'] = async (ctx, input) => {
 	if (ctx.db.votes && response.votes) {
 		for (const vote of response.votes) {
 			try {
-				await ctx.db.votes.upsertByEntityId(vote.id, {
+				await ctx.db.votes.upsertByEntityId(buildVoteEntityId(vote), {
 					id: vote.id,
 					created: new Date(vote.created),
 					postID: vote.post?.id,
@@ -55,27 +56,15 @@ export const create: CannyEndpoints['votesCreate'] = async (ctx, input) => {
 
 export const deleteVote: CannyEndpoints['votesDelete'] = async (ctx, input) => {
 	const parsedInput = CannyEndpointInputSchemas.votesDelete.parse(input);
-	const requestBody: Record<string, unknown> = {};
-	if (parsedInput.id) requestBody.id = parsedInput.id;
-	if (parsedInput.postID) requestBody.postID = parsedInput.postID;
-	if (parsedInput.voterID) requestBody.voterID = parsedInput.voterID;
-
 	const raw = await makeCannyRequest<unknown>('votes/delete', ctx.key, {
 		method: 'POST',
-		body: requestBody,
+		body: { ...parsedInput },
 	});
 	const response = CannyEndpointOutputSchemas.votesDelete.parse(raw);
 
 	if (ctx.db.votes) {
 		try {
-			if (parsedInput.id) {
-				await ctx.db.votes.deleteByEntityId(parsedInput.id);
-			}
-			if (parsedInput.postID && parsedInput.voterID) {
-				await ctx.db.votes.deleteByEntityId(
-					`${parsedInput.postID}_${parsedInput.voterID}`,
-				);
-			}
+			await ctx.db.votes.deleteByEntityId(buildVoteEntityId(parsedInput));
 		} catch (error) {
 			console.warn('Failed to delete vote from database:', error);
 		}

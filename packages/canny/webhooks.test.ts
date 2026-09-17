@@ -18,9 +18,15 @@ jest.mock('corsair/core', () => {
 describe('Canny webhooks', () => {
 	const secret = 'canny_secret_123';
 	const nonce = 'random_nonce_abc';
-	const validSignature = createHmac('sha256', secret)
-		.update(nonce)
-		.digest('base64');
+
+	const signRequest = (
+		timestamp: string,
+		nonceValue: string,
+		body: string,
+	): string =>
+		createHmac('sha256', secret)
+			.update(`${timestamp}.${nonceValue}.${body}`)
+			.digest('base64');
 
 	const mockLogEventFromContext = logEventFromContext as jest.MockedFunction<
 		typeof logEventFromContext
@@ -94,29 +100,34 @@ describe('Canny webhooks', () => {
 
 	describe('verifyCannyWebhookSignature', () => {
 		it('accepts valid HMAC signature with nonce', () => {
+			const body = JSON.stringify({ type: 'post.created' });
+			const timestamp = Date.now().toString();
+			const signature = signRequest(timestamp, nonce, body);
 			const req = {
 				headers: {
 					'canny-nonce': nonce,
-					'canny-signature': validSignature,
-					'canny-timestamp': Date.now().toString(),
+					'canny-signature': signature,
+					'canny-timestamp': timestamp,
 				},
-				body: '{}',
-				rawBody: '{}',
-				payload: {},
+				body,
+				rawBody: body,
+				payload: { type: 'post.created' },
 			};
 			const res = verifyCannyWebhookSignature(req, secret);
 			expect(res.valid).toBe(true);
 		});
 
 		it('rejects invalid signature', () => {
+			const body = JSON.stringify({ type: 'post.created' });
 			const req = {
 				headers: {
 					'canny-nonce': nonce,
 					'canny-signature': 'invalid_signature_base64=',
+					'canny-timestamp': Date.now().toString(),
 				},
-				body: '{}',
-				rawBody: '{}',
-				payload: {},
+				body,
+				rawBody: body,
+				payload: { type: 'post.created' },
 			};
 			const res = verifyCannyWebhookSignature(req, secret);
 			expect(res.valid).toBe(false);
@@ -124,30 +135,60 @@ describe('Canny webhooks', () => {
 		});
 
 		it('rejects missing secret', () => {
+			const body = JSON.stringify({ type: 'post.created' });
+			const timestamp = Date.now().toString();
+			const signature = signRequest(timestamp, nonce, body);
 			const req = {
 				headers: {
 					'canny-nonce': nonce,
-					'canny-signature': validSignature,
+					'canny-signature': signature,
+					'canny-timestamp': timestamp,
 				},
-				body: '{}',
-				rawBody: '{}',
-				payload: {},
+				body,
+				rawBody: body,
+				payload: { type: 'post.created' },
 			};
 			const res = verifyCannyWebhookSignature(req, undefined);
 			expect(res.valid).toBe(false);
 			expect(res.error).toBe('Missing webhook secret or API key');
 		});
 
-		it('rejects missing nonce or signature header', () => {
+		it('rejects missing nonce, signature, or timestamp header', () => {
 			const req = {
 				headers: {},
-				body: '{}',
-				rawBody: '{}',
-				payload: {},
+				body: JSON.stringify({ type: 'post.created' }),
+				rawBody: JSON.stringify({ type: 'post.created' }),
+				payload: { type: 'post.created' },
 			};
 			const res = verifyCannyWebhookSignature(req, secret);
 			expect(res.valid).toBe(false);
-			expect(res.error).toBe('Missing canny-signature or canny-nonce header');
+			expect(res.error).toBe(
+				'Missing canny-signature, canny-nonce, or canny-timestamp header',
+			);
+		});
+
+		it('rejects replayed nonce with same timestamp', () => {
+			const body = JSON.stringify({ type: 'post.created' });
+			const timestamp = Date.now().toString();
+			const replayNonce = 'nonce_replay_1';
+			const signature = signRequest(timestamp, replayNonce, body);
+
+			const req = {
+				headers: {
+					'canny-nonce': replayNonce,
+					'canny-signature': signature,
+					'canny-timestamp': timestamp,
+				},
+				body,
+				rawBody: body,
+				payload: { type: 'post.created' },
+			};
+
+			const first = verifyCannyWebhookSignature(req, secret);
+			const second = verifyCannyWebhookSignature(req, secret);
+			expect(first.valid).toBe(true);
+			expect(second.valid).toBe(false);
+			expect(second.error).toBe('Webhook nonce has already been used');
 		});
 	});
 
@@ -171,13 +212,22 @@ describe('Canny webhooks', () => {
 
 	describe('post.created handler', () => {
 		it('processes valid post.created event', async () => {
+			const timestamp = Date.now().toString();
+			const body = JSON.stringify({
+				created: '2026-01-01T00:00:00.000Z',
+				objectType: 'post',
+				type: 'post.created',
+				object: mockPost,
+			});
+			const signature = signRequest(timestamp, nonce, body);
 			const req = {
 				headers: {
 					'canny-nonce': nonce,
-					'canny-signature': validSignature,
+					'canny-signature': signature,
+					'canny-timestamp': timestamp,
 				},
-				body: '',
-				rawBody: '',
+				body,
+				rawBody: body,
 				payload: {
 					created: '2026-01-01T00:00:00.000Z',
 					objectType: 'post' as const,
@@ -203,13 +253,22 @@ describe('Canny webhooks', () => {
 
 	describe('post.status_changed handler', () => {
 		it('processes valid post.status_changed event', async () => {
+			const timestamp = Date.now().toString();
+			const body = JSON.stringify({
+				created: '2026-01-01T00:00:00.000Z',
+				objectType: 'post',
+				type: 'post.status_changed',
+				object: { ...mockPost, status: 'in_progress' },
+			});
+			const signature = signRequest(timestamp, nonce, body);
 			const req = {
 				headers: {
 					'canny-nonce': nonce,
-					'canny-signature': validSignature,
+					'canny-signature': signature,
+					'canny-timestamp': timestamp,
 				},
-				body: '',
-				rawBody: '',
+				body,
+				rawBody: body,
 				payload: {
 					created: '2026-01-01T00:00:00.000Z',
 					objectType: 'post' as const,
@@ -227,17 +286,59 @@ describe('Canny webhooks', () => {
 				'completed',
 			);
 		});
+
+		it('rejects replayed post.status_changed event', async () => {
+			const timestamp = Date.now().toString();
+			const replayNonce = 'status_nonce_replay';
+			const body = JSON.stringify({
+				created: '2026-01-01T00:00:00.000Z',
+				objectType: 'post',
+				type: 'post.status_changed',
+				object: { ...mockPost, status: 'in_progress' },
+			});
+			const signature = signRequest(timestamp, replayNonce, body);
+			const req = {
+				headers: {
+					'canny-nonce': replayNonce,
+					'canny-signature': signature,
+					'canny-timestamp': timestamp,
+				},
+				body,
+				rawBody: body,
+				payload: {
+					created: '2026-01-01T00:00:00.000Z',
+					objectType: 'post' as const,
+					type: 'post.status_changed' as const,
+					object: { ...mockPost, status: 'in_progress' },
+				},
+			};
+
+			const first = await PostWebhooks.statusChanged.handler(ctx, req);
+			const second = await PostWebhooks.statusChanged.handler(ctx, req);
+			expect(first.success).toBe(true);
+			expect(second.success).toBe(false);
+			expect(second.error).toBe('Webhook nonce has already been used');
+		});
 	});
 
 	describe('comment.created handler', () => {
 		it('processes valid comment.created event', async () => {
+			const timestamp = Date.now().toString();
+			const body = JSON.stringify({
+				created: '2026-01-01T00:00:00.000Z',
+				objectType: 'comment',
+				type: 'comment.created',
+				object: mockComment,
+			});
+			const signature = signRequest(timestamp, nonce, body);
 			const req = {
 				headers: {
 					'canny-nonce': nonce,
-					'canny-signature': validSignature,
+					'canny-signature': signature,
+					'canny-timestamp': timestamp,
 				},
-				body: '',
-				rawBody: '',
+				body,
+				rawBody: body,
 				payload: {
 					created: '2026-01-01T00:00:00.000Z',
 					objectType: 'comment' as const,
@@ -262,17 +363,63 @@ describe('Canny webhooks', () => {
 				'completed',
 			);
 		});
+
+		it('returns failure when comment persistence fails', async () => {
+			(ctx.db.comments.upsertByEntityId as jest.Mock).mockRejectedValueOnce(
+				new Error('db write failed'),
+			);
+			const timestamp = Date.now().toString();
+			const persistNonce = 'comment_persist_nonce';
+			const body = JSON.stringify({
+				created: '2026-01-01T00:00:00.000Z',
+				objectType: 'comment',
+				type: 'comment.created',
+				object: mockComment,
+			});
+			const signature = signRequest(timestamp, persistNonce, body);
+
+			const req = {
+				headers: {
+					'canny-nonce': persistNonce,
+					'canny-signature': signature,
+					'canny-timestamp': timestamp,
+				},
+				body,
+				rawBody: body,
+				payload: {
+					created: '2026-01-01T00:00:00.000Z',
+					objectType: 'comment' as const,
+					type: 'comment.created' as const,
+					object: mockComment,
+				},
+			} as unknown as Parameters<typeof CommentWebhooks.created.handler>[1];
+
+			const res = await CommentWebhooks.created.handler(ctx, req);
+
+			expect(res.success).toBe(false);
+			expect(res.statusCode).toBe(500);
+			expect(res.error).toBe('Failed to persist comment');
+		});
 	});
 
 	describe('vote.created handler', () => {
 		it('processes valid vote.created event', async () => {
+			const timestamp = Date.now().toString();
+			const body = JSON.stringify({
+				created: '2026-01-01T00:00:00.000Z',
+				objectType: 'vote',
+				type: 'vote.created',
+				object: mockVote,
+			});
+			const signature = signRequest(timestamp, nonce, body);
 			const req = {
 				headers: {
 					'canny-nonce': nonce,
-					'canny-signature': validSignature,
+					'canny-signature': signature,
+					'canny-timestamp': timestamp,
 				},
-				body: '',
-				rawBody: '',
+				body,
+				rawBody: body,
 				payload: {
 					created: '2026-01-01T00:00:00.000Z',
 					objectType: 'vote' as const,
@@ -284,7 +431,7 @@ describe('Canny webhooks', () => {
 			const res = await VoteWebhooks.created.handler(ctx, req);
 			expect(res.success).toBe(true);
 			expect(ctx.db.votes.upsertByEntityId).toHaveBeenCalledWith(
-				'vote_123',
+				'post_123_user_123',
 				expect.objectContaining({ id: 'vote_123' }),
 			);
 			expect(mockLogEventFromContext).toHaveBeenCalledWith(
@@ -293,6 +440,43 @@ describe('Canny webhooks', () => {
 				{ id: 'vote_123', postID: 'post_123', voterID: 'user_123' },
 				'completed',
 			);
+		});
+
+		it('returns failure when vote persistence fails', async () => {
+			(ctx.db.votes.upsertByEntityId as jest.Mock).mockRejectedValueOnce(
+				new Error('db write failed'),
+			);
+			const timestamp = Date.now().toString();
+			const persistNonce = 'vote_persist_nonce';
+			const body = JSON.stringify({
+				created: '2026-01-01T00:00:00.000Z',
+				objectType: 'vote',
+				type: 'vote.created',
+				object: mockVote,
+			});
+			const signature = signRequest(timestamp, persistNonce, body);
+
+			const req = {
+				headers: {
+					'canny-nonce': persistNonce,
+					'canny-signature': signature,
+					'canny-timestamp': timestamp,
+				},
+				body,
+				rawBody: body,
+				payload: {
+					created: '2026-01-01T00:00:00.000Z',
+					objectType: 'vote' as const,
+					type: 'vote.created' as const,
+					object: mockVote,
+				},
+			} as unknown as Parameters<typeof VoteWebhooks.created.handler>[1];
+
+			const res = await VoteWebhooks.created.handler(ctx, req);
+
+			expect(res.success).toBe(false);
+			expect(res.statusCode).toBe(500);
+			expect(res.error).toBe('Failed to persist vote');
 		});
 	});
 });

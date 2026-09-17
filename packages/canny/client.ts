@@ -78,6 +78,10 @@ export async function makeCannyRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
+			if (error.status === 429) {
+				throw error;
+			}
+
 			const errorBody = error.body;
 			const message =
 				typeof errorBody === 'object' &&
