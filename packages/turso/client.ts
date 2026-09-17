@@ -206,6 +206,21 @@ export async function tursoFetchJson(
 		});
 	} catch (err) {
 		if (err instanceof TursoAPIError) throw err;
+
+		const metadata = asRecord(err);
+		const status =
+			typeof metadata?.status === 'number' ? metadata.status : undefined;
+		const retryAfter =
+			typeof metadata?.retryAfter === 'number'
+				? metadata.retryAfter
+				: undefined;
+		if (
+			err instanceof Error &&
+			(status !== undefined || retryAfter !== undefined)
+		) {
+			throw new TursoAPIError(err.message, undefined, status, retryAfter);
+		}
+
 		const detail = err instanceof Error ? `: ${err.message}` : '';
 		throw new TursoAPIError(
 			`Failed to reach Turso${detail}`,

