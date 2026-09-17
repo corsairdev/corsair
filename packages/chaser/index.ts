@@ -12,6 +12,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import { packChaserCredentials } from './client';
 import {
 	getInvoice,
 	getOrganization,
@@ -41,10 +43,15 @@ export type ChaserPluginOptions = {
 
 export type ChaserContext = CorsairPluginContext<
 	typeof ChaserSchema,
-	ChaserPluginOptions
+	ChaserPluginOptions,
+	undefined,
+	typeof chaserAuthConfig
 >;
 
-export type ChaserKeyBuilderContext = KeyBuilderContext<ChaserPluginOptions>;
+export type ChaserKeyBuilderContext = KeyBuilderContext<
+	ChaserPluginOptions,
+	typeof chaserAuthConfig
+>;
 
 export type ChaserBoundEndpoints = BindEndpoints<typeof chaserEndpointsNested>;
 
@@ -130,7 +137,7 @@ const chaserEndpointMeta = {
 
 export const chaserAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
+		account: ['tenant_external_id', 'api_secret'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -140,7 +147,8 @@ export type BaseChaserPlugin<T extends ChaserPluginOptions> = CorsairPlugin<
 	typeof chaserEndpointsNested,
 	{},
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof chaserAuthConfig
 >;
 
 export type InternalChaserPlugin = BaseChaserPlugin<ChaserPluginOptions>;
@@ -171,17 +179,18 @@ export function chaser<const T extends ChaserPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ChaserKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (source !== 'endpoint') {
+				throw new AuthMissingError('chaser', 'api_key');
 			}
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const key = await ctx.keys.get_api_key();
-				if (!key) {
-					throw new Error('Chaser API key is required.');
+			if (ctx.authType === 'api_key') {
+				const key = options.key ?? (await ctx.keys.get_api_key());
+				const secret = options.secret ?? (await ctx.keys.get_api_secret());
+				if (!key || !secret) {
+					throw new AuthMissingError('chaser', 'api_key');
 				}
-				return key;
+				return packChaserCredentials(key, secret);
 			}
-			throw new Error('Chaser API key is required.');
+			throw new AuthMissingError('chaser', 'api_key');
 		},
 	} satisfies InternalChaserPlugin;
 }

@@ -31,7 +31,7 @@ const InvoiceSchema = z.object({
 const ListInvoicesInputSchema = z.object({
 	page: z.number().int().positive().optional(),
 	limit: z.number().int().positive().optional(),
-	customer_id: z.string().optional(),
+	customer_external_id: z.string().optional(),
 });
 
 const ListInvoicesOutputSchema = z.object({

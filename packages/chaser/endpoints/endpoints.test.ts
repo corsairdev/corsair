@@ -15,14 +15,12 @@ const mockedRequest = client.makeChaserRequest as jest.MockedFunction<
 	typeof client.makeChaserRequest
 >;
 
-const createContext = (input: unknown = {}) =>
+const createContext = () =>
 	({
 		key: 'chaser-test-api-key',
 		$getAccountId: jest.fn().mockReturnValue('test-account'),
-		secret: 'chaser-test-api-secret',
-		options: { secret: 'chaser-test-api-secret' },
+		options: {},
 		db: {},
-		input,
 	}) as any;
 
 describe('Chaser endpoints', () => {
@@ -37,11 +35,10 @@ describe('Chaser endpoints', () => {
 				total: 1,
 			};
 			mockedRequest.mockResolvedValueOnce(response);
-			const result = await listCustomers(createContext({}));
+			const result = await listCustomers(createContext(), {});
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'/v1/customers',
 				'chaser-test-api-key',
-				'chaser-test-api-secret',
 				expect.objectContaining({ method: 'GET' }),
 			);
 			expect(result).toEqual(response);
@@ -63,12 +60,16 @@ describe('Chaser endpoints', () => {
 				total: 1,
 			};
 			mockedRequest.mockResolvedValueOnce(response);
-			const result = await listInvoices(createContext({}));
+			const result = await listInvoices(createContext(), {
+				customer_external_id: 'external-customer-1',
+			});
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'/v1/invoices',
 				'chaser-test-api-key',
-				'chaser-test-api-secret',
-				expect.objectContaining({ method: 'GET' }),
+				expect.objectContaining({
+					method: 'GET',
+					query: { customer_external_id: 'external-customer-1' },
+				}),
 			);
 			expect(result).toEqual(response);
 		});
@@ -82,11 +83,10 @@ describe('Chaser endpoints', () => {
 				status: 'open',
 			};
 			mockedRequest.mockResolvedValueOnce(response);
-			const result = await getInvoice(createContext({ id: 'inv_1' }));
+			const result = await getInvoice(createContext(), { id: 'inv_1' });
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'/v1/invoices/inv_1',
 				'chaser-test-api-key',
-				'chaser-test-api-secret',
 				expect.objectContaining({ method: 'GET' }),
 			);
 			expect(result).toEqual(response);
@@ -108,11 +108,10 @@ describe('Chaser endpoints', () => {
 				total: 1,
 			};
 			mockedRequest.mockResolvedValueOnce(response);
-			const result = await listCreditNotes(createContext({}));
+			const result = await listCreditNotes(createContext(), {});
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'/v1/credit-notes',
 				'chaser-test-api-key',
-				'chaser-test-api-secret',
 				expect.objectContaining({ method: 'GET' }),
 			);
 			expect(result).toEqual(response);
@@ -123,11 +122,10 @@ describe('Chaser endpoints', () => {
 		it('gets organization details', async () => {
 			const response = { id: 'org_1', name: 'Test Org' };
 			mockedRequest.mockResolvedValueOnce(response);
-			const result = await getOrganization(createContext({}));
+			const result = await getOrganization(createContext(), {});
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'/v1/organization',
 				'chaser-test-api-key',
-				'chaser-test-api-secret',
 				expect.objectContaining({ method: 'GET' }),
 			);
 			expect(result).toEqual(response);
