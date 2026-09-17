@@ -11,6 +11,7 @@ type KeyBuilder = (
 
 describe('Cincopa plugin', () => {
 	const plugin = cincopa();
+	// unknown: test helper receives a partial plugin candidate from local fixtures.
 	const keyBuilderOf = (candidate: { keyBuilder?: unknown }): KeyBuilder =>
 		candidate.keyBuilder as KeyBuilder;
 
@@ -31,6 +32,7 @@ describe('Cincopa plugin', () => {
 			({
 				authType: 'api_key',
 				keys: { get_api_key: async () => key },
+				// unknown: fixture omits unrelated runtime context fields.
 			}) as unknown as CincopaKeyBuilderContext;
 
 		it('returns options.key when explicitly provided', async () => {

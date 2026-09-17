@@ -6,6 +6,15 @@ jest.mock('../client', () => ({
 }));
 
 const mockedMakeCincopaRequest = jest.mocked(makeCincopaRequest);
+type GalleryContext = Parameters<typeof get>[0];
+
+function galleryContext(): GalleryContext {
+	return {
+		key: 'test-api-token',
+		$getAccountId: () => 'test-account-id',
+		// unknown: fixture omits unrelated runtime context fields.
+	} as unknown as GalleryContext;
+}
 
 describe('Cincopa gallery.list', () => {
 	it('lists galleries with mapped query parameters', async () => {
@@ -24,10 +33,7 @@ describe('Cincopa gallery.list', () => {
 
 		mockedMakeCincopaRequest.mockResolvedValue(response);
 
-		const ctx = {
-			key: 'test-api-token',
-			$getAccountId: () => 'test-account-id',
-		} as any;
+		const ctx = galleryContext();
 
 		const input = {
 			search: 'photos',
@@ -56,26 +62,20 @@ describe('Cincopa gallery.list', () => {
 	});
 
 	it('rejects invalid inputs failing Zod validation', async () => {
-		const ctx = {
-			key: 'test-api-token',
-			$getAccountId: () => 'test-account-id',
-		} as any;
+		const ctx = galleryContext();
 
-		await expect(get(ctx, { itemsPerPage: 200 } as any)).rejects.toThrow();
+		await expect(get(ctx, { itemsPerPage: 200 })).rejects.toThrow();
 
-		await expect(get(ctx, { page: 0 } as any)).rejects.toThrow();
+		await expect(get(ctx, { page: 0 })).rejects.toThrow();
 	});
 
 	it('rejects malformed provider output failing Zod validation', async () => {
 		mockedMakeCincopaRequest.mockResolvedValue({
 			success: true,
 			// missing runtime, galleries, items_data, etc.
-		} as any);
+		} as never);
 
-		const ctx = {
-			key: 'test-api-token',
-			$getAccountId: () => 'test-account-id',
-		} as any;
+		const ctx = galleryContext();
 
 		await expect(get(ctx, {})).rejects.toThrow();
 	});

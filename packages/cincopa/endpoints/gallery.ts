@@ -11,6 +11,7 @@ export const get: CincopaEndpoints['galleryList'] = async (ctx, input) => {
 		input ?? {},
 	);
 
+	// unknown: provider response is parsed immediately by Zod before use.
 	const raw = await makeCincopaRequest<unknown>('gallery.list.json', ctx.key, {
 		method: 'GET',
 		query: {

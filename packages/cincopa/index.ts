@@ -123,16 +123,18 @@ export function cincopa<const T extends CincopaPluginOptions>(
 				throw new AuthMissingError('cincopa', 'api_key');
 			}
 
-			if (options.key?.trim()) {
-				return options.key;
+			const configuredKey = options.key?.trim();
+			if (configuredKey) {
+				return configuredKey;
 			}
 
 			const res = await ctx.keys?.get_api_key();
-			if (!res?.trim()) {
+			const storedKey = res?.trim();
+			if (!storedKey) {
 				throw new AuthMissingError('cincopa', 'api_key');
 			}
 
-			return res;
+			return storedKey;
 		},
 	} satisfies InternalCincopaPlugin;
 }
