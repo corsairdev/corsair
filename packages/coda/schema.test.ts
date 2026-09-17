@@ -9,7 +9,10 @@ describe('Coda schema', () => {
 	it('declares an entities map', () => {
 		expect(typeof CodaSchema.entities).toBe('object');
 		expect(CodaSchema.entities).not.toBeNull();
-		expect(Object.keys(CodaSchema.entities)).toEqual([]);
+		expect(Object.keys(CodaSchema.entities).sort()).toEqual([
+			'documents',
+			'tables',
+		]);
 		for (const entity of Object.values(CodaSchema.entities)) {
 			expect(entity).toBeDefined();
 		}

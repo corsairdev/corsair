@@ -1,12 +1,10 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -26,18 +24,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { CodaSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveCodaOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchCodaTenantWebhook } from './webhooks/tenant-matcher';
-import type { CodaWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type CodaPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalCodaPlugin['hooks'];
-	webhookHooks?: InternalCodaPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof codaEndpointsNested>;
 };
@@ -64,18 +55,6 @@ export type CodaEndpoints = {
 	insertRows: CodaEndpoint<'insertRows'>;
 };
 
-type CodaWebhook<K extends keyof CodaWebhookOutputs, TEvent> = CorsairWebhook<
-	CodaContext,
-	TEvent,
-	CodaWebhookOutputs[K]
->;
-
-export type CodaWebhooks = {
-	example: CodaWebhook<'example', ExampleEvent>;
-};
-
-export type CodaBoundWebhooks = BindWebhooks<CodaWebhooks>;
-
 const codaEndpointsNested = {
 	auth: {
 		whoami: CodaActions.whoami,
@@ -89,11 +68,7 @@ const codaEndpointsNested = {
 	},
 } as const;
 
-const codaWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const codaWebhooksNested = {} as const;
 
 export const codaEndpointSchemas = {
 	'auth.whoami': {
@@ -114,13 +89,9 @@ export const codaEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof codaEndpointsNested>;
 
-const codaWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof codaWebhooksNested>;
+const codaWebhookSchemas = {} as const satisfies RequiredPluginWebhookSchemas<
+	typeof codaWebhooksNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -178,32 +149,17 @@ export function coda<const T extends CodaPluginOptions>(
 		schema: CodaSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: codaEndpointsNested,
 		webhooks: codaWebhooksNested,
 		endpointMeta: codaEndpointMeta,
 		endpointSchemas: codaEndpointSchemas,
 		webhookSchemas: codaWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-webhook-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchCodaTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveCodaOAuthWebhookTenantLink,
+		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CodaKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -235,7 +191,3 @@ export type {
 	WhoamiInput,
 	WhoamiResponse,
 } from './endpoints/types';
-export type {
-	CodaWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
