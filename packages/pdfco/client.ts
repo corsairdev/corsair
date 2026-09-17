@@ -25,7 +25,7 @@ export const PDFCO_API_BASE = 'https://api.pdf.co';
 
 export const PDFCO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 3,
+	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: {
