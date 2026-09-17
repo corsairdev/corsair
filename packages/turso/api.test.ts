@@ -4,7 +4,7 @@ import {
 	tursoFetchJson,
 	tursoPipelineHealthCheck,
 } from './client';
-import { Changes, Regions, Tokens } from './endpoints';
+import { Changes, Tokens } from './endpoints';
 import { TursoEndpointOutputSchemas } from './endpoints/types';
 import type { TursoContext } from './index';
 
