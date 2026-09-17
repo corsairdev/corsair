@@ -1,29 +1,28 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
+import type { LeexiCredentialSource } from './client';
 import {
 	LeexiAPIError,
 	makeLeexiRequest,
 	resolveLeexiCredentials,
 } from './client';
-import type { LeexiContext } from './index';
 
 /**
- * Minimal `LeexiContext` stand-in for `resolveLeexiCredentials`, which only
- * reads `key`, `options.keySecret`, and `keys.get_key_secret`. The full
- * context type carries many other fields (tenantId, hooks, db, ...) that
- * this unit test never touches, so the object is deliberately partial and
- * cast the same way the plugin's own endpoint tests mock a context.
+ * Minimal credential source for `resolveLeexiCredentials`, which only reads
+ * `key`, `options.keySecret`, and `keys.get_key_secret`. Typed as
+ * `LeexiCredentialSource` (not the full `LeexiContext`), so the mock is a
+ * plain object literal with zero type assertions.
  */
 function mockCredentialsContext(
 	key: string,
 	keySecretOption: string | undefined,
 	getKeySecret: () => Promise<string | null>,
-): LeexiContext {
+): LeexiCredentialSource {
 	return {
 		key,
 		options: { keySecret: keySecretOption },
 		keys: { get_key_secret: getKeySecret },
-	} as unknown as LeexiContext;
+	};
 }
 
 jest.mock('corsair/http', () => {

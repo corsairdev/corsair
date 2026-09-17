@@ -28,17 +28,40 @@ function createMockContext(
 	keyId = 'test-key-id',
 	keySecret: string | null = 'test-key-secret',
 ): LeexiContext {
-	// Test-only mock: only `key`, `options`, and `keys.get_key_secret` are
-	// read by `resolveLeexiCredentials`. The full context carries many more
-	// fields (tenantId, db, hooks, …) this test never touches, so the object
-	// is deliberately partial. No real credentials — dummy values only.
+	// Test-only mock with zero type assertions (no `as unknown as`, per
+	// CONTRIBUTING.md). Every member the framework context requires is
+	// provided with an implementation-typed `jest.fn()`: the full account
+	// key manager (`api_key` + `key_secret` + `webhook_signature` fields),
+	// `$getAccountId`, an empty bound-endpoint tree (endpoints under test
+	// never call `ctx.endpoints`), and an empty entity-client map (the
+	// plugin declares no entities). The return-type annotation is the
+	// check — any drift fails the build.
+	// No real credentials — dummy values only.
 	return {
 		key: keyId,
 		options: {},
 		keys: {
-			get_key_secret: jest.fn().mockResolvedValue(keySecret),
+			get_dek: jest.fn((): Promise<string> => Promise.resolve('dek')),
+			issue_new_dek: jest.fn((): Promise<string> => Promise.resolve('new-dek')),
+			get_api_key: jest.fn(
+				(): Promise<string | null> => Promise.resolve(keyId),
+			),
+			set_api_key: jest.fn((): Promise<void> => Promise.resolve()),
+			get_key_secret: jest.fn(
+				(): Promise<string | null> => Promise.resolve(keySecret),
+			),
+			set_key_secret: jest.fn((): Promise<void> => Promise.resolve()),
+			get_webhook_signature: jest.fn(
+				(): Promise<string | null> => Promise.resolve(null),
+			),
+			set_webhook_signature: jest.fn((): Promise<void> => Promise.resolve()),
 		},
-	} as unknown as LeexiContext;
+		$getAccountId: jest.fn(
+			(): Promise<string> => Promise.resolve('test-account'),
+		),
+		endpoints: {},
+		db: {},
+	};
 }
 
 function lastRequestOptions() {

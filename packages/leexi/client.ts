@@ -1,7 +1,6 @@
 import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
-import type { LeexiContext } from './index';
 
 export class LeexiAPIError extends Error {
 	public readonly status?: number;
@@ -29,6 +28,18 @@ const LEEXI_API_BASE = 'https://public-api.leexi.ai/v1';
 export type LeexiCredentials = {
 	keyId: string;
 	keySecret: string;
+};
+
+/**
+ * Minimal context surface `resolveLeexiCredentials` needs. Declared
+ * structurally (not as the full `LeexiContext`) so unit tests can build it
+ * with zero type assertions, while the real `LeexiContext` stays assignable
+ * at production call sites.
+ */
+export type LeexiCredentialSource = {
+	key: string;
+	options: { keySecret?: string };
+	keys: { get_key_secret: () => Promise<string | null> };
 };
 
 /**
@@ -107,7 +118,7 @@ export async function makeLeexiRequest<T>(
  * Leexi's Basic auth credentials.
  */
 export async function resolveLeexiCredentials(
-	ctx: LeexiContext,
+	ctx: LeexiCredentialSource,
 ): Promise<LeexiCredentials> {
 	const keySecret =
 		ctx.options.keySecret ?? (await ctx.keys.get_key_secret()) ?? '';
