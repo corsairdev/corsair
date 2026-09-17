@@ -9,7 +9,7 @@ export const toMe: ChatworkWebhooks['mentionToMe'] = {
 		if (!valid) {
 			return {
 				success: false,
-				statusCode: 401,
+				statusCode: 200,
 				error: error || 'Signature verification failed',
 			};
 		}

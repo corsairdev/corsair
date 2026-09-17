@@ -9,7 +9,7 @@ export const created: ChatworkWebhooks['messageCreated'] = {
 		if (!valid) {
 			return {
 				success: false,
-				statusCode: 401,
+				statusCode: 200,
 				error: error || 'Signature verification failed',
 			};
 		}
@@ -57,7 +57,7 @@ export const updated: ChatworkWebhooks['messageUpdated'] = {
 		if (!valid) {
 			return {
 				success: false,
-				statusCode: 401,
+				statusCode: 200,
 				error: error || 'Signature verification failed',
 			};
 		}

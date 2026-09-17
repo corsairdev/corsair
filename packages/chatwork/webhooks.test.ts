@@ -1,6 +1,7 @@
 import { createHmac } from 'node:crypto';
 import type { RawWebhookRequest, WebhookRequest } from 'corsair/core';
 import type { ChatworkContext } from './index';
+import { chatwork } from './index';
 import {
 	createChatworkMatch,
 	MentionsWebhooks,
@@ -226,7 +227,7 @@ describe('Chatwork Webhook Handlers', () => {
 		expect(response.data).toEqual(payload);
 	});
 
-	it('rejects webhooks with invalid signature returning 401', async () => {
+	it('rejects webhooks with invalid signature returning 200', async () => {
 		const payload: MessageCreatedWebhookPayload = {
 			webhook_setting_id: 'setting-1',
 			webhook_event_type: 'message_created',
@@ -249,7 +250,7 @@ describe('Chatwork Webhook Handlers', () => {
 		const response = await MessagesWebhooks.created.handler(ctx, req);
 
 		expect(response.success).toBe(false);
-		expect(response.statusCode).toBe(401);
+		expect(response.statusCode).toBe(200);
 	});
 });
 
@@ -284,6 +285,43 @@ describe('Chatwork Webhook Tenant Matcher', () => {
 
 		const match = matchChatworkTenantWebhook(req);
 		expect(match).toEqual({ linkType: 'account_id', externalId: '67890' });
+	});
+
+	it('matches tenant by query signature presence', () => {
+		const plugin = chatwork();
+		const result = plugin.pluginWebhookMatcher?.({
+			headers: {},
+			body: {},
+			query: { chatwork_webhook_signature: 'sig' },
+		});
+
+		expect(result).toBe(true);
+	});
+
+	it('verifies signature from query when header is absent', () => {
+		const rawBody = JSON.stringify({
+			webhook_setting_id: '123',
+			webhook_event_type: 'message_created',
+			webhook_event_time: 1600000000,
+			webhook_event: {
+				message_id: 'msg-1',
+				room_id: 100,
+				account_id: 200,
+				body: 'Test',
+				send_time: 1600000000,
+			},
+		});
+		const sig = computeSignature(rawBody, secretBase64);
+		const result = verifyChatworkWebhookSignature(
+			{
+				headers: {},
+				body: rawBody,
+				query: { chatwork_webhook_signature: sig },
+			},
+			secretBase64,
+		);
+
+		expect(result.valid).toBe(true);
 	});
 
 	it('returns null when no account_id is present', () => {

@@ -270,7 +270,10 @@ export function chatwork<const T extends ChatworkPluginOptions>(
 		webhookSchemas: chatworkWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
+			const signatureInQuery =
+				typeof request.query?.chatwork_webhook_signature === 'string';
 			return (
+				signatureInQuery ||
 				'x-chatworkwebhooksignature' in headers ||
 				'x-chatwork-signature' in headers
 			);

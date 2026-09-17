@@ -113,6 +113,8 @@ describe('Chatwork Endpoints', () => {
 			const [config] = mockRequest.mock.calls[0];
 			expect(config.HEADERS['X-ChatWorkToken']).toBe('test-token');
 			expect(config.TOKEN).toBeUndefined();
+			const [, reqOptions] = mockRequest.mock.calls[0];
+			expect(reqOptions.redirect).toBe('error');
 			expect(result.account_id).toBe(54321);
 		});
 	});

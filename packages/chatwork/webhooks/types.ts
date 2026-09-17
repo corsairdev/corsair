@@ -55,6 +55,7 @@ export const MentionToMeEventSchema = z.object({
 	mention_id: z
 		.union([z.string(), z.number()])
 		.transform(String)
+		.optional()
 		.describe('The unique mention ID'),
 	message_id: z.string().describe('The message ID containing the mention'),
 	room_id: z.number().describe('The room ID where the mention occurred'),
@@ -146,7 +147,8 @@ export function verifyChatworkWebhookSignature(
 		const rawSig =
 			headers['x-chatworkwebhooksignature'] ??
 			headers['X-ChatWorkWebhookSignature'] ??
-			headers['x-chatwork-signature'];
+			headers['x-chatwork-signature'] ??
+			req.query?.chatwork_webhook_signature;
 		signature = Array.isArray(rawSig) ? rawSig[0] : rawSig;
 
 		if (req.rawBody) {
