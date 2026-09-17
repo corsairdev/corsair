@@ -121,4 +121,29 @@ describe('Carbone client', () => {
 			}),
 		).toThrow('Error message from server');
 	});
+
+	it('preserves status and retry-after metadata for binary request errors', async () => {
+		const fetchSpy = jest.spyOn(global, 'fetch').mockResolvedValueOnce({
+			ok: false,
+			status: 429,
+			statusText: 'Too Many Requests',
+			headers: {
+				get: (name: string) =>
+					name.toLowerCase() === 'retry-after' ? '2' : null,
+			},
+		} as unknown as Response);
+
+		await expect(
+			makeCarboneRequest('/template/tmpl_123', {
+				apiKey: 'test-key',
+				responseType: 'binary',
+			}),
+		).rejects.toMatchObject({
+			code: 429,
+			status: 429,
+			retryAfter: 2000,
+		});
+
+		fetchSpy.mockRestore();
+	});
 });

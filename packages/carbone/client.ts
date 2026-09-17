@@ -10,7 +10,13 @@ export class CarboneAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: number,
-		options?: { cause?: Error },
+		options?: {
+			cause?: Error;
+			status?: number;
+			statusText?: string;
+			body?: unknown;
+			retryAfter?: number;
+		},
 	) {
 		super(message, options);
 		this.name = 'CarboneAPIError';
@@ -20,7 +26,13 @@ export class CarboneAPIError extends Error {
 			this.statusText = options.cause.statusText;
 			this.body = options.cause.body;
 			this.retryAfter = options.cause.retryAfter;
+			return;
 		}
+
+		this.status = options?.status;
+		this.statusText = options?.statusText;
+		this.body = options?.body;
+		this.retryAfter = options?.retryAfter;
 	}
 }
 
@@ -36,6 +48,22 @@ export type CarboneRequestOptions = {
 	headers?: Record<string, string>;
 	responseType?: 'json' | 'binary';
 };
+
+function parseRetryAfterHeader(value: string | null): number | undefined {
+	if (!value) return undefined;
+
+	const seconds = Number(value);
+	if (Number.isFinite(seconds)) {
+		return Math.max(0, Math.round(seconds * 1000));
+	}
+
+	const retryAt = Date.parse(value);
+	if (Number.isNaN(retryAt)) {
+		return undefined;
+	}
+
+	return Math.max(0, retryAt - Date.now());
+}
 
 function buildConfig(
 	apiKey?: string,
@@ -116,6 +144,13 @@ export async function makeCarboneRequest<T>(
 			throw new CarboneAPIError(
 				response.statusText || response.status.toString(),
 				response.status,
+				{
+					status: response.status,
+					statusText: response.statusText,
+					retryAfter: parseRetryAfterHeader(
+						response.headers.get('retry-after'),
+					),
+				},
 			);
 		}
 
