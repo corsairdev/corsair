@@ -10,11 +10,11 @@ import {
 export const EverhourSchema = {
 	version: '1.0.0',
 	entities: {
-		User: EverhourUser,
-		Project: EverhourProject,
-		Task: EverhourTask,
-		TimeEntry: EverhourTimeEntry,
-		Client: EverhourClient,
-		Platform: EverhourPlatform,
+		users: EverhourUser,
+		projects: EverhourProject,
+		tasks: EverhourTask,
+		timeEntries: EverhourTimeEntry,
+		clients: EverhourClient,
+		platforms: EverhourPlatform,
 	},
 } as const;

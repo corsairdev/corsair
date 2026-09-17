@@ -10,11 +10,16 @@ describe('Everhour schema', () => {
 		expect(typeof EverhourSchema.entities).toBe('object');
 		expect(EverhourSchema.entities).not.toBeNull();
 		expect(Array.isArray(Object.keys(EverhourSchema.entities))).toBe(true);
+		expect(Object.keys(EverhourSchema.entities).sort()).toEqual([
+			'clients',
+			'platforms',
+			'projects',
+			'tasks',
+			'timeEntries',
+			'users',
+		]);
 		for (const entity of Object.values(EverhourSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

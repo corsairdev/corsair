@@ -8,6 +8,8 @@ import {
 	EverhourUser,
 } from '../schema/database';
 
+const QueryValueSchema = z.union([z.string(), z.number(), z.boolean()]);
+
 export type EverhourEndpointInputs = {
 	getUser: {};
 	listTeamUsers: { query?: Record<string, any> };
@@ -58,11 +60,11 @@ export type EverhourEndpointInputs = {
 export type EverhourEndpointOutputs = {
 	getUser: EverhourUser;
 	listTeamUsers: EverhourUser[];
-	getCurrentTimer: any;
-	startTimer: any;
-	stopTimer: any;
+	getCurrentTimer: Record<string, unknown>;
+	startTimer: Record<string, unknown>;
+	stopTimer: Record<string, unknown>;
 	listUserTime: EverhourTimeEntry[];
-	listUserTimesheets: any[];
+	listUserTimesheets: Record<string, unknown>[];
 	logTime: EverhourTimeEntry;
 	updateTimeEntry: EverhourTimeEntry;
 	deleteTimeEntry: void;
@@ -76,10 +78,12 @@ export type EverhourEndpointOutputs = {
 	listPlatforms: EverhourPlatform[];
 };
 
+const AnyObjectSchema = z.object({}).passthrough();
+
 export const EverhourEndpointInputSchemas = {
 	getUser: z.object({}),
 	listTeamUsers: z.object({
-		query: z.record(z.any()).optional(),
+		query: z.record(z.string(), QueryValueSchema).optional(),
 	}),
 	getCurrentTimer: z.object({}),
 	startTimer: z.object({
@@ -90,11 +94,11 @@ export const EverhourEndpointInputSchemas = {
 	stopTimer: z.object({}),
 	listUserTime: z.object({
 		userId: z.string(),
-		query: z.record(z.any()).optional(),
+		query: z.record(z.string(), QueryValueSchema).optional(),
 	}),
 	listUserTimesheets: z.object({
 		userId: z.string(),
-		query: z.record(z.any()).optional(),
+		query: z.record(z.string(), QueryValueSchema).optional(),
 	}),
 	logTime: z.object({
 		time: z.number(),
@@ -135,13 +139,13 @@ export const EverhourEndpointInputSchemas = {
 			.optional(),
 	}),
 	listProjects: z.object({
-		query: z.record(z.any()).optional(),
+		query: z.record(z.string(), QueryValueSchema).optional(),
 	}),
 	getProject: z.object({
 		projectId: z.string(),
 	}),
 	listClients: z.object({
-		query: z.record(z.any()).optional(),
+		query: z.record(z.string(), QueryValueSchema).optional(),
 	}),
 	getClient: z.object({
 		clientId: z.string(),
@@ -152,11 +156,11 @@ export const EverhourEndpointInputSchemas = {
 export const EverhourEndpointOutputSchemas = {
 	getUser: EverhourUser,
 	listTeamUsers: z.array(EverhourUser),
-	getCurrentTimer: z.any(),
-	startTimer: z.any(),
-	stopTimer: z.any(),
+	getCurrentTimer: AnyObjectSchema,
+	startTimer: AnyObjectSchema,
+	stopTimer: AnyObjectSchema,
 	listUserTime: z.array(EverhourTimeEntry),
-	listUserTimesheets: z.array(z.any()),
+	listUserTimesheets: z.array(AnyObjectSchema),
 	logTime: EverhourTimeEntry,
 	updateTimeEntry: EverhourTimeEntry,
 	deleteTimeEntry: z.null().optional(),

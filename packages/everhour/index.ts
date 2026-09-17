@@ -1,26 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
-	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { z } from 'zod';
 import * as endpoints from './endpoints';
-import type {
-	EverhourEndpointInputs,
-	EverhourEndpointOutputs,
-} from './endpoints/types';
 import {
 	EverhourEndpointInputSchemas,
 	EverhourEndpointOutputSchemas,

@@ -6,6 +6,10 @@ import * as projectEndpoints from './endpoints/projects';
 import * as taskEndpoints from './endpoints/tasks';
 import * as timeEndpoints from './endpoints/time';
 import * as timerEndpoints from './endpoints/timer';
+import {
+	EverhourEndpointInputSchemas,
+	EverhourEndpointOutputSchemas,
+} from './endpoints/types';
 import * as userEndpoints from './endpoints/user';
 import type { EverhourContext } from './index';
 
@@ -104,15 +108,16 @@ describe('Everhour endpoints routing & event logging', () => {
 			);
 		});
 
-		it('startTimer issues POST /timers/start_for/:taskId', async () => {
+		it('startTimer issues POST /timers when task is provided', async () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({ id: 'timer_1' } as any);
 			const result = await timerEndpoints.startTimer(ctx, { task: 'task_1' });
 			expect(result.id).toBe('timer_1');
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
-				'/timers/start_for/task_1',
+				'/timers',
 				'ev_test_key',
 				expect.objectContaining({
 					method: 'POST',
+					body: { task: 'task_1' },
 				}),
 			);
 		});
@@ -185,13 +190,16 @@ describe('Everhour endpoints routing & event logging', () => {
 		it('updateTimeEntry issues PUT /time/:timeId', async () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				id: 'time_1',
-				time: 7200,
+				task_id: 'task_1',
+				user_id: 'user_1',
+				start_date: new Date('2026-01-01T00:00:00.000Z'),
+				duration: 7200,
 			} as any);
 			const result = await timeEndpoints.updateTimeEntry(ctx, {
 				timeId: 'time_1',
 				time: 7200,
 			});
-			expect(result.time).toBe(7200);
+			expect(result.duration).toBe(7200);
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
 				'/time/time_1',
 				'ev_test_key',
@@ -269,6 +277,9 @@ describe('Everhour endpoints routing & event logging', () => {
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
 				'/projects',
 				'ev_test_key',
+				expect.objectContaining({
+					method: 'GET',
+				}),
 			);
 		});
 
@@ -298,6 +309,9 @@ describe('Everhour endpoints routing & event logging', () => {
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
 				'/clients',
 				'ev_test_key',
+				expect.objectContaining({
+					method: 'GET',
+				}),
 			);
 		});
 
@@ -326,6 +340,44 @@ describe('Everhour endpoints routing & event logging', () => {
 				'/platforms',
 				'ev_test_key',
 			);
+		});
+	});
+
+	describe('Webhook event persistence', () => {
+		it('returns 500 when event persistence fails', async () => {
+			const { EverhourWebhooks } = await import('./webhooks');
+			mockLogEventFromContext.mockResolvedValueOnce(null as never);
+
+			const result = await EverhourWebhooks['api:time:updated'].handler(ctx, {
+				headers: { 'x-hook-secret': 'ev_test_key' },
+				payload: {
+					type: 'api:time:updated',
+					created_at: '2026-01-01T00:00:00.000Z',
+					data: {},
+				},
+				rawBody:
+					'{"type":"api:time:updated","created_at":"2026-01-01T00:00:00.000Z","data":{}}',
+			} as any);
+
+			expect(result).toEqual(
+				expect.objectContaining({ success: false, statusCode: 500 }),
+			);
+		});
+	});
+
+	describe('Endpoint schemas', () => {
+		it('rejects invalid write input for logTime', () => {
+			const result = EverhourEndpointInputSchemas.logTime.safeParse({
+				time: '3600',
+			});
+			expect(result.success).toBe(false);
+		});
+
+		it('rejects malformed provider output for listUserTimesheets', () => {
+			const result = EverhourEndpointOutputSchemas.listUserTimesheets.safeParse(
+				['not-an-object'],
+			);
+			expect(result.success).toBe(false);
 		});
 	});
 });
