@@ -1,13 +1,15 @@
 import { list as categoriesList } from './categories';
-import { list as eventsList } from './events';
-import { get as coinsList } from './example';
+import { get as coinsGet, list as coinsList } from './coins';
+import { get as eventsGet, list as eventsList } from './events';
 
-export const Example = {
-	get: coinsList,
+export const Coins = {
+	list: coinsList,
+	get: coinsGet,
 };
 
 export const Events = {
 	list: eventsList,
+	get: eventsGet,
 };
 
 export const Categories = {
