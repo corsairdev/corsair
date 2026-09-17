@@ -94,8 +94,13 @@ export function northflank(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: NorthflankKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key !== undefined) {
-				return options.key;
+			const configuredKey = options.key?.trim();
+			if (
+				source === 'endpoint' &&
+				configuredKey !== undefined &&
+				configuredKey !== ''
+			) {
+				return configuredKey;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {

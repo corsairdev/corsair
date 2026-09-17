@@ -140,6 +140,24 @@ describe('Northflank plugin structure and endpoints', () => {
 		expect(key).toBe('custom-api-token');
 	});
 
+	it('treats whitespace-only options.key as missing and uses the stored key', async () => {
+		const plugin: ExternalNorthflankPlugin<NorthflankPluginOptions> =
+			northflank({ key: '   ' });
+		const key = await resolvePluginKey(
+			plugin,
+			createKeyBuilderContext('stored-api-token'),
+		);
+		expect(key).toBe('stored-api-token');
+	});
+
+	it('throws AuthMissingError for whitespace-only options.key with no stored key', async () => {
+		const plugin: ExternalNorthflankPlugin<NorthflankPluginOptions> =
+			northflank({ key: '   ' });
+		await expect(
+			resolvePluginKey(plugin, createKeyBuilderContext(null)),
+		).rejects.toThrow(AuthMissingError);
+	});
+
 	it('resolves key from keys.get_api_key when options.key is absent', async () => {
 		const plugin = northflank();
 		const key = await resolvePluginKey(

@@ -14,8 +14,8 @@ jest.mock('corsair/core', () => {
 	};
 });
 
-const LIVE_API_KEY = process.env.NORTHFLANK_API_KEY;
-const describeLive = LIVE_API_KEY === undefined ? describe.skip : describe;
+const LIVE_API_KEY = process.env.NORTHFLANK_API_KEY?.trim();
+const describeLive = LIVE_API_KEY ? describe : describe.skip;
 
 function createLiveContext(apiKey: string): NorthflankContext {
 	return {
