@@ -3,6 +3,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import crypto from 'crypto';
 import { z } from 'zod';
 
 export const HookdeckWebhookPayloadSchema = z.object({
@@ -59,6 +60,64 @@ export function verifyHookdeckWebhookSignature(
 	request: WebhookRequest<HookdeckWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
-	return { valid: true };
+	if (request.hubVerified === true) {
+		return { valid: true };
+	}
+
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
+	const signature = Array.isArray(request.headers['x-hookdeck-signature'])
+		? request.headers['x-hookdeck-signature'][0]
+		: request.headers['x-hookdeck-signature'];
+	const fallbackSignature = Array.isArray(
+		request.headers['x-hookdeck-signature-2'],
+	)
+		? request.headers['x-hookdeck-signature-2'][0]
+		: request.headers['x-hookdeck-signature-2'];
+
+	if (!signature && !fallbackSignature) {
+		return {
+			valid: false,
+			error: 'Missing x-hookdeck-signature or x-hookdeck-signature-2 header',
+		};
+	}
+
+	const expectedSignature = crypto
+		.createHmac('sha256', secret)
+		.update(rawBody)
+		.digest('base64');
+
+	const isValidHeader = (value: string | undefined): boolean => {
+		if (!value) return false;
+		const received = Buffer.from(value);
+		const expected = Buffer.from(expectedSignature);
+		if (received.length !== expected.length) return false;
+		return crypto.timingSafeEqual(received, expected);
+	};
+
+	const isPrimaryValid = isValidHeader(
+		typeof signature === 'string' ? signature : undefined,
+	);
+	if (isPrimaryValid) {
+		return { valid: true };
+	}
+
+	const isFallbackValid = isValidHeader(
+		typeof fallbackSignature === 'string' ? fallbackSignature : undefined,
+	);
+	if (isFallbackValid) {
+		return { valid: true };
+	}
+
+	return { valid: false, error: 'Invalid signature' };
 }

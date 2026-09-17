@@ -1,16 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
-export class HookdeckAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'HookdeckAPIError';
-	}
-}
-
 const HOOKDECK_API_BASE = 'https://api.hookdeck.com/2025-07-01';
 
 export async function makeHookdeckRequest<T>(
@@ -47,12 +37,5 @@ export async function makeHookdeckRequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new HookdeckAPIError(error.message);
-		}
-		throw new HookdeckAPIError('Unknown error');
-	}
+	return request<T>(config, requestOptions);
 }

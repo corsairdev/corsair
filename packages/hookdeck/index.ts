@@ -200,8 +200,10 @@ export function hookdeck<const T extends HookdeckPluginOptions>(
 		webhookSchemas: hookdeckWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-hookdeck-signature' in headers;
+			return (
+				headers['x-hookdeck-signature'] !== undefined ||
+				headers['x-hookdeck-signature-2'] !== undefined
+			);
 		},
 		pluginTenantWebhookMatcher: matchHookdeckTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveHookdeckOAuthWebhookTenantLink,

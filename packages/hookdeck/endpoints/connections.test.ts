@@ -21,13 +21,28 @@ const mockCtx = {
 	key: 'test-api-key',
 } as any;
 
+const makeConnection = (overrides: Record<string, unknown> = {}) => ({
+	id: 'conn_1',
+	team_id: 'team_1',
+	name: 'my-connection',
+	full_name: 'source -> destination',
+	disabled_at: null,
+	paused_at: null,
+	created_at: '2026-01-01T00:00:00.000Z',
+	updated_at: '2026-01-01T00:00:00.000Z',
+	...overrides,
+});
+
 describe('connections endpoints', () => {
 	beforeEach(() => {
 		mockedRequest.mockReset();
 	});
 
 	it('connectionsList calls GET /connections and returns the response', async () => {
-		const mockResponse = { models: [{ id: 'conn_1' }, { id: 'conn_2' }] };
+		const mockResponse = {
+			models: [makeConnection(), makeConnection({ id: 'conn_2' })],
+			count: 2,
+		};
 		mockedRequest.mockResolvedValueOnce(mockResponse);
 
 		const result = await connectionsList(mockCtx, {});
@@ -47,7 +62,7 @@ describe('connections endpoints', () => {
 			dir: 'desc' as const,
 		};
 		const mockResponse = {
-			models: [{ id: 'conn_1' }],
+			models: [makeConnection()],
 			count: 1,
 			pagination: {
 				order_by: 'created_at',
@@ -73,7 +88,10 @@ describe('connections endpoints', () => {
 			source_id: 'src_1',
 			destination_id: 'dst_1',
 		};
-		const mockResponse = { id: 'conn_new', ...input };
+		const mockResponse = makeConnection({
+			id: 'conn_new',
+			name: input.name,
+		});
 		mockedRequest.mockResolvedValueOnce(mockResponse);
 
 		const result = await connectionsCreate(mockCtx, input as any);
@@ -87,7 +105,7 @@ describe('connections endpoints', () => {
 
 	it('connectionsGet calls GET /connections/:id', async () => {
 		const input = { id: 'conn_1' };
-		const mockResponse = { id: 'conn_1', name: 'my-connection' };
+		const mockResponse = makeConnection();
 		mockedRequest.mockResolvedValueOnce(mockResponse);
 
 		const result = await connectionsGet(mockCtx, input as any);
@@ -102,7 +120,7 @@ describe('connections endpoints', () => {
 
 	it('connectionsUpdate calls PUT /connections/:id with the remaining body (id stripped)', async () => {
 		const input = { id: 'conn_1', name: 'renamed-connection' };
-		const mockResponse = { id: 'conn_1', name: 'renamed-connection' };
+		const mockResponse = makeConnection({ name: 'renamed-connection' });
 		mockedRequest.mockResolvedValueOnce(mockResponse);
 
 		const result = await connectionsUpdate(mockCtx, input as any);
@@ -130,7 +148,7 @@ describe('connections endpoints', () => {
 			'test-api-key',
 			{ method: 'DELETE' },
 		);
-		expect(result).toEqual(mockResponse);
+		expect(result).toEqual({ id: 'conn_1' });
 	});
 
 	it('propagates errors from makeHookdeckRequest', async () => {
