@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import type { ZodTypeAny } from 'zod';
+import { z } from 'zod';
 import {
 	attachments,
 	bulk,
@@ -157,7 +158,16 @@ function withSchemaValidation<T extends EndpointTree>(
 			const handler = value as EndpointHandler;
 			const schema = schemas[path];
 			const wrapped: EndpointHandler = async (ctx, input) => {
-				const parsedInput = schema?.input ? schema.input.parse(input) : input;
+				const normalizedInput =
+					schema?.input instanceof z.ZodVoid &&
+					input !== null &&
+					typeof input === 'object' &&
+					Object.keys(input as Record<string, unknown>).length === 0
+						? undefined
+						: input;
+				const parsedInput = schema?.input
+					? schema.input.parse(normalizedInput)
+					: normalizedInput;
 				const rawOutput = await handler(ctx, parsedInput);
 				return schema?.output ? schema.output.parse(rawOutput) : rawOutput;
 			};
