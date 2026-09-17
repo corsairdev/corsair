@@ -1,0 +1,603 @@
+---
+title: API
+description: "API reference for Carbone: every `carbone.api.*` operation with input and output types."
+---
+
+Every `carbone.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Render
+
+### generateReport
+
+`render.generateReport`
+
+Tool to generate a Carbone report from a template and JSON data. Use when you need to render documents in various formats.
+
+**Risk:** `write`
+
+```ts
+await corsair.carbone.api.render.generateReport({
+	templateId: 'tmpl_1234567890abcdef',
+	data: { customer: 'Acme Corp', amount: 1250 },
+	convertTo: 'pdf',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | 64-character hexadecimal template ID or version ID to render |
+| `data` | `object[]` | No | JSON dataset to merge into the document template placeholders |
+| `convertTo` | `object` | No | Target file format extension to convert output document into (e.g. pdf, docx, xlsx, html) |
+| `converter` | `string` | No | Converter engine to use for document conversion |
+| `lang` | `string` | No | Localization language code for formatting numbers, dates, and currency (e.g. en-US, fr-FR) |
+| `timezone` | `string` | No | IANA timezone string for date/time calculations (e.g. Europe/Paris, America/New_York) |
+| `currency` | `string` | No | ISO 4217 currency code for currency formatters (e.g. USD, EUR) |
+| `translations` | `object` | No | Dictionary of translation strings per locale |
+| `enum` | `object` | No | Enum mapping dictionaries for translating code values |
+| `variable` | `object` | No | Pre-calculated variables accessible globally within the template |
+| `complement` | `object` | No | Complementary dataset accessible with the c. prefix in templates |
+| `hardRefresh` | `boolean` | No | When true, recalculates all template functions and forces fresh render |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+} | lazy[]
+```
+</Accordion>
+
+<Accordion title="convertTo full type">
+
+```ts
+string | {
+  formatName: string,
+  formatOptions?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="translations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="enum full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="variable full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="complement full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Indicates if report generation succeeded |
+| `data` | `object` | Yes | Render result payload containing the render ID |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  renderId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### renderDirect
+
+`render.renderDirect`
+
+Tool to generate a document by uploading a base64-encoded template and data in a single API call. Use when you need to render documents without uploading templates separately.
+
+**Risk:** `write`
+
+```ts
+await corsair.carbone.api.render.renderDirect({
+	template: 'UEsDBBQAAAAIAAAAIQAAAAAAAAAAAAAAAAAJAAAAdGVtcGxhdGUuZG9jeA==',
+	data: { customer: 'Acme Corp', amount: 1250 },
+	convertTo: 'pdf',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `string` | Yes | Base64-encoded document template content |
+| `data` | `object[]` | No | JSON dataset to merge into the template placeholders |
+| `convertTo` | `object` | No | Target output document format extension (e.g. pdf, docx, xlsx, html) |
+| `converter` | `string` | No | Converter engine to use for document conversion |
+| `lang` | `string` | No | Localization language code for formatting numbers and dates |
+| `timezone` | `string` | No | IANA timezone string for date operations |
+| `currency` | `string` | No | ISO 4217 currency code for currency formatting |
+| `translations` | `object` | No | Translation dictionaries for multi-language templates |
+| `enum` | `object` | No | Enum dictionaries for code translation |
+| `variable` | `object` | No | Pre-calculated variables accessible in template |
+| `complement` | `object` | No | Complementary data accessible with c. prefix |
+| `hardRefresh` | `boolean` | No | Force complete recalculation of document fields |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+} | lazy[]
+```
+</Accordion>
+
+<Accordion title="convertTo full type">
+
+```ts
+string | {
+  formatName: string,
+  formatOptions?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="translations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="enum full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="variable full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="complement full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Indicates if direct template rendering succeeded |
+| `data` | `object` | Yes | Render result payload |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  renderId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Status
+
+### get
+
+`status.get`
+
+Tool to retrieve the current status and health of the Carbone server. Use before generating reports to ensure the service is operational.
+
+**Risk:** `read`
+
+```ts
+await corsair.carbone.api.status.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Indicates if the status check request succeeded |
+| `code` | `number` | No | HTTP status code returned by API |
+| `message` | `string` | Yes | Status message from Carbone server |
+| `version` | `string` | No | Active Carbone engine/API version |
+
+
+
+---
+
+## Templates
+
+### delete
+
+`templates.delete`
+
+Permanently delete a template from the Carbone server by its 64-character hexadecimal template ID. This action is irreversible. Ensure you have the correct template ID before deleting.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.carbone.api.templates.delete({ templateId: 'tmpl_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | 64-character hexadecimal template ID to permanently delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Indicates if template was successfully deleted |
+| `message` | `string` | No | Confirmation message from Carbone server |
+
+
+
+---
+
+### download
+
+`templates.download`
+
+Tool to download a template from Carbone by template ID. Use when you need to retrieve the original template file.
+
+**Risk:** `read`
+
+```ts
+await corsair.carbone.api.templates.download({ templateId: 'tmpl_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | 64-character hexadecimal template ID to download |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | ID of the downloaded template |
+| `content` | `string` | Yes | Raw file content or stream of the retrieved template |
+| `success` | `boolean` | Yes | Indicates if template download was successful |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+Tool to retrieve a list of templates from Carbone storage with filtering, search, and cursor-based pagination. Use when you need to find templates, search by name or ID, or iterate through all deployed templates.
+
+**Risk:** `read`
+
+```ts
+await corsair.carbone.api.templates.list({ id: 'tmpl_1234567890abcdef', cursor: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | Filter templates by exact template ID match |
+| `templateId` | `string` | No | Alias for id; filter templates by exact template ID match |
+| `versionId` | `string` | No | Filter templates by exact version ID match |
+| `category` | `string` | No | Filter templates belonging to a specific category folder |
+| `search` | `string` | No | Search templates by name or identifier query |
+| `cursor` | `string \| number` | No | Pagination cursor for iterating through templates |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Indicates if listing templates succeeded |
+| `data` | `object[]` | Yes | Array of deployed Carbone template metadata records |
+| `hasMore` | `boolean` | No | Whether more template records are available on next page |
+| `nextCursor` | `string \| number` | No | Cursor to retrieve the next page of templates |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  versionId?: string,
+  id?: string | null,
+  name?: string,
+  category?: string,
+  type?: string,
+  size?: number,
+  comment?: string,
+  tags?: string[],
+  deployedAt?: number | null,
+  createdAt?: number,
+  expireAt?: number | null,
+  origin?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listCategories
+
+`templates.listCategories`
+
+Tool to retrieve a list of all categories used in templates. Categories function like folders for organizing templates. Use when you need to see available template groupings.
+
+**Risk:** `read`
+
+```ts
+await corsair.carbone.api.templates.listCategories({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Indicates if listing categories succeeded |
+| `data` | `object[]` | Yes | List of category folder names used across templates |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTags
+
+`templates.listTags`
+
+Tool to list all tags currently used in templates. Use when you need to discover available tags for categorizing or filtering templates by document type or version.
+
+**Risk:** `read`
+
+```ts
+await corsair.carbone.api.templates.listTags({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Indicates if listing tags succeeded |
+| `data` | `object[]` | Yes | List of tag names used across templates |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`templates.update`
+
+Tool to update metadata and attributes of an existing Carbone template. Use when you need to modify template name, comment, tags, category, or control version deployment and lifecycle.
+
+**Risk:** `write`
+
+```ts
+await corsair.carbone.api.templates.update({
+	templateId: 'tmpl_1234567890abcdef',
+	name: 'Updated invoice template',
+	category: 'Finance',
+	tags: ['invoices', 'v2'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | 64-character hexadecimal template ID to update |
+| `name` | `string` | No | Updated human-readable name of the template |
+| `category` | `string` | No | Updated category folder for organizing the template |
+| `comment` | `string` | No | Updated description or version release comment |
+| `tags` | `string[]` | No | Updated array of tag strings for filtering |
+| `deployedAt` | `number` | No | Unix timestamp to control version deployment |
+| `expireAt` | `number` | No | Unix timestamp when the template will automatically expire |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Indicates if template metadata update succeeded |
+| `data` | `object` | No | Updated metadata values of the template |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  category?: string,
+  comment?: string,
+  tags?: string[],
+  deployedAt?: number | null,
+  versionId?: string,
+  id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`templates.upload`
+
+Upload a template file to the Carbone server to obtain a template ID for document generation. Supported template formats: DOCX, XLSX, PPTX, ODT, ODS, ODP, ODG, XHTML, IDML, HTML, or XML. Templates can contain placeholders like {d.fieldname} that will be replaced with data during report generation.
+
+**Risk:** `write`
+
+```ts
+await corsair.carbone.api.templates.upload({ template: 'UEsDBBQAAAAIAAAAIQAAAAAAAAAAAAAAAAAJAAAAdGVtcGxhdGUuZG9jeA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `string` | Yes | Base64-encoded document template payload |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Indicates if template upload succeeded |
+| `data` | `object` | Yes | Metadata of the newly uploaded template |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  templateId?: string,
+  id?: string,
+  versionId?: string,
+  templateExtension?: string,
+  type?: string,
+  size?: number,
+  createdAt?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Version
+
+### set
+
+`version.set`
+
+Tool to set the Carbone API version to be used for subsequent requests. Use before rendering or managing templates to ensure correct version is applied.
+
+**Risk:** `write`
+
+```ts
+await corsair.carbone.api.version.set({ version: '5' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `string` | Yes | Carbone API major version string to use for subsequent requests (e.g. "5") |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Indicates if setting API version was successful |
+| `version` | `string` | Yes | The active Carbone API version now configured |
+| `message` | `string` | Yes | Confirmation message |
+
+
+
+---
+

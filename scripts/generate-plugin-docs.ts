@@ -86,6 +86,11 @@ type PluginDocsFile = {
 		write?: PluginDocsExampleCall;
 	};
 	/**
+	 * Per-operation sample args for API page snippets.
+	 * Keys are short paths after `plugin.api.` (e.g. `templates.list`).
+	 */
+	apiExamples?: Record<string, { args?: Record<string, unknown> }>;
+	/**
 	 * Headline webhook for the overview. `path` is the short path under
 	 * `plugin.webhooks.` (e.g. `messages.message`).
 	 */
@@ -644,6 +649,37 @@ function validatePluginDocsConfig(
 
 	validateApiExample(docsConfig.examples?.read, 'examples.read');
 	validateApiExample(docsConfig.examples?.write, 'examples.write');
+
+	for (const [shortPath, example] of Object.entries(
+		docsConfig.apiExamples ?? {},
+	)) {
+		const ep = findEndpointByShortPath(data.api, shortPath);
+		if (!ep) {
+			errors.push(
+				`${prefix}: apiExamples path "${shortPath}" not found on ${pluginId}.api`,
+			);
+			continue;
+		}
+
+		const args =
+			example && typeof example === 'object' && !Array.isArray(example)
+				? (example.args ?? {})
+				: {};
+		if (typeof args !== 'object' || Array.isArray(args)) {
+			errors.push(
+				`${prefix}: apiExamples."${shortPath}".args must be an object`,
+			);
+			continue;
+		}
+
+		errors.push(
+			...validateExampleArgsAgainstInput(
+				args,
+				ep.input,
+				`${prefix}: apiExamples (${shortPath})`,
+			),
+		);
+	}
 
 	const dbEx = docsConfig.dbExample;
 	if (dbEx) {
@@ -1444,6 +1480,7 @@ function buildApiMdx(
 	pluginId: string,
 	title: string,
 	data: PluginDocsIntrospection,
+	docsConfig: PluginDocsFile,
 ): string {
 	const byGroup = new Map<string, typeof data.api>();
 	for (const ep of data.api) {
@@ -1472,8 +1509,11 @@ function buildApiMdx(
 			sections.push('');
 			const [, ...pathParts] = ep.path.split('.');
 			const callExpr = `corsair.${pluginId}.${pathParts.join('.')}`;
+			const callArgs = docsConfig.apiExamples?.[ep.shortPath]?.args;
 			sections.push('```ts');
-			sections.push(`await ${callExpr}({});`);
+			sections.push(
+				`await ${callExpr}(${formatExampleArgs(callArgs ?? {})});`,
+			);
 			sections.push('```');
 			sections.push('');
 			sections.push(formatSchemaShape(ep.input, 'Input'));
@@ -1969,7 +2009,7 @@ async function generatePluginDocsForEntry(
 
 	writeFileSync(
 		join(outDir, 'api.mdx'),
-		buildApiMdx(pluginId, title, docData),
+		buildApiMdx(pluginId, title, docData, docsConfig),
 		'utf8',
 	);
 	writeFileSync(
