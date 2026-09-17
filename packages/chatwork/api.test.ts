@@ -91,7 +91,7 @@ describe('Chatwork Endpoints', () => {
 
 			expect(mockRequest).toHaveBeenCalledTimes(1);
 			const [config, reqOptions] = mockRequest.mock.calls[0];
-			expect(config.HEADERS.Authorization).toBe('Bearer test-token');
+			expect(config.TOKEN).toBe('test-token');
 			expect(reqOptions.url).toBe('me');
 			expect(reqOptions.method).toBe('GET');
 
@@ -112,9 +112,18 @@ describe('Chatwork Endpoints', () => {
 
 			const [config] = mockRequest.mock.calls[0];
 			expect(config.HEADERS['X-ChatWorkToken']).toBe('test-token');
-			expect(config.HEADERS.Authorization).toBeUndefined();
+			expect(config.TOKEN).toBeUndefined();
 			expect(result.account_id).toBe(54321);
 		});
+	});
+
+	it('validates endpoint input at runtime', async () => {
+		const ctx = testContext();
+		await expect(
+			Rooms.get(ctx, {
+				room_id: 0,
+			}),
+		).rejects.toThrow();
 	});
 
 	describe('rooms.list', () => {

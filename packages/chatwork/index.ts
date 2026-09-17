@@ -272,7 +272,6 @@ export function chatwork<const T extends ChatworkPluginOptions>(
 			const headers = request.headers;
 			return (
 				'x-chatworkwebhooksignature' in headers ||
-				'X-ChatWorkWebhookSignature' in headers ||
 				'x-chatwork-signature' in headers
 			);
 		},

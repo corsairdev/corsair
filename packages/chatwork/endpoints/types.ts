@@ -137,7 +137,7 @@ export const MessagesSendInputSchema = z.object({
 		.int()
 		.positive()
 		.describe('The ID of the room to post to'),
-	body: z.string().min(1).describe('The message body text'),
+	body: z.string().min(1).max(65535).describe('The message body text'),
 	self_unread: z
 		.union([z.literal(0), z.literal(1), z.boolean()])
 		.optional()

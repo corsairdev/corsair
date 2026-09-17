@@ -138,6 +138,9 @@ export function verifyChatworkWebhookSignature(
 		secret = secretIfBody ?? '';
 	} else {
 		secret = secretOrSignature;
+		if ('hubVerified' in requestOrBody && requestOrBody.hubVerified === true) {
+			return { valid: true };
+		}
 		const req = requestOrBody as RawWebhookRequest & { rawBody?: string };
 		const headers = req.headers ?? {};
 		const rawSig =
@@ -151,7 +154,10 @@ export function verifyChatworkWebhookSignature(
 		} else if (typeof req.body === 'string') {
 			rawBody = req.body;
 		} else {
-			rawBody = JSON.stringify(req.body ?? {});
+			return {
+				valid: false,
+				error: 'Missing raw body for signature verification',
+			};
 		}
 	}
 

@@ -14,6 +14,24 @@ export const toMe: ChatworkWebhooks['mentionToMe'] = {
 			};
 		}
 
+		if (ctx.db.messages) {
+			try {
+				const event = request.payload.webhook_event;
+				await ctx.db.messages.upsertByEntityId(event.message_id, {
+					message_id: event.message_id,
+					room_id: event.room_id,
+					body: event.body,
+					send_time: event.send_time,
+					account: {
+						account_id: event.from_account_id,
+						name: '',
+					},
+				});
+			} catch (dbError) {
+				console.warn('Failed to save Chatwork mention_to_me webhook:', dbError);
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'chatwork.webhook.mentionToMe',

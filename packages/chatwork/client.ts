@@ -38,6 +38,7 @@ export interface ChatworkRequestOptions {
 	query?: Record<string, string | number | boolean | undefined>;
 	authType?: 'api_key' | 'oauth_2';
 	mediaType?: string;
+	defaultEmptyArray?: boolean;
 }
 
 export async function makeChatworkRequest<T>(
@@ -51,14 +52,13 @@ export async function makeChatworkRequest<T>(
 		query,
 		authType = 'oauth_2',
 		mediaType,
+		defaultEmptyArray = false,
 	} = options;
 
 	const headers: Record<string, string> = {};
 
 	if (authType === 'api_key') {
 		headers['X-ChatWorkToken'] = token;
-	} else {
-		headers.Authorization = `Bearer ${token}`;
 	}
 
 	let requestBody: any;
@@ -105,8 +105,7 @@ export async function makeChatworkRequest<T>(
 			rateLimitConfig: CHATWORK_RATE_LIMIT_CONFIG,
 		});
 
-		// Chatwork returns 204 No Content for endpoints like GET /rooms/{room_id}/messages when empty
-		if (response === undefined || response === null) {
+		if (defaultEmptyArray && (response === undefined || response === null)) {
 			return [] as unknown as T;
 		}
 

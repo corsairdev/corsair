@@ -254,7 +254,9 @@ describe('Chatwork Webhook Handlers', () => {
 });
 
 describe('Chatwork Webhook Tenant Matcher', () => {
-	it('matches tenant by account_id in webhook_event', () => {
+	const secretBase64 = Buffer.from('my-super-secret-token').toString('base64');
+
+	it('does not use author account_id for message events', () => {
 		const req: RawWebhookRequest = {
 			headers: {},
 			body: {
@@ -266,7 +268,7 @@ describe('Chatwork Webhook Tenant Matcher', () => {
 		};
 
 		const match = matchChatworkTenantWebhook(req);
-		expect(match).toEqual({ linkType: 'account_id', externalId: '12345' });
+		expect(match).toBeNull();
 	});
 
 	it('matches tenant by to_account_id in mention_to_me event', () => {
@@ -292,6 +294,32 @@ describe('Chatwork Webhook Tenant Matcher', () => {
 
 		const match = matchChatworkTenantWebhook(req);
 		expect(match).toBeNull();
+	});
+
+	it('accepts hub-verified requests without requiring raw body', () => {
+		const payload = {
+			webhook_setting_id: 'setting-1',
+			webhook_event_type: 'message_created',
+			webhook_event_time: 1600000000,
+			webhook_event: {
+				message_id: 'msg-1',
+				room_id: 101,
+				account_id: 202,
+				body: 'Test',
+				send_time: 1600000000,
+			},
+		};
+
+		const result = verifyChatworkWebhookSignature(
+			{
+				payload,
+				headers: {},
+				hubVerified: true,
+			},
+			secretBase64,
+		);
+
+		expect(result).toEqual({ valid: true });
 	});
 });
 

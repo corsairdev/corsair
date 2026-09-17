@@ -14,6 +14,28 @@ export const created: ChatworkWebhooks['messageCreated'] = {
 			};
 		}
 
+		if (ctx.db.messages) {
+			try {
+				const event = request.payload.webhook_event;
+				await ctx.db.messages.upsertByEntityId(event.message_id, {
+					message_id: event.message_id,
+					room_id: event.room_id,
+					body: event.body,
+					send_time: event.send_time,
+					update_time: event.update_time,
+					account: {
+						account_id: event.account_id,
+						name: '',
+					},
+				});
+			} catch (dbError) {
+				console.warn(
+					'Failed to save Chatwork message_created webhook:',
+					dbError,
+				);
+			}
+		}
+
 		await logEventFromContext(
 			ctx,
 			'chatwork.webhook.messageCreated',
@@ -38,6 +60,28 @@ export const updated: ChatworkWebhooks['messageUpdated'] = {
 				statusCode: 401,
 				error: error || 'Signature verification failed',
 			};
+		}
+
+		if (ctx.db.messages) {
+			try {
+				const event = request.payload.webhook_event;
+				await ctx.db.messages.upsertByEntityId(event.message_id, {
+					message_id: event.message_id,
+					room_id: event.room_id,
+					body: event.body,
+					send_time: event.send_time,
+					update_time: event.update_time,
+					account: {
+						account_id: event.account_id,
+						name: '',
+					},
+				});
+			} catch (dbError) {
+				console.warn(
+					'Failed to save Chatwork message_updated webhook:',
+					dbError,
+				);
+			}
 		}
 
 		await logEventFromContext(
