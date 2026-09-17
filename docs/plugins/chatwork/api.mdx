@@ -64,7 +64,7 @@ List members belonging to a chat room
 **Risk:** `read`
 
 ```ts
-await corsair.chatwork.api.members.list({});
+await corsair.chatwork.api.members.list({ room_id: 123456 });
 ```
 
 **Input**
@@ -83,7 +83,7 @@ await corsair.chatwork.api.members.list({});
 ```ts
 {
   account_id: number,
-  role: admin | member | readonly | string,
+  role: 'admin' | 'member' | 'readonly' | string,
   name: string,
   chatwork_id?: string,
   organization_id?: number,
@@ -109,7 +109,7 @@ Get a specific message from a chat room
 **Risk:** `read`
 
 ```ts
-await corsair.chatwork.api.messages.get({});
+await corsair.chatwork.api.messages.get({ room_id: 123456, message_id: '123456789' });
 ```
 
 **Input**
@@ -157,7 +157,7 @@ List messages in a chat room
 **Risk:** `read`
 
 ```ts
-await corsair.chatwork.api.messages.list({});
+await corsair.chatwork.api.messages.list({ room_id: 123456 });
 ```
 
 **Input**
@@ -202,7 +202,7 @@ Send a new message to a chat room
 **Risk:** `write`
 
 ```ts
-await corsair.chatwork.api.messages.send({});
+await corsair.chatwork.api.messages.send({ room_id: 123456, body: 'Hello from Corsair' });
 ```
 
 **Input**
@@ -236,7 +236,7 @@ Get details of a specific chat room
 **Risk:** `read`
 
 ```ts
-await corsair.chatwork.api.rooms.get({});
+await corsair.chatwork.api.rooms.get({ room_id: 123456 });
 ```
 
 **Input**
@@ -313,4 +313,3 @@ await corsair.chatwork.api.rooms.list({});
 
 
 ---
-
