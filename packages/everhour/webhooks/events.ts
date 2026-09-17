@@ -1,5 +1,4 @@
 import { logEventFromContext } from 'corsair/core';
-import type { EverhourWebhooks } from '.';
 import { createEverhourMatch, verifyEverhourWebhookSignature } from './types';
 
 const createEventHandler = (eventName: string): any => ({
@@ -15,12 +14,20 @@ const createEventHandler = (eventName: string): any => ({
 		}
 
 		const event = request.payload;
-		await logEventFromContext(
+		const loggedEvent = await logEventFromContext(
 			ctx,
 			`everhour.webhook.${eventName.replace('api:', '').replace(':', '_')}`,
 			{ ...event },
 			'completed',
 		);
+
+		if (loggedEvent === null) {
+			return {
+				success: false,
+				statusCode: 500,
+				error: 'Failed to persist webhook event',
+			};
+		}
 
 		return { success: true, data: event };
 	},

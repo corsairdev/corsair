@@ -5,7 +5,6 @@ import type {
 } from 'corsair/core';
 export type { WebhookRequest };
 
-import crypto from 'crypto';
 import { z } from 'zod';
 
 export const EverhourWebhookPayloadSchema = z.object({

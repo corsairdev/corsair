@@ -18,10 +18,7 @@ export const startTimer = async (
 	ctx: any,
 	options: { task?: string; userDate?: string; comment?: string } = {},
 ) => {
-	const endpoint = options.task
-		? `/timers/start_for/${options.task}`
-		: '/timers';
-	return makeEverhourRequest<TimerResponse>(endpoint, ctx.key, {
+	return makeEverhourRequest<TimerResponse>('/timers', ctx.key, {
 		method: 'POST',
 		body: options,
 	});

@@ -52,7 +52,7 @@ export async function makeEverhourRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error: any) {
 		if (error instanceof ApiError) {
-			throw new EverhourAPIError(error.message, error.status, error.body);
+			throw error;
 		}
 		if (error instanceof Error) {
 			throw new EverhourAPIError(error.message);
