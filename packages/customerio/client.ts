@@ -22,14 +22,14 @@ export class CustomerioAPIError extends Error {
 // Track API lives on track.customer.io with Basic siteId:apiKey auth.
 // CDP/Pipelines API lives on cdp.customer.io with Basic writeKey: auth.
 //
-// The plugin follows the standard Corsair api_key pattern: a single opaque
-// `key` string is returned verbatim by the keyBuilder and forwarded
-// unchanged to the transport that needs it (Bearer for App, base64-encoded
-// for Track/CDP — see toBasicCredential). No `;`/`=` parsing, no JSON
-// packing, no multi-credential string. Callers that need more than one
-// family create separate `customerio()` instances with the appropriate
-// credential for that family (the same pattern every other api_key plugin
-// uses), or standard `region` handling for EU bases.
+// The plugin follows the standard Corsair api_key pattern: the shared `key`
+// is the App API key, returned verbatim by the keyBuilder and sent as a
+// Bearer token. Track and CDP need incompatible credentials
+// (`siteId:apiKey` and write key), so those handlers resolve their own
+// credential via resolveTrackCredential/resolveCdpCredential below —
+// options first, then the stored per-family field, then the shared `key`
+// fallback (same precedence Twilio uses for accountSid). No `;`/`=`
+// parsing, no JSON packing, no multi-credential string.
 export const CUSTOMERIO_APP_BASE = 'https://api.customer.io';
 export const CUSTOMERIO_TRACK_BASE = 'https://track.customer.io';
 export const CUSTOMERIO_CDP_BASE = 'https://cdp.customer.io';
@@ -90,6 +90,46 @@ const CUSTOMERIO_RATE_LIMIT: RateLimitConfig = {
 		retryAfter: 'Retry-After',
 	},
 };
+
+// Structural input for per-family credential resolution. Endpoint
+// contexts satisfy this without importing index.ts (avoids a value-level
+// cycle; endpoints already import their context type from '..').
+export type CustomerioCredentialSource = {
+	key: string;
+	options: {
+		trackApiKey?: string;
+		cdpWriteKey?: string;
+	};
+	keys: {
+		get_track_api_key: () => Promise<string | null>;
+		get_cdp_write_key: () => Promise<string | null>;
+	};
+};
+
+// Track credential: explicit option, then the stored `track_api_key`
+// field (`siteId:apiKey`), then the shared key (legacy single-key setups
+// store `siteId:apiKey` in the key field itself).
+export async function resolveTrackCredential(
+	source: CustomerioCredentialSource,
+): Promise<string> {
+	return (
+		source.options.trackApiKey ??
+		(await source.keys.get_track_api_key()) ??
+		source.key
+	);
+}
+
+// CDP credential: explicit option, then the stored `cdp_write_key` field,
+// then the shared key (legacy single-key setups store the write key there).
+export async function resolveCdpCredential(
+	source: CustomerioCredentialSource,
+): Promise<string> {
+	return (
+		source.options.cdpWriteKey ??
+		(await source.keys.get_cdp_write_key()) ??
+		source.key
+	);
+}
 
 function toBasicCredential(apiKey: string): string {
 	// Track expects base64(siteId:apiKey); CDP expects base64(writeKey:).

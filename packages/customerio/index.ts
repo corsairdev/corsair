@@ -47,8 +47,17 @@ import { CustomerioSchema } from './schema';
 
 export type CustomerioPluginOptions = {
 	authType?: PickAuth<'api_key'>;
-	/** Optional: pass the API key directly (bypasses key manager). */
+	/** Optional: pass the App API key directly (bypasses key manager). */
 	key?: string;
+	// Optional: pass the Track credential (`siteId:apiKey`) directly
+	// (bypasses key manager). Same precedence as Twilio's `accountSid`
+	// (packages/twilio/index.ts:52-69): options first, then the stored
+	// `track_api_key` field, then the shared `key` fallback.
+	trackApiKey?: string;
+	// Optional: pass the CDP/Pipelines write key directly (bypasses key
+	// manager). Precedence: options, then the stored `cdp_write_key`
+	// field, then the shared `key` fallback.
+	cdpWriteKey?: string;
 	// Account region. EU workspaces must set 'eu' so App, Track and CDP
 	// requests use the EU bases (api-eu/track-eu/cdp-eu.customer.io);
 	// defaults to 'us'. Handlers forward this via ctx.options.region.
@@ -60,11 +69,15 @@ export type CustomerioPluginOptions = {
 
 export type CustomerioContext = CorsairPluginContext<
 	typeof CustomerioSchema,
-	CustomerioPluginOptions
+	CustomerioPluginOptions,
+	undefined,
+	typeof customerioAuthConfig
 >;
 
-export type CustomerioKeyBuilderContext =
-	KeyBuilderContext<CustomerioPluginOptions>;
+export type CustomerioKeyBuilderContext = KeyBuilderContext<
+	CustomerioPluginOptions,
+	typeof customerioAuthConfig
+>;
 
 export type CustomerioBoundEndpoints = BindEndpoints<
 	typeof customerioEndpointsNested
@@ -358,9 +371,16 @@ const customerioEndpointMeta = {
 	typeof customerioEndpointsNested
 >;
 
+// The three API families need incompatible credentials (App Bearer key,
+// Track `siteId:apiKey` Basic, CDP write-key Basic), so each family gets
+// its own stored field on the single api_key connection — the same
+// extension mechanism Twilio (`accountSid`), Algolia (`applicationId`)
+// and Zendesk (`subdomain`) use. The shared `api_key` remains the App key
+// (keyBuilder returns it verbatim); Track/CDP handlers resolve their own
+// credential via resolveTrackCredential/resolveCdpCredential in client.ts.
 export const customerioAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
+		account: ['tenant_external_id', 'track_api_key', 'cdp_write_key'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -371,7 +391,8 @@ export type BaseCustomerioPlugin<T extends CustomerioPluginOptions> =
 		typeof customerioEndpointsNested,
 		typeof customerioWebhooksNested,
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof customerioAuthConfig
 	>;
 
 export type InternalCustomerioPlugin =

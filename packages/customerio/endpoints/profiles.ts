@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CustomerioEndpoints } from '..';
 import type { CustomerioJsonObject } from '../client';
-import { makeTrackRequest } from '../client';
+import { makeTrackRequest, resolveTrackCredential } from '../client';
 import type { CustomerioEndpointOutputs } from './types';
 
 // PUT /api/v1/customers/{identifier}
@@ -25,11 +25,15 @@ export const identifyPerson: CustomerioEndpoints['identifyPerson'] = async (
 	}
 	const response = await makeTrackRequest<
 		CustomerioEndpointOutputs['identifyPerson']
-	>(`/api/v1/customers/${encodeURIComponent(input.identifier)}`, ctx.key, {
-		method: 'PUT',
-		body,
-		region: ctx.options.region,
-	});
+	>(
+		`/api/v1/customers/${encodeURIComponent(input.identifier)}`,
+		await resolveTrackCredential(ctx),
+		{
+			method: 'PUT',
+			body,
+			region: ctx.options.region,
+		},
+	);
 	// Minimal logging: identifier, email and attributes are PII, so no input
 	// payload is persisted.
 	await logEventFromContext(
@@ -54,7 +58,7 @@ export const createAlias: CustomerioEndpoints['createAlias'] = async (
 	};
 	const response = await makeTrackRequest<
 		CustomerioEndpointOutputs['createAlias']
-	>('/api/v1/merge_customers', ctx.key, {
+	>('/api/v1/merge_customers', await resolveTrackCredential(ctx), {
 		method: 'POST',
 		body,
 		region: ctx.options.region,
@@ -81,7 +85,7 @@ export const suppressPerson: CustomerioEndpoints['suppressPerson'] = async (
 		CustomerioEndpointOutputs['suppressPerson']
 	>(
 		`/api/v1/customers/${encodeURIComponent(input.identifier)}/suppress`,
-		ctx.key,
+		await resolveTrackCredential(ctx),
 		{ method: 'POST', body: {}, region: ctx.options.region },
 	);
 	// Minimal logging: the identifier is PII, so no input payload is persisted.
@@ -119,7 +123,7 @@ export const trackEvent: CustomerioEndpoints['trackEvent'] = async (
 		CustomerioEndpointOutputs['trackEvent']
 	>(
 		`/api/v1/customers/${encodeURIComponent(input.identifier)}/events`,
-		ctx.key,
+		await resolveTrackCredential(ctx),
 		{ method: 'POST', body, region: ctx.options.region },
 	);
 	// Minimal logging: only the developer-defined event name is persisted;
@@ -143,11 +147,15 @@ export const unsubscribeDelivery: CustomerioEndpoints['unsubscribeDelivery'] =
 		}
 		const response = await makeTrackRequest<
 			CustomerioEndpointOutputs['unsubscribeDelivery']
-		>(`/unsubscribe/${encodeURIComponent(input.delivery_id)}`, ctx.key, {
-			method: 'POST',
-			body,
-			region: ctx.options.region,
-		});
+		>(
+			`/unsubscribe/${encodeURIComponent(input.delivery_id)}`,
+			await resolveTrackCredential(ctx),
+			{
+				method: 'POST',
+				body,
+				region: ctx.options.region,
+			},
+		);
 		// Minimal logging: the delivery id identifies a message recipient,
 		// so no input payload is persisted.
 		await logEventFromContext(
@@ -183,7 +191,7 @@ export const reportPushEvents: CustomerioEndpoints['reportPushEvents'] = async (
 	}
 	const response = await makeTrackRequest<
 		CustomerioEndpointOutputs['reportPushEvents']
-	>('/api/v1/metrics', ctx.key, {
+	>('/api/v1/metrics', await resolveTrackCredential(ctx), {
 		method: 'POST',
 		body,
 		region: ctx.options.region,

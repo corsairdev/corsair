@@ -34,15 +34,26 @@ const mockTrack = jest.mocked(makeTrackRequest);
 const mockCdp = jest.mocked(makeCdpRequest);
 const mockLogEvent = jest.mocked(logEventFromContext);
 
-// Justification for this single assertion (same pattern as the merged campayn
-// plugin): endpoint handlers only read ctx.key and ctx.options at runtime;
-// the full CustomerioContext is assembled by the Corsair runtime and cannot
-// be built by hand without stubbing the entire framework.
-const ctx = { key: 'customerio-test-key', options: {} } as CustomerioContext;
+// Justification for these assertions (same pattern as the merged algolia
+// plugin): endpoint handlers only read ctx.key, ctx.options and ctx.keys at
+// runtime; the full CustomerioContext is assembled by the Corsair runtime
+// and cannot be built by hand without stubbing the entire framework. The
+// key-manager stubs resolve null so the default path exercises the shared
+// `key` fallback (legacy single-key setups).
+const nullKeys = () => ({
+	get_track_api_key: jest.fn().mockResolvedValue(null),
+	get_cdp_write_key: jest.fn().mockResolvedValue(null),
+});
+const ctx = {
+	key: 'customerio-test-key',
+	options: {},
+	keys: nullKeys(),
+} as unknown as CustomerioContext;
 const ctxEu = {
 	key: 'customerio-test-key',
 	options: { region: 'eu' },
-} as CustomerioContext;
+	keys: nullKeys(),
+} as unknown as CustomerioContext;
 
 beforeEach(() => {
 	mockApp.mockReset();
@@ -622,6 +633,91 @@ describe('event log minimization', () => {
 			'customerio.profiles.unsubscribeDelivery',
 			{},
 			'completed',
+		);
+	});
+});
+
+describe('per-family credentials', () => {
+	// One connection carries three incompatible credentials (App Bearer key,
+	// Track `siteId:apiKey`, CDP write key). Track/CDP handlers resolve
+	// options first, then the stored per-family field, then the shared key.
+	const ctxWithKeys = (
+		overrides: Partial<CustomerioContext['options']>,
+		stored: { track?: string | null; cdp?: string | null } = {},
+	) =>
+		({
+			key: 'customerio-test-key',
+			options: { ...overrides },
+			keys: {
+				get_track_api_key: jest.fn().mockResolvedValue(stored.track ?? null),
+				get_cdp_write_key: jest.fn().mockResolvedValue(stored.cdp ?? null),
+			},
+		}) as unknown as CustomerioContext;
+
+	it('Track endpoints prefer the explicit trackApiKey option', async () => {
+		mockTrack.mockResolvedValue({});
+		const trackCtx = ctxWithKeys(
+			{ trackApiKey: 'site-opt:key-opt' },
+			{ track: 'site-stored:key-stored' },
+		);
+		await Profiles.trackEvent(trackCtx, { identifier: 'u_1', name: 'paid' });
+		expect(mockTrack).toHaveBeenCalledWith(
+			'/api/v1/customers/u_1/events',
+			'site-opt:key-opt',
+			expect.objectContaining({ method: 'POST' }),
+		);
+	});
+
+	it('Track endpoints fall back to the stored track_api_key field', async () => {
+		mockTrack.mockResolvedValue({});
+		const trackCtx = ctxWithKeys({}, { track: 'site-stored:key-stored' });
+		await Profiles.identifyPerson(trackCtx, { identifier: 'u_1' });
+		expect(mockTrack).toHaveBeenCalledWith(
+			expect.anything(),
+			'site-stored:key-stored',
+			expect.anything(),
+		);
+	});
+
+	it('CDP endpoints prefer the explicit cdpWriteKey option', async () => {
+		mockCdp.mockResolvedValue({});
+		const cdpCtx = ctxWithKeys(
+			{ cdpWriteKey: 'write-opt' },
+			{ cdp: 'write-stored' },
+		);
+		await Cdp.trackPage(cdpCtx, { anonymousId: 'a_1', name: 'Home' });
+		expect(mockCdp).toHaveBeenCalledWith(
+			'/v1/page',
+			'write-opt',
+			expect.objectContaining({ method: 'POST' }),
+		);
+	});
+
+	it('CDP endpoints fall back to the stored cdp_write_key field', async () => {
+		mockCdp.mockResolvedValue({});
+		const cdpCtx = ctxWithKeys({}, { cdp: 'write-stored' });
+		await Groups.addPersonToGroup(cdpCtx, { userId: 'u_1', groupId: 'acme' });
+		expect(mockCdp).toHaveBeenCalledWith(
+			'/v1/group',
+			'write-stored',
+			expect.objectContaining({ method: 'POST' }),
+		);
+	});
+
+	it('Track and CDP endpoints fall back to the shared key for legacy setups', async () => {
+		mockTrack.mockResolvedValue({});
+		mockCdp.mockResolvedValue({});
+		await Profiles.suppressPerson(ctx, { identifier: 'u_1' });
+		expect(mockTrack).toHaveBeenCalledWith(
+			expect.anything(),
+			'customerio-test-key',
+			expect.anything(),
+		);
+		await Cdp.trackScreen(ctx, { userId: 'u_1', name: 'Home' });
+		expect(mockCdp).toHaveBeenCalledWith(
+			expect.anything(),
+			'customerio-test-key',
+			expect.anything(),
 		);
 	});
 });

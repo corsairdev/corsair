@@ -11,10 +11,17 @@ import {
 	makeCdpRequest,
 	makeTrackRequest,
 } from './client';
+import { Cdp, Profiles, Segments } from './endpoints';
+import type { CustomerioContext } from './index';
 
 jest.mock('corsair/http', () => ({
 	...jest.requireActual('corsair/http'),
 	request: jest.fn(),
+}));
+
+jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
+	logEventFromContext: jest.fn().mockResolvedValue(null),
 }));
 
 const mockRequest = jest.mocked(request);
@@ -294,5 +301,76 @@ describe('client error mapping', () => {
 		);
 		expect(failure).toBeInstanceOf(CustomerioAPIError);
 		expect(failure.message).toBe('Unknown Customer.io request failure');
+	});
+});
+
+describe('endpoint-to-transport composition', () => {
+	// endpoints.test.ts proves each wrapper picks the right transport
+	// function; the describes above prove each transport builds the right
+	// HTTP request. These three tests close the loop: wrapper to wire.
+	// Justification for the assertion below: the runtime context is
+	// assembled by the Corsair framework; handlers only read key, options
+	// and keys (same pattern as algolia's api.test.ts).
+	const compositionCtx = {
+		key: 'app-key-1',
+		options: {},
+		keys: {
+			get_track_api_key: jest.fn().mockResolvedValue('site-7:key-7'),
+			get_cdp_write_key: jest.fn().mockResolvedValue('write-7'),
+		},
+	} as unknown as CustomerioContext;
+
+	it('an App endpoint sends its exact path with Bearer auth to the App base', async () => {
+		mockRequest.mockResolvedValue({ segments: [] });
+		await Segments.getSegments(compositionCtx, {});
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: CUSTOMERIO_APP_BASE,
+				HEADERS: expect.objectContaining({
+					Authorization: 'Bearer app-key-1',
+				}),
+			}),
+			expect.objectContaining({ method: 'GET', url: '/v1/segments' }),
+			expect.anything(),
+		);
+	});
+
+	it('a Track endpoint sends its exact path with the stored siteId:apiKey Basic credential', async () => {
+		mockRequest.mockResolvedValue({});
+		await Profiles.identifyPerson(compositionCtx, { identifier: 'u_1' });
+		const expected = Buffer.from('site-7:key-7', 'utf-8').toString('base64');
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: CUSTOMERIO_TRACK_BASE,
+				HEADERS: expect.objectContaining({
+					Authorization: `Basic ${expected}`,
+				}),
+			}),
+			expect.objectContaining({
+				method: 'PUT',
+				url: '/api/v1/customers/u_1',
+			}),
+			expect.anything(),
+		);
+	});
+
+	it('a CDP endpoint sends its exact path with the stored write key plus strict mode', async () => {
+		mockRequest.mockResolvedValue({});
+		await Cdp.trackPage(compositionCtx, {
+			anonymousId: 'a_1',
+			name: 'Home',
+		});
+		const expected = Buffer.from('write-7:', 'utf-8').toString('base64');
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: CUSTOMERIO_CDP_BASE,
+				HEADERS: expect.objectContaining({
+					Authorization: `Basic ${expected}`,
+					'X-Strict-Mode': '1',
+				}),
+			}),
+			expect.objectContaining({ method: 'POST', url: '/v1/page' }),
+			expect.anything(),
+		);
 	});
 });

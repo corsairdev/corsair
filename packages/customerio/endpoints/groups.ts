@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CustomerioEndpoints } from '..';
 import type { CustomerioJsonObject } from '../client';
-import { makeCdpRequest } from '../client';
+import { makeCdpRequest, resolveCdpCredential } from '../client';
 import type { CustomerioEndpointOutputs } from './types';
 
 // POST /v1/group (CDP API)
@@ -20,7 +20,11 @@ export const addPersonToGroup: CustomerioEndpoints['addPersonToGroup'] = async (
 	}
 	const response = await makeCdpRequest<
 		CustomerioEndpointOutputs['addPersonToGroup']
-	>('/v1/group', ctx.key, { method: 'POST', body, region: ctx.options.region });
+	>('/v1/group', await resolveCdpCredential(ctx), {
+		method: 'POST',
+		body,
+		region: ctx.options.region,
+	});
 	// Minimal logging: userId, groupId and traits identify people and
 	// companies, so no input payload is persisted.
 	await logEventFromContext(

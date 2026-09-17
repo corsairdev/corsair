@@ -4,7 +4,7 @@ import {
 } from './endpoints/types';
 import { CustomerioSchema } from './schema';
 
-describe('Customerio schema', () => {
+describe('Customer.io schema', () => {
 	it('declares a semver version', () => {
 		expect(CustomerioSchema.version).toBeDefined();
 		expect(CustomerioSchema.version).toMatch(/^\d+\.\d+\.\d+$/);

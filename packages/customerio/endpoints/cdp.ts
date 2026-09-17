@@ -1,7 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CustomerioEndpoints } from '..';
 import type { CustomerioJsonObject } from '../client';
-import { CustomerioAPIError, makeCdpRequest } from '../client';
+import {
+	CustomerioAPIError,
+	makeCdpRequest,
+	resolveCdpCredential,
+} from '../client';
 import type { CustomerioEndpointOutputs } from './types';
 
 // Pipelines limits per https://docs.customer.io/integrations/api/track-vs-cdp-api
@@ -46,7 +50,7 @@ export const sendBatch: CustomerioEndpoints['sendBatch'] = async (
 	}
 	const response = await makeCdpRequest<CustomerioEndpointOutputs['sendBatch']>(
 		'/v1/batch',
-		ctx.key,
+		await resolveCdpCredential(ctx),
 		{ method: 'POST', body, region: ctx.options.region },
 	);
 	// Minimal logging: batch contents carry user identities and traits, so
@@ -88,7 +92,7 @@ export const trackPage: CustomerioEndpoints['trackPage'] = async (
 	assertCdpCallSize(body);
 	const response = await makeCdpRequest<CustomerioEndpointOutputs['trackPage']>(
 		'/v1/page',
-		ctx.key,
+		await resolveCdpCredential(ctx),
 		{ method: 'POST', body, region: ctx.options.region },
 	);
 	// Minimal logging: only the page name is persisted; identifiers,
@@ -129,7 +133,7 @@ export const trackScreen: CustomerioEndpoints['trackScreen'] = async (
 	assertCdpCallSize(body);
 	const response = await makeCdpRequest<
 		CustomerioEndpointOutputs['trackScreen']
-	>('/v1/screen', ctx.key, {
+	>('/v1/screen', await resolveCdpCredential(ctx), {
 		method: 'POST',
 		body,
 		region: ctx.options.region,
