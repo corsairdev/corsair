@@ -80,6 +80,8 @@
                   "mcp-adapters/claude-sdk",
                   "mcp-adapters/vercel-ai",
                   "mcp-adapters/mastra",
+                  "mcp-adapters/langchain",
+                  "mcp-adapters/llamaindex",
                   "mcp-adapters/openai"
                 ]
               },
@@ -1140,6 +1142,14 @@
                 ]
               },
               {
+                "group": "Cosmic",
+                "pages": [
+                  "plugins/cosmic/overview",
+                  "plugins/cosmic/api",
+                  "plugins/cosmic/database"
+                ]
+              },
+              {
                 "group": "CountdownApi",
                 "pages": [
                   "plugins/countdownapi/overview",
@@ -1320,6 +1330,14 @@
                   "plugins/studiobyai21labs/overview",
                   "plugins/studiobyai21labs/api",
                   "plugins/studiobyai21labs/database"
+                ]
+              },
+              {
+                "group": "Emelia",
+                "pages": [
+                  "plugins/emelia/overview",
+                  "plugins/emelia/api",
+                  "plugins/emelia/database"
                 ]
               },
               {
@@ -1707,6 +1725,14 @@
                   "plugins/kaggle/overview",
                   "plugins/kaggle/api",
                   "plugins/kaggle/database"
+                ]
+              },
+              {
+                "group": "Kibana",
+                "pages": [
+                  "plugins/kibana/overview",
+                  "plugins/kibana/api",
+                  "plugins/kibana/database"
                 ]
               },
               {
@@ -2351,6 +2377,14 @@
                   "plugins/vercel/api",
                   "plugins/vercel/database",
                   "plugins/vercel/webhooks"
+                ]
+              },
+              {
+                "group": "Veriphone",
+                "pages": [
+                  "plugins/veriphone/overview",
+                  "plugins/veriphone/api",
+                  "plugins/veriphone/database"
                 ]
               },
               {
