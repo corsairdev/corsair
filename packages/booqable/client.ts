@@ -1,27 +1,39 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
+import type { BooqableMethod } from './endpoints/routes';
 
 export class BooqableAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
+	public readonly status?: number;
+	public readonly statusText?: string;
+	public readonly body?: unknown;
+	public readonly retryAfter?: number;
+
+	constructor(message: string, options?: { cause?: Error }) {
+		super(message, options);
 		this.name = 'BooqableAPIError';
+		if (options?.cause instanceof ApiError) {
+			this.status = options.cause.status;
+			this.statusText = options.cause.statusText;
+			this.body = options.cause.body;
+			this.retryAfter = options.cause.retryAfter;
+		}
 	}
 }
+
+export type BooqableRequestOptions = {
+	method?: BooqableMethod;
+	body?: unknown;
+	query?: Record<string, unknown>;
+	headers?: Record<string, string>;
+};
 
 export async function makeBooqableRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	companySlug: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+	options: BooqableRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, headers } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: `https://${companySlug}.booqable.com/api/4`,
@@ -32,25 +44,24 @@ export async function makeBooqableRequest<T>(
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${apiKey}`,
+			...headers,
 		},
 	};
 
+	const hasBody =
+		body !== undefined && !['GET', 'HEAD', 'OPTIONS'].includes(method);
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		body: hasBody ? body : undefined,
+		query,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof Error) {
-			throw new BooqableAPIError(error.message);
+		if (error instanceof ApiError || error instanceof Error) {
+			throw new BooqableAPIError(error.message, { cause: error });
 		}
 		throw new BooqableAPIError('Unknown error');
 	}
