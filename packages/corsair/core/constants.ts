@@ -203,6 +203,7 @@ export const BaseProviders = [
 	'jira',
 	'kaggle',
 	'kibana',
+	'leexi',
 	'linear',
 	'linkedin',
 	'loyverse',
@@ -493,6 +494,7 @@ export const ProviderDisplayNames = {
 	jira: 'Jira',
 	kaggle: 'Kaggle',
 	kibana: 'Kibana',
+	leexi: 'Leexi',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
 	loyverse: 'Loyverse',
@@ -790,6 +792,7 @@ export type AllProviders =
 	| 'jira'
 	| 'kaggle'
 	| 'kibana'
+	| 'leexi'
 	| 'linear'
 	| 'linkedin'
 	| 'loyverse'
