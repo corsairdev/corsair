@@ -232,7 +232,6 @@ const sendRequest = async (
 		body: body ?? formData,
 		method: options.method,
 		signal: AbortSignal.any([controller.signal, AbortSignal.timeout(timeout)]),
-		...(options.redirect ? { redirect: options.redirect } : {}),
 	};
 
 	if (config.WITH_CREDENTIALS) {

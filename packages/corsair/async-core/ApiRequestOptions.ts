@@ -15,7 +15,6 @@ export type ApiRequestOptions = {
 	readonly formData?: Record<string, any>;
 	readonly body?: any;
 	readonly mediaType?: string;
-	readonly redirect?: 'follow' | 'error' | 'manual';
 	readonly responseHeader?: string;
 	readonly errors?: Record<number, string>;
 };
