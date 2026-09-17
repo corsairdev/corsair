@@ -160,7 +160,9 @@ export const importFile: DovetailEndpoints['insightsImportFile'] = async (
 	input,
 ) => {
 	// Justification: unknown is used in client body typing, and body payload here is typed strictly as Record<string, unknown>
-	const body: Record<string, unknown> = {};
+	const body: Record<string, unknown> = {
+		title: input.title,
+	};
 	if (input.project_id !== undefined) body.project_id = input.project_id;
 	if (input.folder_id !== undefined) body.folder_id = input.folder_id;
 	if (input.url !== undefined) body.url = input.url;

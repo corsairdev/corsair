@@ -89,6 +89,7 @@ export const DovetailContact = z.object({
 	id: z.string(),
 	name: z.string(),
 	email: z.string().nullable().optional(),
+	avatar_url: z.string().nullable().optional(),
 	created_at: z.string().nullable().optional(),
 	updated_at: z.string().nullable().optional(),
 });
@@ -110,6 +111,7 @@ export const DovetailFile = z.object({
 	mime_type: z.string().optional(),
 	status: z.string().optional(),
 	created_at: z.string().nullable().optional(),
+	updated_at: z.string().nullable().optional(),
 });
 export type DovetailFile = z.infer<typeof DovetailFile>;
 
@@ -117,6 +119,7 @@ export const DovetailHighlight = z.object({
 	id: z.string(),
 	project_id: z.string().optional(),
 	note_id: z.string().optional(),
+	tag_id: z.string().nullable().optional(),
 	text: z.string().optional(),
 	start_time: z.number().nullable().optional(),
 	end_time: z.number().nullable().optional(),
@@ -132,6 +135,7 @@ export const DovetailTag = z.object({
 	project_id: z.string().nullable().optional(),
 	tag_board_id: z.string().nullable().optional(),
 	scope: z.string().optional(),
+	highlight_count: z.number().optional(),
 	created_at: z.string().nullable().optional(),
 	updated_at: z.string().nullable().optional(),
 });

@@ -119,7 +119,7 @@ export const ChannelsDeleteTopicInputSchema = z.object({
 // Contacts
 export const ContactsCreateInputSchema = z.object({
 	name: z.string().min(1),
-	email: z.string().email().optional(),
+	email: z.string().email(),
 	fields: z.array(CustomFieldInputSchema).optional(),
 });
 
@@ -240,6 +240,7 @@ export const DocsExportInputSchema = z.object({
 });
 
 export const DocsImportFileInputSchema = z.object({
+	title: z.string().min(1),
 	project_id: z.string().optional(),
 	folder_id: z.string().optional(),
 	url: z.string().url().optional(),
@@ -306,6 +307,7 @@ export const InsightsExportInputSchema = z.object({
 });
 
 export const InsightsImportFileInputSchema = z.object({
+	title: z.string().min(1),
 	project_id: z.string().optional(),
 	folder_id: z.string().optional(),
 	url: z.string().url().optional(),
@@ -368,8 +370,8 @@ export const NotesExportInputSchema = z.object({
 
 export const NotesImportFileInputSchema = z.object({
 	project_id: z.string(),
-	url: z.string().url().optional(),
-	file_id: z.string().optional(),
+	title: z.string().min(1),
+	url: z.string().url(),
 	mime_type: z.string().optional(),
 });
 

@@ -86,6 +86,7 @@ describe('Dovetail schema', () => {
 			updated_at: '2025-01-02T00:00:00Z',
 		});
 		expect(contact.name).toBe('Jane Doe');
+		expect(contact.avatar_url).toBe('https://example.com/avatar.png');
 
 		const folder = DovetailFolder.parse({
 			id: 'fld_1',
@@ -106,6 +107,7 @@ describe('Dovetail schema', () => {
 			updated_at: '2025-01-02T00:00:00Z',
 		});
 		expect(file.mime_type).toBe('video/mp4');
+		expect(file.updated_at).toBe('2025-01-02T00:00:00Z');
 	});
 
 	it('validates data, doc, insight, and note entities', () => {
@@ -167,6 +169,7 @@ describe('Dovetail schema', () => {
 			updated_at: '2025-01-02T00:00:00Z',
 		});
 		expect(highlight.text).toBe('Checkout button was not visible');
+		expect(highlight.tag_id).toBe('tag_1');
 
 		const tag = DovetailTag.parse({
 			id: 'tag_1',
@@ -178,5 +181,6 @@ describe('Dovetail schema', () => {
 			updated_at: '2025-01-02T00:00:00Z',
 		});
 		expect(tag.title).toBe('Pain Point');
+		expect(tag.highlight_count).toBe(5);
 	});
 });

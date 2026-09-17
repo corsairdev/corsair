@@ -152,9 +152,9 @@ export const importFile: DovetailEndpoints['notesImportFile'] = async (
 	// Justification: unknown is used in client body typing, and body payload here is typed strictly as Record<string, unknown>
 	const body: Record<string, unknown> = {
 		project_id: input.project_id,
+		title: input.title,
+		url: input.url,
 	};
-	if (input.url !== undefined) body.url = input.url;
-	if (input.file_id !== undefined) body.file_id = input.file_id;
 	if (input.mime_type !== undefined) body.mime_type = input.mime_type;
 
 	const result = await makeDovetailRequest<

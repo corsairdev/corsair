@@ -10,8 +10,8 @@ export const create: DovetailEndpoints['contactsCreate'] = async (
 	// Justification: unknown is used in client body typing, and body payload here is typed strictly as Record<string, unknown>
 	const body: Record<string, unknown> = {
 		name: input.name,
+		email: input.email,
 	};
-	if (input.email !== undefined) body.email = input.email;
 	if (input.fields !== undefined) body.fields = input.fields;
 
 	const result = await makeDovetailRequest<

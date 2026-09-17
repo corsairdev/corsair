@@ -611,6 +611,7 @@ describe('Dovetail API Endpoints', () => {
 				.mockResolvedValue(mockResponse);
 
 			const result = await corsair.dovetail.api.docs.importFile({
+				title: 'Imported Doc',
 				project_id: 'prj_1',
 				url: 'https://example.com/doc.pdf',
 			});
@@ -621,7 +622,11 @@ describe('Dovetail API Endpoints', () => {
 				'test-api-token',
 				expect.objectContaining({
 					method: 'POST',
-					body: { project_id: 'prj_1', url: 'https://example.com/doc.pdf' },
+					body: {
+						title: 'Imported Doc',
+						project_id: 'prj_1',
+						url: 'https://example.com/doc.pdf',
+					},
 				}),
 			);
 		});
@@ -789,6 +794,7 @@ describe('Dovetail API Endpoints', () => {
 				.mockResolvedValue(mockResponse);
 
 			const result = await corsair.dovetail.api.insights.importFile({
+				title: 'Imported Insight',
 				url: 'https://example.com/insight.pdf',
 			});
 
@@ -798,7 +804,10 @@ describe('Dovetail API Endpoints', () => {
 				'test-api-token',
 				expect.objectContaining({
 					method: 'POST',
-					body: { url: 'https://example.com/insight.pdf' },
+					body: {
+						title: 'Imported Insight',
+						url: 'https://example.com/insight.pdf',
+					},
 				}),
 			);
 		});
@@ -967,6 +976,7 @@ describe('Dovetail API Endpoints', () => {
 
 			const result = await corsair.dovetail.api.notes.importFile({
 				project_id: 'prj_1',
+				title: 'Imported Note',
 				url: 'https://example.com/recording.mp3',
 			});
 
@@ -978,6 +988,7 @@ describe('Dovetail API Endpoints', () => {
 					method: 'POST',
 					body: {
 						project_id: 'prj_1',
+						title: 'Imported Note',
 						url: 'https://example.com/recording.mp3',
 					},
 				}),
