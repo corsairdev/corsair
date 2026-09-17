@@ -3,20 +3,17 @@ import type { CoinmarketcalEndpoints } from '..';
 import { makeCoinmarketcalRequest } from '../client';
 import type { CoinmarketcalEndpointOutputs } from './types';
 
-export const list: CoinmarketcalEndpoints['eventsList'] = async (
-	ctx,
-	input,
-) => {
+export const list: CoinmarketcalEndpoints['coinsList'] = async (ctx, input) => {
 	const response = await makeCoinmarketcalRequest<
-		CoinmarketcalEndpointOutputs['eventsList']
-	>('/v2/events', ctx.key, {
+		CoinmarketcalEndpointOutputs['coinsList']
+	>('/v2/coins', ctx.key, {
 		method: 'GET',
 		query: input,
 	});
 
 	await logEventFromContext(
 		ctx,
-		'coinmarketcal.events.list',
+		'coinmarketcal.coins.list',
 		{ ...input },
 		'completed',
 	);
@@ -24,17 +21,17 @@ export const list: CoinmarketcalEndpoints['eventsList'] = async (
 	return response;
 };
 
-export const get: CoinmarketcalEndpoints['eventsGet'] = async (ctx, input) => {
+export const get: CoinmarketcalEndpoints['coinsGet'] = async (ctx, input) => {
 	const response = await makeCoinmarketcalRequest<
-		CoinmarketcalEndpointOutputs['eventsGet']
-	>(`/v2/events/${encodeURIComponent(input.id)}`, ctx.key, {
+		CoinmarketcalEndpointOutputs['coinsGet']
+	>(`/v2/coins/${encodeURIComponent(input.symbol)}`, ctx.key, {
 		method: 'GET',
 	});
 
 	await logEventFromContext(
 		ctx,
-		'coinmarketcal.events.get',
-		{ id: input.id },
+		'coinmarketcal.coins.get',
+		{ symbol: input.symbol },
 		'completed',
 	);
 

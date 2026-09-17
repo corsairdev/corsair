@@ -16,10 +16,16 @@ const CoinsInputSchema = z.object({
 	cursor: z.string().optional(),
 });
 
+const CoinGetInputSchema = z.object({
+	symbol: z.string().min(1),
+});
+
 const CoinsResponseSchema = z.object({
 	data: z.array(CoinSchema).optional(),
 	meta: PaginationMetaSchema.optional(),
 });
+
+const CoinGetResponseSchema = CoinSchema;
 
 const EventsInputSchema = z.object({
 	coins: z.string().optional(),
@@ -31,6 +37,10 @@ const EventsInputSchema = z.object({
 	sortBy: z.string().optional(),
 	limit: z.coerce.number().optional(),
 	cursor: z.string().optional(),
+});
+
+const EventGetInputSchema = z.object({
+	id: z.string().min(1),
 });
 
 const EventSchema = z.object({
@@ -56,6 +66,8 @@ const EventsResponseSchema = z.object({
 	meta: PaginationMetaSchema.optional(),
 });
 
+const EventGetResponseSchema = EventSchema;
+
 const CategoriesInputSchema = z.object({});
 
 const CategorySchema = z.object({
@@ -70,33 +82,45 @@ const CategoriesResponseSchema = z.object({
 
 export type CoinsInput = z.infer<typeof CoinsInputSchema>;
 export type CoinsResponse = z.infer<typeof CoinsResponseSchema>;
+export type CoinGetInput = z.infer<typeof CoinGetInputSchema>;
+export type CoinGetResponse = z.infer<typeof CoinGetResponseSchema>;
 
 export type EventsInput = z.infer<typeof EventsInputSchema>;
 export type EventsResponse = z.infer<typeof EventsResponseSchema>;
+export type EventGetInput = z.infer<typeof EventGetInputSchema>;
+export type EventGetResponse = z.infer<typeof EventGetResponseSchema>;
 
 export type CategoriesInput = z.infer<typeof CategoriesInputSchema>;
 export type CategoriesResponse = z.infer<typeof CategoriesResponseSchema>;
 
 export type CoinmarketcalEndpointInputs = {
-	exampleGet: CoinsInput;
+	coinsList: CoinsInput;
+	coinsGet: CoinGetInput;
 	eventsList: EventsInput;
+	eventsGet: EventGetInput;
 	categoriesList: CategoriesInput;
 };
 
 export type CoinmarketcalEndpointOutputs = {
-	exampleGet: CoinsResponse;
+	coinsList: CoinsResponse;
+	coinsGet: CoinGetResponse;
 	eventsList: EventsResponse;
+	eventsGet: EventGetResponse;
 	categoriesList: CategoriesResponse;
 };
 
 export const CoinmarketcalEndpointInputSchemas = {
-	exampleGet: CoinsInputSchema,
+	coinsList: CoinsInputSchema,
+	coinsGet: CoinGetInputSchema,
 	eventsList: EventsInputSchema,
+	eventsGet: EventGetInputSchema,
 	categoriesList: CategoriesInputSchema,
 } as const;
 
 export const CoinmarketcalEndpointOutputSchemas = {
-	exampleGet: CoinsResponseSchema,
+	coinsList: CoinsResponseSchema,
+	coinsGet: CoinGetResponseSchema,
 	eventsList: EventsResponseSchema,
+	eventsGet: EventGetResponseSchema,
 	categoriesList: CategoriesResponseSchema,
 } as const;
