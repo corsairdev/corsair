@@ -8,6 +8,7 @@ import type {
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { z } from 'zod';
 import * as endpoints from './endpoints';
@@ -606,7 +607,7 @@ const everhourEndpointMeta = {
 		description: 'Delete a webhook',
 	},
 	'tags.listTags': { riskLevel: 'read', description: 'List workspace tags' },
-} as const;
+} as const satisfies RequiredPluginEndpointMeta<typeof everhourEndpointsNested>;
 
 export const everhourAuthConfig = {
 	api_key: {
