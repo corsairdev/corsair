@@ -427,7 +427,7 @@ export const ProviderDisplayNames = {
 	countdownapi: 'Countdown API',
 	crowterminal: 'CrowTerminal',
 	cursor: 'Cursor',
-	customerio: 'Customerio',
+	customerio: 'Customer.io',
 	customgpt: 'CustomGPT',
 	dadataru: 'Dadataru',
 	databricks: 'Databricks',
