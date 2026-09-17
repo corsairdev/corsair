@@ -1,5 +1,6 @@
 import { ApiError, request } from 'corsair/http';
 import { makeBooqableRequest } from './client';
+import { booqableRoutes } from './endpoints/routes';
 import type { BooqableContext } from './index';
 import { booqable, booqableEndpointSchemas } from './index';
 
@@ -129,6 +130,72 @@ describe('Booqable endpoints', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
 		mockRequest.mockResolvedValue({ data: [] });
+	});
+
+	it('routes every operation to its declared path and method', async () => {
+		const plugin = booqable({
+			companySlug: 'demo-company',
+			key: 'test-api-key',
+		});
+		const endpoints = plugin.endpoints as unknown as Record<
+			string,
+			Record<
+				string,
+				(
+					ctx: BooqableContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>
+			>
+		>;
+
+		const allRoutes = booqableRoutes as readonly {
+			group: string;
+			name: string;
+			method: string;
+			path: string;
+			pathParams?: readonly string[];
+		}[];
+
+		for (const route of allRoutes) {
+			const handler = endpoints[route.group]?.[route.name];
+			if (!handler) {
+				throw new Error(`[test] missing endpoint ${route.group}.${route.name}`);
+			}
+
+			const input: Record<string, unknown> = {};
+			let expectedUrl: string = route.path;
+			for (const param of route.pathParams ?? []) {
+				const value = `test-${param}`;
+				input[param] = value;
+				expectedUrl = expectedUrl.replace(`{${param}}`, value);
+			}
+
+			mockRequest.mockClear();
+			mockRequest.mockResolvedValue({ data: [] });
+			await handler(mockCtx, input);
+
+			const call = mockRequest.mock.calls[0]?.[1];
+			expect(call).toMatchObject({
+				method: route.method,
+				url: expectedUrl,
+			});
+			expect(call.url).not.toContain('{');
+		}
+	});
+
+	it('rejects invalid company slug overrides before sending requests', async () => {
+		const plugin = booqable({
+			companySlug: 'demo-company',
+			key: 'test-api-key',
+		});
+		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints>;
+
+		await expect(
+			endpoints.customers.getCustomers(mockCtx, {
+				companySlug: 'attacker.example/',
+			}),
+		).rejects.toThrow(/company slug is invalid/);
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('maps representative operations to API routes', async () => {

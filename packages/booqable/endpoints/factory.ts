@@ -12,6 +12,17 @@ const PATH_PARAM_ALIASES: Record<string, readonly string[]> = {
 
 const BODY_CONTROL_KEYS = new Set(['body', 'query', 'headers', 'companySlug']);
 
+/** Booqable tenants use a single DNS label as the company subdomain. */
+const BOOQABLE_COMPANY_SLUG = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i;
+
+function assertBooqableCompanySlug(slug: string): string {
+	const trimmed = slug.trim();
+	if (!BOOQABLE_COMPANY_SLUG.test(trimmed)) {
+		throw new Error('[booqable] company slug is invalid');
+	}
+	return trimmed;
+}
+
 export type BooqableEndpoint = CorsairEndpoint<
 	BooqableContext,
 	BooqableEndpointInput,
@@ -112,16 +123,16 @@ async function resolveCompanySlug(
 	input: BooqableEndpointInput,
 ): Promise<string> {
 	const explicit = (input as { companySlug?: string }).companySlug;
-	if (explicit) return explicit;
+	if (explicit) return assertBooqableCompanySlug(explicit);
 
 	const fromOptions = ctx.options.companySlug;
-	if (fromOptions) return fromOptions;
+	if (fromOptions) return assertBooqableCompanySlug(fromOptions);
 
 	const slug = await ctx.keys.get_tenant_external_id();
 	if (!slug) {
 		throw new AuthMissingError('booqable', 'api_key');
 	}
-	return slug;
+	return assertBooqableCompanySlug(slug);
 }
 
 export async function logBooqableOperation(
