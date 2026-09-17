@@ -186,11 +186,7 @@ function consumeWebhookNonce(timestampMs: number, nonce: string): boolean {
 }
 
 /**
- * Verify a Canny webhook request using HMAC-SHA256 signature of nonce using secret API key.
- * Canny signs webhooks with:
- * - canny-timestamp: milliseconds since epoch
- * - canny-nonce: random unique string
- * - canny-signature: HMAC-SHA256 signature of the nonce (or payload) in Base64 or Hex
+ * Verify a Canny webhook request using HMAC-SHA256 with timestamp, nonce, and raw body.
  */
 export function verifyCannyWebhookSignature(
 	request: WebhookRequest<unknown>,
@@ -257,8 +253,6 @@ export function verifyCannyWebhookSignature(
 			createHmac('sha256', webhookSecret)
 				.update(`${timestamp}.${nonce}.${rawBody}`)
 				.digest('hex'),
-			createHmac('sha256', webhookSecret).update(nonce).digest('base64'),
-			createHmac('sha256', webhookSecret).update(nonce).digest('hex'),
 		];
 
 		for (const expected of candidates) {

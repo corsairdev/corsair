@@ -190,6 +190,31 @@ describe('Canny webhooks', () => {
 			expect(second.valid).toBe(false);
 			expect(second.error).toBe('Webhook nonce has already been used');
 		});
+
+		it('rejects nonce-only signature when payload changes', () => {
+			const timestamp = Date.now().toString();
+			const nonceOnly = 'nonce_only_sig';
+			const originalBody = JSON.stringify({ type: 'post.created' });
+			const tamperedBody = JSON.stringify({ type: 'comment.created' });
+			const nonceOnlySignature = createHmac('sha256', secret)
+				.update(nonceOnly)
+				.digest('base64');
+
+			const req = {
+				headers: {
+					'canny-nonce': nonceOnly,
+					'canny-signature': nonceOnlySignature,
+					'canny-timestamp': timestamp,
+				},
+				body: tamperedBody,
+				rawBody: tamperedBody,
+				payload: JSON.parse(originalBody),
+			};
+
+			const res = verifyCannyWebhookSignature(req, secret);
+			expect(res.valid).toBe(false);
+			expect(res.error).toBe('Invalid signature');
+		});
 	});
 
 	describe('createCannyMatch', () => {

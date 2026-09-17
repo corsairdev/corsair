@@ -331,6 +331,10 @@ export function canny<const T extends CannyPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CannyKeyBuilderContext, source) => {
+			if (source === 'webhook' && options.webhookSecret) {
+				return options.webhookSecret;
+			}
+
 			if (source === 'webhook' && options.key) {
 				return options.key;
 			}
