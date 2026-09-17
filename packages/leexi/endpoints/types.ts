@@ -152,9 +152,10 @@ export type MeetingEventsGetResponse = z.infer<
 >;
 
 const MeetingEventsCreateInputSchema = z.object({
-	// URL-formatted (docs: a Zoom, Teams, or Google Meet link). Rejects
-	// malformed values before any API call or audit logging.
-	meeting_url: z.string().url(),
+	// HTTP(S)-only meeting link (docs: a Zoom, Teams, or Google Meet link).
+	// Rejects malformed values and non-web schemes (ftp:, mailto:, data:)
+	// before any API call or audit logging.
+	meeting_url: z.httpUrl(),
 	user_uuid: z.string(),
 	start_time: z.string(),
 	end_time: z.string(),

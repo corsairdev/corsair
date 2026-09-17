@@ -227,6 +227,28 @@ describe('meetingEvents.create schema', () => {
 		).toBe('inbound');
 	});
 
+	it('rejects non-web schemes and malformed URLs', () => {
+		for (const meeting_url of [
+			'ftp://files.example.com/meeting.mp4',
+			'mailto:host@example.com',
+			'data:text/plain,hello',
+			'not-a-valid-url',
+		]) {
+			expect(() =>
+				LeexiEndpointInputSchemas.meetingEventsCreate.parse({
+					...validInput,
+					meeting_url,
+				}),
+			).toThrow();
+		}
+		expect(
+			LeexiEndpointInputSchemas.meetingEventsCreate.parse({
+				...validInput,
+				meeting_url: 'http://meet.example.com/abc',
+			}).meeting_url,
+		).toBe('http://meet.example.com/abc');
+	});
+
 	it('accepts a documented create response', () => {
 		expect(
 			LeexiEndpointOutputSchemas.meetingEventsCreate.parse({
