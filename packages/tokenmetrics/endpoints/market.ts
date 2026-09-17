@@ -14,7 +14,7 @@ export const getPrice: TokenMetricsEndpoints['marketGetPrice'] = async (
 ) => {
 	const input = GetPriceInputSchema.parse(rawInput);
 	const response = PriceResponseSchema.parse(
-		await makeTokenMetricsRequest<unknown>('/price', ctx.key, input),
+		await makeTokenMetricsRequest('/price', ctx.key, input),
 	);
 	await logEventFromContext(
 		ctx,
@@ -28,11 +28,10 @@ export const getTopMarketCap: TokenMetricsEndpoints['marketGetTopMarketCap'] =
 	async (ctx, rawInput) => {
 		const input = GetTopMarketCapInputSchema.parse(rawInput);
 		const response = TopMarketCapResponseSchema.parse(
-			await makeTokenMetricsRequest<unknown>(
-				'/top-market-cap-tokens',
-				ctx.key,
-				{ top_k: input.top_k ?? 100, page: input.page ?? 0 },
-			),
+			await makeTokenMetricsRequest('/top-market-cap-tokens', ctx.key, {
+				top_k: input.top_k ?? 100,
+				page: input.page ?? 0,
+			}),
 		);
 		await logEventFromContext(
 			ctx,

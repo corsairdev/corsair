@@ -13,6 +13,7 @@ const ctx = {
 	$getAccountId: async () => 'test-account',
 } as never;
 
+// Test fixtures intentionally vary by endpoint; unknown keeps assertions honest.
 function json(body: unknown): Response {
 	return new Response(JSON.stringify(body), {
 		status: 200,

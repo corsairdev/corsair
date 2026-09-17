@@ -10,6 +10,8 @@ const IdentifierFields = {
 };
 const requireIdentifier = <T extends z.ZodTypeAny>(schema: T) =>
 	schema.refine((value) => {
+		// zod refine callbacks receive unknown-ish values; narrow only the fields
+		// we need for the "token_id or symbol" guard.
 		const record = value as { token_id?: unknown; symbol?: unknown };
 		return record.token_id !== undefined || record.symbol !== undefined;
 	}, 'Provide token_id or symbol');

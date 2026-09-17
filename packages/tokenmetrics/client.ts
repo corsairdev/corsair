@@ -13,6 +13,8 @@ function retryAfterMs(response: Response): number | undefined {
 	return Number.isNaN(date) ? undefined : Math.max(0, date - Date.now());
 }
 
+// Provider responses vary across endpoints and error bodies, so we return
+// unknown and let each endpoint schema narrow the payload.
 async function responseBody(response: Response): Promise<unknown> {
 	if (response.status === 204) return undefined;
 	const contentType = response.headers.get('content-type')?.toLowerCase() ?? '';
@@ -57,7 +59,7 @@ export async function makeTokenMetricsRequest<T>(
 	if (!response.ok) {
 		const providerMessage =
 			typeof body === 'object' && body !== null && 'message' in body
-				? String((body as { message: unknown }).message)
+				? String(body.message)
 				: response.statusText ||
 					`Token Metrics request failed (${response.status})`;
 		throw new ApiError(

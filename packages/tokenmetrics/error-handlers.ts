@@ -13,6 +13,8 @@ export const errorHandlers = {
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
 			}
+			// Keep endpoint retries disabled so we do not stack retry loops on top of
+			// the shared HTTP transport retry behavior.
 			return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
 		},
 	},

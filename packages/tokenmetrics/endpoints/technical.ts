@@ -10,11 +10,7 @@ export const getIndicators: TokenMetricsEndpoints['technicalGetIndicators'] =
 	async (ctx, rawInput) => {
 		const input = GetTechnicalIndicatorsInputSchema.parse(rawInput);
 		const response = TechnicalIndicatorsResponseSchema.parse(
-			await makeTokenMetricsRequest<unknown>(
-				'/technical-indicators',
-				ctx.key,
-				input,
-			),
+			await makeTokenMetricsRequest('/technical-indicators', ctx.key, input),
 		);
 		await logEventFromContext(
 			ctx,

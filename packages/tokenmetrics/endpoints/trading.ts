@@ -12,7 +12,7 @@ export const getSignals: TokenMetricsEndpoints['tradingGetSignals'] = async (
 ) => {
 	const input = GetTradingSignalsInputSchema.parse(rawInput);
 	const response = TradingSignalsResponseSchema.parse(
-		await makeTokenMetricsRequest<unknown>('/trading-signals', ctx.key, input),
+		await makeTokenMetricsRequest('/trading-signals', ctx.key, input),
 	);
 	await logEventFromContext(
 		ctx,

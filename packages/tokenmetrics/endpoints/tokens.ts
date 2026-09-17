@@ -9,7 +9,7 @@ export const list: TokenMetricsEndpoints['tokensList'] = async (
 ) => {
 	const input = ListTokensInputSchema.parse(rawInput);
 	const response = TokensResponseSchema.parse(
-		await makeTokenMetricsRequest<unknown>('/tokens', ctx.key, input),
+		await makeTokenMetricsRequest('/tokens', ctx.key, input),
 	);
 	await logEventFromContext(
 		ctx,
