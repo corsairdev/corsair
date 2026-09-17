@@ -612,6 +612,28 @@ describe('zohobigin endpoints', () => {
 		).rejects.toThrow();
 	});
 
+	it('accepts binder empty-object input for void endpoints', async () => {
+		jest
+			.mocked(globalThis.fetch)
+			.mockResolvedValueOnce(jsonResponse({ roles: [] }))
+			.mockResolvedValueOnce(jsonResponse({ profiles: [] }))
+			.mockResolvedValueOnce(jsonResponse({ org: [] }))
+			.mockResolvedValueOnce(jsonResponse({ modules: [] }));
+
+		await expect(endpoint(plugin, 'users.getRoles')(ctx, {})).resolves.toEqual({
+			roles: [],
+		});
+		await expect(
+			endpoint(plugin, 'users.getProfiles')(ctx, {}),
+		).resolves.toEqual({ profiles: [] });
+		await expect(
+			endpoint(plugin, 'users.getOrganization')(ctx, {}),
+		).resolves.toEqual({ org: [] });
+		await expect(
+			endpoint(plugin, 'metadata.getModules')(ctx, {}),
+		).resolves.toEqual({ modules: [] });
+	});
+
 	it('merges custom error handlers from plugin options', async () => {
 		const customPlugin = zohobigin({
 			errorHandlers: {
