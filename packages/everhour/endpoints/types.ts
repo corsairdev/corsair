@@ -14,7 +14,7 @@ export type EverhourEndpointInputs = {
 	getUser: {};
 	listTeamUsers: { query?: Record<string, any> };
 	getCurrentTimer: {};
-	startTimer: { task?: string; userDate?: string; comment?: string };
+	startTimer: { task: string; userDate?: string; comment?: string };
 	stopTimer: {};
 	listUserTime: { userId: string; query?: Record<string, any> };
 	listUserTimesheets: { userId: string; query?: Record<string, any> };
@@ -78,7 +78,21 @@ export type EverhourEndpointOutputs = {
 	listPlatforms: EverhourPlatform[];
 };
 
-const AnyObjectSchema = z.object({}).passthrough();
+const TimerResponseSchema = z.object({
+	id: z.string().optional(),
+	task_id: z.string().optional(),
+	start_time: z.string().optional(),
+	status: z.enum(['active', 'stopped']).optional(),
+	duration: z.number().optional(),
+	startedAt: z.string().optional(),
+	task: z.unknown().optional(),
+});
+
+const TimesheetEntrySchema = z
+	.object({
+		id: z.string(),
+	})
+	.passthrough();
 
 export const EverhourEndpointInputSchemas = {
 	getUser: z.object({}),
@@ -87,7 +101,7 @@ export const EverhourEndpointInputSchemas = {
 	}),
 	getCurrentTimer: z.object({}),
 	startTimer: z.object({
-		task: z.string().optional(),
+		task: z.string(),
 		userDate: z.string().optional(),
 		comment: z.string().optional(),
 	}),
@@ -156,11 +170,11 @@ export const EverhourEndpointInputSchemas = {
 export const EverhourEndpointOutputSchemas = {
 	getUser: EverhourUser,
 	listTeamUsers: z.array(EverhourUser),
-	getCurrentTimer: AnyObjectSchema,
-	startTimer: AnyObjectSchema,
-	stopTimer: AnyObjectSchema,
+	getCurrentTimer: TimerResponseSchema,
+	startTimer: TimerResponseSchema,
+	stopTimer: TimerResponseSchema,
 	listUserTime: z.array(EverhourTimeEntry),
-	listUserTimesheets: z.array(AnyObjectSchema),
+	listUserTimesheets: z.array(TimesheetEntrySchema),
 	logTime: EverhourTimeEntry,
 	updateTimeEntry: EverhourTimeEntry,
 	deleteTimeEntry: z.null().optional(),

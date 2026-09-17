@@ -95,6 +95,7 @@ describe('Everhour endpoints routing & event logging', () => {
 		it('startTimer issues POST /timers', async () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({ id: 'timer_1' } as any);
 			const result = await timerEndpoints.startTimer(ctx, {
+				task: 'task_1',
 				comment: 'Testing',
 			});
 			expect(result.id).toBe('timer_1');
@@ -103,7 +104,7 @@ describe('Everhour endpoints routing & event logging', () => {
 				'ev_test_key',
 				expect.objectContaining({
 					method: 'POST',
-					body: { comment: 'Testing' },
+					body: { task: 'task_1', comment: 'Testing' },
 				}),
 			);
 		});
@@ -366,6 +367,11 @@ describe('Everhour endpoints routing & event logging', () => {
 	});
 
 	describe('Endpoint schemas', () => {
+		it('rejects invalid input for startTimer when task is missing', () => {
+			const result = EverhourEndpointInputSchemas.startTimer.safeParse({});
+			expect(result.success).toBe(false);
+		});
+
 		it('rejects invalid write input for logTime', () => {
 			const result = EverhourEndpointInputSchemas.logTime.safeParse({
 				time: '3600',
@@ -373,9 +379,16 @@ describe('Everhour endpoints routing & event logging', () => {
 			expect(result.success).toBe(false);
 		});
 
+		it('rejects malformed provider output for timer endpoints', () => {
+			const result = EverhourEndpointOutputSchemas.getCurrentTimer.safeParse({
+				status: 1,
+			});
+			expect(result.success).toBe(false);
+		});
+
 		it('rejects malformed provider output for listUserTimesheets', () => {
 			const result = EverhourEndpointOutputSchemas.listUserTimesheets.safeParse(
-				['not-an-object'],
+				[{ missing: 'id' }],
 			);
 			expect(result.success).toBe(false);
 		});

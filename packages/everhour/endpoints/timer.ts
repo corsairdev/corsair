@@ -16,7 +16,7 @@ export const getCurrentTimer = async (ctx: any) => {
 
 export const startTimer = async (
 	ctx: any,
-	options: { task?: string; userDate?: string; comment?: string } = {},
+	options: { task: string; userDate?: string; comment?: string },
 ) => {
 	return makeEverhourRequest<TimerResponse>('/timers', ctx.key, {
 		method: 'POST',
