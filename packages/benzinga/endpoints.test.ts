@@ -170,12 +170,17 @@ describe('Benzinga endpoint schemas', () => {
 		).toThrow();
 
 		const economics = BenzingaEndpointInputSchemas.listEconomics.parse({
+			importance: 3,
 			country: 'USA',
 			event_name: 'CPI',
 			event_category: 'Employment',
 		});
+		expect(economics.importance).toBe(3);
 		expect(economics.country).toBe('USA');
 		expect(economics.event_name).toBe('CPI');
+		expect(() =>
+			BenzingaEndpointInputSchemas.listEconomics.parse({ importance: 0 }),
+		).toThrow();
 	});
 
 	it('parses representative news, earnings and ratings payloads', () => {

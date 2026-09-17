@@ -155,6 +155,7 @@ const CalendarPaginationSchema = z.object({
 });
 
 const CalendarImportanceSchema = z.number().int().min(0).max(5);
+const EconomicsImportanceSchema = z.number().int().min(1).max(5);
 
 const CalendarDateFiltersSchema = z.object({
 	date: CalendarDateSchema.optional(),
@@ -456,6 +457,7 @@ export type ListSplitsResponse = z.infer<typeof ListSplitsResponseSchema>;
 const ListEconomicsInputSchema = CalendarPaginationSchema.extend(
 	CalendarDateFiltersSchema.shape,
 ).extend({
+	importance: EconomicsImportanceSchema.optional(),
 	country: z.string().optional(),
 	event_name: z.string().optional(),
 	event_category: z.string().optional(),
