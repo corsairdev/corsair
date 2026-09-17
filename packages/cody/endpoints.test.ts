@@ -334,12 +334,16 @@ describe('Cody error handlers', () => {
 				ok: false,
 			},
 			'Rate limited',
+			{ retryAfter: 12_000 },
 		);
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 
 		const strategy = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
-		expect(strategy).toEqual({ maxRetries: 0 });
+		expect(strategy).toEqual({
+			headersRetryAfterMs: 12_000,
+			maxRetries: 5,
+		});
 	});
 
 	it('matches RATE_LIMIT_ERROR on message fallback', async () => {
