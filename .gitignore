@@ -411,14 +411,14 @@ packages/frpc-*/frpc.exe
 packages/frpc-*/LICENSE.frp
 packages/frpc-*/NOTICE
 packages/frpc-*/.frpc-version
-
 # env
 .env
 .env.local
 .env.*.local
 
- 
+
 packages/fade-agent-ui/.settings.json
 packages/fade-agent-ui/.uploads/
 packages/fade-agent-ui/.imports/
 packages/fade-agent-ui/.preview/
+docs/superpowers/
