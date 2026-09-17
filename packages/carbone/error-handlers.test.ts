@@ -85,10 +85,25 @@ describe('Carbone errorHandlers', () => {
 			expect(errorHandlers.SERVER_ERROR.match(err503)).toBe(true);
 		});
 
-		it('returns retry configuration for server errors', async () => {
-			const result = await errorHandlers.SERVER_ERROR.handler();
+		it('returns retry configuration for idempotent server errors', async () => {
+			const result = await errorHandlers.SERVER_ERROR.handler(new Error('x'), {
+				pluginId: 'carbone',
+				operation: 'templates.list',
+				input: {},
+				originalError: new Error('x'),
+			});
 			expect(result.maxRetries).toBe(2);
 			expect(result.retryStrategy).toBe('exponential_backoff');
+		});
+
+		it('disables retries for write operations', async () => {
+			const result = await errorHandlers.SERVER_ERROR.handler(new Error('x'), {
+				pluginId: 'carbone',
+				operation: 'render.generateReport',
+				input: {},
+				originalError: new Error('x'),
+			});
+			expect(result.maxRetries).toBe(0);
 		});
 	});
 

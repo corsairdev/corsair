@@ -54,9 +54,13 @@ function createMockContext(key = 'test-carbone-key'): CarboneContext {
 			},
 			categories: {
 				upsertByEntityId: jest.fn().mockResolvedValue(undefined as never),
+				list: jest.fn().mockResolvedValue([] as never),
+				deleteByEntityId: jest.fn().mockResolvedValue(undefined as never),
 			},
 			tags: {
 				upsertByEntityId: jest.fn().mockResolvedValue(undefined as never),
+				list: jest.fn().mockResolvedValue([] as never),
+				deleteByEntityId: jest.fn().mockResolvedValue(undefined as never),
 			},
 		},
 	} as unknown as CarboneContext;
@@ -159,6 +163,27 @@ describe('Carbone endpoints execution', () => {
 				expect.objectContaining({
 					name: 'Invoice',
 					category: 'Finance',
+				}),
+			);
+		});
+
+		it('listTemplates normalizes templateId filter to id query parameter', async () => {
+			mockRequest.mockResolvedValueOnce({
+				success: true,
+				data: [],
+			});
+
+			const ctx = createMockContext();
+			await TemplatesEndpoints.listTemplates(ctx, {
+				templateId: 'tmpl_12345',
+			});
+
+			expect(mockRequest).toHaveBeenCalledWith(
+				expect.anything(),
+				expect.objectContaining({
+					method: 'GET',
+					url: '/templates',
+					query: { id: 'tmpl_12345' },
 				}),
 			);
 		});
@@ -278,6 +303,31 @@ describe('Carbone endpoints execution', () => {
 			);
 		});
 
+		it('listCategories removes stale categories missing from API response', async () => {
+			mockRequest.mockResolvedValueOnce({
+				success: true,
+				data: [{ name: 'Invoices' }],
+			});
+
+			const ctx = createMockContext();
+			(ctx.db.categories.list as jest.Mock).mockResolvedValueOnce([
+				{
+					entity_id: 'Invoices',
+					data: { name: 'Invoices' },
+				},
+				{
+					entity_id: 'Receipts',
+					data: { name: 'Receipts' },
+				},
+			]);
+
+			await TemplatesEndpoints.listCategories(ctx, {});
+
+			expect(ctx.db.categories.deleteByEntityId).toHaveBeenCalledWith(
+				'Receipts',
+			);
+		});
+
 		it('listTags retrieves tags and syncs to local database', async () => {
 			mockRequest.mockResolvedValueOnce({
 				success: true,
@@ -299,6 +349,29 @@ describe('Carbone endpoints execution', () => {
 			expect(ctx.db.tags.upsertByEntityId).toHaveBeenCalledWith('billing', {
 				name: 'billing',
 			});
+		});
+
+		it('listTags removes stale tags missing from API response', async () => {
+			mockRequest.mockResolvedValueOnce({
+				success: true,
+				data: [{ name: 'billing' }],
+			});
+
+			const ctx = createMockContext();
+			(ctx.db.tags.list as jest.Mock).mockResolvedValueOnce([
+				{
+					entity_id: 'billing',
+					data: { name: 'billing' },
+				},
+				{
+					entity_id: 'legacy',
+					data: { name: 'legacy' },
+				},
+			]);
+
+			await TemplatesEndpoints.listTags(ctx, {});
+
+			expect(ctx.db.tags.deleteByEntityId).toHaveBeenCalledWith('legacy');
 		});
 	});
 

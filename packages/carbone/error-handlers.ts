@@ -1,6 +1,22 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import type { CarboneAPIError } from './client';
 
+const WRITE_OPERATIONS = new Set([
+	'templates.upload',
+	'templates.update',
+	'templates.delete',
+	'render.generateReport',
+	'render.renderDirect',
+]);
+
+function shouldRetryServerError(operation: string | undefined): boolean {
+	if (!operation) {
+		return true;
+	}
+
+	return !WRITE_OPERATIONS.has(operation);
+}
+
 function getStatus(error: Error): number | undefined {
 	return (error as Partial<CarboneAPIError>).status;
 }
@@ -61,10 +77,13 @@ export const errorHandlers = {
 				msg.includes('server error')
 			);
 		},
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (_error: Error, context) =>
+			shouldRetryServerError(context.operation)
+				? {
+						maxRetries: 2,
+						retryStrategy: 'exponential_backoff' as const,
+					}
+				: { maxRetries: 0 },
 	},
 	DEFAULT: {
 		match: () => true,

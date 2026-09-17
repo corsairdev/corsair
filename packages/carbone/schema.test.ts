@@ -106,11 +106,13 @@ describe('Carbone endpoint schemas', () => {
 
 	it('validates template list schemas', () => {
 		const input = ListTemplatesInputSchema.parse({
+			id: 'tmpl_abc',
 			category: 'Invoices',
 			search: 'billing',
 			cursor: 10,
 		});
 		expect(input.category).toBe('Invoices');
+		expect(input.id).toBe('tmpl_abc');
 
 		const output = CarboneEndpointOutputSchemas.listTemplates.parse({
 			success: true,
@@ -124,9 +126,11 @@ describe('Carbone endpoint schemas', () => {
 				},
 			],
 			hasMore: false,
+			nextCursor: 11,
 		});
 		expect(output.success).toBe(true);
 		expect(output.data.length).toBe(1);
+		expect(output.nextCursor).toBe(11);
 		expect(ListTemplatesOutputSchema.parse(output).success).toBe(true);
 	});
 
@@ -199,12 +203,14 @@ describe('Carbone endpoint schemas', () => {
 	it('validates report generation schemas', () => {
 		const renderInput = GenerateReportInputSchema.parse({
 			templateId: 'tmpl_123',
-			data: { firstname: 'John', lastname: 'Doe' },
-			convertTo: 'pdf',
+			data: [{ firstname: 'John' }, { lastname: 'Doe' }],
+			convertTo: { formatName: 'pdf' },
 			lang: 'en',
+			converter: 'libreoffice',
 		});
 		expect(renderInput.templateId).toBe('tmpl_123');
-		expect(renderInput.convertTo).toBe('pdf');
+		expect(renderInput.convertTo).toEqual({ formatName: 'pdf' });
+		expect(renderInput.converter).toBe('libreoffice');
 
 		const renderOutput = CarboneEndpointOutputSchemas.generateReport.parse({
 			success: true,
@@ -220,9 +226,17 @@ describe('Carbone endpoint schemas', () => {
 		const directInput = RenderTemplateDirectInputSchema.parse({
 			template: 'base64RawString',
 			data: { items: [1, 2, 3] },
-			convertTo: 'pdf',
+			convertTo: {
+				formatName: 'pdf',
+				formatOptions: { quality: 'high' },
+			},
+			converter: 'libreoffice',
 		});
-		expect(directInput.convertTo).toBe('pdf');
+		expect(directInput.convertTo).toEqual({
+			formatName: 'pdf',
+			formatOptions: { quality: 'high' },
+		});
+		expect(directInput.converter).toBe('libreoffice');
 
 		const directOutput = CarboneEndpointOutputSchemas.renderDirect.parse({
 			success: true,

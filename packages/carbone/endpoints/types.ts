@@ -104,10 +104,14 @@ export type UploadTemplateOutput = z.infer<typeof UploadTemplateOutputSchema>;
 
 export const ListTemplatesInputSchema = z
 	.object({
-		templateId: z
+		id: z
 			.string()
 			.optional()
 			.describe('Filter templates by exact template ID match'),
+		templateId: z
+			.string()
+			.optional()
+			.describe('Alias for id; filter templates by exact template ID match'),
 		versionId: z
 			.string()
 			.optional()
@@ -138,7 +142,7 @@ export const ListTemplatesOutputSchema = z
 			.boolean()
 			.optional()
 			.describe('Whether more template records are available on next page'),
-		cursor: z
+		nextCursor: z
 			.union([z.string(), z.number()])
 			.optional()
 			.describe('Cursor to retrieve the next page of templates'),
@@ -303,19 +307,32 @@ export const GenerateReportInputSchema = z
 			.string()
 			.min(1, 'Template ID is required')
 			.describe('64-character hexadecimal template ID or version ID to render'),
-		data: JsonObjectSchema.describe(
-			'JSON dataset to merge into the document template placeholders',
-		),
+		data: z
+			.union([JsonObjectSchema, z.array(JsonValueSchema)])
+			.optional()
+			.describe(
+				'JSON dataset to merge into the document template placeholders',
+			),
 		convertTo: z
-			.string()
+			.union([
+				z.string(),
+				z.object({
+					formatName: z
+						.string()
+						.describe('Target file format extension for conversion output'),
+					formatOptions: JsonObjectSchema.optional().describe(
+						'Optional converter-specific options for the target format',
+					),
+				}),
+			])
 			.optional()
 			.describe(
 				'Target file format extension to convert output document into (e.g. pdf, docx, xlsx, html)',
 			),
-		formatName: z
+		converter: z
 			.string()
 			.optional()
-			.describe('Custom format name or conversion engine configuration'),
+			.describe('Converter engine to use for document conversion'),
 		lang: z
 			.string()
 			.optional()
@@ -384,19 +401,30 @@ export const RenderTemplateDirectInputSchema = z
 			.string()
 			.min(1, 'Template payload (base64 string) is required')
 			.describe('Base64-encoded document template content'),
-		data: JsonObjectSchema.describe(
-			'JSON dataset to merge into the template placeholders',
-		),
+		data: z
+			.union([JsonObjectSchema, z.array(JsonValueSchema)])
+			.optional()
+			.describe('JSON dataset to merge into the template placeholders'),
 		convertTo: z
-			.string()
+			.union([
+				z.string(),
+				z.object({
+					formatName: z
+						.string()
+						.describe('Target output format extension for conversion output'),
+					formatOptions: JsonObjectSchema.optional().describe(
+						'Optional converter-specific options for the target format',
+					),
+				}),
+			])
 			.optional()
 			.describe(
 				'Target output document format extension (e.g. pdf, docx, xlsx, html)',
 			),
-		formatName: z
+		converter: z
 			.string()
 			.optional()
-			.describe('Custom format name or conversion profile'),
+			.describe('Converter engine to use for document conversion'),
 		lang: z
 			.string()
 			.optional()

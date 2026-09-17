@@ -59,7 +59,7 @@ export const listTemplates: CarboneEndpoints['listTemplates'] = async (
 	input,
 ) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input?.templateId) query.templateId = input.templateId;
+	if (input?.id ?? input?.templateId) query.id = input?.id ?? input?.templateId;
 	if (input?.versionId) query.versionId = input.versionId;
 	if (input?.category) query.category = input.category;
 	if (input?.search) query.search = input.search;
@@ -232,8 +232,10 @@ export const listCategories: CarboneEndpoints['listCategories'] = async (
 	);
 
 	if (ctx.db?.categories && Array.isArray(response.data)) {
+		const seenNames = new Set<string>();
 		for (const cat of response.data) {
 			if (cat.name) {
+				seenNames.add(cat.name);
 				try {
 					await ctx.db.categories.upsertByEntityId(cat.name, {
 						name: cat.name,
@@ -245,6 +247,21 @@ export const listCategories: CarboneEndpoints['listCategories'] = async (
 					);
 				}
 			}
+		}
+
+		try {
+			const stored = await ctx.db.categories.list();
+			for (const row of stored) {
+				const name = (row.data as { name?: string }).name;
+				if (name && !seenNames.has(name)) {
+					await ctx.db.categories.deleteByEntityId(row.entity_id);
+				}
+			}
+		} catch (error) {
+			console.warn(
+				'[carbone] Failed to remove stale categories from local database:',
+				error,
+			);
 		}
 	}
 
@@ -268,8 +285,10 @@ export const listTags: CarboneEndpoints['listTags'] = async (ctx) => {
 	);
 
 	if (ctx.db?.tags && Array.isArray(response.data)) {
+		const seenNames = new Set<string>();
 		for (const tag of response.data) {
 			if (tag.name) {
+				seenNames.add(tag.name);
 				try {
 					await ctx.db.tags.upsertByEntityId(tag.name, {
 						name: tag.name,
@@ -281,6 +300,21 @@ export const listTags: CarboneEndpoints['listTags'] = async (ctx) => {
 					);
 				}
 			}
+		}
+
+		try {
+			const stored = await ctx.db.tags.list();
+			for (const row of stored) {
+				const name = (row.data as { name?: string }).name;
+				if (name && !seenNames.has(name)) {
+					await ctx.db.tags.deleteByEntityId(row.entity_id);
+				}
+			}
+		} catch (error) {
+			console.warn(
+				'[carbone] Failed to remove stale tags from local database:',
+				error,
+			);
 		}
 	}
 
