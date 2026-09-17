@@ -98,7 +98,6 @@ export async function makeChatworkRequest<T>(
 		body: requestBody,
 		mediaType: effectiveMediaType,
 		query: method === 'GET' ? query : undefined,
-		redirect: authType === 'api_key' ? 'error' : undefined,
 	};
 
 	try {
