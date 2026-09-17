@@ -3,6 +3,8 @@ import { ApiError } from 'corsair/http';
 
 const TOKEN_METRICS_API_BASE = 'https://api.tokenmetrics.com/v2/';
 const REQUEST_TIMEOUT_MS = 20_000;
+const MAX_RATE_LIMIT_RETRIES = 3;
+const INITIAL_RETRY_DELAY_MS = 1000;
 
 function retryAfterMs(response: Response): number | undefined {
 	const value = response.headers.get('retry-after');
@@ -30,6 +32,15 @@ async function responseBody(response: Response): Promise<unknown> {
 	return text;
 }
 
+function calculateRetryDelay(attempt: number, retryAfter?: number): number {
+	if (retryAfter !== undefined) return retryAfter;
+	return Math.min(INITIAL_RETRY_DELAY_MS * 2 ** (attempt - 1), 60_000);
+}
+
+async function sleep(ms: number): Promise<void> {
+	await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export async function makeTokenMetricsRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -48,21 +59,24 @@ export async function makeTokenMetricsRequest<T>(
 		url: `${url.pathname}${url.search}`,
 		query,
 	};
-	const response = await fetch(url, {
-		method: 'GET',
-		headers: { Accept: 'application/json', api_key: normalizedKey },
-		redirect: 'error',
-		signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-	});
-	const body = await responseBody(response);
+	let attempt = 0;
+	while (true) {
+		const response = await fetch(url, {
+			method: 'GET',
+			headers: { Accept: 'application/json', api_key: normalizedKey },
+			redirect: 'error',
+			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+		});
+		const body = await responseBody(response);
 
-	if (!response.ok) {
+		if (response.ok) return body as T;
+
 		const providerMessage =
 			typeof body === 'object' && body !== null && 'message' in body
 				? String(body.message)
 				: response.statusText ||
 					`Token Metrics request failed (${response.status})`;
-		throw new ApiError(
+		const error = new ApiError(
 			requestOptions,
 			{
 				url: url.toString(),
@@ -74,7 +88,10 @@ export async function makeTokenMetricsRequest<T>(
 			providerMessage,
 			{ retryAfter: retryAfterMs(response) },
 		);
-	}
 
-	return body as T;
+		if (error.status !== 429 || attempt >= MAX_RATE_LIMIT_RETRIES) throw error;
+
+		attempt += 1;
+		await sleep(calculateRetryDelay(attempt, error.retryAfter));
+	}
 }

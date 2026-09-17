@@ -91,15 +91,16 @@ describe('Token Metrics API operations', () => {
 	});
 
 	it('preserves status and retry metadata for malformed JSON errors', async () => {
-		fetchMock.mockResolvedValueOnce(
-			new Response('{not-json', {
-				status: 429,
-				statusText: 'Too Many Requests',
-				headers: {
-					'Content-Type': 'application/json',
-					'Retry-After': '2',
-				},
-			}),
+		fetchMock.mockImplementation(
+			async () =>
+				new Response('{not-json', {
+					status: 429,
+					statusText: 'Too Many Requests',
+					headers: {
+						'Content-Type': 'application/json',
+						'Retry-After': '2',
+					},
+				}),
 		);
 
 		await expect(
@@ -109,5 +110,33 @@ describe('Token Metrics API operations', () => {
 			retryAfter: 2000,
 			body: '{not-json',
 		});
+		expect(fetchMock).toHaveBeenCalledTimes(4);
+	});
+
+	it('retries rate-limited requests before succeeding', async () => {
+		fetchMock
+			.mockResolvedValueOnce(
+				new Response(JSON.stringify({ message: 'Too Many Requests' }), {
+					status: 429,
+					headers: {
+						'Content-Type': 'application/json',
+						'Retry-After': '0',
+					},
+				}),
+			)
+			.mockResolvedValueOnce(
+				new Response(
+					JSON.stringify({ data: [{ symbol: 'BTC', price: 60000 }] }),
+					{
+						status: 200,
+						headers: { 'Content-Type': 'application/json' },
+					},
+				),
+			);
+
+		const response = await getPrice(ctx, { symbol: 'BTC', interval: '1d' });
+
+		expect(response.data[0]?.symbol).toBe('BTC');
+		expect(fetchMock).toHaveBeenCalledTimes(2);
 	});
 });
