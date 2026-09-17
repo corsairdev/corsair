@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/zohobigin",
   "version": "0.1.0",
-  "description": "ZohoBigin plugin for Corsair",
+  "description": "Zoho Bigin plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -36,8 +36,14 @@
     "zohobigin",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/zohobigin"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/zohobigin",
   "files": [
     "dist"
   ]
