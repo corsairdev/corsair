@@ -1,28 +1,30 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class DovetailAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
+		public readonly status?: number,
 	) {
 		super(message);
 		this.name = 'DovetailAPIError';
 	}
 }
 
-// TODO: Update with your API base URL
-const DOVETAIL_API_BASE = 'https://api.example.com';
+export const DOVETAIL_API_BASE = 'https://dovetail.com/api';
+
+export type DovetailRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	// Justification: unknown is used here because request payload values can be arbitrary JSON data (e.g. metadata or custom field values)
+	body?: Record<string, unknown> | undefined;
+	query?: Record<string, string | number | boolean | undefined> | undefined;
+};
 
 export async function makeDovetailRequest<T>(
 	endpoint: string,
 	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+	options: DovetailRequestOptions = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
@@ -34,8 +36,8 @@ export async function makeDovetailRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			Accept: 'application/json',
+			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 
@@ -47,15 +49,8 @@ export async function makeDovetailRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new DovetailAPIError(error.message);
-		}
-		throw new DovetailAPIError('Unknown error');
-	}
+	return request<T>(config, requestOptions);
 }
