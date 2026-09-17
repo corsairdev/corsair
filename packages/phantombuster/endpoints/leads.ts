@@ -59,6 +59,13 @@ export const fetchByList = async (
 ): Promise<FetchLeadsByListResponse> => {
 	const { listId } = input;
 
+	// Guard the {listId} path segment: dot segments would be normalized away
+	// by URL parsing and change the request target, so reject them outright.
+	// Everything else is encoded so one list ID always maps to one segment.
+	if (listId === '.' || listId === '..') {
+		throw new Error('Invalid listId path segment');
+	}
+
 	// unknown: POST bodies are endpoint-specific JSON shapes accepted by makePhantomBusterRequest.
 	const body: Record<string, unknown> = {};
 	if (input.paginationOptions !== undefined)
@@ -69,7 +76,7 @@ export const fetchByList = async (
 		body.withCompanies = input.withCompanies;
 
 	const response = await makePhantomBusterRequest<FetchLeadsByListResponse>(
-		`/org-storage/leads/by-list/${listId}`,
+		`/org-storage/leads/by-list/${encodeURIComponent(listId)}`,
 		ctx.key,
 		{
 			method: 'POST',

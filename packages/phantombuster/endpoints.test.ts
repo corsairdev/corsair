@@ -466,3 +466,16 @@ describe('phantombuster endpoints', () => {
 		});
 	}
 });
+
+describe('leads.fetchByList listId encoding', () => {
+	it('encodes reserved characters so one list ID maps to one path segment', async () => {
+		await LeadsEndpoints.fetchByList(makeCtx(), { listId: 'a/b?c#d' });
+		expect(lastUrl).toContain('/org-storage/leads/by-list/a%2Fb%3Fc%23d');
+	});
+
+	it.each(['.', '..'])('rejects dot-segment listId %s', async (listId) => {
+		await expect(
+			LeadsEndpoints.fetchByList(makeCtx(), { listId }),
+		).rejects.toThrow('Invalid listId path segment');
+	});
+});

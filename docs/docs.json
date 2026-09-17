@@ -1961,6 +1961,14 @@
                 ]
               },
               {
+                "group": "PhantomBuster",
+                "pages": [
+                  "plugins/phantombuster/overview",
+                  "plugins/phantombuster/api",
+                  "plugins/phantombuster/database"
+                ]
+              },
+              {
                 "group": "Pinecone",
                 "pages": [
                   "plugins/pinecone/overview",
