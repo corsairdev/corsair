@@ -20,7 +20,7 @@ Look up a word in Merriam-Webster Collegiate Dictionary, returning definitions, 
 **Risk:** `read`
 
 ```ts
-await corsair.dictionaryapi.api.entries.get({});
+await corsair.dictionaryapi.api.entries.get({ word: 'computer' });
 ```
 
 **Input**
@@ -31,7 +31,7 @@ await corsair.dictionaryapi.api.entries.get({});
 
 
 
-**Output:** `object[]`
+**Output:** `(object \| string)[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -39,7 +39,7 @@ await corsair.dictionaryapi.api.entries.get({});
 ```ts
 (
   {
-    meta?: {
+    meta: {
       id: string,
       uuid?: string,
       sort?: string,

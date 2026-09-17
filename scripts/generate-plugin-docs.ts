@@ -1189,7 +1189,7 @@ npm install corsair ${npmPackageName}
 yarn add corsair ${npmPackageName}
 \`\`\`
 \`\`\`bash pnpm
-pnpm install corsair ${npmPackageName}
+pnpm add corsair ${npmPackageName}
 \`\`\`
 \`\`\`bash bun
 bun add corsair ${npmPackageName}
@@ -1277,9 +1277,77 @@ function isObjectLikeType(type: string): boolean {
 /** Table "Type" column: primitives stay literal; object shapes become `object` / `object[]`. */
 function tableTypeDisplay(type: string): string {
 	const t = type.trim();
+	if (t.includes('|')) {
+		const isArray = /\[\]\s*$/.test(t);
+		const hasObject = t.includes('{');
+		const hasString = /\bstring\b/.test(t);
+		if (hasObject && hasString) {
+			return isArray ? '(object | string)[]' : 'object | string';
+		}
+	}
 	if (!isObjectLikeType(t)) return type;
 	if (/\[\]\s*$/.test(t)) return 'object[]';
 	return 'object';
+}
+
+function parseRequiredInlineObjectFields(type: string): Array<[string, string]> {
+	const t = type.trim();
+	const m = t.match(/^\{([\s\S]*)\}$/);
+	if (!m) return [];
+
+	const fields: Array<[string, string]> = [];
+	for (const line of m[1]!.split('\n')) {
+		const trimmed = line.trim();
+		if (!trimmed || trimmed === ',' || trimmed === '{' || trimmed === '}') {
+			continue;
+		}
+		const fieldMatch = trimmed.match(/^([A-Za-z0-9_]+)(\?)?:\s*([^,]+),?$/);
+		if (!fieldMatch) continue;
+		const [, key, optionalMark, fieldType] = fieldMatch;
+		if (optionalMark) continue;
+		fields.push([key!, fieldType!.trim()]);
+	}
+	return fields;
+}
+
+function exampleValueForType(type: string, key: string): unknown {
+	const t = type.trim();
+	const keyLower = key.toLowerCase();
+
+	if (keyLower === 'word') return 'computer';
+	if (t.includes('string')) return 'example';
+	if (t.includes('number')) return 1;
+	if (t.includes('boolean')) return true;
+	if (/\[\]\s*$/.test(t)) return [];
+	return {};
+}
+
+function exampleArgsForShape(shape: DocSchemaShape): Record<string, unknown> {
+	if (shape.kind === 'object') {
+		const required = shape.fields.filter((field) => !field.optional);
+		if (required.length === 0) return {};
+
+		return Object.fromEntries(
+			required.map((field) => [
+				field.key,
+				exampleValueForType(field.type, field.key),
+			]),
+		);
+	}
+
+	if (shape.kind === 'inline') {
+		const requiredInline = parseRequiredInlineObjectFields(shape.type);
+		if (requiredInline.length === 0) return {};
+
+		return Object.fromEntries(
+			requiredInline.map(([key, fieldType]) => [
+				key,
+				exampleValueForType(fieldType, key),
+			]),
+		);
+	}
+
+	return {};
 }
 
 function escapeAttr(s: string): string {
@@ -1472,8 +1540,9 @@ function buildApiMdx(
 			sections.push('');
 			const [, ...pathParts] = ep.path.split('.');
 			const callExpr = `corsair.${pluginId}.${pathParts.join('.')}`;
+			const exampleArgs = exampleArgsForShape(ep.input);
 			sections.push('```ts');
-			sections.push(`await ${callExpr}({});`);
+			sections.push(`await ${callExpr}(${formatExampleArgs(exampleArgs)});`);
 			sections.push('```');
 			sections.push('');
 			sections.push(formatSchemaShape(ep.input, 'Input'));
@@ -1542,13 +1611,19 @@ function buildDbMdx(
 		);
 	}
 
-	const dbDescription = `${title} local sync: searchable entities, \`.search()\` filters, and operators.`;
+	const hasEntities = data.db.length > 0;
+	const dbDescription = hasEntities
+		? `${title} local sync: searchable entities, \`.search()\` filters, and operators.`
+		: `${title} database support: whether this plugin syncs local entities.`;
+	const intro = hasEntities
+		? `The ${title} plugin syncs data locally. Use \`corsair.${pluginId}.db.<entity>.search({ data, limit?, offset? })\` with the filters listed per entity.`
+		: `The ${title} plugin does not currently synchronize data locally or expose searchable database entities.`;
 	return `---
 title: Database
 description: ${yamlDoubleQuotedScalar(dbDescription)}
 ---
 
-The ${title} plugin syncs data locally. Use \`corsair.${pluginId}.db.<entity>.search({ data, limit?, offset? })\` with the filters listed per entity.
+${intro}
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
