@@ -25,6 +25,10 @@ describe('Fixer Client', () => {
 		const result = await makeFixerRequest('symbols', 'test-api-key', {
 			method: 'GET',
 			query: { base: 'USD' },
+			schema: z.object({
+				success: z.boolean(),
+				symbols: z.record(z.string(), z.string()),
+			}),
 		});
 
 		expect(result).toEqual(mockResponse);
@@ -77,7 +81,33 @@ describe('Fixer Client', () => {
 		(request as jest.Mock).mockResolvedValueOnce(errorPayload);
 
 		await expect(
-			makeFixerRequest('latest', 'invalid-key', { method: 'GET' }),
+			makeFixerRequest('latest', 'invalid-key', {
+				method: 'GET',
+				schema: z.object({
+					success: z.boolean(),
+					timestamp: z.number(),
+					base: z.string(),
+					date: z.string(),
+					rates: z.record(z.string(), z.number()),
+				}),
+			}),
+		).rejects.toThrow(FixerAPIError);
+	});
+
+	it('throws FixerAPIError when schema validation fails', async () => {
+		(request as jest.Mock).mockResolvedValueOnce({
+			success: true,
+			symbols: 123,
+		});
+
+		await expect(
+			makeFixerRequest('symbols', 'test-api-key', {
+				method: 'GET',
+				schema: z.object({
+					success: z.boolean(),
+					symbols: z.record(z.string(), z.string()),
+				}),
+			}),
 		).rejects.toThrow(FixerAPIError);
 	});
 
@@ -99,7 +129,16 @@ describe('Fixer Client', () => {
 		(request as jest.Mock).mockRejectedValueOnce(apiError);
 
 		await expect(
-			makeFixerRequest('latest', 'bad-key', { method: 'GET' }),
+			makeFixerRequest('latest', 'bad-key', {
+				method: 'GET',
+				schema: z.object({
+					success: z.boolean(),
+					timestamp: z.number(),
+					base: z.string(),
+					date: z.string(),
+					rates: z.record(z.string(), z.number()),
+				}),
+			}),
 		).rejects.toThrow(apiError);
 	});
 
@@ -107,7 +146,16 @@ describe('Fixer Client', () => {
 		(request as jest.Mock).mockRejectedValueOnce(new Error('Network timeout'));
 
 		await expect(
-			makeFixerRequest('latest', 'test-key', { method: 'GET' }),
+			makeFixerRequest('latest', 'test-key', {
+				method: 'GET',
+				schema: z.object({
+					success: z.boolean(),
+					timestamp: z.number(),
+					base: z.string(),
+					date: z.string(),
+					rates: z.record(z.string(), z.number()),
+				}),
+			}),
 		).rejects.toThrow(FixerAPIError);
 	});
 });

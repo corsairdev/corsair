@@ -67,8 +67,8 @@ export async function makeFixerRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
-		schema?: z.ZodType<T>;
-	} = {},
+		schema: z.ZodType<T>;
+	},
 ): Promise<T> {
 	const { method = 'GET', body, query, schema } = options;
 
@@ -105,11 +105,7 @@ export async function makeFixerRequest<T>(
 			);
 		}
 
-		if (schema) {
-			return schema.parse(rawResponse);
-		}
-
-		return rawResponse as T;
+		return schema.parse(rawResponse);
 	} catch (error) {
 		if (error instanceof ApiError || error instanceof FixerAPIError) {
 			throw error;
