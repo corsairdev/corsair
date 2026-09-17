@@ -1237,14 +1237,6 @@
                 ]
               },
               {
-                "group": "Dictionary API",
-                "pages": [
-                  "plugins/dictionaryapi/overview",
-                  "plugins/dictionaryapi/api",
-                  "plugins/dictionaryapi/database"
-                ]
-              },
-              {
                 "group": "Diffbot",
                 "pages": [
                   "plugins/diffbot/overview",
@@ -1810,6 +1802,9 @@
               {
                 "group": "Merriam-Webster",
                 "pages": [
+                  "plugins/dictionaryapi/overview",
+                  "plugins/dictionaryapi/api",
+                  "plugins/dictionaryapi/database",
                   "plugins/merriamwebsterdict/overview",
                   "plugins/merriamwebsterdict/api",
                   "plugins/merriamwebsterdict/database"
