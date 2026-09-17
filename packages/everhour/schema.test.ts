@@ -9,14 +9,20 @@ describe('Everhour schema', () => {
 	it('declares an entities map', () => {
 		expect(typeof EverhourSchema.entities).toBe('object');
 		expect(EverhourSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(EverhourSchema.entities))).toBe(true);
 		expect(Object.keys(EverhourSchema.entities).sort()).toEqual([
 			'clients',
+			'expenseCategories',
+			'expenses',
+			'invoices',
 			'platforms',
 			'projects',
+			'sections',
+			'tags',
 			'tasks',
 			'timeEntries',
+			'timecards',
 			'users',
+			'webhooks',
 		]);
 		for (const entity of Object.values(EverhourSchema.entities)) {
 			expect(entity).toBeDefined();

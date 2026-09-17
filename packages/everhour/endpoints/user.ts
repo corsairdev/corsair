@@ -7,10 +7,18 @@ export const getUser = async (ctx: any) => {
 
 export const listTeamUsers = async (
 	ctx: any,
-	options: { query?: Record<string, any> } = {},
+	options: { query?: Record<string, any>; limit?: number } = {},
 ) => {
 	return makeEverhourRequest<EverhourUser[]>('/team/users', ctx.key, {
 		method: 'GET',
-		query: options.query,
+		query: {
+			...options.query,
+			...(options.limit !== undefined ? { limit: options.limit } : {}),
+		},
 	});
+};
+
+export const listTeams = async (ctx: any) => {
+	const me = await makeEverhourRequest<EverhourUser>('/users/me', ctx.key);
+	return me.team != null ? [me.team] : [me];
 };

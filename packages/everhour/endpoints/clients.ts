@@ -17,3 +17,44 @@ export const getClient = async (ctx: any, options: { clientId: string }) => {
 		ctx.key,
 	);
 };
+
+export const createClient = async (
+	ctx: any,
+	options: {
+		name: string;
+		projects?: string[];
+		businessDetails?: string;
+		email?: string[];
+		status?: string;
+	},
+) => {
+	const { name, projects, businessDetails, email, status } = options;
+	return makeEverhourRequest<EverhourClient>('/clients', ctx.key, {
+		method: 'POST',
+		body: { name, projects, businessDetails, email, status },
+	});
+};
+
+export const updateClient = async (
+	ctx: any,
+	options: {
+		clientId: string;
+		name?: string;
+		projects?: string[];
+		businessDetails?: string;
+		email?: string[];
+		status?: string;
+	},
+) => {
+	const { clientId, ...body } = options;
+	return makeEverhourRequest<EverhourClient>(`/clients/${clientId}`, ctx.key, {
+		method: 'PUT',
+		body,
+	});
+};
+
+export const deleteClient = async (ctx: any, options: { clientId: string }) => {
+	return makeEverhourRequest<void>(`/clients/${options.clientId}`, ctx.key, {
+		method: 'DELETE',
+	});
+};

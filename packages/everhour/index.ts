@@ -49,6 +49,7 @@ const everhourEndpointsNested = {
 	user: {
 		getUser: endpoints.getUser,
 		listTeamUsers: endpoints.listTeamUsers,
+		listTeams: endpoints.listTeams,
 	},
 	timer: {
 		getCurrentTimer: endpoints.getCurrentTimer,
@@ -61,22 +62,63 @@ const everhourEndpointsNested = {
 		logTime: endpoints.logTime,
 		updateTimeEntry: endpoints.updateTimeEntry,
 		deleteTimeEntry: endpoints.deleteTimeEntry,
+		requestTimesheetApproval: endpoints.requestTimesheetApproval,
+		discardTimesheetApproval: endpoints.discardTimesheetApproval,
 	},
 	tasks: {
 		searchTasks: endpoints.searchTasks,
 		getTask: endpoints.getTask,
 		listTasksForProject: endpoints.listTasksForProject,
+		createTask: endpoints.createTask,
 	},
 	projects: {
 		listProjects: endpoints.listProjects,
 		getProject: endpoints.getProject,
+		createProject: endpoints.createProject,
+		updateProject: endpoints.updateProject,
+		deleteProject: endpoints.deleteProject,
+	},
+	sections: {
+		listSections: endpoints.listSections,
+		getSection: endpoints.getSection,
+		createSection: endpoints.createSection,
+		deleteSection: endpoints.deleteSection,
 	},
 	clients: {
 		listClients: endpoints.listClients,
 		getClient: endpoints.getClient,
+		createClient: endpoints.createClient,
+		updateClient: endpoints.updateClient,
+		deleteClient: endpoints.deleteClient,
 	},
 	platforms: {
 		listPlatforms: endpoints.listPlatforms,
+	},
+	timecards: {
+		clockIn: endpoints.clockIn,
+		clockOut: endpoints.clockOut,
+		getTimecard: endpoints.getTimecard,
+		listTimecards: endpoints.listTimecards,
+		listUserTimecards: endpoints.listUserTimecards,
+		updateTimecard: endpoints.updateTimecard,
+		deleteTimecard: endpoints.deleteTimecard,
+	},
+	expenses: {
+		listExpenses: endpoints.listExpenses,
+		listExpenseCategories: endpoints.listExpenseCategories,
+	},
+	invoices: {
+		listInvoices: endpoints.listInvoices,
+	},
+	hooks: {
+		listWebhooks: endpoints.listWebhooks,
+		getWebhook: endpoints.getWebhook,
+		createWebhook: endpoints.createWebhook,
+		updateWebhook: endpoints.updateWebhook,
+		deleteWebhook: endpoints.deleteWebhook,
+	},
+	tags: {
+		listTags: endpoints.listTags,
 	},
 } as const;
 
@@ -128,6 +170,10 @@ export const everhourEndpointSchemas = {
 		input: EverhourEndpointInputSchemas.listTeamUsers,
 		output: EverhourEndpointOutputSchemas.listTeamUsers,
 	},
+	'user.listTeams': {
+		input: EverhourEndpointInputSchemas.listTeams,
+		output: EverhourEndpointOutputSchemas.listTeams,
+	},
 	'timer.getCurrentTimer': {
 		input: EverhourEndpointInputSchemas.getCurrentTimer,
 		output: EverhourEndpointOutputSchemas.getCurrentTimer,
@@ -160,6 +206,14 @@ export const everhourEndpointSchemas = {
 		input: EverhourEndpointInputSchemas.deleteTimeEntry,
 		output: EverhourEndpointOutputSchemas.deleteTimeEntry,
 	},
+	'time.requestTimesheetApproval': {
+		input: EverhourEndpointInputSchemas.requestTimesheetApproval,
+		output: EverhourEndpointOutputSchemas.requestTimesheetApproval,
+	},
+	'time.discardTimesheetApproval': {
+		input: EverhourEndpointInputSchemas.discardTimesheetApproval,
+		output: EverhourEndpointOutputSchemas.discardTimesheetApproval,
+	},
 	'tasks.searchTasks': {
 		input: EverhourEndpointInputSchemas.searchTasks,
 		output: EverhourEndpointOutputSchemas.searchTasks,
@@ -172,6 +226,10 @@ export const everhourEndpointSchemas = {
 		input: EverhourEndpointInputSchemas.listTasksForProject,
 		output: EverhourEndpointOutputSchemas.listTasksForProject,
 	},
+	'tasks.createTask': {
+		input: EverhourEndpointInputSchemas.createTask,
+		output: EverhourEndpointOutputSchemas.createTask,
+	},
 	'projects.listProjects': {
 		input: EverhourEndpointInputSchemas.listProjects,
 		output: EverhourEndpointOutputSchemas.listProjects,
@@ -179,6 +237,34 @@ export const everhourEndpointSchemas = {
 	'projects.getProject': {
 		input: EverhourEndpointInputSchemas.getProject,
 		output: EverhourEndpointOutputSchemas.getProject,
+	},
+	'projects.createProject': {
+		input: EverhourEndpointInputSchemas.createProject,
+		output: EverhourEndpointOutputSchemas.createProject,
+	},
+	'projects.updateProject': {
+		input: EverhourEndpointInputSchemas.updateProject,
+		output: EverhourEndpointOutputSchemas.updateProject,
+	},
+	'projects.deleteProject': {
+		input: EverhourEndpointInputSchemas.deleteProject,
+		output: EverhourEndpointOutputSchemas.deleteProject,
+	},
+	'sections.listSections': {
+		input: EverhourEndpointInputSchemas.listSections,
+		output: EverhourEndpointOutputSchemas.listSections,
+	},
+	'sections.getSection': {
+		input: EverhourEndpointInputSchemas.getSection,
+		output: EverhourEndpointOutputSchemas.getSection,
+	},
+	'sections.createSection': {
+		input: EverhourEndpointInputSchemas.createSection,
+		output: EverhourEndpointOutputSchemas.createSection,
+	},
+	'sections.deleteSection': {
+		input: EverhourEndpointInputSchemas.deleteSection,
+		output: EverhourEndpointOutputSchemas.deleteSection,
 	},
 	'clients.listClients': {
 		input: EverhourEndpointInputSchemas.listClients,
@@ -188,9 +274,85 @@ export const everhourEndpointSchemas = {
 		input: EverhourEndpointInputSchemas.getClient,
 		output: EverhourEndpointOutputSchemas.getClient,
 	},
+	'clients.createClient': {
+		input: EverhourEndpointInputSchemas.createClient,
+		output: EverhourEndpointOutputSchemas.createClient,
+	},
+	'clients.updateClient': {
+		input: EverhourEndpointInputSchemas.updateClient,
+		output: EverhourEndpointOutputSchemas.updateClient,
+	},
+	'clients.deleteClient': {
+		input: EverhourEndpointInputSchemas.deleteClient,
+		output: EverhourEndpointOutputSchemas.deleteClient,
+	},
 	'platforms.listPlatforms': {
 		input: EverhourEndpointInputSchemas.listPlatforms,
 		output: EverhourEndpointOutputSchemas.listPlatforms,
+	},
+	'timecards.clockIn': {
+		input: EverhourEndpointInputSchemas.clockIn,
+		output: EverhourEndpointOutputSchemas.clockIn,
+	},
+	'timecards.clockOut': {
+		input: EverhourEndpointInputSchemas.clockOut,
+		output: EverhourEndpointOutputSchemas.clockOut,
+	},
+	'timecards.getTimecard': {
+		input: EverhourEndpointInputSchemas.getTimecard,
+		output: EverhourEndpointOutputSchemas.getTimecard,
+	},
+	'timecards.listTimecards': {
+		input: EverhourEndpointInputSchemas.listTimecards,
+		output: EverhourEndpointOutputSchemas.listTimecards,
+	},
+	'timecards.listUserTimecards': {
+		input: EverhourEndpointInputSchemas.listUserTimecards,
+		output: EverhourEndpointOutputSchemas.listUserTimecards,
+	},
+	'timecards.updateTimecard': {
+		input: EverhourEndpointInputSchemas.updateTimecard,
+		output: EverhourEndpointOutputSchemas.updateTimecard,
+	},
+	'timecards.deleteTimecard': {
+		input: EverhourEndpointInputSchemas.deleteTimecard,
+		output: EverhourEndpointOutputSchemas.deleteTimecard,
+	},
+	'expenses.listExpenses': {
+		input: EverhourEndpointInputSchemas.listExpenses,
+		output: EverhourEndpointOutputSchemas.listExpenses,
+	},
+	'expenses.listExpenseCategories': {
+		input: EverhourEndpointInputSchemas.listExpenseCategories,
+		output: EverhourEndpointOutputSchemas.listExpenseCategories,
+	},
+	'invoices.listInvoices': {
+		input: EverhourEndpointInputSchemas.listInvoices,
+		output: EverhourEndpointOutputSchemas.listInvoices,
+	},
+	'hooks.listWebhooks': {
+		input: EverhourEndpointInputSchemas.listWebhooks,
+		output: EverhourEndpointOutputSchemas.listWebhooks,
+	},
+	'hooks.getWebhook': {
+		input: EverhourEndpointInputSchemas.getWebhook,
+		output: EverhourEndpointOutputSchemas.getWebhook,
+	},
+	'hooks.createWebhook': {
+		input: EverhourEndpointInputSchemas.createWebhook,
+		output: EverhourEndpointOutputSchemas.createWebhook,
+	},
+	'hooks.updateWebhook': {
+		input: EverhourEndpointInputSchemas.updateWebhook,
+		output: EverhourEndpointOutputSchemas.updateWebhook,
+	},
+	'hooks.deleteWebhook': {
+		input: EverhourEndpointInputSchemas.deleteWebhook,
+		output: EverhourEndpointOutputSchemas.deleteWebhook,
+	},
+	'tags.listTags': {
+		input: EverhourEndpointInputSchemas.listTags,
+		output: EverhourEndpointOutputSchemas.listTags,
 	},
 } as const;
 
@@ -308,6 +470,10 @@ const everhourEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List all team users',
 	},
+	'user.listTeams': {
+		riskLevel: 'read',
+		description: 'Get the authenticated Everhour workspace',
+	},
 	'timer.getCurrentTimer': {
 		riskLevel: 'read',
 		description: 'Get the current active timer',
@@ -334,6 +500,14 @@ const everhourEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Delete a time record',
 	},
+	'time.requestTimesheetApproval': {
+		riskLevel: 'write',
+		description: 'Request approval for a timesheet week',
+	},
+	'time.discardTimesheetApproval': {
+		riskLevel: 'write',
+		description: 'Discard a pending timesheet approval request',
+	},
 	'tasks.searchTasks': {
 		riskLevel: 'read',
 		description: 'Search tasks across projects',
@@ -343,14 +517,95 @@ const everhourEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List tasks for a project',
 	},
+	'tasks.createTask': { riskLevel: 'write', description: 'Create a task' },
 	'projects.listProjects': { riskLevel: 'read', description: 'List projects' },
 	'projects.getProject': { riskLevel: 'read', description: 'Get a project' },
+	'projects.createProject': {
+		riskLevel: 'write',
+		description: 'Create a project',
+	},
+	'projects.updateProject': {
+		riskLevel: 'write',
+		description: 'Update a project',
+	},
+	'projects.deleteProject': {
+		riskLevel: 'write',
+		description: 'Delete a project',
+	},
+	'sections.listSections': {
+		riskLevel: 'read',
+		description: 'List sections in a project',
+	},
+	'sections.getSection': { riskLevel: 'read', description: 'Get a section' },
+	'sections.createSection': {
+		riskLevel: 'write',
+		description: 'Create a section',
+	},
+	'sections.deleteSection': {
+		riskLevel: 'write',
+		description: 'Delete a section',
+	},
 	'clients.listClients': { riskLevel: 'read', description: 'List clients' },
 	'clients.getClient': { riskLevel: 'read', description: 'Get a client' },
+	'clients.createClient': {
+		riskLevel: 'write',
+		description: 'Create a client',
+	},
+	'clients.updateClient': {
+		riskLevel: 'write',
+		description: 'Update a client',
+	},
+	'clients.deleteClient': {
+		riskLevel: 'write',
+		description: 'Delete a client',
+	},
 	'platforms.listPlatforms': {
 		riskLevel: 'read',
 		description: 'List supported platforms',
 	},
+	'timecards.clockIn': { riskLevel: 'write', description: 'Clock a user in' },
+	'timecards.clockOut': { riskLevel: 'write', description: 'Clock a user out' },
+	'timecards.getTimecard': {
+		riskLevel: 'read',
+		description: 'Get a user timecard for a date',
+	},
+	'timecards.listTimecards': {
+		riskLevel: 'read',
+		description: 'List team timecards',
+	},
+	'timecards.listUserTimecards': {
+		riskLevel: 'read',
+		description: 'List timecards for a user',
+	},
+	'timecards.updateTimecard': {
+		riskLevel: 'write',
+		description: 'Update a user timecard',
+	},
+	'timecards.deleteTimecard': {
+		riskLevel: 'write',
+		description: 'Delete a user timecard',
+	},
+	'expenses.listExpenses': { riskLevel: 'read', description: 'List expenses' },
+	'expenses.listExpenseCategories': {
+		riskLevel: 'read',
+		description: 'List expense categories',
+	},
+	'invoices.listInvoices': { riskLevel: 'read', description: 'List invoices' },
+	'hooks.listWebhooks': { riskLevel: 'read', description: 'List webhooks' },
+	'hooks.getWebhook': { riskLevel: 'read', description: 'Get a webhook' },
+	'hooks.createWebhook': {
+		riskLevel: 'write',
+		description: 'Create a webhook',
+	},
+	'hooks.updateWebhook': {
+		riskLevel: 'write',
+		description: 'Update a webhook',
+	},
+	'hooks.deleteWebhook': {
+		riskLevel: 'write',
+		description: 'Delete a webhook',
+	},
+	'tags.listTags': { riskLevel: 'read', description: 'List workspace tags' },
 } as const;
 
 export const everhourAuthConfig = {

@@ -27,17 +27,40 @@ export const listTasksForProject = async (
 		query?: {
 			query?: string;
 			limit?: number;
+			page?: number;
 			searchInClosed?: boolean;
 			searchInUnscheduled?: boolean;
 		};
 	},
 ) => {
 	return makeEverhourRequest<EverhourTask[]>(
-		`/projects/${options.projectId}/tasks/search`,
+		`/projects/${options.projectId}/tasks`,
 		ctx.key,
 		{
 			method: 'GET',
 			query: options.query,
+		},
+	);
+};
+
+export const createTask = async (
+	ctx: any,
+	options: {
+		projectId: string;
+		name: string;
+		section?: number;
+		labels?: string[];
+		status?: 'open' | 'closed';
+		description?: string;
+	},
+) => {
+	const { projectId, ...body } = options;
+	return makeEverhourRequest<EverhourTask>(
+		`/projects/${projectId}/tasks`,
+		ctx.key,
+		{
+			method: 'POST',
+			body,
 		},
 	);
 };

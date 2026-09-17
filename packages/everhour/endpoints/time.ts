@@ -1,5 +1,8 @@
 import { makeEverhourRequest } from '../client';
-import type { EverhourTimeEntry } from '../schema/database';
+import type {
+	EverhourTimeEntry,
+	EverhourTimesheetApproval,
+} from '../schema/database';
 
 export const listUserTime = async (
 	ctx: any,
@@ -56,14 +59,11 @@ export const updateTimeEntry = async (
 		comment?: string;
 	},
 ) => {
-	return makeEverhourRequest<EverhourTimeEntry>(
-		`/time/${options.timeId}`,
-		ctx.key,
-		{
-			method: 'PUT',
-			body: options,
-		},
-	);
+	const { timeId, ...body } = options;
+	return makeEverhourRequest<EverhourTimeEntry>(`/time/${timeId}`, ctx.key, {
+		method: 'PUT',
+		body,
+	});
 };
 
 export const deleteTimeEntry = async (
@@ -73,4 +73,44 @@ export const deleteTimeEntry = async (
 	return makeEverhourRequest<void>(`/time/${options.timeId}`, ctx.key, {
 		method: 'DELETE',
 	});
+};
+
+export const requestTimesheetApproval = async (
+	ctx: any,
+	options: {
+		timesheetId: string;
+		comment?: string;
+		reviewer?: number;
+		sendNotification?: boolean;
+	},
+) => {
+	const { timesheetId, ...body } = options;
+	return makeEverhourRequest<EverhourTimesheetApproval>(
+		`/timesheets/${timesheetId}/approval`,
+		ctx.key,
+		{
+			method: 'POST',
+			body,
+		},
+	);
+};
+
+export const discardTimesheetApproval = async (
+	ctx: any,
+	options: {
+		timesheetId: string;
+		comment?: string;
+		reviewer?: number;
+		sendNotification?: boolean;
+	},
+) => {
+	const { timesheetId, ...body } = options;
+	return makeEverhourRequest<EverhourTimesheetApproval>(
+		`/timesheets/${timesheetId}/discard-approval`,
+		ctx.key,
+		{
+			method: 'PUT',
+			body,
+		},
+	);
 };
