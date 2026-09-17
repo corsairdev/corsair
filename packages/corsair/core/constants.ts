@@ -138,6 +138,7 @@ export const BaseProviders = [
 	'countdownapi',
 	'crowterminal',
 	'cursor',
+	'customerio',
 	'customgpt',
 	'dadataru',
 	'databricks',
@@ -428,6 +429,7 @@ export const ProviderDisplayNames = {
 	countdownapi: 'Countdown API',
 	crowterminal: 'CrowTerminal',
 	cursor: 'Cursor',
+	customerio: 'Customer.io',
 	customgpt: 'CustomGPT',
 	dadataru: 'Dadataru',
 	databricks: 'Databricks',
@@ -725,6 +727,7 @@ export type AllProviders =
 	| 'countdownapi'
 	| 'crowterminal'
 	| 'cursor'
+	| 'customerio'
 	| 'customgpt'
 	| 'dadataru'
 	| 'databricks'
