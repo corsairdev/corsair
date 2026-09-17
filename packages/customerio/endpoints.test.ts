@@ -15,7 +15,7 @@ import {
 	Transactional,
 } from './endpoints';
 import type { CustomerioEndpointInputs } from './endpoints/types';
-import type { CustomerioContext } from './index';
+import type { CustomerioContext, CustomerioPluginOptions } from './index';
 
 jest.mock('./client', () => ({
 	...jest.requireActual('./client'),
@@ -34,13 +34,20 @@ const mockTrack = jest.mocked(makeTrackRequest);
 const mockCdp = jest.mocked(makeCdpRequest);
 const mockLogEvent = jest.mocked(logEventFromContext);
 
-// Justification for these assertions (same pattern as the merged algolia
-// plugin): endpoint handlers only read ctx.key, ctx.options and ctx.keys at
-// runtime; the full CustomerioContext is assembled by the Corsair runtime
-// and cannot be built by hand without stubbing the entire framework. The
-// key-manager stubs resolve null so the default path exercises the shared
-// `key` fallback (legacy single-key setups).
-const nullKeys = () => ({
+// The key-manager stubs carry the exact accessor signatures (not bare
+// jest.Mock), so the doubles stay comparable to the real context and a
+// single `as` suffices — no `unknown` (same constraint as src: no `any`,
+// no `as Type` casts except framework-required `as const`). Handlers only
+// read ctx.key, ctx.options and ctx.keys at runtime; the full
+// CustomerioContext is assembled by the Corsair runtime and cannot be built
+// by hand without stubbing the entire framework. The stubs resolve null so
+// the default path exercises the shared `key` fallback (legacy single-key
+// setups).
+type CustomerioTestKeys = {
+	get_track_api_key: () => Promise<string | null>;
+	get_cdp_write_key: () => Promise<string | null>;
+};
+const nullKeys = (): CustomerioTestKeys => ({
 	get_track_api_key: jest.fn().mockResolvedValue(null),
 	get_cdp_write_key: jest.fn().mockResolvedValue(null),
 });
@@ -48,12 +55,12 @@ const ctx = {
 	key: 'customerio-test-key',
 	options: {},
 	keys: nullKeys(),
-} as unknown as CustomerioContext;
+} as CustomerioContext;
 const ctxEu = {
 	key: 'customerio-test-key',
 	options: { region: 'eu' },
 	keys: nullKeys(),
-} as unknown as CustomerioContext;
+} as CustomerioContext;
 
 beforeEach(() => {
 	mockApp.mockReset();
@@ -642,17 +649,19 @@ describe('per-family credentials', () => {
 	// Track `siteId:apiKey`, CDP write key). Track/CDP handlers resolve
 	// options first, then the stored per-family field, then the shared key.
 	const ctxWithKeys = (
-		overrides: Partial<CustomerioContext['options']>,
+		overrides: CustomerioPluginOptions,
 		stored: { track?: string | null; cdp?: string | null } = {},
-	) =>
-		({
+	) => {
+		const keys: CustomerioTestKeys = {
+			get_track_api_key: jest.fn().mockResolvedValue(stored.track ?? null),
+			get_cdp_write_key: jest.fn().mockResolvedValue(stored.cdp ?? null),
+		};
+		return {
 			key: 'customerio-test-key',
 			options: { ...overrides },
-			keys: {
-				get_track_api_key: jest.fn().mockResolvedValue(stored.track ?? null),
-				get_cdp_write_key: jest.fn().mockResolvedValue(stored.cdp ?? null),
-			},
-		}) as unknown as CustomerioContext;
+			keys,
+		} as CustomerioContext;
+	};
 
 	it('Track endpoints prefer the explicit trackApiKey option', async () => {
 		mockTrack.mockResolvedValue({});

@@ -308,17 +308,20 @@ describe('endpoint-to-transport composition', () => {
 	// endpoints.test.ts proves each wrapper picks the right transport
 	// function; the describes above prove each transport builds the right
 	// HTTP request. These three tests close the loop: wrapper to wire.
-	// Justification for the assertion below: the runtime context is
-	// assembled by the Corsair framework; handlers only read key, options
-	// and keys (same pattern as algolia's api.test.ts).
+	// The stubs carry the exact accessor signatures so a single `as`
+	// suffices — no `unknown` (same constraint as src and endpoints.test.ts).
+	const compositionKeys: {
+		get_track_api_key: () => Promise<string | null>;
+		get_cdp_write_key: () => Promise<string | null>;
+	} = {
+		get_track_api_key: jest.fn().mockResolvedValue('site-7:key-7'),
+		get_cdp_write_key: jest.fn().mockResolvedValue('write-7'),
+	};
 	const compositionCtx = {
 		key: 'app-key-1',
 		options: {},
-		keys: {
-			get_track_api_key: jest.fn().mockResolvedValue('site-7:key-7'),
-			get_cdp_write_key: jest.fn().mockResolvedValue('write-7'),
-		},
-	} as unknown as CustomerioContext;
+		keys: compositionKeys,
+	} as CustomerioContext;
 
 	it('an App endpoint sends its exact path with Bearer auth to the App base', async () => {
 		mockRequest.mockResolvedValue({ segments: [] });
