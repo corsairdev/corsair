@@ -101,6 +101,7 @@ export async function makeStartonRequest<T>(
 		url: endpoint,
 		query,
 		body: hasBody ? body : undefined,
+		redirect: 'error',
 		mediaType: hasBody ? 'application/json; charset=utf-8' : undefined,
 	};
 

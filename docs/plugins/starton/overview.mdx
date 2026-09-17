@@ -93,7 +93,12 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.starton.api.smartContract.read({});
+await tenant.starton.api.smartContract.read({
+  network: 'polygon-mumbai',
+  address: '0x1111111111111111111111111111111111111111',
+  functionName: 'balanceOf',
+  params: ['0x2222222222222222222222222222222222222222']
+});
 ```
 
 
@@ -101,7 +106,13 @@ await tenant.starton.api.smartContract.read({});
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.starton.api.smartContract.call({});
+await tenant.starton.api.smartContract.call({
+  network: 'polygon-mumbai',
+  address: '0x1111111111111111111111111111111111111111',
+  functionName: 'transfer',
+  params: ['0x2222222222222222222222222222222222222222', '1000000000000000000'],
+  signerWallet: '0x3333333333333333333333333333333333333333'
+});
 ```
 
 

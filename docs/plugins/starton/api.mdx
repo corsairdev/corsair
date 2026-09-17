@@ -20,7 +20,13 @@ Execute a state-changing function on a deployed smart contract
 **Risk:** `write`
 
 ```ts
-await corsair.starton.api.smartContract.call({});
+await corsair.starton.api.smartContract.call({
+  network: 'polygon-mumbai',
+  address: '0x1111111111111111111111111111111111111111',
+  functionName: 'transfer',
+  params: ['0x2222222222222222222222222222222222222222', '1000000000000000000'],
+  signerWallet: '0x3333333333333333333333333333333333333333'
+});
 ```
 
 **Input**
@@ -136,7 +142,13 @@ Deploy a smart contract from a Starton-audited template (e.g. ERC20, ERC721)
 **Risk:** `write`
 
 ```ts
-await corsair.starton.api.smartContract.deployFromTemplate({});
+await corsair.starton.api.smartContract.deployFromTemplate({
+  network: 'polygon-mumbai',
+  signerWallet: '0x3333333333333333333333333333333333333333',
+  templateId: 'ERC20_META_TRANSACTION',
+  name: 'MyToken',
+  params: ['MyToken', 'MTK', '1000000000000000000000']
+});
 ```
 
 **Input**
@@ -308,7 +320,12 @@ Call a read-only function on a deployed smart contract without broadcasting a tr
 **Risk:** `read`
 
 ```ts
-await corsair.starton.api.smartContract.read({});
+await corsair.starton.api.smartContract.read({
+  network: 'polygon-mumbai',
+  address: '0x1111111111111111111111111111111111111111',
+  functionName: 'balanceOf',
+  params: ['0x2222222222222222222222222222222222222222']
+});
 ```
 
 **Input**
@@ -379,7 +396,9 @@ Retrieve a blockchain transaction by its Starton id
 **Risk:** `read`
 
 ```ts
-await corsair.starton.api.transaction.get({});
+await corsair.starton.api.transaction.get({
+  id: 'tx_1234567890'
+});
 ```
 
 **Input**
@@ -464,7 +483,9 @@ Create a new KMS-managed blockchain wallet for the project
 **Risk:** `write`
 
 ```ts
-await corsair.starton.api.wallet.create({});
+await corsair.starton.api.wallet.create({
+  kmsId: 'kms_1234567890'
+});
 ```
 
 **Input**
@@ -582,4 +603,3 @@ await corsair.starton.api.wallet.list({});
 
 
 ---
-

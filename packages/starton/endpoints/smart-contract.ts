@@ -23,6 +23,8 @@ export const deployFromTemplate: StartonEndpoints['smartContractDeployFromTempla
 		// keys so only DeployFromTemplateDto fields reach Starton.
 		const { simulate, ...body } =
 			StartonEndpointInputSchemas.smartContractDeployFromTemplate.parse(input);
+		// Keep transport responses unknown at the boundary; parse below is the
+		// runtime contract that validates and narrows to DeployFromTemplateResponse.
 		const response = await makeStartonRequest<unknown>(
 			'v3/smart-contract/from-template',
 			ctx.key,
@@ -61,6 +63,8 @@ export const call: StartonEndpoints['smartContractCall'] = async (
 ) => {
 	const { network, address, simulate, ...body } =
 		StartonEndpointInputSchemas.smartContractCall.parse(input);
+	// Keep transport responses unknown at the boundary; parse below is the
+	// runtime contract that validates and narrows to StartonTransaction.
 	const response = await makeStartonRequest<unknown>(
 		`v3/smart-contract/${encodeStartonPathSegment(network)}/${encodeStartonPathSegment(address)}/call`,
 		ctx.key,
@@ -91,6 +95,8 @@ export const read: StartonEndpoints['smartContractRead'] = async (
 ) => {
 	const { network, address, ...body } =
 		StartonEndpointInputSchemas.smartContractRead.parse(input);
+	// Keep transport responses unknown at the boundary; parse below is the
+	// runtime contract that validates and narrows to ReadSmartContractResponse.
 	const response = await makeStartonRequest<unknown>(
 		`v3/smart-contract/${encodeStartonPathSegment(network)}/${encodeStartonPathSegment(address)}/read`,
 		ctx.key,
