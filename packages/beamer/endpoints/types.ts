@@ -1,8 +1,15 @@
 import { z } from 'zod';
 
+const IntegerFromStringOrNumber = z
+	.union([z.number(), z.string().regex(/^-?\d+$/)])
+	.transform((value) => (typeof value === 'string' ? Number(value) : value))
+	.pipe(z.number().int());
+
 export const PostsGetInputSchema = z.object({
-	page: z.coerce.number().int().positive().optional(),
-	maxResults: z.coerce.number().int().positive().max(10).optional(),
+	page: IntegerFromStringOrNumber.pipe(z.number().int().positive()).optional(),
+	maxResults: IntegerFromStringOrNumber.pipe(
+		z.number().int().positive().max(10),
+	).optional(),
 });
 
 export type PostsGetInput = z.infer<typeof PostsGetInputSchema>;
@@ -30,7 +37,7 @@ const BeamerTranslationSchema = z
 
 const BeamerPostSchema = z
 	.object({
-		id: z.coerce.number().int(),
+		id: IntegerFromStringOrNumber,
 		date: z.string().optional(),
 		dueDate: z.string().optional(),
 		published: BeamerBooleanSchema.optional(),
@@ -46,13 +53,13 @@ const BeamerPostSchema = z
 		editionDate: z.string().optional(),
 		feedbackEnabled: BeamerBooleanSchema.optional(),
 		reactionsEnabled: BeamerBooleanSchema.optional(),
-		views: z.coerce.number().int().optional(),
-		uniqueViews: z.coerce.number().int().optional(),
-		clicks: z.coerce.number().int().optional(),
-		feedbacks: z.coerce.number().int().optional(),
-		positiveReactions: z.coerce.number().int().optional(),
-		neutralReactions: z.coerce.number().int().optional(),
-		negativeReactions: z.coerce.number().int().optional(),
+		views: IntegerFromStringOrNumber.optional(),
+		uniqueViews: IntegerFromStringOrNumber.optional(),
+		clicks: IntegerFromStringOrNumber.optional(),
+		feedbacks: IntegerFromStringOrNumber.optional(),
+		positiveReactions: IntegerFromStringOrNumber.optional(),
+		neutralReactions: IntegerFromStringOrNumber.optional(),
+		negativeReactions: IntegerFromStringOrNumber.optional(),
 	})
 	.loose();
 
