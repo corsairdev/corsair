@@ -189,9 +189,11 @@ describe('Carbone endpoints execution', () => {
 		});
 
 		it('downloadTemplate performs authenticated request and returns template content', async () => {
-			mockRequest.mockResolvedValueOnce(
-				'PK\x03\x04mockTemplateFileStreamContent',
-			);
+			const expectedBuffer = Buffer.from([0x50, 0x4b, 0x03, 0x04, 0xff, 0x00]);
+			const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
+				ok: true,
+				arrayBuffer: async () => expectedBuffer,
+			} as unknown as Response);
 
 			const ctx = createMockContext();
 			const res = await TemplatesEndpoints.downloadTemplate(ctx, {
@@ -199,18 +201,20 @@ describe('Carbone endpoints execution', () => {
 			});
 
 			expect(res.templateId).toBe('tmpl_12345');
-			expect(res.content).toBe('PK\x03\x04mockTemplateFileStreamContent');
+			expect(res.content).toBe(expectedBuffer.toString('base64'));
 			expect(res.success).toBe(true);
-			expect(mockRequest).toHaveBeenCalledWith(
-				expect.objectContaining({
-					BASE: 'https://api.carbone.io',
-					TOKEN: 'test-carbone-key',
-				}),
+			expect(fetchMock).toHaveBeenCalledWith(
+				'https://api.carbone.io/template/tmpl_12345',
 				expect.objectContaining({
 					method: 'GET',
-					url: '/template/tmpl_12345',
+					headers: expect.objectContaining({
+						Authorization: 'Bearer test-carbone-key',
+						'carbone-version': '5',
+					}),
 				}),
 			);
+
+			fetchMock.mockRestore();
 		});
 
 		it('updateTemplate updates metadata and syncs to local database', async () => {

@@ -140,10 +140,10 @@ describe('Carbone endpoint schemas', () => {
 
 		const output = CarboneEndpointOutputSchemas.downloadTemplate.parse({
 			templateId: 'tmpl_123',
-			content: '<html>template</html>',
+			content: 'UEsDBA==',
 			success: true,
 		});
-		expect(output.content).toBe('<html>template</html>');
+		expect(output.content).toBe('UEsDBA==');
 		expect(DownloadTemplateOutputSchema.parse(output).success).toBe(true);
 	});
 

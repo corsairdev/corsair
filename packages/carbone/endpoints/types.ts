@@ -165,7 +165,7 @@ export const DownloadTemplateOutputSchema = z
 		templateId: z.string().describe('ID of the downloaded template'),
 		content: z
 			.string()
-			.describe('Raw file content or stream of the retrieved template'),
+			.describe('Base64-encoded binary content of the retrieved template file'),
 		success: z
 			.boolean()
 			.describe('Indicates if template download was successful'),

@@ -118,10 +118,11 @@ export const downloadTemplate: CarboneEndpoints['downloadTemplate'] = async (
 	input,
 ) => {
 	const templateId = encodeURIComponent(input.templateId);
-	const content = await makeCarboneRequest<string>(`/template/${templateId}`, {
+	const content = await makeCarboneRequest<Buffer>(`/template/${templateId}`, {
 		apiKey: ctx.key,
 		version: ctx.options?.version,
 		method: 'GET',
+		responseType: 'binary',
 	});
 
 	await logEventFromContext(
@@ -133,7 +134,7 @@ export const downloadTemplate: CarboneEndpoints['downloadTemplate'] = async (
 
 	return {
 		templateId: input.templateId,
-		content: typeof content === 'string' ? content : JSON.stringify(content),
+		content: content.toString('base64'),
 		success: true,
 	} satisfies DownloadTemplateOutput;
 };

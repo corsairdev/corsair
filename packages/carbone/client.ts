@@ -34,6 +34,7 @@ export type CarboneRequestOptions = {
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 	headers?: Record<string, string>;
+	responseType?: 'json' | 'binary';
 };
 
 function buildConfig(
@@ -78,6 +79,7 @@ export async function makeCarboneRequest<T>(
 		body,
 		query = {},
 		headers = {},
+		responseType = 'json',
 	} = options;
 	const isWrite =
 		method === 'POST' ||
@@ -89,6 +91,36 @@ export async function makeCarboneRequest<T>(
 		...(isWrite && body ? { 'Content-Type': 'application/json' } : {}),
 		...headers,
 	});
+
+	if (responseType === 'binary') {
+		const requestHeaders: Record<string, string> = {
+			'carbone-version': version,
+			...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+			...headers,
+		};
+
+		const url = new URL(endpoint, `${CARBONE_API_BASE}/`);
+		for (const [key, value] of Object.entries(query)) {
+			if (value !== undefined) {
+				url.searchParams.set(key, String(value));
+			}
+		}
+
+		const response = await fetch(url.toString(), {
+			method,
+			headers: requestHeaders,
+			body: isWrite && body ? JSON.stringify(body) : undefined,
+		});
+
+		if (!response.ok) {
+			throw new CarboneAPIError(
+				response.statusText || response.status.toString(),
+				response.status,
+			);
+		}
+
+		return Buffer.from(await response.arrayBuffer()) as T;
+	}
 
 	const requestOptions: ApiRequestOptions = {
 		method,
