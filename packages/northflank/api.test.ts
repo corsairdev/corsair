@@ -59,7 +59,8 @@ describeLive('Northflank live API (NORTHFLANK_API_KEY)', () => {
 
 	it('lists addon types', async () => {
 		const res = await northflankEndpointsNested.addonTypes.list(ctx, {});
-		expect(res.data).toBeDefined();
+		expect(res.data.addonTypes.length).toBeGreaterThan(0);
+		expect(res.data.addonTypes[0]?.type).toBeDefined();
 	});
 
 	it('lists cloud provider node types', async () => {

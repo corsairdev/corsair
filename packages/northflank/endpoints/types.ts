@@ -496,16 +496,32 @@ export type RegionsListOutput = z.infer<typeof RegionsListOutputSchema>;
 
 // ============================================================================
 // Addon types — GET /v1/addon-types ("List available addon types").
+// Envelope live-verified 2026-09-17: { data: { addonTypes: [
+// { type, name, description, features, resources, versions, majors } ] } }.
+// `type` is the identifier callers need — it must be preserved, never
+// stripped, by this schema.
 // Path corroborated by the Jentic Northflank OpenAPI index and the
 // "Get Addon Types endpoint" cross-reference in the create-addon docs.
-// No dedicated reference page exists, so the response envelope below is
-// intentionally tolerant: verify `data` shape against a live key.
 // ============================================================================
 
-export const AddonTypeSchema = z.object({
-	id: z.string().optional(),
-	name: z.string().optional(),
-});
+export const AddonTypeSchema = z
+	.object({
+		// `type` is the identifier callers need — required so a missing
+		// identifier fails loudly instead of being silently stripped.
+		// Field shapes live-verified 2026-09-17 across all 8 catalog items:
+		// type/name/description are strings; versions/majors are string
+		// arrays; features/resources are objects (resources absent on one
+		// item, hence optional).
+		type: z.string(),
+		name: z.string(),
+		description: z.string().optional(),
+		features: z.object({}).passthrough().optional(),
+		resources: z.object({}).passthrough().optional(),
+		versions: z.array(z.string()).optional(),
+		majors: z.array(z.string()).optional(),
+	})
+	// Preserve any additional provider fields instead of stripping them.
+	.passthrough();
 
 export type AddonType = z.infer<typeof AddonTypeSchema>;
 
@@ -514,13 +530,9 @@ export const AddonTypesListInputSchema = PaginationInputSchema.optional();
 export type AddonTypesListInput = z.infer<typeof AddonTypesListInputSchema>;
 
 export const AddonTypesListOutputSchema = z.object({
-	data: z
-		.object({
-			addonTypes: z.array(AddonTypeSchema).optional(),
-			addons: z.array(AddonTypeSchema).optional(),
-			types: z.array(AddonTypeSchema).optional(),
-		})
-		.passthrough(),
+	data: z.object({
+		addonTypes: z.array(AddonTypeSchema),
+	}),
 	pagination: PaginationSchema.optional(),
 });
 

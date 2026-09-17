@@ -574,7 +574,17 @@ describe('Northflank plugin structure and endpoints', () => {
 
 	it('calls addonTypes.list', async () => {
 		mockRequest.mockResolvedValueOnce({
-			data: { addonTypes: [{ type: 'postgres', name: 'Postgres' }] },
+			data: {
+				addonTypes: [
+					{
+						type: 'postgres',
+						name: 'Postgres',
+						description: 'PostgreSQL database',
+						versions: ['14.1'],
+						majors: ['14'],
+					},
+				],
+			},
 		});
 		const res = await northflankEndpointsNested.addonTypes.list(mockCtx, {});
 		expect(mockRequest).toHaveBeenCalledWith(
@@ -582,6 +592,10 @@ describe('Northflank plugin structure and endpoints', () => {
 			expect.objectContaining({ method: 'GET', url: 'addon-types' }),
 		);
 		expect(res.data.addonTypes).toHaveLength(1);
+		expect(res.data.addonTypes[0]?.type).toBe('postgres');
+		expect(res.data.addonTypes[0]?.name).toBe('Postgres');
+		expect(res.data.addonTypes[0]?.versions).toEqual(['14.1']);
+		expect(res.data.addonTypes[0]?.majors).toEqual(['14']);
 	});
 
 	it('calls cloudProviders.listNodeTypes with provider filters', async () => {
