@@ -70,7 +70,7 @@ function sleep(ms: number): Promise<void> {
 const SUPADATA_API_BASE = 'https://api.supadata.ai/v1';
 const REQUEST_TIMEOUT_MS = 20_000;
 
-export async function makeSupadataRequest<T>(
+export async function makeSupadataRequest(
 	endpoint: string,
 	apiKey: string,
 	options: {
@@ -78,7 +78,7 @@ export async function makeSupadataRequest<T>(
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | string[] | undefined>;
 	} = {},
-): Promise<T> {
+): Promise<unknown> {
 	const { method = 'GET', body, query } = options;
 
 	const url = new URL(`${SUPADATA_API_BASE}/${endpoint.replace(/^\//, '')}`);
@@ -173,12 +173,12 @@ export async function makeSupadataRequest<T>(
 
 		const ct = res.headers.get('content-type') ?? '';
 		if (res.status === 204 || !ct) {
-			return undefined as T;
+			return undefined;
 		}
 		if (ct.includes('application/json')) {
-			return (await res.json()) as T;
+			return await res.json();
 		}
-		return (await res.text()) as unknown as T;
+		return await res.text();
 	}
 
 	throw new Error('Supadata: exceeded maximum retry attempts');

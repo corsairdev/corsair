@@ -12,7 +12,7 @@ export const getTranscript: SupadataEndpoints['transcriptGet'] = async (
 ) => {
 	const parsed = SupadataEndpointInputSchemas.transcriptGet.parse(input);
 
-	const response = await makeSupadataRequest<unknown>('transcript', ctx.key, {
+	const response = await makeSupadataRequest('transcript', ctx.key, {
 		method: 'GET',
 		query: {
 			url: parsed.url,
@@ -46,7 +46,7 @@ export const getTranscriptJob: SupadataEndpoints['transcriptGetJob'] = async (
 ) => {
 	const parsed = SupadataEndpointInputSchemas.transcriptGetJob.parse(input);
 
-	const response = await makeSupadataRequest<unknown>(
+	const response = await makeSupadataRequest(
 		`transcript/${encodeURIComponent(parsed.jobId)}`,
 		ctx.key,
 		{ method: 'GET' },
@@ -71,7 +71,7 @@ export const getMetadata: SupadataEndpoints['metadataGet'] = async (
 ) => {
 	const parsed = SupadataEndpointInputSchemas.metadataGet.parse(input);
 
-	const response = await makeSupadataRequest<unknown>('metadata', ctx.key, {
+	const response = await makeSupadataRequest('metadata', ctx.key, {
 		method: 'GET',
 		query: { url: parsed.url },
 	});
@@ -92,7 +92,7 @@ export const getMetadata: SupadataEndpoints['metadataGet'] = async (
 export const scrapeWeb: SupadataEndpoints['webScrape'] = async (ctx, input) => {
 	const parsed = SupadataEndpointInputSchemas.webScrape.parse(input);
 
-	const response = await makeSupadataRequest<unknown>('web/scrape', ctx.key, {
+	const response = await makeSupadataRequest('web/scrape', ctx.key, {
 		method: 'GET',
 		query: {
 			url: parsed.url,
@@ -120,7 +120,7 @@ export const scrapeWeb: SupadataEndpoints['webScrape'] = async (ctx, input) => {
 export const mapWeb: SupadataEndpoints['webMap'] = async (ctx, input) => {
 	const parsed = SupadataEndpointInputSchemas.webMap.parse(input);
 
-	const response = await makeSupadataRequest<unknown>('web/map', ctx.key, {
+	const response = await makeSupadataRequest('web/map', ctx.key, {
 		method: 'GET',
 		query: {
 			url: parsed.url,
@@ -147,23 +147,19 @@ export const searchYoutube: SupadataEndpoints['youtubeSearch'] = async (
 ) => {
 	const parsed = SupadataEndpointInputSchemas.youtubeSearch.parse(input);
 
-	const response = await makeSupadataRequest<unknown>(
-		'youtube/search',
-		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				query: parsed.query,
-				type: parsed.type,
-				limit: parsed.limit,
-				uploadDate: parsed.uploadDate,
-				sortBy: parsed.sortBy,
-				duration: parsed.duration,
-				features: parsed.features,
-				nextPageToken: parsed.nextPageToken,
-			},
+	const response = await makeSupadataRequest('youtube/search', ctx.key, {
+		method: 'GET',
+		query: {
+			query: parsed.query,
+			type: parsed.type,
+			limit: parsed.limit,
+			uploadDate: parsed.uploadDate,
+			sortBy: parsed.sortBy,
+			duration: parsed.duration,
+			features: parsed.features,
+			nextPageToken: parsed.nextPageToken,
 		},
-	);
+	});
 
 	const result = SupadataEndpointOutputSchemas.youtubeSearch.parse(response);
 
