@@ -196,6 +196,62 @@ describe('Chatwork Webhook Handlers', () => {
 		expect(response.data).toEqual(payload);
 	});
 
+	it('preserves existing message fields on webhook upsert', async () => {
+		const payload: MessageUpdatedWebhookPayload = {
+			webhook_setting_id: 'setting-4',
+			webhook_event_type: 'message_updated',
+			webhook_event_time: 1600000030,
+			webhook_event: {
+				message_id: 'msg-merge',
+				room_id: 101,
+				account_id: 202,
+				body: 'Updated body',
+				send_time: 1600000000,
+				update_time: 1600000030,
+			},
+		};
+
+		const rawBody = JSON.stringify(payload);
+		const sig = computeSignature(rawBody, secretBase64);
+		const findByEntityId = jest.fn().mockResolvedValue({
+			data: {
+				message_id: 'msg-merge',
+				account: {
+					account_id: 202,
+					name: 'Existing Sender',
+					avatar_image_url: 'https://example.com/avatar.png',
+				},
+			},
+		});
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const dbCtx = {
+			...ctx,
+			db: {
+				messages: { findByEntityId, upsertByEntityId },
+			},
+		} as unknown as ChatworkContext;
+
+		const req: WebhookRequest<MessageUpdatedWebhookPayload> = {
+			payload,
+			headers: { 'x-chatworkwebhooksignature': sig },
+			rawBody,
+		};
+
+		const response = await MessagesWebhooks.updated.handler(dbCtx, req);
+
+		expect(response.success).toBe(true);
+		expect(upsertByEntityId).toHaveBeenCalledWith(
+			'msg-merge',
+			expect.objectContaining({
+				account: {
+					account_id: 202,
+					name: 'Existing Sender',
+					avatar_image_url: 'https://example.com/avatar.png',
+				},
+			}),
+		);
+	});
+
 	it('handles mention_to_me webhook successfully', async () => {
 		const payload: MentionToMeWebhookPayload = {
 			webhook_setting_id: 'setting-3',
