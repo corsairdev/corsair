@@ -50,7 +50,7 @@ export type DictionaryEntryHeadword = z.infer<
 
 export const DictionaryEntrySchema = z
 	.object({
-		meta: DictionaryEntryMetaSchema.optional(),
+		meta: DictionaryEntryMetaSchema,
 		hwi: DictionaryEntryHeadwordSchema.optional(),
 		fl: z.string().optional(),
 		shortdef: z.array(z.string()).optional(),
