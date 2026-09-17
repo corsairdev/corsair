@@ -83,6 +83,15 @@ describe('Northflank errorHandlers', () => {
 		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
 	});
 
+	it('ignores auth keywords when an HTTP status is present', async () => {
+		const serverAuthWords = authError(500, 'token expired during request');
+		expect(errorHandlers.AUTH_ERROR.match(serverAuthWords)).toBe(false);
+		expect(errorHandlers.SERVER_ERROR.match(serverAuthWords)).toBe(true);
+
+		const badRequestAuthWords = authError(400, 'Unauthorized');
+		expect(errorHandlers.AUTH_ERROR.match(badRequestAuthWords)).toBe(false);
+	});
+
 	it('matches 404 not found errors without retry', async () => {
 		const error = notFoundError();
 		expect(errorHandlers.NOT_FOUND_ERROR.match(error)).toBe(true);

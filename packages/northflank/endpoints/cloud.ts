@@ -45,13 +45,14 @@ export const listNodeTypes: NorthflankEndpoint<
 		{ method: 'GET', query },
 	);
 
+	const parsedNodeTypes = CloudNodeTypesListOutputSchema.parse(res);
 	await logEventFromContext(
 		ctx,
 		'northflank.cloudProviders.listNodeTypes',
 		{},
 		'completed',
 	);
-	return CloudNodeTypesListOutputSchema.parse(res);
+	return parsedNodeTypes;
 };
 
 // GET /v1/cloud-providers/regions
@@ -74,13 +75,14 @@ export const listRegions: NorthflankEndpoint<
 		{ method: 'GET', query },
 	);
 
+	const parsedRegions = CloudRegionsListOutputSchema.parse(res);
 	await logEventFromContext(
 		ctx,
 		'northflank.cloudProviders.listRegions',
 		{},
 		'completed',
 	);
-	return CloudRegionsListOutputSchema.parse(res);
+	return parsedRegions;
 };
 
 export const CloudProvidersEndpoints = {

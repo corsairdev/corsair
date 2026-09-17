@@ -33,8 +33,9 @@ export const list: NorthflankEndpoint<
 		{ method: 'GET', query },
 	);
 
+	const parsedAddonTypes = AddonTypesListOutputSchema.parse(res);
 	await logEventFromContext(ctx, 'northflank.addonTypes.list', {}, 'completed');
-	return AddonTypesListOutputSchema.parse(res);
+	return parsedAddonTypes;
 };
 
 export const AddonTypesEndpoints = {

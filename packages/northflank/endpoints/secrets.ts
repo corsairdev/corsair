@@ -67,13 +67,14 @@ export const list: NorthflankEndpoint<
 		{ method: 'GET', query: toPaginationQuery(validatedInput) },
 	);
 
+	const parsedSecrets = SecretsListOutputSchema.parse(res);
 	await logEventFromContext(
 		ctx,
 		'northflank.secrets.list',
 		{ projectId: validatedInput.projectId },
 		'completed',
 	);
-	return SecretsListOutputSchema.parse(res);
+	return parsedSecrets;
 };
 
 export const get: NorthflankEndpoint<

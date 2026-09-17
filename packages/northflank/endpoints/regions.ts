@@ -26,8 +26,9 @@ export const list: NorthflankEndpoint<
 		},
 	);
 
+	const parsedRegions = RegionsListOutputSchema.parse(res);
 	await logEventFromContext(ctx, 'northflank.regions.list', {}, 'completed');
-	return RegionsListOutputSchema.parse(res);
+	return parsedRegions;
 };
 
 export const RegionsEndpoints = {

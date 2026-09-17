@@ -66,8 +66,9 @@ export const list: NorthflankEndpoint<
 		},
 	);
 
+	const parsedProjects = ProjectsListOutputSchema.parse(res);
 	await logEventFromContext(ctx, 'northflank.projects.list', {}, 'completed');
-	return ProjectsListOutputSchema.parse(res);
+	return parsedProjects;
 };
 
 export const get: NorthflankEndpoint<

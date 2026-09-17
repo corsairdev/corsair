@@ -46,7 +46,7 @@ export const errorHandlers = {
 	AUTH_ERROR: {
 		match: (error: Error, _context?: ErrorContext) => {
 			const status = getStatus(error);
-			if (status === 401 || status === 403) return true;
+			if (status !== undefined) return status === 401 || status === 403;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('unauthorized') ||

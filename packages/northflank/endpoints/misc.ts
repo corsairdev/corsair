@@ -25,8 +25,9 @@ export const getDnsId: NorthflankEndpoint<
 		{ method: 'GET' },
 	);
 
+	const parsedDnsId = MiscGetDnsIdOutputSchema.parse(res);
 	await logEventFromContext(ctx, 'northflank.misc.getDnsId', {}, 'completed');
-	return MiscGetDnsIdOutputSchema.parse(res);
+	return parsedDnsId;
 };
 
 export const MiscEndpoints = {

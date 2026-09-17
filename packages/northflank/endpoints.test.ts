@@ -186,6 +186,7 @@ describe('Northflank plugin structure and endpoints', () => {
 		await expect(
 			northflankEndpointsNested.projects.list(mockCtx, {}),
 		).rejects.toThrow(ZodError);
+		expect(mockLogEvent).not.toHaveBeenCalled();
 	});
 
 	it('calls projects.list with pagination query', async () => {

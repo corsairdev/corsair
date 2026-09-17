@@ -30,8 +30,9 @@ export const list: NorthflankEndpoint<PlansListInput, PlansListOutput> = async (
 		query,
 	});
 
+	const parsedPlans = PlansListOutputSchema.parse(res);
 	await logEventFromContext(ctx, 'northflank.plans.list', {}, 'completed');
-	return PlansListOutputSchema.parse(res);
+	return parsedPlans;
 };
 
 export const PlansEndpoints = {

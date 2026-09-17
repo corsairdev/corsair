@@ -30,13 +30,14 @@ export const list: NorthflankEndpoint<
 		{ method: 'GET', query },
 	);
 
+	const parsedServices = ServicesListOutputSchema.parse(res);
 	await logEventFromContext(
 		ctx,
 		'northflank.services.list',
 		{ projectId: validatedInput.projectId },
 		'completed',
 	);
-	return ServicesListOutputSchema.parse(res);
+	return parsedServices;
 };
 
 export const ServicesEndpoints = {
