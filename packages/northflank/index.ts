@@ -1,5 +1,4 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
 	CorsairErrorHandler,
 	CorsairPlugin,
@@ -46,7 +45,7 @@ export type NorthflankBoundEndpoints = BindEndpoints<
 
 export type NorthflankEndpoints = typeof northflankEndpointsNested;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType: PickAuth<'api_key'> = 'api_key';
 
 export const northflankAuthConfig = {
 	api_key: {},
@@ -68,13 +67,16 @@ export type InternalNorthflankPlugin =
 export type ExternalNorthflankPlugin<T extends NorthflankPluginOptions> =
 	BaseNorthflankPlugin<T>;
 
+export function northflank(): ExternalNorthflankPlugin<NorthflankPluginOptions>;
 export function northflank<const T extends NorthflankPluginOptions>(
-	incomingOptions: NorthflankPluginOptions & T = {} as NorthflankPluginOptions &
-		T,
-): ExternalNorthflankPlugin<T> {
-	const options = {
+	incomingOptions: NorthflankPluginOptions & T,
+): ExternalNorthflankPlugin<T>;
+export function northflank(
+	incomingOptions: NorthflankPluginOptions = {},
+): ExternalNorthflankPlugin<NorthflankPluginOptions> {
+	const options: NorthflankPluginOptions = {
+		authType: defaultAuthType,
 		...incomingOptions,
-		authType: incomingOptions.authType ?? defaultAuthType,
 	};
 	return {
 		id: 'northflank',
@@ -92,13 +94,13 @@ export function northflank<const T extends NorthflankPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: NorthflankKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
+			if (source === 'endpoint' && options.key !== undefined) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				if (!res) {
+				if (res === null || res === undefined) {
 					console.error(
 						'[NORTHFLANK] API key missing — connect Northflank or pass key in plugin options.',
 					);

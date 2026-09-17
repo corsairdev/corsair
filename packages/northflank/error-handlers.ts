@@ -2,20 +2,25 @@ import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import type { NorthflankAPIError } from './client';
 
 function getStatus(error: Error): number | undefined {
-	return (error as Partial<NorthflankAPIError>).status;
+	// NorthflankAPIError exposes status as an optional field. View the error
+	// through an intersection instead of casting or narrowing.
+	const holder: Error & Partial<NorthflankAPIError> = error;
+	return holder.status;
 }
 
-const WRITE_OPERATIONS = new Set([
+const WRITE_OPERATIONS: ReadonlySet<string> = new Set([
 	'projects.create',
+	'projects.createOrUpdate',
 	'projects.update',
-	'services.createCombined',
-	'services.updateCombined',
+	'projects.delete',
 	'secrets.create',
+	'secrets.createOrUpdate',
+	'secrets.patch',
 	'secrets.update',
 ]);
 
 function isWriteOperation(operation?: string): boolean {
-	if (!operation) return false;
+	if (operation === undefined) return false;
 	return WRITE_OPERATIONS.has(operation);
 }
 
@@ -23,7 +28,10 @@ export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error, _context?: ErrorContext) => getStatus(error) === 429,
 		handler: async (error: Error, context?: ErrorContext) => {
-			if (context?.operation && isWriteOperation(context.operation)) {
+			if (
+				context?.operation !== undefined &&
+				isWriteOperation(context.operation)
+			) {
 				console.warn(
 					`[NORTHFLANK:${context.operation}] Rate limit encountered on write operation — not retried to prevent duplicate resources: ${error.message}`,
 				);
@@ -31,7 +39,7 @@ export const errorHandlers = {
 			}
 			return {
 				maxRetries: 3,
-				retryStrategy: 'exponential_backoff' as const,
+				retryStrategy: 'exponential_backoff',
 			};
 		},
 	},
@@ -66,7 +74,10 @@ export const errorHandlers = {
 			return status !== undefined && status >= 500;
 		},
 		handler: async (error: Error, context?: ErrorContext) => {
-			if (context?.operation && isWriteOperation(context.operation)) {
+			if (
+				context?.operation !== undefined &&
+				isWriteOperation(context.operation)
+			) {
 				console.warn(
 					`[NORTHFLANK:${context.operation}] Server error on write operation — not retried to prevent duplicate resources: ${error.message}`,
 				);
@@ -74,7 +85,7 @@ export const errorHandlers = {
 			}
 			return {
 				maxRetries: 2,
-				retryStrategy: 'exponential_backoff' as const,
+				retryStrategy: 'exponential_backoff',
 			};
 		},
 	},

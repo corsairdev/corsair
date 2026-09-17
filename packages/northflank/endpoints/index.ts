@@ -1,5 +1,8 @@
 import type { RequiredPluginEndpointMeta } from 'corsair/core';
-import { EnvironmentsEndpoints } from './environments';
+import { AddonTypesEndpoints } from './addons';
+import { CloudProvidersEndpoints } from './cloud';
+import { MiscEndpoints } from './misc';
+import { PipelinesEndpoints } from './pipelines';
 import { PlansEndpoints } from './plans';
 import { ProjectsEndpoints } from './projects';
 import { RegionsEndpoints } from './regions';
@@ -13,10 +16,13 @@ import {
 export const northflankEndpointsNested = {
 	projects: ProjectsEndpoints,
 	services: ServicesEndpoints,
-	environments: EnvironmentsEndpoints,
 	secrets: SecretsEndpoints,
+	pipelines: PipelinesEndpoints,
 	plans: PlansEndpoints,
 	regions: RegionsEndpoints,
+	addonTypes: AddonTypesEndpoints,
+	cloudProviders: CloudProvidersEndpoints,
+	misc: MiscEndpoints,
 } as const;
 
 export const northflankEndpointMeta = {
@@ -32,45 +38,53 @@ export const northflankEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Create a new Northflank project',
 	},
+	'projects.createOrUpdate': {
+		riskLevel: 'write',
+		description: 'Create or update a Northflank project (upsert)',
+	},
 	'projects.update': {
 		riskLevel: 'write',
 		description: 'Update an existing Northflank project',
+	},
+	'projects.delete': {
+		riskLevel: 'write',
+		description: 'Delete a Northflank project',
 	},
 	'services.list': {
 		riskLevel: 'read',
 		description: 'List services in a Northflank project',
 	},
-	'services.get': {
-		riskLevel: 'read',
-		description: 'Get details of a Northflank service',
-	},
-	'services.createCombined': {
-		riskLevel: 'write',
-		description: 'Create a new combined service in a project',
-	},
-	'services.updateCombined': {
-		riskLevel: 'write',
-		description: 'Update an existing combined service in a project',
-	},
-	'environments.listPreviews': {
-		riskLevel: 'read',
-		description: 'List preview environments for a preview blueprint',
-	},
 	'secrets.list': {
 		riskLevel: 'read',
-		description: 'List secrets in a Northflank project',
+		description: 'List secret groups in a Northflank project',
 	},
 	'secrets.get': {
 		riskLevel: 'read',
-		description: 'Get details of a Northflank secret',
+		description: 'Get details of a Northflank secret group',
 	},
 	'secrets.create': {
 		riskLevel: 'write',
-		description: 'Create a new Northflank secret',
+		description: 'Create a new secret group in a Northflank project',
+	},
+	'secrets.createOrUpdate': {
+		riskLevel: 'write',
+		description: 'Create or update a secret group in a Northflank project',
+	},
+	'secrets.patch': {
+		riskLevel: 'write',
+		description: 'Partially update a secret group in a Northflank project',
 	},
 	'secrets.update': {
 		riskLevel: 'write',
-		description: 'Update an existing Northflank secret',
+		description: 'Update a secret group in a Northflank project',
+	},
+	'secrets.getDetails': {
+		riskLevel: 'read',
+		description: 'Get a secret group with linked addon details',
+	},
+	'pipelines.list': {
+		riskLevel: 'read',
+		description: 'List pipelines in a Northflank project',
 	},
 	'plans.list': {
 		riskLevel: 'read',
@@ -79,6 +93,22 @@ export const northflankEndpointMeta = {
 	'regions.list': {
 		riskLevel: 'read',
 		description: 'List available Northflank regions',
+	},
+	'addonTypes.list': {
+		riskLevel: 'read',
+		description: 'List available Northflank addon types',
+	},
+	'cloudProviders.listNodeTypes': {
+		riskLevel: 'read',
+		description: 'List supported cloud provider node types',
+	},
+	'cloudProviders.listRegions': {
+		riskLevel: 'read',
+		description: 'List supported cloud provider regions',
+	},
+	'misc.getDnsId': {
+		riskLevel: 'read',
+		description: 'Get the DNS identifier for the authenticated account',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof northflankEndpointsNested
@@ -97,29 +127,21 @@ export const northflankEndpointSchemas = {
 		input: NorthflankEndpointInputSchemas['projects.create'],
 		output: NorthflankEndpointOutputSchemas['projects.create'],
 	},
+	'projects.createOrUpdate': {
+		input: NorthflankEndpointInputSchemas['projects.createOrUpdate'],
+		output: NorthflankEndpointOutputSchemas['projects.createOrUpdate'],
+	},
 	'projects.update': {
 		input: NorthflankEndpointInputSchemas['projects.update'],
 		output: NorthflankEndpointOutputSchemas['projects.update'],
 	},
+	'projects.delete': {
+		input: NorthflankEndpointInputSchemas['projects.delete'],
+		output: NorthflankEndpointOutputSchemas['projects.delete'],
+	},
 	'services.list': {
 		input: NorthflankEndpointInputSchemas['services.list'],
 		output: NorthflankEndpointOutputSchemas['services.list'],
-	},
-	'services.get': {
-		input: NorthflankEndpointInputSchemas['services.get'],
-		output: NorthflankEndpointOutputSchemas['services.get'],
-	},
-	'services.createCombined': {
-		input: NorthflankEndpointInputSchemas['services.createCombined'],
-		output: NorthflankEndpointOutputSchemas['services.createCombined'],
-	},
-	'services.updateCombined': {
-		input: NorthflankEndpointInputSchemas['services.updateCombined'],
-		output: NorthflankEndpointOutputSchemas['services.updateCombined'],
-	},
-	'environments.listPreviews': {
-		input: NorthflankEndpointInputSchemas['environments.listPreviews'],
-		output: NorthflankEndpointOutputSchemas['environments.listPreviews'],
 	},
 	'secrets.list': {
 		input: NorthflankEndpointInputSchemas['secrets.list'],
@@ -133,9 +155,25 @@ export const northflankEndpointSchemas = {
 		input: NorthflankEndpointInputSchemas['secrets.create'],
 		output: NorthflankEndpointOutputSchemas['secrets.create'],
 	},
+	'secrets.createOrUpdate': {
+		input: NorthflankEndpointInputSchemas['secrets.createOrUpdate'],
+		output: NorthflankEndpointOutputSchemas['secrets.createOrUpdate'],
+	},
+	'secrets.patch': {
+		input: NorthflankEndpointInputSchemas['secrets.patch'],
+		output: NorthflankEndpointOutputSchemas['secrets.patch'],
+	},
 	'secrets.update': {
 		input: NorthflankEndpointInputSchemas['secrets.update'],
 		output: NorthflankEndpointOutputSchemas['secrets.update'],
+	},
+	'secrets.getDetails': {
+		input: NorthflankEndpointInputSchemas['secrets.getDetails'],
+		output: NorthflankEndpointOutputSchemas['secrets.getDetails'],
+	},
+	'pipelines.list': {
+		input: NorthflankEndpointInputSchemas['pipelines.list'],
+		output: NorthflankEndpointOutputSchemas['pipelines.list'],
 	},
 	'plans.list': {
 		input: NorthflankEndpointInputSchemas['plans.list'],
@@ -144,6 +182,22 @@ export const northflankEndpointSchemas = {
 	'regions.list': {
 		input: NorthflankEndpointInputSchemas['regions.list'],
 		output: NorthflankEndpointOutputSchemas['regions.list'],
+	},
+	'addonTypes.list': {
+		input: NorthflankEndpointInputSchemas['addonTypes.list'],
+		output: NorthflankEndpointOutputSchemas['addonTypes.list'],
+	},
+	'cloudProviders.listNodeTypes': {
+		input: NorthflankEndpointInputSchemas['cloudProviders.listNodeTypes'],
+		output: NorthflankEndpointOutputSchemas['cloudProviders.listNodeTypes'],
+	},
+	'cloudProviders.listRegions': {
+		input: NorthflankEndpointInputSchemas['cloudProviders.listRegions'],
+		output: NorthflankEndpointOutputSchemas['cloudProviders.listRegions'],
+	},
+	'misc.getDnsId': {
+		input: NorthflankEndpointInputSchemas['misc.getDnsId'],
+		output: NorthflankEndpointOutputSchemas['misc.getDnsId'],
 	},
 };
 

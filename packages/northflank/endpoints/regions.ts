@@ -11,14 +11,20 @@ export type NorthflankEndpoint<TInput, TOutput> = CorsairEndpoint<
 	TOutput
 >;
 
+// GET /v1/regions
+// Docs: "List regions" (apiClient.list.regions)
 export const list: NorthflankEndpoint<
 	RegionsListInput,
 	RegionsListOutput
 > = async (ctx, input = {}) => {
 	RegionsListInputSchema.parse(input);
-	const res = await makeNorthflankRequest<unknown>('regions', ctx.key, {
-		method: 'GET',
-	});
+	const res = await makeNorthflankRequest<RegionsListOutput>(
+		'regions',
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 
 	await logEventFromContext(ctx, 'northflank.regions.list', {}, 'completed');
 	return RegionsListOutputSchema.parse(res);

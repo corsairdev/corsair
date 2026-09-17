@@ -11,19 +11,21 @@ export type NorthflankEndpoint<TInput, TOutput> = CorsairEndpoint<
 	TOutput
 >;
 
+// GET /v1/plans
+// Docs: /docs/v1/api/miscellaneous/list-plans
 export const list: NorthflankEndpoint<PlansListInput, PlansListOutput> = async (
 	ctx,
 	input = {},
 ) => {
 	const validatedInput = PlansListInputSchema.parse(input);
-	const query: Record<string, unknown> = {};
+	const query: { page?: number; per_page?: number; cursor?: string } = {};
 	if (validatedInput?.page !== undefined) query.page = validatedInput.page;
 	if (validatedInput?.per_page !== undefined)
 		query.per_page = validatedInput.per_page;
 	if (validatedInput?.cursor !== undefined)
 		query.cursor = validatedInput.cursor;
 
-	const res = await makeNorthflankRequest<unknown>('plans', ctx.key, {
+	const res = await makeNorthflankRequest<PlansListOutput>('plans', ctx.key, {
 		method: 'GET',
 		query,
 	});
