@@ -53,11 +53,6 @@ type PluginDocsFile = {
 	displayName?: string;
 	/** Overrides Mintlify frontmatter `description` when set. */
 	description?: string;
-	/**
-	 * Brand website hostname used for plugin icons (e.g. `scale.com`).
-	 * Accepts bare hostnames or full URLs; `www.` is stripped.
-	 */
-	domain?: string;
 	/** Markdown inserted after the intro paragraph on the overview page. */
 	overviewNote?: string;
 	/**
@@ -85,11 +80,6 @@ type PluginDocsFile = {
 		read?: PluginDocsExampleCall;
 		write?: PluginDocsExampleCall;
 	};
-	/**
-	 * Per-operation sample args for API page snippets.
-	 * Keys are short paths after `plugin.api.` (e.g. `templates.list`).
-	 */
-	apiExamples?: Record<string, { args?: Record<string, unknown> }>;
 	/**
 	 * Headline webhook for the overview. `path` is the short path under
 	 * `plugin.webhooks.` (e.g. `messages.message`).
@@ -650,37 +640,6 @@ function validatePluginDocsConfig(
 	validateApiExample(docsConfig.examples?.read, 'examples.read');
 	validateApiExample(docsConfig.examples?.write, 'examples.write');
 
-	for (const [shortPath, example] of Object.entries(
-		docsConfig.apiExamples ?? {},
-	)) {
-		const ep = findEndpointByShortPath(data.api, shortPath);
-		if (!ep) {
-			errors.push(
-				`${prefix}: apiExamples path "${shortPath}" not found on ${pluginId}.api`,
-			);
-			continue;
-		}
-
-		const args =
-			example && typeof example === 'object' && !Array.isArray(example)
-				? (example.args ?? {})
-				: {};
-		if (typeof args !== 'object' || Array.isArray(args)) {
-			errors.push(
-				`${prefix}: apiExamples."${shortPath}".args must be an object`,
-			);
-			continue;
-		}
-
-		errors.push(
-			...validateExampleArgsAgainstInput(
-				args,
-				ep.input,
-				`${prefix}: apiExamples (${shortPath})`,
-			),
-		);
-	}
-
 	const dbEx = docsConfig.dbExample;
 	if (dbEx) {
 		const entityName = dbEx.entity?.trim();
@@ -747,20 +706,6 @@ function validatePluginDocsConfig(
 			errors.push(
 				`${prefix}: exampleWebhook.path "${path}" not found — webhook paths: ${known}`,
 			);
-		}
-	}
-
-	const domain = docsConfig.domain?.trim();
-	if (domain) {
-		try {
-			const hostname = new URL(
-				domain.includes('://') ? domain : `https://${domain}`,
-			).hostname;
-			if (!hostname || hostname.includes(' ')) {
-				errors.push(`${prefix}: domain "${domain}" is not a valid hostname`);
-			}
-		} catch {
-			errors.push(`${prefix}: domain "${domain}" is not a valid hostname`);
 		}
 	}
 
@@ -1480,7 +1425,6 @@ function buildApiMdx(
 	pluginId: string,
 	title: string,
 	data: PluginDocsIntrospection,
-	docsConfig: PluginDocsFile,
 ): string {
 	const byGroup = new Map<string, typeof data.api>();
 	for (const ep of data.api) {
@@ -1509,11 +1453,8 @@ function buildApiMdx(
 			sections.push('');
 			const [, ...pathParts] = ep.path.split('.');
 			const callExpr = `corsair.${pluginId}.${pathParts.join('.')}`;
-			const callArgs = docsConfig.apiExamples?.[ep.shortPath]?.args;
 			sections.push('```ts');
-			sections.push(
-				`await ${callExpr}(${formatExampleArgs(callArgs ?? {})});`,
-			);
+			sections.push(`await ${callExpr}({});`);
 			sections.push('```');
 			sections.push('');
 			sections.push(formatSchemaShape(ep.input, 'Input'));
@@ -2009,7 +1950,7 @@ async function generatePluginDocsForEntry(
 
 	writeFileSync(
 		join(outDir, 'api.mdx'),
-		buildApiMdx(pluginId, title, docData, docsConfig),
+		buildApiMdx(pluginId, title, docData),
 		'utf8',
 	);
 	writeFileSync(
