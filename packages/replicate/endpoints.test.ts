@@ -137,17 +137,20 @@ describe('Replicate endpoint contracts', () => {
 
 	it('deployments.list', async () => {
 		mockRequest.mockResolvedValueOnce({
-			next: null,
+			next: 'next-deployments-cursor',
 			previous: null,
 			results: [deployment],
 		});
-		await deploymentsList(ctx as never, { cursor: 'deployments-cursor' });
+		const result = await deploymentsList(ctx as never, {
+			cursor: 'deployments-cursor',
+		});
 		expect(mockRequest).toHaveBeenCalledWith('/deployments', ctx.key, {
 			method: 'GET',
 			query: {
 				cursor: 'deployments-cursor',
 			},
 		});
+		expect(result.next).toBe('next-deployments-cursor');
 	});
 
 	it('deployments.create', async () => {
@@ -331,11 +334,17 @@ describe('Replicate endpoint contracts', () => {
 		await modelsExamplesList(ctx as never, {
 			owner: 'replicate',
 			name: 'hello-world',
+			cursor: 'examples-cursor',
 		});
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/models/replicate/hello-world/examples',
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'GET',
+				query: {
+					cursor: 'examples-cursor',
+				},
+			},
 		);
 	});
 

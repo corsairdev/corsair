@@ -140,6 +140,14 @@ const DeploymentSchema = z
 	})
 	.loose();
 
+const PaginatedDeploymentsSchema = z
+	.object({
+		next: z.string().nullable().optional(),
+		previous: z.string().nullable().optional(),
+		results: z.array(DeploymentSchema),
+	})
+	.loose();
+
 const CollectionSchema = z
 	.object({
 		name: z.string(),
@@ -299,6 +307,7 @@ export const ReplicateEndpointInputSchemas = {
 	modelsExamplesList: z.object({
 		owner: z.string().min(1),
 		name: z.string().min(1),
+		cursor: z.string().min(1).optional(),
 	}),
 	modelsPredictionsCreate: z
 		.object({ owner: z.string().min(1), name: z.string().min(1) })
@@ -363,7 +372,7 @@ export const ReplicateEndpointOutputSchemas = {
 		.loose(),
 	collectionsList: PaginatedCollectionsSchema,
 	collectionsGet: CollectionSchema,
-	deploymentsList: z.array(DeploymentSchema),
+	deploymentsList: PaginatedDeploymentsSchema,
 	deploymentsCreate: DeploymentSchema,
 	deploymentsDelete: z.object({ success: z.literal(true) }),
 	deploymentsGet: DeploymentSchema,
