@@ -1,6 +1,7 @@
 import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import { z } from 'zod';
 
 export class LeexiAPIError extends Error {
 	public readonly status?: number;
@@ -41,6 +42,48 @@ export type LeexiCredentialSource = {
 	options: { keySecret?: string };
 	keys: { get_key_secret: () => Promise<string | null> };
 };
+
+// Upper bound for any provider-supplied text quoted in an error message.
+const MAX_ERROR_DETAIL_LENGTH = 200;
+
+// Common provider error shapes. Parsed with zod (never indexed or cast),
+// so only a declared short string field is ever quoted — full objects,
+// arrays, and non-string payloads stay out of the message.
+const ErrorSummarySchema = z
+	.object({
+		message: z.string(),
+		code: z.string(),
+		error: z.string(),
+	})
+	.partial();
+
+/**
+ * Extracts a short, safe summary from a provider error payload without
+ * dumping the whole body into the message (messages flow into logs, and
+ * bodies can carry PII or tokens). Allowed: a short string body, or the
+ * short string value of a `message`/`code`/`error` field on a plain object.
+ * Anything else yields `undefined` and the caller falls back to the HTTP
+ * status text.
+ */
+function safeErrorSummary(body: unknown): string | undefined {
+	if (typeof body === 'string') {
+		const trimmed = body.trim();
+		return trimmed === '' || trimmed.length > MAX_ERROR_DETAIL_LENGTH
+			? undefined
+			: trimmed;
+	}
+	const parsed = ErrorSummarySchema.safeParse(body);
+	if (parsed.success) {
+		const value = parsed.data.message ?? parsed.data.code ?? parsed.data.error;
+		if (value !== undefined) {
+			const trimmed = value.trim();
+			if (trimmed !== '' && trimmed.length <= MAX_ERROR_DETAIL_LENGTH) {
+				return trimmed;
+			}
+		}
+	}
+	return undefined;
+}
 
 /**
  * Leexi authenticates with HTTP Basic auth using an API Key ID + Key Secret
@@ -89,19 +132,16 @@ export async function makeLeexiRequest<T>(
 		mediaType: 'application/json; charset=utf-8',
 		query: !isWriteMethod ? query : undefined,
 	};
-
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			const bodyDetail =
-				error.body == null
-					? ''
-					: typeof error.body === 'string'
-						? error.body
-						: JSON.stringify(error.body);
-			const message = bodyDetail
-				? `${error.statusText || 'API Error'}: ${bodyDetail}`
+			// Never quote the full body: `safeErrorSummary` allows only a
+			// short string (or short message/code/error field). Status and
+			// retry metadata still travel on the error for classification.
+			const summary = safeErrorSummary(error.body);
+			const message = summary
+				? `${error.statusText || 'API Error'}: ${summary}`
 				: error.statusText || 'Unknown API Error';
 			throw new LeexiAPIError(message, { cause: error });
 		}
@@ -120,7 +160,15 @@ export async function makeLeexiRequest<T>(
 export async function resolveLeexiCredentials(
 	ctx: LeexiCredentialSource,
 ): Promise<LeexiCredentials> {
+	// An explicitly blank override ('' or whitespace-only) means "unset",
+	// not "use an empty secret": fall back to the stored account secret so
+	// a blank option can't shadow it and fail confusingly downstream in
+	// `makeLeexiRequest`'s own blank check. Non-blank overrides win and the
+	// stored secret is only fetched when needed.
+	const override = ctx.options.keySecret;
 	const keySecret =
-		ctx.options.keySecret ?? (await ctx.keys.get_key_secret()) ?? '';
+		override !== undefined && override.trim() !== ''
+			? override
+			: ((await ctx.keys.get_key_secret()) ?? '');
 	return { keyId: ctx.key, keySecret };
 }

@@ -39,11 +39,12 @@ function apiError(
 	status: number,
 	message: string,
 	retryAfter?: number,
+	body: unknown = { message },
 ): ApiError {
 	return new ApiError(
 		{ method: 'GET', url: '/v1/calls' },
 		{
-			body: { message },
+			body,
 			ok: false,
 			status,
 			statusText: message,
@@ -151,6 +152,43 @@ describe('makeLeexiRequest', () => {
 			message: 'Unknown error',
 		});
 	});
+
+	it('quotes a short provider message but never dumps a full object body', async () => {
+		mockRequest.mockRejectedValueOnce(
+			apiError(400, 'Bad Request', undefined, {
+				token: 'secret-token-value',
+				nested: { detail: 'more secrets' },
+			}),
+		);
+		const error = await makeLeexiRequest('calls', {
+			keyId: 'k',
+			keySecret: 's',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(LeexiAPIError);
+		const message = (error as LeexiAPIError).message;
+		expect(message).not.toContain('secret-token-value');
+		expect(message).not.toContain('nested');
+		expect(message).toContain('Bad Request');
+	});
+
+	it('quotes a short message field from an object body', async () => {
+		mockRequest.mockRejectedValueOnce(
+			apiError(422, 'Unprocessable', undefined, { message: 'rate_limited' }),
+		);
+		await expect(
+			makeLeexiRequest('calls', { keyId: 'k', keySecret: 's' }),
+		).rejects.toMatchObject({ message: 'Unprocessable: rate_limited' });
+	});
+
+	it('omits overlong string bodies from the message', async () => {
+		mockRequest.mockRejectedValueOnce(
+			apiError(500, 'Server Error', undefined, 'x'.repeat(500)),
+		);
+		await expect(
+			makeLeexiRequest('calls', { keyId: 'k', keySecret: 's' }),
+		).rejects.toMatchObject({ message: 'Server Error' });
+	});
 });
 
 describe('resolveLeexiCredentials', () => {
@@ -186,5 +224,20 @@ describe('resolveLeexiCredentials', () => {
 		);
 
 		expect(credentials).toEqual({ keyId: 'key-id', keySecret: '' });
+	});
+
+	it('treats a blank override as unset and falls back to stored secret', async () => {
+		for (const blank of ['', '   ']) {
+			const getKeySecret = jest.fn().mockResolvedValue('stored-secret');
+			const credentials = await resolveLeexiCredentials(
+				mockCredentialsContext('key-id', blank, getKeySecret),
+			);
+
+			expect(credentials).toEqual({
+				keyId: 'key-id',
+				keySecret: 'stored-secret',
+			});
+			expect(getKeySecret).toHaveBeenCalled();
+		}
 	});
 });

@@ -18,7 +18,10 @@ const PaginationSchema = z.object({
 });
 
 const UuidInputSchema = z.object({
-	uuid: z.string(),
+	// Trimmed and non-empty: a blank uuid would build a broken path like
+	// `calls/  `. Generic identifiers (`call_1`, `me_1`) still pass —
+	// only the format is enforced, not UUID shape.
+	uuid: z.string().trim().min(1),
 });
 export type UuidInput = z.infer<typeof UuidInputSchema>;
 
@@ -149,7 +152,9 @@ export type MeetingEventsGetResponse = z.infer<
 >;
 
 const MeetingEventsCreateInputSchema = z.object({
-	meeting_url: z.string(),
+	// URL-formatted (docs: a Zoom, Teams, or Google Meet link). Rejects
+	// malformed values before any API call or audit logging.
+	meeting_url: z.string().url(),
 	user_uuid: z.string(),
 	start_time: z.string(),
 	end_time: z.string(),

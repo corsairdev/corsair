@@ -1,4 +1,5 @@
 import { redactedCallsListLog } from './endpoints/calls';
+import { safeMeetingUrlHost } from './endpoints/meeting-events';
 import {
 	LeexiEndpointInputSchemas,
 	LeexiEndpointOutputSchemas,
@@ -89,6 +90,18 @@ describe('meetingEvents.get / delete schemas', () => {
 		expect(
 			LeexiEndpointInputSchemas.meetingEventsDelete.parse({ uuid: 'me_1' }),
 		).toEqual({ uuid: 'me_1' });
+	});
+
+	it('trims uuids and rejects blank ones', () => {
+		expect(
+			LeexiEndpointInputSchemas.callsGet.parse({ uuid: '  call_1  ' }),
+		).toEqual({ uuid: 'call_1' });
+		expect(() =>
+			LeexiEndpointInputSchemas.callsGet.parse({ uuid: '' }),
+		).toThrow();
+		expect(() =>
+			LeexiEndpointInputSchemas.callsGet.parse({ uuid: '   ' }),
+		).toThrow();
 	});
 
 	it('accepts a documented get response with integration_user', () => {
@@ -506,5 +519,20 @@ describe('calls list audit-log redaction', () => {
 			items: 25,
 			owner_uuid: ['a4ce7181-07f3-451c-8593-c067209efe4c'],
 		});
+	});
+});
+
+describe('meeting URL hostname redaction', () => {
+	it('returns only the hostname for URLs with secrets in query', () => {
+		expect(
+			safeMeetingUrlHost(
+				'https://zoom.us/j/123456789?pwd=SuperSecretPasscode&tk=signed-token',
+			),
+		).toBe('zoom.us');
+	});
+
+	it('returns undefined for unparsable input, never a raw fallback', () => {
+		expect(safeMeetingUrlHost('not-a-valid-url')).toBeUndefined();
+		expect(safeMeetingUrlHost('')).toBeUndefined();
 	});
 });

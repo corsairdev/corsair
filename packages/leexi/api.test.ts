@@ -208,13 +208,7 @@ describe('Leexi Meeting Events endpoints', () => {
 		});
 	});
 
-	it('logs an undefined meeting_host rather than any raw fallback when the URL cannot be parsed', async () => {
-		const apiResponse = {
-			success: true,
-			message: 'Meeting event successfully created',
-			data: { uuid: 'me_4' },
-		};
-		mockRequest.mockResolvedValueOnce(apiResponse);
+	it('rejects a non-URL meeting_url before calling the API or logging', async () => {
 		const ctx = createMockContext();
 
 		const input = {
@@ -228,14 +222,9 @@ describe('Leexi Meeting Events endpoints', () => {
 			organizer: 'organizer@example.com',
 		};
 
-		await MeetingEvents.create(ctx, input);
-
-		const loggedPayload = mockLogEvent.mock.calls[0]?.[2];
-		expect(loggedPayload).toEqual({
-			user_uuid: 'user_1',
-			meeting_host: undefined,
-			to_record: false,
-		});
+		await expect(MeetingEvents.create(ctx, input)).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+		expect(mockLogEvent).not.toHaveBeenCalled();
 	});
 
 	it('rejects create input missing required fields before calling the API', async () => {

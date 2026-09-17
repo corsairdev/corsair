@@ -8,9 +8,10 @@ import { LeexiEndpointInputSchemas, LeexiEndpointOutputSchemas } from './types';
  * token, or other signed query parameters. Only the hostname is safe to
  * persist in the Corsair audit log — never the full URL, path, or query
  * string. Returns `undefined` when the URL can't be parsed rather than
- * falling back to any part of the raw string.
+ * falling back to any part of the raw string. Exported for unit testing;
+ * the create input schema already rejects non-URLs before this runs.
  */
-function safeMeetingUrlHost(meetingUrl: string): string | undefined {
+export function safeMeetingUrlHost(meetingUrl: string): string | undefined {
 	try {
 		return new URL(meetingUrl).hostname;
 	} catch {
