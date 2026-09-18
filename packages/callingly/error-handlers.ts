@@ -3,6 +3,7 @@ import type { CallinglyAPIError } from './client';
 
 /**
  * Safely extracts HTTP status code from an error object.
+ * unknown: caught values may be CallinglyAPIError, HTTP client errors, or plain Error.
  */
 function getStatus(error: unknown): number | undefined {
 	if (error && typeof error === 'object' && 'status' in error) {
