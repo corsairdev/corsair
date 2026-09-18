@@ -1,5 +1,6 @@
 displayName: PostHog
 description: Product analytics platform for event tracking, feature flags, session replay, and experiments.
+recommendedAuth: api_key
 examples:
   write:
     path: events.eventCreate
@@ -10,6 +11,8 @@ examples:
 dbExample:
   entity: events
   note: Search synced events without hitting PostHog.
+  data:
+    event: signup_completed
   limit: 50
 exampleWebhook:
   path: events.captured
