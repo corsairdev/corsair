@@ -11,6 +11,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { resolveManagedAccessToken } from 'corsair/hub';
 
 import {
 	AdsEndpoints,
@@ -37,6 +38,9 @@ export const linkedinAuthConfig = {
 	oauth_2: {
 		// client_id and client_secret are provided by the base framework and must not
 		// be declared in the integration array.
+		integration: [] as const,
+	},
+	managed: {
 		integration: [] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -311,7 +315,7 @@ const linkedinEndpointMeta = {
 } satisfies RequiredPluginEndpointMeta<typeof LinkedInEndpointsNested>;
 
 export type LinkedInPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalLinkedInPlugin['hooks'];
 	permissions?: PluginPermissionsConfig<typeof LinkedInEndpointsNested>;
@@ -399,15 +403,19 @@ export function linkedin<const T extends LinkedInPluginOptions>(
 				return options.key;
 			}
 
-			if (ctx.authType !== 'oauth_2') {
-				throw new AuthMissingError('linkedin', 'oauth_2');
+			if (ctx.authType === 'oauth_2') {
+				return getOAuthAccessToken(ctx, {
+					plugin: 'linkedin',
+					tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
+					tokenAuthMethod: 'body',
+				});
 			}
 
-			return getOAuthAccessToken(ctx, {
-				plugin: 'linkedin',
-				tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
-				tokenAuthMethod: 'body',
-			});
+			if (ctx.authType === 'managed') {
+				return resolveManagedAccessToken(ctx, 'linkedin');
+			}
+
+			throw new AuthMissingError('linkedin', 'oauth_2');
 		},
 	} satisfies InternalLinkedInPlugin;
 }

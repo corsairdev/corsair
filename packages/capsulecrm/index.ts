@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { resolveManagedAccessToken } from 'corsair/hub';
 import {
 	activityTypesGet,
 	activityTypesList,
@@ -137,7 +138,7 @@ import { errorHandlers } from './error-handlers';
 import { CapsuleCrmSchema } from './schema';
 
 export type CapsuleCrmPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalCapsuleCrmPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -1353,6 +1354,7 @@ const capsuleCrmEndpointMeta = {
 export const capsuleCrmAuthConfig = {
 	api_key: { account: ['subdomain'] as const },
 	oauth_2: { account: ['subdomain'] as const },
+	managed: { account: ['subdomain'] as const },
 } as const satisfies PluginAuthConfig;
 
 export type BaseCapsuleCrmPlugin<T extends CapsuleCrmPluginOptions> =
@@ -1411,6 +1413,10 @@ export function capsulecrm<const T extends CapsuleCrmPluginOptions>(
 				if (!res) throw new AuthMissingError('capsulecrm', 'oauth_2');
 				return res;
 			}
+			if (source === 'endpoint' && ctx.authType === 'managed') {
+				return resolveManagedAccessToken(ctx, 'capsulecrm');
+			}
+
 			throw new AuthMissingError('capsulecrm', ctx.authType ?? 'api_key');
 		},
 	} satisfies InternalCapsuleCrmPlugin;
