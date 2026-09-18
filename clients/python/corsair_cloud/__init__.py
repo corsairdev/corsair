@@ -1,6 +1,6 @@
 """Thin HTTP client for a hosted Corsair Cloud project.
 
-Mirrors `createCorsairCloud` (TS) / `CorsairCloud` (Swift): a dynamic client —
+Mirrors `corsairCloud` (TS) / `CorsairCloud` (Swift): a dynamic client —
 the plugin set lives on the VM, so calls are just `POST .../call/<op>`.
 """
 

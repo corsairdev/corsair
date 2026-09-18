@@ -3,7 +3,7 @@ title: Corsair Cloud
 description: A hosted runtime for your integrations. You have an API key, and every tool call is one HTTP request.
 ---
 
-import CloudProxyNext from '/snippets/cloud-proxy-next.mdx';
+import CloudProxyNext from '/snippets/connect-next.mdx';
 
 Corsair Cloud runs the integration layer for you. Instead of building and
 hosting a server that talks to Notion, Slack, GitHub, and the rest, you get a
@@ -32,9 +32,9 @@ key and nothing else.
 <CodeGroup>
 
 ```ts TypeScript
-import { createCorsairCloud } from "corsair";
+import { corsairCloud } from "corsair";
 
-const corsair = createCorsairCloud({ apiKey: process.env.CORSAIR_CLOUD_KEY! });
+const corsair = corsairCloud({ apiKey: process.env.CORSAIR_CLOUD_KEY! });
 
 const pages = await corsair.withTenant("acme").notion.api.pages.searchPage({});
 ```
@@ -154,7 +154,7 @@ The runtime has one contract and two ways to reach it:
 - **From a server or agent.** Use the client directly — it holds the key and
   calls the runtime. This is the path in every example above.
 - **From a browser (React).** Browser code must never see the key. Stand up a
-  route in *your own* app that injects the bearer server-side; `corsair/cloud-proxy`
+  route in *your own* app that injects the bearer server-side; `corsair/connect`
   builds that route from just the key:
 
 <CloudProxyNext />
@@ -165,7 +165,7 @@ time.
 
 ## Type hints for your calls (TypeScript)
 
-`createCorsairCloud` takes no plugin list — the plugins live on the runtime — so
+`corsairCloud` takes no plugin list — the plugins live on the runtime — so
 by default `corsair.withTenant(t).notion.api…` is typed as `any`. For
 autocomplete, run the CLI once:
 

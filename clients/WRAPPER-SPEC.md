@@ -4,7 +4,7 @@ Every language wrapper is a **thin idiomatic HTTP client** over the hosted
 runtime's contract (`packages/corsair/core/cloud/contract.openapi.yaml`). It is
 **not** generated — the `/call` surface is dynamic (ops are plugin-defined and
 discovered at runtime), so a hand-written ~150-line client gives far better DX
-than a generated blob. The TS `createCorsairCloud` is the reference; every other
+than a generated blob. The TS `corsairCloud` is the reference; every other
 language mirrors this shape.
 
 ## What every wrapper takes
@@ -35,10 +35,10 @@ language mirrors this shape.
 A dev who has never seen Corsair needs one value — the **key** (from the
 project's Overview) — then one call. The wrapper derives the URL from it.
 
-**TypeScript** (flagship, `createCorsairCloud`):
+**TypeScript** (flagship, `corsairCloud`):
 ```ts
-import { createCorsairCloud } from "corsair";
-const corsair = createCorsairCloud({ apiKey: "ck_cloud_…" });
+import { corsairCloud } from "corsair";
+const corsair = corsairCloud({ apiKey: "ck_cloud_…" });
 const pages = await corsair.withTenant("acme").notion.api.pages.searchPage({});
 ```
 
@@ -77,7 +77,7 @@ See `clients/react` (todo).
 
 ## Build order
 1. **Contract** — done + tested (`contract.openapi.yaml` + `contract.test.ts`).
-2. **TS** — `createCorsairCloud` (reference). Done.
+2. **TS** — `corsairCloud` (reference). Done.
 3. **Swift** — `clients/swift` (this PR).
 4. **React** — `CorsairProvider` + `useCorsair` + the backend-proxy snippet.
 5. **Python / Go / Rust** — same thin pattern.

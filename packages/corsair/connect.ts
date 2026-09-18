@@ -10,8 +10,8 @@
  * @example
  * ```ts
  * // app/api/corsair/[...path]/route.ts
- * import { createCloudProxy } from 'corsair/cloud-proxy';
- * const proxy = createCloudProxy({
+ * import { corsairConnect } from 'corsair/connect';
+ * const proxy = corsairConnect({
  *   apiKey: process.env.CORSAIR_CLOUD_KEY!,
  *   authorize: async (req) => Boolean(await getSession(req)),
  * });
@@ -20,7 +20,7 @@
  * ```
  */
 
-export interface CloudProxyOptions {
+export interface CorsairConnectOptions {
 	/** `ck_cloud_…` key for the project. Injected as the upstream bearer, and the
 	 * upstream URL is derived from it. */
 	apiKey: string;
@@ -88,19 +88,19 @@ function stripBasePath(pathname: string, basePath: string): string {
  * Only the method, path, search, body, and content-type are forwarded —
  * the caller's own Authorization header and cookies are dropped.
  */
-export function createCloudProxy(
-	options: CloudProxyOptions,
+export function corsairConnect(
+	options: CorsairConnectOptions,
 ): (req: Request) => Promise<Response> {
 	const url = options.url ?? cloudUrlFromKey(options.apiKey);
 	if (!url) {
 		throw new Error(
-			'createCloudProxy: could not resolve a URL from apiKey — pass a ck_cloud_<slug>.<secret> key, or set `url` explicitly.',
+			'corsairConnect: could not resolve a URL from apiKey — pass a ck_cloud_<slug>.<secret> key, or set `url` explicitly.',
 		);
 	}
 	assertSecureCloudUrl(url);
 	if (!options.authorize && process.env.NODE_ENV !== 'production') {
 		console.warn(
-			'[corsair] createCloudProxy has no `authorize` — this route forwards any tenant/plugin/op with your cloud key. Add `authorize` before exposing it.',
+			'[corsair] corsairConnect has no `authorize` — this route forwards any tenant/plugin/op with your cloud key. Add `authorize` before exposing it.',
 		);
 	}
 	const upstream = url.endsWith('/') ? url.slice(0, -1) : url;

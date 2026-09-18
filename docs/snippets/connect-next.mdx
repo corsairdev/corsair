@@ -1,8 +1,8 @@
 ```ts app/api/corsair/[...path]/route.ts
-import { createCloudProxy } from 'corsair/cloud-proxy';
+import { corsairConnect } from 'corsair/connect';
 import { getSession } from '@/lib/auth';
 
-const proxy = createCloudProxy({
+const proxy = corsairConnect({
     apiKey: process.env.CORSAIR_CLOUD_KEY!,
     // Runs before every forwarded request — the caller's own credentials
     // never reach this handler, so this is where you check who's asking.

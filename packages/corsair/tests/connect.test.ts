@@ -1,4 +1,4 @@
-import { createCloudProxy } from '../cloud-proxy';
+import { corsairConnect } from '../connect';
 
 const KEY = 'ck_cloud_test';
 const UPSTREAM = 'https://acme-vm.corsair.cloud/acme/api/corsair';
@@ -15,7 +15,7 @@ function mockFetch(
 		);
 }
 
-describe('createCloudProxy', () => {
+describe('corsairConnect', () => {
 	afterEach(() => {
 		jest.restoreAllMocks();
 	});
@@ -24,7 +24,7 @@ describe('createCloudProxy', () => {
 		const fetchMock = mockFetch(200, '{}');
 		global.fetch = fetchMock as unknown as typeof fetch;
 
-		const proxy = createCloudProxy({ apiKey: KEY, url: UPSTREAM });
+		const proxy = corsairConnect({ apiKey: KEY, url: UPSTREAM });
 		await proxy(
 			new Request(
 				'https://app.example.com/api/corsair/acme/notion/call/pages.searchPage?x=1',
@@ -45,7 +45,7 @@ describe('createCloudProxy', () => {
 		const fetchMock = mockFetch(200, '{}');
 		global.fetch = fetchMock as unknown as typeof fetch;
 
-		const proxy = createCloudProxy({ apiKey: KEY, url: UPSTREAM });
+		const proxy = corsairConnect({ apiKey: KEY, url: UPSTREAM });
 		await proxy(
 			new Request(
 				'https://app.example.com/api/corsair/acme/notion/call/pages.searchPage',
@@ -65,7 +65,7 @@ describe('createCloudProxy', () => {
 		const fetchMock = mockFetch(200, '{}');
 		global.fetch = fetchMock as unknown as typeof fetch;
 
-		const proxy = createCloudProxy({ apiKey: KEY, url: UPSTREAM });
+		const proxy = corsairConnect({ apiKey: KEY, url: UPSTREAM });
 		await proxy(
 			new Request(
 				'https://app.example.com/api/corsair/acme/notion/call/pages.searchPage',
@@ -88,13 +88,13 @@ describe('createCloudProxy', () => {
 
 	it('rejects a non-https, non-loopback url', () => {
 		expect(() =>
-			createCloudProxy({ apiKey: KEY, url: 'http://attacker.example' }),
+			corsairConnect({ apiKey: KEY, url: 'http://attacker.example' }),
 		).toThrow(/https/);
 	});
 
 	it('allows http for loopback hosts', () => {
 		expect(() =>
-			createCloudProxy({ apiKey: KEY, url: 'http://localhost:4000' }),
+			corsairConnect({ apiKey: KEY, url: 'http://localhost:4000' }),
 		).not.toThrow();
 	});
 
@@ -102,7 +102,7 @@ describe('createCloudProxy', () => {
 		const fetchMock = mockFetch(200, '{}');
 		global.fetch = fetchMock as unknown as typeof fetch;
 
-		const proxy = createCloudProxy({
+		const proxy = corsairConnect({
 			apiKey: KEY,
 			url: UPSTREAM,
 			authorize: () => false,
@@ -125,7 +125,7 @@ describe('createCloudProxy', () => {
 		const fetchMock = mockFetch(200, '{}');
 		global.fetch = fetchMock as unknown as typeof fetch;
 
-		const proxy = createCloudProxy({
+		const proxy = corsairConnect({
 			apiKey: KEY,
 			url: UPSTREAM,
 			authorize: () => {
@@ -147,7 +147,7 @@ describe('createCloudProxy', () => {
 		const fetchMock = mockFetch(200, '{}');
 		global.fetch = fetchMock as unknown as typeof fetch;
 
-		const proxy = createCloudProxy({
+		const proxy = corsairConnect({
 			apiKey: KEY,
 			url: UPSTREAM,
 			authorize: async () => true,
@@ -169,7 +169,7 @@ describe('createCloudProxy', () => {
 		const fetchMock = mockFetch(404, '{"error":"not_found"}');
 		global.fetch = fetchMock as unknown as typeof fetch;
 
-		const proxy = createCloudProxy({ apiKey: KEY, url: UPSTREAM });
+		const proxy = corsairConnect({ apiKey: KEY, url: UPSTREAM });
 		const res = await proxy(
 			new Request(
 				'https://app.example.com/api/corsair/acme/notion/call/pages.searchPage',

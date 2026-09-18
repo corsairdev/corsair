@@ -58,7 +58,7 @@ export default defineConfig([
 			'orm.ts',
 			'setup.ts',
 			'http.ts',
-			'cloud-proxy.ts',
+			'connect.ts',
 			'tests.ts',
 		],
 	},

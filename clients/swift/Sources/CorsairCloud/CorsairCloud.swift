@@ -120,7 +120,7 @@ public struct Tenant: Codable, Sendable {
 	public let connectedPlugins: [String]?
 }
 
-/// Client for a hosted Corsair Cloud project. Mirrors `createCorsairCloud`: a
+/// Client for a hosted Corsair Cloud project. Mirrors `corsairCloud`: a
 /// dynamic HTTP client — the plugin set lives on the VM.
 public struct CorsairCloud: Sendable {
 	let apiKey: String
