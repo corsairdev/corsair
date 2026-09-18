@@ -138,7 +138,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -993,6 +996,14 @@
                   "plugins/capsulecrm/overview",
                   "plugins/capsulecrm/api",
                   "plugins/capsulecrm/database"
+                ]
+              },
+              {
+                "group": "Carbone",
+                "pages": [
+                  "plugins/carbone/overview",
+                  "plugins/carbone/api",
+                  "plugins/carbone/database"
                 ]
               },
               {

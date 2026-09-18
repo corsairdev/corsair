@@ -116,6 +116,7 @@ export const BaseProviders = [
 	'canva',
 	'canvas',
 	'capsulecrm',
+	'carbone',
 	'castingwords',
 	'cdrplatform',
 	'certifier',
@@ -406,6 +407,7 @@ export const ProviderDisplayNames = {
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
 	capsulecrm: 'Capsule CRM',
+	carbone: 'Carbone',
 	castingwords: 'CastingWords',
 	cdrplatform: 'CDR Platform',
 	certifier: 'Certifier',
@@ -703,6 +705,7 @@ export type AllProviders =
 	| 'canva'
 	| 'canvas'
 	| 'capsulecrm'
+	| 'carbone'
 	| 'castingwords'
 	| 'cdrplatform'
 	| 'certifier'
