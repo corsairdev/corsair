@@ -36,6 +36,12 @@ export interface CorsairConnectOptions {
 	 * is the only place to check who's asking and for which tenant.
 	 */
 	authorize?: (req: Request) => boolean | Promise<boolean>;
+	/**
+	 * Explicit opt-in to run WITHOUT `authorize` — an open proxy that forwards any
+	 * tenant/plugin/op with the project key. Required to acknowledge the risk;
+	 * without either `authorize` or this flag, construction throws.
+	 */
+	allowUnauthenticated?: boolean;
 }
 
 function stripBasePath(pathname: string, basePath: string): string {
@@ -63,12 +69,19 @@ export function corsairConnect(
 		);
 	}
 	assertCloudUrlSecure(url, 'Cloud proxy URL');
+	if (!options.authorize && !options.allowUnauthenticated) {
+		// Fail closed: without an authorize gate this route forwards any
+		// tenant/plugin/op with the project key. Force a conscious opt-in rather
+		// than shipping an open proxy by omission.
+		throw new Error(
+			'corsairConnect requires `authorize` to gate callers. To intentionally run an open proxy (any caller can invoke any op with your key), pass `allowUnauthenticated: true`.',
+		);
+	}
 	if (!options.authorize) {
-		// Warn in every environment, production included: a route with no
-		// authorize forwards any tenant/plugin/op with the project key, and
-		// suppressing the signal in prod is exactly backwards.
+		// allowUnauthenticated was set — still warn (every environment) that this
+		// route is wide open.
 		console.warn(
-			'[corsair] corsairConnect has no `authorize` — this route forwards any tenant/plugin/op with your cloud key. Add `authorize` before exposing it.',
+			'[corsair] corsairConnect is running with allowUnauthenticated — this route forwards any tenant/plugin/op with your cloud key.',
 		);
 	}
 	const upstream = url.endsWith('/') ? url.slice(0, -1) : url;

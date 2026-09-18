@@ -24,7 +24,11 @@ describe('corsairConnect', () => {
 		const fetchMock = mockFetch(200, '{}');
 		global.fetch = fetchMock as unknown as typeof fetch;
 
-		const proxy = corsairConnect({ apiKey: KEY, url: UPSTREAM });
+		const proxy = corsairConnect({
+			apiKey: KEY,
+			url: UPSTREAM,
+			allowUnauthenticated: true,
+		});
 		await proxy(
 			new Request(
 				'https://app.example.com/api/corsair/acme/notion/call/pages.searchPage?x=1',
@@ -45,7 +49,11 @@ describe('corsairConnect', () => {
 		const fetchMock = mockFetch(200, '{}');
 		global.fetch = fetchMock as unknown as typeof fetch;
 
-		const proxy = corsairConnect({ apiKey: KEY, url: UPSTREAM });
+		const proxy = corsairConnect({
+			apiKey: KEY,
+			url: UPSTREAM,
+			allowUnauthenticated: true,
+		});
 		await proxy(
 			new Request(
 				'https://app.example.com/api/corsair/acme/notion/call/pages.searchPage',
@@ -65,7 +73,11 @@ describe('corsairConnect', () => {
 		const fetchMock = mockFetch(200, '{}');
 		global.fetch = fetchMock as unknown as typeof fetch;
 
-		const proxy = corsairConnect({ apiKey: KEY, url: UPSTREAM });
+		const proxy = corsairConnect({
+			apiKey: KEY,
+			url: UPSTREAM,
+			allowUnauthenticated: true,
+		});
 		await proxy(
 			new Request(
 				'https://app.example.com/api/corsair/acme/notion/call/pages.searchPage',
@@ -94,7 +106,24 @@ describe('corsairConnect', () => {
 
 	it('allows http for loopback hosts', () => {
 		expect(() =>
-			corsairConnect({ apiKey: KEY, url: 'http://localhost:4000' }),
+			corsairConnect({
+				apiKey: KEY,
+				url: 'http://localhost:4000',
+				allowUnauthenticated: true,
+			}),
+		).not.toThrow();
+	});
+
+	it('throws without authorize unless allowUnauthenticated is set', () => {
+		expect(() => corsairConnect({ apiKey: KEY, url: UPSTREAM })).toThrow(
+			/authorize/,
+		);
+		expect(() =>
+			corsairConnect({
+				apiKey: KEY,
+				url: UPSTREAM,
+				allowUnauthenticated: true,
+			}),
 		).not.toThrow();
 	});
 
@@ -169,7 +198,11 @@ describe('corsairConnect', () => {
 		const fetchMock = mockFetch(404, '{"error":"not_found"}');
 		global.fetch = fetchMock as unknown as typeof fetch;
 
-		const proxy = corsairConnect({ apiKey: KEY, url: UPSTREAM });
+		const proxy = corsairConnect({
+			apiKey: KEY,
+			url: UPSTREAM,
+			allowUnauthenticated: true,
+		});
 		const res = await proxy(
 			new Request(
 				'https://app.example.com/api/corsair/acme/notion/call/pages.searchPage',
