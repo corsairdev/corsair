@@ -61,8 +61,9 @@ let pages = try await corsair.tenant("acme").call("notion", "pages.searchPage", 
 ```
 
 ```bash curl
-# The key carries the address; for curl, put the runtime URL from the dashboard here.
-curl -X POST "$CORSAIR_CLOUD_URL/acme/notion/call/pages.searchPage" \
+# The clients derive the URL from the key; for raw curl, build it from your key's
+# slug (the segment between ck_cloud_ and the last _): https://api.corsair.cloud/<slug>/api/corsair
+curl -X POST "https://api.corsair.cloud/<slug>/api/corsair/acme/notion/call/pages.searchPage" \
   -H "authorization: Bearer $CORSAIR_CLOUD_KEY" \
   -H "content-type: application/json" \
   -d '{"args":{}}'
