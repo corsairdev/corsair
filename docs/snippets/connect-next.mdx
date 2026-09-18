@@ -4,7 +4,7 @@ import { getSession } from '@/lib/auth';
 
 const proxy = corsairConnect({
     apiKey: process.env.CORSAIR_CLOUD_KEY!,
-    // Runs before every forwarded request — the caller's own credentials
+    // Runs before every forwarded request. The caller's own credentials
     // never reach this handler, so this is where you check who's asking.
     authorize: async (req) => Boolean(await getSession(req)),
 });
@@ -13,7 +13,7 @@ export const GET = proxy;
 export const POST = proxy;
 ```
 
-Pair it with `<CorsairProvider baseURL="/api/corsair">` in the browser — the
+Pair it with `<CorsairProvider baseURL="/api/corsair">` in the browser. The
 provider only ever calls this same-origin route and never sees the key.
 
 `authorize` is required in practice: without it, anyone who can reach this
