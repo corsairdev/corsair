@@ -88,7 +88,8 @@ export async function makeCallinglyRequest<T>(
 			throw error;
 		}
 		if (error && typeof error === 'object' && 'status' in error) {
-			// Type narrowing safely inspects HTTP client error shape with fallback messages
+			// Type narrowing safely inspects HTTP client error shape with fallback messages.
+			// unknown: corsair/http error status and body shapes are not a fixed schema.
 			const errObj = error as {
 				status?: unknown;
 				message?: string;

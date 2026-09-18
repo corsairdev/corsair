@@ -7,13 +7,16 @@ import {
 } from './types';
 
 type UpsertTable = {
+	// unknown: entity persistence returns an opaque row handle from the core DB layer.
 	upsertByEntityId: (id: string, data: never) => Promise<unknown>;
 	deleteByEntityId?: (id: string) => Promise<unknown>;
 };
 
 async function upsert(
 	table: UpsertTable | undefined,
+	// unknown: Callingly entity ids are numeric or string depending on the resource.
 	id: unknown,
+	// unknown: validated endpoint output objects vary per entity type before persistence.
 	data: unknown,
 ) {
 	if (!table || id === undefined || id === null || id === '') return;
@@ -24,7 +27,11 @@ async function upsert(
 	}
 }
 
-async function remove(table: UpsertTable | undefined, id: unknown) {
+async function remove(
+	table: UpsertTable | undefined,
+	// unknown: Callingly delete inputs accept numeric or string ids from callers.
+	id: unknown,
+) {
 	if (
 		!table?.deleteByEntityId ||
 		id === undefined ||
@@ -41,6 +48,7 @@ async function remove(table: UpsertTable | undefined, id: unknown) {
 }
 
 function collection<T extends { id?: unknown }>(
+	// unknown: list endpoints return a bare array or one of several collection keys.
 	response: unknown,
 	keys: string[],
 ): T[] {
@@ -55,7 +63,12 @@ function collection<T extends { id?: unknown }>(
 	return [];
 }
 
-function scheduleRecord(agentId: unknown, response: unknown) {
+function scheduleRecord(
+	// unknown: schedule handlers accept numeric or string agent ids from input schemas.
+	agentId: unknown,
+	// unknown: GET schedule returns a day array while PUT may return the wrapped object.
+	response: unknown,
+) {
 	if (Array.isArray(response)) {
 		return { id: agentId, agent_id: agentId, days: response };
 	}
