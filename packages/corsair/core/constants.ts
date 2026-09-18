@@ -112,6 +112,7 @@ export const BaseProviders = [
 	'bunnycdn',
 	'cal',
 	'calendly',
+	'campaigncleaner',
 	'campayn',
 	'canva',
 	'canvas',
@@ -402,6 +403,7 @@ export const ProviderDisplayNames = {
 	bunnycdn: 'Bunnycdn',
 	cal: 'Cal',
 	calendly: 'Calendly',
+	campaigncleaner: 'Campaign Cleaner',
 	campayn: 'Campayn',
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
@@ -699,6 +701,7 @@ export type AllProviders =
 	| 'bunnycdn'
 	| 'cal'
 	| 'calendly'
+	| 'campaigncleaner'
 	| 'campayn'
 	| 'canva'
 	| 'canvas'
