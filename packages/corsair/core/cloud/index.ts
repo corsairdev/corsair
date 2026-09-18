@@ -172,6 +172,9 @@ type CloudTenantClient<Registry> = [keyof Registry] extends [never]
 export type CorsairCloudInstance<Registry = CorsairCloudRegistry> = {
 	withTenant(tenantId: string): CloudTenantClient<Registry>;
 	manage: CorsairManageNamespace;
+	/** The resolved runtime base URL (derived from the key's slug, or the `url`
+	 * override). Read this instead of re-parsing the key to display or log it. */
+	readonly url: string;
 };
 
 /**
@@ -194,8 +197,11 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 		);
 	}
 	assertCloudUrlSecure(baseUrl);
-	return buildCloudSurface(
+	const surface = buildCloudSurface(
 		{ baseUrl, apiKey },
 		{ multiTenancy: true },
-	) as unknown as CorsairCloudInstance<Registry>;
+	);
+	return Object.assign(surface, {
+		url: baseUrl,
+	}) as unknown as CorsairCloudInstance<Registry>;
 }
