@@ -195,6 +195,11 @@ func isNilArgs(args any) bool {
 
 // Call invokes a plugin op and returns the response's data field.
 func (t *TenantClient) Call(ctx context.Context, plugin, op string, args any) (json.RawMessage, error) {
+	if t.tenantID == "" {
+		// An empty tenant would build a `.../call/...` path with a missing
+		// segment and misroute; reject it like the TS client's withTenant.
+		return nil, fmt.Errorf("corsaircloud: tenantId must be a non-empty string")
+	}
 	if isNilArgs(args) {
 		// Send {"args":{}} rather than {"args":null}; the contract types args as
 		// an object, matching the Python/Swift clients' empty-object default.

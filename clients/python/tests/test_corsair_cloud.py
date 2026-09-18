@@ -124,6 +124,12 @@ def test_call_encodes_a_slash_containing_tenant(monkeypatch):
     )
 
 
+def test_with_tenant_rejects_empty():
+    corsair = CorsairCloud(api_key="ck_cloud_envh.secret123")
+    with pytest.raises(ValueError):
+        corsair.with_tenant("")
+
+
 def test_derives_url_from_key():
     from corsair_cloud import _url_from_key
 

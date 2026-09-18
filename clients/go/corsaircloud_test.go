@@ -167,6 +167,13 @@ func TestCallNilArgsSendsEmptyObject(t *testing.T) {
 	}
 }
 
+func TestCallEmptyTenantErrors(t *testing.T) {
+	c := New("ck_cloud_x", WithURL("https://vm.corsair.cloud"))
+	if _, err := c.Tenant("").Call(context.Background(), "slack", "send", nil); err == nil {
+		t.Fatal("expected an error for an empty tenant id")
+	}
+}
+
 func TestCallTypedNilArgsSendsEmptyObject(t *testing.T) {
 	var gotBody map[string]json.RawMessage
 	c, close := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {

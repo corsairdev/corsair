@@ -79,6 +79,10 @@ private func assertSecureBaseURL(_ url: URL) throws {
 /// key — pass a `ck_cloud_<slug>.<secret>` key, or set `url` explicitly.
 public struct UnresolvedURLError: Error, Equatable, Sendable {}
 
+/// Thrown by a tenant call when the tenant id is empty — it would build a
+/// request path with a missing segment and misroute (matches the TS client).
+public struct EmptyTenantIdError: Error, Equatable, Sendable {}
+
 private let cloudSlugChars = Set("abcdefghijklmnopqrstuvwxyz0123456789")
 
 /// Derives the runtime URL from a ck_cloud_<slug>.<secret> key: the slug is the
@@ -192,12 +196,19 @@ public struct TenantClient: Sendable {
 	let client: CorsairCloud
 	let tenantId: String
 
+	private func callRaw(
+		_ plugin: String, _ op: String, _ args: [String: JSONValue]
+	) async throws -> Data {
+		guard !tenantId.isEmpty else { throw EmptyTenantIdError() }
+		return try await client.send(
+			"POST", path: [tenantId, plugin, "call", op], body: .object(["args": .object(args)]))
+	}
+
 	/// Invoke a plugin op, returning the raw result (`.data`) as a `JSONValue`.
 	public func call(
 		_ plugin: String, _ op: String, args: [String: JSONValue] = [:]
 	) async throws -> JSONValue {
-		let data = try await client.send(
-			"POST", path: [tenantId, plugin, "call", op], body: .object(["args": .object(args)]))
+		let data = try await callRaw(plugin, op, args)
 		return try JSONDecoder().decode(CorsairCloud.Envelope<JSONValue>.self, from: data).data
 	}
 
@@ -205,8 +216,7 @@ public struct TenantClient: Sendable {
 	public func call<T: Decodable>(
 		_ plugin: String, _ op: String, args: [String: JSONValue] = [:], as _: T.Type
 	) async throws -> T {
-		let data = try await client.send(
-			"POST", path: [tenantId, plugin, "call", op], body: .object(["args": .object(args)]))
+		let data = try await callRaw(plugin, op, args)
 		return try JSONDecoder().decode(CorsairCloud.Envelope<T>.self, from: data).data
 	}
 }

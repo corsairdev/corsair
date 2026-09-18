@@ -78,6 +78,10 @@ class CorsairCloud:
         self.timeout = timeout
 
     def with_tenant(self, tenant_id: str) -> "TenantClient":
+        # Reject an empty tenant up front (matches the TS client's withTenant);
+        # otherwise it builds a request path with a missing segment and misroutes.
+        if not tenant_id:
+            raise ValueError("with_tenant: tenant_id must be a non-empty string")
         return TenantClient(self, tenant_id)
 
     @property
