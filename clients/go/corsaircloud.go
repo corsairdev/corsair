@@ -172,6 +172,12 @@ func (c *Client) CreateTenant(ctx context.Context, id string) (Tenant, error) {
 	return out, nil
 }
 
+// GetPermission fetches a permission record by id. The shape varies by grant,
+// so it's returned as raw JSON for the caller to decode.
+func (c *Client) GetPermission(ctx context.Context, id string) (json.RawMessage, error) {
+	return c.send(ctx, http.MethodGet, []string{"permissions", id}, nil, nil)
+}
+
 // TenantClient invokes plugin ops scoped to one tenant.
 type TenantClient struct {
 	client   *Client

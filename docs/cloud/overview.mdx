@@ -105,11 +105,12 @@ tenants = corsair.manage.tenants()
 </CodeGroup>
 
 <Note>
-`tenants` gives you each tenant's id and connected plugins, and
-`connectionStatus` gives the per-plugin auth state. Both redact secrets: you
-see *that* a tenant connected Notion, never their token. Reading a tenant's
-stored *data* rows directly, or pointing the runtime at your own database,
-comes with bring-your-own-DB (coming soon).
+`tenants` gives you each tenant's id and connected plugins, `connectionStatus`
+gives the per-plugin auth state, and `manage.permissions.get({ id })` reads a
+permission grant (its scopes and approval status). All redact secrets: you see
+*that* a tenant connected Notion, never their token. Reading a tenant's stored
+*data* rows directly, or pointing the runtime at your own database, comes with
+bring-your-own-DB (coming soon).
 </Note>
 
 ## Connect a user's account

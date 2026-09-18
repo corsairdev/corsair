@@ -254,4 +254,11 @@ public struct Manage: Sendable {
 			"POST", path: ["tenants"], body: .object(["id": .string(id)]))
 		return try JSONDecoder().decode(Tenant.self, from: data)
 	}
+
+	/// Fetch a permission record by id. The shape varies by grant, so it comes
+	/// back as a `JSONValue` for the caller to read or decode.
+	public func permission(id: String) async throws -> JSONValue {
+		let data = try await client.send("GET", path: ["permissions", id])
+		return try JSONDecoder().decode(JSONValue.self, from: data)
+	}
 }

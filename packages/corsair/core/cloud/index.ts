@@ -79,10 +79,10 @@ export function hasCloudBaseUrl(hub: HubConfigInput | undefined): boolean {
 	return !!(hub?.baseUrl?.trim() || process.env.CORSAIR_CLOUD_URL?.trim());
 }
 
-// The cloud manage namespace only covers what the VM's HTTP surface exposes
-// today (tenants/plugins/connect/disconnect/connectionStatus). The rest of
-// CorsairManageNamespace is cast in, not implemented — server-side auth
-// review and OAuth callback handling stay a deferred track.
+// The cloud manage namespace covers what the VM's HTTP surface exposes today
+// (tenants, connectionStatus, permissions.get, connect.createLink, disconnect).
+// The rest of CorsairManageNamespace is cast in, not implemented: plugins.list,
+// connect.resolve/oauthCallback stay a deferred track.
 function buildCloudManageNamespace(
 	transport: CloudTransport,
 	multiTenancy: boolean,
@@ -108,9 +108,7 @@ function buildCloudManageNamespace(
 				});
 			},
 		},
-		permissions: {
-			get: () => deferredCloudError('manage.permissions'),
-		},
+		permissions: cloud.permissions,
 		connect: {
 			createLink: cloud.connect.createLink,
 			resolve: () => deferredCloudError('manage.connect.resolve'),

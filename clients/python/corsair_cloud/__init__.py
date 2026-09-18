@@ -162,3 +162,8 @@ class Manage:
 
     def create_tenant(self, id: str) -> dict[str, Any]:
         return self._client._request("POST", ["tenants"], body={"id": id})
+
+    def get_permission(self, permission_id: str) -> dict[str, Any]:
+        return self._client._request(
+            "GET", ["permissions", quote(permission_id, safe="")]
+        )
