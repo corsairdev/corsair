@@ -53,7 +53,7 @@ export const connectionsGet: HookdeckEndpoints['connectionsGet'] = async (
 ) => {
 	const parsedInput = HookdeckEndpointInputSchemas.connectionsGet.parse(input);
 	const raw = await makeHookdeckRequest<unknown>(
-		`connections/${parsedInput.id}`,
+		`connections/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
@@ -75,10 +75,14 @@ export const connectionsUpdate: HookdeckEndpoints['connectionsUpdate'] = async (
 	const parsedInput =
 		HookdeckEndpointInputSchemas.connectionsUpdate.parse(input);
 	const { id, ...body } = parsedInput;
-	const raw = await makeHookdeckRequest<unknown>(`connections/${id}`, ctx.key, {
-		method: 'PUT',
-		body,
-	});
+	const raw = await makeHookdeckRequest<unknown>(
+		`connections/${encodeURIComponent(id)}`,
+		ctx.key,
+		{
+			method: 'PUT',
+			body,
+		},
+	);
 	const response = HookdeckEndpointOutputSchemas.connectionsUpdate.parse(raw);
 
 	await logEventFromContext(
@@ -97,7 +101,7 @@ export const connectionsDelete: HookdeckEndpoints['connectionsDelete'] = async (
 	const parsedInput =
 		HookdeckEndpointInputSchemas.connectionsDelete.parse(input);
 	const raw = await makeHookdeckRequest<unknown>(
-		`connections/${parsedInput.id}`,
+		`connections/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
 		{ method: 'DELETE' },
 	);

@@ -10,10 +10,12 @@ export function matchHookdeckTenantWebhook(
 	const data = asRecord(body.data);
 	const externalId = firstString([
 		body.tenant_external_id,
+		body.tenant_id,
 		body.team_id,
 		body.account_id,
 		body.organization_id,
 		data?.tenant_external_id,
+		data?.tenant_id,
 		data?.team_id,
 		data?.account_id,
 		data?.organization_id,

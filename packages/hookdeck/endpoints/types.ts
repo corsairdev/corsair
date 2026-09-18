@@ -22,7 +22,7 @@ const ConnectionSchema = z.object({
 });
 
 const ConnectionsListInputSchema = z.object({
-	limit: z.number().optional(),
+	limit: z.number().int().min(0).max(255).optional(),
 	next: z.string().optional(),
 	prev: z.string().optional(),
 	order_by: z.string().optional(),

@@ -33,12 +33,19 @@ import type { ExampleEvent, HookdeckWebhookOutputs } from './webhooks/types';
 import { ExampleEventSchema } from './webhooks/types';
 
 export type HookdeckPluginOptions = {
+	/** Authentication method. API key is the primary Hookdeck auth type. */
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	/** Optional: pass the API key directly (bypasses key manager). */
 	key?: string;
+	/** Optional: webhook signing secret for HMAC verification. */
 	webhookSecret?: string;
+	/** Optional: lifecycle hooks for endpoints. */
 	hooks?: InternalHookdeckPlugin['hooks'];
+	/** Optional: lifecycle hooks for webhooks. */
 	webhookHooks?: InternalHookdeckPlugin['webhookHooks'];
+	/** Optional: custom error handlers (merged with defaults). */
 	errorHandlers?: CorsairErrorHandler;
+	/** Permission configuration for the Hookdeck plugin. */
 	permissions?: PluginPermissionsConfig<typeof hookdeckEndpointsNested>;
 };
 

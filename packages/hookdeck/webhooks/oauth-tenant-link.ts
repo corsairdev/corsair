@@ -6,6 +6,7 @@ export async function resolveHookdeckOAuthWebhookTenantLink(
 ): Promise<WebhookTenantMatch | null> {
 	const externalId =
 		toExternalId(tokens.tenant_external_id) ??
+		toExternalId(tokens.tenant_id) ??
 		toExternalId(tokens.team_id) ??
 		toExternalId(asRecord(tokens.team)?.id) ??
 		toExternalId(tokens.account_id) ??
