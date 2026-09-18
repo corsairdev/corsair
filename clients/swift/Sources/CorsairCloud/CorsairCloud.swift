@@ -76,18 +76,19 @@ private func assertSecureBaseURL(_ url: URL) throws {
 }
 
 /// Thrown at call time when no URL was given and none could be derived from the
-/// key — pass a `ck_cloud_<slug>_<secret>` key, or set `url` explicitly.
+/// key — pass a `ck_cloud_<slug>.<secret>` key, or set `url` explicitly.
 public struct UnresolvedURLError: Error, Equatable, Sendable {}
 
 private let cloudSlugChars = Set("abcdefghijklmnopqrstuvwxyz0123456789")
 
-/// Derives the runtime URL from a ck_cloud_<slug>_<secret> key: the slug is the
-/// first segment after the prefix, so the key is the only value you pass.
+/// Derives the runtime URL from a ck_cloud_<slug>.<secret> key: the slug is the
+/// segment after the prefix up to the first '.' (the base64url secret never
+/// contains '.'), so the key is the only value you pass.
 private func urlFromKey(_ apiKey: String) -> URL? {
 	let prefix = "ck_cloud_"
 	guard apiKey.hasPrefix(prefix) else { return nil }
 	let rest = apiKey.dropFirst(prefix.count)
-	guard let sep = rest.firstIndex(of: "_") else { return nil }
+	guard let sep = rest.firstIndex(of: ".") else { return nil }
 	let slug = rest[..<sep]
 	guard !slug.isEmpty, slug.allSatisfy({ cloudSlugChars.contains($0) }) else { return nil }
 	return URL(string: "https://api.corsair.cloud/\(slug)/api/corsair")

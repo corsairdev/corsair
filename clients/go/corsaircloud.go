@@ -36,15 +36,16 @@ func WithURL(u string) Option {
 	return func(c *Client) { c.baseURL = u }
 }
 
-// urlFromKey derives the runtime URL from a ck_cloud_<slug>_<secret> key: the
-// slug is the first segment after the prefix.
+// urlFromKey derives the runtime URL from a ck_cloud_<slug>.<secret> key: the
+// slug is the segment after the prefix up to the first '.' (the base64url
+// secret never contains '.').
 func urlFromKey(apiKey string) string {
 	const prefix = "ck_cloud_"
 	if !strings.HasPrefix(apiKey, prefix) {
 		return ""
 	}
 	rest := apiKey[len(prefix):]
-	i := strings.IndexByte(rest, '_')
+	i := strings.IndexByte(rest, '.')
 	if i <= 0 {
 		return ""
 	}
@@ -88,7 +89,7 @@ func New(apiKey string, opts ...Option) *Client {
 		c.baseURL = urlFromKey(apiKey)
 	}
 	if c.baseURL == "" {
-		c.initErr = fmt.Errorf("corsaircloud: could not resolve a URL from apiKey — pass a ck_cloud_<slug>_<secret> key, or corsaircloud.WithURL(...)")
+		c.initErr = fmt.Errorf("corsaircloud: could not resolve a URL from apiKey — pass a ck_cloud_<slug>.<secret> key, or corsaircloud.WithURL(...)")
 	} else {
 		c.baseURL = strings.TrimRight(c.baseURL, "/")
 		c.initErr = assertSecureBaseURL(c.baseURL)

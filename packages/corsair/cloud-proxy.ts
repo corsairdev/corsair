@@ -38,12 +38,12 @@ export interface CloudProxyOptions {
 
 const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
 
-// Derive the runtime URL from a ck_cloud_<slug>_<secret> key (slug = first
-// segment after the prefix), so the proxy needs only the key.
+// Derive the runtime URL from a ck_cloud_<slug>.<secret> key (slug = segment
+// after the prefix up to the first '.'), so the proxy needs only the key.
 function cloudUrlFromKey(apiKey: string): string | null {
 	if (!apiKey.startsWith('ck_cloud_')) return null;
 	const rest = apiKey.slice('ck_cloud_'.length);
-	const sep = rest.indexOf('_');
+	const sep = rest.indexOf('.');
 	if (sep <= 0) return null;
 	const slug = rest.slice(0, sep);
 	if (!/^[a-z0-9]+$/.test(slug)) return null;
@@ -89,7 +89,7 @@ export function createCloudProxy(
 	const url = options.url ?? cloudUrlFromKey(options.apiKey);
 	if (!url) {
 		throw new Error(
-			'createCloudProxy: could not resolve a URL from apiKey — pass a ck_cloud_<slug>_<secret> key, or set `url` explicitly.',
+			'createCloudProxy: could not resolve a URL from apiKey — pass a ck_cloud_<slug>.<secret> key, or set `url` explicitly.',
 		);
 	}
 	assertSecureCloudUrl(url);

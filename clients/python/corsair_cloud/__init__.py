@@ -23,12 +23,12 @@ _SLUG_RE = re.compile(r"^[a-z0-9]+$")
 
 
 def _url_from_key(api_key: str) -> str | None:
-    # ck_cloud_<slug>_<secret>: the slug is the first segment after the prefix,
-    # and the client builds its own URL from it — so the key is the only value
-    # a developer passes.
+    # ck_cloud_<slug>.<secret>: the slug is the segment after the prefix up to
+    # the first '.' (the base64url secret never contains '.'), and the client
+    # builds its own URL from it — so the key is the only value a developer passes.
     if not api_key.startswith("ck_cloud_"):
         return None
-    slug, sep, _secret = api_key[len("ck_cloud_") :].partition("_")
+    slug, sep, _secret = api_key[len("ck_cloud_") :].partition(".")
     if not sep or not _SLUG_RE.match(slug):
         return None
     return f"https://{_CLOUD_API_HOST}/{slug}/api/corsair"
@@ -70,7 +70,7 @@ class CorsairCloud:
         if not base:
             raise ValueError(
                 "CorsairCloud: could not resolve a URL from api_key — pass a "
-                "ck_cloud_<slug>_<secret> key, or set url explicitly."
+                "ck_cloud_<slug>.<secret> key, or set url explicitly."
             )
         _assert_secure_url(base)
         self.api_key = api_key

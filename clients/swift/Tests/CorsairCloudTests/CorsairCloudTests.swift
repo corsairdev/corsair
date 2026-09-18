@@ -164,7 +164,7 @@ struct CorsairCloudTests {
 	}
 
 	@Test func derivesURLFromKey() async throws {
-		let client = CorsairCloud(apiKey: "ck_cloud_envh_secret123")
+		let client = CorsairCloud(apiKey: "ck_cloud_envh.secret123")
 		#expect(
 			client.baseURL?.absoluteString == "https://api.corsair.cloud/envh/api/corsair")
 		// No derivable slug and no url -> unresolved, throws at call time.

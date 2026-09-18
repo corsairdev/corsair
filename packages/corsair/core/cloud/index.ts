@@ -18,18 +18,19 @@ function deferredCloudError(name: string): never {
 const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
 
 // The stable public host for the hosted free tier. A cloud key carries its
-// project slug (ck_cloud_<slug>_<secret>), so the client builds its own base
+// project slug (ck_cloud_<slug>.<secret>), so the client builds its own base
 // URL and the developer passes only the key.
 const CLOUD_API_HOST = 'api.corsair.cloud';
 
-// Slug is the first segment after the ck_cloud_ prefix, delimited by '_'; the
-// secret (which may itself contain '_') is the remainder. Returns null when the
-// key isn't in that shape (e.g. an older flat key), so the caller can fall back
-// to an explicit url or error clearly.
+// Slug is the segment after the ck_cloud_ prefix up to the first '.'; the secret
+// is the remainder. The secret is base64url so it never contains '.', which is
+// why the delimiter is unambiguous. Returns null when the key isn't in that
+// shape (e.g. an older flat key with no '.'), so the caller can fall back to an
+// explicit url or error clearly.
 function cloudUrlFromKey(apiKey: string): string | null {
 	if (!apiKey.startsWith('ck_cloud_')) return null;
 	const rest = apiKey.slice('ck_cloud_'.length);
-	const sep = rest.indexOf('_');
+	const sep = rest.indexOf('.');
 	if (sep <= 0) return null;
 	const slug = rest.slice(0, sep);
 	if (!/^[a-z0-9]+$/.test(slug)) return null;
@@ -189,7 +190,7 @@ export function buildCloudCorsair<Plugins extends readonly CorsairPlugin[]>(
 }
 
 export type CreateCorsairCloudConfig = {
-	/** The `ck_cloud_<slug>_<secret>` project key, sent as the bearer token. The
+	/** The `ck_cloud_<slug>.<secret>` project key, sent as the bearer token. The
 	 * base URL is resolved from its slug, so this is the whole prod contract. */
 	apiKey: string;
 	/** Internal override (dev/testing). Prod resolves the URL from the key. */
@@ -231,7 +232,7 @@ export function createCorsairCloud<Registry = CorsairCloudRegistry>(
 	const baseUrl = config.url?.trim() || cloudUrlFromKey(apiKey);
 	if (!baseUrl) {
 		throw new Error(
-			'createCorsairCloud: could not resolve a URL from apiKey — pass a ck_cloud_<slug>_<secret> key, or set `url` explicitly.',
+			'createCorsairCloud: could not resolve a URL from apiKey — pass a ck_cloud_<slug>.<secret> key, or set `url` explicitly.',
 		);
 	}
 	assertCloudUrlIsSecure(baseUrl);

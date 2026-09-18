@@ -266,13 +266,13 @@ describe('createCorsairCloud', () => {
 		).resolves.toBeDefined();
 	});
 
-	it('resolves the api.corsair.cloud URL from a ck_cloud_<slug>_<secret> key', async () => {
+	it('resolves the api.corsair.cloud URL from a ck_cloud_<slug>.<secret> key', async () => {
 		jest
 			.spyOn(globalThis, 'fetch')
 			.mockResolvedValue(
 				new Response(JSON.stringify({ data: { ok: true } }), { status: 200 }),
 			);
-		const corsair = createCorsairCloud({ apiKey: 'ck_cloud_envh_secret123' });
+		const corsair = createCorsairCloud({ apiKey: 'ck_cloud_envh.secret123' });
 		await corsair.withTenant('acme').notion.api.pages.searchPage({});
 		const [url] = (globalThis.fetch as jest.Mock).mock.calls[0];
 		expect(url).toBe(
@@ -284,6 +284,11 @@ describe('createCorsairCloud', () => {
 		expect(() => createCorsairCloud({ apiKey: '' })).toThrow(/apiKey/);
 		// A key with no slug+secret and no url can't resolve a base URL.
 		expect(() => createCorsairCloud({ apiKey: 'ck_cloud_x' })).toThrow(
+			/resolve|url/i,
+		);
+		// An older slug-less key (base64url secret, no '.') can't resolve either —
+		// it falls through to the same error rather than a wrong URL.
+		expect(() => createCorsairCloud({ apiKey: 'ck_cloud_abc_def123' })).toThrow(
 			/resolve|url/i,
 		);
 		// An explicit http override is still rejected (bearer token in cleartext).

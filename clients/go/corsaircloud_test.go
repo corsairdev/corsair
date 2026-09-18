@@ -126,7 +126,7 @@ func TestSendRejectsNonHTTPSBaseURL(t *testing.T) {
 }
 
 func TestDerivesURLFromKey(t *testing.T) {
-	c := New("ck_cloud_envh_secret123")
+	c := New("ck_cloud_envh.secret123")
 	if c.baseURL != "https://api.corsair.cloud/envh/api/corsair" {
 		t.Errorf("baseURL = %q, want the api.corsair.cloud URL derived from the key", c.baseURL)
 	}

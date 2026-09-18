@@ -127,9 +127,12 @@ def test_call_encodes_a_slash_containing_tenant(monkeypatch):
 def test_derives_url_from_key():
     from corsair_cloud import _url_from_key
 
-    corsair = CorsairCloud(api_key="ck_cloud_envh_secret123")
+    corsair = CorsairCloud(api_key="ck_cloud_envh.secret123")
     assert corsair.base_url == "https://api.corsair.cloud/envh/api/corsair"
-    assert _url_from_key("ck_cloud_envh_secret123") == "https://api.corsair.cloud/envh/api/corsair"
+    assert _url_from_key("ck_cloud_envh.secret123") == "https://api.corsair.cloud/envh/api/corsair"
+    # An older slug-less key (base64url secret, no '.') resolves to None rather
+    # than a wrong URL — the '.' delimiter is what makes this unambiguous.
+    assert _url_from_key("ck_cloud_abc_def123") is None
     # A key with no derivable slug and no url raises.
     with pytest.raises(ValueError):
         CorsairCloud(api_key="not-a-cloud-key")

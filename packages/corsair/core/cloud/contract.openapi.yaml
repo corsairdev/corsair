@@ -17,7 +17,7 @@ servers:
     variables:
       baseUrl:
         default: https://api.corsair.cloud/PROJECT/api/corsair
-        description: https://api.corsair.cloud/<slug>/api/corsair — the client derives this from the ck_cloud_<slug>_<secret> key.
+        description: https://api.corsair.cloud/<slug>/api/corsair — the client derives this from the ck_cloud_<slug>.<secret> key.
 
 security:
   - projectKey: []          # default: every operation needs the project key…

@@ -8,7 +8,7 @@ than a generated blob. The TS `createCorsairCloud` is the reference; every other
 language mirrors this shape.
 
 ## What every wrapper takes
-- `apiKey` — the `ck_cloud_<slug>_<secret>` project key. Sent as
+- `apiKey` — the `ck_cloud_<slug>.<secret>` project key. Sent as
   `Authorization: Bearer <apiKey>`, and the base URL is **derived from it**:
   parse the slug (first segment after `ck_cloud_`) → `https://api.corsair.cloud/<slug>/api/corsair`.
   So the key is the only value a developer passes.
