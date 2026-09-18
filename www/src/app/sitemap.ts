@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 import { getAllPosts } from '@/lib/blog';
+import { getComboCanonicalUrls } from '@/lib/combined-integrations';
 import { getCatalogIntegrationIds } from '@/server/catalog-integration-cache';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -37,6 +38,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		},
 		...integrationIds.map((id) => ({
 			url: `https://corsair.dev/integrations/${id}`,
+			changeFrequency: 'weekly' as const,
+			priority: 0.8,
+		})),
+		...getComboCanonicalUrls().map((combo) => ({
+			url: `https://corsair.dev${combo}`,
 			changeFrequency: 'weekly' as const,
 			priority: 0.8,
 		})),
