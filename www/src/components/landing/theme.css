@@ -309,6 +309,178 @@
 	animation: landing-use-case-node-in 0.4s ease-out both;
 }
 
+@keyframes combo-agent-row-in {
+	from {
+		opacity: 0;
+		transform: translateY(12px) scale(0.985);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes combo-agent-result-in {
+	from {
+		opacity: 0;
+		transform: translateY(3px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes combo-agent-caret {
+	0%,
+	49% {
+		opacity: 1;
+	}
+	50%,
+	100% {
+		opacity: 0;
+	}
+}
+
+@keyframes combo-agent-shimmer {
+	0% {
+		transform: translateX(-100%);
+	}
+	100% {
+		transform: translateX(100%);
+	}
+}
+
+@keyframes combo-agent-live {
+	0%,
+	100% {
+		box-shadow: 0 0 0 0 rgba(26, 127, 75, 0.45);
+	}
+	70% {
+		box-shadow: 0 0 0 6px rgba(26, 127, 75, 0);
+	}
+}
+
+@keyframes combo-agent-check-in {
+	from {
+		opacity: 0;
+		transform: scale(0.55);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes combo-agent-draw {
+	to {
+		stroke-dashoffset: 0;
+	}
+}
+
+@keyframes combo-agent-idle-mark {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-4px);
+	}
+}
+
+@keyframes combo-agent-composer-glow {
+	0%,
+	100% {
+		box-shadow: 0 0 0 0 rgba(74, 56, 245, 0);
+	}
+	50% {
+		box-shadow: 0 0 0 4px rgba(74, 56, 245, 0.08);
+	}
+}
+
+.combo-agent-row {
+	animation: combo-agent-row-in 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.combo-agent-result {
+	animation: combo-agent-result-in 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.combo-agent-caret {
+	display: inline-block;
+	width: 1.5px;
+	height: 0.9em;
+	margin-left: 2px;
+	vertical-align: text-bottom;
+	background: #4a38f5;
+	animation: combo-agent-caret 900ms steps(1) infinite;
+}
+
+.combo-agent-live {
+	animation: combo-agent-live 2.2s ease-out infinite;
+}
+
+.combo-agent-check {
+	display: inline-flex;
+	animation: combo-agent-check-in 340ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.combo-agent-check-path {
+	stroke-dasharray: 18;
+	stroke-dashoffset: 18;
+	animation: combo-agent-draw 360ms 80ms ease-out forwards;
+}
+
+.combo-agent-running {
+	position: relative;
+	overflow: hidden;
+}
+
+.combo-agent-running::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(74, 56, 245, 0.07) 50%,
+		transparent 100%
+	);
+	animation: combo-agent-shimmer 1.35s ease-in-out infinite;
+	pointer-events: none;
+}
+
+.combo-agent-idle-mark {
+	animation: combo-agent-idle-mark 3.4s ease-in-out infinite;
+}
+
+.combo-agent-idle-mark-delay {
+	animation: combo-agent-idle-mark 3.4s ease-in-out 0.45s infinite;
+}
+
+.combo-agent-composer-busy {
+	animation: combo-agent-composer-glow 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.combo-agent-row,
+	.combo-agent-result,
+	.combo-agent-caret,
+	.combo-agent-live,
+	.combo-agent-check,
+	.combo-agent-check-path,
+	.combo-agent-running::after,
+	.combo-agent-idle-mark,
+	.combo-agent-idle-mark-delay,
+	.combo-agent-composer-busy {
+		animation: none;
+	}
+
+	.combo-agent-check-path {
+		stroke-dashoffset: 0;
+	}
+}
+
 /* ── Site Menu Sticky Scroll Animation ────────────────────────────── */
 
 /* ---- Plus icon rotation ---- */

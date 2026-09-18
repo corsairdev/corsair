@@ -57,6 +57,18 @@ export type ComboFaq = {
 	answer: string;
 };
 
+export type ComboKbApp = {
+	appId: string;
+	appLabel: string;
+};
+
+export type ComboKbTool = {
+	apps: [ComboKbApp, ...ComboKbApp[]];
+	op: string;
+	label: string;
+	result: string;
+};
+
 export type ComboData = {
 	slugA: string;
 	slugB: string;
@@ -77,8 +89,10 @@ export type ComboData = {
 	connectSteps: ConnectStep[];
 	appDetails: AppDetail[];
 	kb: {
+		asker: string;
 		query: string;
 		answer: string;
+		tools: ComboKbTool[];
 		sources: { label: string; href: string; appId: string; appLabel: string }[];
 	};
 	faqs: ComboFaq[];
@@ -358,12 +372,54 @@ export const SLACK_LINEAR_COMBO: ComboData = {
 		},
 	],
 	kb: {
+		asker: 'ambi',
 		query: 'Why is ENG-412 blocked?',
 		answer:
-			'ENG-412 (Fix onboarding email delay) is blocked on a missing SMTP credential. It came up in #eng yesterday with 14 replies, and the Linear issue shows 3 comments, the latest from Priya 2 hours ago. Related: ENG-413 tracks the retry fix that unblocks it.',
+			'ENG-412 (Fix onboarding email delay) is blocked on a missing SMTP credential. In #eng yesterday djain flagged it, 14 replies in that thread.\n\nLinear has 3 comments, the latest from djain 2 hours ago. ENG-413 is the retry fix and it is already in progress.',
+		tools: [
+			{
+				apps: [{ appId: 'slack', appLabel: 'Slack' }],
+				op: 'messages.search',
+				label: 'Searching Slack for ENG-412',
+				result: '14 matches in #eng',
+			},
+			{
+				apps: [{ appId: 'linear', appLabel: 'Linear' }],
+				op: 'issues.get',
+				label: 'Fetching Linear issue ENG-412',
+				result: 'Blocked · missing SMTP credential',
+			},
+			{
+				apps: [{ appId: 'slack', appLabel: 'Slack' }],
+				op: 'conversations.history',
+				label: 'Reading the #eng thread',
+				result: 'djain: deploy is waiting on SMTP',
+			},
+			{
+				apps: [{ appId: 'linear', appLabel: 'Linear' }],
+				op: 'comments.list',
+				label: 'Reading comments on ENG-412',
+				result: '3 comments · latest from djain 2h ago',
+			},
+			{
+				apps: [{ appId: 'linear', appLabel: 'Linear' }],
+				op: 'issues.list',
+				label: 'Finding related Linear issues',
+				result: 'ENG-413 · retry the onboarding send',
+			},
+			{
+				apps: [
+					{ appId: 'linear', appLabel: 'Linear' },
+					{ appId: 'slack', appLabel: 'Slack' },
+				],
+				op: 'issues.get',
+				label: 'Matching the #eng thread to ENG-412',
+				result: '#eng linked on ENG-412',
+			},
+		],
 		sources: [
 			{
-				label: 'Slack · #eng thread',
+				label: 'Slack · #eng',
 				href: '/integrations/slack',
 				appId: 'slack',
 				appLabel: 'Slack',
