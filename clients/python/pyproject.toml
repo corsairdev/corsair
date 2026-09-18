@@ -30,3 +30,8 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["corsair_cloud"]
+
+# Ship the py.typed marker so type checkers honor the inline hints (the
+# "Typing :: Typed" classifier promises it).
+[tool.setuptools.package-data]
+corsair_cloud = ["py.typed"]
