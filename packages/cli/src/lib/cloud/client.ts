@@ -27,25 +27,42 @@ function assertSecureCloudUrl(url: string): void {
 	);
 }
 
+// Derive the runtime URL from a ck_cloud_<slug>_<secret> key (slug = first
+// segment after the prefix), so --key alone is enough.
+function cloudUrlFromKey(key: string): string | null {
+	if (!key.startsWith('ck_cloud_')) return null;
+	const rest = key.slice('ck_cloud_'.length);
+	const sep = rest.indexOf('_');
+	if (sep <= 0) return null;
+	const slug = rest.slice(0, sep);
+	if (!/^[a-z0-9]+$/.test(slug)) return null;
+	return `https://api.corsair.cloud/${slug}/api/corsair`;
+}
+
 export function resolveCloudConfig(options: {
 	url?: string;
 	key?: string;
 }): CloudConfig {
-	const url = (options.url || process.env.CORSAIR_CLOUD_URL || '')
-		.trim()
-		.replace(/\/+$/, '');
-	if (!url) {
-		throw new Error(
-			'Corsair Cloud URL required — pass --url or set CORSAIR_CLOUD_URL.',
-		);
-	}
-	assertSecureCloudUrl(url);
 	const key = (options.key || process.env.CORSAIR_CLOUD_KEY || '').trim();
 	if (!key) {
 		throw new Error(
 			'Corsair Cloud key required — pass --key or set CORSAIR_CLOUD_KEY.',
 		);
 	}
+	const url = (
+		options.url ||
+		process.env.CORSAIR_CLOUD_URL ||
+		cloudUrlFromKey(key) ||
+		''
+	)
+		.trim()
+		.replace(/\/+$/, '');
+	if (!url) {
+		throw new Error(
+			'Corsair Cloud URL required — pass a ck_cloud_<slug>_<secret> key, or --url / CORSAIR_CLOUD_URL.',
+		);
+	}
+	assertSecureCloudUrl(url);
 	return { url, key };
 }
 

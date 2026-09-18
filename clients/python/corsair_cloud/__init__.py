@@ -7,6 +7,7 @@ the plugin set lives on the VM, so calls are just `POST .../call/<op>`.
 from __future__ import annotations
 
 import json
+import re
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
@@ -17,6 +18,20 @@ __all__ = ["CorsairCloud", "CorsairError", "TenantClient", "Manage"]
 
 _LOOPBACK_HOSTS = {"localhost", "127.0.0.1", "::1"}
 _DEFAULT_TIMEOUT = 30.0
+_CLOUD_API_HOST = "api.corsair.cloud"
+_SLUG_RE = re.compile(r"^[a-z0-9]+$")
+
+
+def _url_from_key(api_key: str) -> str | None:
+    # ck_cloud_<slug>_<secret>: the slug is the first segment after the prefix,
+    # and the client builds its own URL from it — so the key is the only value
+    # a developer passes.
+    if not api_key.startswith("ck_cloud_"):
+        return None
+    slug, sep, _secret = api_key[len("ck_cloud_") :].partition("_")
+    if not sep or not _SLUG_RE.match(slug):
+        return None
+    return f"https://{_CLOUD_API_HOST}/{slug}/api/corsair"
 
 
 def _assert_secure_url(url: str) -> None:
@@ -46,10 +61,20 @@ class CorsairError(Exception):
 
 
 class CorsairCloud:
-    def __init__(self, api_key: str, url: str, timeout: float = _DEFAULT_TIMEOUT) -> None:
-        _assert_secure_url(url)
+    def __init__(
+        self, api_key: str, url: str | None = None, timeout: float = _DEFAULT_TIMEOUT
+    ) -> None:
+        if not api_key:
+            raise ValueError("CorsairCloud: api_key is required")
+        base = url or _url_from_key(api_key)
+        if not base:
+            raise ValueError(
+                "CorsairCloud: could not resolve a URL from api_key — pass a "
+                "ck_cloud_<slug>_<secret> key, or set url explicitly."
+            )
+        _assert_secure_url(base)
         self.api_key = api_key
-        self.base_url = url.rstrip("/")
+        self.base_url = base.rstrip("/")
         self.timeout = timeout
 
     def with_tenant(self, tenant_id: str) -> "TenantClient":

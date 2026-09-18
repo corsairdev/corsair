@@ -13,7 +13,7 @@ import (
 func newTestServer(t *testing.T, handler http.HandlerFunc) (*Client, func()) {
 	t.Helper()
 	srv := httptest.NewServer(handler)
-	c := New("ck_cloud_test", srv.URL)
+	c := New("ck_cloud_test", WithURL(srv.URL))
 	return c, srv.Close
 }
 
@@ -118,10 +118,22 @@ func TestErrorBodyMapsToCorsairError(t *testing.T) {
 }
 
 func TestSendRejectsNonHTTPSBaseURL(t *testing.T) {
-	c := New("ck_cloud_test", "http://attacker.example")
+	c := New("ck_cloud_test", WithURL("http://attacker.example"))
 	_, err := c.Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", nil)
 	if err == nil {
 		t.Fatal("expected error for non-https base URL")
+	}
+}
+
+func TestDerivesURLFromKey(t *testing.T) {
+	c := New("ck_cloud_envh_secret123")
+	if c.baseURL != "https://api.corsair.cloud/envh/api/corsair" {
+		t.Errorf("baseURL = %q, want the api.corsair.cloud URL derived from the key", c.baseURL)
+	}
+	// A key with no derivable slug and no WithURL errors at call time.
+	c2 := New("not-a-cloud-key")
+	if _, err := c2.Tenant("acme").Call(context.Background(), "notion", "op", nil); err == nil {
+		t.Fatal("expected error when no URL can be resolved from the key")
 	}
 }
 

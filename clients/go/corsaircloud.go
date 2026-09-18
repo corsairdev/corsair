@@ -13,8 +13,9 @@ import (
 	"time"
 )
 
-// Client talks to a Corsair Cloud project's base URL
-// (https://<vm>.corsair.cloud/<env>/api/corsair).
+// Client talks to a Corsair Cloud project. The base URL is derived from the
+// API key (https://api.corsair.cloud/<slug>/api/corsair), so the key is the
+// only value you pass.
 type Client struct {
 	apiKey  string
 	baseURL string
@@ -28,6 +29,32 @@ type Option func(*Client)
 // WithHTTPClient overrides the default http.Client.
 func WithHTTPClient(h *http.Client) Option {
 	return func(c *Client) { c.http = h }
+}
+
+// WithURL overrides the base URL derived from the key (dev/testing only).
+func WithURL(u string) Option {
+	return func(c *Client) { c.baseURL = u }
+}
+
+// urlFromKey derives the runtime URL from a ck_cloud_<slug>_<secret> key: the
+// slug is the first segment after the prefix.
+func urlFromKey(apiKey string) string {
+	const prefix = "ck_cloud_"
+	if !strings.HasPrefix(apiKey, prefix) {
+		return ""
+	}
+	rest := apiKey[len(prefix):]
+	i := strings.IndexByte(rest, '_')
+	if i <= 0 {
+		return ""
+	}
+	slug := rest[:i]
+	for _, r := range slug {
+		if !((r >= 'a' && r <= 'z') || (r >= '0' && r <= '9')) {
+			return ""
+		}
+	}
+	return "https://api.corsair.cloud/" + slug + "/api/corsair"
 }
 
 var loopbackHosts = map[string]bool{"localhost": true, "127.0.0.1": true, "::1": true}
@@ -48,18 +75,23 @@ func assertSecureBaseURL(baseURL string) error {
 	return fmt.Errorf("corsaircloud: base URL must use https:// (got %q) — http:// is only allowed for localhost/127.0.0.1", baseURL)
 }
 
-// New creates a Client for the given API key and project base URL. A base
-// URL that isn't https:// (loopback excepted) surfaces as an error from the
+// New creates a Client for the given API key; the URL is derived from the key.
+// Pass WithURL only for dev/testing. A URL that isn't https:// (loopback
+// excepted), or a key no URL can be derived from, surfaces as an error from the
 // first call made with this client.
-func New(apiKey, baseURL string, opts ...Option) *Client {
-	c := &Client{
-		apiKey:  apiKey,
-		baseURL: strings.TrimRight(baseURL, "/"),
-		http:    &http.Client{Timeout: 30 * time.Second},
-		initErr: assertSecureBaseURL(baseURL),
-	}
+func New(apiKey string, opts ...Option) *Client {
+	c := &Client{apiKey: apiKey, http: &http.Client{Timeout: 30 * time.Second}}
 	for _, opt := range opts {
 		opt(c)
+	}
+	if c.baseURL == "" {
+		c.baseURL = urlFromKey(apiKey)
+	}
+	if c.baseURL == "" {
+		c.initErr = fmt.Errorf("corsaircloud: could not resolve a URL from apiKey — pass a ck_cloud_<slug>_<secret> key, or corsaircloud.WithURL(...)")
+	} else {
+		c.baseURL = strings.TrimRight(c.baseURL, "/")
+		c.initErr = assertSecureBaseURL(c.baseURL)
 	}
 	return c
 }

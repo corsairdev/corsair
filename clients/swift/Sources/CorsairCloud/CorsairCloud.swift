@@ -75,6 +75,24 @@ private func assertSecureBaseURL(_ url: URL) throws {
 	throw InsecureBaseURLError(url: url.absoluteString)
 }
 
+/// Thrown at call time when no URL was given and none could be derived from the
+/// key — pass a `ck_cloud_<slug>_<secret>` key, or set `url` explicitly.
+public struct UnresolvedURLError: Error, Equatable, Sendable {}
+
+private let cloudSlugChars = Set("abcdefghijklmnopqrstuvwxyz0123456789")
+
+/// Derives the runtime URL from a ck_cloud_<slug>_<secret> key: the slug is the
+/// first segment after the prefix, so the key is the only value you pass.
+private func urlFromKey(_ apiKey: String) -> URL? {
+	let prefix = "ck_cloud_"
+	guard apiKey.hasPrefix(prefix) else { return nil }
+	let rest = apiKey.dropFirst(prefix.count)
+	guard let sep = rest.firstIndex(of: "_") else { return nil }
+	let slug = rest[..<sep]
+	guard !slug.isEmpty, slug.allSatisfy({ cloudSlugChars.contains($0) }) else { return nil }
+	return URL(string: "https://api.corsair.cloud/\(slug)/api/corsair")
+}
+
 private func encodedPathSegment(_ segment: String) -> String {
 	segment.addingPercentEncoding(withAllowedCharacters: .urlPathSegmentAllowed) ?? segment
 }
@@ -98,15 +116,21 @@ public struct Tenant: Codable, Sendable {
 /// dynamic HTTP client — the plugin set lives on the VM.
 public struct CorsairCloud: Sendable {
 	let apiKey: String
-	let baseURL: URL
+	let baseURL: URL?
 	let session: URLSession
 
-	public init(apiKey: String, url: URL, session: URLSession = .shared) {
+	/// The URL is derived from the API key; pass `url` only for dev/testing.
+	public init(apiKey: String, url: URL? = nil, session: URLSession = .shared) {
 		self.apiKey = apiKey
-		// Strip a trailing slash so a console-copied base URL doesn't produce a
-		// "//" in the request path, matching the Python/Go/TS clients.
-		let s = url.absoluteString
-		baseURL = URL(string: s.hasSuffix("/") ? String(s.dropLast()) : s) ?? url
+		let resolved = url ?? urlFromKey(apiKey)
+		if let resolved {
+			// Strip a trailing slash so a console-copied base URL doesn't produce
+			// a "//" in the request path, matching the Python/Go/TS clients.
+			let s = resolved.absoluteString
+			baseURL = URL(string: s.hasSuffix("/") ? String(s.dropLast()) : s) ?? resolved
+		} else {
+			baseURL = nil
+		}
 		self.session = session
 	}
 
@@ -122,6 +146,7 @@ public struct CorsairCloud: Sendable {
 		query: [String: String] = [:],
 		body: JSONValue? = nil
 	) async throws -> Data {
+		guard let baseURL else { throw UnresolvedURLError() }
 		try assertSecureBaseURL(baseURL)
 		var comps = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
 		comps.percentEncodedPath += "/" + path.map(encodedPathSegment).joined(separator: "/")

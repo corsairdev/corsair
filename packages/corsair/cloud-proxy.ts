@@ -13,7 +13,6 @@
  * import { createCloudProxy } from 'corsair/cloud-proxy';
  * const proxy = createCloudProxy({
  *   apiKey: process.env.CORSAIR_CLOUD_KEY!,
- *   url: process.env.CORSAIR_CLOUD_URL!,
  *   authorize: async (req) => Boolean(await getSession(req)),
  * });
  * export const GET = proxy;
@@ -22,10 +21,11 @@
  */
 
 export interface CloudProxyOptions {
-	/** `ck_cloud_…` key for the project. Injected as the upstream bearer. */
+	/** `ck_cloud_…` key for the project. Injected as the upstream bearer, and the
+	 * upstream URL is derived from it. */
 	apiKey: string;
-	/** Project runtime base URL, e.g. `https://<vm>.corsair.cloud/<project>/api/corsair`. */
-	url: string;
+	/** Override the URL derived from the key (dev/testing only). */
+	url?: string;
 	/** Path prefix this route is mounted at. Stripped before forwarding. Default `/api/corsair`. */
 	basePath?: string;
 	/**
@@ -37,6 +37,18 @@ export interface CloudProxyOptions {
 }
 
 const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
+
+// Derive the runtime URL from a ck_cloud_<slug>_<secret> key (slug = first
+// segment after the prefix), so the proxy needs only the key.
+function cloudUrlFromKey(apiKey: string): string | null {
+	if (!apiKey.startsWith('ck_cloud_')) return null;
+	const rest = apiKey.slice('ck_cloud_'.length);
+	const sep = rest.indexOf('_');
+	if (sep <= 0) return null;
+	const slug = rest.slice(0, sep);
+	if (!/^[a-z0-9]+$/.test(slug)) return null;
+	return `https://api.corsair.cloud/${slug}/api/corsair`;
+}
 
 // The cloud key is sent as a bearer token, so http:// would leak it in
 // cleartext — allowed only for loopback, matching the reference client.
@@ -74,15 +86,19 @@ function stripBasePath(pathname: string, basePath: string): string {
 export function createCloudProxy(
 	options: CloudProxyOptions,
 ): (req: Request) => Promise<Response> {
-	assertSecureCloudUrl(options.url);
+	const url = options.url ?? cloudUrlFromKey(options.apiKey);
+	if (!url) {
+		throw new Error(
+			'createCloudProxy: could not resolve a URL from apiKey — pass a ck_cloud_<slug>_<secret> key, or set `url` explicitly.',
+		);
+	}
+	assertSecureCloudUrl(url);
 	if (!options.authorize && process.env.NODE_ENV !== 'production') {
 		console.warn(
 			'[corsair] createCloudProxy has no `authorize` — this route forwards any tenant/plugin/op with your cloud key. Add `authorize` before exposing it.',
 		);
 	}
-	const upstream = options.url.endsWith('/')
-		? options.url.slice(0, -1)
-		: options.url;
+	const upstream = url.endsWith('/') ? url.slice(0, -1) : url;
 	const basePath = options.basePath ?? '/api/corsair';
 
 	return async (req: Request): Promise<Response> => {

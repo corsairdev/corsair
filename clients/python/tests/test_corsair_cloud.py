@@ -122,3 +122,14 @@ def test_call_encodes_a_slash_containing_tenant(monkeypatch):
     assert captured["url"] == (
         "https://vm.corsair.cloud/env/api/corsair/a%2Fb/notion/call/pages.searchPage"
     )
+
+
+def test_derives_url_from_key():
+    from corsair_cloud import _url_from_key
+
+    corsair = CorsairCloud(api_key="ck_cloud_envh_secret123")
+    assert corsair.base_url == "https://api.corsair.cloud/envh/api/corsair"
+    assert _url_from_key("ck_cloud_envh_secret123") == "https://api.corsair.cloud/envh/api/corsair"
+    # A key with no derivable slug and no url raises.
+    with pytest.raises(ValueError):
+        CorsairCloud(api_key="not-a-cloud-key")

@@ -162,4 +162,15 @@ struct CorsairCloudTests {
 			#expect(error.status == 401)
 		}
 	}
+
+	@Test func derivesURLFromKey() async throws {
+		let client = CorsairCloud(apiKey: "ck_cloud_envh_secret123")
+		#expect(
+			client.baseURL?.absoluteString == "https://api.corsair.cloud/envh/api/corsair")
+		// No derivable slug and no url -> unresolved, throws at call time.
+		let bad = CorsairCloud(apiKey: "not-a-cloud-key")
+		await #expect(throws: UnresolvedURLError.self) {
+			_ = try await bad.tenant("acme").call("notion", "op")
+		}
+	}
 }
