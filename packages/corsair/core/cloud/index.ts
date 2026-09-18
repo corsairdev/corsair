@@ -17,6 +17,25 @@ function deferredCloudError(name: string): never {
 
 const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
 
+// The stable public host for the hosted free tier. A cloud key carries its
+// project slug (ck_cloud_<slug>_<secret>), so the client builds its own base
+// URL and the developer passes only the key.
+const CLOUD_API_HOST = 'api.corsair.cloud';
+
+// Slug is the first segment after the ck_cloud_ prefix, delimited by '_'; the
+// secret (which may itself contain '_') is the remainder. Returns null when the
+// key isn't in that shape (e.g. an older flat key), so the caller can fall back
+// to an explicit url or error clearly.
+function cloudUrlFromKey(apiKey: string): string | null {
+	if (!apiKey.startsWith('ck_cloud_')) return null;
+	const rest = apiKey.slice('ck_cloud_'.length);
+	const sep = rest.indexOf('_');
+	if (sep <= 0) return null;
+	const slug = rest.slice(0, sep);
+	if (!/^[a-z0-9]+$/.test(slug)) return null;
+	return `https://${CLOUD_API_HOST}/${slug}/api/corsair`;
+}
+
 // The cloud transport sends the project key as a bearer token (http.ts), so
 // http:// would leak it in cleartext — allowed only for loopback, where the
 // mock-runtime tests run.
@@ -170,10 +189,11 @@ export function buildCloudCorsair<Plugins extends readonly CorsairPlugin[]>(
 }
 
 export type CreateCorsairCloudConfig = {
-	/** The `ck_cloud_` project key, sent as the bearer token. */
+	/** The `ck_cloud_<slug>_<secret>` project key, sent as the bearer token. The
+	 * base URL is resolved from its slug, so this is the whole prod contract. */
 	apiKey: string;
-	/** The Corsair Cloud runtime URL, e.g. https://<vm>.corsair.cloud/<env>/api/corsair. */
-	url: string;
+	/** Internal override (dev/testing). Prod resolves the URL from the key. */
+	url?: string;
 	/** Reserved for future connect/callback signing; unused by the HTTP client. */
 	signingSecret?: string;
 };
@@ -208,9 +228,11 @@ export function createCorsairCloud<Registry = CorsairCloudRegistry>(
 	if (!apiKey) {
 		throw new Error('createCorsairCloud: apiKey is required');
 	}
-	const baseUrl = config.url?.trim();
+	const baseUrl = config.url?.trim() || cloudUrlFromKey(apiKey);
 	if (!baseUrl) {
-		throw new Error('createCorsairCloud: url is required');
+		throw new Error(
+			'createCorsairCloud: could not resolve a URL from apiKey — pass a ck_cloud_<slug>_<secret> key, or set `url` explicitly.',
+		);
 	}
 	assertCloudUrlIsSecure(baseUrl);
 	return buildCloudSurface(

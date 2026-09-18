@@ -266,13 +266,27 @@ describe('createCorsairCloud', () => {
 		).resolves.toBeDefined();
 	});
 
-	it('requires apiKey and url, and rejects a non-loopback http url', () => {
-		expect(() =>
-			createCorsairCloud({ apiKey: '', url: 'https://vm/p' }),
-		).toThrow(/apiKey/);
-		expect(() => createCorsairCloud({ apiKey: 'ck_cloud_x', url: '' })).toThrow(
-			/url/,
+	it('resolves the api.corsair.cloud URL from a ck_cloud_<slug>_<secret> key', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(
+				new Response(JSON.stringify({ data: { ok: true } }), { status: 200 }),
+			);
+		const corsair = createCorsairCloud({ apiKey: 'ck_cloud_envh_secret123' });
+		await corsair.withTenant('acme').notion.api.pages.searchPage({});
+		const [url] = (globalThis.fetch as jest.Mock).mock.calls[0];
+		expect(url).toBe(
+			'https://api.corsair.cloud/envh/api/corsair/acme/notion/call/pages.searchPage',
 		);
+	});
+
+	it('requires apiKey, a resolvable key or explicit url, and rejects non-loopback http', () => {
+		expect(() => createCorsairCloud({ apiKey: '' })).toThrow(/apiKey/);
+		// A key with no slug+secret and no url can't resolve a base URL.
+		expect(() => createCorsairCloud({ apiKey: 'ck_cloud_x' })).toThrow(
+			/resolve|url/i,
+		);
+		// An explicit http override is still rejected (bearer token in cleartext).
 		expect(() =>
 			createCorsairCloud({ apiKey: 'ck_cloud_x', url: 'http://evil.example' }),
 		).toThrow(/https/);
