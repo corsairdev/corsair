@@ -1,12 +1,17 @@
 import { z } from 'zod';
 
+// z.unknown() is used because Bigin record fields are module-specific and not fully typed by the API.
 const StandardRecordSchema = z.record(z.string(), z.unknown());
+// z.unknown() is used because action response details vary per operation and module.
+const ActionDetailsSchema = z.record(z.string(), z.unknown());
+// z.unknown() is used because list pagination info fields vary by endpoint.
+const PaginationInfoSchema = z.record(z.string(), z.unknown()).optional();
 
 const StandardActionResponseSchema = z.object({
 	data: z.array(
 		z.object({
 			code: z.string(),
-			details: z.record(z.string(), z.unknown()),
+			details: ActionDetailsSchema,
 			message: z.string(),
 			status: z.string(),
 		}),
@@ -111,12 +116,14 @@ export type DeleteRecordPhotoResponse = z.infer<
 	typeof DeleteRecordPhotoResponseSchema
 >;
 
+// z.unknown() is used because download endpoints return binary file content, not JSON.
 export const DownloadRecordPhotoResponseSchema = z.unknown();
 export type DownloadRecordPhotoResponse = unknown;
 
 export const UploadRecordPhotoInputSchema = z.object({
 	module: z.string(),
 	id: z.string(),
+	// z.unknown() is used because file inputs accept Buffer, Blob, or stream-like objects.
 	file: z.unknown(),
 });
 export type UploadRecordPhotoInput = z.infer<
@@ -138,7 +145,7 @@ export type GetDeletedRecordsInput = z.infer<
 >;
 export const GetDeletedRecordsResponseSchema = z.object({
 	data: z.array(StandardRecordSchema),
-	info: z.record(z.string(), z.unknown()).optional(),
+	info: PaginationInfoSchema,
 });
 export type GetDeletedRecordsResponse = z.infer<
 	typeof GetDeletedRecordsResponseSchema
@@ -285,7 +292,7 @@ export const GetAllNotesInputSchema = z.object({
 export type GetAllNotesInput = z.infer<typeof GetAllNotesInputSchema>;
 export const GetAllNotesResponseSchema = z.object({
 	data: z.array(StandardRecordSchema),
-	info: z.record(z.string(), z.unknown()).optional(),
+	info: PaginationInfoSchema,
 });
 export type GetAllNotesResponse = z.infer<typeof GetAllNotesResponseSchema>;
 
@@ -325,7 +332,7 @@ export const CreateTagsResponseSchema = z.object({
 	tags: z.array(
 		z.object({
 			code: z.string(),
-			details: z.record(z.string(), z.unknown()),
+			details: ActionDetailsSchema,
 			message: z.string(),
 			status: z.string(),
 		}),
@@ -370,6 +377,7 @@ export const DeleteAttachmentResponseSchema = StandardActionResponseSchema;
 export type DeleteAttachmentResponse = z.infer<
 	typeof DeleteAttachmentResponseSchema
 >;
+// z.unknown() is used because download endpoints return binary file content, not JSON.
 export const DownloadAttachmentResponseSchema = z.unknown();
 export type DownloadAttachmentResponse = unknown;
 
@@ -383,7 +391,7 @@ export const GetAttachmentsInputSchema = z.object({
 export type GetAttachmentsInput = z.infer<typeof GetAttachmentsInputSchema>;
 export const GetAttachmentsResponseSchema = z.object({
 	data: z.array(StandardRecordSchema),
-	info: z.record(z.string(), z.unknown()).optional(),
+	info: PaginationInfoSchema,
 });
 export type GetAttachmentsResponse = z.infer<
 	typeof GetAttachmentsResponseSchema
@@ -393,6 +401,7 @@ export const UploadAttachmentInputSchema = z
 	.object({
 		module: z.string(),
 		recordId: z.string(),
+		// z.unknown() is used because file inputs accept Buffer, Blob, or stream-like objects.
 		file: z.unknown().optional(),
 		attachmentUrl: z.string().url().optional(),
 		attachment_url: z.string().url().optional(),
@@ -417,6 +426,7 @@ export type UploadAttachmentResponse = z.infer<
 >;
 
 // Bulk
+// z.unknown() is used because bulk job query/callback fields are caller-defined.
 export const CreateBulkReadJobInputSchema = z.record(z.string(), z.unknown());
 export type CreateBulkReadJobInput = z.infer<
 	typeof CreateBulkReadJobInputSchema
@@ -432,6 +442,7 @@ export const DownloadBulkReadResultInputSchema = z.object({
 export type DownloadBulkReadResultInput = z.infer<
 	typeof DownloadBulkReadResultInputSchema
 >;
+// z.unknown() is used because bulk download results are CSV/binary, not JSON.
 export const DownloadBulkReadResultResponseSchema = z.unknown();
 export type DownloadBulkReadResultResponse = unknown;
 
@@ -488,7 +499,7 @@ export type GetNotificationDetailsInput = z.infer<
 >;
 export const GetNotificationDetailsResponseSchema = z.object({
 	watch: z.array(StandardRecordSchema),
-	info: z.record(z.string(), z.unknown()).optional(),
+	info: PaginationInfoSchema,
 });
 export type GetNotificationDetailsResponse = z.infer<
 	typeof GetNotificationDetailsResponseSchema
@@ -607,7 +618,7 @@ export const GetUsersInputSchema = z.object({
 export type GetUsersInput = z.infer<typeof GetUsersInputSchema>;
 export const GetUsersResponseSchema = z.object({
 	users: z.array(StandardRecordSchema),
-	info: z.record(z.string(), z.unknown()).optional(),
+	info: PaginationInfoSchema,
 });
 export type GetUsersResponse = z.infer<typeof GetUsersResponseSchema>;
 
@@ -657,6 +668,7 @@ export type GetOrganizationResponse = z.infer<
 >;
 
 export const UploadOrganizationPhotoInputSchema = z.object({
+	// z.unknown() is used because file inputs accept Buffer, Blob, or stream-like objects.
 	file: z.unknown(),
 });
 export type UploadOrganizationPhotoInput = z.infer<

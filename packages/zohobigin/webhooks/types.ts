@@ -11,6 +11,7 @@ export const ZohoBiginWebhookPayloadSchema = z.object({
 	module: z.string().optional(),
 	token: z.string().optional(),
 	ids: z.array(z.string()).optional(),
+	// z.unknown() is used because webhook record payloads are module-specific.
 	data: z.record(z.string(), z.unknown()).optional(),
 });
 
