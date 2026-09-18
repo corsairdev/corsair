@@ -67,6 +67,9 @@ Create a connect link and send the user to it:
 
 ```go
 link, err := corsair.CreateConnectLink(ctx, "notion", "acme", "") // last arg: optional redirectURI
+if err != nil {
+    return err
+}
 // redirect the user to link.ConnectURL
 ```
 
@@ -74,7 +77,10 @@ After they authorize, check who is connected:
 
 ```go
 status, err := corsair.ConnectionStatus(ctx, "acme")
-// map[string]string{"notion": "connected"}
+if err != nil {
+    return err
+}
+// status is map[string]string{"notion": "connected"}
 ```
 
 ## Handle errors
