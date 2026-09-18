@@ -8,57 +8,12 @@ import type { CorsairIntegration, CorsairPlugin } from '../plugins';
 import { buildCloudClient } from './client';
 import type { CloudTransport } from './http';
 import { buildCloudManagement } from './manage';
+import { assertCloudUrlSecure, cloudUrlFromKey } from './url';
 
 const CLOUD_SINGLE_TENANT_ID = 'default';
 
 function deferredCloudError(name: string): never {
 	throw new Error(`"${name}" is not available in cloud mode (deferred)`);
-}
-
-const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
-
-// The stable public host for the hosted free tier. A cloud key carries its
-// project slug (ck_cloud_<slug>.<secret>), so the client builds its own base
-// URL and the developer passes only the key.
-const CLOUD_API_HOST = 'api.corsair.cloud';
-
-// Slug is the segment after the ck_cloud_ prefix up to the first '.'; the secret
-// is the remainder. The secret is base64url so it never contains '.', which is
-// why the delimiter is unambiguous. Returns null when the key isn't in that
-// shape (e.g. an older flat key with no '.'), so the caller can fall back to an
-// explicit url or error clearly.
-function cloudUrlFromKey(apiKey: string): string | null {
-	if (!apiKey.startsWith('ck_cloud_')) return null;
-	const rest = apiKey.slice('ck_cloud_'.length);
-	const sep = rest.indexOf('.');
-	if (sep <= 0) return null;
-	const slug = rest.slice(0, sep);
-	if (!/^[a-z0-9]+$/.test(slug)) return null;
-	return `https://${CLOUD_API_HOST}/${slug}/api/corsair`;
-}
-
-// The cloud transport sends the project key as a bearer token (http.ts), so
-// http:// would leak it in cleartext — allowed only for loopback, where the
-// mock-runtime tests run.
-function assertCloudUrlIsSecure(baseUrl: string): void {
-	let parsed: URL;
-	try {
-		parsed = new URL(baseUrl);
-	} catch {
-		throw new Error(`Cloud base URL is not a valid URL: "${baseUrl}"`);
-	}
-	if (parsed.search || parsed.hash) {
-		throw new Error(
-			`Cloud base URL must not contain a query or fragment (got "${baseUrl}") — path segments are appended to it.`,
-		);
-	}
-	if (parsed.protocol === 'https:') return;
-	if (parsed.protocol === 'http:' && LOOPBACK_HOSTS.has(parsed.hostname)) {
-		return;
-	}
-	throw new Error(
-		`Cloud mode requires an https:// base URL (got "${baseUrl}") — http:// is only allowed for localhost/127.0.0.1, since the project key is sent as a bearer token.`,
-	);
 }
 
 function resolveCloudBaseUrl(hub: HubConfigInput | undefined): string {
@@ -68,7 +23,7 @@ function resolveCloudBaseUrl(hub: HubConfigInput | undefined): string {
 			'Cloud mode (ck_cloud_ key) requires a base URL — set hub.baseUrl or CORSAIR_CLOUD_URL.',
 		);
 	}
-	assertCloudUrlIsSecure(baseUrl);
+	assertCloudUrlSecure(baseUrl);
 	return baseUrl;
 }
 
@@ -238,7 +193,7 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 			'corsairCloud: could not resolve a URL from apiKey — pass a ck_cloud_<slug>.<secret> key, or set `url` explicitly.',
 		);
 	}
-	assertCloudUrlIsSecure(baseUrl);
+	assertCloudUrlSecure(baseUrl);
 	return buildCloudSurface(
 		{ baseUrl, apiKey },
 		{ multiTenancy: true },

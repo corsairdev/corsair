@@ -1,3 +1,5 @@
+import { assertCloudUrlSecure, cloudUrlFromKey } from './core/cloud/url';
+
 /**
  * Corsair Cloud proxy — server-only. Holds the `ck_cloud_` key; never import
  * this into browser code. Pairs with `<CorsairProvider baseURL={basePath}>`,
@@ -36,43 +38,6 @@ export interface CorsairConnectOptions {
 	authorize?: (req: Request) => boolean | Promise<boolean>;
 }
 
-const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
-
-// Derive the runtime URL from a ck_cloud_<slug>.<secret> key (slug = segment
-// after the prefix up to the first '.'), so the proxy needs only the key.
-function cloudUrlFromKey(apiKey: string): string | null {
-	if (!apiKey.startsWith('ck_cloud_')) return null;
-	const rest = apiKey.slice('ck_cloud_'.length);
-	const sep = rest.indexOf('.');
-	if (sep <= 0) return null;
-	const slug = rest.slice(0, sep);
-	if (!/^[a-z0-9]+$/.test(slug)) return null;
-	return `https://api.corsair.cloud/${slug}/api/corsair`;
-}
-
-// The cloud key is sent as a bearer token, so http:// would leak it in
-// cleartext — allowed only for loopback, matching the reference client.
-function assertSecureCloudUrl(url: string): void {
-	let parsed: URL;
-	try {
-		parsed = new URL(url);
-	} catch {
-		throw new Error(`Cloud proxy URL is not a valid URL: "${url}"`);
-	}
-	if (parsed.search || parsed.hash) {
-		throw new Error(
-			`Cloud proxy URL must not contain a query or fragment (got "${url}") — path segments are appended to it.`,
-		);
-	}
-	if (parsed.protocol === 'https:') return;
-	if (parsed.protocol === 'http:' && LOOPBACK_HOSTS.has(parsed.hostname)) {
-		return;
-	}
-	throw new Error(
-		`Cloud proxy requires an https:// URL (got "${url}") — http:// is only allowed for localhost/127.0.0.1.`,
-	);
-}
-
 function stripBasePath(pathname: string, basePath: string): string {
 	const normalized = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
 	if (!normalized) return pathname;
@@ -97,8 +62,11 @@ export function corsairConnect(
 			'corsairConnect: could not resolve a URL from apiKey — pass a ck_cloud_<slug>.<secret> key, or set `url` explicitly.',
 		);
 	}
-	assertSecureCloudUrl(url);
-	if (!options.authorize && process.env.NODE_ENV !== 'production') {
+	assertCloudUrlSecure(url, 'Cloud proxy URL');
+	if (!options.authorize) {
+		// Warn in every environment, production included: a route with no
+		// authorize forwards any tenant/plugin/op with the project key, and
+		// suppressing the signal in prod is exactly backwards.
 		console.warn(
 			'[corsair] corsairConnect has no `authorize` — this route forwards any tenant/plugin/op with your cloud key. Add `authorize` before exposing it.',
 		);
