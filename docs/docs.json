@@ -1667,6 +1667,14 @@
                 ]
               },
               {
+                "group": "Imagior",
+                "pages": [
+                  "plugins/imagior/overview",
+                  "plugins/imagior/api",
+                  "plugins/imagior/database"
+                ]
+              },
+              {
                 "group": "ImgBB",
                 "pages": [
                   "plugins/imgbb/overview",
