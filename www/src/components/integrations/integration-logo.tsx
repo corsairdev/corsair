@@ -6,6 +6,11 @@ import { useState } from 'react';
 import { integrationIconUrl } from '@/lib/integrations-catalog';
 import { cn } from '@/lib/utils';
 
+const OFFICIAL_ICONS: Record<string, string> = {
+	slack: '/brand/slack.svg',
+	linear: '/brand/linear.svg',
+};
+
 function hashColor(id: string): string {
 	let hash = 0;
 	for (let i = 0; i < id.length; i += 1) {
@@ -47,6 +52,12 @@ function InitialFallback({
 	);
 }
 
+function insetFor(size: number) {
+	if (size <= 20) return 1;
+	if (size <= 36) return 2;
+	return 4;
+}
+
 export function IntegrationLogo({
 	id,
 	displayName,
@@ -59,6 +70,8 @@ export function IntegrationLogo({
 	className?: string;
 }) {
 	const [failed, setFailed] = useState(false);
+	const inset = insetFor(size);
+	const officialSrc = OFFICIAL_ICONS[id];
 
 	if (failed) {
 		return (
@@ -77,17 +90,28 @@ export function IntegrationLogo({
 				'inline-flex shrink-0 items-center justify-center overflow-hidden rounded-sm border border-[#1c1c1c]/8 bg-white',
 				className,
 			)}
-			style={{ width: size, height: size }}
+			style={{ width: size, height: size, padding: inset }}
 		>
-			<Image
-				src={integrationIconUrl(id)}
-				alt=""
-				width={size}
-				height={size}
-				className="h-full w-full object-contain p-1.5"
-				onError={() => setFailed(true)}
-				unoptimized
-			/>
+			{officialSrc ? (
+				<img
+					src={officialSrc}
+					alt=""
+					width={size}
+					height={size}
+					className="h-full w-full object-contain"
+					draggable={false}
+				/>
+			) : (
+				<Image
+					src={integrationIconUrl(id)}
+					alt=""
+					width={size * 2}
+					height={size * 2}
+					className="h-full w-full object-contain"
+					onError={() => setFailed(true)}
+					unoptimized
+				/>
+			)}
 		</span>
 	);
 }
