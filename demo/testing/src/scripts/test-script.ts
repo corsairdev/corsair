@@ -4,26 +4,20 @@ dotenv.config({ path: '../.env' });
 
 import { corsair } from '@/server/corsair';
 
-async function setInstagramCredentials() {
-	const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, IG_ACCESS_TOKEN } = process.env;
+async function main() {
+	const configuredKey = process.env.CALLPAGE_API_KEY;
+	if (!configuredKey) {
+		throw new Error('CALLPAGE_API_KEY is required to run the CallPage demo test');
+	}
 
-	if (FACEBOOK_APP_ID) {
-		await corsair.keys.instagram.set_client_id(FACEBOOK_APP_ID);
+	const plugin = corsair.callpage;
+	if (!plugin) {
+		throw new Error('CallPage plugin is not registered in the demo');
 	}
-	if (FACEBOOK_APP_SECRET) {
-		await corsair.keys.instagram.set_client_secret(FACEBOOK_APP_SECRET);
-	}
-	if (IG_ACCESS_TOKEN) {
-		await corsair.instagram.keys.set_access_token(IG_ACCESS_TOKEN);
-	}
+
+	await plugin.api.users.list({ limit: 1 });
+	await plugin.api.widgets.get({ encrypted_id: 'demo' });
 }
-
-const main = async () => {
-	const res = await corsair.slack.api.messages.post({
-		channel: 'general',
-		text: 'hello',
-	});
-};
 
 main().catch((err) => {
 	console.error(err);
