@@ -1,3 +1,4 @@
+import { WorksWithSection } from '@/components/integrations/combo/works-with-section';
 import { IntegrationCapabilitiesSection } from '@/components/integrations/detail/integration-capabilities-section';
 import { IntegrationDetailHero } from '@/components/integrations/detail/integration-detail-hero';
 import { IntegrationFaqSection } from '@/components/integrations/detail/integration-faq-section';
@@ -14,6 +15,10 @@ export function IntegrationDetailPage({
 			<IntegrationCapabilitiesSection
 				operations={integration.operations}
 				triggers={integration.triggers}
+			/>
+			<WorksWithSection
+				integrationId={integration.id}
+				displayName={integration.displayName}
 			/>
 			<IntegrationFaqSection faqs={integration.faqs} />
 		</main>
