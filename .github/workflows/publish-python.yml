@@ -5,13 +5,18 @@ on:
     tags:
       - 'corsair-cloud-py-v*'
 
+# Trusted Publishing (OIDC) — no PyPI token stored. The `pypi` environment must
+# be configured on the repo and named in the PyPI publisher for id-token to be
+# accepted.
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   publish:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    environment: pypi
     steps:
       - uses: actions/checkout@v4
 
@@ -29,16 +34,11 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install build tools
-        run: pip install build twine
-
       - name: Build
-        run: python -m build
+        run: pipx run build
         working-directory: clients/python
 
-      - name: Upload to PyPI
-        run: twine upload dist/*
-        working-directory: clients/python
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: clients/python/dist
