@@ -54,6 +54,19 @@ describe('buildCloudDeclaration', () => {
 		);
 	});
 
+	it('handles op segments that collide with Object.prototype keys', () => {
+		// "toString" would resolve an inherited function on a plain-object map,
+		// so a naive `children[part] ??= makeNode()` never assigns and crashes.
+		const out = buildCloudDeclaration(
+			{ meta: ['toString.create', 'constructor.get'] },
+			'corsair',
+		);
+		expect(out).toContain('"toString": {');
+		expect(out).toContain('"create"(args?: any): Promise<any>;');
+		expect(out).toContain('"constructor": {');
+		expect(out).toContain('"get"(args?: any): Promise<any>;');
+	});
+
 	it('keeps a terminal op alongside its nested ops regardless of order', () => {
 		const forward = buildCloudDeclaration(
 			{ users: ['users', 'users.list'] },

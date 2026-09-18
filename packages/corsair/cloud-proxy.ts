@@ -59,6 +59,11 @@ function assertSecureCloudUrl(url: string): void {
 	} catch {
 		throw new Error(`Cloud proxy URL is not a valid URL: "${url}"`);
 	}
+	if (parsed.search || parsed.hash) {
+		throw new Error(
+			`Cloud proxy URL must not contain a query or fragment (got "${url}") — path segments are appended to it.`,
+		);
+	}
 	if (parsed.protocol === 'https:') return;
 	if (parsed.protocol === 'http:' && LOOPBACK_HOSTS.has(parsed.hostname)) {
 		return;
@@ -102,11 +107,21 @@ export function createCloudProxy(
 	const basePath = options.basePath ?? '/api/corsair';
 
 	return async (req: Request): Promise<Response> => {
-		if (options.authorize && !(await options.authorize(req))) {
-			return new Response(JSON.stringify({ error: 'unauthorized' }), {
-				status: 401,
-				headers: { 'content-type': 'application/json' },
-			});
+		if (options.authorize) {
+			// A thrown authorize is a denied request, not a proxy crash: a leaked
+			// stack would otherwise surface as a 500 with the key-bearing route live.
+			let ok: boolean;
+			try {
+				ok = await options.authorize(req);
+			} catch {
+				ok = false;
+			}
+			if (!ok) {
+				return new Response(JSON.stringify({ error: 'unauthorized' }), {
+					status: 401,
+					headers: { 'content-type': 'application/json' },
+				});
+			}
 		}
 
 		const reqUrl = new URL(req.url);

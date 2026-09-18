@@ -51,9 +51,12 @@ jobs:
           git add -A
           if git diff --cached --quiet; then
             echo "No changes to publish for $VERSION"
+            git tag "$VERSION"
+            git push origin "$VERSION"
           else
             git commit -m "release: $VERSION (synced from corsair@$GITHUB_SHA)"
-            git push origin HEAD:main
+            git tag "$VERSION"
+            # Push the branch and the tag in one atomic push so a tag failure
+            # can't leave main advanced without its release tag.
+            git push --atomic origin HEAD:main "$VERSION"
           fi
-          git tag "$VERSION"
-          git push origin "$VERSION"

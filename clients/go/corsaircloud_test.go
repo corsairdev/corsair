@@ -167,6 +167,26 @@ func TestCallNilArgsSendsEmptyObject(t *testing.T) {
 	}
 }
 
+func TestCallTypedNilArgsSendsEmptyObject(t *testing.T) {
+	var gotBody map[string]json.RawMessage
+	c, close := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
+		body, _ := io.ReadAll(r.Body)
+		_ = json.Unmarshal(body, &gotBody)
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"data":{}}`))
+	})
+	defer close()
+
+	// A typed nil map is a non-nil interface but still marshals to null.
+	var typedNil map[string]any
+	if _, err := c.Tenant("acme").Call(context.Background(), "notion", "pages.searchPage", typedNil); err != nil {
+		t.Fatalf("Call returned error: %v", err)
+	}
+	if string(gotBody["args"]) != "{}" {
+		t.Errorf("args = %s, want {}", gotBody["args"])
+	}
+}
+
 func TestCallEscapesPathSegments(t *testing.T) {
 	var gotRequestURI string
 	c, close := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {

@@ -47,6 +47,11 @@ function assertCloudUrlIsSecure(baseUrl: string): void {
 	} catch {
 		throw new Error(`Cloud base URL is not a valid URL: "${baseUrl}"`);
 	}
+	if (parsed.search || parsed.hash) {
+		throw new Error(
+			`Cloud base URL must not contain a query or fragment (got "${baseUrl}") — path segments are appended to it.`,
+		);
+	}
 	if (parsed.protocol === 'https:') return;
 	if (parsed.protocol === 'http:' && LOOPBACK_HOSTS.has(parsed.hostname)) {
 		return;

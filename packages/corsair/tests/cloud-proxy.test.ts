@@ -121,6 +121,28 @@ describe('createCloudProxy', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('rejects with 401 (not a 500) when authorize throws', async () => {
+		const fetchMock = mockFetch(200, '{}');
+		global.fetch = fetchMock as unknown as typeof fetch;
+
+		const proxy = createCloudProxy({
+			apiKey: KEY,
+			url: UPSTREAM,
+			authorize: () => {
+				throw new Error('session lookup failed');
+			},
+		});
+		const res = await proxy(
+			new Request('https://app.example.com/api/corsair/acme/notion/call/x', {
+				method: 'POST',
+				body: '{}',
+			}),
+		);
+
+		expect(res.status).toBe(401);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('forwards to upstream when authorize returns true', async () => {
 		const fetchMock = mockFetch(200, '{}');
 		global.fetch = fetchMock as unknown as typeof fetch;

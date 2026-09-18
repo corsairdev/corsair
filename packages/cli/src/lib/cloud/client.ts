@@ -18,6 +18,14 @@ function assertSecureCloudUrl(url: string): void {
 	} catch {
 		throw new Error(`Corsair Cloud URL is not a valid URL: "${url}"`);
 	}
+	// A query/fragment would land mid-URL once path segments are appended
+	// (e.g. `https://vm?x=1` + `/call` → `https://vm?x=1/call`), silently
+	// misrouting the request — reject it rather than build a broken target.
+	if (parsed.search || parsed.hash) {
+		throw new Error(
+			`Corsair Cloud URL must not contain a query or fragment (got "${url}").`,
+		);
+	}
 	if (parsed.protocol === 'https:') return;
 	if (parsed.protocol === 'http:' && LOOPBACK_HOSTS.has(parsed.hostname)) {
 		return;

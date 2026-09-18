@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"reflect"
 	"strings"
 	"time"
 )
@@ -26,9 +27,14 @@ type Client struct {
 // Option configures a Client.
 type Option func(*Client)
 
-// WithHTTPClient overrides the default http.Client.
+// WithHTTPClient overrides the default http.Client. A nil client is ignored so
+// the default is kept, rather than panicking on the next request.
 func WithHTTPClient(h *http.Client) Option {
-	return func(c *Client) { c.http = h }
+	return func(c *Client) {
+		if h != nil {
+			c.http = h
+		}
+	}
 }
 
 // WithURL overrides the base URL derived from the key (dev/testing only).
@@ -172,11 +178,28 @@ type TenantClient struct {
 	tenantID string
 }
 
+// isNilArgs reports whether args is nil or a typed nil (map/slice/pointer/etc.),
+// both of which JSON-marshal to null.
+func isNilArgs(args any) bool {
+	if args == nil {
+		return true
+	}
+	v := reflect.ValueOf(args)
+	switch v.Kind() {
+	case reflect.Map, reflect.Slice, reflect.Ptr, reflect.Interface, reflect.Chan, reflect.Func:
+		return v.IsNil()
+	default:
+		return false
+	}
+}
+
 // Call invokes a plugin op and returns the response's data field.
 func (t *TenantClient) Call(ctx context.Context, plugin, op string, args any) (json.RawMessage, error) {
-	if args == nil {
+	if isNilArgs(args) {
 		// Send {"args":{}} rather than {"args":null}; the contract types args as
 		// an object, matching the Python/Swift clients' empty-object default.
+		// isNilArgs also catches a typed nil (e.g. a nil map[string]any passed as
+		// `any`), which is a non-nil interface but still marshals to null.
 		args = map[string]any{}
 	}
 	raw, err := t.client.send(ctx, http.MethodPost, []string{t.tenantID, plugin, "call", op}, nil, map[string]any{"args": args})

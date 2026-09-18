@@ -99,7 +99,10 @@ private func encodedPathSegment(_ segment: String) -> String {
 }
 
 extension CharacterSet {
-	fileprivate static let urlPathSegmentAllowed = CharacterSet.urlPathAllowed.subtracting(CharacterSet(charactersIn: "/"))
+	// Also escape "%" so a literal segment like "a%2Fb" encodes to "a%252Fb"
+	// rather than staying "a%2Fb" and decoding to "a/b" on the server — matching
+	// Go's url.PathEscape and Python's quote(safe="").
+	fileprivate static let urlPathSegmentAllowed = CharacterSet.urlPathAllowed.subtracting(CharacterSet(charactersIn: "/%"))
 }
 
 public struct ConnectLink: Codable, Sendable {

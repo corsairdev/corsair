@@ -67,6 +67,21 @@ describe('resolveCloudConfig', () => {
 			resolveCloudConfig({ url: 'http://localhost:4000', key: 'ck_cloud_x' }),
 		).toEqual({ url: 'http://localhost:4000', key: 'ck_cloud_x' });
 	});
+
+	it('rejects a url carrying a query or fragment', () => {
+		expect(() =>
+			resolveCloudConfig({
+				url: 'https://vm.corsair.cloud?tenant=x',
+				key: 'ck_cloud_x',
+			}),
+		).toThrow(/query or fragment/);
+		expect(() =>
+			resolveCloudConfig({
+				url: 'https://vm.corsair.cloud#frag',
+				key: 'ck_cloud_x',
+			}),
+		).toThrow(/query or fragment/);
+	});
 });
 
 describe('fetchCloudOpTree', () => {

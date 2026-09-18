@@ -15,6 +15,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Verify tag matches package version
+        working-directory: clients/python
+        run: |
+          tag_version="${GITHUB_REF_NAME#corsair-cloud-py-v}"
+          pkg_version="$(grep -m1 -E '^version' pyproject.toml | sed -E 's/.*"([^"]+)".*/\1/')"
+          if [ "$tag_version" != "$pkg_version" ]; then
+            echo "Tag version ($tag_version) does not match pyproject version ($pkg_version)" >&2
+            exit 1
+          fi
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'

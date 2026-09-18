@@ -3,8 +3,10 @@ interface OpNode {
 	children: Record<string, OpNode>;
 }
 
+// Null-prototype maps so an op segment like "toString" or "constructor" keys a
+// real node instead of resolving an inherited Object.prototype member.
 function makeNode(): OpNode {
-	return { call: false, children: {} };
+	return { call: false, children: Object.create(null) };
 }
 
 function insertOp(root: Record<string, OpNode>, op: string): void {
@@ -21,7 +23,7 @@ function insertOp(root: Record<string, OpNode>, op: string): void {
 }
 
 function buildOpTree(ops: string[]): Record<string, OpNode> {
-	const root: Record<string, OpNode> = {};
+	const root: Record<string, OpNode> = Object.create(null);
 	for (const op of ops) insertOp(root, op);
 	return root;
 }
