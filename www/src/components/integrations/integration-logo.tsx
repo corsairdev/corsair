@@ -6,10 +6,11 @@ import { useState } from 'react';
 import { integrationIconUrl } from '@/lib/integrations-catalog';
 import { cn } from '@/lib/utils';
 
-const OFFICIAL_ICONS: Record<string, string> = {
-	slack: '/brand/slack.svg',
-	linear: '/brand/linear.svg',
-};
+const OFFICIAL_ICONS: Record<string, { src: string; fit: 'glyph' | 'tile' }> =
+	{
+		slack: { src: '/brand/slack.svg', fit: 'glyph' },
+		linear: { src: '/brand/linear.svg', fit: 'tile' },
+	};
 
 function hashColor(id: string): string {
 	let hash = 0;
@@ -52,7 +53,13 @@ function InitialFallback({
 	);
 }
 
-function insetFor(size: number) {
+function insetFor(size: number, fit?: 'glyph' | 'tile') {
+	if (fit === 'tile') return 0;
+	if (fit === 'glyph') {
+		if (size <= 20) return 3;
+		if (size <= 36) return 6;
+		return Math.round(size * 0.14);
+	}
 	if (size <= 20) return 1;
 	if (size <= 36) return 2;
 	return 4;
@@ -70,8 +77,8 @@ export function IntegrationLogo({
 	className?: string;
 }) {
 	const [failed, setFailed] = useState(false);
-	const inset = insetFor(size);
-	const officialSrc = OFFICIAL_ICONS[id];
+	const official = OFFICIAL_ICONS[id];
+	const inset = insetFor(size, official?.fit);
 
 	if (failed) {
 		return (
@@ -92,9 +99,9 @@ export function IntegrationLogo({
 			)}
 			style={{ width: size, height: size, padding: inset }}
 		>
-			{officialSrc ? (
+			{official ? (
 				<img
-					src={officialSrc}
+					src={official.src}
 					alt=""
 					width={size}
 					height={size}

@@ -65,21 +65,19 @@ export function ComboHero({ combo }: { combo: ComboData }) {
 				</nav>
 
 				<div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-5">
-					<div className="flex shrink-0 items-center" aria-hidden>
+					<div className="flex shrink-0 items-center gap-4" aria-hidden>
 						<IntegrationLogo
 							id={combo.slugA}
 							displayName={combo.displayA}
 							size={64}
 							className="rounded-md shadow-[0_1px_2px_rgba(28,28,28,0.06)]"
 						/>
-						<span className="relative z-[1] -ml-2.5 rounded-md ring-[3px] ring-[#f4f4f4]">
-							<IntegrationLogo
-								id={combo.slugB}
-								displayName={combo.displayB}
-								size={64}
-								className="rounded-md shadow-[0_1px_2px_rgba(28,28,28,0.08)]"
-							/>
-						</span>
+						<IntegrationLogo
+							id={combo.slugB}
+							displayName={combo.displayB}
+							size={64}
+							className="rounded-md shadow-[0_1px_2px_rgba(28,28,28,0.06)]"
+						/>
 					</div>
 					<div className="min-w-0 flex-1">
 						<h1 className="font-[family-name:var(--landing-font-serif)] text-[clamp(2rem,4vw,2.75rem)] font-light leading-[1.08] tracking-[-0.03em] text-[#1c1c1c]">
