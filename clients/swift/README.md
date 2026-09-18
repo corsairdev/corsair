@@ -15,15 +15,14 @@ For in-repo or vendored use, add it as a local path dependency:
 
 ## Use
 
-Grab two values from your project's Overview page: an API key (`ck_cloud_…`) and
-a URL. Keep the key on a server, not inside a shipped app.
+Grab your API key (`ck_cloud_…`) from your project's Overview page. The client
+derives its URL from the key, so it's the only value you pass. Keep the key on a
+server, not inside a shipped app.
 
 ```swift
 import CorsairCloud
 
-let corsair = CorsairCloud(
-    apiKey: "ck_cloud_…",
-    url: URL(string: "https://vm.corsair.cloud/env/api/corsair")!)
+let corsair = CorsairCloud(apiKey: "ck_cloud_…")
 
 // Call any operation on any plugin your runtime has, as user "acme":
 let result = try await corsair.tenant("acme").call("notion", "pages.searchPage", args: [:])

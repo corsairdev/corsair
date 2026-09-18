@@ -12,17 +12,15 @@ pip install corsair-cloud
 
 ## Use
 
-Grab two values from your project's Overview page in the dashboard: an API key
-(`ck_cloud_…`) and a URL. Then make a call as one of your users.
+Grab your API key (`ck_cloud_…`) from your project's Overview page in the
+dashboard. The client derives its URL from the key, so it's the only value you
+pass. Then make a call as one of your users.
 
 ```python
 import os
 from corsair_cloud import CorsairCloud, CorsairError
 
-corsair = CorsairCloud(
-    api_key=os.environ["CORSAIR_CLOUD_KEY"],
-    url=os.environ["CORSAIR_CLOUD_URL"],
-)
+corsair = CorsairCloud(api_key=os.environ["CORSAIR_CLOUD_KEY"])
 
 # Call any operation on any plugin your runtime has, as user "acme":
 pages = corsair.with_tenant("acme").call("notion", "pages.searchPage", {"query": "roadmap"})

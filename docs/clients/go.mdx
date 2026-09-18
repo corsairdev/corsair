@@ -6,7 +6,7 @@ icon: "/icons/go.svg"
 ---
 
 `corsaircloud` is a small Go client for a hosted [Corsair Cloud](/cloud/overview)
-project. It uses only the standard library. You give it two values, and every
+project. It uses only the standard library. Give it your API key, and every
 plugin your runtime has is callable over HTTP.
 
 ## 1. Install
@@ -23,11 +23,11 @@ exact version:
 go get github.com/corsairdev/corsair/clients/go@v0.1.0
 ```
 
-## 2. Get your two values
+## 2. Add your API key
 
-From your project's **Overview** page in the dashboard, copy the **API key**
-(`ck_cloud_…`) and the **URL** (`https://<vm>.corsair.cloud/<env>/api/corsair`).
-Keep the key in an environment variable, not in source:
+Copy your project's **API key** (`ck_cloud_…`) from the dashboard Overview page.
+It's a server secret — keep it in an environment variable, not in source. The
+client derives its own URL from the key:
 
 ```go
 import (
@@ -35,10 +35,8 @@ import (
     corsaircloud "github.com/corsairdev/corsair/clients/go"
 )
 
-corsair := corsaircloud.New(
-    os.Getenv("CORSAIR_CLOUD_KEY"),
-    os.Getenv("CORSAIR_CLOUD_URL"),
-)
+corsair := corsaircloud.New(os.Getenv("CORSAIR_CLOUD_KEY"))
+// dev/testing: point at a local runtime with corsaircloud.WithURL("http://localhost:…")
 ```
 
 ## 3. Make a call
@@ -59,7 +57,7 @@ if err := json.Unmarshal(raw, &pages); err != nil {
 ```
 
 `Tenant("acme")` runs the call as your user "acme". The arguments map onto one
-request: `POST {url}/acme/notion/call/pages.searchPage` with body
+request: `POST /acme/notion/call/pages.searchPage` with body
 `{"args": {"query": "roadmap"}}`.
 
 ## 4. Connect a user's account

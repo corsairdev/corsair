@@ -6,7 +6,8 @@ project. Standard library only.
 ```go
 import corsaircloud "github.com/corsairdev/corsair/clients/go"
 
-corsair := corsaircloud.New("ck_cloud_…", "https://vm.corsair.cloud/env/api/corsair")
+// The URL is derived from the key; pass corsaircloud.WithURL(...) only for dev.
+corsair := corsaircloud.New("ck_cloud_…")
 
 // Call any operation on any plugin your runtime has, as user "acme":
 raw, err := corsair.Tenant("acme").Call(ctx, "notion", "pages.searchPage", map[string]any{})

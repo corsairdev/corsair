@@ -6,7 +6,7 @@ icon: "/icons/swift.svg"
 ---
 
 `CorsairCloud` is a small Swift client for a hosted [Corsair Cloud](/cloud/overview)
-project. It uses `URLSession` and `async`/`await`. You give it two values, and
+project. It uses `URLSession` and `async`/`await`. Give it your API key, and
 every plugin your runtime has is callable over HTTP.
 
 ## 1. Install
@@ -20,18 +20,16 @@ dependency from a checkout of `corsair`:
 // then in your target: .product(name: "CorsairCloud", package: "CorsairCloud")
 ```
 
-## 2. Get your two values
+## 2. Add your API key
 
-From your project's **Overview** page in the dashboard, copy the **API key**
-(`ck_cloud_…`) and the **URL** (`https://<vm>.corsair.cloud/<env>/api/corsair`).
-Keep the key on a server. Do not ship it inside an app you distribute.
+Copy your project's **API key** (`ck_cloud_…`) from the dashboard Overview page.
+Keep it on a server — don't ship it inside an app you distribute. The client
+derives its own URL from the key:
 
 ```swift
 import CorsairCloud
 
-let corsair = CorsairCloud(
-    apiKey: ProcessInfo.processInfo.environment["CORSAIR_CLOUD_KEY"]!,
-    url: URL(string: ProcessInfo.processInfo.environment["CORSAIR_CLOUD_URL"]!)!)
+let corsair = CorsairCloud(apiKey: ProcessInfo.processInfo.environment["CORSAIR_CLOUD_KEY"]!)
 ```
 
 ## 3. Make a call

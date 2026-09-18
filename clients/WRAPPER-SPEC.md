@@ -8,14 +8,18 @@ than a generated blob. The TS `createCorsairCloud` is the reference; every other
 language mirrors this shape.
 
 ## What every wrapper takes
-- `apiKey` — the `ck_cloud_…` project key. Sent as `Authorization: Bearer <apiKey>`.
-- `url` — the project base URL: `https://<vm>.corsair.cloud/<env>/api/corsair`.
+- `apiKey` — the `ck_cloud_<slug>_<secret>` project key. Sent as
+  `Authorization: Bearer <apiKey>`, and the base URL is **derived from it**:
+  parse the slug (first segment after `ck_cloud_`) → `https://api.corsair.cloud/<slug>/api/corsair`.
+  So the key is the only value a developer passes.
+- `url` — **optional** dev/testing override for the derived URL. Reject a plain
+  `http://` unless the host is loopback (the key is a bearer token).
 - (optional, later) `databaseUrl` — for BYO/hosted Postgres; consumed by the
   runtime at provision, not by the client.
 
 ## The surface (mirror across languages)
 - **Tool call** — `withTenant(t).<plugin>.call(op, args) → data`
-  → `POST {url}/{tenant}/{plugin}/call/{op}` body `{ "args": {...} }`, returns `.data`.
+  → `POST <base>/{tenant}/{plugin}/call/{op}` body `{ "args": {...} }`, returns `.data`.
 - **Management** (fixed shape, from the contract):
   - `manage.tenants.list() / create(id) / get(id)`
   - `manage.connect.createLink({ plugin, tenantId, redirectUri? }) → { connectUrl, expiresAt, tenantId }`
@@ -28,40 +32,40 @@ language mirrors this shape.
 
 ## Zero-context wire-up (the whole story, per language)
 
-A dev who has never seen Corsair needs exactly two values — the **key** and the
-**URL** (both shown on the project's Overview) — then one call.
+A dev who has never seen Corsair needs one value — the **key** (from the
+project's Overview) — then one call. The wrapper derives the URL from it.
 
 **TypeScript** (flagship, `createCorsairCloud`):
 ```ts
 import { createCorsairCloud } from "corsair";
-const corsair = createCorsairCloud({ apiKey: "ck_cloud_…", url: "https://vm.corsair.cloud/env/api/corsair" });
+const corsair = createCorsairCloud({ apiKey: "ck_cloud_…" });
 const pages = await corsair.withTenant("acme").notion.api.pages.searchPage({});
 ```
 
 **Swift** (`@corsair/CorsairCloud`):
 ```swift
 import CorsairCloud
-let corsair = CorsairCloud(apiKey: "ck_cloud_…", url: URL(string: "https://vm.corsair.cloud/env/api/corsair")!)
+let corsair = CorsairCloud(apiKey: "ck_cloud_…")
 let data = try await corsair.tenant("acme").call("notion", "pages.searchPage", args: [:])
 ```
 
 **Python** (`corsair-cloud`):
 ```python
 from corsair_cloud import CorsairCloud
-corsair = CorsairCloud(api_key="ck_cloud_…", url="https://vm.corsair.cloud/env/api/corsair")
+corsair = CorsairCloud(api_key="ck_cloud_…")
 pages = corsair.with_tenant("acme").call("notion", "pages.searchPage", {})
 ```
 
-**curl** (the raw truth every wrapper implements):
+**curl** (the raw truth every wrapper implements — the base is what the key resolves to):
 ```bash
-curl -X POST "https://vm.corsair.cloud/env/api/corsair/acme/notion/call/pages.searchPage" \
+curl -X POST "https://api.corsair.cloud/<slug>/api/corsair/acme/notion/call/pages.searchPage" \
   -H "authorization: Bearer ck_cloud_…" -H "content-type: application/json" \
   -d '{"args":{}}'
 # → { "data": { ...notion result... } }
 ```
 
-**"What do I have access to?"** — `GET {url}/call` returns the op tree
-(`{ notion: ["pages.searchPage", ...] }`); `GET {url}/plugins` returns per-plugin
+**"What do I have access to?"** — `GET <base>/call` returns the op tree
+(`{ notion: ["pages.searchPage", ...] }`); `GET <base>/plugins` returns per-plugin
 auth + arg metadata. Wrappers expose these as `discover()` / `plugins.list()`.
 
 ## Browser / React (separate, secret-safe)

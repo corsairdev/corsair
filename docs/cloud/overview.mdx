@@ -1,6 +1,6 @@
 ---
 title: Corsair Cloud
-description: A hosted runtime for your integrations. You get a URL and a key, and every tool call is one HTTP request.
+description: A hosted runtime for your integrations. You have an API key, and every tool call is one HTTP request.
 ---
 
 import CloudProxyNext from '/snippets/cloud-proxy-next.mdx';
@@ -9,63 +9,59 @@ Corsair Cloud runs the integration layer for you. Instead of building and
 hosting a server that talks to Notion, Slack, GitHub, and the rest, you get a
 project with its own hosted runtime and call any plugin operation over HTTP.
 
-Nothing to deploy, no OAuth server to write, no tokens to store. You connect
-your users' accounts once, then make calls.
+Nothing to deploy, no OAuth server to write, no tokens to store. Connect your
+users' accounts once, then make calls.
 
-## Before you start
+## Set up
 
-Open your project's **Overview** page in the dashboard. You need two values from
-it, and that is all:
-
-| Value | Looks like | What it is |
-| --- | --- | --- |
-| **API key** | `ck_cloud_…` | A secret. Sent as a bearer token. Keep it on your server. |
-| **URL** | `https://<vm>.corsair.cloud/<project>/api/corsair` | Your runtime's address. |
+You need one thing: your project's **API key**, from the dashboard Overview
+page. It looks like `ck_cloud_…`. The client derives its own URL from the key,
+so that's the whole configuration.
 
 <Warning>
-The API key is a server secret. Never put it in browser code or a mobile app you
-ship. See [Server vs. browser](#server-vs-browser) for the safe browser path.
+The API key is a server secret — it's sent as a bearer token. Keep it on your
+server; never put it in browser code or a mobile app you ship. For the browser,
+see [Server vs. browser](#server-vs-browser).
 </Warning>
 
 ## Your first call
 
-Install the client for your language and make one call. Every language uses the
-same two values and the same request shape.
+Install the client for your language and make one call. Every language takes the
+key and nothing else.
 
 <CodeGroup>
 
 ```ts TypeScript
 import { createCorsairCloud } from "corsair";
 
-const corsair = createCorsairCloud({
-  apiKey: process.env.CORSAIR_CLOUD_KEY!,
-  url: process.env.CORSAIR_CLOUD_URL!,
-});
+const corsair = createCorsairCloud({ apiKey: process.env.CORSAIR_CLOUD_KEY! });
 
 const pages = await corsair.withTenant("acme").notion.api.pages.searchPage({});
 ```
 
 ```python Python
 from corsair_cloud import CorsairCloud
+import os
 
-corsair = CorsairCloud(api_key="ck_cloud_…", url="https://<vm>.corsair.cloud/<env>/api/corsair")
+corsair = CorsairCloud(api_key=os.environ["CORSAIR_CLOUD_KEY"])
 
 pages = corsair.with_tenant("acme").call("notion", "pages.searchPage", {})
 ```
 
 ```go Go
-corsair := corsaircloud.New("ck_cloud_…", "https://<vm>.corsair.cloud/<env>/api/corsair")
+corsair := corsaircloud.New(os.Getenv("CORSAIR_CLOUD_KEY"))
 
 raw, err := corsair.Tenant("acme").Call(ctx, "notion", "pages.searchPage", map[string]any{})
 ```
 
 ```swift Swift
-let corsair = CorsairCloud(apiKey: "ck_cloud_…", url: URL(string: "https://<vm>.corsair.cloud/<env>/api/corsair")!)
+let corsair = CorsairCloud(apiKey: ProcessInfo.processInfo.environment["CORSAIR_CLOUD_KEY"]!)
 
 let pages = try await corsair.tenant("acme").call("notion", "pages.searchPage", args: [:])
 ```
 
 ```bash curl
+# The key carries the address; for curl, put the runtime URL from the dashboard here.
 curl -X POST "$CORSAIR_CLOUD_URL/acme/notion/call/pages.searchPage" \
   -H "authorization: Bearer $CORSAIR_CLOUD_KEY" \
   -H "content-type: application/json" \
@@ -74,24 +70,46 @@ curl -X POST "$CORSAIR_CLOUD_URL/acme/notion/call/pages.searchPage" \
 
 </CodeGroup>
 
-That call runs Notion's `pages.searchPage` operation as your user "acme" and
-returns the result. Under the hood it is always one request:
-`POST {url}/{tenant}/{plugin}/call/{op}` with a `{ "args": {...} }` body. The
-language clients are thin wrappers over that one shape, so once you have seen the
-curl you have seen all of them.
+That runs Notion's `pages.searchPage` as your user "acme" and returns the
+result. It's always one request — `POST /{tenant}/{plugin}/call/{op}` with a
+`{ "args": {...} }` body — so the language clients are thin wrappers over the
+same shape.
 
 ## What is a tenant?
 
 A tenant is one of your users. `withTenant("acme")` (or `with_tenant`, `Tenant`,
-`tenant`) picks which user a call acts as, so the call uses that user's connected
-account. One runtime serves all your tenants at once. If you are building for a
-single user, use one tenant id and forget about it.
+`tenant`) picks which user a call acts as, so it uses that user's connected
+account. One runtime serves all your tenants at once. Building for a single
+user? Pick one tenant id and forget about it.
+
+## Map your tenants
+
+The runtime holds the tenants and which accounts each has connected — list them
+to line up against your own users:
+
+<CodeGroup>
+
+```ts TypeScript
+const tenants = await corsair.manage.tenants.list();
+// [{ id: "acme", connectedPlugins: ["notion"] }, …]
+```
+
+```python Python
+tenants = corsair.manage.tenants()
+```
+
+</CodeGroup>
+
+<Note>
+This gives you tenant ids and connection state. Reading a tenant's stored *data*
+directly from the managed store — or pointing the runtime at your own database —
+comes with bring-your-own-DB (coming soon).
+</Note>
 
 ## Connect a user's account
 
-Before a tenant can call Notion, that tenant has to connect their Notion
-account. Corsair Cloud runs the OAuth for you. Create a connect link and send
-your user to it:
+Before a tenant can call Notion, they have to connect their Notion account.
+Corsair Cloud runs the OAuth. Create a connect link and send your user to it:
 
 <CodeGroup>
 
@@ -110,9 +128,9 @@ link = corsair.manage.create_connect_link("notion", "acme")
 
 </CodeGroup>
 
-When the user finishes authorizing, the runtime stores their token (encrypted at
-rest with a key Corsair holds, so raw provider tokens never sit in your
-runtime's store). Check who is connected any time:
+When they finish authorizing, the runtime stores their token, encrypted at rest
+with a key Corsair holds — raw provider tokens never sit in your store. Check who
+is connected any time:
 
 <CodeGroup>
 
@@ -132,39 +150,39 @@ status = corsair.manage.connection_status("acme")
 
 The runtime has one contract and two ways to reach it:
 
-- **From a server or agent.** Use the client directly. It holds the API key and
-  makes calls straight to the runtime. This is the path in every example above.
-- **From a browser (React).** Browser code must never see the key. `CorsairProvider`
-  runs in the browser and talks to a route in *your own* app that adds the bearer
-  server-side. `corsair/cloud-proxy` builds that route for you:
+- **From a server or agent.** Use the client directly — it holds the key and
+  calls the runtime. This is the path in every example above.
+- **From a browser (React).** Browser code must never see the key. Stand up a
+  route in *your own* app that injects the bearer server-side; `corsair/cloud-proxy`
+  builds that route from just the key:
 
 <CloudProxyNext />
 
-Then wrap your app in `CorsairProvider` and use `useCorsair()` to render the
+Then wrap your app in `CorsairProvider` and use `useCorsair()` to drive the
 connect flow and read connection state. The key stays on your server the whole
 time.
 
-## Get type hints for your calls (TypeScript)
+## Type hints for your calls (TypeScript)
 
-`createCorsairCloud` takes no plugin list, because the plugins live on the
-runtime. By default your calls are dynamic, so `corsair.withTenant(t).notion.api…`
-is typed as `any`. To get autocomplete, run the CLI once:
+`createCorsairCloud` takes no plugin list — the plugins live on the runtime — so
+by default `corsair.withTenant(t).notion.api…` is typed as `any`. For
+autocomplete, run the CLI once:
 
 ```bash
 pnpm corsair cloud pull
 ```
 
 It reads the exact plugins and operations your runtime has, down to the scopes
-you allowed, and writes a local `corsair-env.d.ts`. TypeScript picks those types
-up automatically, so your calls autocomplete with no plugin import to maintain.
-Coding agents can skip this and list operations with `pnpm corsair cloud list`.
+you allowed, and writes a local `corsair-env.d.ts` that TypeScript picks up — no
+plugin import to maintain. Coding agents can skip it and list operations with
+`pnpm corsair cloud list`.
 
 ## Where calls go
 
 Your call goes straight to the runtime, not through the dashboard. The dashboard
-creates and configures the runtime, then steps out of the request path. So a
-plugin call is one hop out (your code to the runtime) and one hop on (the runtime
-to the provider).
+creates and configures the runtime, then steps out of the request path — so a
+call is one hop out (your code to the runtime) and one hop on (the runtime to the
+provider).
 
 ## Next steps
 

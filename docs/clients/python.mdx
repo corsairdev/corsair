@@ -6,8 +6,8 @@ icon: "/icons/python.svg"
 ---
 
 `corsair-cloud` is a small Python client for a hosted [Corsair Cloud](/cloud/overview)
-project. It has no dependencies and works on Python 3.9+. You give it two
-values, and every plugin your runtime has is callable over HTTP.
+project. It has no dependencies and works on Python 3.9+. Give it your API key,
+and every plugin your runtime has is callable over HTTP.
 
 ## 1. Install
 
@@ -15,27 +15,18 @@ values, and every plugin your runtime has is callable over HTTP.
 pip install corsair-cloud
 ```
 
-## 2. Get your two values
+## 2. Add your API key
 
-Open your project's **Overview** page in the dashboard and copy:
-
-- the **API key** (`ck_cloud_…`), a server secret
-- the **URL** (`https://<vm>.corsair.cloud/<env>/api/corsair`)
-
-Keep the key in an environment variable, not in source:
+Copy your project's **API key** (`ck_cloud_…`) from the dashboard Overview page.
+It's a server secret — keep it in an environment variable, not in source. The
+client derives its own URL from the key, so it's the only value you pass:
 
 ```python
 import os
 from corsair_cloud import CorsairCloud
 
-corsair = CorsairCloud(
-    api_key=os.environ["CORSAIR_CLOUD_KEY"],
-    url=os.environ["CORSAIR_CLOUD_URL"],
-)
+corsair = CorsairCloud(api_key=os.environ["CORSAIR_CLOUD_KEY"])
 ```
-
-The client refuses a plain `http://` URL unless the host is `localhost`, so the
-key is never sent in cleartext by accident.
 
 ## 3. Make a call
 
@@ -48,7 +39,7 @@ pages = corsair.with_tenant("acme").call("notion", "pages.searchPage", {"query":
 `with_tenant("acme")` runs the call as your user "acme", using that user's
 connected account. `call(plugin, op, args)` returns the operation's result
 directly. The three arguments map onto one request:
-`POST {url}/acme/notion/call/pages.searchPage` with body `{"args": {"query": "roadmap"}}`.
+`POST /acme/notion/call/pages.searchPage` with body `{"args": {"query": "roadmap"}}`.
 
 ## 4. Connect a user's account
 

@@ -4,7 +4,6 @@ import { getSession } from '@/lib/auth';
 
 const proxy = createCloudProxy({
     apiKey: process.env.CORSAIR_CLOUD_KEY!,
-    url: process.env.CORSAIR_CLOUD_URL!,
     // Runs before every forwarded request — the caller's own credentials
     // never reach this handler, so this is where you check who's asking.
     authorize: async (req) => Boolean(await getSession(req)),
