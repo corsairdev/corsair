@@ -118,6 +118,7 @@ export const BaseProviders = [
 	'capsulecrm',
 	'castingwords',
 	'cdrplatform',
+	'celigo',
 	'certifier',
 	'chatbotkit',
 	'chatfai',
@@ -408,6 +409,7 @@ export const ProviderDisplayNames = {
 	capsulecrm: 'Capsule CRM',
 	castingwords: 'CastingWords',
 	cdrplatform: 'CDR Platform',
+	celigo: 'Celigo',
 	certifier: 'Certifier',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
@@ -705,6 +707,7 @@ export type AllProviders =
 	| 'capsulecrm'
 	| 'castingwords'
 	| 'cdrplatform'
+	| 'celigo'
 	| 'certifier'
 	| 'chatbotkit'
 	| 'chatfai'
