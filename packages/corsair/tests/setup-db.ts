@@ -56,12 +56,8 @@ export function createTestDatabase(): {
 			status TEXT
 		);
 
-		CREATE TABLE IF NOT EXISTS corsair_connects (
-			tenant_id TEXT PRIMARY KEY,
-			plugin TEXT NOT NULL,
-			connect_url TEXT NOT NULL,
-			requested_at TEXT NOT NULL
-		);
+		CREATE INDEX IF NOT EXISTS corsair_events_account_type_created_idx
+			ON corsair_events (account_id, event_type, created_at);
 	`);
 
 	const db = new Kysely<CorsairKyselyDatabase>({

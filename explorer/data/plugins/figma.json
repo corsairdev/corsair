@@ -1,0 +1,2713 @@
+{
+  "id": "figma",
+  "displayName": "Figma",
+  "description": "Collaborative design tool for UI mockups, prototypes, components, and design system files.",
+  "npmPackageName": "@corsair-dev/figma",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 50,
+    "webhooks": 6,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "figma.api.activityLogs.list",
+      "shortPath": "activityLogs.list",
+      "description": "List Figma organization activity logs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "activity_logs",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.comments.add",
+      "shortPath": "comments.add",
+      "description": "Add a comment to a Figma file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reactions",
+            "optional": true,
+            "type": "{ user?: { id: string, handle?: string, img_url?: string }, emoji?: string, created_at?: string }[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_meta",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "resolved_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: string, handle?: string, img_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.comments.addReaction",
+      "shortPath": "comments.addReaction",
+      "description": "Add a reaction to a comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "emoji",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.comments.delete",
+      "shortPath": "comments.delete",
+      "description": "Delete a comment from a Figma file",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.comments.deleteReaction",
+      "shortPath": "comments.deleteReaction",
+      "description": "Delete a reaction from a comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "emoji",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.comments.getReactions",
+      "shortPath": "comments.getReactions",
+      "description": "Get reactions on a comment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reactions",
+            "optional": true,
+            "type": "{ user?: { id: string, handle?: string, img_url?: string }, emoji?: string, created_at?: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ cursor?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List comments on a Figma file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "as_md",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "{ id: string, uuid?: string | null, message?: string, file_key?: string, order_id?: string | null, parent_id?: string | null, reactions?: { user?: { id: string, handle?: string, img_url?: string }, emoji?: string, created_at?: string }[], created_at?: string, client_meta?: any, resolved_at?: string | null, user?: { id: string, handle?: string, img_url?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.components.get",
+      "shortPath": "components.get",
+      "description": "Get a Figma component by key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ component?: { key: string, file_key?: string, node_id?: string, thumbnail_url?: string, name?: string, description?: string, created_at?: string, updated_at?: string, containing_frame?: { name?: string, node_id?: string }, user?: { id: string, handle?: string, img_url?: string } } }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.components.getComponentSet",
+      "shortPath": "components.getComponentSet",
+      "description": "Get a Figma component set by key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ component_set?: { key: string, name?: string, description?: string, thumbnail_url?: string } }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.components.getComponentSetsForFile",
+      "shortPath": "components.getComponentSetsForFile",
+      "description": "Get all component sets in a Figma file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ component_sets?: { key: string, name?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.components.getComponentSetsForTeam",
+      "shortPath": "components.getComponentSetsForTeam",
+      "description": "Get all component sets for a Figma team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ component_sets?: { key: string, name?: string }[] }"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.components.getForFile",
+      "shortPath": "components.getForFile",
+      "description": "Get all components in a Figma file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ components?: { key: string, file_key?: string, node_id?: string, thumbnail_url?: string, name?: string, description?: string, created_at?: string, updated_at?: string, containing_frame?: { name?: string, node_id?: string }, user?: { id: string, handle?: string, img_url?: string } }[] }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.components.getForTeam",
+      "shortPath": "components.getForTeam",
+      "description": "Get all components for a Figma team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ components?: { key: string, file_key?: string, node_id?: string, thumbnail_url?: string, name?: string, description?: string, created_at?: string, updated_at?: string, containing_frame?: { name?: string, node_id?: string }, user?: { id: string, handle?: string, img_url?: string } }[] }"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.designTools.designTokensToTailwind",
+      "shortPath": "designTools.designTokensToTailwind",
+      "description": "Convert Figma design tokens to a Tailwind CSS configuration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tokens",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "config_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_font_imports",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "config",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "css",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.designTools.discoverResources",
+      "shortPath": "designTools.discoverResources",
+      "description": "Discover Figma files, projects, and teams",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "figma_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_depth",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "files",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "projects",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "teams",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.designTools.downloadImages",
+      "shortPath": "designTools.downloadImages",
+      "description": "Download rendered images for Figma nodes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ node_id: string }[]"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "svg_include_id",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "svg_outline_text",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "svg_simplify_stroke",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.designTools.extractDesignTokens",
+      "shortPath": "designTools.extractDesignTokens",
+      "description": "Extract design tokens (variables and styles) from a Figma file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_variables",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_local_styles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "extract_from_nodes",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tokens",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.designTools.extractPrototypeInteractions",
+      "shortPath": "designTools.extractPrototypeInteractions",
+      "description": "Extract prototype interactions and flows from a Figma file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "analyze_components",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_animations",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interactions",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "flows",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.devResources.create",
+      "shortPath": "devResources.create",
+      "description": "Create dev resources on a Figma file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dev_resources",
+            "optional": false,
+            "type": "{ url: string, name: string, node_id: string, file_key: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links_created",
+            "optional": true,
+            "type": "{ id: string, url: string, name: string, node_id: string, file_key: string }[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ error: string, node_id?: string, file_key?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.devResources.delete",
+      "shortPath": "devResources.delete",
+      "description": "Delete a dev resource from a Figma file",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dev_resource_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "figma.api.devResources.get",
+      "shortPath": "devResources.get",
+      "description": "Get dev resources for a Figma file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "node_ids",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dev_resources",
+            "optional": true,
+            "type": "{ id: string, url: string, name: string, node_id: string, file_key: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.devResources.update",
+      "shortPath": "devResources.update",
+      "description": "Update dev resources on a Figma file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dev_resources",
+            "optional": false,
+            "type": "{ id: string, url?: string, name?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links_updated",
+            "optional": true,
+            "type": "{ id: string, url?: string, name?: string }[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ error: string, dev_resource_id?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.files.getImageFills",
+      "shortPath": "files.getImageFills",
+      "description": "Get image fills from a Figma file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ images?: {} }"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.files.getJSON",
+      "shortPath": "files.getJSON",
+      "description": "Get full Figma file JSON",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plugin_data",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "branch_data",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "simplify",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_raw",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "editorType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnailUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "document",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "components",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "styles",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.files.getMetadata",
+      "shortPath": "files.getMetadata",
+      "description": "Get Figma file metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_modified",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "editorType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnail_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.files.getNodes",
+      "shortPath": "files.getNodes",
+      "description": "Get specific nodes from a Figma file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plugin_data",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nodes",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.files.getProjectFiles",
+      "shortPath": "files.getProjectFiles",
+      "description": "Get all files in a Figma project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "branch_data",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ key: string, name?: string, thumbnail_url?: string | null, last_modified?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.files.getStyles",
+      "shortPath": "files.getStyles",
+      "description": "Get styles from a Figma file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ styles?: { key: string, file_key?: string, node_id?: string, style_type?: string, name?: string, description?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.files.getVersions",
+      "shortPath": "files.getVersions",
+      "description": "Get version history of a Figma file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "versions",
+            "optional": true,
+            "type": "{ id: string, created_at?: string, label?: string | null, description?: string | null, user?: { id: string, handle?: string, img_url?: string } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ cursor?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.files.renderImages",
+      "shortPath": "files.renderImages",
+      "description": "Render Figma nodes as images",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "jpg | png | svg | pdf"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contents_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "svg_include_id",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "svg_outline_text",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "svg_include_node_id",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "svg_simplify_stroke",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_absolute_bounds",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "err",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.libraryAnalytics.componentActions",
+      "shortPath": "libraryAnalytics.componentActions",
+      "description": "Get library component action analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.libraryAnalytics.componentUsages",
+      "shortPath": "libraryAnalytics.componentUsages",
+      "description": "Get library component usage analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.libraryAnalytics.styleActions",
+      "shortPath": "libraryAnalytics.styleActions",
+      "description": "Get library style action analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.libraryAnalytics.styleUsages",
+      "shortPath": "libraryAnalytics.styleUsages",
+      "description": "Get library style usage analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.libraryAnalytics.variableActions",
+      "shortPath": "libraryAnalytics.variableActions",
+      "description": "Get library variable action analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.libraryAnalytics.variableUsages",
+      "shortPath": "libraryAnalytics.variableUsages",
+      "description": "Get library variable usage analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.payments.get",
+      "shortPath": "payments.get",
+      "description": "Get payment information for a Figma plugin or widget",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plugin_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "widget_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "community_file_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plugin_payment_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ payment_information?: any }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.projects.getTeamProjects",
+      "shortPath": "projects.getTeamProjects",
+      "description": "Get all projects for a Figma team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projects",
+            "optional": true,
+            "type": "{ id: string, name?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.styles.get",
+      "shortPath": "styles.get",
+      "description": "Get a Figma style by key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ style?: { key: string, file_key?: string, node_id?: string, style_type?: string, name?: string, description?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.styles.getForTeam",
+      "shortPath": "styles.getForTeam",
+      "description": "Get all styles for a Figma team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ styles?: { key: string, name?: string, style_type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.users.getCurrent",
+      "shortPath": "users.getCurrent",
+      "description": "Get the currently authenticated Figma user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "img_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.variables.createModifyDelete",
+      "shortPath": "variables.createModifyDelete",
+      "description": "Create, modify, or delete variables in a Figma file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "variableModes",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "variableModeValues",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "variableCollections",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ tempIdToRealId?: {} }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.variables.getLocal",
+      "shortPath": "variables.getLocal",
+      "description": "Get local variables from a Figma file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ variables?: {}, variableCollections?: {} }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.variables.getPublished",
+      "shortPath": "variables.getPublished",
+      "description": "Get published variables from a Figma file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ variables?: {}, variableCollections?: {} }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a Figma webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endpoint",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "passcode",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "ACTIVE | PAUSED"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "context_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "ACTIVE | PAUSED"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "team | project | file"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "passcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "context_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a Figma webhook",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "ACTIVE | PAUSED"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "team | project | file"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "passcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "context_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Get a Figma webhook by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "ACTIVE | PAUSED"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "team | project | file"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "passcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "context_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.webhooks.getRequests",
+      "shortPath": "webhooks.getRequests",
+      "description": "Get webhook request history",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests",
+            "optional": true,
+            "type": "{ id: string, webhook_id: string, status?: string, created_at?: string, error?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List Figma webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "context",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "context_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": true,
+            "type": "{ id: string, status?: ACTIVE | PAUSED, context?: team | project | file | null, team_id?: string | null, endpoint?: string, passcode?: string, client_id?: string | null, context_id?: string | null, event_type?: string, description?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "figma.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a Figma webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "passcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "ACTIVE | PAUSED"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "ACTIVE | PAUSED"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "team | project | file"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "passcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "context_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "figma.webhooks.files.fileComment",
+      "shortPath": "files.fileComment",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "figma({\n    webhookHooks: {\n        files: {\n            fileComment: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "figma.webhooks.files.fileDelete",
+      "shortPath": "files.fileDelete",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "figma({\n    webhookHooks: {\n        files: {\n            fileDelete: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "figma.webhooks.files.fileUpdate",
+      "shortPath": "files.fileUpdate",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "figma({\n    webhookHooks: {\n        files: {\n            fileUpdate: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "figma.webhooks.files.fileVersionUpdate",
+      "shortPath": "files.fileVersionUpdate",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "figma({\n    webhookHooks: {\n        files: {\n            fileVersionUpdate: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "figma.webhooks.library.libraryPublish",
+      "shortPath": "library.libraryPublish",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "figma({\n    webhookHooks: {\n        library: {\n            libraryPublish: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "figma.webhooks.ping.ping",
+      "shortPath": "ping.ping",
+      "payload": {
+        "kind": "inline",
+        "type": "unknown"
+      },
+      "usageExample": "figma({\n    webhookHooks: {\n        ping: {\n            ping: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "figma.db.comments.search",
+      "entityName": "comments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "file_key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "order_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resolved_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_handle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "figma.db.components.search",
+      "entityName": "components",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "file_key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "node_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "thumbnail_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "figma.db.fileMetadata.search",
+      "entityName": "fileMetadata",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "role",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_modified",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "editorType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "thumbnail_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "figma.db.versions.search",
+      "entityName": "versions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "file_key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_handle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "figma.db.webhookConfigs.search",
+      "entityName": "webhookConfigs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "team_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endpoint",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "passcode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "client_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "context_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "event_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

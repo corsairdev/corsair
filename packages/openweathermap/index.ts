@@ -340,8 +340,7 @@ const openWeatherMapEndpointMeta = {
 	},
 	'stations.remove': {
 		riskLevel: 'destructive',
-		description:
-			'Delete a registered weather station from your account [DESTRUCTIVE]',
+		description: 'Delete a registered weather station from your account',
 	},
 	'stations.getMeasurements': {
 		riskLevel: 'read',

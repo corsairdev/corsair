@@ -53,8 +53,18 @@ export type CorsairManagementClient = {
 		get: (query?: {
 			tenantId?: string;
 		}) => Promise<{ request: ConnectRequest | null }>;
-		clear: (input?: { tenantId?: string }) => Promise<{ ok: true }>;
+		clear: (input?: {
+			tenantId?: string;
+			plugin?: string;
+		}) => Promise<{ ok: true }>;
 	};
+	/** Invoke a plugin op via `POST /:tenant/:plugin/call/:op`. Returns the op's result. */
+	call: <T = unknown>(
+		plugin: string,
+		op: string,
+		tenantId: string,
+		args?: unknown,
+	) => Promise<T>;
 };
 
 export class CorsairClientError extends Error {
