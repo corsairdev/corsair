@@ -1,5 +1,7 @@
 displayName: Updown.io
 description: Website and API uptime monitoring - read your checks and the monitoring node addresses to allowlist.
-overviewExampleCalls:
-  - path: checks.list
-  - path: nodes.list
+overviewNote: |
+  All five operations are read-only catalog endpoints backed by the Updown.io API.
+examples:
+  read:
+    path: checks.list
