@@ -8,10 +8,9 @@ export const errorHandlers = {
 			error.message.toLowerCase().includes('rate limit') ||
 			error.message.toLowerCase().includes('too many requests'),
 		handler: async () => {
-			// The shared corsair/http transport has already retried this 429
-			// (up to 3 times, honoring Retry-After when parseable). Re-running
-			// the endpoint here would multiply those attempts and replay
-			// requests before the rate-limit window resets.
+			// makeAppVeyorRequest already retried this 429 (up to 3 times,
+			// honoring Retry-After seconds and HTTP-date). Re-running the
+			// endpoint here would multiply those attempts.
 			return { maxRetries: 0 };
 		},
 	},
