@@ -3,10 +3,7 @@ import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { user } from '@/db/auth-schema';
-import {
-	buildContributorRankings,
-	getContributorRank,
-} from '@/server/contributor-rankings';
+import { buildContributorRankings } from '@/server/contributor-rankings';
 import { getGithubUserAvatar } from '@/server/github-users';
 
 import { githubUsernameSchema } from '../schemas/usernames';
@@ -39,7 +36,6 @@ export const contributorsRouter = createTRPCRouter({
 			const rankingEntry = rankings.find(
 				(entry) => entry.userId === profileUser.id,
 			);
-			const rank = getContributorRank(rankings, profileUser.id);
 			const avatarUrl = await getGithubUserAvatar(profileUser.githubUsername);
 
 			return {
@@ -47,7 +43,6 @@ export const contributorsRouter = createTRPCRouter({
 				githubUsername: profileUser.githubUsername,
 				discordUsername: profileUser.discordUsername,
 				avatarUrl,
-				rank,
 				completedPoints: rankingEntry?.completedPoints ?? 0,
 				pendingPoints: rankingEntry?.pendingPoints ?? 0,
 				totalPoints: rankingEntry?.totalPoints ?? 0,
