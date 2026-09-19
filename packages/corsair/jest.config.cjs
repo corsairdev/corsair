@@ -59,7 +59,6 @@ module.exports = {
 		'^corsair/db$': '<rootDir>/db.ts',
 		'^corsair/orm$': '<rootDir>/orm.ts',
 		'^corsair/http$': '<rootDir>/http.ts',
-		'^corsair/connect$': '<rootDir>/connect.ts',
 		'^corsair/setup$': '<rootDir>/setup.ts',
 		'^corsair/tests$': '<rootDir>/tests.ts',
 		// hub.ts re-exports frpc-binary, whose ESM createRequire lands in dist/hub.js

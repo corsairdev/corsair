@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/whatsapp",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "description": "WhatsApp plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -41,15 +41,9 @@
     "whatsapp",
     "plugin"
   ],
-  "author": "Corsair (https://corsair.dev)",
+  "author": "",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/corsairdev/corsair.git",
-    "directory": "packages/whatsapp"
-  },
-  "homepage": "https://docs.corsair.dev/plugins/whatsapp"
+  ]
 }

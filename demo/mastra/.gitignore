@@ -1,7 +1,0 @@
-.env
-*.db
-*.db-wal
-*.db-shm
-*.db-journal
-.mastra
-node_modules

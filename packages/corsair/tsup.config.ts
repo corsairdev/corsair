@@ -58,7 +58,6 @@ export default defineConfig([
 			'orm.ts',
 			'setup.ts',
 			'http.ts',
-			'connect.ts',
 			'tests.ts',
 		],
 	},

@@ -51,14 +51,9 @@ sqlite.exec(`
 		id TEXT PRIMARY KEY,
 		created_at TEXT NOT NULL,
 		updated_at TEXT NOT NULL,
-		token TEXT NOT NULL,
-		plugin TEXT NOT NULL,
+		account_id TEXT NOT NULL,
 		endpoint TEXT NOT NULL,
-		args TEXT NOT NULL,
-		tenant_id TEXT NOT NULL DEFAULT 'default',
-		status TEXT NOT NULL DEFAULT 'pending',
-		expires_at TEXT NOT NULL,
-		error TEXT NULL
+		status TEXT NOT NULL
 	);
 `);
 

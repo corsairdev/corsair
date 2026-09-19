@@ -15,11 +15,11 @@ import {
 	signState,
 	verifyAndDecodeState,
 } from '../core/auth/state';
-import { generateUUID } from '../core/utils';
 import {
 	getCorsairInternal,
 	requireCorsairPlugin,
 } from '../core/utils/corsair-instance';
+import { createCorsairOrm } from '../db/orm';
 import {
 	registerHubWebhookTenantLink,
 	reportPluginConnectionStatus,
@@ -84,45 +84,28 @@ async function ensureAccount(
 	tenantId: string,
 	kek: string,
 ): Promise<void> {
-	await database.db.transaction().execute(async (trx) => {
-		// Lock the integration row before the check-then-insert so this
-		// cannot interleave with a concurrent disconnect (or another connect).
-		let integrationQuery = trx
-			.selectFrom('corsair_integrations')
-			.select(['id'])
-			.where('name', '=', pluginId);
-		if (database.isPg === true) integrationQuery = integrationQuery.forUpdate();
-		const integrationRow = await integrationQuery.executeTakeFirst();
+	const orm = createCorsairOrm(database);
 
-		if (!integrationRow) {
-			throw new Error(
-				`Integration '${pluginId}' not found. Run setupCorsair first.`,
-			);
-		}
+	const integration = await orm.integrations.findByName(pluginId);
+	if (!integration) {
+		throw new Error(
+			`Integration '${pluginId}' not found. Run setupCorsair first.`,
+		);
+	}
 
-		const existing = await trx
-			.selectFrom('corsair_accounts')
-			.select('id')
-			.where('tenant_id', '=', tenantId)
-			.where('integration_id', '=', integrationRow.id)
-			.executeTakeFirst();
-		if (existing) return;
+	const existing = await orm.accounts.findOne({
+		tenant_id: tenantId,
+		integration_id: integration.id,
+	});
+	if (existing) return;
 
-		const dek = generateDEK();
-		const encryptedDek = await encryptDEK(dek, kek);
-		const now = new Date();
-		await trx
-			.insertInto('corsair_accounts')
-			.values({
-				id: generateUUID(),
-				created_at: now,
-				updated_at: now,
-				tenant_id: tenantId,
-				integration_id: integrationRow.id,
-				config: {},
-				dek: encryptedDek,
-			})
-			.execute();
+	const dek = generateDEK();
+	const encryptedDek = await encryptDEK(dek, kek);
+	await orm.accounts.create({
+		tenant_id: tenantId,
+		integration_id: integration.id,
+		config: {},
+		dek: encryptedDek,
 	});
 }
 

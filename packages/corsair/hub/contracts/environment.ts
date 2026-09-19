@@ -1,4 +1,4 @@
-export type HubEnvironmentSlug = 'development' | 'production' | 'cloud';
+export type HubEnvironmentSlug = 'development' | 'production';
 
 export type DeliveryTransport = 'browser' | 'server';
 

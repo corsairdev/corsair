@@ -37,15 +37,9 @@
     "chmeetings",
     "plugin"
   ],
-  "author": "Corsair (https://corsair.dev)",
+  "author": "",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/corsairdev/corsair.git",
-    "directory": "packages/chmeetings"
-  },
-  "homepage": "https://docs.corsair.dev/plugins/chmeetings"
+  ]
 }

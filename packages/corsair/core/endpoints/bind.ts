@@ -181,13 +181,7 @@ export function bindEndpointsRecursively({
 						} else {
 							msg = `Action '${operationPath}' requires user approval before it can run.`;
 						}
-						const errReason =
-							permReason === 'denied' ||
-							permReason === 'policy' ||
-							permReason === 'timeout'
-								? permReason
-								: 'pending';
-						throw new PermissionRequiredError(msg, errReason);
+						throw new PermissionRequiredError(msg);
 					}
 					onPermissionComplete = onComplete;
 				}

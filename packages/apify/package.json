@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/apify",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "description": "Apify plugin for Corsair (MCP + REST API)",
   "type": "module",
   "main": "./dist/index.js",
@@ -42,15 +42,9 @@
     "rest",
     "plugin"
   ],
-  "author": "Corsair (https://corsair.dev)",
+  "author": "",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/corsairdev/corsair.git",
-    "directory": "packages/apify"
-  },
-  "homepage": "https://docs.corsair.dev/plugins/apify"
+  ]
 }

@@ -124,21 +124,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**List tasks**
+**`projects.get`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.asana.api.tasks.list({});
+await tenant.asana.api.projects.get({});
 ```
 
 
-**Create a task**
+**`projects.addFollowers`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.asana.api.tasks.create({
-	data: { name: 'Follow up from Corsair' },
-});
+await tenant.asana.api.projects.addFollowers({});
 ```
 
 
@@ -146,37 +144,15 @@ See the full list on the [API](/plugins/asana/api) page.
 
 ## Query synced data
 
-Search synced tasks without hitting Asana.
+Synced entities support `tenant.asana.db.<entity>.search()` and `.list()`: `projects`, `sections`, `stories`, `tags`, `tasks`, `teams`, `users`.
 
-```ts
-const tenant = corsair.withTenant('acme');
-const rows = await tenant.asana.db.tasks.search({
-	data: { completed: false },
-	limit: 50,
-});
-```
-
-Synced entities: `projects`, `sections`, `stories`, `tags`, `tasks`, `teams`, `users`. See [Database](/plugins/asana/database) for filters and operators.
+See [Database](/plugins/asana/database) for filters and operators.
 
 ## Webhooks
 
-Fires on Asana task create/update events. Do not use challenge.challenge.
+This plugin registers **2** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
 
-```ts
-asana({
-    webhookHooks: {
-        tasks: {
-            taskEvent: {
-                after: async (ctx, result) => {
-                    console.log('Asana task event:', result.data);
-                }
-            },
-        },
-    },
-})
-```
-
-Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/asana/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+See [Webhooks](/plugins/asana/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
 
 ## What's next
 

@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/marketstack",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "description": "Marketstack stock market data plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -39,15 +39,9 @@
     "market-data",
     "plugin"
   ],
-  "author": "Corsair (https://corsair.dev)",
+  "author": "",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/corsairdev/corsair.git",
-    "directory": "packages/marketstack"
-  },
-  "homepage": "https://docs.corsair.dev/plugins/marketstack"
+  ]
 }
