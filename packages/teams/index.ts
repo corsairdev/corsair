@@ -27,6 +27,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { TeamsSchema } from './schema';
+import type { TeamsChannelSubscription } from './subscribe';
 import { teamsSubscribe } from './subscribe';
 import { ChannelWebhooks, ChatWebhooks, MemberWebhooks } from './webhooks';
 import { matchTeamsTenantWebhook } from './webhooks/tenant-matcher';
@@ -40,8 +41,8 @@ import type {
 import {
 	TeamsChannelCreatedEventSchema,
 	TeamsChannelCreatedPayloadSchema,
-	TeamsChannelMessageEventSchema,
 	TeamsChannelMessagePayloadSchema,
+	TeamsChannelMessageWebhookResponseSchema,
 	TeamsChatMessageEventSchema,
 	TeamsChatMessagePayloadSchema,
 	TeamsMembershipChangedEventSchema,
@@ -52,6 +53,7 @@ export type TeamsPluginOptions = {
 	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	clientState?: string;
+	channelSubscription?: TeamsChannelSubscription;
 	hooks?: InternalTeamsPlugin['hooks'];
 	webhookHooks?: InternalTeamsPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -372,7 +374,7 @@ const teamsWebhookSchemas = {
 	'channels.message': {
 		description: 'A message was created or updated in a team channel',
 		payload: TeamsChannelMessagePayloadSchema,
-		response: TeamsChannelMessageEventSchema,
+		response: TeamsChannelMessageWebhookResponseSchema,
 	},
 	'channels.created': {
 		description: 'A channel was created, updated, or deleted in a team',
@@ -458,7 +460,11 @@ export function teams<const T extends TeamsPluginOptions>(
 			return hasTeamsHeader && isJsonPost;
 		},
 		pluginTenantWebhookMatcher: matchTeamsTenantWebhook,
-		subscribe: teamsSubscribe,
+		subscribe: (ctx, input) =>
+			teamsSubscribe(ctx, {
+				...input,
+				channelSubscription: options.channelSubscription,
+			}),
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

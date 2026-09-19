@@ -38,6 +38,36 @@ describe('teamsSubscribe (BYO)', () => {
 		expect(body.changeType).toBe('created');
 	});
 
+	it('subscribes to a configured channel message resource', async () => {
+		const calls: Array<{ url: string; init: any }> = [];
+		global.fetch = (async (url: unknown, init: any) => {
+			calls.push({ url: String(url), init });
+			if ((init?.method ?? 'GET') === 'GET') {
+				return { ok: true, json: async () => ({ value: [] }) };
+			}
+			return { ok: true, json: async () => ({ id: 'sub-channel' }) };
+		}) as unknown as typeof fetch;
+
+		const ctx = {
+			keys: {
+				get_access_token: async () => 'tok',
+				set_webhook_signature: async () => {},
+			},
+		};
+		const result = await teamsSubscribe(ctx, {
+			webhookUrl: 'https://hub.example/webhooks/uuid',
+			channelSubscription: { teamId: 'team-1', channelId: 'channel-1' },
+		});
+
+		expect(result!.webhookLink.externalId).toBe('sub-channel');
+		const body = JSON.parse(
+			calls.find((c) => c.init?.method === 'POST')!.init.body,
+		);
+		expect(body.resource).toBe('teams/team-1/channels/channel-1/messages');
+		expect(body.changeType).toBe('created');
+		expect(calls.some((c) => c.url.endsWith('/me'))).toBe(false);
+	});
+
 	it('returns null when the user id cannot be resolved', async () => {
 		global.fetch = (async () => ({
 			ok: false,
