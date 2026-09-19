@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { resolveBoundaryAction } from './connect-controller';
-import { useCorsair } from './provider';
+import { useCorsairContext } from './provider';
 
 /** Props Next.js passes to an `error.tsx` segment boundary. */
 export type CorsairErrorBoundaryProps = {
@@ -33,7 +33,7 @@ export function CorsairErrorBoundary({
 	error,
 	reset,
 }: CorsairErrorBoundaryProps): ReactNode {
-	const { requireConnect } = useCorsair();
+	const { requireConnect } = useCorsairContext();
 	const [dismissed, setDismissed] = useState(false);
 	const [fatal, setFatal] = useState(false);
 	// One prompt per error instance: requireConnect resolves only when the user

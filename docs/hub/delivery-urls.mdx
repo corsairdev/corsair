@@ -45,7 +45,7 @@ CORSAIR_SIGNING_SECRET=...
 CORSAIR_DELIVERY_URL=http://localhost:3001/api/corsair
 ```
 
-On startup the SDK asks Hub for the tunnel connection details, then opens the tunnel. The `ck_dev_` key is the credential: the tunnel server validates it live on connect, and Hub vends a Corsair-owned public URL (`https://<slug>.corsair.cloud/api/corsair`) scoped to your app's delivery path. No account, ngrok, or manual URL is needed. `CORSAIR_DELIVERY_URL` only sets which local path your app serves.
+On startup the SDK asks Hub for the tunnel connection details, then opens the tunnel. The `ck_dev_` key is the credential: the tunnel server validates it live on connect, and Hub vends a Corsair-owned public URL (`https://<slug>.corsair.run/api/corsair`) scoped to your app's delivery path. No account, ngrok, or manual URL is needed. `CORSAIR_DELIVERY_URL` only sets which local path your app serves.
 
 Hub delivers signed JSON envelopes to that tunnel URL, the same signed-POST contract as production (see below); your handler verifies each one. No dashboard registration is required for development. While the tunnel is live the dashboard's **App sync** indicator turns green.
 
