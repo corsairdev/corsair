@@ -61,16 +61,6 @@ function getZodArrayItem(def: ZodDef): ZodTypeAny | undefined {
 		| undefined;
 }
 
-function getZodRecordKey(def: ZodDef): ZodTypeAny | undefined {
-	return (def.keyType ?? def.keySchema ?? def.key) as ZodTypeAny | undefined;
-}
-
-function getZodRecordValue(def: ZodDef): ZodTypeAny | undefined {
-	return (def.valueType ?? def.valueSchema ?? def.value) as
-		| ZodTypeAny
-		| undefined;
-}
-
 function getZodShape(
 	schema: ZodTypeAny,
 	def: ZodDef,
@@ -188,13 +178,8 @@ function zodToInlineType(schema: ZodTypeAny): string {
 			const inner = zodToInlineType(itemType);
 			return `${isUnion ? `(${inner})` : inner}[]`;
 		}
-		case 'ZodRecord': {
-			const keyType = getZodRecordKey(def);
-			const valueType = getZodRecordValue(def);
-			const renderedKey = keyType ? zodToInlineType(keyType) : 'string';
-			const renderedValue = valueType ? zodToInlineType(valueType) : 'unknown';
-			return `Record<${renderedKey}, ${renderedValue}>`;
-		}
+		case 'ZodRecord':
+			return '{}';
 		case 'ZodObject': {
 			const shape = getZodShape(schema, def);
 			const entries = Object.entries(shape);
