@@ -20,8 +20,23 @@ export const submitJob: RevAIEndpoints['submitJob'] = async (ctx, input) => {
 		},
 	);
 	const parsedResponse = RevAIEndpointOutputSchemas.submitJob.parse(response);
-	const { media_url, ...safeInput } = parsedInput;
-	await logEventFromContext(ctx, 'revai.jobs.submit', safeInput, 'completed');
+	const {
+		media_url,
+		notification_config: unsafeNotificationConfig,
+		...safeInput
+	} = parsedInput;
+	const safeNotificationConfig = unsafeNotificationConfig
+		? {
+				...unsafeNotificationConfig,
+				auth_headers: undefined,
+			}
+		: undefined;
+	await logEventFromContext(
+		ctx,
+		'revai.jobs.submit',
+		{ ...safeInput, notification_config: safeNotificationConfig },
+		'completed',
+	);
 	return parsedResponse;
 };
 
@@ -59,7 +74,9 @@ export const getTranscript: RevAIEndpoints['getTranscript'] = async (
 	const parsedResponse =
 		parsedInput.accept === 'text/plain'
 			? RevAIEndpointOutputSchemas.getTranscript.options[1].parse(response)
-			: RevAIEndpointOutputSchemas.getTranscript.options[0].parse(response);
+			: RevAIEndpointOutputSchemas.getTranscript.options[0].parse(
+					typeof response === 'string' ? JSON.parse(response) : response,
+				);
 
 	await logEventFromContext(
 		ctx,

@@ -1,3 +1,4 @@
+import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import { getJob, getTranscript, submitJob } from './endpoints/jobs';
 
@@ -48,6 +49,20 @@ describe('Rev AI Endpoints', () => {
 					},
 				},
 			}),
+		);
+
+		expect(logEventFromContext).toHaveBeenCalledWith(
+			mockCtx,
+			'revai.jobs.submit',
+			{
+				metadata: 'test',
+				language: 'en',
+				notification_config: {
+					url: 'https://example.com/webhooks/revai',
+					auth_headers: undefined,
+				},
+			},
+			'completed',
 		);
 	});
 
@@ -122,13 +137,13 @@ describe('Rev AI Endpoints', () => {
 		).resolves.toBe('plain text transcript');
 
 		(client.makeRevAIRequest as jest.Mock).mockResolvedValue(
-			'plain text transcript',
+			JSON.stringify({ monologues: [] }),
 		);
 		await expect(
 			getTranscript(mockCtx, {
 				id: 'job-123',
 				accept: 'application/vnd.rev.transcript.v1.0+json',
 			}),
-		).rejects.toThrow();
+		).resolves.toEqual({ monologues: [] });
 	});
 });
