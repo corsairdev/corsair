@@ -286,6 +286,7 @@ export const BaseProviders = [
 	'webflow',
 	'webvizio',
 	'whatsapp',
+	'wisepops',
 	'witai',
 	'wix',
 	'wiza',
@@ -576,6 +577,7 @@ export const ProviderDisplayNames = {
 	webflow: 'Webflow',
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
+	wisepops: 'Wisepops',
 	witai: 'WitAi',
 	wix: 'Wix',
 	wiza: 'Wiza',
@@ -873,6 +875,7 @@ export type AllProviders =
 	| 'webflow'
 	| 'webvizio'
 	| 'whatsapp'
+	| 'wisepops'
 	| 'witai'
 	| 'wix'
 	| 'wiza'
