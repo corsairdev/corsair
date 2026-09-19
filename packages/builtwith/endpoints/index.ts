@@ -1,3 +1,5 @@
+import { createDomainListFile } from './create-domain-list-file';
+import { datasetsLookup } from './datasets-lookup';
 import { domainApiLookup } from './domain-api-lookup';
 import { financialApiLookup } from './financial-api-lookup';
 import { freeApiLookup } from './free-api-lookup';
@@ -9,6 +11,8 @@ import { redirectsApiLookup } from './redirects-api-lookup';
 import { socialApiLookup } from './social-api-lookup';
 
 export const BuiltWithEndpoints = {
+	createDomainListFile,
+	datasetsLookup,
 	domainApiLookup,
 	financialApiLookup,
 	freeApiLookup,

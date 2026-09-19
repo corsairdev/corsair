@@ -52,6 +52,8 @@ type BuiltWithEndpoint<K extends keyof BuiltWithEndpointOutputs> =
 	>;
 
 export type BuiltWithEndpoints = {
+	createDomainListFile: BuiltWithEndpoint<'createDomainListFile'>;
+	datasetsLookup: BuiltWithEndpoint<'datasetsLookup'>;
 	domainApiLookup: BuiltWithEndpoint<'domainApiLookup'>;
 	financialApiLookup: BuiltWithEndpoint<'financialApiLookup'>;
 	freeApiLookup: BuiltWithEndpoint<'freeApiLookup'>;
@@ -64,6 +66,10 @@ export type BuiltWithEndpoints = {
 };
 
 const builtWithEndpointsNested = {
+	createDomainListFile: BuiltWithEndpoints.createDomainListFile,
+	datasets: {
+		lookup: BuiltWithEndpoints.datasetsLookup,
+	},
 	domain: {
 		lookup: BuiltWithEndpoints.domainApiLookup,
 	},
@@ -94,6 +100,14 @@ const builtWithEndpointsNested = {
 } as const;
 
 export const builtWithEndpointSchemas = {
+	createDomainListFile: {
+		input: BuiltWithEndpointInputSchemas.createDomainListFile,
+		output: BuiltWithEndpointOutputSchemas.createDomainListFile,
+	},
+	'datasets.lookup': {
+		input: BuiltWithEndpointInputSchemas.datasetsLookup,
+		output: BuiltWithEndpointOutputSchemas.datasetsLookup,
+	},
 	'domain.lookup': {
 		input: BuiltWithEndpointInputSchemas.domainApiLookup,
 		output: BuiltWithEndpointOutputSchemas.domainApiLookup,
@@ -137,6 +151,14 @@ export const builtWithEndpointSchemas = {
 const defaultAuthType: AuthTypes = 'api_key';
 
 const builtWithEndpointMeta = {
+	createDomainListFile: {
+		riskLevel: 'write',
+		description: 'Create a TXT or ZIP file from a list of domains',
+	},
+	'datasets.lookup': {
+		riskLevel: 'read',
+		description: 'Look up historical technology usage trends',
+	},
 	'domain.lookup': {
 		riskLevel: 'read',
 		description: 'Look up technology information for domains',
