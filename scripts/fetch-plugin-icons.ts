@@ -5,9 +5,7 @@
  * Run after adding plugins or when icons look stale:
  *   pnpm fetch:plugin-icons
  *   pnpm fetch:plugin-icons -- --force
- *   pnpm fetch:plugin-icons -- --only=slack,github
- *
- * `--only` limits which PNGs are fetched; the manifest always lists the full catalog.
+ *   pnpm fetch:plugin-icons -- --only slack,github
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -166,20 +164,20 @@ async function main(): Promise<void> {
 	const catalog = JSON.parse(
 		readFileSync(catalogPath, 'utf8'),
 	) as PluginCatalogIndex;
-	const allPluginIds = catalog.plugins.map((plugin) => plugin.id).sort();
+	let pluginIds = catalog.plugins.map((plugin) => plugin.id).sort();
 
-	const fetchPluginIds =
-		only.length > 0
-			? allPluginIds.filter((id) => only.includes(id))
-			: allPluginIds;
+	if (only.length > 0) {
+		const allowed = new Set(only);
+		pluginIds = pluginIds.filter((id) => allowed.has(id));
+	}
 
 	mkdirSync(iconsDir, { recursive: true });
 
-	const domains = buildPluginDomainMap(allPluginIds);
+	const domains = buildPluginDomainMap(pluginIds);
 	const sources: Record<string, IconSource> = {};
 	const failures: Manifest['failures'] = [];
 
-	const targets = fetchPluginIds.filter((id) => {
+	const targets = pluginIds.filter((id) => {
 		if (force) return true;
 		return !existsSync(join(iconsDir, `${id}.png`));
 	});
@@ -213,7 +211,7 @@ async function main(): Promise<void> {
 		existingSources = existing.sources ?? {};
 	}
 
-	for (const pluginId of allPluginIds) {
+	for (const pluginId of pluginIds) {
 		if (sources[pluginId]) continue;
 		if (existsSync(join(iconsDir, `${pluginId}.png`))) {
 			sources[pluginId] = existingSources[pluginId] ?? 'twenty-icons';
@@ -226,10 +224,9 @@ async function main(): Promise<void> {
 		fallbackSource: FALLBACK_SOURCE,
 		size: ICON_SIZE,
 		format: ICON_FORMAT,
-		total: allPluginIds.length,
-		succeeded: allPluginIds.filter((id) =>
-			existsSync(join(iconsDir, `${id}.png`)),
-		).length,
+		total: pluginIds.length,
+		succeeded: pluginIds.filter((id) => existsSync(join(iconsDir, `${id}.png`)))
+			.length,
 		failed: failures.length,
 		domains,
 		sources,

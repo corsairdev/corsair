@@ -762,13 +762,8 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 	multiTenancy?: boolean;
 	/** Root-level error handlers that apply when plugin-specific handlers are not defined */
 	errorHandlers?: CorsairErrorHandler;
-	/**
-	 * Key Encryption Key (KEK) for envelope encryption. Used to encrypt/decrypt
-	 * Data Encryption Keys (DEK) stored in the database. Required alongside
-	 * `database` to use integration-level `keys`; omit both to get a proxy that
-	 * throws a clear error on first access. Not used in cloud mode (`ck_cloud_`).
-	 */
-	kek?: string;
+	/** Key Encryption Key (KEK) for envelope encryption. Used to encrypt/decrypt Data Encryption Keys (DEK) stored in the database. */
+	kek: string;
 	/**
 	 * Global permissions configuration — approval timeouts and sync/async blocking.
 	 * Pair with per-plugin `permissions: { mode, overrides }` on each plugin.

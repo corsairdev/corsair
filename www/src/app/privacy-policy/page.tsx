@@ -11,14 +11,14 @@ import {
 export const metadata: Metadata = {
 	title: 'Privacy Policy',
 	description:
-		'How Corsair handles information for hub.corsair.dev, the Corsair SDK, Corsair Cloud, and related services.',
+		'How Corsair handles information for hub.corsair.dev, Hub account sign-in, and the Corsair SDK.',
 	alternates: {
 		canonical: '/privacy-policy',
 	},
 };
 
-const CONTACT_EMAIL = 'team@corsair.dev';
-const LAST_UPDATED = 'September 16, 2026';
+const CONTACT_EMAIL = 'dev@corsair.dev';
+const LAST_UPDATED = 'September 7, 2026';
 const LOG_RETENTION_PERIOD = '90 days';
 
 export default function PrivacyPolicyPage() {
@@ -38,14 +38,15 @@ export default function PrivacyPolicyPage() {
 					<strong className="font-medium text-[#1c1c1c]">us</strong>,&rdquo; or
 					&ldquo;
 					<strong className="font-medium text-[#1c1c1c]">our</strong>
-					&rdquo;) handles information in connection with our integration
-					infrastructure, hosted platform at hub.corsair.dev, open-source SDK (
-					<code className="text-sm">corsair</code> and plugin packages), and
-					hosted runtime offering (&ldquo;
-					<strong className="font-medium text-[#1c1c1c]">Corsair Cloud</strong>
-					&rdquo;) (collectively, the &ldquo;
+					&rdquo;) handles information in connection with our managed OAuth
+					infrastructure and developer SDK (collectively, the &ldquo;
 					<strong className="font-medium text-[#1c1c1c]">Service</strong>
-					&rdquo;).
+					&rdquo;), including our hosted platform at hub.corsair.dev and the
+					Corsair SDK (<code className="text-sm">corsair</code> and associated
+					plugin packages such as{' '}
+					<code className="text-sm">@corsair-dev/gmail</code>,{' '}
+					<code className="text-sm">@corsair-dev/googlecalendar</code>, and{' '}
+					<code className="text-sm">@corsair-dev/googlesheets</code>).
 				</p>
 				<p>
 					Please read this policy carefully. If you have questions, contact us
@@ -69,463 +70,378 @@ export default function PrivacyPolicyPage() {
 					<strong className="font-medium text-[#1c1c1c]">
 						Customer Applications
 					</strong>
-					&rdquo;) so those applications can connect to third-party services on
-					behalf of the Customer&apos;s own end users (&ldquo;
+					&rdquo;) to connect their own end users&apos; (&ldquo;
 					<strong className="font-medium text-[#1c1c1c]">End Users</strong>
-					&rdquo;).
+					&rdquo;) Google Accounts. This policy explains:
 				</p>
-				<p>This policy explains:</p>
 				<ul className="list-disc space-y-2 pl-6">
 					<li>
-						What information Corsair collects as the operator of Hub accounts,
-						billing, and the control plane;
+						What information Corsair itself collects and processes as the
+						operator of hub.corsair.dev, and
 					</li>
 					<li>
-						How Corsair handles{' '}
-						<strong className="font-medium text-[#1c1c1c]">
-							third-party integration data
-						</strong>{' '}
-						(including credentials and data obtained through integrated APIs)
-						under each deployment option described in Section 2; and
-					</li>
-					<li>
-						Your choices and rights with respect to information for which
-						Corsair acts as a controller.
+						What our architecture is designed to ensure Corsair does{' '}
+						<strong className="font-medium text-[#1c1c1c]">not</strong> access,
+						regardless of which Customer Application an End User is using.
 					</li>
 				</ul>
 				<p>
 					Customers are independently responsible for their own privacy
 					disclosures to their End Users. This policy does not govern how a
-					Customer Application uses third-party integration data once obtained —
-					that is between the Customer and their End Users. If you are an End
-					User of a Customer Application and have questions about your personal
-					data, contact that Customer Application directly.
+					Customer Application uses End User data once obtained — that is
+					between the Customer and their End Users, and Customers must
+					independently comply with Google&apos;s API Services User Data Policy
+					for their own use of that data.
 				</p>
 			</LegalSection>
 
-			<LegalSection title="2. Deployment Options">
+			<LegalSection title="2. End User Consent Screen">
 				<p>
-					Customers may use Corsair in one of two primary configurations. The
-					option you choose determines where integration credentials and related
-					data are stored and whether Corsair processes integration payloads in
-					the course of providing the Service.
-				</p>
-
-				<LegalSubsection title="SDK with Corsair Hub">
-					<p>
-						In this configuration, you run the Corsair SDK in your own
-						application infrastructure and use Corsair Hub (hub.corsair.dev) for
-						managed OAuth connect flows, token refresh, webhooks, and related
-						control-plane features.{' '}
-						<strong className="font-medium text-[#1c1c1c]">
-							OAuth tokens, API keys, and other integration credentials are
-							stored in a database you operate
-						</strong>{' '}
-						(not in Corsair&apos;s integration datastore). The SDK encrypts
-						stored credentials at rest using envelope encryption; the encryption
-						key (<code className="text-sm">CORSAIR_KEK</code>) is held and
-						managed in your application environment.
-					</p>
-					<p>
-						Calls from your application to third-party APIs are made from your
-						infrastructure using the SDK. Corsair does not receive, log, or
-						store the substantive content of those API requests or responses as
-						part of this path, except as described in Section 4 (Hub control
-						plane and operational metadata).
-					</p>
-				</LegalSubsection>
-
-				<LegalSubsection title="Corsair Cloud">
-					<p>
-						In this configuration, Corsair hosts a managed SDK runtime for your
-						project.{' '}
-						<strong className="font-medium text-[#1c1c1c]">
-							Third-party integration data flows through Corsair-operated
-							servers
-						</strong>{' '}
-						when your Customer Application invokes integrations through the
-						hosted runtime. Corsair processes that data only to provide the
-						Service — to execute the integrations you configure and to maintain
-						connections on your and your End Users&apos; behalf — and{' '}
-						<strong className="font-medium text-[#1c1c1c]">not</strong> for
-						advertising, selling or licensing data to third parties, training or
-						improving machine learning or AI models, analytics unrelated to
-						operating the Service, or building Corsair product features outside
-						your intended use case.
-					</p>
-					<p>
-						Corsair Cloud{' '}
-						<strong className="font-medium text-[#1c1c1c]">
-							retains and stores
-						</strong>{' '}
-						the integration credentials and SDK database contents your project
-						needs to operate — including OAuth access and refresh tokens, API
-						keys, connection and tenant records, and related metadata — in
-						either:
-					</p>
-					<ul className="list-disc space-y-2 pl-6">
-						<li>
-							a{' '}
-							<strong className="font-medium text-[#1c1c1c]">
-								Corsair-managed database
-							</strong>{' '}
-							on infrastructure Corsair operates (the default for many Cloud
-							projects), or
-						</li>
-						<li>
-							a{' '}
-							<strong className="font-medium text-[#1c1c1c]">
-								database you choose and provide
-							</strong>{' '}
-							(for example, via a connection URL you supply), where the hosted
-							runtime writes the same encrypted SDK data to your database.
-						</li>
-					</ul>
-					<p>
-						In both cases, credentials and keys are{' '}
-						<strong className="font-medium text-[#1c1c1c]">
-							encrypted at rest
-						</strong>
-						. For Corsair Cloud, Corsair manages the encryption keys for data
-						held in the hosted runtime (including Corsair-managed databases);
-						for SDK with Hub, you manage{' '}
-						<code className="text-sm">CORSAIR_KEK</code> in your environment as
-						described above.
-					</p>
-					<p>
-						Stored credentials and SDK data are{' '}
-						<strong className="font-medium text-[#1c1c1c]">
-							retained until you delete the applicable Hub project or Cloud
-							environment
-						</strong>{' '}
-						(or as otherwise described in Section 9). This is separate from
-						operational logging: when integration calls pass through the hosted
-						runtime, Corsair also retains call{' '}
-						<strong className="font-medium text-[#1c1c1c]">metadata</strong>{' '}
-						(such as timestamps, tenant and plugin identifiers, operation names,
-						and success or error signals) but does not log the substantive
-						payloads of third-party API requests or responses for diagnostic
-						retention.
-					</p>
-					<p>
-						Corsair Cloud is designed so that one Customer&apos;s data is not
-						accessible to other Customers: hosted environments and stored
-						credentials are isolated by project and organization, and End Users
-						within a Customer Application are isolated logically by tenant
-						identifiers in the SDK — not on separate physical hosts per End
-						User.
-					</p>
-				</LegalSubsection>
-			</LegalSection>
-
-			<LegalSection title="3. End User Connect Experience">
-				<p>
-					When an End User connects a third-party account to a Customer
-					Application through Corsair Hub, they see a Corsair connect screen
-					that identifies the Customer Application by name and states that the
-					application is{' '}
+					When an End User connects a Google Account to a Customer Application
+					through Corsair, they first see a Corsair Hub connect screen before
+					being redirected to Google&apos;s OAuth consent screen. That connect
+					screen explicitly identifies the Customer Application by name and
+					states that the application is{' '}
 					<strong className="font-medium text-[#1c1c1c]">
 						powered by Corsair
-					</strong>{' '}
-					before being redirected to the third party&apos;s authorization flow.
+					</strong>
+					.
+				</p>
+				<p>
 					The connect screen explains that the named Customer Application will
-					receive access to the data and permissions the End User approves with
-					that third party. The specific scopes or permissions depend on the
-					Customer Application&apos;s implemented features.
+					receive access to the Google data and permissions the End User
+					approves on Google&apos;s consent screen. Corsair manages the OAuth
+					authentication flow on the Customer Application&apos;s behalf but does
+					not access the substantive content of the End User&apos;s Google
+					Account (such as email body text, calendar event details, file
+					contents, or spreadsheet data).
+				</p>
+				<p>
+					Corsair Hub supports OAuth connections to Google services including
+					Gmail, Google Calendar, Google Drive, and Google Sheets. The specific
+					scopes requested depend on the Customer Application&apos;s implemented
+					features and appear on Google&apos;s consent screen before the End
+					User approves access.
 				</p>
 			</LegalSection>
 
-			<LegalSection title="4. Information Corsair Collects and Processes">
-				<LegalSubsection title="Hub control plane (all Customers)">
-					<p>
-						To operate hub.corsair.dev, we collect and process limited
-						categories of information, including:
-					</p>
+			<LegalSection title="3. How Our Architecture Handles Google Account Data">
+				<p>
+					Corsair&apos;s system is deliberately structured to minimize what our
+					infrastructure can see:
+				</p>
+				<ul className="list-disc space-y-2 pl-6">
+					<li>
+						<strong className="font-medium text-[#1c1c1c]">
+							Tokens are stored by the Customer, not by Corsair.
+						</strong>{' '}
+						When an End User authorizes a Customer Application to access their
+						Google Account, the resulting OAuth access token and refresh token
+						are stored exclusively within the Customer&apos;s own database,
+						encrypted at rest using envelope encryption. Corsair does not
+						maintain a copy of these tokens.
+					</li>
+					<li>
+						<strong className="font-medium text-[#1c1c1c]">
+							Corsair&apos;s hub is invoked only to refresh expired access
+							tokens.
+						</strong>{' '}
+						When an access token expires, the Customer&apos;s application (via
+						the Corsair SDK) sends the refresh token to hub.corsair.dev over an
+						encrypted, signed channel. The hub exchanges that refresh token,
+						together with Corsair&apos;s registered OAuth client ID and secret,
+						for a new access token from Google, and returns the new access token
+						to the Customer&apos;s application. The hub does not initiate this
+						process independently and cannot do so without the Customer&apos;s
+						application first contacting it.
+					</li>
+					<li>
+						<strong className="font-medium text-[#1c1c1c]">
+							Corsair never makes API calls on any End User&apos;s behalf.
+						</strong>{' '}
+						All calls to Google APIs (Gmail, Calendar, Drive, Sheets, etc.) are
+						made directly from the Customer&apos;s own infrastructure to Google,
+						using the SDK. Corsair&apos;s servers are not in this request path
+						and do not receive, log, or store the content of these requests or
+						their responses.
+					</li>
+					<li>
+						<strong className="font-medium text-[#1c1c1c]">
+							Corsair does not access Google Account content.
+						</strong>{' '}
+						Because of the above, Corsair does not see, store, or process the
+						substantive content of any End User&apos;s emails, calendar events,
+						files, or spreadsheets accessed through the Service.
+					</li>
+				</ul>
+			</LegalSection>
+
+			<LegalSection title="4. Information Corsair Does Collect">
+				<p>
+					In operating hub.corsair.dev, we collect and process the following
+					limited categories of information:
+				</p>
+				<ul className="list-disc space-y-2 pl-6">
+					<li>
+						<strong className="font-medium text-[#1c1c1c]">
+							Token refresh metadata.
+						</strong>{' '}
+						When a refresh request is made, we necessarily process the refresh
+						token (transiently, to complete the exchange with Google) and the
+						resulting access token before returning it to the Customer&apos;s
+						application. We do not persist tokens after the refresh operation
+						completes.
+					</li>
+					<li>
+						<strong className="font-medium text-[#1c1c1c]">
+							Operational and diagnostic logs.
+						</strong>{' '}
+						We may log metadata about refresh requests (e.g., timestamps,
+						response codes, project/API key identifiers) for the purpose of
+						operating, securing, debugging, and improving the Service. These
+						logs do not contain Google Account content.
+					</li>
+					<li>
+						<strong className="font-medium text-[#1c1c1c]">
+							Customer account information.
+						</strong>{' '}
+						We collect information necessary to administer Customer accounts,
+						such as project API keys, signing secrets, billing information, and
+						developer contact details.
+					</li>
+					<li>
+						<strong className="font-medium text-[#1c1c1c]">
+							Hub account profile information.
+						</strong>{' '}
+						When you sign in to Corsair Hub using Google or GitHub, we receive
+						basic profile information from that provider as described in
+						Sections 5 and 6 below.
+					</li>
+					<li>
+						<strong className="font-medium text-[#1c1c1c]">
+							Webhook notifications.
+						</strong>{' '}
+						When a Customer registers Corsair&apos;s webhook endpoint with
+						Google for push notifications (for example, Gmail or Calendar change
+						notifications), Google sends those notifications to Corsair&apos;s
+						infrastructure, which forwards them to the Customer&apos;s
+						registered development and production endpoints. These notifications
+						are change pings only, such as a resource identifier and a
+						timestamp, and do not contain the substantive content of the
+						underlying email, calendar event, or other Google Account data.
+						Corsair does not hold OAuth credentials for the End User and cannot
+						independently query Google for that content.
+					</li>
+				</ul>
+			</LegalSection>
+
+			<LegalSection title="5. Google Sign-In (Corsair Hub)">
+				<p>
+					When you sign in to Corsair Hub using your Google account, we receive
+					the following information from Google, with your permission:
+				</p>
+				<ul className="list-disc space-y-2 pl-6">
+					<li>Your name</li>
+					<li>Your email address</li>
+					<li>Your profile picture (if available)</li>
+					<li>A unique Google account identifier</li>
+				</ul>
+				<p>
+					We do <strong className="font-medium text-[#1c1c1c]">not</strong>{' '}
+					request or receive access to your Gmail, Google Drive, Google
+					Calendar, or any other Google data beyond your basic profile
+					information through Hub sign-in.
+				</p>
+
+				<LegalSubsection title="How we use Google sign-in data">
+					<p>We use this information solely to:</p>
 					<ul className="list-disc space-y-2 pl-6">
+						<li>Create and maintain your Corsair Hub account</li>
+						<li>Authenticate you when you sign in</li>
 						<li>
-							<strong className="font-medium text-[#1c1c1c]">
-								Customer account and project information
-							</strong>{' '}
-							— such as organization and project names, API keys, signing
-							secrets, billing and contact details, and team membership;
+							Identify you within our service (for example, displaying your name
+							or profile picture)
 						</li>
-						<li>
-							<strong className="font-medium text-[#1c1c1c]">
-								Encrypted OAuth application credentials
-							</strong>{' '}
-							— when you use managed or bring-your-own OAuth applications,
-							client identifiers and secrets may be stored encrypted in
-							Corsair&apos;s control-plane database to facilitate connect and
-							token refresh;
-						</li>
-						<li>
-							<strong className="font-medium text-[#1c1c1c]">
-								Webhook and connection metadata
-							</strong>{' '}
-							— routing identifiers, delivery status, and similar operational
-							data needed to forward provider webhooks to your registered
-							endpoints;
-						</li>
-						<li>
-							<strong className="font-medium text-[#1c1c1c]">
-								Operational and diagnostic logs
-							</strong>{' '}
-							— metadata about Service operations (for example, timestamps,
-							response codes, and project or environment identifiers). For
-							Customers{' '}
-							<strong className="font-medium text-[#1c1c1c]">not</strong> using
-							Corsair Cloud, these logs are retained for {LOG_RETENTION_PERIOD}{' '}
-							and then deleted or anonymized, as described in Section 9.
-						</li>
+						<li>Communicate with you about your account, if necessary</li>
 					</ul>
-				</LegalSubsection>
-
-				<LegalSubsection title="Token refresh (SDK with Hub)">
 					<p>
-						When your application refreshes an OAuth access token through Hub,
-						we transiently process the refresh token and new access token to
-						complete the exchange with the third-party provider. For SDK with
-						Hub, we do not persist end-user OAuth tokens in the{' '}
-						<strong className="font-medium text-[#1c1c1c]">
-							Hub control plane
-						</strong>{' '}
-						after the refresh completes; tokens remain in your SDK database (or,
-						for Corsair Cloud, in the Corsair-managed or customer-provided
-						database configured for that project, as described in Section 2).
+						We do not use your information for advertising, and we do not sell,
+						rent, or trade your information to third parties.
 					</p>
 				</LegalSubsection>
 
-				<LegalSubsection title="Corsair Cloud — stored credentials and SDK data">
+				<LegalSubsection title="Revoking Google access">
 					<p>
-						For Corsair Cloud projects, end-user and application integration
-						credentials, tenant connection state, and other data the SDK
-						persists to serve your Customer Application are{' '}
-						<strong className="font-medium text-[#1c1c1c]">
-							stored and retained
-						</strong>{' '}
-						in your project&apos;s database — either Corsair&apos;s managed
-						database or one you provide. Corsair processes and stores this data
-						only to operate your hosted runtime, not for unrelated purposes
-						described in Section 2.
-					</p>
-				</LegalSubsection>
-
-				<LegalSubsection title="Third-party integration data we process on your behalf">
-					<p>
-						Depending on your deployment option, Corsair may process third-party
-						integration data (including personal data contained in credentials
-						or API payloads) as a{' '}
-						<strong className="font-medium text-[#1c1c1c]">
-							processor or service provider
-						</strong>{' '}
-						on your instructions — principally when you use Corsair Cloud, or
-						when Hub handles OAuth or webhooks on your behalf. We process that
-						data only to provide the Service. We do not have a direct
-						relationship with End Users; if you are an End User, contact the
-						Customer Application you used to exercise privacy rights regarding
-						data processed through Corsair on that Customer&apos;s behalf.
-					</p>
-				</LegalSubsection>
-
-				<LegalSubsection title="Hub account sign-in">
-					<p>
-						When you sign in to Corsair Hub with Google or GitHub, we receive
-						basic profile information from that provider (such as name, email
-						address, profile picture if available, and a unique account
-						identifier). We use this information only to create and maintain
-						your Hub account, authenticate you, display your identity in the
-						dashboard, and communicate with you about your account. We do not
-						use it for advertising, and we do not sell, rent, or trade it to
-						third parties. You can revoke Hub&apos;s access through your{' '}
+						You can revoke Corsair Hub&apos;s access to your Google account at
+						any time via your{' '}
 						<a
 							href="https://myaccount.google.com/permissions"
 							target="_blank"
 							rel="noopener noreferrer"
 							className={legalLinkClassName}
 						>
-							Google Account permissions
-						</a>{' '}
-						or{' '}
+							Google Account permissions page
+						</a>
+						.
+					</p>
+				</LegalSubsection>
+			</LegalSection>
+
+			<LegalSection title="6. GitHub Sign-In (Corsair Hub)">
+				<p>
+					When you sign in to Corsair Hub using your GitHub account, we receive
+					the following information from GitHub, with your permission:
+				</p>
+				<ul className="list-disc space-y-2 pl-6">
+					<li>Your name or username</li>
+					<li>Your email address</li>
+					<li>Your profile picture (if available)</li>
+					<li>A unique GitHub account identifier</li>
+				</ul>
+				<p>
+					We do <strong className="font-medium text-[#1c1c1c]">not</strong>{' '}
+					request or receive access to your repositories, organizations, gists,
+					or any other GitHub data beyond your basic profile information.
+				</p>
+
+				<LegalSubsection title="How we use GitHub sign-in data">
+					<p>We use this information solely to:</p>
+					<ul className="list-disc space-y-2 pl-6">
+						<li>Create and maintain your Corsair Hub account</li>
+						<li>Authenticate you when you sign in</li>
+						<li>
+							Identify you within our service (for example, displaying your name
+							or profile picture)
+						</li>
+						<li>Communicate with you about your account, if necessary</li>
+					</ul>
+					<p>
+						We do not use your information for advertising, and we do not sell,
+						rent, or trade your information to third parties.
+					</p>
+				</LegalSubsection>
+
+				<LegalSubsection title="Revoking GitHub access">
+					<p>
+						You can revoke Corsair Hub&apos;s access to your GitHub account at
+						any time via your{' '}
 						<a
 							href="https://github.com/settings/applications"
 							target="_blank"
 							rel="noopener noreferrer"
 							className={legalLinkClassName}
 						>
-							GitHub authorized applications
-						</a>{' '}
-						settings, as applicable.
+							GitHub authorized applications settings
+						</a>
+						.
 					</p>
 				</LegalSubsection>
 			</LegalSection>
 
-			<LegalSection title="5. Google API Services User Data Policy">
+			<LegalSection title="7. Compliance with Google API Services User Data Policy">
 				<p>
-					When Customer Applications connect to Google services through Corsair,
 					Corsair&apos;s use of information received from Google APIs will
-					adhere to the{' '}
-					<a
-						href="https://developers.google.com/terms/api-services-user-data-policy"
-						target="_blank"
-						rel="noopener noreferrer"
-						className={legalLinkClassName}
-					>
-						Google API Services User Data Policy
-					</a>
-					, including the Limited Use requirements. In accordance with that
-					policy, we do not:
+					adhere to the Google API Services User Data Policy, including the
+					Limited Use requirements. In accordance with that policy, we do not:
 				</p>
 				<ul className="list-disc space-y-2 pl-6">
 					<li>Use or transfer Google user data for serving advertisements;</li>
 					<li>
 						Sell or share Google user data with third parties, except as
 						strictly necessary to provide the core functionality of the Service
-						(for example, completing OAuth or token refresh with Google);
+						(e.g., completing a token refresh with Google);
 					</li>
 					<li>
 						Use Google user data to train or improve any machine learning or
-						artificial intelligence model; or
+						artificial intelligence model, whether foundational, frontier, or
+						otherwise;
 					</li>
 					<li>
 						Allow human review of Google user data, except where necessary for
-						security purposes (such as investigating suspected abuse), to comply
+						security purposes (e.g., investigating suspected abuse), to comply
 						with applicable law, or where an End User has separately and
 						affirmatively consented.
 					</li>
 				</ul>
 				<p>
-					Customers who access Google user data through their own Customer
-					Applications remain independently responsible for complying with
-					Google&apos;s policies for their use of that data.
+					We limit our use of any Google-derived data we do process (per Section
+					4) to operating, securing, and improving the token-refresh
+					functionality of the Service.
 				</p>
 			</LegalSection>
 
-			<LegalSection title="6. How We Use Information">
-				<p>We use information we collect to:</p>
-				<ul className="list-disc space-y-2 pl-6">
-					<li>Provide, operate, maintain, and secure the Service;</li>
-					<li>
-						Authenticate Hub users and administer Customer accounts, projects,
-						and billing;
-					</li>
-					<li>
-						Execute integrations and related features you configure (including
-						through Corsair Cloud);
-					</li>
-					<li>
-						Provide support, troubleshoot issues, and protect against abuse or
-						security incidents; and
-					</li>
-					<li>Comply with applicable law and enforce our terms.</li>
-				</ul>
-				<p>
-					We do not use third-party integration data or End User data processed
-					through the Service for advertising, model training, or analytics
-					unrelated to operating and securing the Service, as described in
-					Section 2.
-				</p>
-			</LegalSection>
-
-			<LegalSection title="7. How We Protect Information">
+			<LegalSection title="8. How We Protect Information">
 				<ul className="list-disc space-y-2 pl-6">
 					<li>
-						Communication between the Corsair SDK and Hub is encrypted and
-						authenticated using project-specific signing secrets.
+						All data in transit between the Corsair SDK and hub.corsair.dev is
+						encrypted and authenticated using a pre-shared signing secret unique
+						to each Customer project.
 					</li>
 					<li>
-						Credentials and keys stored through the Service are encrypted at
-						rest; encryption keys for Corsair Cloud are managed by Corsair, and
-						for SDK with Hub are managed in your application environment.
+						Any credentials or tokens transiently handled by our infrastructure
+						are encrypted in transit using industry-standard protocols (TLS).
 					</li>
 					<li>
-						We maintain access controls limiting employee access to production
-						systems and logs.
+						We require Customers to encrypt tokens at rest in their own
+						databases using envelope encryption, and our SDK is designed to
+						facilitate this by default.
 					</li>
 					<li>
-						Corsair Cloud environments are isolated so that one Customer cannot
-						access another Customer&apos;s stored integration data.
+						We maintain internal access controls limiting employee access to
+						production systems and logs.
+					</li>
+					<li>
+						Account information received through Google or GitHub sign-in is
+						stored securely and protected using industry-standard security
+						measures. We retain it only for as long as your account remains
+						active, or as needed to provide Corsair Hub to you.
 					</li>
 				</ul>
-			</LegalSection>
-
-			<LegalSection title="8. Data Sharing and Subprocessors">
-				<p>
-					We do not sell third-party integration data or Hub account
-					information. We may share information with:
-				</p>
-				<ul className="list-disc space-y-2 pl-6">
-					<li>
-						<strong className="font-medium text-[#1c1c1c]">
-							Amazon Web Services (AWS)
-						</strong>{' '}
-						— our infrastructure subprocessor for hosting Corsair Cloud and
-						related production systems, bound by contractual confidentiality and
-						security obligations;
-					</li>
-					<li>
-						Government or regulatory authorities where required by law; and
-					</li>
-					<li>
-						A successor entity in connection with a merger, acquisition, or sale
-						of assets, subject to this policy continuing to apply or you being
-						notified of material changes.
-					</li>
-				</ul>
-				<p>
-					Integration API calls are made to third-party providers (such as
-					Google, Slack, or other services you connect) according to your
-					configuration; those providers handle data under their own policies.
-				</p>
 			</LegalSection>
 
 			<LegalSection title="9. Data Retention">
 				<p>
-					<strong className="font-medium text-[#1c1c1c]">
-						Corsair Cloud — credentials and SDK database:
-					</strong>{' '}
-					OAuth tokens, API keys, connection records, and other SDK-persisted
-					data (in a Corsair-managed database or a database you provide) are
-					retained until you delete the relevant Hub project or Cloud
-					environment (or we delete them following account termination, subject
-					to any legal retention requirements).
+					We do not retain access or refresh tokens beyond the duration of a
+					single refresh operation. Operational logs described in Section 4 are
+					retained for {LOG_RETENTION_PERIOD} for security and diagnostic
+					purposes, after which they are deleted or anonymized.
 				</p>
 				<p>
-					<strong className="font-medium text-[#1c1c1c]">
-						Corsair Cloud — call metadata:
-					</strong>{' '}
-					Hosted-runtime call metadata described in Section 2 is retained with
-					the project for as long as the project remains active, unless a
-					shorter period applies under your agreement.
-				</p>
-				<p>
-					<strong className="font-medium text-[#1c1c1c]">
-						Operational logs (SDK with Hub, without Corsair Cloud):
-					</strong>{' '}
-					Control-plane and diagnostic logs described in Section 4 are retained
-					for {LOG_RETENTION_PERIOD} for security and diagnostic purposes, after
-					which they are deleted or anonymized.
-				</p>
-				<p>
-					<strong className="font-medium text-[#1c1c1c]">Webhooks:</strong>{' '}
-					Webhook notification payloads are deleted upon successful delivery to
-					your registered endpoint when possible. If delivery fails, we may
-					retain the notification for up to 7 days to allow redelivery, after
-					which it is deleted.
-				</p>
-				<p>
-					Hub account profile information from Google or GitHub sign-in is
-					retained while your account remains active, or as needed to provide
-					the Service.
+					Webhook notifications are deleted immediately upon successful delivery
+					to the Customer&apos;s registered endpoint. If delivery fails, we
+					retain the notification for up to 7 days to allow the Customer to
+					request redelivery, after which it is deleted.
 				</p>
 			</LegalSection>
 
-			<LegalSection title="10. Your Rights">
+			<LegalSection title="10. Data Sharing">
 				<p>
-					If you are an End User of a Customer Application, direct requests
-					regarding personal data (access, deletion, correction) to the Customer
-					Application you interacted with. You may also revoke a third
-					party&apos;s access to your account through that provider&apos;s
-					settings (for Google, your{' '}
+					We do not sell Google user data. We may share the limited operational
+					information described in Section 4 with:
+				</p>
+				<ul className="list-disc space-y-2 pl-6">
+					<li>
+						Infrastructure and hosting subprocessors who help us operate the
+						Service, bound by confidentiality and data protection obligations;
+					</li>
+					<li>Government or regulatory authorities where required by law;</li>
+					<li>
+						A successor entity in connection with a merger, acquisition, or sale
+						of assets, subject to this policy continuing to apply or the End
+						User being notified and given the opportunity to consent to any
+						change.
+					</li>
+				</ul>
+			</LegalSection>
+
+			<LegalSection title="11. Your Rights">
+				<p>
+					If you are an End User of a Customer Application built on Corsair, you
+					should direct requests regarding your personal data (access, deletion,
+					correction) to the Customer Application you interacted with directly,
+					as they control that data. You may revoke Corsair&apos;s (or any
+					Customer Application&apos;s) access to your Google Account at any time
+					via your{' '}
 					<a
 						href="https://myaccount.google.com/permissions"
 						target="_blank"
@@ -534,41 +450,30 @@ export default function PrivacyPolicyPage() {
 					>
 						Google Account permissions page
 					</a>
-					).
+					.
 				</p>
 				<p>If you are a Corsair Customer or Hub account holder, you can:</p>
 				<ul className="list-disc space-y-2 pl-6">
 					<li>
-						Revoke Google or GitHub Hub sign-in access using the links in
-						Section 4;
+						Revoke Google or GitHub access using the links in Sections 5 and 6
 					</li>
 					<li>
-						Request deletion of your Hub account and associated control-plane
-						data by contacting{' '}
+						Request that we delete your account and associated data by
+						contacting us at{' '}
 						<a href={`mailto:${CONTACT_EMAIL}`} className={legalLinkClassName}>
 							{CONTACT_EMAIL}
 						</a>
-						;
 					</li>
 					<li>
-						Request a copy of Hub account data we hold as controller by
-						contacting{' '}
+						Request a copy of the data we hold about you by contacting us at{' '}
 						<a href={`mailto:${CONTACT_EMAIL}`} className={legalLinkClassName}>
 							{CONTACT_EMAIL}
 						</a>
-						.
 					</li>
 				</ul>
-				<p>
-					Where Corsair processes personal data on your behalf through Corsair
-					Cloud or related features, you are the controller (or equivalent) for
-					that data and Corsair acts as processor — End User requests should be
-					handled by you, with our assistance as required by applicable law and
-					our agreement with you.
-				</p>
 			</LegalSection>
 
-			<LegalSection title="11. Children's Privacy">
+			<LegalSection title="12. Children's Privacy">
 				<p>
 					The Service is not directed to children under 13 (or the relevant age
 					of digital consent in your jurisdiction), and we do not knowingly
@@ -576,16 +481,16 @@ export default function PrivacyPolicyPage() {
 				</p>
 			</LegalSection>
 
-			<LegalSection title="12. Changes to This Policy">
+			<LegalSection title="13. Changes to This Policy">
 				<p>
 					We may update this Privacy Policy from time to time. If we make
-					material changes to how we handle personal information or third-party
-					integration data, we will update this page and, where required, seek
-					renewed consent before making use of data in a new way.
+					material changes to how we handle Google user data, we will update
+					this page and, where required, seek renewed consent before making use
+					of data in a new way.
 				</p>
 			</LegalSection>
 
-			<LegalSection title="13. Contact Us">
+			<LegalSection title="14. Contact Us">
 				<p>Corsair</p>
 				<p>
 					<a href={`mailto:${CONTACT_EMAIL}`} className={legalLinkClassName}>
