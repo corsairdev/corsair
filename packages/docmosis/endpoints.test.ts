@@ -310,6 +310,18 @@ describe('Docmosis endpoints', () => {
 		await expect(endpoints.images.list(ctx, {})).rejects.toThrow();
 	});
 
+	it('drops untyped fields from provider responses', async () => {
+		mockRequest.mockResolvedValue({
+			succeeded: true,
+			accessKey: 'should-not-leak',
+		});
+
+		const result = await endpoints.admin.environmentReady(ctx, {});
+
+		expect(result).toEqual({ succeeded: true });
+		expect(result).not.toHaveProperty('accessKey');
+	});
+
 	it('registers schemas/meta for all 17 claimed operations', () => {
 		const schemas = plugin.endpointSchemas as Record<string, unknown>;
 		const meta = plugin.endpointMeta as Record<string, unknown>;

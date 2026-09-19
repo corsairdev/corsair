@@ -35,160 +35,129 @@ const JsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
 	]),
 );
 
-const DocmosisBaseResponseSchema = z
-	.object({
-		succeeded: z.boolean(),
-		shortMsg: z.string().optional(),
-		longMsg: z.string().optional(),
-	})
-	.passthrough();
+const DocmosisBaseResponseSchema = z.object({
+	succeeded: z.boolean(),
+	shortMsg: z.string().optional(),
+	longMsg: z.string().optional(),
+});
 
-const AuditInfoSchema = z
-	.object({
-		lastUpdatedByUser: z.string().optional(),
-		lastUpdatedTime: z.number().optional(),
-	})
-	.passthrough();
+const AuditInfoSchema = z.object({
+	lastUpdatedByUser: z.string().optional(),
+	lastUpdatedTime: z.number().optional(),
+});
 
-const AccountEnvironmentDetailsSchema = z
-	.object({
-		name: z.string().optional(),
-		description: z.string().optional(),
-		isActivated: z.union([z.boolean(), z.string()]).optional(),
-		isDisabled: z.boolean().optional(),
-		isDeleted: z.boolean().optional(),
-		auditInfo: AuditInfoSchema.optional(),
-	})
-	.passthrough();
+const AccountEnvironmentDetailsSchema = z.object({
+	name: z.string().optional(),
+	description: z.string().optional(),
+	isActivated: z.union([z.boolean(), z.string()]).optional(),
+	isDisabled: z.boolean().optional(),
+	isDeleted: z.boolean().optional(),
+	auditInfo: AuditInfoSchema.optional(),
+});
 
-const PageQuotaSchema = z
-	.object({
-		used: z.union([z.number(), z.string()]).optional(),
-		quota: z.union([z.number(), z.string()]).optional(),
-		pctUsed: z.union([z.number(), z.string()]).optional(),
-		pctUsedStr: z.string().optional(),
-		isHardLimited: z.union([z.boolean(), z.string()]).optional(),
-	})
-	.passthrough();
+const PageQuotaSchema = z.object({
+	used: z.union([z.number(), z.string()]).optional(),
+	quota: z.union([z.number(), z.string()]).optional(),
+	pctUsed: z.union([z.number(), z.string()]).optional(),
+	pctUsedStr: z.string().optional(),
+	isHardLimited: z.union([z.boolean(), z.string()]).optional(),
+});
 
-const PlanSchema = z
-	.object({
-		name: z.string().optional(),
-	})
-	.passthrough();
+const PlanSchema = z.object({
+	name: z.string().optional(),
+});
 
-const AccountEnvironmentSummarySchema = z
-	.object({
-		ready: z.union([z.boolean(), z.string()]).optional(),
-		accountEnvDetails: AccountEnvironmentDetailsSchema.optional(),
-		pageQuota: PageQuotaSchema.optional(),
-		plan: PlanSchema.optional(),
-	})
-	.passthrough();
+const AccountEnvironmentSummarySchema = z.object({
+	ready: z.union([z.boolean(), z.string()]).optional(),
+	accountEnvDetails: AccountEnvironmentDetailsSchema.optional(),
+	pageQuota: PageQuotaSchema.optional(),
+	plan: PlanSchema.optional(),
+});
 
-const TemplateDetailsSchema = z
-	.object({
-		name: z.string().optional(),
-		lastModifiedMillisSinceEpoch: z.number().optional(),
-		lastModifiedISO8601: z.string().optional(),
-		sizeBytes: z.number().optional(),
-		md5: z.string().optional(),
-		templatePlainTextFieldPrefix: z.string().optional(),
-		templatePlainTextFieldSuffix: z.string().optional(),
-		templateHasErrors: z.boolean().optional(),
-		templateDevMode: z.boolean().optional(),
-		templateDescription: z.string().optional(),
-	})
-	.passthrough();
+const TemplateDetailsSchema = z.object({
+	name: z.string().optional(),
+	lastModifiedMillisSinceEpoch: z.number().optional(),
+	lastModifiedISO8601: z.string().optional(),
+	sizeBytes: z.number().optional(),
+	md5: z.string().optional(),
+	templatePlainTextFieldPrefix: z.string().optional(),
+	templatePlainTextFieldSuffix: z.string().optional(),
+	templateHasErrors: z.boolean().optional(),
+	templateDevMode: z.boolean().optional(),
+	templateDescription: z.string().optional(),
+});
 
-const ImageDetailsSchema = z
-	.object({
-		name: z.string().optional(),
-		lastModifiedMillisSinceEpoch: z.number().optional(),
-		lastModifiedISO8601: z.string().optional(),
-		sizeBytes: z.number().optional(),
-		md5: z.string().optional(),
-	})
-	.passthrough();
+const ImageDetailsSchema = z.object({
+	name: z.string().optional(),
+	lastModifiedMillisSinceEpoch: z.number().optional(),
+	lastModifiedISO8601: z.string().optional(),
+	sizeBytes: z.number().optional(),
+	md5: z.string().optional(),
+});
 
-const UploadTemplateBatchJobResultSchema = z
-	.object({
-		errorsDetected: z.boolean().optional(),
-		uploadedIntoFolder: z.string().optional(),
-		devMode: z.boolean().optional(),
-		uploadedTotalCount: z.number().optional(),
-		processedWithErrorsCount: z.number().optional(),
-		processedWithoutErrorsCount: z.number().optional(),
-	})
-	.passthrough();
+const UploadTemplateBatchJobResultSchema = z.object({
+	errorsDetected: z.boolean().optional(),
+	uploadedIntoFolder: z.string().optional(),
+	devMode: z.boolean().optional(),
+	uploadedTotalCount: z.number().optional(),
+	processedWithErrorsCount: z.number().optional(),
+	processedWithoutErrorsCount: z.number().optional(),
+});
 
-const JobStatusSchema = z
-	.object({
-		userJobId: z.string().optional(),
-		isEnded: z.boolean().optional(),
-		status: z.string().optional(),
-		type: z.string().optional(),
-		processingMsg: z.string().optional(),
-		startedTime: z.number().optional(),
-		finishedTime: z.number().optional(),
-		duration: z.number().optional(),
-		pctComplete: z.number().optional(),
-		jobResult: UploadTemplateBatchJobResultSchema.optional(),
-	})
-	.passthrough();
+const JobStatusSchema = z.object({
+	userJobId: z.string().optional(),
+	isEnded: z.boolean().optional(),
+	status: z.string().optional(),
+	type: z.string().optional(),
+	processingMsg: z.string().optional(),
+	startedTime: z.number().optional(),
+	finishedTime: z.number().optional(),
+	duration: z.number().optional(),
+	pctComplete: z.number().optional(),
+	jobResult: UploadTemplateBatchJobResultSchema.optional(),
+});
 
-const RenderQueueSchema = z
-	.object({
-		rejected: z.boolean().optional(),
-		availablePct: z.number().optional(),
-		delaySeconds: z.number().optional(),
-	})
-	.passthrough();
+const RenderQueueSchema = z.object({
+	rejected: z.boolean().optional(),
+	availablePct: z.number().optional(),
+	delaySeconds: z.number().optional(),
+});
 
-const RenderTagStatsSchema = z
-	.object({
-		name: z.string().optional(),
-		countPages: z.number().optional(),
-		countDocuments: z.number().optional(),
-	})
-	.passthrough();
+const RenderTagStatsSchema = z.object({
+	name: z.string().optional(),
+	countPages: z.number().optional(),
+	countDocuments: z.number().optional(),
+});
 
-const RenderTagsSchema = z
-	.object({
-		year: z.number().optional(),
-		month: z.number().optional(),
-		tags: z.array(RenderTagStatsSchema).optional(),
-	})
-	.passthrough();
+const RenderTagsSchema = z.object({
+	year: z.number().optional(),
+	month: z.number().optional(),
+	tags: z.array(RenderTagStatsSchema).optional(),
+});
 
-const TemplateStructureFieldSchema: z.ZodType<TemplateStructureField> = z
-	.object({
+const TemplateStructureFieldSchema: z.ZodType<TemplateStructureField> =
+	z.object({
 		name: z.string().optional(),
 		type: z.string().optional(),
 		children: z.lazy(() => z.array(TemplateStructureFieldSchema)).optional(),
-	})
-	.passthrough();
+	});
 
-const DocmosisPingSchema = z
-	.object({
-		status: z.string().optional(),
-		shortMsg: z.string().optional(),
-		longMsg: z.string().optional(),
-		environment: z.string().optional(),
-		time: z.string().optional(),
-		succeeded: z.boolean().optional(),
-	})
-	.passthrough();
+const DocmosisPingSchema = z.object({
+	status: z.string().optional(),
+	shortMsg: z.string().optional(),
+	longMsg: z.string().optional(),
+	environment: z.string().optional(),
+	time: z.string().optional(),
+	succeeded: z.boolean().optional(),
+});
 
 const TemplateSampleDataRecordSchema: z.ZodType<Record<string, JsonValue>> =
 	z.record(z.string(), JsonValueSchema);
 
-const GetSampleDataTemplateDetailsSchema = z
-	.object({
-		templateHasErrors: z.boolean().optional(),
-		templateFirstError: z.string().optional(),
-	})
-	.passthrough();
+const GetSampleDataTemplateDetailsSchema = z.object({
+	templateHasErrors: z.boolean().optional(),
+	templateFirstError: z.string().optional(),
+});
 
 export const DocmosisEndpointInputSchemas = {
 	environmentReady: z.object({}),
