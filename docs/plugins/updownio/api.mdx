@@ -96,14 +96,21 @@ await corsair.updownio.api.nodes.list({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `Record<string, UpdownIONode>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-{
-}
+Record<string, {
+  ip?: string | null,
+  ip6?: string | null,
+  city?: string | null,
+  country?: string | null,
+  country_code?: string | null,
+  lat?: number | null,
+  lng?: number | null
+}>
 ```
 </Accordion>
 </AccordionGroup>

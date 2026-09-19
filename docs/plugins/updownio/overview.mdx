@@ -5,6 +5,8 @@ description: "Website and API uptime monitoring - read your checks and the monit
 
 Use **Updown.io** through Corsair: one client, typed API calls, local DB sync.
 
+All five operations are read-only catalog endpoints backed by the Updown.io API.
+
 **What you get:**
 
 - 5 typed API operations
@@ -95,12 +97,6 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 const tenant = corsair.withTenant('acme');
 await tenant.updownio.api.checks.list({});
 ```
-
-
-**Write**
-
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/updownio/api) reference._
-
 
 See the full list on the [API](/plugins/updownio/api) page.
 
