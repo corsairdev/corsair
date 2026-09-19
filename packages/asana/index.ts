@@ -12,9 +12,8 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
-import { getValidAccessToken } from './client';
 import {
 	Projects,
 	Sections,
@@ -631,7 +630,7 @@ const asanaEndpointMeta = {
 	'tasks.update': { riskLevel: 'write', description: 'Update a task' },
 	'tasks.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a task [DESTRUCTIVE]',
+		description: 'Delete a task',
 	},
 	'tasks.duplicate': { riskLevel: 'write', description: 'Duplicate a task' },
 	'tasks.search': {
@@ -703,7 +702,7 @@ const asanaEndpointMeta = {
 	'projects.update': { riskLevel: 'write', description: 'Update a project' },
 	'projects.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a project [DESTRUCTIVE]',
+		description: 'Delete a project',
 	},
 	'projects.duplicate': {
 		riskLevel: 'write',
@@ -750,7 +749,7 @@ const asanaEndpointMeta = {
 	'sections.update': { riskLevel: 'write', description: 'Update a section' },
 	'sections.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a section [DESTRUCTIVE]',
+		description: 'Delete a section',
 	},
 	'sections.insert': {
 		riskLevel: 'write',
@@ -832,7 +831,7 @@ const asanaEndpointMeta = {
 	'tags.update': { riskLevel: 'write', description: 'Update a tag' },
 	'tags.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a tag [DESTRUCTIVE]',
+		description: 'Delete a tag',
 	},
 	'tags.getTasks': {
 		riskLevel: 'read',
@@ -851,7 +850,7 @@ const asanaEndpointMeta = {
 	'stories.update': { riskLevel: 'write', description: 'Update a story' },
 	'stories.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a story [DESTRUCTIVE]',
+		description: 'Delete a story',
 	},
 	// Webhook management
 	'webhookManagement.create': {
@@ -860,7 +859,7 @@ const asanaEndpointMeta = {
 	},
 	'webhookManagement.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a webhook [DESTRUCTIVE]',
+		description: 'Delete a webhook',
 	},
 	'webhookManagement.getList': {
 		riskLevel: 'read',
@@ -1037,68 +1036,10 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('asana', 'oauth_2');
-				}
-
-				const creds = await ctx.keys.get_integration_credentials();
-				if (!creds.client_id || !creds.client_secret) {
-					throw new Error(
-						'[auth-missing:asana:client_credentials]: Asana client credentials are missing',
-					);
-				}
-
-				let result: Awaited<ReturnType<typeof getValidAccessToken>>;
-				try {
-					result = await getValidAccessToken({
-						accessToken,
-						expiresAt,
-						refreshToken,
-						clientId: creds.client_id,
-						clientSecret: creds.client_secret,
-					});
-				} catch (error) {
-					throw new Error(
-						`[corsair:asana] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
-
-				if (result.refreshed) {
-					try {
-						await Promise.all([
-							ctx.keys.set_access_token(result.accessToken),
-							ctx.keys.set_expires_at(String(result.expiresAt)),
-						]);
-					} catch (error) {
-						throw new Error(
-							`[corsair:asana] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
-						);
-					}
-				}
-
-				(ctx as Record<string, unknown>)._refreshAuth = async () => {
-					const freshResult = await getValidAccessToken({
-						accessToken: null,
-						expiresAt: null,
-						refreshToken,
-						clientId: creds.client_id!,
-						clientSecret: creds.client_secret!,
-						forceRefresh: true,
-					});
-					await Promise.all([
-						ctx.keys.set_access_token(freshResult.accessToken),
-						ctx.keys.set_expires_at(String(freshResult.expiresAt)),
-					]);
-					return freshResult.accessToken;
-				};
-
-				return result.accessToken;
+				return getOAuthAccessToken(ctx, {
+					plugin: 'asana',
+					tokenUrl: 'https://app.asana.com/-/oauth_token',
+				});
 			}
 
 			if (ctx.authType === 'managed') {

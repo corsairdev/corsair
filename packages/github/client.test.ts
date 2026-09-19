@@ -48,6 +48,20 @@ describe('makeGithubRequest response casing (ENG-34)', () => {
 		expect(result[0]!.htmlUrl).toBe('https://github.com/o/r');
 	});
 
+	it('converts camelCase query params to snake_case for GitHub REST', async () => {
+		mockRequest.mockResolvedValueOnce([]);
+
+		await makeGithubRequest<unknown[]>('/repos/o/r/issues/comments', 'token', {
+			query: { perPage: 100, page: 2, state: 'all' },
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]?.query).toEqual({
+			per_page: 100,
+			page: 2,
+			state: 'all',
+		});
+	});
+
 	it('camelCases search envelope fields and the nested pull_request marker', async () => {
 		mockRequest.mockResolvedValueOnce({
 			total_count: 1,

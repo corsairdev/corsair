@@ -1,3 +1,8 @@
+import {
+	readRequestBodyTextCapped,
+	resolveBodyStallTimeoutMs,
+	resolveMaxBodyBytes,
+} from '../core/management/body-limit';
 import { processOAuthCallback } from '../oauth';
 import type { ProcessCorsairRequest } from '../tunnel';
 import {
@@ -252,6 +257,8 @@ export async function handleHubDeliveryGet(
 				refreshToken: payload.refreshToken,
 				expiresIn: payload.expiresIn,
 				scope: payload.scope,
+				authType: payload.authType,
+				providerData: payload.providerData,
 			});
 		} else {
 			if (
@@ -472,6 +479,10 @@ export async function respondToHubDelivery(
 export async function respondToHubDeliveryFromRequest(
 	corsair: unknown,
 	request: Request,
+	opts?: {
+		maxBodyBytes?: number;
+		bodyStallTimeoutMs?: number;
+	},
 ): Promise<Response> {
 	// A request reaching the corsair route proves the app is live and serving —
 	// register its (trusted, config-derived) delivery URL with Hub.
@@ -493,11 +504,22 @@ export async function respondToHubDeliveryFromRequest(
 		return Response.json({ error: 'Method not allowed' }, { status: 405 });
 	}
 
+	// Byte-count the read instead of trusting content-length: signed envelopes
+	// arrive here before signature verification and on Web-native runtimes a
+	// chunked body declares no length at all.
 	const response = await respondToHubDelivery(corsair, {
 		method,
 		url: request.url,
 		headers: request.headers,
-		body: method === 'POST' ? await request.text() : undefined,
+		body:
+			method === 'POST'
+				? await readRequestBodyTextCapped(request, {
+						maxBodyBytes: resolveMaxBodyBytes(opts?.maxBodyBytes),
+						bodyStallTimeoutMs: resolveBodyStallTimeoutMs(
+							opts?.bodyStallTimeoutMs,
+						),
+					})
+				: undefined,
 	});
 
 	return applyHubBrowserDeliveryCors(response, corsHeaders);

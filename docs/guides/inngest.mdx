@@ -1,9 +1,14 @@
 ---
 title: Inngest
+icon: "/icons/inngest.svg"
 description: Trigger durable Inngest functions from Corsair webhook events.
 ---
 
-Use Corsair's `webhookHooks` to fire Inngest events the moment something happens in a connected service. Inngest handles retries, step execution, and scheduling — Corsair handles the webhook plumbing.
+import WorkflowsBetaCallout from '/snippets/workflows-beta-callout.mdx';
+
+<WorkflowsBetaCallout />
+
+Use Corsair's `webhookHooks` to fire Inngest events the moment something happens in a connected service. Inngest handles retries, step execution, and scheduling. Corsair handles the webhook plumbing.
 
 ## Install
 
@@ -11,7 +16,6 @@ Use Corsair's `webhookHooks` to fire Inngest events the moment something happens
 npm install inngest
 ```
 
----
 
 ## Event trigger
 
@@ -38,7 +42,7 @@ linear({
                             issueId: result.data.id,
                             title: result.data.title,
                             url: result.data.url,
-                            assigneeEmail: result.data.assignee?.email,
+                            assigneeId: result.data.assigneeId,
                             tenantId: ctx.tenantId,
                         },
                     });
@@ -57,14 +61,15 @@ export const notifyAssignee = inngest.createFunction(
     { id: 'notify-linear-assignee' },
     { event: 'linear/issue.created' },
     async ({ event }) => {
-        const { title, url, assigneeEmail, tenantId } = event.data;
+        const { title, url, assigneeId, tenantId } = event.data;
 
         // Use withTenant if you have multi-tenancy enabled
         const client = tenantId ? corsair.withTenant(tenantId) : corsair;
 
-        // Look up the Slack user by email
+        // assigneeId is a Linear user id; resolve their email for the Slack lookup
+        const assignee = await client.linear.api.users.get({ id: assigneeId });
         const user = await client.slack.api.users.lookupByEmail({
-            email: assigneeEmail,
+            email: assignee.data.email,
         });
 
         await client.slack.api.messages.post({
@@ -75,7 +80,6 @@ export const notifyAssignee = inngest.createFunction(
 );
 ```
 
----
 
 ## Workflow
 
@@ -140,7 +144,7 @@ export const reviewPR = inngest.createFunction(
             await client.github.api.issues.createComment({
                 owner,
                 repo,
-                issue_number: number,
+                issueNumber: number,
                 body: review,
             });
         });
@@ -156,11 +160,10 @@ export const reviewPR = inngest.createFunction(
 );
 ```
 
----
 
 ## Cron job
 
-Every Monday at 9 AM, pull open Linear issues from Corsair's local database and post a sprint digest to Slack. No webhook needed — this runs on a schedule.
+Every Monday at 9 AM, pull open Linear issues from Corsair's local database and post a sprint digest to Slack. No webhook needed. This runs on a schedule.
 
 ```ts inngest/functions.ts
 import { inngest } from './client';
@@ -171,10 +174,14 @@ export const weeklySprintDigest = inngest.createFunction(
     { cron: '0 9 * * 1' }, // Every Monday at 9am UTC
     async () => {
         // Query Corsair's synced database — no API call needed
-        const issues = await corsair.linear.db.issues.list({
-            where: { state: { type: { in: ['started', 'unstarted'] } } },
-            orderBy: { priority: 'asc' },
-        });
+        const all = await corsair.linear.db.issues.list();
+        // Rows store flat stateId/teamId/assigneeId, not nested objects.
+        // Compare stateId against configured open-state ids (comma-separated).
+        const openStateIds = process.env.LINEAR_OPEN_STATE_IDS!.split(',');
+        // Filter and sort in JS (list returns all rows; fields live on .data)
+        const issues = all
+            .filter((i) => openStateIds.includes(i.data.stateId))
+            .sort((a, b) => (a.data.priority ?? 0) - (b.data.priority ?? 0));
 
         if (issues.length === 0) {
             await corsair.slack.api.messages.post({
@@ -187,8 +194,10 @@ export const weeklySprintDigest = inngest.createFunction(
         const lines = [
             `*Sprint Digest — ${issues.length} open issue${issues.length === 1 ? '' : 's'}*`,
             '',
+            // Rows carry assigneeId/stateId, not names. Resolve the related
+            // records separately if you need human-readable names.
             ...issues.map(
-                (i) => `• *${i.title}* — ${i.assignee?.name ?? 'Unassigned'} (${i.state?.name})`,
+                (i) => `• *${i.data.title}* (${i.data.identifier}) — ${i.data.assigneeId ?? 'Unassigned'}`,
             ),
         ];
 
@@ -201,10 +210,9 @@ export const weeklySprintDigest = inngest.createFunction(
 ```
 
 <Info>
-`corsair.linear.db.issues.list()` queries your local synced database — it's fast and doesn't count against Linear's API rate limits.
+`corsair.linear.db.issues.list()` queries your local synced database. It's fast and doesn't count against Linear's API rate limits.
 </Info>
 
----
 
 ## What's next
 

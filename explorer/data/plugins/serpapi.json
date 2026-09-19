@@ -1,0 +1,2669 @@
+{
+  "id": "serpapi",
+  "displayName": "SerpApi",
+  "description": "Search engine results API for Google, Bing, and other SERP scraping at scale.",
+  "npmPackageName": "@corsair-dev/serpapi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 48,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "serpapi.api.engines.baiduSearch",
+      "shortPath": "engines.baiduSearch",
+      "description": "Baidu (Chinese search engine) results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.engines.bingMaps",
+      "shortPath": "engines.bingMaps",
+      "description": "Bing Maps search for places and businesses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.engines.bingSearch",
+      "shortPath": "engines.bingSearch",
+      "description": "Bing search engine results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mkt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.engines.duckDuckGoLightSearch",
+      "shortPath": "engines.duckDuckGoLightSearch",
+      "description": "Fast, lightweight DuckDuckGo search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "df",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.engines.duckDuckGoMaps",
+      "shortPath": "engines.duckDuckGoMaps",
+      "description": "DuckDuckGo Maps search for places and businesses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.engines.duckDuckGoSearch",
+      "shortPath": "engines.duckDuckGoSearch",
+      "description": "DuckDuckGo search engine results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.engines.naverSearch",
+      "shortPath": "engines.naverSearch",
+      "description": "Naver (South Korea's leading search engine) results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.engines.yahooSearch",
+      "shortPath": "engines.yahooSearch",
+      "description": "Yahoo! search engine results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "p",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.engines.yahooVideos",
+      "shortPath": "engines.yahooVideos",
+      "description": "Yahoo! Videos search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "p",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.engines.yandexImagesSearch",
+      "shortPath": "engines.yandexImagesSearch",
+      "description": "Yandex Images search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isize",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icolor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itype",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.engines.yandexSearch",
+      "shortPath": "engines.yandexSearch",
+      "description": "Yandex search engine results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.engines.youtubeSearch",
+      "shortPath": "engines.youtubeSearch",
+      "description": "YouTube video search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.marketplace.appleAppStoreSearch",
+      "shortPath": "marketplace.appleAppStoreSearch",
+      "description": "Apple App Store search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "term",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.marketplace.ebaySearch",
+      "shortPath": "marketplace.ebaySearch",
+      "description": "eBay product listing search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_nkw",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_sacat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.marketplace.facebookProfile",
+      "shortPath": "marketplace.facebookProfile",
+      "description": "Public information from a Facebook profile or page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.marketplace.openTableReviews",
+      "shortPath": "marketplace.openTableReviews",
+      "description": "Customer reviews for an OpenTable restaurant",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.marketplace.walmartProductReviews",
+      "shortPath": "marketplace.walmartProductReviews",
+      "description": "Customer reviews for a Walmart product",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.marketplace.walmartSearch",
+      "shortPath": "marketplace.walmartSearch",
+      "description": "Walmart product listing search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cat_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "store_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.marketplace.yelpSearch",
+      "shortPath": "marketplace.yelpSearch",
+      "description": "Yelp business search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "find_loc",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "find_desc",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.aboutThisResult",
+      "shortPath": "search.aboutThisResult",
+      "description": "Google's \"About this result\" details for a URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.eventSearch",
+      "shortPath": "search.eventSearch",
+      "description": "Google Events search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.financeSearch",
+      "shortPath": "search.financeSearch",
+      "description": "Google Finance data for a company or ticker",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.forumsSearch",
+      "shortPath": "search.forumsSearch",
+      "description": "Google Forums discussion search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.hotelsAutocomplete",
+      "shortPath": "search.hotelsAutocomplete",
+      "description": "Autocomplete suggestions for Google Hotels destinations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.hotelSearch",
+      "shortPath": "search.hotelSearch",
+      "description": "Google Hotels search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "check_in_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "check_out_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "adults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.imageSearch",
+      "shortPath": "search.imageSearch",
+      "description": "Google Images search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.imagesLightSearch",
+      "shortPath": "search.imagesLightSearch",
+      "description": "Fast, lightweight Google Images search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.imagesRelatedContent",
+      "shortPath": "search.imagesRelatedContent",
+      "description": "Related content for a Google Images result",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "related_content_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.jobsSearch",
+      "shortPath": "search.jobsSearch",
+      "description": "Google Jobs search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ltype",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.lensSearch",
+      "shortPath": "search.lensSearch",
+      "description": "Reverse image search via Google Lens",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.lightSearch",
+      "shortPath": "search.lightSearch",
+      "description": "Fast, lightweight Google Search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.localServicesSearch",
+      "shortPath": "search.localServicesSearch",
+      "description": "Google's guaranteed local service providers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.mapsPosts",
+      "shortPath": "search.mapsPosts",
+      "description": "Posts published by a business on its Google Maps listing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.mapsSearch",
+      "shortPath": "search.mapsSearch",
+      "description": "Google Maps search for places and businesses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ll",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.newsSearch",
+      "shortPath": "search.newsSearch",
+      "description": "Google News article search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.patentDetails",
+      "shortPath": "search.patentDetails",
+      "description": "Detailed information for a specific Google Patent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "patent_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.playProduct",
+      "shortPath": "search.playProduct",
+      "description": "Details for a specific Google Play Store item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "store",
+            "optional": true,
+            "type": "apps | movies | tv | audiobooks | books"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.playSearch",
+      "shortPath": "search.playSearch",
+      "description": "Google Play Store search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.scholarAuthor",
+      "shortPath": "search.scholarAuthor",
+      "description": "A researcher's full Google Scholar author profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "author_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.scholarCite",
+      "shortPath": "search.scholarCite",
+      "description": "Formatted citations for a Google Scholar paper",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.scholarSearch",
+      "shortPath": "search.scholarSearch",
+      "description": "Google Scholar academic search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cites",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cluster",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.search",
+      "shortPath": "search.search",
+      "description": "Real-time Google search results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.shoppingSearch",
+      "shortPath": "search.shoppingSearch",
+      "description": "Google Shopping product listings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.trendsSearch",
+      "shortPath": "search.trendsSearch",
+      "description": "Google Trends relative interest data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "geo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.search.videosLightSearch",
+      "shortPath": "search.videosLightSearch",
+      "description": "Fast, lightweight Google Videos search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | tablet | mobile"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "serpapi.api.utilities.domainsList",
+      "shortPath": "utilities.domainsList",
+      "description": "The list of supported Google domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ domain: string, language_code?: string, country_code?: string, country_name?: string }[]"
+      }
+    },
+    {
+      "path": "serpapi.api.utilities.locationOptions",
+      "shortPath": "utilities.locationOptions",
+      "description": "Valid location values for a Google search's location parameter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, google_id?: number, google_parent_id?: number, name: string, canonical_name?: string, country_code?: string, target_type?: string, reach?: number, gps?: number[], keys?: string[] }[]"
+      }
+    },
+    {
+      "path": "serpapi.api.utilities.searchArchive",
+      "shortPath": "utilities.searchArchive",
+      "description": "Results from a previously run async search, by search id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_metadata",
+            "optional": false,
+            "type": "{ id: string, status: string, created_at?: string, processed_at?: string, total_time_taken?: number, json_endpoint?: string }"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

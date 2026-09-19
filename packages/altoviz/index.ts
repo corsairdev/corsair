@@ -482,7 +482,7 @@ export const altovizEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete a customer [DESTRUCTIVE]. Evicts the auto-created contact from the mirror if one is cached.',
+			'Delete a customer. Evicts the auto-created contact from the mirror if one is cached.',
 	},
 	'customers.get': { riskLevel: 'read', description: 'Get a customer by id' },
 	'customers.getByInternalId': {
@@ -516,7 +516,7 @@ export const altovizEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete a customer family [DESTRUCTIVE]. Refused with a conflict if it still has members - it does not cascade.',
+			'Delete a customer family. Refused with a conflict if it still has members - it does not cascade.',
 	},
 	'customerFamilies.list': {
 		riskLevel: 'read',
@@ -534,7 +534,7 @@ export const altovizEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete a supplier [DESTRUCTIVE]. Evicts the auto-created contact from the mirror if one is cached.',
+			'Delete a supplier. Evicts the auto-created contact from the mirror if one is cached.',
 	},
 	'suppliers.getContacts': {
 		riskLevel: 'read',
@@ -571,7 +571,7 @@ export const altovizEndpointMeta = {
 	'colleagues.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a colleague [DESTRUCTIVE]',
+		description: 'Delete a colleague',
 	},
 
 	'account.getCurrentUser': {
@@ -615,7 +615,7 @@ export const altovizEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Unregister a webhook subscription by id or url [DESTRUCTIVE]. Exactly one of the two is required.',
+			'Unregister a webhook subscription by id or url. Exactly one of the two is required.',
 	},
 
 	'products.create': {
@@ -626,7 +626,7 @@ export const altovizEndpointMeta = {
 	'products.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a product [DESTRUCTIVE]',
+		description: 'Delete a product',
 	},
 	'products.get': { riskLevel: 'read', description: 'Get a product by id' },
 	'products.find': {
@@ -651,7 +651,7 @@ export const altovizEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete a product family [DESTRUCTIVE]. Refused with a conflict if it still has members.',
+			'Delete a product family. Refused with a conflict if it still has members.',
 	},
 	'productFamilies.list': {
 		riskLevel: 'read',
@@ -679,7 +679,7 @@ export const altovizEndpointMeta = {
 	'saleInvoices.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a draft sale invoice [DESTRUCTIVE]. Drafts only.',
+		description: 'Delete a draft sale invoice. Drafts only.',
 	},
 	'saleInvoices.download': {
 		riskLevel: 'read',
@@ -712,7 +712,7 @@ export const altovizEndpointMeta = {
 	'saleCredits.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a draft sale credit [DESTRUCTIVE]. Drafts only.',
+		description: 'Delete a draft sale credit. Drafts only.',
 	},
 	'saleCredits.download': {
 		riskLevel: 'read',
@@ -733,7 +733,7 @@ export const altovizEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete a sale quote [DESTRUCTIVE]. Deleting a quote that does not exist also returns 200.',
+			'Delete a sale quote. Deleting a quote that does not exist also returns 200.',
 	},
 
 	'receipts.create': {
@@ -756,7 +756,7 @@ export const altovizEndpointMeta = {
 	'receipts.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a receipt [DESTRUCTIVE]',
+		description: 'Delete a receipt',
 	},
 
 	'purchaseInvoices.upload': {

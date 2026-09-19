@@ -1,12 +1,12 @@
 ---
 title: Overview
-description: Mount Corsair's management API in your own app — the same routes app.corsair.dev uses, available to self-hosted dashboards.
+description: Mount Corsair's management API in your own app, the same routes app.corsair.dev uses, available to self-hosted dashboards.
 ---
 
 Corsair has two surfaces:
 
-- **Runtime** — `createCorsair()`. Agents call Slack, GitHub, and the rest through this.
-- **Management API** — the routes behind a dashboard: list tenants, connect OAuth accounts, check plugin status, look up permissions.
+- **Runtime**, `createCorsair()`. Agents call Slack, GitHub, and the rest through this.
+- **Management API**, the routes behind a dashboard: list tenants, connect OAuth accounts, check plugin status, look up permissions.
 
 If you self-host Corsair and want your own dashboard, the management API is what you mount. The shape mirrors [better-auth](https://better-auth.com):
 
@@ -24,7 +24,7 @@ All of these (except the React hooks) are exported from the `corsair` package ro
 - You are building a dashboard, an internal tool, or any UI that needs to see Corsair state from outside the agent runtime.
 - You want a typed HTTP boundary between a frontend and your Corsair server instead of calling `corsair.*` directly.
 
-If you only run agents server-side, you don't need this — keep using `corsair.slack.api.*` and friends.
+If you only run agents server-side, you don't need this. Keep using `corsair.slack.api.*` and friends.
 
 ## The pieces
 
@@ -33,13 +33,13 @@ If you only run agents server-side, you don't need this — keep using `corsair.
     The 9 management routes, options, and error shapes. Mounting lives under Adapters.
   </Card>
   <Card title="Vanilla client" href="/adapters/client">
-    `createCorsairClient` — typed fetch wrapper. Works in any JS runtime.
+    `createCorsairClient`, a typed fetch wrapper. Works in any JS runtime.
   </Card>
   <Card title="React hooks" href="/adapters/react">
-    `createCorsairReactClient` — typed `useTenants`, `useConnectionStatus`, etc.
+    `createCorsairReactClient`, typed `useTenants`, `useConnectionStatus`, etc.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
-    One `createLink` API — hub or self-hosted, config-driven.
+    One `createLink` API, hub or self-hosted, config-driven.
   </Card>
 </CardGroup>
 
@@ -88,7 +88,7 @@ That is the whole picture. The next pages cover each layer in detail.
 
 ## Auth
 
-The management API has **no auth opinion**. Wire your own — NextAuth, Clerk, an API key check, whatever already protects the rest of your dashboard. Put it in front of the handler:
+The management API has **no auth opinion**. Wire your own: NextAuth, Clerk, an API key check, whatever already protects the rest of your dashboard. Put it in front of the handler:
 
 ```ts
 import { managementHandler } from "corsair";

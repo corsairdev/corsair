@@ -1,0 +1,233 @@
+---
+title: Database
+description: "ZoomInfo local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The ZoomInfo plugin syncs data locally. Use `corsair.zoominfo.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Companies
+
+Path: `zoominfo.db.companies.search`
+
+```ts
+const rows = await corsair.zoominfo.db.companies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `website` | `string` | equals, contains, startsWith, endsWith, in |
+| `ticker` | `string` | equals, contains, startsWith, endsWith, in |
+| `revenue` | `number` | equals, gt, gte, lt, lte, in |
+| `employeeCount` | `number` | equals, gt, gte, lt, lte, in |
+| `numberOfContactsInZoomInfo` | `number` | equals, gt, gte, lt, lte, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `street` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `zipCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `companyStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `logo` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Contacts
+
+Path: `zoominfo.db.contacts.search`
+
+```ts
+const rows = await corsair.zoominfo.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `middleName` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `jobTitle` | `string` | equals, contains, startsWith, endsWith, in |
+| `contactAccuracyScore` | `number` | equals, gt, gte, lt, lte, in |
+| `hasEmail` | `boolean` | equals |
+| `hasSupplementalEmail` | `boolean` | equals |
+| `hasDirectPhone` | `boolean` | equals |
+| `hasMobilePhone` | `boolean` | equals |
+| `validDate` | `date` | equals, before, after, between |
+| `lastUpdatedDate` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Intent Signals
+
+Path: `zoominfo.db.intentSignals.search`
+
+```ts
+const rows = await corsair.zoominfo.db.intentSignals.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `string` | equals, contains, startsWith, endsWith, in |
+| `topic` | `string` | equals, contains, startsWith, endsWith, in |
+| `signalScore` | `number` | equals, gt, gte, lt, lte, in |
+| `audienceStrength` | `string` | equals, contains, startsWith, endsWith, in |
+| `newSignal` | `boolean` | equals |
+| `signalDate` | `date` | equals, before, after, between |
+| `trend` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Locations
+
+Path: `zoominfo.db.locations.search`
+
+```ts
+const rows = await corsair.zoominfo.db.locations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `street` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `zipCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `fax` | `string` | equals, contains, startsWith, endsWith, in |
+| `addressStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `subUnitType` | `string` | equals, contains, startsWith, endsWith, in |
+| `locationName` | `string` | equals, contains, startsWith, endsWith, in |
+| `locationEmployeeCount` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## News Articles
+
+Path: `zoominfo.db.newsArticles.search`
+
+```ts
+const rows = await corsair.zoominfo.db.newsArticles.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `imageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `pageDate` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Scoops
+
+Path: `zoominfo.db.scoops.search`
+
+```ts
+const rows = await corsair.zoominfo.db.scoops.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `link` | `string` | equals, contains, startsWith, endsWith, in |
+| `linkText` | `string` | equals, contains, startsWith, endsWith, in |
+| `updateText` | `string` | equals, contains, startsWith, endsWith, in |
+| `publishedDate` | `date` | equals, before, after, between |
+| `originalPublishedDate` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Technologies
+
+Path: `zoominfo.db.technologies.search`
+
+```ts
+const rows = await corsair.zoominfo.db.technologies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `vendor` | `string` | equals, contains, startsWith, endsWith, in |
+| `product` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `string` | equals, contains, startsWith, endsWith, in |
+| `categoryParent` | `string` | equals, contains, startsWith, endsWith, in |
+| `attribute` | `string` | equals, contains, startsWith, endsWith, in |
+| `website` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `logo` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
