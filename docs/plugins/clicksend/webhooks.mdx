@@ -29,6 +29,14 @@ export async function POST(request: Request) {
 }
 ```
 
+Provide a webhook token in one of these places so verification can succeed:
+
+- `Authorization: Bearer <token>`
+- `x-clicksend-token: <token>`
+- `x-webhook-secret: <token>`
+
+Configure the token through `clicksend({ webhookSecret: '...' })`, or store it as the integration's `webhook_signature` credential.
+
 ## Events
 
 ## Sms
@@ -142,4 +150,3 @@ clicksend({
 ```
 
 ---
-

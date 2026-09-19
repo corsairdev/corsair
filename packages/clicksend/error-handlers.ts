@@ -2,6 +2,9 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { ClickSendAPIError } from './client';
 
+const rateLimitPattern = /\brate\b|429|too many requests/;
+const badRequestPattern = /bad request|\binvalid\b|\bmissing\b/;
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
@@ -9,11 +12,7 @@ export const errorHandlers = {
 			if (error instanceof ClickSendAPIError && error.status === 429)
 				return true;
 			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('rate') ||
-				msg.includes('429') ||
-				msg.includes('too many requests')
-			);
+			return rateLimitPattern.test(msg);
 		},
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
@@ -44,11 +43,7 @@ export const errorHandlers = {
 			if (error instanceof ClickSendAPIError && error.status === 400)
 				return true;
 			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('bad request') ||
-				msg.includes('invalid') ||
-				msg.includes('missing')
-			);
+			return badRequestPattern.test(msg);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

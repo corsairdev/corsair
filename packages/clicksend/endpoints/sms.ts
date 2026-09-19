@@ -1,21 +1,29 @@
 import { logEventFromContext } from 'corsair/core';
 import { getClickSendCredentials, makeClickSendRequest } from '../client';
 import type { ClickSendEndpoints } from '../index';
-import type { ClickSendEndpointOutputs } from './types';
+import { ClickSendEndpointOutputSchemas } from './types';
+
+function epochSecondsToISOString(epochSeconds?: number): string | undefined {
+	if (typeof epochSeconds !== 'number' || !Number.isFinite(epochSeconds)) {
+		return undefined;
+	}
+
+	const iso = new Date(epochSeconds * 1000).toISOString();
+	return Number.isNaN(Date.parse(iso)) ? undefined : iso;
+}
 
 export const send: ClickSendEndpoints['smsSend'] = async (ctx, input) => {
 	const { username, apiKey } = await getClickSendCredentials(ctx);
 
-	const response = await makeClickSendRequest<
-		ClickSendEndpointOutputs['smsSend']
-	>('sms/send', username, apiKey, {
+	const response = await makeClickSendRequest('sms/send', username, apiKey, {
 		method: 'POST',
 		body: { messages: input.messages },
+		responseSchema: ClickSendEndpointOutputSchemas.smsSend,
 	});
 
 	if (response.messages && ctx.db.messages) {
-		try {
-			for (const msg of response.messages) {
+		for (const msg of response.messages) {
+			try {
 				await ctx.db.messages.upsertByEntityId(msg.message_id, {
 					id: msg.message_id,
 					message_id: msg.message_id,
@@ -24,15 +32,13 @@ export const send: ClickSendEndpoints['smsSend'] = async (ctx, input) => {
 					body: msg.body,
 					status: msg.status,
 					direction: msg.direction ?? 'out',
-					date_sent: msg.date
-						? new Date(msg.date * 1000).toISOString()
-						: undefined,
+					date_sent: epochSecondsToISOString(msg.date),
 					price: msg.message_price,
-					currency: 'USD',
+					currency: msg.currency,
 				});
+			} catch (error) {
+				console.warn('Failed to save message to database:', error);
 			}
-		} catch (error) {
-			console.warn('Failed to save message to database:', error);
 		}
 	}
 
@@ -49,9 +55,7 @@ export const send: ClickSendEndpoints['smsSend'] = async (ctx, input) => {
 export const history: ClickSendEndpoints['smsHistory'] = async (ctx, input) => {
 	const { username, apiKey } = await getClickSendCredentials(ctx);
 
-	const response = await makeClickSendRequest<
-		ClickSendEndpointOutputs['smsHistory']
-	>('sms/history', username, apiKey, {
+	const response = await makeClickSendRequest('sms/history', username, apiKey, {
 		method: 'GET',
 		query: {
 			page: input.page,
@@ -59,11 +63,12 @@ export const history: ClickSendEndpoints['smsHistory'] = async (ctx, input) => {
 			date_from: input.date_from,
 			date_to: input.date_to,
 		},
+		responseSchema: ClickSendEndpointOutputSchemas.smsHistory,
 	});
 
 	if (response.data && ctx.db.messages) {
-		try {
-			for (const msg of response.data) {
+		for (const msg of response.data) {
+			try {
 				await ctx.db.messages.upsertByEntityId(msg.message_id, {
 					id: msg.message_id,
 					message_id: msg.message_id,
@@ -72,15 +77,13 @@ export const history: ClickSendEndpoints['smsHistory'] = async (ctx, input) => {
 					body: msg.body,
 					status: msg.status,
 					direction: msg.direction ?? 'out',
-					date_sent: msg.date
-						? new Date(msg.date * 1000).toISOString()
-						: undefined,
+					date_sent: epochSecondsToISOString(msg.date),
 					price: msg.message_price,
-					currency: 'USD',
+					currency: msg.currency,
 				});
+			} catch (error) {
+				console.warn('Failed to cache message history to database:', error);
 			}
-		} catch (error) {
-			console.warn('Failed to cache message history to database:', error);
 		}
 	}
 
@@ -97,19 +100,23 @@ export const history: ClickSendEndpoints['smsHistory'] = async (ctx, input) => {
 export const inbound: ClickSendEndpoints['smsInbound'] = async (ctx, input) => {
 	const { username, apiKey } = await getClickSendCredentials(ctx);
 
-	const response = await makeClickSendRequest<
-		ClickSendEndpointOutputs['smsInbound']
-	>('sms/inbound-sms', username, apiKey, {
-		method: 'GET',
-		query: {
-			page: input.page,
-			limit: input.limit,
+	const response = await makeClickSendRequest(
+		'sms/inbound-sms',
+		username,
+		apiKey,
+		{
+			method: 'GET',
+			query: {
+				page: input.page,
+				limit: input.limit,
+			},
+			responseSchema: ClickSendEndpointOutputSchemas.smsInbound,
 		},
-	});
+	);
 
 	if (response.data && ctx.db.messages) {
-		try {
-			for (const msg of response.data) {
+		for (const msg of response.data) {
+			try {
 				await ctx.db.messages.upsertByEntityId(msg.message_id, {
 					id: msg.message_id,
 					message_id: msg.message_id,
@@ -118,13 +125,11 @@ export const inbound: ClickSendEndpoints['smsInbound'] = async (ctx, input) => {
 					body: msg.body,
 					status: 'received',
 					direction: 'in',
-					date_sent: msg.timestamp
-						? new Date(msg.timestamp * 1000).toISOString()
-						: undefined,
+					date_sent: epochSecondsToISOString(msg.timestamp),
 				});
+			} catch (error) {
+				console.warn('Failed to cache inbound message to database:', error);
 			}
-		} catch (error) {
-			console.warn('Failed to cache inbound message to database:', error);
 		}
 	}
 
@@ -144,15 +149,19 @@ export const receipts: ClickSendEndpoints['smsReceipts'] = async (
 ) => {
 	const { username, apiKey } = await getClickSendCredentials(ctx);
 
-	const response = await makeClickSendRequest<
-		ClickSendEndpointOutputs['smsReceipts']
-	>('sms/receipts', username, apiKey, {
-		method: 'GET',
-		query: {
-			page: input.page,
-			limit: input.limit,
+	const response = await makeClickSendRequest(
+		'sms/receipts',
+		username,
+		apiKey,
+		{
+			method: 'GET',
+			query: {
+				page: input.page,
+				limit: input.limit,
+			},
+			responseSchema: ClickSendEndpointOutputSchemas.smsReceipts,
 		},
-	});
+	);
 
 	await logEventFromContext(
 		ctx,
