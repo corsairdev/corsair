@@ -1,0 +1,66 @@
+---
+title: API
+description: "API reference for TimeCamp: every `timecamp.api.*` operation with input and output types."
+---
+
+Every `timecamp.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Projects
+
+### getList
+
+`projects.getList`
+
+List TimeCamp projects (root-level tasks), returning task id, name, archived status, colour, budget information and assigned users
+
+**Risk:** `read`
+
+```ts
+await corsair.timecamp.api.projects.getList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_archived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  task_id: string,
+  name: string,
+  archived: boolean,
+  color?: string | null,
+  billable?: boolean | null,
+  budgeted?: number | null,
+  budget_unit?: string | null,
+  note?: string | null,
+  add_date?: string | null,
+  edit_date?: string | null,
+  root_group_id?: string | null,
+  assigned_users: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

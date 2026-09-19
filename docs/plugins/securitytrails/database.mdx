@@ -1,0 +1,146 @@
+---
+title: Database
+description: "SecurityTrails local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The SecurityTrails plugin syncs data locally. Use `corsair.securitytrails.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Certificates
+
+Path: `securitytrails.db.certificates.search`
+
+```ts
+const rows = await corsair.securitytrails.db.certificates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `hostname` | `string` | equals, contains, startsWith, endsWith, in |
+| `sha1` | `string` | equals, contains, startsWith, endsWith, in |
+| `sha256` | `string` | equals, contains, startsWith, endsWith, in |
+| `issuer_common_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `serial_number` | `string` | equals, contains, startsWith, endsWith, in |
+| `not_before` | `date` | equals, before, after, between |
+| `not_after` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Company Ip Ranges
+
+Path: `securitytrails.db.companyIpRanges.search`
+
+```ts
+const rows = await corsair.securitytrails.db.companyIpRanges.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `cidr` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Domains
+
+Path: `securitytrails.db.domains.search`
+
+```ts
+const rows = await corsair.securitytrails.db.domains.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `hostname` | `string` | equals, contains, startsWith, endsWith, in |
+| `alexa_rank` | `number` | equals, gt, gte, lt, lte, in |
+| `dns_first_seen` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Ips
+
+Path: `securitytrails.db.ips.search`
+
+```ts
+const rows = await corsair.securitytrails.db.ips.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `ip` | `string` | equals, contains, startsWith, endsWith, in |
+| `ptr` | `string` | equals, contains, startsWith, endsWith, in |
+| `query` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projects
+
+Path: `securitytrails.db.projects.search`
+
+```ts
+const rows = await corsair.securitytrails.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `scanning_enabled` | `boolean` | equals |
+| `last_scanned_at` | `date` | equals, before, after, between |
+| `inserted_at` | `date` | equals, before, after, between |
+| `max_exposure_score` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

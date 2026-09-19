@@ -1,0 +1,180 @@
+---
+title: Webhooks
+description: "Bannerbear incoming webhooks: event paths, payloads, and response data."
+---
+
+The Bannerbear plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/bannerbear/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `animation`
+  - `animationCompleted` (`animation.animationCompleted`)
+- `image`
+  - `imageCompleted` (`image.imageCompleted`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Animation
+
+### Animation Completed
+
+`animation.animationCompleted`
+
+Fires when a Bannerbear animation finishes rendering
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `status` | `completed` | Yes | — |
+| `template` | `string` | No | — |
+| `files` | `object` | No | — |
+| `progress` | `number` | No | — |
+| `metadata` | `string` | No | — |
+| `self` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  uid: string,
+  status: completed,
+  template?: string,
+  files?: {
+  },
+  progress?: number,
+  metadata?: string,
+  self?: string,
+  created_at?: string,
+  completed_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+bannerbear({
+    webhookHooks: {
+        animation: {
+            animationCompleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Image
+
+### Image Completed
+
+`image.imageCompleted`
+
+Fires when a Bannerbear image finishes rendering
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `status` | `completed` | Yes | — |
+| `template` | `string` | No | — |
+| `files` | `object` | No | — |
+| `metadata` | `string` | No | — |
+| `self` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  uid: string,
+  status: completed,
+  template?: string,
+  files?: {
+  },
+  metadata?: string,
+  self?: string,
+  created_at?: string,
+  completed_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+bannerbear({
+    webhookHooks: {
+        image: {
+            imageCompleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

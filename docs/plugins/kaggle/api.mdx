@@ -1,0 +1,1069 @@
+---
+title: API
+description: "API reference for Kaggle: every `kaggle.api.*` operation with input and output types."
+---
+
+Every `kaggle.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Competitions
+
+### downloadFile
+
+`competitions.downloadFile`
+
+Download a single competition data file (rules acceptance required)
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.competitions.downloadFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fileName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+| `dataBase64` | `string` | Yes | — |
+| `fileName` | `string` | No | — |
+
+
+
+---
+
+### downloadFiles
+
+`competitions.downloadFiles`
+
+Download all competition data files as a zip (rules acceptance required)
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.competitions.downloadFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+| `dataBase64` | `string` | Yes | — |
+| `fileName` | `string` | No | — |
+
+
+
+---
+
+### downloadLeaderboard
+
+`competitions.downloadLeaderboard`
+
+Download the competition leaderboard as a zip/CSV (base64)
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.competitions.downloadLeaderboard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+| `dataBase64` | `string` | Yes | — |
+| `fileName` | `string` | No | — |
+
+
+
+---
+
+### generateSubmissionUrl
+
+`competitions.generateSubmissionUrl`
+
+Generate a pre-signed URL and token for uploading a competition submission file
+
+**Risk:** `write`
+
+```ts
+await corsair.kaggle.api.competitions.generateSubmissionUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `competitionName` | `string` | Yes | — |
+| `contentLength` | `number` | Yes | — |
+| `lastModifiedEpochSeconds` | `number` | Yes | — |
+| `fileName` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`competitions.list`
+
+List Kaggle competitions with category, group, sort, and search filters
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.competitions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `string` | No | — |
+| `category` | `string` | No | — |
+| `sortBy` | `string` | No | — |
+| `page` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+  results?: {
+  }[],
+  data?: {
+  }[],
+  list?: {
+  }[],
+  totalResults?: number,
+  nextPageToken?: string
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listFiles
+
+`competitions.listFiles`
+
+List data files available for a Kaggle competition
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.competitions.listFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `pageToken` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+  results?: {
+  }[],
+  data?: {
+  }[],
+  list?: {
+  }[],
+  totalResults?: number,
+  nextPageToken?: string
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### submit
+
+`competitions.submit`
+
+Finalize a competition submission using a previously uploaded blob file token
+
+**Risk:** `write`
+
+```ts
+await corsair.kaggle.api.competitions.submit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `blobFileTokens` | `string` | Yes | — |
+| `submissionDescription` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### viewLeaderboard
+
+`competitions.viewLeaderboard`
+
+View competition leaderboard rankings and scores
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.competitions.viewLeaderboard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Datasets
+
+### create
+
+`datasets.create`
+
+Create a new Kaggle dataset (requires prior file upload tokens and owner username in id)
+
+**Risk:** `write`
+
+```ts
+await corsair.kaggle.api.datasets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerSlug` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `subtitle` | `string` | No | — |
+| `description` | `string` | No | — |
+| `isPrivate` | `boolean` | No | — |
+| `licenseName` | `string` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createVersion
+
+`datasets.createVersion`
+
+Create a new version of an existing Kaggle dataset after uploading updated files
+
+**Risk:** `write`
+
+```ts
+await corsair.kaggle.api.datasets.createVersion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerSlug` | `string` | Yes | — |
+| `datasetSlug` | `string` | Yes | — |
+| `versionNotes` | `string` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### download
+
+`datasets.download`
+
+Download all files from a Kaggle dataset as a zip (returned as base64)
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.datasets.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerSlug` | `string` | Yes | — |
+| `datasetSlug` | `string` | Yes | — |
+| `datasetVersionNumber` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+| `dataBase64` | `string` | Yes | — |
+| `fileName` | `string` | No | — |
+
+
+
+---
+
+### downloadFile
+
+`datasets.downloadFile`
+
+Download a single file from a Kaggle dataset (returned as base64)
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.datasets.downloadFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerSlug` | `string` | Yes | — |
+| `datasetSlug` | `string` | Yes | — |
+| `fileName` | `string` | Yes | — |
+| `datasetVersionNumber` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+| `dataBase64` | `string` | Yes | — |
+| `fileName` | `string` | No | — |
+
+
+
+---
+
+### getMetadata
+
+`datasets.getMetadata`
+
+Get metadata for a Kaggle dataset including title, licenses, and tags
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.datasets.getMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerSlug` | `string` | Yes | — |
+| `datasetSlug` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getStatus
+
+`datasets.getStatus`
+
+Check processing status after dataset create/version (404 expected when already published)
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.datasets.getStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerSlug` | `string` | Yes | — |
+| `datasetSlug` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`datasets.list`
+
+List Kaggle datasets with optional search, owner, size, and pagination filters
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.datasets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `user` | `string` | No | — |
+| `sortBy` | `string` | No | — |
+| `size` | `string` | No | — |
+| `fileType` | `string` | No | — |
+| `licenseName` | `string` | No | — |
+| `tagIds` | `string` | No | — |
+| `page` | `number` | No | — |
+| `maxSize` | `number` | No | — |
+| `minSize` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+  results?: {
+  }[],
+  data?: {
+  }[],
+  list?: {
+  }[],
+  totalResults?: number,
+  nextPageToken?: string
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listFiles
+
+`datasets.listFiles`
+
+List files in a Kaggle dataset with optional version and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.datasets.listFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerSlug` | `string` | Yes | — |
+| `datasetSlug` | `string` | Yes | — |
+| `datasetVersionNumber` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+  results?: {
+  }[],
+  data?: {
+  }[],
+  list?: {
+  }[],
+  totalResults?: number,
+  nextPageToken?: string
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Kernels
+
+### downloadOutput
+
+`kernels.downloadOutput`
+
+Download kernel session output files as base64 (fetches signed GCS URLs from GET /kernels/output)
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.kernels.downloadOutput({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userName` | `string` | Yes | — |
+| `kernelSlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `files` | `object[]` | Yes | — |
+| `log` | `string` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  contentType: string,
+  size: number,
+  dataBase64: string,
+  fileName?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStatus
+
+`kernels.getStatus`
+
+Get execution status of a Kaggle kernel
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.kernels.getStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userName` | `string` | Yes | — |
+| `kernelSlug` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`kernels.list`
+
+List Kaggle kernels (notebooks/scripts) with filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.kernels.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `search` | `string` | No | — |
+| `group` | `string` | No | — |
+| `user` | `string` | No | — |
+| `language` | `string` | No | — |
+| `kernelType` | `string` | No | — |
+| `outputType` | `string` | No | — |
+| `sortBy` | `string` | No | — |
+| `dataset` | `string` | No | — |
+| `competition` | `string` | No | — |
+| `parentKernel` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+  results?: {
+  }[],
+  data?: {
+  }[],
+  list?: {
+  }[],
+  totalResults?: number,
+  nextPageToken?: string
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listOutputFiles
+
+`kernels.listOutputFiles`
+
+List output files produced by a kernel run
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.kernels.listOutputFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userName` | `string` | Yes | — |
+| `kernelSlug` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+  results?: {
+  }[],
+  data?: {
+  }[],
+  list?: {
+  }[],
+  totalResults?: number,
+  nextPageToken?: string
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### pull
+
+`kernels.pull`
+
+Pull kernel source code and optional metadata from Kaggle
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.kernels.pull({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userName` | `string` | Yes | — |
+| `kernelSlug` | `string` | Yes | — |
+| `metadata` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Models
+
+### get
+
+`models.get`
+
+Get details for a Kaggle model
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.models.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerSlug` | `string` | Yes | — |
+| `modelSlug` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getInstance
+
+`models.getInstance`
+
+Get details for a Kaggle model instance (framework variation)
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.models.getInstance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerSlug` | `string` | Yes | — |
+| `modelSlug` | `string` | Yes | — |
+| `framework` | `string` | Yes | — |
+| `instanceSlug` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`models.list`
+
+List Kaggle models with optional owner, search, and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.models.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `owner` | `string` | No | — |
+| `sortBy` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+  results?: {
+  }[],
+  data?: {
+  }[],
+  list?: {
+  }[],
+  totalResults?: number,
+  nextPageToken?: string
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listInstanceVersionFiles
+
+`models.listInstanceVersionFiles`
+
+List files for a specific version of a model instance/variation
+
+**Risk:** `read`
+
+```ts
+await corsair.kaggle.api.models.listInstanceVersionFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerSlug` | `string` | Yes | — |
+| `modelSlug` | `string` | Yes | — |
+| `framework` | `string` | Yes | — |
+| `instanceSlug` | `string` | Yes | — |
+| `versionNumber` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+  results?: {
+  }[],
+  data?: {
+  }[],
+  list?: {
+  }[],
+  totalResults?: number,
+  nextPageToken?: string
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

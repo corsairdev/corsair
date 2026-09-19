@@ -1,0 +1,283 @@
+---
+title: Database
+description: "Bookingmood local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Bookingmood plugin syncs data locally. Use `corsair.bookingmood.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Bookings
+
+Path: `bookingmood.db.bookings.search`
+
+```ts
+const rows = await corsair.bookingmood.db.bookings.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `site_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `widget_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `confirmed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `display_currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `exchange_rate` | `number` | equals, gt, gte, lt, lte, in |
+| `method` | `string` | equals, contains, startsWith, endsWith, in |
+| `reference` | `string` | equals, contains, startsWith, endsWith, in |
+| `secret` | `string` | equals, contains, startsWith, endsWith, in |
+| `silent` | `boolean` | equals |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Calendar Events
+
+Path: `bookingmood.db.calendar_events.search`
+
+```ts
+const rows = await corsair.bookingmood.db.calendar_events.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `product_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Contacts
+
+Path: `bookingmood.db.contacts.search`
+
+```ts
+const rows = await corsair.bookingmood.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `first_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `company_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Invoices
+
+Path: `bookingmood.db.invoices.search`
+
+```ts
+const rows = await corsair.bookingmood.db.invoices.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Members
+
+Path: `bookingmood.db.members.search`
+
+```ts
+const rows = await corsair.bookingmood.db.members.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `user_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Organizations
+
+Path: `bookingmood.db.organizations.search`
+
+```ts
+const rows = await corsair.bookingmood.db.organizations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `company_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `active` | `boolean` | equals |
+| `country_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `subscription_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `tier` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `deleted_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Payments
+
+Path: `bookingmood.db.payments.search`
+
+```ts
+const rows = await corsair.bookingmood.db.payments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `invoice_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `booking_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Products
+
+Path: `bookingmood.db.products.search`
+
+```ts
+const rows = await corsair.bookingmood.db.products.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `approximate_address` | `string` | equals, contains, startsWith, endsWith, in |
+| `exact_address` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `deleted_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Widgets
+
+Path: `bookingmood.db.widgets.search`
+
+```ts
+const rows = await corsair.bookingmood.db.widgets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `language` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

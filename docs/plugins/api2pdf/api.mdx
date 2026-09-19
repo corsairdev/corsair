@@ -1,0 +1,393 @@
+---
+title: API
+description: "API reference for API2PDF: every `api2pdf.api.*` operation with input and output types."
+---
+
+Every `api2pdf.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Chrome
+
+### addHeaderFooter
+
+`chrome.addHeaderFooter`
+
+Render HTML to PDF with custom headers and footers
+
+**Risk:** `write`
+
+```ts
+await corsair.api2pdf.api.chrome.addHeaderFooter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | Yes | HTML content to render as PDF |
+| `headerTemplate` | `string` | No | HTML template for page header (Headless Chrome) |
+| `footerTemplate` | `string` | No | HTML template for page footer (Headless Chrome) |
+| `displayHeaderFooter` | `boolean` | No | Render the header/footer templates (default true) |
+| `inline` | `boolean` | No | Serve the file inline rather than as an attachment (default true) |
+| `fileName` | `string` | No | Name for the generated file |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `FileUrl` | `string` | No | — |
+| `MbOut` | `number` | No | — |
+| `Cost` | `number` | No | — |
+| `Seconds` | `number` | No | — |
+| `Success` | `boolean` | Yes | — |
+| `Error` | `string` | No | — |
+| `ResponseId` | `string` | No | — |
+
+
+
+---
+
+## Libreoffice
+
+### libreOfficePdfToHtml
+
+`libreoffice.libreOfficePdfToHtml`
+
+Convert a PDF to HTML using LibreOffice
+
+**Risk:** `write`
+
+```ts
+await corsair.api2pdf.api.libreoffice.libreOfficePdfToHtml({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the PDF to convert |
+| `inline` | `boolean` | No | Serve the file inline rather than as an attachment (default true) |
+| `fileName` | `string` | No | Name for the generated file |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `FileUrl` | `string` | No | — |
+| `MbOut` | `number` | No | — |
+| `Cost` | `number` | No | — |
+| `Seconds` | `number` | No | — |
+| `Success` | `boolean` | Yes | — |
+| `Error` | `string` | No | — |
+| `ResponseId` | `string` | No | — |
+
+
+
+---
+
+### libreOfficeThumbnail
+
+`libreoffice.libreOfficeThumbnail`
+
+Generate a thumbnail preview of a document
+
+**Risk:** `write`
+
+```ts
+await corsair.api2pdf.api.libreoffice.libreOfficeThumbnail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of PDF or Office document |
+| `inline` | `boolean` | No | Serve the file inline rather than as an attachment (default true) |
+| `fileName` | `string` | No | Name for the generated file |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `FileUrl` | `string` | No | — |
+| `MbOut` | `number` | No | — |
+| `Cost` | `number` | No | — |
+| `Seconds` | `number` | No | — |
+| `Success` | `boolean` | Yes | — |
+| `Error` | `string` | No | — |
+| `ResponseId` | `string` | No | — |
+
+
+
+---
+
+## Pdfsharp
+
+### extractPages
+
+`pdfsharp.extractPages`
+
+Extract a page range from a PDF
+
+**Risk:** `write`
+
+```ts
+await corsair.api2pdf.api.pdfsharp.extractPages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the source PDF |
+| `start` | `number` | No | Zero-based index of the first page to extract; negative counts back from the end |
+| `end` | `number` | No | Zero-based index of the last page to extract, inclusive; negative counts back from the end |
+| `inline` | `boolean` | No | Serve the file inline rather than as an attachment (default true) |
+| `fileName` | `string` | No | Name for the generated file |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `FileUrl` | `string` | No | — |
+| `MbOut` | `number` | No | — |
+| `Cost` | `number` | No | — |
+| `Seconds` | `number` | No | — |
+| `Success` | `boolean` | Yes | — |
+| `Error` | `string` | No | — |
+| `ResponseId` | `string` | No | — |
+
+
+
+---
+
+### mergePdfs
+
+`pdfsharp.mergePdfs`
+
+Merge multiple PDF URLs into a single document
+
+**Risk:** `write`
+
+```ts
+await corsair.api2pdf.api.pdfsharp.mergePdfs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string[]` | Yes | Publicly accessible PDF URLs to merge in order |
+| `inline` | `boolean` | No | Serve the file inline rather than as an attachment (default true) |
+| `fileName` | `string` | No | Name for the generated file |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `FileUrl` | `string` | No | — |
+| `MbOut` | `number` | No | — |
+| `Cost` | `number` | No | — |
+| `Seconds` | `number` | No | — |
+| `Success` | `boolean` | Yes | — |
+| `Error` | `string` | No | — |
+| `ResponseId` | `string` | No | — |
+
+
+
+---
+
+### optimizePdf
+
+`pdfsharp.optimizePdf`
+
+Compress a PDF to reduce file size
+
+**Risk:** `write`
+
+```ts
+await corsair.api2pdf.api.pdfsharp.optimizePdf({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the PDF to compress |
+| `inline` | `boolean` | No | Serve the file inline rather than as an attachment (default true) |
+| `fileName` | `string` | No | Name for the generated file |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `FileUrl` | `string` | No | — |
+| `MbOut` | `number` | No | — |
+| `Cost` | `number` | No | — |
+| `Seconds` | `number` | No | — |
+| `Success` | `boolean` | Yes | — |
+| `Error` | `string` | No | — |
+| `ResponseId` | `string` | No | — |
+
+
+
+---
+
+### watermarkPdf
+
+`pdfsharp.watermarkPdf`
+
+Stamp a text watermark onto every page of a PDF
+
+**Risk:** `write`
+
+```ts
+await corsair.api2pdf.api.pdfsharp.watermarkPdf({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the PDF to watermark |
+| `text` | `string` | Yes | Watermark text to stamp on each page |
+| `fontSize` | `number` | No | Watermark font size in points |
+| `color` | `string` | No | Watermark colour, e.g. "#FF0000" |
+| `opacity` | `number` | No | Watermark opacity between 0 and 1 |
+| `rotation` | `number` | No | Watermark rotation in degrees |
+| `inline` | `boolean` | No | Serve the file inline rather than as an attachment (default true) |
+| `fileName` | `string` | No | Name for the generated file |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `FileUrl` | `string` | No | — |
+| `MbOut` | `number` | No | — |
+| `Cost` | `number` | No | — |
+| `Seconds` | `number` | No | — |
+| `Success` | `boolean` | Yes | — |
+| `Error` | `string` | No | — |
+| `ResponseId` | `string` | No | — |
+
+
+
+---
+
+## Utility
+
+### checkStatus
+
+`utility.checkStatus`
+
+Check API2PDF service health status
+
+**Risk:** `read`
+
+```ts
+await corsair.api2pdf.api.utility.checkStatus({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+### deletePdf
+
+`utility.deletePdf`
+
+Delete a previously generated PDF by response ID
+
+**Risk:** `write`
+
+```ts
+await corsair.api2pdf.api.utility.deletePdf({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responseId` | `string` | Yes | ResponseId from a prior API2PDF job |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Success` | `boolean` | No | — |
+| `Error` | `string` | No | — |
+
+
+
+---
+
+## Zebra
+
+### generateBarcode
+
+`zebra.generateBarcode`
+
+Generate a barcode or QR code image
+
+**Risk:** `write`
+
+```ts
+await corsair.api2pdf.api.zebra.generateBarcode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `format` | `string` | Yes | ZXING barcode format, e.g. QR_CODE, CODE_128, EAN_13 |
+| `value` | `string` | Yes | Value to encode |
+| `height` | `number` | No | — |
+| `width` | `number` | No | — |
+| `showLabel` | `boolean` | No | Render the encoded value beneath the barcode |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `FileUrl` | `string` | No | — |
+| `MbOut` | `number` | No | — |
+| `Cost` | `number` | No | — |
+| `Seconds` | `number` | No | — |
+| `Success` | `boolean` | Yes | — |
+| `Error` | `string` | No | — |
+| `ResponseId` | `string` | No | — |
+
+
+
+---
+

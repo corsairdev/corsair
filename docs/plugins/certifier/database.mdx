@@ -1,0 +1,176 @@
+---
+title: Database
+description: "Certifier local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Certifier plugin syncs data locally. Use `corsair.certifier.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Attributes
+
+Path: `certifier.db.attributes.search`
+
+```ts
+const rows = await corsair.certifier.db.attributes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Credential Interactions
+
+Path: `certifier.db.credentialInteractions.search`
+
+```ts
+const rows = await corsair.certifier.db.credentialInteractions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `credentialId` | `string` | equals, contains, startsWith, endsWith, in |
+| `eventType` | `string` | equals, contains, startsWith, endsWith, in |
+| `triggeredBy` | `string` | equals, contains, startsWith, endsWith, in |
+| `triggeredAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Credentials
+
+Path: `certifier.db.credentials.search`
+
+```ts
+const rows = await corsair.certifier.db.credentials.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `publicId` | `string` | equals, contains, startsWith, endsWith, in |
+| `groupId` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `issueDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `expiryDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Designs
+
+Path: `certifier.db.designs.search`
+
+```ts
+const rows = await corsair.certifier.db.designs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `previewUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Email Templates
+
+Path: `certifier.db.emailTemplates.search`
+
+```ts
+const rows = await corsair.certifier.db.emailTemplates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `subject` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Groups
+
+Path: `certifier.db.groups.search`
+
+```ts
+const rows = await corsair.certifier.db.groups.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `certificateDesignId` | `string` | equals, contains, startsWith, endsWith, in |
+| `badgeDesignId` | `string` | equals, contains, startsWith, endsWith, in |
+| `emailTemplateId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
