@@ -12,9 +12,10 @@ function parseAuthToken(raw: string): string | undefined {
 			const decoded = Buffer.from(raw.slice(6).trim(), 'base64').toString(
 				'utf8',
 			);
-			const parts = decoded.split(':');
-			if (parts.length > 1 && parts[1]) {
-				return parts[1].trim() || undefined;
+			const colonIndex = decoded.indexOf(':');
+			if (colonIndex !== -1) {
+				const password = decoded.slice(colonIndex + 1).trim();
+				return password.length > 0 ? password : undefined;
 			}
 			return decoded.trim() || undefined;
 		} catch {
@@ -36,8 +37,16 @@ export function matchClickSendTenantWebhook(
 		| Record<string, string | string[] | undefined>
 		| undefined;
 
+	const authHeader = firstString([headers?.authorization]) ?? '';
+	const basicAuthToken = authHeader.startsWith('Basic ')
+		? parseAuthToken(authHeader)
+		: undefined;
+
+	if (basicAuthToken) {
+		return { linkType: 'api_key', externalId: basicAuthToken };
+	}
+
 	const webhookSecret = firstString([
-		parseAuthToken(firstString([headers?.authorization]) ?? ''),
 		firstString([headers?.['x-clicksend-token']]),
 		firstString([headers?.['x-webhook-secret']]),
 		firstString([query?.token]),

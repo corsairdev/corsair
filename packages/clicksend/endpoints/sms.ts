@@ -8,8 +8,8 @@ function epochSecondsToISOString(epochSeconds?: number): string | undefined {
 		return undefined;
 	}
 
-	const iso = new Date(epochSeconds * 1000).toISOString();
-	return Number.isNaN(Date.parse(iso)) ? undefined : iso;
+	const date = new Date(epochSeconds * 1000);
+	return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
 }
 
 export const send: ClickSendEndpoints['smsSend'] = async (ctx, input) => {
