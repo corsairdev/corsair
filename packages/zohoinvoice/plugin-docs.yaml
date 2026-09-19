@@ -1,0 +1,14 @@
+displayName: Zoho Invoice
+description: Manage invoices, customers, items, payments, and estimates.
+overviewNote: |
+  Zoho Invoice uses regional datacenters. Pass `region` (`us` default, plus
+  `eu`, `in`, `au`, `jp`, `ca`, `cn`, `sa`) so the plugin targets the right
+  `accounts.zoho.*` and `www.zohoapis.*` hosts:
+
+  ```ts
+  zohoinvoice({ region: 'eu' })
+  ```
+
+  Most API calls are organization-scoped. Provide `organization_id` on each
+  request, or omit it and the plugin will resolve and cache the first linked
+  tenant via OAuth tenant linking.
