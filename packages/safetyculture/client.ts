@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { ZodSchema } from 'zod';
 
 export class SafetyCultureAPIError extends Error {
 	constructor(
@@ -21,10 +22,14 @@ const SAFETYCULTURE_API_BASE = 'https://api.safetyculture.io';
 export async function makeSafetyCultureRequest<T>(
 	endpoint: string,
 	apiKey: string,
+	outputSchema: ZodSchema<T>,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
+		query?: Record<
+			string,
+			string | number | boolean | Array<string | number | boolean> | undefined
+		>;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
@@ -53,8 +58,8 @@ export async function makeSafetyCultureRequest<T>(
 	};
 
 	try {
-		const response = await request<T>(config, requestOptions);
-		return response;
+		const response = await request<unknown>(config, requestOptions);
+		return outputSchema.parse(response);
 	} catch (error) {
 		// Preserve ApiError so error-handlers can read .status / .retryAfter
 		if (error instanceof ApiError) {

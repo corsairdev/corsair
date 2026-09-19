@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SafetyCultureEndpoints } from '..';
 import { makeSafetyCultureRequest } from '../client';
-import type { TemplatesListResponse } from './types';
+import { TemplatesListResponseSchema } from './types';
 
 export const list: SafetyCultureEndpoints['templatesList'] = async (
 	ctx,
@@ -15,9 +15,10 @@ export const list: SafetyCultureEndpoints['templatesList'] = async (
 	if (input.owner) query.owner = input.owner;
 	if (input.limit) query.limit = input.limit;
 
-	const response = await makeSafetyCultureRequest<TemplatesListResponse>(
+	const response = await makeSafetyCultureRequest(
 		'templates/search',
 		ctx.key,
+		TemplatesListResponseSchema,
 		{ method: 'GET', query },
 	);
 
