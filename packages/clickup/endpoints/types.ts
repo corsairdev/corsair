@@ -138,7 +138,7 @@ export const TasksCreateInputSchema = z.object({
 	notify_all: z.boolean().optional(),
 	parent: z.string().optional(),
 	links_to: z.string().optional(),
-	custom_fields: z.array(z.any()).optional(),
+	custom_fields: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 export type TasksCreateInput = z.infer<typeof TasksCreateInputSchema>;
 
