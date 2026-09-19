@@ -246,7 +246,7 @@ const campaynEndpointMeta = {
 	'webforms.getWebform': {
 		riskLevel: 'read',
 		description:
-			'Tool to retrieve details of a specific webform by ID. Use after confirming the webform ID when you need to fetch form details like title, type, HTML, and signup count. Example: "Get webform 1550".',
+			'Tool to retrieve details of a specific webform by ID. Use after confirming both the list_id and webform_id when you need to fetch form details like title, type, HTML, and signup count. Example: "Get webform 1550 from list 123".',
 	},
 	'webforms.deleteWebform': {
 		riskLevel: 'destructive',
