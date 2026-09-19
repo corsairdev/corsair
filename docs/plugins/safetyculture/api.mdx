@@ -1,0 +1,365 @@
+---
+title: API
+description: "API reference for SafetyCulture: every `safetyculture.api.*` operation with input and output types."
+---
+
+Every `safetyculture.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Actions
+
+### list
+
+`actions.list`
+
+List actions / issues
+
+**Risk:** `read`
+
+```ts
+await corsair.safetyculture.api.actions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `IN PROGRESS \| DONE \| OVERDUE \| NONE \| CLOSED` | No | — |
+| `assignee` | `string` | No | — |
+| `created_after` | `string` | No | — |
+| `created_before` | `string` | No | — |
+| `modified_after` | `string` | No | — |
+| `due_after` | `string` | No | — |
+| `due_before` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `total` | `number` | No | — |
+| `actions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+{
+  action_id: string,
+  title?: string,
+  description?: string,
+  status?: string,
+  priority?: string | null,
+  assignee_id?: string | null,
+  assignee_name?: string | null,
+  creator_id?: string | null,
+  creator_name?: string | null,
+  audit_id?: string | null,
+  audit_title?: string | null,
+  template_id?: string | null,
+  due_at?: string | null,
+  created_at?: string,
+  modified_at?: string,
+  completed_at?: string | null,
+  site_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Inspections
+
+### get
+
+`inspections.get`
+
+Get a single inspection by audit ID
+
+**Risk:** `read`
+
+```ts
+await corsair.safetyculture.api.inspections.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audit_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audit_id` | `string` | Yes | — |
+| `template_id` | `string` | No | — |
+| `audit_data` | `object` | No | — |
+| `header_items` | `object[]` | No | — |
+| `items` | `object[]` | No | — |
+| `template_data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="audit_data full type">
+
+```ts
+{
+  name?: string,
+  score?: number | null,
+  total_score?: number | null,
+  score_percentage?: number | null,
+  duration?: number | null,
+  authorship?: {
+    device_id?: string,
+    owner?: string,
+    owner_id?: string,
+    author?: string,
+    author_id?: string
+  },
+  date_started?: string | null,
+  date_completed?: string | null,
+  date_modified?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="header_items full type">
+
+```ts
+{
+  label?: string,
+  type?: string,
+  responses?: {
+    text?: string,
+    datetime?: string | null,
+    location_text?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="items full type">
+
+```ts
+{
+  item_id?: string,
+  label?: string,
+  type?: string,
+  responses?: {
+    text?: string,
+    selected?: {
+      label?: string,
+      value?: string
+    }[]
+  },
+  score?: number | null,
+  max_score?: number | null,
+  score_percentage?: number | null,
+  parent_id?: string | null,
+  combined_score?: number | null,
+  combined_max_score?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="template_data full type">
+
+```ts
+{
+  template_id?: string,
+  name?: string,
+  description?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`inspections.list`
+
+List / search inspections (audits)
+
+**Risk:** `read`
+
+```ts
+await corsair.safetyculture.api.inspections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `string[]` | No | — |
+| `modified_after` | `string` | No | — |
+| `modified_before` | `string` | No | — |
+| `completed` | `true \| false \| both` | No | — |
+| `archived` | `true \| false \| both` | No | — |
+| `owner` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `modified_after_cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `total` | `number` | No | — |
+| `audits` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="audits full type">
+
+```ts
+{
+  audit_id: string,
+  template_id?: string,
+  template_name?: string,
+  audit_title?: string,
+  created_at?: string,
+  modified_at?: string,
+  completed_at?: string | null,
+  audit_owner?: string,
+  archived?: boolean,
+  site_id?: string | null,
+  date_started?: string | null,
+  date_completed?: string | null,
+  score?: number | null,
+  total_score?: number | null,
+  score_percentage?: number | null,
+  duration?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### list
+
+`templates.list`
+
+List inspection templates
+
+**Risk:** `read`
+
+```ts
+await corsair.safetyculture.api.templates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modified_after` | `string` | No | — |
+| `modified_before` | `string` | No | — |
+| `archived` | `true \| false \| both` | No | — |
+| `owner` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `total` | `number` | No | — |
+| `templates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  template_id: string,
+  name?: string,
+  description?: string,
+  created_at?: string,
+  modified_at?: string,
+  owner_name?: string,
+  owner_id?: string,
+  archived?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### list
+
+`users.list`
+
+List organisation users
+
+**Risk:** `read`
+
+```ts
+await corsair.safetyculture.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `total` | `number` | No | — |
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  user_id: string,
+  firstname?: string,
+  lastname?: string,
+  email?: string,
+  status?: string,
+  organisation_id?: string,
+  last_seen_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
