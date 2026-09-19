@@ -1,5 +1,31 @@
-import type { ApiRequestOptions, ApiResult, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	ApiResult,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+
+const DOCUSIGN_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'retry-after',
+	},
+};
+
+const SAFE_TRANSPORT_RETRY_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+
+function transportRateLimitConfig(
+	method: ApiRequestOptions['method'],
+): RateLimitConfig {
+	if (SAFE_TRANSPORT_RETRY_METHODS.has(method)) {
+		return DOCUSIGN_RATE_LIMIT_CONFIG;
+	}
+	return { ...DOCUSIGN_RATE_LIMIT_CONFIG, enabled: false, maxRetries: 0 };
+}
 
 export interface DocusignAuthOptions {
 	accessToken: string;
@@ -174,10 +200,14 @@ export class DocusignClient {
 	async userInfo(authServer?: string): Promise<unknown> {
 		const origin = this.resolveAuthServer(authServer);
 		try {
-			const data: unknown = await request<unknown>(this.openApiConfig(origin), {
-				method: 'GET',
-				url: '/oauth/userinfo',
-			});
+			const data: unknown = await request<unknown>(
+				this.openApiConfig(origin),
+				{
+					method: 'GET',
+					url: '/oauth/userinfo',
+				},
+				{ rateLimitConfig: transportRateLimitConfig('GET') },
+			);
 			return data;
 		} catch (error) {
 			throw toDocusignApiError(error, 'GET', '/oauth/userinfo');
@@ -258,6 +288,9 @@ export class DocusignClient {
 			const data: unknown = await request<unknown>(
 				this.openApiConfig(base),
 				requestOptions,
+				{
+					rateLimitConfig: transportRateLimitConfig(requestOptions.method),
+				},
 			);
 			return data;
 		} catch (error) {

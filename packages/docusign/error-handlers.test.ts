@@ -45,24 +45,16 @@ describe('docusignErrorHandlers', () => {
 			expect(docusignErrorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		});
 
-		it('retries safe read methods with the upstream retry delay', async () => {
+		it('does not stack endpoint retries on top of transport retries', async () => {
 			const error = docusignError(429, 'Too Many Requests', {}, 2000, 'GET');
-			const result =
-				await docusignErrorHandlers.RATE_LIMIT_ERROR.handler(error);
-			expect(result.maxRetries).toBe(5);
-			expect(result.headersRetryAfterMs).toBe(2000);
-		});
-
-		it('does not retry unsafe write methods', async () => {
-			const error = docusignError(429, 'Too Many Requests', {}, 2000, 'POST');
 			const result =
 				await docusignErrorHandlers.RATE_LIMIT_ERROR.handler(error);
 			expect(result.maxRetries).toBe(0);
 			expect(result.headersRetryAfterMs).toBe(2000);
 		});
 
-		it('does not retry DELETE because provider writes are not idempotent', async () => {
-			const error = docusignError(429, 'Too Many Requests', {}, 2000, 'DELETE');
+		it('preserves retry-after metadata for write methods without retrying', async () => {
+			const error = docusignError(429, 'Too Many Requests', {}, 2000, 'POST');
 			const result =
 				await docusignErrorHandlers.RATE_LIMIT_ERROR.handler(error);
 			expect(result.maxRetries).toBe(0);

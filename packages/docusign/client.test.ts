@@ -64,6 +64,29 @@ describe('DocusignClient', () => {
 		);
 	});
 
+	it('retries safe GETs at the transport layer only', async () => {
+		const client = makeClient();
+		await client.request('/templates');
+		const extra = mockRequest.mock.calls[0]?.[2] as {
+			rateLimitConfig: { enabled: boolean; maxRetries: number };
+		};
+		expect(extra.rateLimitConfig.enabled).toBe(true);
+		expect(extra.rateLimitConfig.maxRetries).toBe(3);
+	});
+
+	it('does not retry non-idempotent writes at the transport layer', async () => {
+		const client = makeClient();
+		await client.request('/envelopes', {
+			method: 'POST',
+			body: JSON.stringify({ status: 'sent' }),
+		});
+		const extra = mockRequest.mock.calls[0]?.[2] as {
+			rateLimitConfig: { enabled: boolean; maxRetries: number };
+		};
+		expect(extra.rateLimitConfig.enabled).toBe(false);
+		expect(extra.rateLimitConfig.maxRetries).toBe(0);
+	});
+
 	it('normalizes a bare production host', async () => {
 		const client = makeClient('na4.docusign.net');
 		await client.request('/templates');

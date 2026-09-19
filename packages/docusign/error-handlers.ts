@@ -14,20 +14,6 @@ function retryAfterOf(error: Error): number | undefined {
 	return undefined;
 }
 
-const SAFE_RETRY_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
-
-function requestMethodOf(error: Error): string | undefined {
-	if (error instanceof DocusignApiError || error instanceof ApiError) {
-		return error.request?.method;
-	}
-	return undefined;
-}
-
-function isSafeRetryMethod(error: Error): boolean {
-	const method = requestMethodOf(error);
-	return method !== undefined && SAFE_RETRY_METHODS.has(method);
-}
-
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
@@ -38,14 +24,8 @@ export const errorHandlers = {
 		},
 		handler: async (error: Error) => {
 			const headersRetryAfterMs = retryAfterOf(error);
-			if (!isSafeRetryMethod(error)) {
-				return {
-					maxRetries: 0,
-					...(headersRetryAfterMs !== undefined ? { headersRetryAfterMs } : {}),
-				};
-			}
 			return {
-				maxRetries: 5,
+				maxRetries: 0,
 				...(headersRetryAfterMs !== undefined ? { headersRetryAfterMs } : {}),
 			};
 		},
