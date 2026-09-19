@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+const SafetyCultureTimestampSchema = z.iso.datetime({ offset: true });
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Shared Sub-Schemas
 // ─────────────────────────────────────────────────────────────────────────────
@@ -24,9 +26,9 @@ export const InspectionsListInputSchema = z.object({
 	/** Filter by template IDs */
 	template: z.array(z.string()).optional(),
 	/** Filter by modified after (ISO 8601) */
-	modified_after: z.string().optional(),
+	modified_after: SafetyCultureTimestampSchema.optional(),
 	/** Filter by modified before (ISO 8601) */
-	modified_before: z.string().optional(),
+	modified_before: SafetyCultureTimestampSchema.optional(),
 	/** Filter by completed status */
 	completed: z.enum(['true', 'false', 'both']).optional(),
 	/** Filter by archived status */
@@ -36,7 +38,7 @@ export const InspectionsListInputSchema = z.object({
 	/** Number of results per page */
 	limit: z.number().int().min(1).max(1000).optional(),
 	/** Pagination field (ISO 8601 modified_at of last item) */
-	modified_after_cursor: z.string().optional(),
+	modified_after_cursor: SafetyCultureTimestampSchema.optional(),
 });
 
 export type InspectionsListInput = z.infer<typeof InspectionsListInputSchema>;
@@ -161,9 +163,9 @@ export type InspectionGetResponse = z.infer<typeof InspectionGetResponseSchema>;
 
 export const TemplatesListInputSchema = z.object({
 	/** Filter by modified after (ISO 8601) */
-	modified_after: z.string().optional(),
+	modified_after: SafetyCultureTimestampSchema.optional(),
 	/** Filter by modified before (ISO 8601) */
-	modified_before: z.string().optional(),
+	modified_before: SafetyCultureTimestampSchema.optional(),
 	/** Filter by archived status */
 	archived: z.enum(['true', 'false', 'both']).optional(),
 	/** Owner user ID filter */
@@ -205,15 +207,15 @@ export const ActionsListInputSchema = z.object({
 	/** Filter by assignee user ID */
 	assignee: z.string().optional(),
 	/** Filter by created after (ISO 8601) */
-	created_after: z.string().optional(),
+	created_after: SafetyCultureTimestampSchema.optional(),
 	/** Filter by created before (ISO 8601) */
-	created_before: z.string().optional(),
+	created_before: SafetyCultureTimestampSchema.optional(),
 	/** Filter by modified after (ISO 8601) */
-	modified_after: z.string().optional(),
+	modified_after: SafetyCultureTimestampSchema.optional(),
 	/** Filter by due date after (ISO 8601) */
-	due_after: z.string().optional(),
+	due_after: SafetyCultureTimestampSchema.optional(),
 	/** Filter by due date before (ISO 8601) */
-	due_before: z.string().optional(),
+	due_before: SafetyCultureTimestampSchema.optional(),
 	/** Number of results per page */
 	limit: z.number().int().min(1).max(1000).optional(),
 	/** Page offset */

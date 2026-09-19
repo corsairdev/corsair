@@ -46,6 +46,13 @@ describe('SafetyCulture endpoint input schemas', () => {
 		expect(result.success).toBe(true);
 	});
 
+	it('rejects invalid modified_after date format on inspections list', () => {
+		const result = InspectionsListInputSchema.safeParse({
+			modified_after: 'not-a-date',
+		});
+		expect(result.success).toBe(false);
+	});
+
 	it('rejects invalid limit (too high) on inspections list', () => {
 		const result = InspectionsListInputSchema.safeParse({
 			limit: 5000,
