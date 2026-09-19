@@ -1,7 +1,7 @@
 {
   "id": "epicgames",
   "displayName": "Epic Games",
-  "description": "Epic Games plugin for Corsair (Fortnite islands + UE Remote Control)",
+  "description": "Gaming platform APIs for Epic Online Services, accounts, and game backend features.",
   "npmPackageName": "@corsair-dev/epicgames",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

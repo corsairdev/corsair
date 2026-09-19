@@ -133,7 +133,7 @@ const blueskyEndpointMeta = {
 	'posts.deleteRecord': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a post on Bluesky [DESTRUCTIVE]',
+		description: 'Delete a post on Bluesky',
 	},
 	'profiles.get': {
 		riskLevel: 'read',

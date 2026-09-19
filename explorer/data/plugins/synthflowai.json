@@ -1,7 +1,7 @@
 {
   "id": "synthflowai",
   "displayName": "Synthflow AI",
-  "description": "Synthflow AI plugin for Corsair",
+  "description": "Voice AI platform for building phone agents, call automation, and conversational IVR flows.",
   "npmPackageName": "@corsair-dev/synthflowai",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -143,7 +143,7 @@
     {
       "path": "synthflowai.api.actions.delete",
       "shortPath": "actions.delete",
-      "description": "Delete an action in Synthflow AI [DESTRUCTIVE]",
+      "description": "Delete an action in Synthflow AI",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -429,7 +429,7 @@
     {
       "path": "synthflowai.api.assistants.delete",
       "shortPath": "assistants.delete",
-      "description": "Delete a Synthflow AI assistant [DESTRUCTIVE]",
+      "description": "Delete a Synthflow AI assistant",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -837,7 +837,7 @@
     {
       "path": "synthflowai.api.contacts.delete",
       "shortPath": "contacts.delete",
-      "description": "Delete a contact in Synthflow AI [DESTRUCTIVE]",
+      "description": "Delete a contact in Synthflow AI",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1063,7 +1063,7 @@
     {
       "path": "synthflowai.api.knowledgeBases.delete",
       "shortPath": "knowledgeBases.delete",
-      "description": "Delete a knowledge base in Synthflow AI [DESTRUCTIVE]",
+      "description": "Delete a knowledge base in Synthflow AI",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1274,7 +1274,7 @@
     {
       "path": "synthflowai.api.memoryStores.delete",
       "shortPath": "memoryStores.delete",
-      "description": "Delete a memory store in Synthflow AI [DESTRUCTIVE]",
+      "description": "Delete a memory store in Synthflow AI",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1485,7 +1485,7 @@
     {
       "path": "synthflowai.api.phoneBooks.delete",
       "shortPath": "phoneBooks.delete",
-      "description": "Delete a phone book in Synthflow AI [DESTRUCTIVE]",
+      "description": "Delete a phone book in Synthflow AI",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

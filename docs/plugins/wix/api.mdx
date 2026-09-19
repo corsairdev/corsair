@@ -1,0 +1,7174 @@
+---
+title: API
+description: "API reference for Wix: every `wix.api.*` operation with input and output types."
+---
+
+Every `wix.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Automations
+
+### bulkUpdateStorageItemTags
+
+`automations.bulkUpdateStorageItemTags`
+
+Tool to bulk update tags on multiple storage items in Wix automations. Use when you need to set public and/or private tags on multiple storage items at once. Requires 'Set Up Automations' permission.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.automations.bulkUpdateStorageItemTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `itemIds` | `string[]` | Yes | — |
+| `assignTags` | `string[]` | No | — |
+| `unassignTags` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkUpdateStorageItemTagsByFilter
+
+`automations.bulkUpdateStorageItemTagsByFilter`
+
+Tool to bulk update tags on storage items matching filter criteria. Use when you need to add or remove tags from multiple storage items at once based on filter conditions. If a tag appears in both assign and unassign, it will be assigned. This operation is asynchronous and triggers the Storage Item Tags Modified event.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.automations.bulkUpdateStorageItemTagsByFilter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | Yes | — |
+| `assignTags` | `string[]` | No | — |
+| `unassignTags` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | No | — |
+
+
+
+---
+
+### cancelEvent
+
+`automations.cancelEvent`
+
+Tool to cancel any remaining automation actions for a trigger and external entity. Use when you need to stop automation workflows that are no longer relevant (e.g., after an invoice is paid or a form submission is processed).
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.automations.cancelEvent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `triggerId` | `string` | No | — |
+| `externalEntityId` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Benefits
+
+### bulkDeleteBenefitItems
+
+`benefits.bulkDeleteBenefitItems`
+
+Tool to bulk delete benefit items from Wix Benefit Programs. Use when you need to remove multiple benefit items at once by providing their IDs.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.benefits.bulkDeleteBenefitItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkDeleteBenefitItemsByFilter
+
+`benefits.bulkDeleteBenefitItemsByFilter`
+
+Tool to bulk delete benefit program items by filter criteria. Use when you need to delete multiple items matching specific conditions within a namespace. If no filter is provided, this may delete all items in the namespace.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.benefits.bulkDeleteBenefitItemsByFilter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `namespace` | `string` | No | — |
+| `filter` | `lazy` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkDeletePoolDefinitions
+
+`benefits.bulkDeletePoolDefinitions`
+
+Tool to bulk delete pool definitions from Wix Benefit Programs. Use when you need to remove multiple pool definitions by their IDs in a single operation.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.benefits.bulkDeletePoolDefinitions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteProgramDefinition
+
+`benefits.deleteProgramDefinition`
+
+Tool to delete a program definition from Wix Benefit Programs. Use when you need to permanently remove a benefit program definition by its ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.benefits.deleteProgramDefinition({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `definitionId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Billing
+
+### bulkDeleteBillableItems
+
+`billing.bulkDeleteBillableItems`
+
+Tool to bulk delete billable items in Wix. Use when you need to remove multiple billable items at once by providing their IDs. This triggers a Billable Item Deleted event in the Wix system.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.billing.bulkDeleteBillableItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkUpdateBillableItems
+
+`billing.bulkUpdateBillableItems`
+
+Tool to bulk update billable items in Wix. Use when you need to modify multiple billable items at once. Each item requires its ID, current revision number, and the fields to update.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.billing.bulkUpdateBillableItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `updates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="updates full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createTaxRegion
+
+`billing.createTaxRegion`
+
+Tool to create a tax region in Wix using the Tax Regions API. Use when you need to define a location-specific tax treatment by country and subdivision with an associated tax calculator.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.billing.createTaxRegion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `country` | `string` | Yes | — |
+| `subdivision` | `string` | No | — |
+| `taxCalculator` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="taxCalculator full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+---
+
+### deleteReceiptPreset
+
+`billing.deleteReceiptPreset`
+
+Tool to permanently delete a receipt preset from Wix. Use when you need to remove a receipt preset by its ID. This triggers a Receipt Preset Deleted event in the Wix system.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.billing.deleteReceiptPreset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `presetId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listDefaultTaxGroups
+
+`billing.listDefaultTaxGroups`
+
+Tool to retrieve the list of default tax groups for a Wix site. Use when you need to fetch the default tax groups that are inherited by apps installed on the site.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.billing.listDefaultTaxGroups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taxGroups` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="taxGroups full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDefaultTaxGroupsByAppIds
+
+`billing.listDefaultTaxGroupsByAppIds`
+
+Tool to retrieve default tax groups for specific Wix apps by their app IDs. Use when you need to fetch predefined tax groups that are automatically assigned to products from specific apps.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.billing.listDefaultTaxGroupsByAppIds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `appIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taxGroups` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="taxGroups full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listManualTaxMappings
+
+`billing.listManualTaxMappings`
+
+Tool to retrieve up to 1,000 manual tax mappings from Wix. Use when you need to list custom tax rate configurations for specific tax group and region combinations. Results are sorted by createdDate in ascending order.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.billing.listManualTaxMappings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `manualTaxMappings` | `object[]` | No | — |
+| `mappings` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="manualTaxMappings full type">
+
+```ts
+{
+  id?: string,
+  taxGroupId?: string,
+  taxRate?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="mappings full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryManualTaxMappings
+
+`billing.queryManualTaxMappings`
+
+Tool to retrieve a list of up to 100 manual tax mappings with optional paging, filtering, and sorting. Use when you need to query custom tax rate configurations for specific tax group and region combinations from a Wix store.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.billing.queryManualTaxMappings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `manualTaxMappings` | `object[]` | No | — |
+| `mappings` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="manualTaxMappings full type">
+
+```ts
+{
+  id?: string,
+  taxGroupId?: string,
+  taxRate?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="mappings full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryTaxGroups
+
+`billing.queryTaxGroups`
+
+Tool to retrieve a list of up to 100 tax groups with optional paging, filtering, and sorting. Only returns tax groups created by the site, not default tax groups. Use when you need to fetch custom tax group configurations from a Wix site.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.billing.queryTaxGroups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taxGroups` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="taxGroups full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setDefaultReceiptPreset
+
+`billing.setDefaultReceiptPreset`
+
+Tool to set a receipt preset as the default in Wix. Use when you need to designate a specific receipt preset as the default for receipt generation.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.billing.setDefaultReceiptPreset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `presetId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+---
+
+### updateReceiptPreset
+
+`billing.updateReceiptPreset`
+
+Tool to update a receipt preset in Wix. Use when you need to modify receipt preset settings including name, custom fields, display settings, or extended fields. Requires the current revision number to prevent conflicting changes. Triggers a Receipt Preset Updated event.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.billing.updateReceiptPreset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `presetId` | `string` | Yes | — |
+| `revision` | `string` | No | — |
+| `preset` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="preset full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `revision` | `string` | No | — |
+
+
+
+---
+
+## Bookings
+
+### bulkDeleteServices
+
+`bookings.bulkDeleteServices`
+
+Tool to bulk delete services from Wix Bookings. Use when you need to remove multiple services at once by providing their IDs.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.bookings.bulkDeleteServices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkDeleteServicesByFilter
+
+`bookings.bulkDeleteServicesByFilter`
+
+Tool to bulk delete booking services by filter criteria. The operation succeeds even if individual services can be deleted, with failure information returned in bulkActionMetadata. Triggers Service Deleted webhook for each successfully deleted service.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.bookings.bulkDeleteServicesByFilter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### countExtendedBookings
+
+`bookings.countExtendedBookings`
+
+Tool to count extended bookings matching specified filter criteria. Use when you need to get the total number of bookings without retrieving the full booking data. Note: unlike query endpoints, the filter is sent at the top level of the body, not wrapped in a query envelope.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.bookings.countExtendedBookings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+
+
+
+---
+
+### deleteAddOnGroup
+
+`bookings.deleteAddOnGroup`
+
+Tool to delete an add-on group from a Wix Bookings service. Use when you need to remove an add-on group from a specific service by providing the service ID and add-on group ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.bookings.deleteAddOnGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `serviceId` | `string` | Yes | — |
+| `addOnGroupId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteService
+
+`bookings.deleteService`
+
+Tool to delete a service from Wix Bookings. Use when you need to remove a single service by its ID. Triggers a Service Deleted event upon success.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.bookings.deleteService({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listSessions
+
+`bookings.listSessions`
+
+Tool to retrieve calendar sessions from Wix Bookings with filtering, sorting, and pagination. Use when you need to list booking sessions, event instances, or availability slots. Note: This endpoint is deprecated and may be replaced with newer Calendar V3 APIs.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.bookings.listSessions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sessions` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sessions full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryCategories
+
+`bookings.queryCategories`
+
+Tool to retrieve bookings service categories with optional filtering, sorting, and pagination. Use when you need to fetch categories that organize booking services in Wix Bookings.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.bookings.queryCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  id?: string,
+  revision?: string,
+  name?: string,
+  createdDate?: string,
+  updatedDate?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryExtendedBookings
+
+`bookings.queryExtendedBookings`
+
+Tool to retrieve up to 100 extended bookings with advanced filtering, sorting, and pagination. Use when you need to search for specific bookings with attendance details and customer action permissions. Default behavior returns 50 bookings sorted by id in ascending order.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.bookings.queryExtendedBookings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `extendedBookings` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="extendedBookings full type">
+
+```ts
+{
+  booking?: {
+    id?: string,
+    status?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateStaffMemberTagsByFilter
+
+`bookings.updateStaffMemberTagsByFilter`
+
+Tool to bulk update tags on Wix Bookings staff members by filter criteria. Use when you need to add or remove tags from multiple staff members matching specific conditions. If a tag appears in both assign and unassign, it will be assigned.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.bookings.updateStaffMemberTagsByFilter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | Yes | — |
+| `assignTags` | `string[]` | No | — |
+| `unassignTags` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Cms
+
+### addSpecialPermissions
+
+`cms.addSpecialPermissions`
+
+Tool to add special permissions to a Wix data collection for a specific user or role. Use when you need to grant CRUD permissions (insert, update, remove, read) to a user or role for a specific collection.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.cms.addSpecialPermissions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `collectionId` | `string` | Yes | — |
+| `permissions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="permissions full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### cancelTask
+
+`cms.cancelTask`
+
+Tool to cancel a background task in Wix CMS. Use when you need to stop a running background task that is no longer needed.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.cms.cancelTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteDataCollectionField
+
+`cms.deleteDataCollectionField`
+
+Tool to delete a field from a Wix data collection. Use when you need to remove a field from a collection's structure, which also removes all associated values. The operation is idempotent and succeeds even if the collection or field doesn't exist.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.cms.deleteDataCollectionField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `collectionId` | `string` | Yes | — |
+| `fieldId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteUserDefinedFields
+
+`cms.deleteUserDefinedFields`
+
+Tool to delete user defined fields from a data extension schema in Wix. Use when you need to remove custom fields from a schema by providing the schema ID and field keys.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.cms.deleteUserDefinedFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `schemaId` | `string` | Yes | — |
+| `fieldKeys` | `string[]` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Community
+
+### bulkUpdateReviewModerationStatus
+
+`community.bulkUpdateReviewModerationStatus`
+
+Tool to bulk update the moderation status of multiple reviews at once. All filtered reviews are updated to the same moderation status. Use when you need to moderate multiple reviews efficiently instead of updating them one by one.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.community.bulkUpdateReviewModerationStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `moderationStatus` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### checkContent
+
+`community.checkContent`
+
+Tool to check content text against Wix moderation rules. Use when you need to validate user-submitted content for policy violations before publishing or to determine if content requires moderation.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.community.checkContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `verdict` | `string` | No | — |
+
+
+
+---
+
+### deleteFaqCategory
+
+`community.deleteFaqCategory`
+
+Tool to delete an FAQ category from the Wix site. Deleting a category permanently removes it and all associated questions from the FAQ page. Triggers a Category Deleted event.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.community.deleteFaqCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `categoryId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteQuestionEntry
+
+`community.deleteQuestionEntry`
+
+Tool to delete a question entry from Wix FAQ app. Use when you need to permanently remove a FAQ question entry by its ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.community.deleteQuestionEntry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `questionId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listGroupRequests
+
+`community.listGroupRequests`
+
+Tool to list group requests across a Wix site. Use when you need to retrieve pending or processed requests for group creation. Only admins can see create group requests; members can access their own requests.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.community.listGroupRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupRequests` | `object[]` | No | — |
+| `requests` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="groupRequests full type">
+
+```ts
+{
+  id?: string,
+  status?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="requests full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryGroupRequests
+
+`community.queryGroupRequests`
+
+Tool to query group creation requests with filtering, sorting, and pagination. Use when you need to retrieve pending, approved, or rejected group requests from site members.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.community.queryGroupRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupRequests` | `object[]` | No | — |
+| `requests` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="groupRequests full type">
+
+```ts
+{
+  id?: string,
+  status?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="requests full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryModerationRules
+
+`community.queryModerationRules`
+
+Tool to retrieve moderation rules with optional filtering, sorting, and pagination. Use when you need to fetch rules that manage user-generated content moderation on a Wix site. Returns up to 1000 rules per request.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.community.queryModerationRules({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rules` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  id?: string,
+  namespace?: string,
+  name?: string,
+  enabled?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateModerationRule
+
+`community.updateModerationRule`
+
+Tool to update a moderation rule in Wix Community Feedback Moderation. Use when you need to modify an existing rule's settings such as name, enabled status, or configuration. Requires the current revision number to prevent conflicts.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.community.updateModerationRule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `ruleId` | `string` | Yes | — |
+| `revision` | `string` | No | — |
+| `rule` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="rule full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `revision` | `string` | No | — |
+
+
+
+---
+
+### updateQuestionEntryLabels
+
+`community.updateQuestionEntryLabels`
+
+Tool to set labels for a Wix FAQ question entry. Use when a question entry is updated and you need to modify its labels. This operation replaces all existing labels with the provided list.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.community.updateQuestionEntryLabels({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `questionId` | `string` | Yes | — |
+| `labels` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+---
+
+### updateReviewModerationStatus
+
+`community.updateReviewModerationStatus`
+
+Tool to update the moderation status of a review. Use when you need to approve, reject, or change the moderation status of a specific review.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.community.updateReviewModerationStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `reviewId` | `string` | Yes | — |
+| `moderationStatus` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+---
+
+## Contacts
+
+### addLabels
+
+`contacts.addLabels`
+
+Tool to add labels to a Wix contact using the Labels API. Use when you need to categorize or tag contacts with specific labels like 'contacts.customers' or 'contacts.contacted-me'.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.contacts.addLabels({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `contactId` | `string` | Yes | — |
+| `labelKeys` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `revision` | `string` | No | — |
+
+
+
+---
+
+### bulkUpdate
+
+`contacts.bulkUpdate`
+
+Tool to bulk update multiple contacts with specified field values. Use when you need to update the same field(s) across multiple contacts matching a filter or search criteria. Only fields specified in fieldMask.paths will be updated.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.contacts.bulkUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `info` | `object` | No | — |
+| `filter` | `lazy` | No | — |
+| `search` | `string` | No | — |
+| `fieldMask` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="info full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}
+```
+</Accordion>
+
+<Accordion title="fieldMask full type">
+
+```ts
+{
+  paths: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+Tool to retrieve a list of up to 1,000 contacts per request from Wix. Use when you need to fetch contact information with support for pagination and field filtering.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: string,
+  revision?: string | number,
+  createdDate?: string,
+  updatedDate?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFacets
+
+`contacts.listFacets`
+
+Tool to list facets from the site's Contact List. Facets include labels, subscription statuses (email and SMS), and membership statuses. Use when you need to retrieve available contact categorization options with their counts.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.contacts.listFacets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `facets` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="facets full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`contacts.query`
+
+Tool to retrieve up to 1,000 Wix contacts with advanced filtering, sorting, and pagination. Use when you need to search for specific contacts or retrieve contacts with custom field selections.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.contacts.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: string,
+  revision?: string | number,
+  createdDate?: string,
+  updatedDate?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryFacets
+
+`contacts.queryFacets`
+
+Tool to retrieve facets from the site's contact list by filter. Facets include labels and subscription statuses with aggregated contact counts. Use when you need to get contact segmentation data.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.contacts.queryFacets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `facets` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="facets full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unlabel
+
+`contacts.unlabel`
+
+Tool to remove labels from a contact in the Wix CRM system. Use when you need to unlabel a contact by removing specific label keys. This triggers a Contact Updated event in the Wix system.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.contacts.unlabel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `contactId` | `string` | Yes | — |
+| `labelKeys` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `revision` | `string` | No | — |
+
+
+
+---
+
+## Events
+
+### bulkDeleteRsvpsByFilter
+
+`events.bulkDeleteRsvpsByFilter`
+
+Tool to bulk delete event RSVPs by filter criteria. Use when you need to remove multiple RSVPs matching specific conditions. If no filter is provided, this may delete all RSVPs.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.events.bulkDeleteRsvpsByFilter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkDeleteTicketDefinitions
+
+`events.bulkDeleteTicketDefinitions`
+
+Tool to bulk delete ticket definitions by filter criteria for Wix Events. Use when you need to delete multiple ticket definitions matching specific conditions. Requires 'Manage Ticket Definitions' permission.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.events.bulkDeleteTicketDefinitions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkUnassignFromCategories
+
+`events.bulkUnassignFromCategories`
+
+Tool to unassign an event from multiple categories in Wix Events. Use when you need to remove an event from one or more categories by providing the event ID and category IDs.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.events.bulkUnassignFromCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `eventId` | `string` | Yes | — |
+| `categoryIds` | `string[]` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteScheduleBookmark
+
+`events.deleteScheduleBookmark`
+
+Tool to remove a bookmark from a schedule item in Wix Events. Use when you need to delete a user's saved bookmark for a specific event schedule item.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.events.deleteScheduleBookmark({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `scheduleId` | `string` | Yes | — |
+| `bookmarkId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteScheduleItem
+
+`events.deleteScheduleItem`
+
+Tool to delete schedule items from a Wix event. Use when you need to remove one or more schedule items from an event's draft schedule.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.events.deleteScheduleItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `eventId` | `string` | Yes | — |
+| `scheduleItemIds` | `string[]` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteTicketCheckIn
+
+`events.deleteTicketCheckIn`
+
+Tool to delete ticket check-in records for Wix Events. Use when you need to remove check-in status for one or more tickets at an event.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.events.deleteTicketCheckIn({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `eventId` | `string` | No | — |
+| `ticketIds` | `string[]` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteTicketReservation
+
+`events.deleteTicketReservation`
+
+Tool to delete a ticket reservation from Wix Events. Use when you need to remove a ticket reservation that is no longer needed or valid.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.events.deleteTicketReservation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `reservationId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### discardDraft
+
+`events.discardDraft`
+
+Tool to discard all changes to a draft schedule for a Wix event. Use when you need to revert all unsaved changes and restore the schedule to its published state. Requires 'Manage Events - all permissions' scope.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.events.discardDraft({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `eventId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### find
+
+`events.find`
+
+Tool to find a Wix event by ID or slug. Use when you need to retrieve event details. Note: This endpoint is deprecated and will be replaced by Events V3 Get Event.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.events.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `eventId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `title` | `string` | No | — |
+
+
+
+---
+
+### publishDraft
+
+`events.publishDraft`
+
+Tool to publish a draft schedule for a Wix event. Use when you need to make all draft changes live and visible to site visitors. Requires Manage Events - all permissions scope.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.events.publishDraft({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `eventId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### queryEventsGraphql
+
+`events.queryEventsGraphql`
+
+Tool to query events using the deprecated eventsEvents GraphQL endpoint. Returns event items and pagination info. Note: This endpoint is deprecated and will be replaced with Events V3 Query Events endpoint.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.events.queryEventsGraphql({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `query` | `string` | Yes | — |
+| `variables` | `object` | No | — |
+| `filter` | `lazy` | No | — |
+
+<AccordionGroup>
+<Accordion title="variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rescheduleDraft
+
+`events.rescheduleDraft`
+
+Tool to reschedule all draft schedule items for an event at once. Use when you need to adjust the time of multiple draft schedule items simultaneously by specifying a new time zone.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.events.rescheduleDraft({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `eventId` | `string` | Yes | — |
+| `timeZone` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Forms
+
+### bulkDeleteSchemas
+
+`forms.bulkDeleteSchemas`
+
+Tool to bulk delete form schemas from Wix Forms. Use when you need to remove multiple forms by their IDs in a single operation.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.forms.bulkDeleteSchemas({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `formIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryDeletedForms
+
+`forms.queryDeletedForms`
+
+Tool to retrieve deleted form schemas from the trash bin for a specified namespace. Use when you need to query forms that have been deleted but not permanently removed. Requires namespace filter.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.forms.queryDeletedForms({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | Yes | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `forms` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="forms full type">
+
+```ts
+{
+  id?: string,
+  namespace?: string,
+  name?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryFormsSubmissions
+
+`forms.queryFormsSubmissions`
+
+Tool to retrieve form submissions from a specified namespace with optional pagination. Use when you need to query form submissions from Wix Forms or other form apps. The namespace filter is required.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.forms.queryFormsSubmissions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | Yes | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `submissions` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="submissions full type">
+
+```ts
+{
+  id?: string,
+  formId?: string,
+  namespace?: string,
+  status?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### querySubmissionsByNamespace
+
+`forms.querySubmissionsByNamespace`
+
+Tool to retrieve form submissions from a specified namespace with advanced filtering, sorting, and pagination. Use when you need to query submissions with specific criteria like status, date ranges, or visibility. Namespace filter is required using $eq operator.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.forms.querySubmissionsByNamespace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | Yes | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `submissions` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="submissions full type">
+
+```ts
+{
+  id?: string,
+  formId?: string,
+  namespace?: string,
+  status?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeDeletedFields
+
+`forms.removeDeletedFields`
+
+Tool to permanently remove deleted fields from a Wix form schema. Use when you need to clean up deleted fields from a form.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.forms.removeDeletedFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `formId` | `string` | Yes | — |
+| `fieldsIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `revision` | `string` | No | — |
+
+
+
+---
+
+## Marketing
+
+### deleteLoyaltyCoupon
+
+`marketing.deleteLoyaltyCoupon`
+
+Tool to delete a loyalty coupon from the Wix Loyalty Program. Note that deleting a loyalty coupon does not affect the functionality of the corresponding discount coupon itself. Use when you need to remove a loyalty coupon by its unique identifier.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.marketing.deleteLoyaltyCoupon({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `couponId` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteSenderDetails
+
+`marketing.deleteSenderDetails`
+
+Tool to delete sender details from Wix email marketing. Use when you need to remove a sender from the available senders list. Note: You cannot delete a default sender - you must first create a new sender and mark it as default before deleting the original.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.marketing.deleteSenderDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `senderId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteSenderEmail
+
+`marketing.deleteSenderEmail`
+
+Tool to delete a sender email from Wix Marketing. Use when you need to remove a specific sender email by its ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.marketing.deleteSenderEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `emailId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### enablePointsExpiration
+
+`marketing.enablePointsExpiration`
+
+Tool to enable points expiration for a Wix loyalty program. Use when you need to activate the points expiration feature, which changes the pointsExpiration status to ENABLED.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.marketing.enablePointsExpiration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `programId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pointsExpiration` | `string` | No | — |
+
+
+
+---
+
+### getCurrentMemberCoupons
+
+`marketing.getCurrentMemberCoupons`
+
+Tool to retrieve loyalty coupons for the currently authenticated member. Use when you need to fetch loyalty program coupons for the logged-in member. Requires visitor or member authentication.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.marketing.getCurrentMemberCoupons({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `coupons` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="coupons full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSenderDetails
+
+`marketing.getSenderDetails`
+
+Tool to retrieve sender details for email marketing campaigns. Use when you need to fetch the sender name and email address. Note: This endpoint is deprecated and has been superseded by the Get Default Sender Details endpoint.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.marketing.getSenderDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+
+
+
+---
+
+### listCampaigns
+
+`marketing.listCampaigns`
+
+Tool to retrieve a list of email marketing campaigns, ordered by date_updated in descending order. Use when you need to get campaigns from Wix Email Marketing with optional filtering by status, visibility, or distribution status.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.marketing.listCampaigns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaigns` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="campaigns full type">
+
+```ts
+{
+  campaignId?: string,
+  title?: string,
+  status?: string,
+  visibilityStatus?: string,
+  dateCreated?: string,
+  dateUpdated?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryLoyaltyCheckoutDiscounts
+
+`marketing.queryLoyaltyCheckoutDiscounts`
+
+Tool to retrieve loyalty checkout discounts with filtering, sorting, and pagination. Use when you need to query discounts applied at checkout using loyalty points.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.marketing.queryLoyaltyCheckoutDiscounts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `loyaltyCheckoutDiscounts` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="loyaltyCheckoutDiscounts full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateReferralProgram
+
+`marketing.updateReferralProgram`
+
+Tool to update a site's referral program configuration including name, rewards, and email settings. Use when you need to modify an existing referral program. The revision field is required to prevent conflicting updates.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.marketing.updateReferralProgram({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `revision` | `string` | No | — |
+| `program` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="program full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `program` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="program full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Media
+
+### generateFilesDownloadUrl
+
+`media.generateFilesDownloadUrl`
+
+Tool to generate download URLs for files in Wix Media Manager. Use when you need to create a permanent download URL for one or multiple files (up to 1000). Returns a download URL for a compressed file containing all requested files.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.media.generateFilesDownloadUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `fileIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `downloadUrl` | `string` | No | — |
+
+
+
+---
+
+### generateFileUploadUrl
+
+`media.generateFileUploadUrl`
+
+Tool to generate an upload URL for uploading files to Wix Media Manager. Use when you need to upload a file to Wix. Note: Files are not immediately available after upload and require processing time. For files larger than 10MB or poor network conditions, use Generate File Resumable Upload URL instead.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.media.generateFileUploadUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `fileName` | `string` | No | — |
+| `mimeType` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uploadUrl` | `string` | No | — |
+
+
+
+---
+
+### importFile
+
+`media.importFile`
+
+Tool to import a file to Wix Media Manager using an external URL. Use when you need to add a file from an external source to the Media Manager. Note: imported files take time to process and are not immediately available (state=PENDING initially).
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.media.importFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `url` | `string` | Yes | — |
+| `fileName` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `state` | `string` | No | — |
+
+
+
+---
+
+## Members
+
+### get
+
+`members.get`
+
+Tool to retrieve a member by ID from Wix Members. Use when you need to fetch detailed information about a specific member. Note: Private members (default privacy status) are not returned for site visitor or member calls.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.members.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `memberId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `contactId` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### getMembersCustomFieldApplications
+
+`members.getMembersCustomFieldApplications`
+
+Tool to retrieve custom field applications for specified members. Use when you need to check which custom field applications apply to specific members.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.members.getMembersCustomFieldApplications({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `memberIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `applications` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="applications full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPrivacySettings
+
+`members.getPrivacySettings`
+
+Tool to retrieve member privacy settings for a Wix site. Use when you need to check what privacy settings are currently configured, including whether members can make their profiles public.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.members.getPrivacySettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publicProfile` | `boolean` | No | — |
+
+
+
+---
+
+### getRolesCustomFieldApplications
+
+`members.getRolesCustomFieldApplications`
+
+Tool to retrieve custom field applications for specified roles. Use when you need to check which custom field applications apply to specific member roles.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.members.getRolesCustomFieldApplications({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `roleIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `applications` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="applications full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRolesInfo
+
+`members.getRolesInfo`
+
+Tool to retrieve all available roles in the requesting Wix account, including predefined and custom roles. Use when you need to list all roles configured for the account.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.members.getRolesInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roles` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="roles full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listCustomFields
+
+`members.listCustomFields`
+
+Tool to retrieve a list of custom fields and fields provided by the Members Area. Use when you need to fetch available custom field definitions for member profiles. Fields are ordered by section and creation date.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.members.listCustomFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `object[]` | No | — |
+| `customFields` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  key?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFollowing
+
+`members.listFollowing`
+
+Tool to retrieve the list of members followed by a given member in Wix Members. Use when you need to see which members a specific member is following. Note: This API is in Developer Preview and may be subject to change.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.members.listFollowing({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `memberId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memberIds` | `string[]` | No | — |
+| `members` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMyFollowers
+
+`members.listMyFollowers`
+
+Tool to retrieve the list of members who are following the current authenticated member in Wix Members. Use when you need to see which members follow the current user.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.members.listMyFollowers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memberIds` | `string[]` | No | — |
+| `members` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### logout
+
+`members.logout`
+
+Tool to terminate a member's session and clear authentication cookies. Use when you need to log out a user from their Wix session. When postLogoutRedirectUri is provided, returns a 302 redirect response.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.members.logout({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `postLogoutRedirectUri` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### register
+
+`members.register`
+
+Tool to register a new member account on Wix site. Use when you need to create a new member with email and password authentication. Returns a session token that can be used to obtain access and refresh tokens.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.members.register({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `loginId` | `object` | Yes | — |
+| `password` | `string` | Yes | — |
+| `profile` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="loginId full type">
+
+```ts
+{
+  email: string
+}
+```
+</Accordion>
+
+<Accordion title="profile full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sessionToken` | `string` | No | — |
+| `member` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendRecoveryEmail
+
+`members.sendRecoveryEmail`
+
+Tool to send a password recovery email to a Wix member with a link to reset their password. Use when a member needs to reset their password. The site must be published for this to work. Site owners will reset their Wix account password instead of site-specific password.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.members.sendRecoveryEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Multilingual
+
+### bulkDeleteTranslationContent
+
+`multilingual.bulkDeleteTranslationContent`
+
+Tool to bulk delete translation content by IDs. Use when you need to delete multiple translation content items in a single operation.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.multilingual.bulkDeleteTranslationContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkUpdateTranslationContentByKey
+
+`multilingual.bulkUpdateTranslationContentByKey`
+
+Tool to bulk update translation content by composite key (schemaId, entityId, locale). Use when updating translatable fields for multiple content items identified by their schema, entity, and locale combination. Triggers Content Updated event on success.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.multilingual.bulkUpdateTranslationContentByKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Orders
+
+### bulkDeleteAbandonedCheckouts
+
+`orders.bulkDeleteAbandonedCheckouts`
+
+Tool to bulk delete abandoned checkouts from Wix e-commerce. Use when you need to remove multiple abandoned checkouts by their IDs.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.orders.bulkDeleteAbandonedCheckouts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkUpdate
+
+`orders.bulkUpdate`
+
+Tool to bulk update properties of up to 100 e-commerce orders. Use when you need to update order fields like archived status, buyer information, billing/shipping addresses, or custom fields. To remove a field, pass null; note that buyerInfo and contactDetails cannot be removed.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.orders.bulkUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `orders` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="orders full type">
+
+```ts
+{
+  order: {
+    id?: string,
+    revision?: string,
+    status?: string | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkUpdateTags
+
+`orders.bulkUpdateTags`
+
+Tool to synchronously update tags on multiple orders by list of order IDs. Use when you need to add or remove tags from multiple orders at once. If a tag appears in both assignTags and unassignTags, it will be assigned.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.orders.bulkUpdateTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `orderIds` | `string[]` | Yes | — |
+| `assignTags` | `string[]` | No | — |
+| `unassignTags` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listInvoicesByOrderIds
+
+`orders.listInvoicesByOrderIds`
+
+Tool to retrieve invoice IDs and external app IDs for multiple orders. Use when you need to get invoice information associated with one or more Wix eCommerce orders.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.orders.listInvoicesByOrderIds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `orderIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoicesForOrder` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="invoicesForOrder full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`orders.query`
+
+Tool to retrieve e-commerce orders with advanced filtering, sorting, and pagination. Use when you need to search for specific orders or retrieve order lists. Default behavior excludes orders with status 'INITIALIZED'.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.orders.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orders` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="orders full type">
+
+```ts
+{
+  id?: string,
+  revision?: string,
+  status?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeTip
+
+`orders.removeTip`
+
+Tool to remove a tip from an existing eCommerce order. Use when you need to remove tip charges that were previously added to an order.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.orders.removeTip({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `orderId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `revision` | `string` | No | — |
+
+
+
+---
+
+## Portfolio
+
+### deleteProject
+
+`portfolio.deleteProject`
+
+Tool to delete a project from Wix Portfolio. Use when you need to remove a specific project by its ID. Note: This operation may return an empty success response when the Portfolio app is not installed.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.portfolio.deleteProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteProjectItem
+
+`portfolio.deleteProjectItem`
+
+Tool to delete a project item from the Wix Portfolio. Use when you need to permanently remove a portfolio project item by its ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.portfolio.deleteProjectItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `itemId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Restaurants
+
+### bulkDeleteModifiers
+
+`restaurants.bulkDeleteModifiers`
+
+Tool to bulk delete item modifiers from Wix Restaurants Menus. Use when you need to remove multiple item modifiers at once by providing their IDs.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.restaurants.bulkDeleteModifiers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkDeleteNotificationRecipients
+
+`restaurants.bulkDeleteNotificationRecipients`
+
+Tool to bulk delete notification recipients for Wix Restaurants online orders. Use when you need to remove multiple recipients at once by providing their IDs.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.restaurants.bulkDeleteNotificationRecipients({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkDeleteVariants
+
+`restaurants.bulkDeleteVariants`
+
+Tool to bulk delete item variants from Wix Restaurants menus. Use when you need to remove multiple menu item variants at once.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.restaurants.bulkDeleteVariants({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### calculateFirstAvailableSlots
+
+`restaurants.calculateFirstAvailableSlots`
+
+Tool to calculate and retrieve the first available time slot of each fulfillment type for each specified menu. Use when you need to check availability for restaurant operations. Note: Developer Preview status - API is subject to change.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.restaurants.calculateFirstAvailableSlots({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `menuIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slots` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="slots full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteMenu
+
+`restaurants.deleteMenu`
+
+Tool to delete a menu from Wix Restaurants. Use when you need to permanently remove a menu by its ID. The endpoint implements idempotent DELETE behavior.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.restaurants.deleteMenu({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `menuId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteServiceFeeRule
+
+`restaurants.deleteServiceFeeRule`
+
+Tool to delete a service fee rule from Wix Restaurants Online Orders. Use when you need to remove a specific rule by its ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.restaurants.deleteServiceFeeRule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `ruleId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listCatalogs
+
+`restaurants.listCatalogs`
+
+Tool to retrieve a list of restaurant catalogs from Wix Restaurants. Use when you need to get all catalogs for a restaurant location. Note: This API is deprecated and has been replaced with the Menus API.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.restaurants.listCatalogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `catalogs` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="catalogs full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sites
+
+### checkDomainAvailability
+
+`sites.checkDomainAvailability`
+
+Tool to check if a domain name is available for purchase. Use when you need to verify domain availability before registration. Returns an availability object with a boolean indicating if the domain can be purchased.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.sites.checkDomainAvailability({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `domainName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `available` | `boolean` | No | — |
+| `domainName` | `string` | No | — |
+
+
+
+---
+
+### getFolderBySite
+
+`sites.getFolderBySite`
+
+Tool to retrieve folder information for a specific site by site ID. Use when you need to get the parent folder details of a site. Note: If the specified site is at root level, the returned folder object will be empty.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.sites.getFolderBySite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `targetSiteId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="folder full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProperties
+
+`sites.getProperties`
+
+Tool to retrieve current snapshot of a site's properties including business profile, contact information, and business schedule. Use when you need to fetch site-level business information, contact details, or operating hours.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.sites.getProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `businessProfile` | `object` | No | — |
+| `businessContact` | `object` | No | — |
+| `businessSchedule` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="businessProfile full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="businessContact full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="businessSchedule full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSitePluginsPlacementStatus
+
+`sites.getSitePluginsPlacementStatus`
+
+Tool to get the placement status of your app's site plugins on the user's site. Use when you need to check whether your plugins are currently placed in slots on the user's site.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.sites.getSitePluginsPlacementStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `placements` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="placements full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryFolders
+
+`sites.queryFolders`
+
+Tool to retrieve a list of site folders with optional paging, filtering, and sorting. Use when you need to organize and manage Wix sites by folders in an account.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.sites.queryFolders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folders` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="folders full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  siteCount?: number,
+  parentId?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryLocations
+
+`sites.queryLocations`
+
+Tool to retrieve business locations with filtering, sorting, and pagination. Use when you need to search for specific locations or list all locations for a site.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.sites.queryLocations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locations` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  status?: string,
+  timeZone?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateBusinessContact
+
+`sites.updateBusinessContact`
+
+Tool to update a site's business contact information including email, phone, fax, and address. Use when you need to modify the public business contact details displayed on a Wix site. Requires Manage Business Contact permission scope.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.sites.updateBusinessContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `businessContact` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="businessContact full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessContact` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="businessContact full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateBusinessProfile
+
+`sites.updateBusinessProfile`
+
+Tool to update a site's business profile including display name, description, logo, and business name. Use when you need to modify public business information. Only fields specified in the fields.paths array are updated.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.sites.updateBusinessProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `businessProfile` | `object` | No | — |
+| `fields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="businessProfile full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessProfile` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="businessProfile full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateBusinessSchedule
+
+`sites.updateBusinessSchedule`
+
+Tool to update a site's business schedule including regular operating hours and special exceptions. Use when you need to set or modify business hours, add holiday closures, or define special event hours. The update replaces the entire schedule, so include all desired periods in each request.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.sites.updateBusinessSchedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `businessSchedule` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="businessSchedule full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessSchedule` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="businessSchedule full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateLocaleSettings
+
+`sites.updateLocaleSettings`
+
+Tool to update a Wix site's locale configuration settings including auto-redirect behavior. Use when you need to modify locale settings such as enabling or disabling automatic visitor redirection based on language preferences. Note: This action cannot update a site's multilingual mode; use the Set Multilingual Mode action for that.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.sites.updateLocaleSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `localeSettings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="localeSettings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `localeSettings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="localeSettings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stores
+
+### bulkCreateProductsWithInventory
+
+`stores.bulkCreateProductsWithInventory`
+
+Tool to bulk create products with inventory in Wix. Use when you need to create multiple products with pricing and stock information in a single request. Supports up to 100 products per request. Physical products require physical_properties.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.stores.bulkCreateProductsWithInventory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `products` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  id?: string,
+  revision?: string,
+  name?: string,
+  slug?: string,
+  visible?: boolean,
+  createdDate?: string,
+  updatedDate?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkDeleteBrands
+
+`stores.bulkDeleteBrands`
+
+Tool to delete multiple brands from the Wix Stores catalog. When a brand is deleted, it's automatically removed from all products that reference it. Use when you need to remove multiple brands at once.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.stores.bulkDeleteBrands({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkDeleteInventoryItems
+
+`stores.bulkDeleteInventoryItems`
+
+Tool to bulk delete inventory items from the Wix Stores catalog. Accepts non-existent IDs without error. Use when you need to remove multiple inventory items at once.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.stores.bulkDeleteInventoryItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkDeleteProducts
+
+`stores.bulkDeleteProducts`
+
+Tool to bulk delete products from the Wix Stores catalog. Use when you need to permanently remove multiple products by their IDs.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.stores.bulkDeleteProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkGetOrCreateBrands
+
+`stores.bulkGetOrCreateBrands`
+
+Tool to bulk retrieve or create brands in Wix Stores catalog. Retrieves multiple brands by name, or creates them if they don't exist. Use when you need to ensure specific brands exist in the catalog.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.stores.bulkGetOrCreateBrands({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `names` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brands` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="brands full type">
+
+```ts
+{
+  id?: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkRemoveInfoSectionsByFilter
+
+`stores.bulkRemoveInfoSectionsByFilter`
+
+Tool to bulk remove info sections from products matching a filter expression. Use when you need to detach information sections from multiple products based on specific criteria like visibility status, creation date, or other product attributes.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.stores.bulkRemoveInfoSectionsByFilter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | Yes | — |
+| `infoSectionIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkUpdateCustomizations
+
+`stores.bulkUpdateCustomizations`
+
+Tool to bulk update multiple customizations in Wix Stores Catalog V3. Use when you need to update properties of existing customizations such as name, type, choices, or settings. Each update requires the current revision number to prevent conflicts.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.stores.bulkUpdateCustomizations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `updates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="updates full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkUpdateInventoryItemsByFilter
+
+`stores.bulkUpdateInventoryItemsByFilter`
+
+Tool to bulk update inventory items by filter criteria. Updates multiple inventory items matching the specified filter (e.g., by productId). Use when you need to change inventory tracking settings, stock status, or quantities for multiple items at once.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.stores.bulkUpdateInventoryItemsByFilter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | Yes | — |
+| `update` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="update full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkUpdateProductsByFilter
+
+`stores.bulkUpdateProductsByFilter`
+
+Tool to bulk update multiple products matching filter criteria in Wix Stores. Use when you need to update the same field(s) across multiple products matching specific conditions. Cannot update slug, options, modifiers, or variantsInfo fields.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.stores.bulkUpdateProductsByFilter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | Yes | — |
+| `update` | `object` | No | — |
+| `fields` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="update full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteBackInStockNotification
+
+`stores.deleteBackInStockNotification`
+
+Tool to delete a back in stock notification request from Wix e-commerce. Use when you need to remove a customer request to be notified when a product comes back in stock.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.stores.deleteBackInStockNotification({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `notificationId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteCustomization
+
+`stores.deleteCustomization`
+
+Tool to delete a customization from the Wix Stores catalog. Use when you need to permanently remove a customization option by its ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.stores.deleteCustomization({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `customizationId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteInfoSection
+
+`stores.deleteInfoSection`
+
+Tool to delete an info section from the Wix Stores catalog. Use when you need to permanently remove a specific info section by its ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.stores.deleteInfoSection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `infoSectionId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteProductOptions
+
+`stores.deleteProductOptions`
+
+Tool to delete all options from a Wix product. Use when you need to remove all product options (like Color, Size) and reset the product to a single default variant. Only works when variant management is disabled.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.stores.deleteProductOptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `productId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `revision` | `string` | No | — |
+
+
+
+---
+
+### getCollectionBySlug
+
+`stores.getCollectionBySlug`
+
+Tool to retrieve a Wix Stores collection by its slug. Use when you need to fetch collection details using the collection's URL-friendly identifier instead of its ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.stores.getCollectionBySlug({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### listCurrencies
+
+`stores.listCurrencies`
+
+Tool to retrieve the list of available currencies from Wix Currency Converter. Use when you need to get all supported currencies with their ISO codes and symbols.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.stores.listCurrencies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currencies` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="currencies full type">
+
+```ts
+{
+  code?: string,
+  symbol?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryCoupons
+
+`stores.queryCoupons`
+
+Tool to retrieve a list of up to 100 coupons with optional paging, filtering, and sorting. Use when you need to fetch coupons from a Wix store.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.stores.queryCoupons({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `coupons` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="coupons full type">
+
+```ts
+{
+  id?: string,
+  expired?: boolean,
+  specification?: {
+    code?: string,
+    name?: string,
+    active?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryInventory
+
+`stores.queryInventory`
+
+Tool to retrieve a list of up to 1000 inventory items with optional paging, filtering, and sorting. Manages inventory per variant including stock quantities, availability status, and preorder information. Use when you need to fetch inventory data from a Wix Stores Catalog V3 site.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.stores.queryInventory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `fieldsets` | `string[]` | No | — |
+| `search` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventoryItems` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="inventoryItems full type">
+
+```ts
+{
+  id?: string,
+  revision?: string,
+  variantId?: string,
+  productId?: string,
+  locationId?: string,
+  trackQuantity?: boolean,
+  inStock?: boolean,
+  quantity?: number,
+  availabilityStatus?: string,
+  createdDate?: string,
+  updatedDate?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchProducts
+
+`stores.searchProducts`
+
+Tool to search products in the Wix store catalog using text search, filters, and sorting. Returns up to 100 products per request with cursor-based pagination. Use when you need to find specific products or retrieve products matching certain criteria.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.stores.searchProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | No | — |
+| `sort` | `object[]` | No | — |
+| `paging` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+| `search` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sort full type">
+
+```ts
+{
+  fieldName: string,
+  order?: ASC | DESC
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+
+<Accordion title="search full type">
+
+```ts
+string | {
+  search?: {
+    expression?: string
+  },
+  expression?: string,
+  filter?: lazy,
+  sort?: {
+    fieldName: string,
+    order?: ASC | DESC
+  }[],
+  paging?: {
+    limit?: number,
+    offset?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[]` | No | — |
+| `pagingMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  id?: string,
+  revision?: string,
+  name?: string,
+  slug?: string,
+  visible?: boolean,
+  createdDate?: string,
+  updatedDate?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagingMetadata full type">
+
+```ts
+{
+  count?: number,
+  offset?: number,
+  total?: number,
+  tooManyToCount?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setCustomizationChoices
+
+`stores.setCustomizationChoices`
+
+Tool to set choices for a customization in Wix stores catalog. Use when you need to replace all existing choices with a new set of choices for a customization. This operation requires a valid GUID customization ID and at least one choice with a name.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.stores.setCustomizationChoices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `customizationId` | `string` | Yes | — |
+| `choices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `revision` | `string` | No | — |
+
+
+
+---
+
+### updateInventoryVariants
+
+`stores.updateInventoryVariants`
+
+Tool to update product inventory including quantity, stock status, and tracking settings per variant. Use when you need to modify inventory levels or stock configuration. The revision field must match the current value to prevent conflicts.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.stores.updateInventoryVariants({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `updates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="updates full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## System
+
+### bulkDeleteReportsByFilter
+
+`system.bulkDeleteReportsByFilter`
+
+Tool to bulk delete reports from the dashboard by filter criteria. Use when you need to remove multiple reports matching specific conditions. Triggers a Report Deleted event for each removed report.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.system.bulkDeleteReportsByFilter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteSecret
+
+`system.deleteSecret`
+
+Tool to delete a secret from Wix Secrets Vault. Use when you need to permanently remove a secret by its GUID identifier.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.system.deleteSecret({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `secretId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteUserFavorite
+
+`system.deleteUserFavorite`
+
+Tool to remove a dashboard page from the current user's list of favorite pages. Use when you need to delete a specific favorite from the user's dashboard. The API exhibits idempotent behavior - returns success even if the favorite doesn't exist.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.wix.api.system.deleteUserFavorite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `pageId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAppInstance
+
+`system.getAppInstance`
+
+Tool to retrieve the current app instance details and associated site information. Use when you need to fetch app configuration, permissions, or site details.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.system.getAppInstance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instanceId` | `string` | No | — |
+| `appId` | `string` | No | — |
+| `siteId` | `string` | No | — |
+
+
+
+---
+
+### getPurchaseHistory
+
+`system.getPurchaseHistory`
+
+Tool to retrieve purchase history for your app on a site. Use when you need to view past purchases and verify upgrades. Note: The response does not include cancellation details. Site context is automatically derived from authentication.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.system.getPurchaseHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `purchases` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="purchases full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAppPermissions
+
+`system.listAppPermissions`
+
+Tool to retrieve all permissions for a specified Wix app. Use when you need to list the permissions your app requests when users install it on a site.
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.system.listAppPermissions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `appId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `permissions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="permissions full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAppPlansByAppId
+
+`system.listAppPlansByAppId`
+
+Tool to retrieve app plans by application ID, including pricing, tax settings, and currency details. Use when you need to fetch pricing plans for a specific Wix app. Note: Only returns activated plans; externally managed plans are excluded. For yearly plans, returns monthly payment amount (multiply by 12 for total).
+
+**Risk:** `read`
+
+```ts
+await corsair.wix.api.system.listAppPlansByAppId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `appId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plans` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="plans full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateOperationGroupTagsByFilter
+
+`system.updateOperationGroupTagsByFilter`
+
+Tool to bulk update tags on operation groups using filter criteria. Use when you need to add or remove tags from multiple operation groups matching specific conditions. If a tag appears in both assign and unassign, it will be assigned.
+
+**Risk:** `write`
+
+```ts
+await corsair.wix.api.system.updateOperationGroupTagsByFilter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteId` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `filter` | `lazy` | Yes | — |
+| `assignTags` | `string[]` | No | — |
+| `unassignTags` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `bulkActionMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  revision?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bulkActionMetadata full type">
+
+```ts
+{
+  totalSuccesses?: number,
+  totalFailures?: number,
+  undetailedFailures?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

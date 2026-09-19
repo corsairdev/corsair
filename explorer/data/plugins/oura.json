@@ -1,7 +1,7 @@
 {
   "id": "oura",
   "displayName": "Oura",
-  "description": "Oura plugin for Corsair",
+  "description": "Wearable health platform API for sleep, readiness, activity, and wellness ring data.",
   "npmPackageName": "@corsair-dev/oura",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

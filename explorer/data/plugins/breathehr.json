@@ -1,7 +1,7 @@
 {
   "id": "breathehr",
   "displayName": "Breathe HR",
-  "description": "Breathe HR plugin for Corsair",
+  "description": "HR software for employee records, leave management, and small business people ops.",
   "npmPackageName": "@corsair-dev/breathehr",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -543,7 +543,7 @@
     {
       "path": "breathehr.api.employeeExpenses.delete",
       "shortPath": "employeeExpenses.delete",
-      "description": "Delete an employee expense [DESTRUCTIVE]",
+      "description": "Delete an employee expense",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1328,7 +1328,7 @@
     {
       "path": "breathehr.api.employeeTrainingCourses.delete",
       "shortPath": "employeeTrainingCourses.delete",
-      "description": "Delete an employee training course [DESTRUCTIVE]",
+      "description": "Delete an employee training course",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

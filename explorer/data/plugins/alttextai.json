@@ -1,7 +1,7 @@
 {
   "id": "alttextai",
   "displayName": "AltText.ai",
-  "description": "AltText.ai plugin for Corsair",
+  "description": "AI service that generates accessible alt text descriptions for images automatically.",
   "npmPackageName": "@corsair-dev/alttextai",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

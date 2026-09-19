@@ -1,5 +1,5 @@
 displayName: PostHog
-description: "PostHog plugin for Corsair — analytics events and event capture."
+description: Product analytics platform for event tracking, feature flags, session replay, and experiments.
 examples:
   write:
     path: events.eventCreate
@@ -9,10 +9,10 @@ examples:
       event: corsair_example
 dbExample:
   entity: events
-  note: "Search synced events without hitting PostHog."
+  note: Search synced events without hitting PostHog.
   limit: 50
 exampleWebhook:
   path: events.captured
-  note: "Fires when a PostHog event is captured."
+  note: Fires when a PostHog event is captured.
   after: |
     console.log('PostHog event captured:', result.data);

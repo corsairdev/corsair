@@ -1,7 +1,7 @@
 {
   "id": "facebook",
   "displayName": "Facebook",
-  "description": "Facebook plugin for Corsair",
+  "description": "Social media platform APIs for pages, posts, ads, and Meta business integrations.",
   "npmPackageName": "@corsair-dev/facebook",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

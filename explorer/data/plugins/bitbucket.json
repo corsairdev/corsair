@@ -1,7 +1,7 @@
 {
   "id": "bitbucket",
-  "displayName": "Bitbucket Cloud OAuth 2.0",
-  "description": "Bitbucket Cloud OAuth 2.0 plugin for Corsair",
+  "displayName": "Bitbucket",
+  "description": "Git repository hosting for source code, pull requests, and CI/CD pipelines.",
   "npmPackageName": "@corsair-dev/bitbucket",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

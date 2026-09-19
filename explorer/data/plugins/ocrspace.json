@@ -1,7 +1,7 @@
 {
   "id": "ocrspace",
   "displayName": "OCR.space",
-  "description": "OCR.space plugin for Corsair",
+  "description": "Optical character recognition API for extracting text from images and scanned documents.",
   "npmPackageName": "@corsair-dev/ocrspace",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

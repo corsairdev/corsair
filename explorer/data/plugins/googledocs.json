@@ -1,7 +1,7 @@
 {
   "id": "googledocs",
   "displayName": "Google Docs",
-  "description": "Google Docs plugin for Corsair",
+  "description": "Online document editor for creating, sharing, and collaborating on text documents.",
   "npmPackageName": "@corsair-dev/googledocs",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

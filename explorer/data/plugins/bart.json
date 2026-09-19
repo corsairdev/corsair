@@ -1,7 +1,7 @@
 {
   "id": "bart",
-  "displayName": "Bart",
-  "description": "Bart plugin for Corsair",
+  "displayName": "BART",
+  "description": "Bay Area Rapid Transit API for schedules, arrivals, and public transit route data.",
   "npmPackageName": "@corsair-dev/bart",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

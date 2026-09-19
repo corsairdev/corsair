@@ -1,7 +1,7 @@
 {
   "id": "beeminder",
   "displayName": "Beeminder",
-  "description": "Beeminder plugin for Corsair",
+  "description": "Goal-tracking app that uses commitment contracts to help you stick to habits.",
   "npmPackageName": "@corsair-dev/beeminder",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

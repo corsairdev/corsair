@@ -1,5 +1,5 @@
 displayName: Discord
-description: "Discord plugin for Corsair — channels, messages, guilds, members, and interaction webhooks."
+description: Community chat platform for servers, channels, voice, bots, and real-time group messaging.
 examples:
   read:
     path: channels.list
@@ -11,13 +11,13 @@ examples:
     title: Send a message
     args:
       channel_id: "123456789"
-      content: "Hello from Corsair!"
+      content: Hello from Corsair!
 dbExample:
   entity: channels
-  note: "Search synced channels without hitting Discord."
+  note: Search synced channels without hitting Discord.
   limit: 50
 exampleWebhook:
   path: interactions.applicationCommand
-  note: "Fires when a user invokes a slash command or context-menu action."
+  note: Fires when a user invokes a slash command or context-menu action.
   after: |
     console.log('Discord application command:', result.data);

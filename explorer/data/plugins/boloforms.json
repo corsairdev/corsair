@@ -1,7 +1,7 @@
 {
   "id": "boloforms",
-  "displayName": "Boloforms",
-  "description": "Boloforms plugin for Corsair",
+  "displayName": "BoloForms",
+  "description": "Online form builder for surveys, applications, and lead capture with workflows.",
   "npmPackageName": "@corsair-dev/boloforms",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

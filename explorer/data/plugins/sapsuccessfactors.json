@@ -1,7 +1,7 @@
 {
   "id": "sapsuccessfactors",
   "displayName": "SAP SuccessFactors",
-  "description": "SAP SuccessFactors plugin for Corsair",
+  "description": "Cloud HR suite for employee records, recruiting, performance, and workforce management.",
   "npmPackageName": "@corsair-dev/sapsuccessfactors",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "oauth_2",

@@ -107,18 +107,18 @@ export function SiteFooter() {
 						<ul className="flex flex-col gap-2 p-0 list-none">
 							<li>
 								<Link
-									href="/compare/composio"
-									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
-								>
-									vs Composio
-								</Link>
-							</li>
-							<li>
-								<Link
 									href="/compare/nango"
 									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
 								>
 									vs Nango
+								</Link>
+							</li>
+							<li>
+								<Link
+									href="/compare/composio"
+									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+								>
+									vs Composio
 								</Link>
 							</li>
 						</ul>
@@ -136,6 +136,14 @@ export function SiteFooter() {
 									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
 								>
 									Blog
+								</Link>
+							</li>
+							<li>
+								<Link
+									href="/oss"
+									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+								>
+									Contribute
 								</Link>
 							</li>
 							<li>

@@ -1,7 +1,7 @@
 {
   "id": "openai",
-  "displayName": "Openai",
-  "description": "Openai plugin for Corsair",
+  "displayName": "OpenAI",
+  "description": "AI platform API for GPT chat completions, embeddings, images, and assistant workflows.",
   "npmPackageName": "@corsair-dev/openai",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

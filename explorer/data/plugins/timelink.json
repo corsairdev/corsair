@@ -1,7 +1,7 @@
 {
   "id": "timelink",
   "displayName": "Timelink",
-  "description": "Timelink plugin for Corsair",
+  "description": "Scheduling and appointment booking platform for service businesses and calendar coordination.",
   "npmPackageName": "@corsair-dev/timelink",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

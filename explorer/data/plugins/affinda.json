@@ -1,7 +1,7 @@
 {
   "id": "affinda",
   "displayName": "Affinda",
-  "description": "Affinda plugin for Corsair",
+  "description": "AI document parsing for resumes, invoices, and structured data extraction from files.",
   "npmPackageName": "@corsair-dev/affinda",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

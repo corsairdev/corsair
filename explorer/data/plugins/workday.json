@@ -1,7 +1,7 @@
 {
   "id": "workday",
   "displayName": "Workday",
-  "description": "Workday plugin for Corsair",
+  "description": "Enterprise HR and finance cloud suite for workers, payroll, and organizational data.",
   "npmPackageName": "@corsair-dev/workday",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

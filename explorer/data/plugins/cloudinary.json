@@ -1,7 +1,7 @@
 {
   "id": "cloudinary",
   "displayName": "Cloudinary",
-  "description": "Cloudinary plugin for Corsair",
+  "description": "Media management API for uploading, transforming, optimizing, and delivering images and video.",
   "npmPackageName": "@corsair-dev/cloudinary",
   "authTypes": [],
   "defaultAuthType": "api_key",
