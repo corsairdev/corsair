@@ -146,9 +146,12 @@ export function verifyClickSendWebhookSignature(
 		return { valid: true };
 	}
 
-	const parts = token.split(':');
-	if (parts.length > 1 && safeTimingEqual(parts[1]!, secret)) {
-		return { valid: true };
+	const colonIndex = token.indexOf(':');
+	if (colonIndex !== -1) {
+		const password = token.slice(colonIndex + 1);
+		if (safeTimingEqual(password, secret)) {
+			return { valid: true };
+		}
 	}
 
 	return { valid: false, error: 'Invalid webhook secret' };
