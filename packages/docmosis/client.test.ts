@@ -148,4 +148,36 @@ describe('makeDocmosisRequest', () => {
 
 		fetchMock.mockRestore();
 	});
+
+	it('uses Docmosis queue-delay header when Retry-After is absent', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue({
+			ok: false,
+			status: 429,
+			statusText: 'Too Many Requests',
+			headers: new Headers({ 'X-Docmosis-Queue-Delay-Seconds': '3' }),
+			text: async () =>
+				JSON.stringify({
+					shortMsg: 'Queue full',
+					longMsg: 'Please retry shortly',
+				}),
+		} as Response);
+
+		await expect(
+			makeDocmosisRequest('render', 'key-7', {
+				method: 'POST',
+				formData: {
+					templateName: '/t.docx',
+					outputName: 'output.pdf',
+					data: '{}',
+				},
+				responseType: 'arrayBuffer',
+			}),
+		).rejects.toMatchObject({
+			name: 'DocmosisAPIError',
+			status: 429,
+			retryAfter: 3000,
+		});
+
+		fetchMock.mockRestore();
+	});
 });

@@ -345,9 +345,8 @@ export const render: DocmosisEndpoints['render'] = async (ctx, input) => {
 			data: renderDataToString(input.data),
 			outputName: input.outputName,
 			outputFormat: input.outputFormat,
-			renderName: input.renderName,
-			test: boolLikeToString(input.test),
-			tag: input.tag,
+			devMode: boolLikeToString(input.devMode),
+			tags: input.tags,
 		},
 		responseType: 'arrayBuffer',
 	});
@@ -360,7 +359,8 @@ export const render: DocmosisEndpoints['render'] = async (ctx, input) => {
 			templateName: input.templateName,
 			outputName: input.outputName,
 			outputFormat: input.outputFormat,
-			renderName: input.renderName,
+			devMode: input.devMode,
+			tags: input.tags,
 		},
 		'completed',
 	);

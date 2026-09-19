@@ -96,11 +96,15 @@ await tenant.docmosis.api.admin.environmentReady({});
 ```
 
 
-**`images.delete`**
+**`templates.render`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.docmosis.api.images.delete({ imageName: '/logo.png' });
+await tenant.docmosis.api.templates.render({
+	templateName: '/samples/WelcomeTemplate.docx',
+	data: { title: 'Hello from Corsair' },
+	outputName: 'output.pdf',
+});
 ```
 
 

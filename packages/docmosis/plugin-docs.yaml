@@ -2,6 +2,9 @@ displayName: Docmosis
 description: Generate documents from templates with Docmosis Cloud, including template/image management and environment diagnostics.
 examples:
   write:
-    path: images.delete
+    path: templates.render
     args:
-      imageName: /logo.png
+      templateName: /samples/WelcomeTemplate.docx
+      data:
+        title: Hello from Corsair
+      outputName: output.pdf

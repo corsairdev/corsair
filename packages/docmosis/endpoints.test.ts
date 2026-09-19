@@ -181,9 +181,8 @@ describe('Docmosis endpoints', () => {
 			data: { invoiceId: 'inv_123', total: 199.5 },
 			outputName: 'invoice.pdf',
 			outputFormat: 'pdf',
-			renderName: 'invoice-render',
-			test: true,
-			tag: 'billing',
+			devMode: true,
+			tags: 'billing',
 		});
 
 		expect(result).toEqual(binary);
@@ -194,9 +193,8 @@ describe('Docmosis endpoints', () => {
 				data: JSON.stringify({ invoiceId: 'inv_123', total: 199.5 }),
 				outputName: 'invoice.pdf',
 				outputFormat: 'pdf',
-				renderName: 'invoice-render',
-				test: 'true',
-				tag: 'billing',
+				devMode: 'true',
+				tags: 'billing',
 			},
 			responseType: 'arrayBuffer',
 		});

@@ -125,13 +125,13 @@ const RenderQueueSchema = z.object({
 
 const RenderTagStatsSchema = z.object({
 	name: z.string().optional(),
-	countPages: z.number().optional(),
-	countDocuments: z.number().optional(),
+	countPages: z.number().int().optional(),
+	countDocuments: z.number().int().optional(),
 });
 
 const RenderTagsSchema = z.object({
-	year: z.number().optional(),
-	month: z.number().optional(),
+	year: z.number().int().optional(),
+	month: z.number().int().optional(),
 	tags: z.array(RenderTagStatsSchema).optional(),
 });
 
@@ -211,11 +211,10 @@ export const DocmosisEndpointInputSchemas = {
 	render: z.object({
 		templateName: z.string().min(1),
 		data: z.union([z.string().min(1), z.record(z.string(), JsonValueSchema)]),
-		outputName: z.string().min(1).optional(),
+		outputName: z.string().min(1),
 		outputFormat: z.string().min(1).optional(),
-		renderName: z.string().min(1).optional(),
-		test: BooleanLikeSchema.optional(),
-		tag: z.string().min(1).optional(),
+		devMode: BooleanLikeSchema.optional(),
+		tags: z.string().min(1).optional(),
 	}),
 } as const;
 

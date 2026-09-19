@@ -107,7 +107,7 @@ Check status for a template batch upload job
 **Risk:** `read`
 
 ```ts
-await corsair.docmosis.api.admin.getBatchUploadStatus({});
+await corsair.docmosis.api.admin.getBatchUploadStatus({ userJobId: 'example' });
 ```
 
 **Input**
@@ -208,7 +208,7 @@ Get monthly render statistics grouped by custom tags
 **Risk:** `read`
 
 ```ts
-await corsair.docmosis.api.admin.getRenderTags({});
+await corsair.docmosis.api.admin.getRenderTags({ tags: 'example' });
 ```
 
 **Input**
@@ -324,7 +324,7 @@ Delete one or more stored images
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.docmosis.api.images.delete({ imageName: '/logo.png' });
+await corsair.docmosis.api.images.delete({ imageName: 'example' });
 ```
 
 **Input**
@@ -356,7 +356,7 @@ Download one or more uploaded images
 **Risk:** `read`
 
 ```ts
-await corsair.docmosis.api.images.get({});
+await corsair.docmosis.api.images.get({ imageName: 'example' });
 ```
 
 **Input**
@@ -367,7 +367,14 @@ await corsair.docmosis.api.images.get({});
 
 
 
-**Output:** `custom`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `dataBase64` | `string` | Yes | — |
+| `byteLength` | `number` | Yes | — |
+
 
 
 ---
@@ -433,7 +440,7 @@ Delete one or more templates from the environment
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.docmosis.api.templates.delete({});
+await corsair.docmosis.api.templates.delete({ templateName: 'example' });
 ```
 
 **Input**
@@ -465,7 +472,7 @@ Download one or more template files
 **Risk:** `read`
 
 ```ts
-await corsair.docmosis.api.templates.get({});
+await corsair.docmosis.api.templates.get({ templateName: 'example' });
 ```
 
 **Input**
@@ -476,7 +483,14 @@ await corsair.docmosis.api.templates.get({});
 
 
 
-**Output:** `custom`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `dataBase64` | `string` | Yes | — |
+| `byteLength` | `number` | Yes | — |
+
 
 
 ---
@@ -490,7 +504,7 @@ Get metadata details for a specific template
 **Risk:** `read`
 
 ```ts
-await corsair.docmosis.api.templates.getDetails({});
+await corsair.docmosis.api.templates.getDetails({ templateName: 'example' });
 ```
 
 **Input**
@@ -544,7 +558,7 @@ Generate sample JSON or XML data from a template structure
 **Risk:** `read`
 
 ```ts
-await corsair.docmosis.api.templates.getSampleData({});
+await corsair.docmosis.api.templates.getSampleData({ templateName: 'example' });
 ```
 
 **Input**
@@ -600,7 +614,7 @@ Get parsed field and structure metadata for a template
 **Risk:** `read`
 
 ```ts
-await corsair.docmosis.api.templates.getStructure({});
+await corsair.docmosis.api.templates.getStructure({ templateName: 'example' });
 ```
 
 **Input**
@@ -710,7 +724,7 @@ Generate a document from a template and JSON/XML data
 **Risk:** `write`
 
 ```ts
-await corsair.docmosis.api.templates.render({});
+await corsair.docmosis.api.templates.render({ templateName: 'example', data: 'example', outputName: 'example' });
 ```
 
 **Input**
@@ -719,11 +733,10 @@ await corsair.docmosis.api.templates.render({});
 |------|------|----------|-------------|
 | `templateName` | `string` | Yes | — |
 | `data` | `object` | Yes | — |
-| `outputName` | `string` | No | — |
+| `outputName` | `string` | Yes | — |
 | `outputFormat` | `string` | No | — |
-| `renderName` | `string` | No | — |
-| `test` | `boolean \| y \| yes \| true \| n \| no \| false` | No | — |
-| `tag` | `string` | No | — |
+| `devMode` | `boolean \| y \| yes \| true \| n \| no \| false` | No | — |
+| `tags` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -737,7 +750,14 @@ string | {
 
 
 
-**Output:** `custom`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+| `dataBase64` | `string` | Yes | — |
+| `byteLength` | `number` | Yes | — |
+
 
 
 ---

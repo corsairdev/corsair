@@ -37,6 +37,19 @@ const DOCMOSIS_API_BASES: Record<DocmosisRegion, string> = {
 
 const REQUEST_TIMEOUT_MS = 20_000;
 
+function parseRetryHeaderSeconds(value: string | null): number | undefined {
+	if (!value) {
+		return undefined;
+	}
+
+	const seconds = Number(value);
+	if (!Number.isFinite(seconds)) {
+		return undefined;
+	}
+
+	return seconds * 1000;
+}
+
 function buildFormData(data?: Record<string, unknown>): FormData | undefined {
 	if (!data) {
 		return undefined;
@@ -130,15 +143,14 @@ async function fetchBinaryResponse(
 			// binary or non-JSON error body
 		}
 
-		const retryAfterHeader = response.headers.get('Retry-After');
-		const retryAfterSeconds = retryAfterHeader
-			? Number(retryAfterHeader)
-			: Number.NaN;
+		const retryAfterMs =
+			parseRetryHeaderSeconds(response.headers.get('Retry-After')) ??
+			parseRetryHeaderSeconds(
+				response.headers.get('X-Docmosis-Queue-Delay-Seconds'),
+			);
 
 		throw new DocmosisAPIError(message, response.status, {
-			retryAfter: Number.isFinite(retryAfterSeconds)
-				? retryAfterSeconds * 1000
-				: undefined,
+			retryAfter: retryAfterMs,
 		});
 	}
 

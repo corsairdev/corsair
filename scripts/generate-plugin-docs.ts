@@ -1430,6 +1430,62 @@ ${detailsSection}
 `;
 }
 
+function exampleValueFromDocType(type: string): unknown {
+	const t = type.trim();
+	if (t.includes('|')) {
+		const parts = t
+			.split('|')
+			.map((p) => p.trim())
+			.filter(Boolean);
+		const preferred =
+			parts.find((p) => p === 'boolean') ??
+			parts.find((p) => p === 'number') ??
+			parts.find((p) => p === 'string') ??
+			parts.find((p) => p === 'object' || p.includes('{')) ??
+			parts.find((p) => p.includes('[]') || p.startsWith('Array<')) ??
+			parts[0];
+		if (preferred) {
+			return exampleValueFromDocType(preferred);
+		}
+	}
+
+	if (t === 'boolean') return true;
+	if (t === 'number') return 1;
+	if (t === 'null') return null;
+	if (t.includes('[]') || t.startsWith('Array<')) return [];
+	if (t === 'object' || t.includes('{') || t.startsWith('Record<')) return {};
+
+	if (
+		(t.startsWith("'") && t.endsWith("'")) ||
+		(t.startsWith('"') && t.endsWith('"')) ||
+		(t.startsWith('`') && t.endsWith('`'))
+	) {
+		return t.slice(1, -1);
+	}
+
+	return 'example';
+}
+
+function apiCallExampleArgs(input: DocSchemaShape): Record<string, unknown> {
+	if (input.kind === 'inline') {
+		if (isObjectLikeType(input.type)) {
+			return {};
+		}
+		return {};
+	}
+
+	const requiredFields = input.fields.filter((f) => !f.optional);
+	if (requiredFields.length === 0) {
+		return {};
+	}
+
+	const args: Record<string, unknown> = {};
+	for (const field of requiredFields) {
+		args[field.key] = exampleValueFromDocType(field.type);
+	}
+	return args;
+}
+
 function groupKey(shortPath: string): string {
 	const i = shortPath.indexOf('.');
 	return i === -1 ? shortPath : shortPath.slice(0, i);
@@ -1472,8 +1528,9 @@ function buildApiMdx(
 			sections.push('');
 			const [, ...pathParts] = ep.path.split('.');
 			const callExpr = `corsair.${pluginId}.${pathParts.join('.')}`;
+			const callArgs = apiCallExampleArgs(ep.input);
 			sections.push('```ts');
-			sections.push(`await ${callExpr}({});`);
+			sections.push(`await ${callExpr}(${formatExampleArgs(callArgs)});`);
 			sections.push('```');
 			sections.push('');
 			sections.push(formatSchemaShape(ep.input, 'Input'));
