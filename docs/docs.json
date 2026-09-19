@@ -31,6 +31,7 @@
             "pages": [
               "introduction",
               "quick-start",
+              "cloud/overview",
               {
                 "group": "Use cases",
                 "pages": [
@@ -66,6 +67,10 @@
                   "frameworks/hono",
                   "frameworks/nestjs"
                 ]
+              },
+              {
+                "group": "Clients",
+                "pages": ["clients/python", "clients/go", "clients/swift"]
               }
             ]
           },
@@ -80,6 +85,8 @@
                   "mcp-adapters/claude-sdk",
                   "mcp-adapters/vercel-ai",
                   "mcp-adapters/mastra",
+                  "mcp-adapters/langchain",
+                  "mcp-adapters/llamaindex",
                   "mcp-adapters/openai"
                 ]
               },
@@ -643,6 +650,14 @@
                 ]
               },
               {
+                "group": "BenchmarkEmail",
+                "pages": [
+                  "plugins/benchmarkemail/overview",
+                  "plugins/benchmarkemail/api",
+                  "plugins/benchmarkemail/database"
+                ]
+              },
+              {
                 "group": "Best Buy Remix API",
                 "pages": [
                   "plugins/bestbuy/overview",
@@ -739,6 +754,14 @@
                 ]
               },
               {
+                "group": "Boldsign",
+                "pages": [
+                  "plugins/boldsign/overview",
+                  "plugins/boldsign/api",
+                  "plugins/boldsign/database"
+                ]
+              },
+              {
                 "group": "BoloForms",
                 "pages": [
                   "plugins/boloforms/overview",
@@ -768,6 +791,14 @@
                   "plugins/bookingmood/overview",
                   "plugins/bookingmood/api",
                   "plugins/bookingmood/database"
+                ]
+              },
+              {
+                "group": "Borneo",
+                "pages": [
+                  "plugins/borneo/overview",
+                  "plugins/borneo/api",
+                  "plugins/borneo/database"
                 ]
               },
               {
@@ -906,6 +937,14 @@
                   "plugins/buildkite/overview",
                   "plugins/buildkite/api",
                   "plugins/buildkite/database"
+                ]
+              },
+              {
+                "group": "Bunnycdn",
+                "pages": [
+                  "plugins/bunnycdn/overview",
+                  "plugins/bunnycdn/api",
+                  "plugins/bunnycdn/database"
                 ]
               },
               {
@@ -1100,6 +1139,22 @@
                 ]
               },
               {
+                "group": "ConvoloAi",
+                "pages": [
+                  "plugins/convoloai/overview",
+                  "plugins/convoloai/api",
+                  "plugins/convoloai/database"
+                ]
+              },
+              {
+                "group": "Cosmic",
+                "pages": [
+                  "plugins/cosmic/overview",
+                  "plugins/cosmic/api",
+                  "plugins/cosmic/database"
+                ]
+              },
+              {
                 "group": "CountdownApi",
                 "pages": [
                   "plugins/countdownapi/overview",
@@ -1283,6 +1338,14 @@
                 ]
               },
               {
+                "group": "Emelia",
+                "pages": [
+                  "plugins/emelia/overview",
+                  "plugins/emelia/api",
+                  "plugins/emelia/database"
+                ]
+              },
+              {
                 "group": "Epic Games",
                 "pages": [
                   "plugins/epicgames/overview",
@@ -1298,6 +1361,14 @@
                   "plugins/exa/api",
                   "plugins/exa/database",
                   "plugins/exa/webhooks"
+                ]
+              },
+              {
+                "group": "Exist",
+                "pages": [
+                  "plugins/exist/overview",
+                  "plugins/exist/api",
+                  "plugins/exist/database"
                 ]
               },
               {
@@ -1394,6 +1465,14 @@
                   "plugins/gitlab/api",
                   "plugins/gitlab/database",
                   "plugins/gitlab/webhooks"
+                ]
+              },
+              {
+                "group": "Gladia",
+                "pages": [
+                  "plugins/gladia/overview",
+                  "plugins/gladia/api",
+                  "plugins/gladia/database"
                 ]
               },
               {
@@ -1499,6 +1578,14 @@
                   "plugins/grafana/overview",
                   "plugins/grafana/api",
                   "plugins/grafana/database"
+                ]
+              },
+              {
+                "group": "Griptape",
+                "pages": [
+                  "plugins/griptape/overview",
+                  "plugins/griptape/api",
+                  "plugins/griptape/database"
                 ]
               },
               {
@@ -1643,6 +1730,14 @@
                   "plugins/kaggle/overview",
                   "plugins/kaggle/api",
                   "plugins/kaggle/database"
+                ]
+              },
+              {
+                "group": "Kibana",
+                "pages": [
+                  "plugins/kibana/overview",
+                  "plugins/kibana/api",
+                  "plugins/kibana/database"
                 ]
               },
               {
@@ -2298,6 +2393,14 @@
                 ]
               },
               {
+                "group": "Veriphone",
+                "pages": [
+                  "plugins/veriphone/overview",
+                  "plugins/veriphone/api",
+                  "plugins/veriphone/database"
+                ]
+              },
+              {
                 "group": "Vestaboard",
                 "pages": [
                   "plugins/vestaboard/overview",
@@ -2344,6 +2447,14 @@
                   "plugins/witai/overview",
                   "plugins/witai/api",
                   "plugins/witai/database"
+                ]
+              },
+              {
+                "group": "Wix",
+                "pages": [
+                  "plugins/wix/overview",
+                  "plugins/wix/api",
+                  "plugins/wix/database"
                 ]
               },
               {
