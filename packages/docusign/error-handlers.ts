@@ -14,7 +14,7 @@ function retryAfterOf(error: Error): number | undefined {
 	return undefined;
 }
 
-const SAFE_RETRY_METHODS = new Set(['GET', 'HEAD', 'OPTIONS', 'DELETE']);
+const SAFE_RETRY_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
 function requestMethodOf(error: Error): string | undefined {
 	if (error instanceof DocusignApiError || error instanceof ApiError) {
