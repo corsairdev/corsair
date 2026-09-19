@@ -122,4 +122,16 @@ describe('Composio v3 endpoint paths', () => {
 		});
 		expect(result.success).toBe(true);
 	});
+
+	it('rejects connectionDelete input missing both id fields', () => {
+		const result = ComposioEndpointInputSchemas.connectionDelete.safeParse({});
+		expect(result.success).toBe(false);
+	});
+
+	it('accepts connectionDelete input with connected_account_id', () => {
+		const result = ComposioEndpointInputSchemas.connectionDelete.safeParse({
+			connected_account_id: 'ca_1',
+		});
+		expect(result.success).toBe(true);
+	});
 });
