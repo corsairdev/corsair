@@ -1,3 +1,4 @@
+import type { ApiRequestOptions } from 'corsair/http';
 import { ApiError } from 'corsair/http';
 import { DocusignApiError } from './client';
 import { docusignErrorHandlers } from './error-handlers';
@@ -7,9 +8,10 @@ function apiError(
 	message: string,
 	body?: unknown,
 	retryAfter?: number,
+	method: ApiRequestOptions['method'] = 'GET',
 ) {
 	return new ApiError(
-		{ method: 'GET', url: '/test' },
+		{ method, url: '/test' },
 		{
 			url: 'https://demo.docusign.net/restapi/v2.1/accounts/12345/test',
 			ok: false,
@@ -27,8 +29,11 @@ function docusignError(
 	message: string,
 	body?: unknown,
 	retryAfter?: number,
+	method: ApiRequestOptions['method'] = 'GET',
 ) {
-	return new DocusignApiError(apiError(status, message, body, retryAfter));
+	return new DocusignApiError(
+		apiError(status, message, body, retryAfter, method),
+	);
 }
 
 describe('docusignErrorHandlers', () => {
@@ -40,11 +45,19 @@ describe('docusignErrorHandlers', () => {
 			expect(docusignErrorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		});
 
-		it('retries with the upstream retry delay', async () => {
-			const error = docusignError(429, 'Too Many Requests', {}, 2000);
+		it('retries safe methods with the upstream retry delay', async () => {
+			const error = docusignError(429, 'Too Many Requests', {}, 2000, 'GET');
 			const result =
 				await docusignErrorHandlers.RATE_LIMIT_ERROR.handler(error);
 			expect(result.maxRetries).toBe(5);
+			expect(result.headersRetryAfterMs).toBe(2000);
+		});
+
+		it('does not retry unsafe write methods', async () => {
+			const error = docusignError(429, 'Too Many Requests', {}, 2000, 'POST');
+			const result =
+				await docusignErrorHandlers.RATE_LIMIT_ERROR.handler(error);
+			expect(result.maxRetries).toBe(0);
 			expect(result.headersRetryAfterMs).toBe(2000);
 		});
 
