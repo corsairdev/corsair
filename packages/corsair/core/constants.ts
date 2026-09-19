@@ -562,7 +562,7 @@ export const ProviderDisplayNames = {
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
 	zohoinventory: 'Zoho Inventory',
-	zohoinvoice: 'ZohoInvoice',
+	zohoinvoice: 'Zoho Invoice',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
 	zoominfo: 'ZoomInfo',
