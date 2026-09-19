@@ -1,7 +1,7 @@
 {
   "id": "tavily",
   "displayName": "Tavily",
-  "description": "Tavily plugin for Corsair",
+  "description": "Search API optimized for AI agents needing fast, relevant web research results.",
   "npmPackageName": "@corsair-dev/tavily",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

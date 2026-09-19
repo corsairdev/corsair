@@ -1,7 +1,7 @@
 {
   "id": "ascora",
   "displayName": "Ascora",
-  "description": "Ascora plugin for Corsair",
+  "description": "Field service management software for scheduling jobs, technicians, and service businesses.",
   "npmPackageName": "@corsair-dev/ascora",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

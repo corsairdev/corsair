@@ -1,7 +1,7 @@
 {
   "id": "dodopayments",
-  "displayName": "DodoPayments",
-  "description": "DodoPayments plugin for Corsair",
+  "displayName": "Dodo Payments",
+  "description": "Payment processing platform for subscriptions, checkout, and global merchant transactions.",
   "npmPackageName": "@corsair-dev/dodopayments",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "amcards",
   "displayName": "AMcards",
-  "description": "AMcards plugin for Corsair",
+  "description": "Automated greeting card platform for sending personalized physical mail campaigns.",
   "npmPackageName": "@corsair-dev/amcards",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

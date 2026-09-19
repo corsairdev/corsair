@@ -1,7 +1,7 @@
 {
   "id": "bouncer",
   "displayName": "Bouncer",
-  "description": "Bouncer plugin for Corsair",
+  "description": "Email verification API for validating addresses, reducing bounces, and improving deliverability.",
   "npmPackageName": "@corsair-dev/bouncer",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

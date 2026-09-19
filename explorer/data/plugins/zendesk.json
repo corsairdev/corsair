@@ -1,7 +1,7 @@
 {
   "id": "zendesk",
   "displayName": "Zendesk",
-  "description": "Zendesk plugin for Corsair",
+  "description": "Customer support platform for tickets, help centers, chat, and service team workflows.",
   "npmPackageName": "@corsair-dev/zendesk",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

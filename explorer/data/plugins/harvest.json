@@ -1,7 +1,7 @@
 {
   "id": "harvest",
   "displayName": "Harvest",
-  "description": "Harvest plugin for Corsair",
+  "description": "Time tracking and invoicing software for agencies, freelancers, and project billing.",
   "npmPackageName": "@corsair-dev/harvest",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

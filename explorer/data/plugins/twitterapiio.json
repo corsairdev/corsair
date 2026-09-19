@@ -1,7 +1,7 @@
 {
   "id": "twitterapiio",
   "displayName": "TwitterAPI.io",
-  "description": "TwitterAPI.io plugin for Corsair",
+  "description": "Third-party X/Twitter data API for tweets, users, search, and social media analytics.",
   "npmPackageName": "@corsair-dev/twitterapiio",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

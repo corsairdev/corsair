@@ -1,7 +1,7 @@
 {
   "id": "uniswapapi",
-  "displayName": "Uniswap Trading API",
-  "description": "Uniswap Trading API plugin for Corsair",
+  "displayName": "Uniswap",
+  "description": "Decentralized exchange protocol API for token swaps, pools, and on-chain liquidity data.",
   "npmPackageName": "@corsair-dev/uniswapapi",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "witai",
-  "displayName": "WitAi",
-  "description": "WitAi plugin for Corsair",
+  "displayName": "Wit.ai",
+  "description": "Natural language understanding platform for intent detection and conversational app building.",
   "npmPackageName": "@corsair-dev/witai",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

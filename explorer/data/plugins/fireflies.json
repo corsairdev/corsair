@@ -1,7 +1,7 @@
 {
   "id": "fireflies",
-  "displayName": "Fireflies",
-  "description": "Fireflies plugin for Corsair",
+  "displayName": "Fireflies.ai",
+  "description": "AI meeting assistant for recording, transcribing, and summarizing calls and conversations.",
   "npmPackageName": "@corsair-dev/fireflies",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -124,7 +124,7 @@
     {
       "path": "fireflies.api.askFred.deleteThread",
       "shortPath": "askFred.deleteThread",
-      "description": "Delete an AskFred conversation thread [DESTRUCTIVE]",
+      "description": "Delete an AskFred conversation thread",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

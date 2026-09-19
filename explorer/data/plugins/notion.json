@@ -1,7 +1,7 @@
 {
   "id": "notion",
   "displayName": "Notion",
-  "description": "Notion plugin for Corsair",
+  "description": "All-in-one workspace for notes, databases, wikis, tasks, and team documentation.",
   "npmPackageName": "@corsair-dev/notion",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
@@ -782,7 +782,7 @@
     {
       "path": "notion.api.pages.archivePage",
       "shortPath": "pages.archivePage",
-      "description": "Archive (trash) a page [DESTRUCTIVE]",
+      "description": "Archive (trash) a page",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

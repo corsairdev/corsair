@@ -1,7 +1,7 @@
 {
   "id": "insightoai",
-  "displayName": "Insighto.ai",
-  "description": "Insighto.ai plugin for Corsair",
+  "displayName": "Insighto AI",
+  "description": "Conversational analytics platform for AI chatbots with voice and customer insight tools.",
   "npmPackageName": "@corsair-dev/insightoai",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

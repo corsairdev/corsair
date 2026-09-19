@@ -1,7 +1,7 @@
 {
   "id": "abstract",
   "displayName": "Abstract",
-  "description": "Abstract plugin for Corsair",
+  "description": "Validation APIs for emails, phones, VAT numbers, and other business data checks.",
   "npmPackageName": "@corsair-dev/abstract",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

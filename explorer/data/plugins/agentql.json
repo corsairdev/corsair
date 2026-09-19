@@ -1,7 +1,7 @@
 {
   "id": "agentql",
   "displayName": "AgentQL",
-  "description": "AgentQL plugin for Corsair",
+  "description": "Web scraping API that turns pages into structured data using natural language queries.",
   "npmPackageName": "@corsair-dev/agentql",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

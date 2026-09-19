@@ -1,7 +1,7 @@
 {
   "id": "supabase",
   "displayName": "Supabase",
-  "description": "Supabase plugin for Corsair",
+  "description": "Open-source Firebase alternative with Postgres, auth, storage, and realtime backend services.",
   "npmPackageName": "@corsair-dev/supabase",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

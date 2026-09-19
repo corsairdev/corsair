@@ -1,5 +1,5 @@
 displayName: BetterContact
-description: BetterContact plugin for Corsair — waterfall lead enrichment and lead discovery search
+description: Waterfall enrichment API for finding verified B2B emails and mobile phone numbers.
 overviewNote: |
   BetterContact integrates waterfall enrichment across multiple data providers for verified work emails and direct phone numbers.
 

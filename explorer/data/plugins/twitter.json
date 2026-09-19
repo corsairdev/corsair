@@ -1,7 +1,7 @@
 {
   "id": "twitter",
-  "displayName": "Twitter",
-  "description": "Twitter plugin for Corsair",
+  "displayName": "X (Twitter)",
+  "description": "Social media platform for posts, timelines, users, and public conversation data via X API.",
   "npmPackageName": "@corsair-dev/twitter",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

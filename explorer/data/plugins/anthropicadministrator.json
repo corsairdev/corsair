@@ -1,7 +1,7 @@
 {
   "id": "anthropicadministrator",
-  "displayName": "Anthropic Admin API",
-  "description": "Anthropic Admin API plugin for Corsair — organization members, invites, workspaces and API keys",
+  "displayName": "Anthropic Admin",
+  "description": "Admin API for managing Anthropic organization members, workspaces, and API keys.",
   "npmPackageName": "@corsair-dev/anthropicadministrator",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
