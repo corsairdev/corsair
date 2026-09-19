@@ -1592,11 +1592,16 @@
                 ]
               },
               {
-                "group": "Merriam-Webster",
+                "group": "Dictionary API",
                 "pages": [
                   "plugins/dictionaryapi/overview",
                   "plugins/dictionaryapi/api",
-                  "plugins/dictionaryapi/database",
+                  "plugins/dictionaryapi/database"
+                ]
+              },
+              {
+                "group": "Merriam-Webster",
+                "pages": [
                   "plugins/merriamwebsterdict/overview",
                   "plugins/merriamwebsterdict/api",
                   "plugins/merriamwebsterdict/database"
