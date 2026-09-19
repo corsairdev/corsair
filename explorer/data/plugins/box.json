@@ -1,0 +1,3257 @@
+{
+  "id": "box",
+  "displayName": "Box",
+  "description": "Cloud content management for secure file storage, sharing, and enterprise collaboration.",
+  "npmPackageName": "@corsair-dev/box",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 13,
+    "webhooks": 33,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "box.api.files.copy",
+      "shortPath": "files.copy",
+      "description": "Copy a Box file to a destination folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "file"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sequence_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "path_collection",
+            "optional": true,
+            "type": "{ total_count?: number, entries?: { type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }[] }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trashed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purged_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "modified_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "owned_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "shared_link",
+            "optional": true,
+            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number }"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }"
+          },
+          {
+            "key": "item_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_package",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "box.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Delete a Box file",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "if_match",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "box.api.files.download",
+      "shortPath": "files.download",
+      "description": "Download the content of a Box file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "box.api.files.get",
+      "shortPath": "files.get",
+      "description": "Get metadata for a Box file by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "file"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sequence_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "path_collection",
+            "optional": true,
+            "type": "{ total_count?: number, entries?: { type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }[] }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trashed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purged_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "modified_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "owned_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "shared_link",
+            "optional": true,
+            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number }"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }"
+          },
+          {
+            "key": "item_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_package",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "box.api.files.search",
+      "shortPath": "files.search",
+      "description": "Search for files in Box",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ancestor_folder_ids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_types",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_range",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_extensions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_user_ids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size_range",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "modified_at | name"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "ASC | DESC"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "entries",
+            "optional": true,
+            "type": "{ type?: string, id: string, name?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "box.api.files.share",
+      "shortPath": "files.share",
+      "description": "Create or update a shared link for a Box file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "shared_link",
+            "optional": false,
+            "type": "{ access?: open | company | collaborators, password?: string, unshared_at?: string, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "file"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sequence_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "path_collection",
+            "optional": true,
+            "type": "{ total_count?: number, entries?: { type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }[] }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trashed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purged_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "modified_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "owned_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "shared_link",
+            "optional": true,
+            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number }"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }"
+          },
+          {
+            "key": "item_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_package",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "box.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload a new file to Box",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "entries",
+            "optional": true,
+            "type": "{ type?: file, id: string, sequence_id?: string, etag?: string, sha1?: string, name?: string, description?: string, size?: number, path_collection?: { total_count?: number, entries?: { type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }[] }, created_at?: string, modified_at?: string, trashed_at?: string | null, purged_at?: string | null, content_created_at?: string, content_modified_at?: string, created_by?: { type?: string, id?: string, name?: string, login?: string }, modified_by?: { type?: string, id?: string, name?: string, login?: string }, owned_by?: { type?: string, id?: string, name?: string, login?: string }, shared_link?: { url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number } | null, parent?: { type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null } | null, item_status?: string, extension?: string, is_package?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "box.api.folders.create",
+      "shortPath": "folders.create",
+      "description": "Create a new folder in Box",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folder_upload_email_access",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sync_state",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "folder"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sequence_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path_collection",
+            "optional": true,
+            "type": "{ total_count?: number, entries?: { type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }[] }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trashed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purged_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "modified_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "owned_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "shared_link",
+            "optional": true,
+            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number }"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }"
+          },
+          {
+            "key": "item_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_externally_owned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_collaborations",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "item_collection",
+            "optional": true,
+            "type": "{ total_count?: number, entries?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "box.api.folders.delete",
+      "shortPath": "folders.delete",
+      "description": "Delete a Box folder",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recursive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "box.api.folders.get",
+      "shortPath": "folders.get",
+      "description": "Get metadata for a Box folder by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "folder"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sequence_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path_collection",
+            "optional": true,
+            "type": "{ total_count?: number, entries?: { type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }[] }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trashed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purged_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "modified_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "owned_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "shared_link",
+            "optional": true,
+            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number }"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }"
+          },
+          {
+            "key": "item_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_externally_owned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_collaborations",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "item_collection",
+            "optional": true,
+            "type": "{ total_count?: number, entries?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "box.api.folders.search",
+      "shortPath": "folders.search",
+      "description": "Search for folders in Box",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ancestor_folder_ids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner_user_ids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "modified_at | name"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "ASC | DESC"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "entries",
+            "optional": true,
+            "type": "{ type?: string, id: string, name?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "box.api.folders.share",
+      "shortPath": "folders.share",
+      "description": "Create or update a shared link for a Box folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "shared_link",
+            "optional": false,
+            "type": "{ access?: open | company | collaborators, password?: string, unshared_at?: string, permissions?: { can_download?: boolean, can_preview?: boolean } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "folder"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sequence_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path_collection",
+            "optional": true,
+            "type": "{ total_count?: number, entries?: { type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }[] }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trashed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purged_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "modified_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "owned_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "shared_link",
+            "optional": true,
+            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number }"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }"
+          },
+          {
+            "key": "item_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_externally_owned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_collaborations",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "item_collection",
+            "optional": true,
+            "type": "{ total_count?: number, entries?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "box.api.folders.update",
+      "shortPath": "folders.update",
+      "description": "Update properties of a Box folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "is_collaboration_restricted_to_enterprise",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "can_non_owners_invite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "can_non_owners_view_collaborators",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "folder"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sequence_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path_collection",
+            "optional": true,
+            "type": "{ total_count?: number, entries?: { type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }[] }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trashed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purged_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "modified_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "owned_by",
+            "optional": true,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "shared_link",
+            "optional": true,
+            "type": "{ url?: string, download_url?: string | null, vanity_url?: string | null, access?: string, effective_access?: string, effective_permission?: string, unshared_at?: string | null, is_password_enabled?: boolean, permissions?: { can_download?: boolean, can_preview?: boolean, can_edit?: boolean }, download_count?: number, preview_count?: number }"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "{ type?: string, id?: string, sequence_id?: string | null, etag?: string | null, name?: string | null }"
+          },
+          {
+            "key": "item_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_externally_owned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_collaborations",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "item_collection",
+            "optional": true,
+            "type": "{ total_count?: number, entries?: {}[] }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "box.webhooks.collaborations.accepted",
+      "shortPath": "collaborations.accepted",
+      "description": "A collaboration invitation was accepted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "COLLABORATION.ACCEPTED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COLLABORATION.ACCEPTED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        collaborations: {\n            accepted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.collaborations.created",
+      "shortPath": "collaborations.created",
+      "description": "A new collaboration was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "COLLABORATION.CREATED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COLLABORATION.CREATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        collaborations: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.collaborations.rejected",
+      "shortPath": "collaborations.rejected",
+      "description": "A collaboration invitation was rejected",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "COLLABORATION.REJECTED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COLLABORATION.REJECTED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        collaborations: {\n            rejected: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.collaborations.removed",
+      "shortPath": "collaborations.removed",
+      "description": "A collaboration was removed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "COLLABORATION.REMOVED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COLLABORATION.REMOVED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        collaborations: {\n            removed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.collaborations.updated",
+      "shortPath": "collaborations.updated",
+      "description": "A collaboration was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "COLLABORATION.UPDATED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COLLABORATION.UPDATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        collaborations: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.comments.created",
+      "shortPath": "comments.created",
+      "description": "A comment was created on a file",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "COMMENT.CREATED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COMMENT.CREATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        comments: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.comments.deleted",
+      "shortPath": "comments.deleted",
+      "description": "A comment was deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "COMMENT.DELETED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COMMENT.DELETED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        comments: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.comments.updated",
+      "shortPath": "comments.updated",
+      "description": "A comment was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "COMMENT.UPDATED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: COMMENT.UPDATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        comments: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.files.copied",
+      "shortPath": "files.copied",
+      "description": "A file was copied to another location",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FILE.COPIED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.COPIED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        files: {\n            copied: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.files.deleted",
+      "shortPath": "files.deleted",
+      "description": "A file was permanently deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FILE.DELETED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.DELETED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        files: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.files.downloaded",
+      "shortPath": "files.downloaded",
+      "description": "A file was downloaded",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FILE.DOWNLOADED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.DOWNLOADED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        files: {\n            downloaded: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.files.locked",
+      "shortPath": "files.locked",
+      "description": "A file was locked",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FILE.LOCKED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.LOCKED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        files: {\n            locked: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.files.moved",
+      "shortPath": "files.moved",
+      "description": "A file was moved to another folder",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FILE.MOVED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.MOVED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        files: {\n            moved: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.files.previewed",
+      "shortPath": "files.previewed",
+      "description": "A file was previewed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FILE.PREVIEWED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.PREVIEWED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        files: {\n            previewed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.files.renamed",
+      "shortPath": "files.renamed",
+      "description": "A file was renamed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FILE.RENAMED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.RENAMED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        files: {\n            renamed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.files.restored",
+      "shortPath": "files.restored",
+      "description": "A file was restored from trash",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FILE.RESTORED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.RESTORED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        files: {\n            restored: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.files.trashed",
+      "shortPath": "files.trashed",
+      "description": "A file was moved to trash",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FILE.TRASHED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.TRASHED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        files: {\n            trashed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.files.unlocked",
+      "shortPath": "files.unlocked",
+      "description": "A file lock was removed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FILE.UNLOCKED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.UNLOCKED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        files: {\n            unlocked: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.files.uploaded",
+      "shortPath": "files.uploaded",
+      "description": "A new file was uploaded",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FILE.UPLOADED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FILE.UPLOADED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        files: {\n            uploaded: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.folders.copied",
+      "shortPath": "folders.copied",
+      "description": "A folder was copied to another location",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FOLDER.COPIED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.COPIED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            copied: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.folders.created",
+      "shortPath": "folders.created",
+      "description": "A new folder was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FOLDER.CREATED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.CREATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.folders.deleted",
+      "shortPath": "folders.deleted",
+      "description": "A folder was permanently deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FOLDER.DELETED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.DELETED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.folders.downloaded",
+      "shortPath": "folders.downloaded",
+      "description": "A folder was downloaded",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FOLDER.DOWNLOADED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.DOWNLOADED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            downloaded: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.folders.moved",
+      "shortPath": "folders.moved",
+      "description": "A folder was moved to another location",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FOLDER.MOVED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.MOVED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            moved: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.folders.renamed",
+      "shortPath": "folders.renamed",
+      "description": "A folder was renamed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FOLDER.RENAMED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.RENAMED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            renamed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.folders.restored",
+      "shortPath": "folders.restored",
+      "description": "A folder was restored from trash",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FOLDER.RESTORED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.RESTORED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            restored: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.folders.trashed",
+      "shortPath": "folders.trashed",
+      "description": "A folder was moved to trash",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "FOLDER.TRASHED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: FOLDER.TRASHED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        folders: {\n            trashed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.metadata.instanceCreated",
+      "shortPath": "metadata.instanceCreated",
+      "description": "A metadata instance was created on a file or folder",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "METADATA_INSTANCE.CREATED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: METADATA_INSTANCE.CREATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        metadata: {\n            instanceCreated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.metadata.instanceDeleted",
+      "shortPath": "metadata.instanceDeleted",
+      "description": "A metadata instance was deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "METADATA_INSTANCE.DELETED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: METADATA_INSTANCE.DELETED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        metadata: {\n            instanceDeleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.metadata.instanceUpdated",
+      "shortPath": "metadata.instanceUpdated",
+      "description": "A metadata instance was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "METADATA_INSTANCE.UPDATED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: METADATA_INSTANCE.UPDATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        metadata: {\n            instanceUpdated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.sharedLinks.created",
+      "shortPath": "sharedLinks.created",
+      "description": "A shared link was created for a file or folder",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "SHARED_LINK.CREATED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: SHARED_LINK.CREATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        sharedLinks: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.sharedLinks.deleted",
+      "shortPath": "sharedLinks.deleted",
+      "description": "A shared link was removed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "SHARED_LINK.DELETED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: SHARED_LINK.DELETED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        sharedLinks: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "box.webhooks.sharedLinks.updated",
+      "shortPath": "sharedLinks.updated",
+      "description": "A shared link settings were updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_event"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": false,
+            "type": "SHARED_LINK.UPDATED"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ type: webhook, id: string }"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "{ type?: string, id?: string, name?: string, login?: string }"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "additional_info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_event, id: string, created_at: string, trigger: SHARED_LINK.UPDATED, webhook: { type: webhook, id: string }, created_by: { type?: string, id?: string, name?: string, login?: string }, source: {}, additional_info?: {} }",
+      "usageExample": "box({\n    webhookHooks: {\n        sharedLinks: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "box.db.files.search",
+      "entityName": "files",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "etag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sha1",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sequence_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "extension",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_package",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "content_created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content_modified_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modified_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "trashed_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "purged_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "item_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "box.db.folders.search",
+      "entityName": "folders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "etag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sequence_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modified_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "trashed_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "purged_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content_created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content_modified_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_externally_owned",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "has_collaborations",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "item_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

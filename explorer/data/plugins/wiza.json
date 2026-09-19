@@ -1,0 +1,392 @@
+{
+  "id": "wiza",
+  "displayName": "Wiza",
+  "description": "LinkedIn prospecting tool for finding verified emails and exporting lead contact lists.",
+  "npmPackageName": "@corsair-dev/wiza",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "wiza.api.credits.get",
+      "shortPath": "credits.get",
+      "description": "Get the number of remaining API credits (emails, phones, exports) in your Wiza account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "{ email_credits: number | unlimited, phone_credits: number | unlimited, export_credits?: number, api_credits?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wiza.api.individualReveals.get",
+      "shortPath": "individualReveals.get",
+      "description": "Get the status and enriched results of an individual reveal by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ code: number, message?: string }"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, status: queued | resolving | finished | failed, is_complete: boolean, name?: string | null, company?: string | null, enrichment_level?: string, linkedin_profile_url?: string | null, title?: string | null, location?: string | null, email?: string | null, email_type?: string | null, email_status?: string | null, emails?: { email: string, email_type?: string, email_status?: string }[], mobile_phone?: string | null, phone_number?: string | null, phone_status?: string | null, phones?: { number: string, pretty_number?: string, type?: string }[], company_domain?: string | null, company_industry?: string | null, company_size?: number | null, company_size_range?: string | null, company_linkedin?: string | null, company_location?: string | null, credits?: any }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wiza.api.individualReveals.start",
+      "shortPath": "individualReveals.start",
+      "description": "Start an individual reveal to enrich a single contact in real time (consumes credits)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "individual_reveal",
+            "optional": false,
+            "type": "{ profile_url?: string, full_name?: string, company?: string, domain?: string, email?: string }"
+          },
+          {
+            "key": "enrichment_level",
+            "optional": false,
+            "type": "none | partial | phone | full"
+          },
+          {
+            "key": "email_options",
+            "optional": true,
+            "type": "{ accept_work?: boolean, accept_personal?: boolean }"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ code: number, message?: string }"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, status: queued | resolving | finished | failed, is_complete: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wiza.api.lists.get",
+      "shortPath": "lists.get",
+      "description": "Get the processing status and details of a list by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ code: number, message?: string }"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name?: string, status: string, stats?: any, finished_at?: string | null, created_at?: string, enrichment_level?: string, email_options?: any, report_type?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wiza.api.prospects.search",
+      "shortPath": "prospects.search",
+      "description": "Search for prospects matching filters (job title, location, company, industry)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "{ first_name?: string[], last_name?: string[], job_title?: { v: string, s?: i | e, b?: city | state | country }[], job_title_level?: string[], job_role?: string[], location?: { v: string, s?: i | e, b?: city | state | country }[], skill?: string[], job_company?: { v: string, s?: i | e, b?: city | state | country }[], past_company?: { v: string, s?: i | e, b?: city | state | country }[], company_location?: { v: string, s?: i | e, b?: city | state | country }[], company_industry?: { v: string, s?: i | e, b?: city | state | country }[], company_size?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ code: number, message?: string }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ total: number, profiles?: { full_name?: string | null, linkedin_url?: string | null, industry?: string | null, job_title?: string | null, job_title_role?: string | null, job_title_sub_role?: string | null, job_company_name?: string | null, job_company_website?: string | null, location_name?: string | null }[] }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "wiza.db.lists.search",
+      "entityName": "lists",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "enrichment_level",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "report_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "finished_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "wiza.db.prospects.search",
+      "entityName": "prospects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "linkedin_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "full_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_company_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "industry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "wiza.db.reveals.search",
+      "entityName": "reveals",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_complete",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "company",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "linkedin_profile_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mobile_phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "company_domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "company_industry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "enrichment_level",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

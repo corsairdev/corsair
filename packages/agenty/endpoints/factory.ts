@@ -26,7 +26,6 @@ const ARRAY_BODY_FIELD_BY_ROUTE: Record<string, string> = {
 };
 
 // scrapeWebpageData uses top-level `query` as the jQuery selector map in the POST
-// body (Composio/Agenty browser scrape). It is not the URL-query control bag.
 const BODY_QUERY_FIELD_ROUTES = new Set(['scrapeWebpageData']);
 
 // Agenty response payloads vary by resource; outputs validated via shared Zod schemas.

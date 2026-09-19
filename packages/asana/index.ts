@@ -630,7 +630,7 @@ const asanaEndpointMeta = {
 	'tasks.update': { riskLevel: 'write', description: 'Update a task' },
 	'tasks.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a task [DESTRUCTIVE]',
+		description: 'Delete a task',
 	},
 	'tasks.duplicate': { riskLevel: 'write', description: 'Duplicate a task' },
 	'tasks.search': {
@@ -702,7 +702,7 @@ const asanaEndpointMeta = {
 	'projects.update': { riskLevel: 'write', description: 'Update a project' },
 	'projects.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a project [DESTRUCTIVE]',
+		description: 'Delete a project',
 	},
 	'projects.duplicate': {
 		riskLevel: 'write',
@@ -749,7 +749,7 @@ const asanaEndpointMeta = {
 	'sections.update': { riskLevel: 'write', description: 'Update a section' },
 	'sections.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a section [DESTRUCTIVE]',
+		description: 'Delete a section',
 	},
 	'sections.insert': {
 		riskLevel: 'write',
@@ -831,7 +831,7 @@ const asanaEndpointMeta = {
 	'tags.update': { riskLevel: 'write', description: 'Update a tag' },
 	'tags.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a tag [DESTRUCTIVE]',
+		description: 'Delete a tag',
 	},
 	'tags.getTasks': {
 		riskLevel: 'read',
@@ -850,7 +850,7 @@ const asanaEndpointMeta = {
 	'stories.update': { riskLevel: 'write', description: 'Update a story' },
 	'stories.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a story [DESTRUCTIVE]',
+		description: 'Delete a story',
 	},
 	// Webhook management
 	'webhookManagement.create': {
@@ -859,7 +859,7 @@ const asanaEndpointMeta = {
 	},
 	'webhookManagement.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a webhook [DESTRUCTIVE]',
+		description: 'Delete a webhook',
 	},
 	'webhookManagement.getList': {
 		riskLevel: 'read',

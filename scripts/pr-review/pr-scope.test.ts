@@ -21,6 +21,17 @@ test('uses the plugin lane for one plugin plus gate-approved extra files', () =>
 	);
 });
 
+test('keeps plugin-code PRs in the plugin lane when they regenerate that plugin docs', () => {
+	assert.deepEqual(
+		classifyPrScope([
+			'packages/airtable/index.ts',
+			'docs/plugins/airtable/overview.mdx',
+			'docs/docs.json',
+		]),
+		{ lane: 'plugin', plugin: 'airtable' },
+	);
+});
+
 test('uses the full lane when a plugin PR changes other corsair files', () => {
 	assert.deepEqual(
 		classifyPrScope([
@@ -50,6 +61,17 @@ test('uses the full lane for lockfile-only changes', () => {
 		lane: 'full',
 		includeWww: false,
 	});
+});
+
+test('skips heavy checks for plugin-docs.yaml and generated plugin docs', () => {
+	assert.deepEqual(
+		classifyPrScope([
+			'packages/airtable/plugin-docs.yaml',
+			'docs/plugins/airtable/overview.mdx',
+			'docs/docs.json',
+		]),
+		{ lane: 'skip-heavy' },
+	);
 });
 
 test('skips heavy checks for explorer and documentation-only changes', () => {
@@ -97,6 +119,7 @@ test('full-lane turbo filter stays quoted-glob safe', () => {
 	assert.deepEqual(filtersForScope({ lane: 'full', includeWww: false }), {
 		lane: 'full',
 		turboFilter: './packages/*',
+		adaptersFilter: '--filter=./adapters/*',
 		skipHeavy: false,
 		includeWww: false,
 		wwwInstallFilter: '',
@@ -108,6 +131,7 @@ test('mixed www filters keep package globs out of the www extra flags', () => {
 	assert.deepEqual(filtersForScope({ lane: 'full', includeWww: true }), {
 		lane: 'full',
 		turboFilter: './packages/*',
+		adaptersFilter: '--filter=./adapters/*',
 		skipHeavy: false,
 		includeWww: true,
 		wwwInstallFilter: '--filter=@corsair/www...',

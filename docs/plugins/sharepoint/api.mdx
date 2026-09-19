@@ -1,6 +1,6 @@
 ---
 title: API
-description: "API reference for Sharepoint: every `sharepoint.api.*` operation with input and output types."
+description: "API reference for SharePoint: every `sharepoint.api.*` operation with input and output types."
 ---
 
 Every `sharepoint.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
@@ -393,7 +393,7 @@ await corsair.sharepoint.api.drive.createSharingLink({});
 
 `drive.deleteVersion`
 
-Delete a specific version of a drive item [DESTRUCTIVE]
+Delete a specific version of a drive item
 
 **Risk:** `destructive`
 
@@ -1035,7 +1035,7 @@ await corsair.sharepoint.api.folders.create({});
 
 `folders.delete`
 
-Delete a SharePoint folder and all its contents [DESTRUCTIVE]
+Delete a SharePoint folder and all its contents
 
 **Risk:** `destructive`
 
@@ -1472,7 +1472,7 @@ await corsair.sharepoint.api.items.createInFolder({});
 
 `items.delete`
 
-Permanently delete a SharePoint list item [DESTRUCTIVE]
+Permanently delete a SharePoint list item
 
 **Risk:** `destructive`
 
@@ -1934,7 +1934,7 @@ await corsair.sharepoint.api.lists.create({});
 
 `lists.delete`
 
-Delete a SharePoint list by GUID [DESTRUCTIVE]
+Delete a SharePoint list by GUID
 
 **Risk:** `destructive`
 
@@ -1964,7 +1964,7 @@ await corsair.sharepoint.api.lists.delete({});
 
 `lists.deleteByTitle`
 
-Delete a SharePoint list by title [DESTRUCTIVE]
+Delete a SharePoint list by title
 
 **Risk:** `destructive`
 
@@ -2492,7 +2492,7 @@ await corsair.sharepoint.api.permissions.getRoleDefinitions({});
 
 `recycleBin.deletePermanent`
 
-Permanently delete an item from the recycle bin [DESTRUCTIVE]
+Permanently delete an item from the recycle bin
 
 **Risk:** `destructive`
 
@@ -3222,7 +3222,7 @@ await corsair.sharepoint.api.users.listSite({});
 
 `users.remove`
 
-Remove a user from the SharePoint site [DESTRUCTIVE]
+Remove a user from the SharePoint site
 
 **Risk:** `destructive`
 
