@@ -59,6 +59,18 @@ describe('ClickSend webhook verification and matchers', () => {
 			expect(res.valid).toBe(true);
 		});
 
+		it('validates Basic auth passwords containing colons', () => {
+			const basic = Buffer.from('clicksend:alpha:beta').toString('base64');
+			const res = verifyClickSendWebhookSignature(
+				{
+					headers: { authorization: `Basic ${basic}` },
+					payload: {},
+				} as any,
+				'alpha:beta',
+			);
+			expect(res.valid).toBe(true);
+		});
+
 		it('validates x-clicksend-token header', () => {
 			const res = verifyClickSendWebhookSignature(
 				{

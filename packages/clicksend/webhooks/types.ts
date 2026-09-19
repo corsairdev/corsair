@@ -147,11 +147,11 @@ export function verifyClickSendWebhookSignature(
 	}
 
 	const colonIndex = token.indexOf(':');
-	if (colonIndex !== -1) {
-		const password = token.slice(colonIndex + 1);
-		if (safeTimingEqual(password, secret)) {
-			return { valid: true };
-		}
+	if (
+		colonIndex !== -1 &&
+		safeTimingEqual(token.slice(colonIndex + 1), secret)
+	) {
+		return { valid: true };
 	}
 
 	return { valid: false, error: 'Invalid webhook secret' };
