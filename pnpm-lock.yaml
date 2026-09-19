@@ -23087,11 +23087,11 @@ snapshots:
   '@posthog/browser-common@0.5.0':
     dependencies:
       '@posthog/core': 1.51.0
-      '@posthog/types': 1.405.0
+      '@posthog/types': 1.409.2
 
   '@posthog/core@1.48.3':
     dependencies:
-      '@posthog/types': 1.405.0
+      '@posthog/types': 1.409.2
 
   '@posthog/core@1.51.0':
     dependencies:
