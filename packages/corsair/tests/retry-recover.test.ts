@@ -61,7 +61,7 @@ describe('Endpoint retry', () => {
 		});
 
 		const corsair = createCorsair({
-			kek: 'test-kek',
+			kek: '',
 			database: testDb.db,
 			multiTenancy: false,
 			plugins: [
@@ -92,7 +92,7 @@ describe('Endpoint retry', () => {
 		mockedMakeSlackRequest.mockRejectedValue(rateLimitApiError());
 
 		const corsair = createCorsair({
-			kek: 'test-kek',
+			kek: '',
 			database: testDb.db,
 			multiTenancy: false,
 			plugins: [
