@@ -6,27 +6,60 @@ import type {
 } from 'corsair/core';
 import { z } from 'zod';
 
+// ── Inbound SMS Webhook ───────────────────────────────────────────────────────
+
 export const InboundSmsEventSchema = z.object({
-	message_id: z.string().min(1),
-	from: z.string().min(1),
-	to: z.string().min(1),
-	body: z.string(),
-	username: z.string().min(1).optional(),
-	user_id: z.union([z.number(), z.string()]).optional(),
-	timestamp: z.union([z.number(), z.string()]).optional(),
-	original_message_id: z.string().optional(),
+	message_id: z.string().min(1).describe('ClickSend message identifier'),
+	from: z.string().min(1).describe('Sender phone number'),
+	to: z.string().min(1).describe('Recipient phone number'),
+	body: z.string().describe('SMS message body'),
+	username: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('ClickSend account username for tenant routing'),
+	user_id: z
+		.union([z.number(), z.string()])
+		.optional()
+		.describe('ClickSend account user ID for tenant routing'),
+	timestamp: z
+		.union([z.number(), z.string()])
+		.optional()
+		.describe('Unix epoch seconds or ISO timestamp'),
+	original_message_id: z
+		.string()
+		.optional()
+		.describe('Original outbound message ID for replies'),
 });
 export type InboundSmsEvent = z.infer<typeof InboundSmsEventSchema>;
 
+// ── Delivery Receipt Webhook ──────────────────────────────────────────────────
+
 export const DeliveryReceiptEventSchema = z.object({
-	message_id: z.string().min(1),
-	status: z.string().min(1),
-	username: z.string().min(1).optional(),
-	user_id: z.union([z.number(), z.string()]).optional(),
-	status_code: z.string().optional(),
-	status_text: z.string().optional(),
-	timestamp: z.union([z.number(), z.string()]).optional(),
-	original_message_id: z.string().optional(),
+	message_id: z.string().min(1).describe('ClickSend message identifier'),
+	status: z
+		.string()
+		.min(1)
+		.describe('Delivery status (e.g. Delivered, Failed)'),
+	username: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('ClickSend account username for tenant routing'),
+	user_id: z
+		.union([z.number(), z.string()])
+		.optional()
+		.describe('ClickSend account user ID for tenant routing'),
+	status_code: z.string().optional().describe('Provider status code'),
+	status_text: z.string().optional().describe('Human-readable status detail'),
+	timestamp: z
+		.union([z.number(), z.string()])
+		.optional()
+		.describe('Unix epoch seconds or ISO timestamp'),
+	original_message_id: z
+		.string()
+		.optional()
+		.describe('Original outbound message ID'),
 });
 export type DeliveryReceiptEvent = z.infer<typeof DeliveryReceiptEventSchema>;
 
@@ -82,6 +115,13 @@ function safeTimingEqual(a: string, b: string): boolean {
 	return timingSafeEqual(bufA, bufB);
 }
 
+/**
+ * Verifies a ClickSend webhook request against the configured secret.
+ *
+ * Accepts credentials from `authorization` (Bearer or Basic), `x-clicksend-token`,
+ * `x-webhook-secret`, or `secret` / `token` query parameters. Rejects requests when
+ * no secret is configured unless the hub has already verified the webhook.
+ */
 export function verifyClickSendWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret?: string,
