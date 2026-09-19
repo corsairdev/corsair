@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ZohoInvoiceAPIError } from './client';
 
 function statusOf(error: Error): number | undefined {
 	const status = (error as { status?: unknown }).status;
@@ -17,11 +18,16 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error: Error) => {
-			const retryAfterMs = (error as { retryAfter?: unknown }).retryAfter;
+			let retryAfterMs: number | undefined;
+			if (
+				error instanceof ZohoInvoiceAPIError &&
+				error.retryAfter !== undefined
+			) {
+				retryAfterMs = error.retryAfter;
+			}
 			return {
 				maxRetries: 5,
-				headersRetryAfterMs:
-					typeof retryAfterMs === 'number' ? retryAfterMs : undefined,
+				headersRetryAfterMs: retryAfterMs,
 			};
 		},
 	},

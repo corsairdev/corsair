@@ -1,11 +1,12 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class ZohoInvoiceAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly status?: number,
 		public readonly code?: string | number,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'ZohoInvoiceAPIError';
@@ -57,6 +58,47 @@ export type ZohoInvoiceRequestOptions = {
 	organizationId: string;
 };
 
+function wrapError(error: unknown): never {
+	if (error instanceof ZohoInvoiceAPIError) throw error;
+	if (error instanceof ApiError) {
+		let message = error.message;
+		let zohoCode: string | number | undefined;
+		if (error.body && typeof error.body === 'object') {
+			const errorBody = error.body as Record<string, unknown>;
+			if (typeof errorBody.message === 'string') message = errorBody.message;
+			if (
+				typeof errorBody.code === 'number' ||
+				typeof errorBody.code === 'string'
+			) {
+				zohoCode = errorBody.code;
+			}
+		}
+		throw new ZohoInvoiceAPIError(
+			message,
+			error.status,
+			zohoCode,
+			error.retryAfter,
+		);
+	}
+	if (error instanceof Error) {
+		const status =
+			'status' in error && typeof error.status === 'number'
+				? error.status
+				: undefined;
+		const code =
+			'body' in error &&
+			typeof error.body === 'object' &&
+			error.body !== null &&
+			'code' in error.body &&
+			(typeof error.body.code === 'string' ||
+				typeof error.body.code === 'number')
+				? error.body.code
+				: undefined;
+		throw new ZohoInvoiceAPIError(error.message, status, code);
+	}
+	throw new ZohoInvoiceAPIError('Unknown Zoho Invoice API error');
+}
+
 export async function makeZohoInvoiceRequest<T>(
 	endpoint: string,
 	token: string,
@@ -94,22 +136,6 @@ export async function makeZohoInvoiceRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof Error) {
-			const status =
-				'status' in error && typeof error.status === 'number'
-					? error.status
-					: undefined;
-			const code =
-				'body' in error &&
-				typeof error.body === 'object' &&
-				error.body !== null &&
-				'code' in error.body &&
-				(typeof error.body.code === 'string' ||
-					typeof error.body.code === 'number')
-					? error.body.code
-					: undefined;
-			throw new ZohoInvoiceAPIError(error.message, status, code);
-		}
-		throw new ZohoInvoiceAPIError('Unknown Zoho Invoice API error');
+		wrapError(error);
 	}
 }

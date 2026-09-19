@@ -15,21 +15,6 @@ export type ZohoInvoiceWebhookPayload = z.infer<
 	typeof ZohoInvoiceWebhookPayloadSchema
 >;
 
-export const ExampleEventSchema = ZohoInvoiceWebhookPayloadSchema.extend({
-	type: z.literal('example'),
-	data: z
-		.object({
-			id: z.string(),
-		})
-		.loose(),
-});
-
-export type ExampleEvent = z.infer<typeof ExampleEventSchema>;
-
-export type ZohoInvoiceWebhookOutputs = {
-	example: ExampleEvent;
-};
-
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {

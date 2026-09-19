@@ -6,7 +6,6 @@ import type {
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -33,7 +32,7 @@ import { resolveZohoInvoiceOAuthWebhookTenantLink } from './webhooks/oauth-tenan
 import { matchZohoInvoiceTenantWebhook } from './webhooks/tenant-matcher';
 
 export type ZohoInvoicePluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'oauth_2'>;
 	region?: ZohoInvoiceRegion;
 	key?: string;
 	webhookSecret?: string;
@@ -208,7 +207,7 @@ const zohoInvoiceWebhookSchemas =
 		typeof zohoInvoiceWebhooksNested
 	>;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType: AuthTypes = 'oauth_2' as const;
 
 const zohoInvoiceEndpointMeta = {
 	'customers.list': {
@@ -287,9 +286,6 @@ const zohoInvoiceEndpointMeta = {
 >;
 
 export const zohoInvoiceAuthConfig = {
-	api_key: {
-		account: ['organization_id'] as const,
-	},
 	oauth_2: {
 		account: ['organization_id'] as const,
 	},
@@ -373,11 +369,6 @@ export function zohoinvoice<const T extends ZohoInvoicePluginOptions>(
 
 			if (source === 'endpoint' && options.key) {
 				return options.key;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {

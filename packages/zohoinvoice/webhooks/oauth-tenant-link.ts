@@ -13,23 +13,32 @@ export async function resolveZohoInvoiceOAuthWebhookTenantLink(
 	const accessToken = tokens.access_token;
 	if (!accessToken) return null;
 
-	const tokenRecord = asRecord(tokens);
-	const apiDomain =
-		typeof tokenRecord?.api_domain === 'string'
-			? tokenRecord.api_domain.replace(/\/$/, '')
+	try {
+		const rawDomain =
+			typeof tokens.api_domain === 'string' ? tokens.api_domain : undefined;
+		const base = rawDomain
+			? `${rawDomain.replace(/\/$/, '')}/invoice/v3`
 			: zohoInvoiceApiBase();
-	const response = await fetch(`${apiDomain}/invoice/v3/organizations`, {
-		headers: { Authorization: `Zoho-oauthtoken ${accessToken}` },
-	});
-	if (!response.ok) return null;
+		const response = await fetch(`${base}/organizations`, {
+			headers: { Authorization: `Zoho-oauthtoken ${accessToken}` },
+		});
+		if (!response.ok) return null;
 
-	const payload = asRecord(await response.json());
-	const organizations = Array.isArray(payload?.organizations)
-		? payload.organizations
-		: [];
-	const organization = asRecord(organizations[0]);
-	const organizationId = toExternalId(organization?.organization_id);
-	return organizationId
-		? { linkType: 'organization_id', externalId: organizationId }
-		: null;
+		const payload = asRecord(await response.json());
+		const organizations = Array.isArray(payload?.organizations)
+			? payload.organizations
+			: [];
+		const defaultOrganizations = organizations.filter(
+			(org) => asRecord(org)?.is_default_org === true,
+		);
+		if (defaultOrganizations.length !== 1) return null;
+
+		const organization = asRecord(defaultOrganizations[0]);
+		const organizationId = toExternalId(organization?.organization_id);
+		return organizationId
+			? { linkType: 'organization_id', externalId: organizationId }
+			: null;
+	} catch {
+		return null;
+	}
 }
