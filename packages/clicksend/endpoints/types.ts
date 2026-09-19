@@ -58,6 +58,7 @@ export const ClickSendSentMessageSchema = z.object({
 	subaccount_id: z.number().optional(),
 	country: z.string().optional(),
 	carrier: z.string().optional(),
+	currency: z.string().optional(),
 	status: z.string(),
 });
 export type ClickSendSentMessage = z.infer<typeof ClickSendSentMessageSchema>;

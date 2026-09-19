@@ -328,9 +328,11 @@ export function clicksend<const T extends ClickSendPluginOptions>(
 				'x-webhook-secret' in request.headers ||
 				(typeof request.body === 'object' &&
 					request.body !== null &&
-					('message_id' in (request.body as Record<string, unknown>) ||
+					'message_id' in (request.body as Record<string, unknown>) &&
+					('status' in (request.body as Record<string, unknown>) ||
 						('from' in (request.body as Record<string, unknown>) &&
-							'to' in (request.body as Record<string, unknown>))))
+							'to' in (request.body as Record<string, unknown>) &&
+							'body' in (request.body as Record<string, unknown>))))
 			);
 		},
 		pluginTenantWebhookMatcher: matchClickSendTenantWebhook,

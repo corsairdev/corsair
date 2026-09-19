@@ -42,6 +42,10 @@ describe('clicksend errorHandlers', () => {
 			expect(handler.match(new Error('Rate limited'))).toBe(true);
 		});
 
+		it('does not match unrelated words containing rate as substring', () => {
+			expect(handler.match(new Error('Failed to generate token'))).toBe(false);
+		});
+
 		it('handler returns retry config with retryAfterMs', async () => {
 			const err = mockApiError(429, 'too many requests', 10000);
 			const res = await handler.handler(err);
@@ -93,6 +97,12 @@ describe('clicksend errorHandlers', () => {
 		it('matches invalid message', () => {
 			expect(handler.match(new Error('Invalid recipient phone number'))).toBe(
 				true,
+			);
+		});
+
+		it('does not match unrelated words containing invalid as substring', () => {
+			expect(handler.match(new Error('invalidation token expired'))).toBe(
+				false,
 			);
 		});
 
