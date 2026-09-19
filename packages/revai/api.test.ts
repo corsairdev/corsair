@@ -59,7 +59,6 @@ describe('Rev AI Endpoints', () => {
 				language: 'en',
 				notification_config: {
 					url: 'https://example.com/webhooks/revai',
-					auth_headers: undefined,
 				},
 			},
 			'completed',
@@ -145,5 +144,19 @@ describe('Rev AI Endpoints', () => {
 				accept: 'application/vnd.rev.transcript.v1.0+json',
 			}),
 		).resolves.toEqual({ monologues: [] });
+	});
+
+	it('getTranscript accepts vendor JSON transcript objects', async () => {
+		(client.makeRevAIRequest as jest.Mock).mockResolvedValue({
+			monologues: [],
+			vendor: 'rev',
+		});
+
+		await expect(
+			getTranscript(mockCtx, {
+				id: 'job-123',
+				accept: 'application/vnd.rev.transcript.v1.0+json',
+			}),
+		).resolves.toEqual({ monologues: [], vendor: 'rev' });
 	});
 });

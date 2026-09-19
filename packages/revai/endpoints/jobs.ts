@@ -1,8 +1,24 @@
 import { logEventFromContext } from 'corsair/core';
 import type { RevAIEndpoints } from '..';
 import { makeRevAIRequest } from '../client';
-import type { RevAIEndpointOutputs } from './types';
+import type { RevAIEndpointOutputs, SubmitJobInput } from './types';
 import { RevAIEndpointInputSchemas, RevAIEndpointOutputSchemas } from './types';
+
+function sanitizeNotificationConfig(
+	notificationConfig: SubmitJobInput['notification_config'],
+) {
+	if (!notificationConfig) return undefined;
+	return {
+		url: notificationConfig.url,
+	};
+}
+
+function decodeTranscriptJson(response: RevAIEndpointOutputs['getTranscript']) {
+	if (typeof response === 'string') {
+		return JSON.parse(response) as unknown;
+	}
+	return response;
+}
 
 export const submitJob: RevAIEndpoints['submitJob'] = async (ctx, input) => {
 	const parsedInput = RevAIEndpointInputSchemas.submitJob.parse(input);
@@ -20,17 +36,13 @@ export const submitJob: RevAIEndpoints['submitJob'] = async (ctx, input) => {
 		},
 	);
 	const parsedResponse = RevAIEndpointOutputSchemas.submitJob.parse(response);
-	const {
-		media_url,
-		notification_config: unsafeNotificationConfig,
-		...safeInput
-	} = parsedInput;
-	const safeNotificationConfig = unsafeNotificationConfig
-		? {
-				...unsafeNotificationConfig,
-				auth_headers: undefined,
-			}
-		: undefined;
+	const safeInput = {
+		metadata: parsedInput.metadata,
+		language: parsedInput.language,
+	};
+	const { notification_config } = parsedInput;
+	const safeNotificationConfig =
+		sanitizeNotificationConfig(notification_config);
 	await logEventFromContext(
 		ctx,
 		'revai.jobs.submit',
@@ -75,7 +87,7 @@ export const getTranscript: RevAIEndpoints['getTranscript'] = async (
 		parsedInput.accept === 'text/plain'
 			? RevAIEndpointOutputSchemas.getTranscript.options[1].parse(response)
 			: RevAIEndpointOutputSchemas.getTranscript.options[0].parse(
-					typeof response === 'string' ? JSON.parse(response) : response,
+					decodeTranscriptJson(response),
 				);
 
 	await logEventFromContext(
