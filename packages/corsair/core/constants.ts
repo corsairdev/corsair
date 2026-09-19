@@ -411,7 +411,7 @@ export const ProviderDisplayNames = {
 	chmeetings: 'ChMeetings',
 	circleci: 'CircleCI',
 	clickhouse: 'Clickhouse',
-	clickup: 'Clickup',
+	clickup: 'ClickUp',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
 	cloudflare: 'Cloudflare',
