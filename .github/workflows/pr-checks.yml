@@ -3,10 +3,12 @@ name: PR Checks
 on:
   pull_request:
     branches: [main]
+  push:
+    branches: [main]
 
 concurrency:
-  group: pr-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -14,58 +16,11 @@ permissions:
   issues: write
 
 jobs:
-  ci:
-    name: CI Checks
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10.20.0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24.x'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Turbo cache
-        uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: turbo-${{ runner.os }}-${{ github.sha }}
-          restore-keys: turbo-${{ runner.os }}-
-
-      - name: Lint
-        run: pnpm lint
-
-      - name: Validate Plugins
-        run: pnpm run validate:plugins
-
-      - name: Validate Docs
-        run: pnpm run validate:docs
-
-      - name: Typecheck
-        run: pnpm typecheck
-
-      - name: Typecheck review scripts
-        run: pnpm exec tsc -p scripts/pr-review
-
-      - name: Build
-        run: pnpm build
-
-      - name: Run tests
-        run: npx turbo test -- --passWithNoTests --ci --testPathIgnorePatterns="api\.test\.ts|integration\.test\.ts"
-        env:
-          CI: true
-          SKIP_PG_TESTS: 1
-
   plugin-gate:
     name: Plugin PR Gate
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
@@ -79,3 +34,150 @@ jobs:
         run: node --experimental-strip-types scripts/pr-review/gate-main.ts
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  scope:
+    name: Classify scope
+    needs: plugin-gate
+    if: always() && (github.event_name == 'push' || needs.plugin-gate.result == 'success')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      lane: ${{ steps.scope.outputs.lane }}
+      turbo_filter: ${{ steps.scope.outputs.turbo_filter }}
+      skip_heavy: ${{ steps.scope.outputs.skip_heavy }}
+      www_install_filter: ${{ steps.scope.outputs.www_install_filter }}
+      www_test_filter: ${{ steps.scope.outputs.www_test_filter }}
+      adapters_filter: ${{ steps.scope.outputs.adapters_filter }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+
+      - name: Classify PR scope
+        id: scope
+        run: node --experimental-strip-types scripts/pr-review/pr-scope-main.ts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build:
+    name: Build & static checks
+    needs: scope
+    if: needs.scope.outputs.skip_heavy != 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - uses: ./.github/actions/prepare
+        with:
+          lane: ${{ needs.scope.outputs.lane }}
+          turbo_filter: ${{ needs.scope.outputs.turbo_filter }}
+          www_install_filter: ${{ needs.scope.outputs.www_install_filter }}
+
+      - name: Turbo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-build-${{ runner.os }}-${{ github.event_name == 'pull_request' && format('pr-{0}-', github.event.pull_request.number) || '' }}${{ github.sha }}
+          restore-keys: turbo-build-${{ runner.os }}-
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Validate Plugins
+        run: pnpm run validate:plugins
+
+      - name: Check plugin READMEs and npm metadata
+        if: steps.scope.outputs.skip_heavy != 'true'
+        run: pnpm generate:readmes:all --check
+
+      - name: Validate Docs
+        run: pnpm run validate:docs
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Typecheck review scripts
+        run: pnpm exec tsc -p scripts/pr-review
+
+      - name: Build
+        if: needs.scope.outputs.lane != 'www'
+        run: pnpm exec turbo build --filter="${{ needs.scope.outputs.turbo_filter }}" ${{ needs.scope.outputs.adapters_filter }}
+
+  test:
+    name: Test
+    needs: scope
+    if: needs.scope.outputs.skip_heavy != 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.scope.outputs.lane == 'full' && '["1","2","3","4"]' || '["1"]') }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - uses: ./.github/actions/prepare
+        with:
+          lane: ${{ needs.scope.outputs.lane }}
+          turbo_filter: ${{ needs.scope.outputs.turbo_filter }}
+          www_install_filter: ${{ needs.scope.outputs.www_install_filter }}
+
+      - name: Turbo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-test-${{ runner.os }}-${{ github.event_name == 'pull_request' && format('pr-{0}-', github.event.pull_request.number) || '' }}${{ github.sha }}-${{ matrix.shard }}
+          restore-keys: turbo-test-${{ runner.os }}-
+
+      # Only the full lane's filter is pure jest packages, so --shard applies
+      # there; www runs its node:test suite separately below, never sharded.
+      - name: Run tests
+        run: >-
+          pnpm exec turbo test --filter="${{ needs.scope.outputs.turbo_filter }}" ${{ needs.scope.outputs.adapters_filter }}
+          -- --passWithNoTests --ci
+          ${{ needs.scope.outputs.lane == 'full' && format('--shard={0}/4', matrix.shard) || '' }}
+          --testPathIgnorePatterns="api\.test\.ts$|(^|/)integration\.test\.ts$"
+        env:
+          CI: true
+          SKIP_PG_TESTS: 1
+
+      - name: Run www tests
+        if: needs.scope.outputs.www_test_filter != '' && matrix.shard == '1'
+        run: >-
+          pnpm exec turbo test ${{ needs.scope.outputs.www_test_filter }}
+          -- --passWithNoTests --ci
+          --testPathIgnorePatterns="api\.test\.ts$|(^|/)integration\.test\.ts$"
+        env:
+          CI: true
+          SKIP_PG_TESTS: 1
+
+  ci:
+    name: CI Checks
+    needs: [scope, build, test]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      # scope must succeed (a skipped scope means the plugin gate failed);
+      # build/test may be skipped only on the docs-only skip-heavy lane.
+      - name: Verify required jobs passed
+        run: |
+          if [ "${{ needs.scope.result }}" != "success" ]; then
+            echo "scope did not pass (result: ${{ needs.scope.result }})"
+            exit 1
+          fi
+          for r in "${{ needs.build.result }}" "${{ needs.test.result }}"; do
+            case "$r" in
+              success|skipped) ;;
+              *) echo "A required job did not pass: $r"; exit 1 ;;
+            esac
+          done

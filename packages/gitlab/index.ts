@@ -14,10 +14,9 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import {
-	getValidGitlabAccessToken,
 	gitlabOAuthTokenUrl,
 	isManagedGitlabHost,
 	normalizeGitlabBaseUrl,
@@ -656,7 +655,7 @@ const gitlabEndpointMeta = {
 	'branches.create': { riskLevel: 'write', description: 'Create a new branch' },
 	'branches.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a branch [DESTRUCTIVE]',
+		description: 'Delete a branch',
 	},
 	'commits.list': {
 		riskLevel: 'read',
@@ -689,7 +688,7 @@ const gitlabEndpointMeta = {
 	},
 	'pipelines.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a pipeline [DESTRUCTIVE]',
+		description: 'Delete a pipeline',
 	},
 	'pipelines.listJobs': {
 		riskLevel: 'read',
@@ -713,7 +712,7 @@ const gitlabEndpointMeta = {
 	'labels.update': { riskLevel: 'write', description: 'Update a label' },
 	'labels.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a label [DESTRUCTIVE]',
+		description: 'Delete a label',
 	},
 	'milestones.list': {
 		riskLevel: 'read',
@@ -733,7 +732,7 @@ const gitlabEndpointMeta = {
 	},
 	'milestones.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a milestone [DESTRUCTIVE]',
+		description: 'Delete a milestone',
 	},
 	'releases.list': {
 		riskLevel: 'read',
@@ -747,7 +746,7 @@ const gitlabEndpointMeta = {
 	'releases.update': { riskLevel: 'write', description: 'Update a release' },
 	'releases.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a release [DESTRUCTIVE]',
+		description: 'Delete a release',
 	},
 	'repository.getTree': {
 		riskLevel: 'read',
@@ -846,83 +845,15 @@ export function gitlab<const T extends GitlabPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('gitlab', 'oauth_2');
-				}
-
-				const res = await ctx.keys.get_integration_credentials();
-
-				if (!res.client_id || !res.client_secret) {
-					throw new Error(
-						'[auth-missing:gitlab:client_credentials]: GitLab client credentials are missing',
-					);
-				}
-
-				// Use a mutable variable so _refreshAuth always uses the latest refresh token
-				// (GitLab/self-managed may rotate refresh_token on refresh).
-				let currentRefreshToken = refreshToken;
-
-				const tokenUrl = gitlabOAuthTokenUrl(ctx.options.baseUrl);
-
-				let result: Awaited<ReturnType<typeof getValidGitlabAccessToken>>;
-				try {
-					result = await getValidGitlabAccessToken({
-						tokenUrl,
-						accessToken,
-						expiresAt,
-						refreshToken: currentRefreshToken,
-						clientId: res.client_id,
-						clientSecret: res.client_secret,
-						redirectUri: res.redirect_url,
-					});
-				} catch (error) {
-					throw new Error(
-						`[corsair:gitlab] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
-
-				if (result.refreshed) {
-					try {
-						await ctx.keys.set_access_token(result.accessToken);
-						await ctx.keys.set_expires_at(String(result.expiresAt));
-						if (result.newRefreshToken) {
-							currentRefreshToken = result.newRefreshToken;
-							await ctx.keys.set_refresh_token(currentRefreshToken);
-						}
-					} catch (error) {
-						throw new Error(
-							`[corsair:gitlab] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
-						);
-					}
-				}
-
-				(ctx as Record<string, unknown>)._refreshAuth = async () => {
-					const freshResult = await getValidGitlabAccessToken({
-						tokenUrl,
-						accessToken: null,
-						expiresAt: null,
-						refreshToken: currentRefreshToken,
-						clientId: res.client_id!,
-						clientSecret: res.client_secret!,
-						redirectUri: res.redirect_url,
-						forceRefresh: true,
-					});
-					await ctx.keys.set_access_token(freshResult.accessToken);
-					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-					if (freshResult.newRefreshToken) {
-						currentRefreshToken = freshResult.newRefreshToken;
-						await ctx.keys.set_refresh_token(currentRefreshToken);
-					}
-					return freshResult.accessToken;
-				};
-
-				return result.accessToken;
+				const creds = await ctx.keys.get_integration_credentials();
+				return getOAuthAccessToken(ctx, {
+					plugin: 'gitlab',
+					tokenUrl: gitlabOAuthTokenUrl(ctx.options.baseUrl),
+					tokenAuthMethod: 'body',
+					extraParams: creds.redirect_url
+						? { redirect_uri: creds.redirect_url }
+						: undefined,
+				});
 			}
 
 			if (ctx.authType === 'managed') {

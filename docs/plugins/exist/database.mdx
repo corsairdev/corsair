@@ -1,0 +1,203 @@
+---
+title: Database
+description: "Exist local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Exist plugin syncs data locally. Use `corsair.exist.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Attributes
+
+Path: `exist.db.attributes.search`
+
+```ts
+const rows = await corsair.exist.db.attributes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `label` | `string` | equals, contains, startsWith, endsWith, in |
+| `template` | `string` | equals, contains, startsWith, endsWith, in |
+| `group_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `group_label` | `string` | equals, contains, startsWith, endsWith, in |
+| `service_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `active` | `boolean` | equals |
+| `manual` | `boolean` | equals |
+| `priority` | `number` | equals, gt, gte, lt, lte, in |
+| `value_type` | `number` | equals, gt, gte, lt, lte, in |
+| `value_type_description` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Attribute Values
+
+Path: `exist.db.attributeValues.search`
+
+```ts
+const rows = await corsair.exist.db.attributeValues.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `attribute` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Averages
+
+Path: `exist.db.averages.search`
+
+```ts
+const rows = await corsair.exist.db.averages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `attribute` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `overall` | `number` | equals, gt, gte, lt, lte, in |
+| `monday` | `number` | equals, gt, gte, lt, lte, in |
+| `tuesday` | `number` | equals, gt, gte, lt, lte, in |
+| `wednesday` | `number` | equals, gt, gte, lt, lte, in |
+| `thursday` | `number` | equals, gt, gte, lt, lte, in |
+| `friday` | `number` | equals, gt, gte, lt, lte, in |
+| `saturday` | `number` | equals, gt, gte, lt, lte, in |
+| `sunday` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Correlations
+
+Path: `exist.db.correlations.search`
+
+```ts
+const rows = await corsair.exist.db.correlations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `attribute` | `string` | equals, contains, startsWith, endsWith, in |
+| `attribute2` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `period` | `number` | equals, gt, gte, lt, lte, in |
+| `offset` | `number` | equals, gt, gte, lt, lte, in |
+| `value` | `number` | equals, gt, gte, lt, lte, in |
+| `p` | `number` | equals, gt, gte, lt, lte, in |
+| `percentage` | `number` | equals, gt, gte, lt, lte, in |
+| `stars` | `number` | equals, gt, gte, lt, lte, in |
+| `second_person` | `string` | equals, contains, startsWith, endsWith, in |
+| `strength_description` | `string` | equals, contains, startsWith, endsWith, in |
+| `stars_description` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Insights
+
+Path: `exist.db.insights.search`
+
+```ts
+const rows = await corsair.exist.db.insights.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `target_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `attribute` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `html` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Profile
+
+Path: `exist.db.profile.search`
+
+```ts
+const rows = await corsair.exist.db.profile.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `first_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `avatar` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `local_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `imperial_distance` | `boolean` | equals |
+| `imperial_weight` | `boolean` | equals |
+| `imperial_energy` | `boolean` | equals |
+| `imperial_liquid` | `boolean` | equals |
+| `imperial_temperature` | `boolean` | equals |
+| `trial` | `boolean` | equals |
+| `delinquent` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

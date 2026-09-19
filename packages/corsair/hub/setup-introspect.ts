@@ -156,10 +156,16 @@ export async function buildConnectPluginManifestFromContext(
 						});
 						entry.oauthUrl = oauth.url;
 					} catch (error) {
-						entry.setupError =
-							error instanceof Error
-								? error.message
-								: `Could not prepare OAuth for ${plugin.id}`;
+						// No local client_id → creds are Hub-side; leave the URL for the Hub (like managed).
+						const noLocalClientId =
+							error instanceof Error &&
+							/client_id not configured/i.test(error.message);
+						if (!noLocalClientId) {
+							entry.setupError =
+								error instanceof Error
+									? error.message
+									: `Could not prepare OAuth for ${plugin.id}`;
+						}
 					}
 				}
 			}

@@ -1,0 +1,4822 @@
+{
+  "id": "googlebigquery",
+  "displayName": "Google BigQuery",
+  "description": "Serverless data warehouse for running SQL analytics on massive datasets at scale.",
+  "npmPackageName": "@corsair-dev/googlebigquery",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 62,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "project_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googlebigquery.api.analyticsHub.createDataExchange",
+      "shortPath": "analyticsHub.createDataExchange",
+      "description": "Create a new data exchange",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataExchangeId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primaryContact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "documentation",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primaryContact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "documentation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "listingCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.analyticsHub.createListing",
+      "shortPath": "analyticsHub.createListing",
+      "description": "Create a new listing (shareable dataset) in a data exchange",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataExchangeId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "listingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primaryContact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bigqueryDataset",
+            "optional": true,
+            "type": "{ dataset?: string, selectedResources?: { table?: string, view?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primaryContact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "documentation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "STATE_UNSPECIFIED | ACTIVE"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "bigqueryDataset",
+            "optional": true,
+            "type": "{ dataset?: string, selectedResources?: { table?: string, view?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.analyticsHub.createQueryTemplate",
+      "shortPath": "analyticsHub.createQueryTemplate",
+      "description": "Create a new query template in a data exchange",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataExchangeId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "googlebigquery.api.analyticsHub.listDataexchangesListings",
+      "shortPath": "analyticsHub.listDataexchangesListings",
+      "description": "List data exchanges in a location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataExchanges",
+            "optional": true,
+            "type": "{ name?: string, displayName?: string, description?: string, primaryContact?: string, documentation?: string, listingCount?: number }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.analyticsHub.listListings",
+      "shortPath": "analyticsHub.listListings",
+      "description": "List listings in a data exchange",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataExchangeId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listings",
+            "optional": true,
+            "type": "{ name?: string, displayName?: string, description?: string, primaryContact?: string, documentation?: string, state?: STATE_UNSPECIFIED | ACTIVE, categories?: string[], bigqueryDataset?: { dataset?: string, selectedResources?: { table?: string, view?: string }[] } }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.analyticsHub.listOrganizationDataExchanges",
+      "shortPath": "analyticsHub.listOrganizationDataExchanges",
+      "description": "List data exchanges across an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataExchanges",
+            "optional": true,
+            "type": "{ name?: string, displayName?: string, description?: string, primaryContact?: string, documentation?: string, listingCount?: number }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.analyticsHub.listQueryTemplates",
+      "shortPath": "analyticsHub.listQueryTemplates",
+      "description": "List query templates in a data exchange",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataExchangeId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queryTemplates",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.connections.create",
+      "shortPath": "connections.create",
+      "description": "Create a new external data source connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cloudSql",
+            "optional": true,
+            "type": "{ instanceId?: string, database?: string, type?: DATABASE_TYPE_UNSPECIFIED | POSTGRES | MYSQL, credential?: { username?: string, password?: string } }"
+          },
+          {
+            "key": "cloudResource",
+            "optional": true,
+            "type": "{ serviceAccountId?: string }"
+          },
+          {
+            "key": "aws",
+            "optional": true,
+            "type": "{ crossAccountRole?: { iamRoleId?: string }, accessRole?: { iamRoleId?: string } }"
+          },
+          {
+            "key": "azure",
+            "optional": true,
+            "type": "{ application?: string, clientId?: string, objectId?: string, customerTenantId?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasCredential",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cloudSql",
+            "optional": true,
+            "type": "{ instanceId?: string, database?: string, type?: DATABASE_TYPE_UNSPECIFIED | POSTGRES | MYSQL, credential?: { username?: string, password?: string } }"
+          },
+          {
+            "key": "cloudResource",
+            "optional": true,
+            "type": "{ serviceAccountId?: string }"
+          },
+          {
+            "key": "aws",
+            "optional": true,
+            "type": "{ crossAccountRole?: { iamRoleId?: string }, accessRole?: { iamRoleId?: string } }"
+          },
+          {
+            "key": "azure",
+            "optional": true,
+            "type": "{ application?: string, clientId?: string, objectId?: string, customerTenantId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.connections.listBigQueryConnections",
+      "shortPath": "connections.listBigQueryConnections",
+      "description": "List BigQuery connections across all locations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connections",
+            "optional": true,
+            "type": "{ name?: string, friendlyName?: string, description?: string, creationTime?: string, lastModifiedTime?: string, hasCredential?: boolean, cloudSql?: { instanceId?: string, database?: string, type?: DATABASE_TYPE_UNSPECIFIED | POSTGRES | MYSQL, credential?: { username?: string, password?: string } }, cloudResource?: { serviceAccountId?: string }, aws?: { crossAccountRole?: { iamRoleId?: string }, accessRole?: { iamRoleId?: string } }, azure?: { application?: string, clientId?: string, objectId?: string, customerTenantId?: string } }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.connections.listLocationsConnections",
+      "shortPath": "connections.listLocationsConnections",
+      "description": "List BigQuery connections in a specific location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connections",
+            "optional": true,
+            "type": "{ name?: string, friendlyName?: string, description?: string, creationTime?: string, lastModifiedTime?: string, hasCredential?: boolean, cloudSql?: { instanceId?: string, database?: string, type?: DATABASE_TYPE_UNSPECIFIED | POSTGRES | MYSQL, credential?: { username?: string, password?: string } }, cloudResource?: { serviceAccountId?: string }, aws?: { crossAccountRole?: { iamRoleId?: string }, accessRole?: { iamRoleId?: string } }, azure?: { application?: string, clientId?: string, objectId?: string, customerTenantId?: string } }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.connections.update",
+      "shortPath": "connections.update",
+      "description": "Update an existing connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updateMask",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "connection",
+            "optional": false,
+            "type": "{ name?: string, friendlyName?: string, description?: string, creationTime?: string, lastModifiedTime?: string, hasCredential?: boolean, cloudSql?: { instanceId?: string, database?: string, type?: DATABASE_TYPE_UNSPECIFIED | POSTGRES | MYSQL, credential?: { username?: string, password?: string } }, cloudResource?: { serviceAccountId?: string }, aws?: { crossAccountRole?: { iamRoleId?: string }, accessRole?: { iamRoleId?: string } }, azure?: { application?: string, clientId?: string, objectId?: string, customerTenantId?: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasCredential",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cloudSql",
+            "optional": true,
+            "type": "{ instanceId?: string, database?: string, type?: DATABASE_TYPE_UNSPECIFIED | POSTGRES | MYSQL, credential?: { username?: string, password?: string } }"
+          },
+          {
+            "key": "cloudResource",
+            "optional": true,
+            "type": "{ serviceAccountId?: string }"
+          },
+          {
+            "key": "aws",
+            "optional": true,
+            "type": "{ crossAccountRole?: { iamRoleId?: string }, accessRole?: { iamRoleId?: string } }"
+          },
+          {
+            "key": "azure",
+            "optional": true,
+            "type": "{ application?: string, clientId?: string, objectId?: string, customerTenantId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.datasets.create",
+      "shortPath": "datasets.create",
+      "description": "Create a new dataset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetReference",
+            "optional": false,
+            "type": "{ datasetId: string, projectId?: string }"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "defaultTableExpirationMs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defaultPartitionExpirationMs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "{ role?: string, userByEmail?: string, groupByEmail?: string, domain?: string, specialGroup?: string, iamMember?: string, view?: { projectId?: string, datasetId: string, tableId: string }, routine?: { projectId?: string, datasetId: string, routineId: string }, dataset?: { dataset: { datasetId: string, projectId?: string }, targetTypes?: string[] } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datasetReference",
+            "optional": false,
+            "type": "{ datasetId: string, projectId?: string }"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defaultTableExpirationMs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defaultPartitionExpirationMs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "{ role?: string, userByEmail?: string, groupByEmail?: string, domain?: string, specialGroup?: string, iamMember?: string, view?: { projectId?: string, datasetId: string, tableId: string }, routine?: { projectId?: string, datasetId: string, routineId: string }, dataset?: { dataset: { datasetId: string, projectId?: string }, targetTypes?: string[] } }[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxTimeTravelHours",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.datasets.delete",
+      "shortPath": "datasets.delete",
+      "description": "Permanently delete a dataset [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleteContents",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googlebigquery.api.datasets.get",
+      "shortPath": "datasets.get",
+      "description": "Get a dataset by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetView",
+            "optional": true,
+            "type": "FULL | METADATA | ACL"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datasetReference",
+            "optional": false,
+            "type": "{ datasetId: string, projectId?: string }"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defaultTableExpirationMs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defaultPartitionExpirationMs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "{ role?: string, userByEmail?: string, groupByEmail?: string, domain?: string, specialGroup?: string, iamMember?: string, view?: { projectId?: string, datasetId: string, tableId: string }, routine?: { projectId?: string, datasetId: string, routineId: string }, dataset?: { dataset: { datasetId: string, projectId?: string }, targetTypes?: string[] } }[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxTimeTravelHours",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.datasets.list",
+      "shortPath": "datasets.list",
+      "description": "List datasets in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datasets",
+            "optional": true,
+            "type": "{ kind?: string, id?: string, datasetReference: { datasetId: string, projectId?: string }, labels?: {}, friendlyName?: string, location?: string }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.datasets.patch",
+      "shortPath": "datasets.patch",
+      "description": "Partially update a dataset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "{ id?: string, kind?: string, etag?: string, selfLink?: string, datasetReference?: { datasetId: string, projectId?: string }, friendlyName?: string, description?: string, defaultTableExpirationMs?: string, defaultPartitionExpirationMs?: string, labels?: {}, access?: { role?: string, userByEmail?: string, groupByEmail?: string, domain?: string, specialGroup?: string, iamMember?: string, view?: { projectId?: string, datasetId: string, tableId: string }, routine?: { projectId?: string, datasetId: string, routineId: string }, dataset?: { dataset: { datasetId: string, projectId?: string }, targetTypes?: string[] } }[], location?: string, maxTimeTravelHours?: string, creationTime?: string, lastModifiedTime?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datasetReference",
+            "optional": false,
+            "type": "{ datasetId: string, projectId?: string }"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defaultTableExpirationMs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defaultPartitionExpirationMs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "{ role?: string, userByEmail?: string, groupByEmail?: string, domain?: string, specialGroup?: string, iamMember?: string, view?: { projectId?: string, datasetId: string, tableId: string }, routine?: { projectId?: string, datasetId: string, routineId: string }, dataset?: { dataset: { datasetId: string, projectId?: string }, targetTypes?: string[] } }[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxTimeTravelHours",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.datasets.undelete",
+      "shortPath": "datasets.undelete",
+      "description": "Restore a recently deleted dataset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deletionTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datasetReference",
+            "optional": false,
+            "type": "{ datasetId: string, projectId?: string }"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defaultTableExpirationMs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defaultPartitionExpirationMs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "{ role?: string, userByEmail?: string, groupByEmail?: string, domain?: string, specialGroup?: string, iamMember?: string, view?: { projectId?: string, datasetId: string, tableId: string }, routine?: { projectId?: string, datasetId: string, routineId: string }, dataset?: { dataset: { datasetId: string, projectId?: string }, targetTypes?: string[] } }[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxTimeTravelHours",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.datasets.update",
+      "shortPath": "datasets.update",
+      "description": "Replace a dataset (full update)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "{ id?: string, kind?: string, etag?: string, selfLink?: string, datasetReference: { datasetId: string, projectId?: string }, friendlyName?: string, description?: string, defaultTableExpirationMs?: string, defaultPartitionExpirationMs?: string, labels?: {}, access?: { role?: string, userByEmail?: string, groupByEmail?: string, domain?: string, specialGroup?: string, iamMember?: string, view?: { projectId?: string, datasetId: string, tableId: string }, routine?: { projectId?: string, datasetId: string, routineId: string }, dataset?: { dataset: { datasetId: string, projectId?: string }, targetTypes?: string[] } }[], location?: string, maxTimeTravelHours?: string, creationTime?: string, lastModifiedTime?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datasetReference",
+            "optional": false,
+            "type": "{ datasetId: string, projectId?: string }"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defaultTableExpirationMs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defaultPartitionExpirationMs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "{ role?: string, userByEmail?: string, groupByEmail?: string, domain?: string, specialGroup?: string, iamMember?: string, view?: { projectId?: string, datasetId: string, tableId: string }, routine?: { projectId?: string, datasetId: string, routineId: string }, dataset?: { dataset: { datasetId: string, projectId?: string }, targetTypes?: string[] } }[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxTimeTravelHours",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.iam.createLocationsDatapolicies",
+      "shortPath": "iam.createLocationsDatapolicies",
+      "description": "Create a column-level security / data masking policy",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dataPolicyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "policyTag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataPolicyType",
+            "optional": true,
+            "type": "DATA_POLICY_TYPE_UNSPECIFIED | COLUMN_LEVEL_SECURITY_POLICY | DATA_MASKING_POLICY"
+          },
+          {
+            "key": "dataMaskingPolicy",
+            "optional": true,
+            "type": "{ predefinedExpression?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataPolicyId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "policyTag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataPolicyType",
+            "optional": true,
+            "type": "DATA_POLICY_TYPE_UNSPECIFIED | COLUMN_LEVEL_SECURITY_POLICY | DATA_MASKING_POLICY"
+          },
+          {
+            "key": "dataMaskingPolicy",
+            "optional": true,
+            "type": "{ predefinedExpression?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.iam.getConnectionIamPolicy",
+      "shortPath": "iam.getConnectionIamPolicy",
+      "description": "Get a connection's IAM policy",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "connectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requestedPolicyVersion",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bindings",
+            "optional": true,
+            "type": "{ role?: string, members?: string[], condition?: { expression?: string, title?: string, description?: string, location?: string } }[]"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.iam.getRoutineIamPolicy",
+      "shortPath": "iam.getRoutineIamPolicy",
+      "description": "Get a routine's IAM policy",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "routineId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requestedPolicyVersion",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bindings",
+            "optional": true,
+            "type": "{ role?: string, members?: string[], condition?: { expression?: string, title?: string, description?: string, location?: string } }[]"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.iam.getServiceAccount",
+      "shortPath": "iam.getServiceAccount",
+      "description": "Get the project's BigQuery service account email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.iam.getTableIamPolicy",
+      "shortPath": "iam.getTableIamPolicy",
+      "description": "Get a table's IAM policy",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requestedPolicyVersion",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bindings",
+            "optional": true,
+            "type": "{ role?: string, members?: string[], condition?: { expression?: string, title?: string, description?: string, location?: string } }[]"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.iam.listLocationsDatapolicies",
+      "shortPath": "iam.listLocationsDatapolicies",
+      "description": "List data policies in a location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataPolicies",
+            "optional": true,
+            "type": "{ name?: string, dataPolicyId?: string, policyTag?: string, dataPolicyType?: DATA_POLICY_TYPE_UNSPECIFIED | COLUMN_LEVEL_SECURITY_POLICY | DATA_MASKING_POLICY, dataMaskingPolicy?: { predefinedExpression?: string } }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.iam.listRowAccessPolicies",
+      "shortPath": "iam.listRowAccessPolicies",
+      "description": "List a table's row-level access policies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rowAccessPolicies",
+            "optional": true,
+            "type": "{ etag?: string, rowAccessPolicyReference?: { projectId?: string, datasetId?: string, tableId?: string, policyId?: string }, filterPredicate?: string, creationTime?: string, lastModifiedTime?: string }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.iam.setRoutineIamPolicy",
+      "shortPath": "iam.setRoutineIamPolicy",
+      "description": "Replace a routine's IAM policy",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "routineId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "policy",
+            "optional": false,
+            "type": "{ version?: number, bindings?: { role?: string, members?: string[], condition?: { expression?: string, title?: string, description?: string, location?: string } }[], etag?: string }"
+          },
+          {
+            "key": "updateMask",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bindings",
+            "optional": true,
+            "type": "{ role?: string, members?: string[], condition?: { expression?: string, title?: string, description?: string, location?: string } }[]"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.iam.testRoutineIamPermissions",
+      "shortPath": "iam.testRoutineIamPermissions",
+      "description": "Test which permissions the caller has on a routine",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "routineId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "permissions",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.ml.deleteModel",
+      "shortPath": "ml.deleteModel",
+      "description": "Permanently delete a model [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "modelId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googlebigquery.api.ml.getBigqueryModel",
+      "shortPath": "ml.getBigqueryModel",
+      "description": "Get a BigQuery ML model by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "modelId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modelReference",
+            "optional": false,
+            "type": "{ projectId?: string, datasetId: string, modelId: string }"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "expirationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modelType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "featureColumns",
+            "optional": true,
+            "type": "{ name?: string, type?: {} }[]"
+          },
+          {
+            "key": "labelColumns",
+            "optional": true,
+            "type": "{ name?: string, type?: {} }[]"
+          },
+          {
+            "key": "trainingRuns",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.ml.listLocations",
+      "shortPath": "ml.listLocations",
+      "description": "List available BigQuery locations for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ name?: string, locationId?: string, displayName?: string }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.ml.listModels",
+      "shortPath": "ml.listModels",
+      "description": "List BigQuery ML models in a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "models",
+            "optional": true,
+            "type": "{ etag?: string, modelReference: { projectId?: string, datasetId: string, modelId: string }, creationTime?: string, lastModifiedTime?: string, description?: string, friendlyName?: string, labels?: {}, expirationTime?: string, location?: string, modelType?: string, featureColumns?: { name?: string, type?: {} }[], labelColumns?: { name?: string, type?: {} }[], trainingRuns?: {}[] }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.ml.listProjects",
+      "shortPath": "ml.listProjects",
+      "description": "List projects visible to the caller",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projects",
+            "optional": true,
+            "type": "{ kind?: string, id?: string, numericId?: string, projectReference?: { projectId?: string }, friendlyName?: string }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalItems",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.ml.patchModel",
+      "shortPath": "ml.patchModel",
+      "description": "Partially update a model's metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "modelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "expirationTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modelReference",
+            "optional": false,
+            "type": "{ projectId?: string, datasetId: string, modelId: string }"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "expirationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modelType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "featureColumns",
+            "optional": true,
+            "type": "{ name?: string, type?: {} }[]"
+          },
+          {
+            "key": "labelColumns",
+            "optional": true,
+            "type": "{ name?: string, type?: {} }[]"
+          },
+          {
+            "key": "trainingRuns",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.queries.cancelJob",
+      "shortPath": "queries.cancelJob",
+      "description": "Request cancellation of a running job",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "{ id?: string, kind?: string, selfLink?: string, etag?: string, jobReference?: { projectId?: string, jobId?: string, location?: string }, configuration?: { jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: {} }, status?: { state?: PENDING | RUNNING | DONE, errorResult?: { reason?: string, location?: string, debugInfo?: string, message?: string }, errors?: { reason?: string, location?: string, debugInfo?: string, message?: string }[] }, statistics?: {}, user_email?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.queries.deleteJobMetadata",
+      "shortPath": "queries.deleteJobMetadata",
+      "description": "Delete a job's metadata",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googlebigquery.api.queries.getJob",
+      "shortPath": "queries.getJob",
+      "description": "Get a job by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobReference",
+            "optional": true,
+            "type": "{ projectId?: string, jobId?: string, location?: string }"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "{ jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: {} }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ state?: PENDING | RUNNING | DONE, errorResult?: { reason?: string, location?: string, debugInfo?: string, message?: string }, errors?: { reason?: string, location?: string, debugInfo?: string, message?: string }[] }"
+          },
+          {
+            "key": "statistics",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "user_email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.queries.getQueryResults",
+      "shortPath": "queries.getQueryResults",
+      "description": "Fetch additional pages of results for a running/completed query job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startIndex",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }"
+          },
+          {
+            "key": "jobReference",
+            "optional": true,
+            "type": "{ projectId?: string, jobId?: string, location?: string }"
+          },
+          {
+            "key": "totalRows",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "{ f?: { v: any }[] }[]"
+          },
+          {
+            "key": "totalBytesProcessed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobComplete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ reason?: string, location?: string, debugInfo?: string, message?: string }[]"
+          },
+          {
+            "key": "cacheHit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "numDmlAffectedRows",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.queries.insertAll",
+      "shortPath": "queries.insertAll",
+      "description": "Stream rows into a table (supports insertId-based deduplication)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rows",
+            "optional": false,
+            "type": "{ insertId?: string, json: {} }[]"
+          },
+          {
+            "key": "skipInvalidRows",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ignoreUnknownValues",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "templateSuffix",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "insertErrors",
+            "optional": true,
+            "type": "{ index?: number, errors?: { reason?: string, location?: string, debugInfo?: string, message?: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.queries.insertJob",
+      "shortPath": "queries.insertJob",
+      "description": "Start a query, load, extract, or copy job (supports dry-run)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobReference",
+            "optional": true,
+            "type": "{ projectId?: string, jobId?: string, location?: string }"
+          },
+          {
+            "key": "configuration",
+            "optional": false,
+            "type": "{ jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: {} }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobReference",
+            "optional": true,
+            "type": "{ projectId?: string, jobId?: string, location?: string }"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "{ jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: {} }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ state?: PENDING | RUNNING | DONE, errorResult?: { reason?: string, location?: string, debugInfo?: string, message?: string }, errors?: { reason?: string, location?: string, debugInfo?: string, message?: string }[] }"
+          },
+          {
+            "key": "statistics",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "user_email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.queries.insertJobWithUpload",
+      "shortPath": "queries.insertJobWithUpload",
+      "description": "Start a load job that uploads an inline file as the data source",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobReference",
+            "optional": true,
+            "type": "{ projectId?: string, jobId?: string, location?: string }"
+          },
+          {
+            "key": "configuration",
+            "optional": false,
+            "type": "{ jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: {} }"
+          },
+          {
+            "key": "fileContent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobReference",
+            "optional": true,
+            "type": "{ projectId?: string, jobId?: string, location?: string }"
+          },
+          {
+            "key": "configuration",
+            "optional": true,
+            "type": "{ jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: {} }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ state?: PENDING | RUNNING | DONE, errorResult?: { reason?: string, location?: string, debugInfo?: string, message?: string }, errors?: { reason?: string, location?: string, debugInfo?: string, message?: string }[] }"
+          },
+          {
+            "key": "statistics",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "user_email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.queries.listJobs",
+      "shortPath": "queries.listJobs",
+      "description": "List jobs for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "allUsers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minCreationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxCreationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projection",
+            "optional": true,
+            "type": "full | minimal"
+          },
+          {
+            "key": "stateFilter",
+            "optional": true,
+            "type": "done | pending | running[]"
+          },
+          {
+            "key": "parentJobId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobs",
+            "optional": true,
+            "type": "{ id?: string, kind?: string, selfLink?: string, etag?: string, jobReference?: { projectId?: string, jobId?: string, location?: string }, configuration?: { jobType?: QUERY | LOAD | EXTRACT | COPY, query?: { query: string, destinationTable?: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, defaultDataset?: { datasetId: string, projectId?: string }, priority?: INTERACTIVE | BATCH, useLegacySql?: boolean, useQueryCache?: boolean, maximumBytesBilled?: string, queryParameters?: { name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[], parameterMode?: POSITIONAL | NAMED }, load?: { sourceUris?: string[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY, skipLeadingRows?: number, autodetect?: boolean, fieldDelimiter?: string, encoding?: UTF-8 | ISO-8859-1 }, extract?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, destinationUris?: string[], destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET, compression?: NONE | GZIP | DEFLATE | SNAPPY, fieldDelimiter?: string }, copy?: { sourceTable?: { projectId?: string, datasetId: string, tableId: string }, sourceTables?: { projectId?: string, datasetId: string, tableId: string }[], destinationTable: { projectId?: string, datasetId: string, tableId: string }, createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER, writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY }, dryRun?: boolean, jobTimeoutMs?: string, labels?: {} }, status?: { state?: PENDING | RUNNING | DONE, errorResult?: { reason?: string, location?: string, debugInfo?: string, message?: string }, errors?: { reason?: string, location?: string, debugInfo?: string, message?: string }[] }, statistics?: {}, user_email?: string }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.queries.query",
+      "shortPath": "queries.query",
+      "description": "Run a SQL query and return inline results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "defaultDataset",
+            "optional": true,
+            "type": "{ datasetId: string, projectId?: string }"
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "useQueryCache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "useLegacySql",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parameterMode",
+            "optional": true,
+            "type": "POSITIONAL | NAMED"
+          },
+          {
+            "key": "queryParameters",
+            "optional": true,
+            "type": "{ name?: string, parameterType: { type: string, arrayType?: any, structTypes?: any[] }, parameterValue: { value?: any, arrayValues?: any[], structValues?: {} } }[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maximumBytesBilled",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }"
+          },
+          {
+            "key": "jobReference",
+            "optional": true,
+            "type": "{ projectId?: string, jobId?: string, location?: string }"
+          },
+          {
+            "key": "totalRows",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "{ f?: { v: any }[] }[]"
+          },
+          {
+            "key": "totalBytesProcessed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobComplete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ reason?: string, location?: string, debugInfo?: string, message?: string }[]"
+          },
+          {
+            "key": "cacheHit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "numDmlAffectedRows",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.reservations.create",
+      "shortPath": "reservations.create",
+      "description": "Create a new slot reservation (has billing impact)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reservationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slotCapacity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ignoreIdleSlots",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "edition",
+            "optional": true,
+            "type": "EDITION_UNSPECIFIED | STANDARD | ENTERPRISE | ENTERPRISE_PLUS"
+          },
+          {
+            "key": "autoscale",
+            "optional": true,
+            "type": "{ currentSlots?: string, maxSlots?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slotCapacity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ignoreIdleSlots",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updateTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "concurrency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "edition",
+            "optional": true,
+            "type": "EDITION_UNSPECIFIED | STANDARD | ENTERPRISE | ENTERPRISE_PLUS"
+          },
+          {
+            "key": "autoscale",
+            "optional": true,
+            "type": "{ currentSlots?: string, maxSlots?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.reservations.createAssignment",
+      "shortPath": "reservations.createAssignment",
+      "description": "Assign a project/folder/org to a reservation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reservationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "jobType",
+            "optional": false,
+            "type": "JOB_TYPE_UNSPECIFIED | PIPELINE | QUERY | ML_EXTERNAL | BACKGROUND | CONTINUOUS"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobType",
+            "optional": true,
+            "type": "JOB_TYPE_UNSPECIFIED | PIPELINE | QUERY | ML_EXTERNAL | BACKGROUND | CONTINUOUS"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "STATE_UNSPECIFIED | PENDING | ACTIVE"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.reservations.createCapacityCommitment",
+      "shortPath": "reservations.createCapacityCommitment",
+      "description": "Purchase a new capacity commitment (has billing impact)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slotCount",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plan",
+            "optional": false,
+            "type": "COMMITMENT_PLAN_UNSPECIFIED | FLEX | FLEX_FLAT_RATE | MONTHLY | ANNUAL | THREE_YEAR"
+          },
+          {
+            "key": "renewalPlan",
+            "optional": true,
+            "type": "COMMITMENT_PLAN_UNSPECIFIED | FLEX | FLEX_FLAT_RATE | MONTHLY | ANNUAL | THREE_YEAR | NONE"
+          },
+          {
+            "key": "enforceSingleAdminProjectPerOrg",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slotCount",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "COMMITMENT_PLAN_UNSPECIFIED | FLEX | FLEX_FLAT_RATE | MONTHLY | ANNUAL | THREE_YEAR"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "STATE_UNSPECIFIED | PENDING | ACTIVE | FAILED"
+          },
+          {
+            "key": "commitmentEndTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "renewalPlan",
+            "optional": true,
+            "type": "COMMITMENT_PLAN_UNSPECIFIED | FLEX | FLEX_FLAT_RATE | MONTHLY | ANNUAL | THREE_YEAR | NONE"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.reservations.list",
+      "shortPath": "reservations.list",
+      "description": "List slot reservations in a location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reservations",
+            "optional": true,
+            "type": "{ name?: string, slotCapacity?: string, ignoreIdleSlots?: boolean, creationTime?: string, updateTime?: string, concurrency?: string, edition?: EDITION_UNSPECIFIED | STANDARD | ENTERPRISE | ENTERPRISE_PLUS, autoscale?: { currentSlots?: string, maxSlots?: string } }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.reservations.listAssignments",
+      "shortPath": "reservations.listAssignments",
+      "description": "List a reservation's assignments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reservationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assignments",
+            "optional": true,
+            "type": "{ name?: string, assignee?: string, jobType?: JOB_TYPE_UNSPECIFIED | PIPELINE | QUERY | ML_EXTERNAL | BACKGROUND | CONTINUOUS, state?: STATE_UNSPECIFIED | PENDING | ACTIVE }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.reservations.listCapacityCommitments",
+      "shortPath": "reservations.listCapacityCommitments",
+      "description": "List capacity commitments in a location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "capacityCommitments",
+            "optional": true,
+            "type": "{ name?: string, slotCount?: string, plan?: COMMITMENT_PLAN_UNSPECIFIED | FLEX | FLEX_FLAT_RATE | MONTHLY | ANNUAL | THREE_YEAR, state?: STATE_UNSPECIFIED | PENDING | ACTIVE | FAILED, commitmentEndTime?: string, renewalPlan?: COMMITMENT_PLAN_UNSPECIFIED | FLEX | FLEX_FLAT_RATE | MONTHLY | ANNUAL | THREE_YEAR | NONE }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.reservations.listGroups",
+      "shortPath": "reservations.listGroups",
+      "description": "List reservation groups in a location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reservationGroups",
+            "optional": true,
+            "type": "{ name?: string }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.reservations.searchAllAssignments",
+      "shortPath": "reservations.searchAllAssignments",
+      "description": "Search assignments across a location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assignments",
+            "optional": true,
+            "type": "{ name?: string, assignee?: string, jobType?: JOB_TYPE_UNSPECIFIED | PIPELINE | QUERY | ML_EXTERNAL | BACKGROUND | CONTINUOUS, state?: STATE_UNSPECIFIED | PENDING | ACTIVE }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.routines.create",
+      "shortPath": "routines.create",
+      "description": "Create a new routine (UDF or stored procedure)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "routineReference",
+            "optional": false,
+            "type": "{ projectId?: string, datasetId: string, routineId: string }"
+          },
+          {
+            "key": "routineType",
+            "optional": false,
+            "type": "SCALAR_FUNCTION | PROCEDURE | TABLE_VALUED_FUNCTION | AGGREGATE_FUNCTION"
+          },
+          {
+            "key": "definitionBody",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "SQL | JAVASCRIPT | PYTHON | JAVA | SCALA"
+          },
+          {
+            "key": "arguments",
+            "optional": true,
+            "type": "{ name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: {} }[]"
+          },
+          {
+            "key": "returnType",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "determinismLevel",
+            "optional": true,
+            "type": "DETERMINISM_LEVEL_UNSPECIFIED | DETERMINISTIC | NOT_DETERMINISTIC"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "routineReference",
+            "optional": false,
+            "type": "{ projectId?: string, datasetId: string, routineId: string }"
+          },
+          {
+            "key": "routineType",
+            "optional": true,
+            "type": "SCALAR_FUNCTION | PROCEDURE | TABLE_VALUED_FUNCTION | AGGREGATE_FUNCTION"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "SQL | JAVASCRIPT | PYTHON | JAVA | SCALA"
+          },
+          {
+            "key": "arguments",
+            "optional": true,
+            "type": "{ name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: {} }[]"
+          },
+          {
+            "key": "returnType",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "importedLibraries",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "definitionBody",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "determinismLevel",
+            "optional": true,
+            "type": "DETERMINISM_LEVEL_UNSPECIFIED | DETERMINISTIC | NOT_DETERMINISTIC"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.routines.delete",
+      "shortPath": "routines.delete",
+      "description": "Permanently delete a routine [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "routineId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googlebigquery.api.routines.get",
+      "shortPath": "routines.get",
+      "description": "Get a routine by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "routineId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "readMask",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "routineReference",
+            "optional": false,
+            "type": "{ projectId?: string, datasetId: string, routineId: string }"
+          },
+          {
+            "key": "routineType",
+            "optional": true,
+            "type": "SCALAR_FUNCTION | PROCEDURE | TABLE_VALUED_FUNCTION | AGGREGATE_FUNCTION"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "SQL | JAVASCRIPT | PYTHON | JAVA | SCALA"
+          },
+          {
+            "key": "arguments",
+            "optional": true,
+            "type": "{ name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: {} }[]"
+          },
+          {
+            "key": "returnType",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "importedLibraries",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "definitionBody",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "determinismLevel",
+            "optional": true,
+            "type": "DETERMINISM_LEVEL_UNSPECIFIED | DETERMINISTIC | NOT_DETERMINISTIC"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.routines.list",
+      "shortPath": "routines.list",
+      "description": "List routines (UDFs/stored procedures) in a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "readMask",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "routines",
+            "optional": true,
+            "type": "{ etag?: string, routineReference: { projectId?: string, datasetId: string, routineId: string }, routineType?: SCALAR_FUNCTION | PROCEDURE | TABLE_VALUED_FUNCTION | AGGREGATE_FUNCTION, creationTime?: string, lastModifiedTime?: string, language?: SQL | JAVASCRIPT | PYTHON | JAVA | SCALA, arguments?: { name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: {} }[], returnType?: {}, importedLibraries?: string[], definitionBody?: string, description?: string, determinismLevel?: DETERMINISM_LEVEL_UNSPECIFIED | DETERMINISTIC | NOT_DETERMINISTIC }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.routines.update",
+      "shortPath": "routines.update",
+      "description": "Replace a routine (full update)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "routineId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "routine",
+            "optional": false,
+            "type": "{ etag?: string, routineReference: { projectId?: string, datasetId: string, routineId: string }, routineType?: SCALAR_FUNCTION | PROCEDURE | TABLE_VALUED_FUNCTION | AGGREGATE_FUNCTION, creationTime?: string, lastModifiedTime?: string, language?: SQL | JAVASCRIPT | PYTHON | JAVA | SCALA, arguments?: { name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: {} }[], returnType?: {}, importedLibraries?: string[], definitionBody?: string, description?: string, determinismLevel?: DETERMINISM_LEVEL_UNSPECIFIED | DETERMINISTIC | NOT_DETERMINISTIC }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "routineReference",
+            "optional": false,
+            "type": "{ projectId?: string, datasetId: string, routineId: string }"
+          },
+          {
+            "key": "routineType",
+            "optional": true,
+            "type": "SCALAR_FUNCTION | PROCEDURE | TABLE_VALUED_FUNCTION | AGGREGATE_FUNCTION"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "SQL | JAVASCRIPT | PYTHON | JAVA | SCALA"
+          },
+          {
+            "key": "arguments",
+            "optional": true,
+            "type": "{ name?: string, argumentKind?: FIXED_TYPE | ANY_TYPE, mode?: IN | OUT | INOUT, dataType?: {} }[]"
+          },
+          {
+            "key": "returnType",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "importedLibraries",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "definitionBody",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "determinismLevel",
+            "optional": true,
+            "type": "DETERMINISM_LEVEL_UNSPECIFIED | DETERMINISTIC | NOT_DETERMINISTIC"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.tables.create",
+      "shortPath": "tables.create",
+      "description": "Create a new table or view",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableReference",
+            "optional": false,
+            "type": "{ projectId?: string, datasetId: string, tableId: string }"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "timePartitioning",
+            "optional": true,
+            "type": "{ type?: DAY | HOUR | MONTH | YEAR, expirationMs?: string, field?: string }"
+          },
+          {
+            "key": "clustering",
+            "optional": true,
+            "type": "{ fields?: string[] }"
+          },
+          {
+            "key": "view",
+            "optional": true,
+            "type": "{ query?: string, useLegacySql?: boolean }"
+          },
+          {
+            "key": "externalDataConfiguration",
+            "optional": true,
+            "type": "{ sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, autodetect?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tableReference",
+            "optional": false,
+            "type": "{ projectId?: string, datasetId: string, tableId: string }"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }"
+          },
+          {
+            "key": "timePartitioning",
+            "optional": true,
+            "type": "{ type?: DAY | HOUR | MONTH | YEAR, expirationMs?: string, field?: string }"
+          },
+          {
+            "key": "clustering",
+            "optional": true,
+            "type": "{ fields?: string[] }"
+          },
+          {
+            "key": "view",
+            "optional": true,
+            "type": "{ query?: string, useLegacySql?: boolean }"
+          },
+          {
+            "key": "externalDataConfiguration",
+            "optional": true,
+            "type": "{ sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, autodetect?: boolean }"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numRows",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numBytes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expirationTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.tables.delete",
+      "shortPath": "tables.delete",
+      "description": "Permanently delete a table [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googlebigquery.api.tables.getSchema",
+      "shortPath": "tables.getSchema",
+      "description": "Get a table's schema and metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "selectedFields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "view",
+            "optional": true,
+            "type": "TABLE_METADATA_VIEW_UNSPECIFIED | BASIC | STORAGE_STATS | FULL"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tableReference",
+            "optional": false,
+            "type": "{ projectId?: string, datasetId: string, tableId: string }"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }"
+          },
+          {
+            "key": "timePartitioning",
+            "optional": true,
+            "type": "{ type?: DAY | HOUR | MONTH | YEAR, expirationMs?: string, field?: string }"
+          },
+          {
+            "key": "clustering",
+            "optional": true,
+            "type": "{ fields?: string[] }"
+          },
+          {
+            "key": "view",
+            "optional": true,
+            "type": "{ query?: string, useLegacySql?: boolean }"
+          },
+          {
+            "key": "externalDataConfiguration",
+            "optional": true,
+            "type": "{ sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, autodetect?: boolean }"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numRows",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numBytes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expirationTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.tables.list",
+      "shortPath": "tables.list",
+      "description": "List tables in a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tables",
+            "optional": true,
+            "type": "{ kind?: string, id?: string, tableReference: { projectId?: string, datasetId: string, tableId: string }, friendlyName?: string, type?: string, creationTime?: string, expirationTime?: string, labels?: {}, view?: { query?: string, useLegacySql?: boolean } }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalItems",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.tables.listTableData",
+      "shortPath": "tables.listTableData",
+      "description": "List a table's row data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startIndex",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selectedFields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalRows",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "{ f?: { v: any }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.tables.patch",
+      "shortPath": "tables.patch",
+      "description": "Partially update a table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "{ id?: string, kind?: string, etag?: string, selfLink?: string, tableReference?: { projectId?: string, datasetId: string, tableId: string }, friendlyName?: string, description?: string, labels?: {}, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, timePartitioning?: { type?: DAY | HOUR | MONTH | YEAR, expirationMs?: string, field?: string }, clustering?: { fields?: string[] }, view?: { query?: string, useLegacySql?: boolean }, externalDataConfiguration?: { sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, autodetect?: boolean }, type?: string, location?: string, numRows?: string, numBytes?: string, creationTime?: string, lastModifiedTime?: string, expirationTime?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tableReference",
+            "optional": false,
+            "type": "{ projectId?: string, datasetId: string, tableId: string }"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }"
+          },
+          {
+            "key": "timePartitioning",
+            "optional": true,
+            "type": "{ type?: DAY | HOUR | MONTH | YEAR, expirationMs?: string, field?: string }"
+          },
+          {
+            "key": "clustering",
+            "optional": true,
+            "type": "{ fields?: string[] }"
+          },
+          {
+            "key": "view",
+            "optional": true,
+            "type": "{ query?: string, useLegacySql?: boolean }"
+          },
+          {
+            "key": "externalDataConfiguration",
+            "optional": true,
+            "type": "{ sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, autodetect?: boolean }"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numRows",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numBytes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expirationTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlebigquery.api.tables.update",
+      "shortPath": "tables.update",
+      "description": "Replace a table (full update)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "{ id?: string, kind?: string, etag?: string, selfLink?: string, tableReference: { projectId?: string, datasetId: string, tableId: string }, friendlyName?: string, description?: string, labels?: {}, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, timePartitioning?: { type?: DAY | HOUR | MONTH | YEAR, expirationMs?: string, field?: string }, clustering?: { fields?: string[] }, view?: { query?: string, useLegacySql?: boolean }, externalDataConfiguration?: { sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, autodetect?: boolean }, type?: string, location?: string, numRows?: string, numBytes?: string, creationTime?: string, lastModifiedTime?: string, expirationTime?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "selfLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tableReference",
+            "optional": false,
+            "type": "{ projectId?: string, datasetId: string, tableId: string }"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "{ fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }"
+          },
+          {
+            "key": "timePartitioning",
+            "optional": true,
+            "type": "{ type?: DAY | HOUR | MONTH | YEAR, expirationMs?: string, field?: string }"
+          },
+          {
+            "key": "clustering",
+            "optional": true,
+            "type": "{ fields?: string[] }"
+          },
+          {
+            "key": "view",
+            "optional": true,
+            "type": "{ query?: string, useLegacySql?: boolean }"
+          },
+          {
+            "key": "externalDataConfiguration",
+            "optional": true,
+            "type": "{ sourceUris?: string[], sourceFormat?: string, schema?: { fields?: { name: string, type: string, mode?: string, description?: string, fields?: lazy }[] }, autodetect?: boolean }"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numRows",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numBytes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expirationTime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "googlebigquery.db.datasets.search",
+      "entityName": "datasets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "friendlyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creationTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "selfLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googlebigquery.db.jobs.search",
+      "entityName": "jobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "kind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "selfLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googlebigquery.db.models.search",
+      "entityName": "models",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modelType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "friendlyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creationTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googlebigquery.db.routines.search",
+      "entityName": "routines",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "routineType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "definitionBody",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creationTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googlebigquery.db.tables.search",
+      "entityName": "tables",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "friendlyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "numRows",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "numBytes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creationTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastModifiedTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expirationTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "selfLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

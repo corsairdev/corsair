@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "HeyGen plugin for Corsair"
+description: "AI video platform for creating avatar videos, translations, and personalized video content."
 ---
 
-Use **HeyGen** through Corsair: one client, typed API calls, optional local DB sync.
+Use **HeyGen** through Corsair: one client, typed API calls.
 
 **What you get:**
 
@@ -14,122 +14,108 @@ Use **HeyGen** through Corsair: one client, typed API calls, optional local DB s
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/heygen
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/heygen
 ```
+```bash yarn
+yarn add corsair @corsair-dev/heygen
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/heygen
+```
+```bash bun
+bun add corsair @corsair-dev/heygen
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { heygen } from '@corsair-dev/heygen';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [heygen()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { heygen } from '@corsair-dev/heygen';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [heygen()],
+	plugins: [
+		heygen(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/heygen/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=heygen
-```
+<Tab title="API Key (Recommended)">
 
-Use the key names documented in [Get Credentials](/plugins/heygen/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=heygen --tenant=<tenantId>
-```
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
-
-</Step>
-
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="API Key (Default)">
-
-```ts corsair.ts
+```ts
 heygen()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=heygen` (see [Get Credentials](/plugins/heygen/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 </Tabs>
 
+</Step>
 
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'heygen',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `aiClipping.get`
+**`aiClipping.get`**
 
 ```ts
-await corsair.heygen.api.aiClipping.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.aiClipping.get({});
 ```
 
 
-**Write-style (write):** `aiClipping.create`
+**`aiClipping.create`**
 
 ```ts
-await corsair.heygen.api.aiClipping.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.heygen.api.aiClipping.create({});
 ```
 
 
-See the full list on the [API](/plugins/heygen/api) page. Use `pnpm corsair list --plugin=heygen` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/heygen/api) page.
 
----
+## What's next
 
-## Hooks
-
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
-
----
-
-## Reference
-
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/heygen/api) |
-| Credentials | [Get credentials](/plugins/heygen/get-credentials) |
-
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/heygen/api">
+    Every `heygen.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

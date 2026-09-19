@@ -7,10 +7,10 @@ import {
 } from './integration-claim-limits';
 
 describe('canClaimMore', () => {
-	it('caps a contributor at two held claims', () => {
-		assert.equal(MAX_USER_BUILT_INTEGRATIONS, 2);
+	it('caps a contributor at one held claim', () => {
+		assert.equal(MAX_USER_BUILT_INTEGRATIONS, 1);
 		assert.equal(canClaimMore(0), true);
-		assert.equal(canClaimMore(1), true);
+		assert.equal(canClaimMore(1), false);
 		assert.equal(canClaimMore(2), false);
 	});
 

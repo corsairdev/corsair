@@ -1,0 +1,92 @@
+---
+title: Database
+description: "TwoChat local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The TwoChat plugin syncs data locally. Use `corsair.twochat.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Accounts
+
+Path: `twochat.db.accounts.search`
+
+```ts
+const rows = await corsair.twochat.db.accounts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `on_trial` | `boolean` | equals |
+| `blocked` | `boolean` | equals |
+| `requests_per_minute` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Contacts
+
+Path: `twochat.db.contacts.search`
+
+```ts
+const rows = await corsair.twochat.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `first_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `profile_pic_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Webhook Subscriptions
+
+Path: `twochat.db.webhookSubscriptions.search`
+
+```ts
+const rows = await corsair.twochat.db.webhookSubscriptions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `event_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `channel_uuid` | `string` | equals, contains, startsWith, endsWith, in |
+| `hook_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

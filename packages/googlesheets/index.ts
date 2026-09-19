@@ -12,8 +12,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
-import { getValidAccessToken } from './client';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import type {
 	GoogleSheetsEndpointInputs,
 	GoogleSheetsEndpointOutputs,
@@ -221,7 +220,7 @@ const googleSheetsEndpointMeta = {
 	},
 	'sheets.clearSheet': {
 		riskLevel: 'destructive',
-		description: 'Clear all data from a sheet [DESTRUCTIVE]',
+		description: 'Clear all data from a sheet',
 	},
 	'sheets.createSheet': {
 		riskLevel: 'write',
@@ -235,7 +234,7 @@ const googleSheetsEndpointMeta = {
 	},
 	'sheets.deleteRowsOrColumns': {
 		riskLevel: 'destructive',
-		description: 'Delete rows or columns from a sheet [DESTRUCTIVE]',
+		description: 'Delete rows or columns from a sheet',
 	},
 	'sheets.listSheetsInSpreadsheet': {
 		riskLevel: 'read',
@@ -303,60 +302,10 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('googlesheets', 'oauth_2');
-				}
-
-				const res = await ctx.keys.get_integration_credentials();
-
-				if (!res.client_id || !res.client_secret) {
-					throw new Error(
-						'[corsair:googlesheets] No client id or client secret',
-					);
-				}
-
-				try {
-					const result = await getValidAccessToken({
-						accessToken,
-						expiresAt,
-						refreshToken,
-						clientId: res.client_id,
-						clientSecret: res.client_secret,
-					});
-
-					if (result.refreshed) {
-						await Promise.all([
-							ctx.keys.set_access_token(result.accessToken),
-							ctx.keys.set_expires_at(String(result.expiresAt)),
-						]);
-					}
-
-					(ctx as Record<string, unknown>)._refreshAuth = async () => {
-						const freshResult = await getValidAccessToken({
-							accessToken: null,
-							expiresAt: null,
-							refreshToken,
-							clientId: res.client_id!,
-							clientSecret: res.client_secret!,
-							forceRefresh: true,
-						});
-						await ctx.keys.set_access_token(freshResult.accessToken);
-						await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-						return freshResult.accessToken;
-					};
-
-					return result.accessToken;
-				} catch (error) {
-					throw new Error(
-						`[corsair:googlesheets] Failed to get valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
+				return getOAuthAccessToken(ctx, {
+					plugin: 'googlesheets',
+					tokenUrl: 'https://oauth2.googleapis.com/token',
+				});
 			}
 
 			throw new AuthMissingError('googlesheets', 'oauth_2');

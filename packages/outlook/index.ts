@@ -16,9 +16,8 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
-import { getValidAccessToken } from './client';
 import { Calendars, Contacts, Events, Folders, Messages } from './endpoints';
 import type {
 	OutlookEndpointInputs,
@@ -403,7 +402,7 @@ const outlookEndpointMeta = {
 	},
 	'messages.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete an email message [DESTRUCTIVE]',
+		description: 'Delete an email message',
 	},
 	'messages.move': {
 		riskLevel: 'write',
@@ -444,7 +443,7 @@ const outlookEndpointMeta = {
 	},
 	'events.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a calendar event [DESTRUCTIVE]',
+		description: 'Delete a calendar event',
 	},
 	'events.cancel': {
 		riskLevel: 'write',
@@ -470,7 +469,7 @@ const outlookEndpointMeta = {
 	'calendars.list': { riskLevel: 'read', description: 'List all calendars' },
 	'calendars.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a calendar [DESTRUCTIVE]',
+		description: 'Delete a calendar',
 	},
 	'contacts.create': {
 		riskLevel: 'write',
@@ -480,7 +479,7 @@ const outlookEndpointMeta = {
 	'contacts.update': { riskLevel: 'write', description: 'Update a contact' },
 	'contacts.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a contact [DESTRUCTIVE]',
+		description: 'Delete a contact',
 	},
 	'folders.create': {
 		riskLevel: 'write',
@@ -491,7 +490,7 @@ const outlookEndpointMeta = {
 	'folders.update': { riskLevel: 'write', description: 'Rename a mail folder' },
 	'folders.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a mail folder [DESTRUCTIVE]',
+		description: 'Delete a mail folder',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof outlookEndpointsNested>;
 
@@ -643,37 +642,11 @@ export function outlook<const T extends OutlookPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('outlook', 'oauth_2');
-				}
-
-				const res = await ctx.keys.get_integration_credentials();
-				if (!res.client_id || !res.client_secret) {
-					throw new Error('No client id or client secret');
-				}
-
-				const result = await getValidAccessToken({
-					accessToken,
-					expiresAt,
-					refreshToken,
-					clientId: res.client_id,
-					clientSecret: res.client_secret,
+				return getOAuthAccessToken(ctx, {
+					plugin: 'outlook',
+					tokenUrl:
+						'https://login.microsoftonline.com/common/oauth2/v2.0/token',
 				});
-
-				if (result.refreshed) {
-					await Promise.all([
-						ctx.keys.set_access_token(result.accessToken),
-						ctx.keys.set_expires_at(String(result.expiresAt)),
-					]);
-				}
-
-				return result.accessToken;
 			}
 
 			if (ctx.authType === 'managed') {

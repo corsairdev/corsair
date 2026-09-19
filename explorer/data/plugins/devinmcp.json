@@ -1,0 +1,448 @@
+{
+  "id": "devinmcp",
+  "displayName": "Devin MCP",
+  "description": "MCP integration for Devin AI software engineering agent capabilities and tooling.",
+  "npmPackageName": "@corsair-dev/devinmcp",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "devinmcp.api.session.create",
+      "shortPath": "session.create",
+      "description": "Create a new Devin session to start working on a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "create_as_user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "playbook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "knowledge_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "max_acu_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "snapshot_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idempotent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unlisted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "structured_output_schema",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "acus_consumed",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pull_requests",
+            "optional": false,
+            "type": "{ url?: string }[]"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_detail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "structured_output",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "playbook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_session_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "devinmcp.api.session.get",
+      "shortPath": "session.get",
+      "description": "Get details and status of an existing Devin session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "acus_consumed",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pull_requests",
+            "optional": false,
+            "type": "{ url?: string }[]"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_detail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "structured_output",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "playbook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_session_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "devinmcp.api.session.list",
+      "shortPath": "session.list",
+      "description": "List Devin sessions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "user_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "session_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ session_id: string, url: string, status: string, tags: string[], org_id: string, created_at: number, updated_at: number, acus_consumed: number, pull_requests: { url?: string }[], title?: string | null, user_id?: string | null, status_detail?: string | null, structured_output?: {} | null, playbook_id?: string | null, parent_session_id?: string | null }[]"
+          },
+          {
+            "key": "end_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_next_page",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "devinmcp.api.session.sendMessage",
+      "shortPath": "session.sendMessage",
+      "description": "Send a follow-up message to an existing Devin session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "org_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "acus_consumed",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pull_requests",
+            "optional": false,
+            "type": "{ url?: string }[]"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_detail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "structured_output",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "playbook_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_session_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -17,6 +17,10 @@ import { managementHandler } from '../handler';
 // same handler out per exported method.
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * Creates Next.js App Router route handlers (GET/POST/OPTIONS) that forward the
+ * native Web Request — body untouched — to the shared management handler.
+ */
 export function toNextJsHandler(
 	// `unknown` matches the managementHandler signature — see the justification
 	// there. The handler only reads the CORSAIR_INTERNAL symbol, so the public

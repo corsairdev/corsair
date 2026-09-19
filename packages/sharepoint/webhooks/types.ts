@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -99,7 +100,7 @@ export function verifySharepointWebhookSignature(
 	request: WebhookRequest<SharepointListChangedPayload>,
 	clientState?: string,
 ): { valid: boolean; error?: string } {
-	if (!clientState) {
+	if (!clientState?.trim()) {
 		return { valid: false, error: 'Missing client state' };
 	}
 
@@ -112,7 +113,10 @@ export function verifySharepointWebhookSignature(
 	// Graph batches notifications into one request, so checking only value[0]
 	// would let unverified entries ride along behind a valid one.
 	const allMatch = notifications.every(
-		(n) => typeof n?.clientState === 'string' && n.clientState === clientState,
+		(n) =>
+			typeof n?.clientState === 'string' &&
+			Buffer.byteLength(n.clientState) === Buffer.byteLength(clientState) &&
+			timingSafeEqual(Buffer.from(n.clientState), Buffer.from(clientState)),
 	);
 	if (!allMatch) {
 		return { valid: false, error: 'Client state mismatch' };
