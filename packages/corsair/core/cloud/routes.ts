@@ -7,4 +7,6 @@ export const CLOUD_ROUTES = {
 	tenant: '/tenants/:id',
 	connectionStatus: '/connection-status',
 	disconnect: '/disconnect',
+	permission: '/permissions/:id',
+	permissionLookup: '/permissions/lookup-by-token',
 } as const;
