@@ -124,7 +124,6 @@ export type AddMemberToProjectInput = z.infer<
 // Create Attachment
 export const CreateAttachmentInputSchema = z.object({
 	task_id: z.number(),
-	file: z.instanceof(File).optional(), // For multipart upload
 	file_name: z.string().optional(),
 	file_size: z.number().optional(),
 	content_type: z.string().optional(),

@@ -12,7 +12,6 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { BugherdAPIError, makeBugherdRequest } from './client';
 import { Bugherd } from './endpoints';
 import type {
 	BugherdEndpointInputs,

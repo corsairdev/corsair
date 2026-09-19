@@ -633,10 +633,6 @@ export const uploadAttachment: BugherdEndpoints['uploadAttachment'] = async (
 ) => {
 	const { task_id, file } = input;
 
-	// For file uploads, we need to use FormData
-	const formData = new FormData();
-	formData.append('file', file);
-
 	const config = {
 		BASE: 'https://www.bugherd.com/api_v2',
 		VERSION: '2',
@@ -650,8 +646,7 @@ export const uploadAttachment: BugherdEndpoints['uploadAttachment'] = async (
 	const requestOptions = {
 		method: 'POST' as const,
 		url: `tasks/${task_id}/attachments`,
-		body: formData,
-		mediaType: 'multipart/form-data',
+		formData: { file },
 	};
 
 	const { request } = await import('corsair/http');
