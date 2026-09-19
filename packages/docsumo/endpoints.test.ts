@@ -26,7 +26,7 @@ const mockLogEvent = logEventFromContext as jest.MockedFunction<
 	typeof logEventFromContext
 >;
 const TEST_API_KEY = 'test-api-key';
-const ctx = { key: TEST_API_KEY } as unknown as DocsumoContext;
+const ctx = { key: TEST_API_KEY } as DocsumoContext;
 
 beforeEach(() => {
 	mockRequest.mockReset();
