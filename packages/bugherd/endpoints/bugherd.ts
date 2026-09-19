@@ -633,27 +633,12 @@ export const uploadAttachment: BugherdEndpoints['uploadAttachment'] = async (
 ) => {
 	const { task_id, file } = input;
 
-	const config = {
-		BASE: 'https://www.bugherd.com/api_v2',
-		VERSION: '2',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit' as const,
-		HEADERS: {
-			Authorization: `Basic ${Buffer.from(`${ctx.key}:x`).toString('base64')}`,
-		},
-	};
-
-	const requestOptions = {
-		method: 'POST' as const,
-		url: `tasks/${task_id}/attachments`,
+	const result = await makeBugherdRequest<
+		BugherdEndpointOutputs['uploadAttachment']
+	>(`tasks/${task_id}/attachments`, ctx.key, {
+		method: 'POST',
 		formData: { file },
-	};
-
-	const { request } = await import('corsair/http');
-	const result = await request<BugherdEndpointOutputs['uploadAttachment']>(
-		config,
-		requestOptions,
-	);
+	});
 
 	await logEventFromContext(
 		ctx,

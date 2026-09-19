@@ -25,10 +25,12 @@ export async function makeBugherdRequest<T>(
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
+		formData?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, formData, query } = options;
+	const isWrite = method === 'POST' || method === 'PUT' || method === 'PATCH';
 
 	const config: OpenAPIConfig = {
 		BASE: BUGHERD_API_BASE,
@@ -36,28 +38,26 @@ export async function makeBugherdRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: {
-			'Content-Type': 'application/json',
 			Authorization: getBasicAuthHeader(apiKey),
+			...(isWrite && !formData ? { 'Content-Type': 'application/json' } : {}),
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
+		body: isWrite && !formData ? body : undefined,
+		formData: isWrite && formData ? formData : undefined,
+		mediaType:
+			isWrite && !formData ? 'application/json; charset=utf-8' : undefined,
 		query,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw error;
-		}
+		// ApiError carries status and retryAfter, which error-handlers.ts needs.
+		if (error instanceof ApiError) throw error;
 		if (error instanceof Error) {
 			throw new BugherdAPIError(error.message);
 		}

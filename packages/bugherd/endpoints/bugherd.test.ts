@@ -663,7 +663,7 @@ describe('BugHerd Endpoint Tests (Mocked Client, Real Endpoints)', () => {
 			expect(response.comment.body).toBe('Test comment');
 		});
 
-		it('uploadAttachment returns parsed response', async () => {
+		it('uploadAttachment calls client with multipart formData and returns parsed response', async () => {
 			const mockResponse = {
 				attachment: {
 					id: 202,
@@ -677,10 +677,24 @@ describe('BugHerd Endpoint Tests (Mocked Client, Real Endpoints)', () => {
 					user_id: 1,
 				},
 			};
-			// uploadAttachment uses a different code path with FormData
-			// We just verify the output schema parsing works
-			UploadAttachmentOutputSchema.parse(mockResponse);
-			expect(mockResponse.attachment.id).toBe(202);
+			mockMakeRequest.mockResolvedValue(mockResponse);
+
+			const file = new File(['hello'], 'upload.txt', { type: 'text/plain' });
+			const input = { task_id: 100, file };
+			const response = await endpoints.uploadAttachment(mockCtx, input);
+
+			expect(mockMakeRequest).toHaveBeenCalledTimes(1);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'tasks/100/attachments',
+				'test-api-key',
+				expect.objectContaining({
+					method: 'POST',
+					formData: { file },
+				}),
+			);
+
+			UploadAttachmentOutputSchema.parse(response);
+			expect(response.attachment.id).toBe(202);
 		});
 	});
 
