@@ -10,7 +10,11 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 type Session = {
 	server: McpServer;
 	transport: StreamableHTTPServerTransport;
-	timer: NodeJS.Timeout;
+	timer?: NodeJS.Timeout;
+	// In-flight requests on this session (a POST, or a long-lived GET/SSE
+	// stream). The idle reaper only arms when this hits 0, so it can never close
+	// a session mid-request.
+	active: number;
 };
 
 export type NodeMcpHandlerOptions = {
@@ -48,14 +52,31 @@ export function createNodeMcpHandler(
 		} catch {}
 	}
 
-	function touch(id: string): void {
+	// Arm the idle reaper, but only when nothing is in flight — an active request
+	// (esp. a streaming GET) must never be reaped. unref'd so the timer itself
+	// can't hold the process open.
+	function arm(id: string): void {
 		const session = sessions.get(id);
 		if (!session) return;
 		clearTimeout(session.timer);
+		if (session.active > 0) return;
 		session.timer = setTimeout(() => cleanup(id), idleMs);
-		// Never let the reaper timer itself keep the process alive — a live SSE
-		// socket holds the loop open long enough for it to fire and reap.
 		session.timer.unref();
+	}
+
+	// Bracket a request: hold off the reaper for the duration, re-arm when the
+	// response closes and no other request remains.
+	function beginRequest(id: string, res: ServerResponse): void {
+		const session = sessions.get(id);
+		if (!session) return;
+		session.active += 1;
+		clearTimeout(session.timer);
+		res.on('close', () => {
+			const s = sessions.get(id);
+			if (!s) return;
+			s.active = Math.max(0, s.active - 1);
+			if (s.active === 0) arm(id);
+		});
 	}
 
 	async function handle(
@@ -76,7 +97,7 @@ export function createNodeMcpHandler(
 				sendJson(res, 400, { error: 'Missing or invalid mcp-session-id' });
 				return;
 			}
-			touch(sessionId);
+			beginRequest(sessionId, res);
 			await sessions.get(sessionId)!.transport.handleRequest(req, res);
 			return;
 		}
@@ -92,7 +113,7 @@ export function createNodeMcpHandler(
 				sendJson(res, 404, { error: 'Session not found' });
 				return;
 			}
-			touch(sessionId);
+			beginRequest(sessionId, res);
 			await session.transport.handleRequest(req, res);
 			return;
 		}
@@ -102,14 +123,15 @@ export function createNodeMcpHandler(
 		const transport = new StreamableHTTPServerTransport({
 			sessionIdGenerator: () => randomUUID(),
 			onsessioninitialized: (id) => {
-				const timer = setTimeout(() => cleanup(id), idleMs);
-				timer.unref();
-				sessions.set(id, { server, transport, timer });
+				sessions.set(id, { server, transport, active: 0 });
 				transport.onclose = () => cleanup(id);
 			},
 		});
 		await server.connect(transport);
 		await transport.handleRequest(req, res);
+		// The initialize POST is done; arm the reaper (nothing in flight yet — the
+		// GET stream arrives as a later request and brackets itself).
+		if (transport.sessionId) arm(transport.sessionId);
 		// A POST that wasn't a valid initialize never fires onsessioninitialized,
 		// so the pair was never stored — close it here or it leaks.
 		if (!transport.sessionId) {

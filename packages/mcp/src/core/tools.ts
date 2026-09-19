@@ -24,19 +24,34 @@ export type CorsairToolDef = {
 
 type Corsair = BaseMcpOptions['corsair'];
 
-// Endpoint results are HTTP-derived JSON, but guard the edge cases (BigInt, a
-// circular ref) so serializing a batch can never throw and reject the handler.
+// Serialize batch results without ever throwing OR collapsing the whole array:
+// a per-node replacer swaps only a BigInt (→ string) or a circular ref
+// (→ "[Circular]"), so one bad op can't discard its siblings' data.
 function safeJson(value: unknown): string {
+	const seen = new WeakSet<object>();
 	try {
 		return JSON.stringify(
 			value,
-			(_k, v) => (typeof v === 'bigint' ? v.toString() : v),
+			(_k, v) => {
+				if (typeof v === 'bigint') return v.toString();
+				if (v !== null && typeof v === 'object') {
+					if (seen.has(v)) return '[Circular]';
+					seen.add(v);
+				}
+				return v;
+			},
 			2,
 		);
-	} catch {
-		return JSON.stringify(String(value));
+	} catch (err) {
+		return JSON.stringify({
+			error: `unserializable result: ${err instanceof Error ? err.message : String(err)}`,
+		});
 	}
 }
+
+// Cap a hosted batch: it's end-user-reachable on a shared box, so an unbounded
+// array could fan out arbitrarily many provider calls / hold unbounded memory.
+const MAX_BATCH_OPS = 50;
 
 // Resolve and invoke `corsair[plugin].api.<op>` on the (already tenant-scoped)
 // instance. Own-property walk only — never cross a prototype boundary — and the
@@ -217,7 +232,8 @@ function runBatchDef(
 					}),
 				)
 				.min(1)
-				.describe('Operations to run sequentially'),
+				.max(MAX_BATCH_OPS)
+				.describe(`Operations to run sequentially (max ${MAX_BATCH_OPS})`),
 		},
 		handler: async ({ ops }) => {
 			const list = ops as Array<{
