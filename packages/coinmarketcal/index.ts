@@ -110,7 +110,7 @@ const coinmarketcalEndpointMeta = {
 	},
 	'coins.get': {
 		riskLevel: 'read',
-		description: 'Get a cryptocurrency by symbol from CoinMarketCal',
+		description: 'Get a cryptocurrency by slug from CoinMarketCal',
 	},
 	'events.list': {
 		riskLevel: 'read',

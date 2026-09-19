@@ -17,7 +17,7 @@ const CoinsInputSchema = z.object({
 });
 
 const CoinGetInputSchema = z.object({
-	symbol: z.string().min(1),
+	slug: z.string().min(1),
 });
 
 const CoinsResponseSchema = z.object({
@@ -44,7 +44,7 @@ const EventGetInputSchema = z.object({
 });
 
 const EventSchema = z.object({
-	id: z.union([z.string(), z.number()]).optional(),
+	id: z.string().optional(),
 	slug: z.string().optional(),
 	title: z.string().optional(),
 	description: z.string().nullable().optional(),
