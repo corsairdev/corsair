@@ -89,6 +89,7 @@ export type ListsListResponse = z.infer<typeof ListsListResponseSchema>;
 // Tasks
 export const TasksListInputSchema = z.object({
 	list_id: z.string(),
+	page: z.number().int().nonnegative().optional(),
 });
 export type TasksListInput = z.infer<typeof TasksListInputSchema>;
 
@@ -125,7 +126,7 @@ export const TasksCreateInputSchema = z.object({
 	list_id: z.string(),
 	name: z.string(),
 	description: z.string().optional(),
-	markdown_description: z.string().optional(),
+	markdown_content: z.string().optional(),
 	assignees: z.array(z.number()).optional(),
 	status: z.string().optional(),
 	priority: z.number().optional(),
@@ -144,17 +145,23 @@ export type TasksCreateInput = z.infer<typeof TasksCreateInputSchema>;
 export const TasksCreateResponseSchema = TasksGetResponseSchema;
 export type TasksCreateResponse = z.infer<typeof TasksCreateResponseSchema>;
 
-export const TasksUpdateInputSchema = z.object({
-	task_id: z.string(),
-	name: z.string().optional(),
-	description: z.string().optional(),
-	status: z.string().optional(),
-	priority: z.number().optional(),
-	due_date: z.number().optional(),
-	time_estimate: z.number().optional(),
-	start_date: z.number().optional(),
-	parent: z.string().optional(),
-});
+export const TasksUpdateInputSchema = z
+	.object({
+		task_id: z.string(),
+		name: z.string().optional(),
+		description: z.string().optional(),
+		status: z.string().optional(),
+		priority: z.number().optional(),
+		due_date: z.number().optional(),
+		time_estimate: z.number().optional(),
+		start_date: z.number().optional(),
+		parent: z.string().optional(),
+	})
+	.refine(
+		({ task_id: _taskId, ...changes }) =>
+			Object.values(changes).some((value) => value !== undefined),
+		{ error: 'Provide at least one field to update' },
+	);
 export type TasksUpdateInput = z.infer<typeof TasksUpdateInputSchema>;
 
 export const TasksUpdateResponseSchema = TasksGetResponseSchema;
@@ -165,7 +172,7 @@ export const TasksDeleteInputSchema = z.object({
 });
 export type TasksDeleteInput = z.infer<typeof TasksDeleteInputSchema>;
 
-export const TasksDeleteResponseSchema = z.object({}).passthrough();
+export const TasksDeleteResponseSchema = z.undefined();
 export type TasksDeleteResponse = z.infer<typeof TasksDeleteResponseSchema>;
 
 export type ClickupEndpointInputs = {

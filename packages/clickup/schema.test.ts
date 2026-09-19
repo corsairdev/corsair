@@ -1,3 +1,7 @@
+import {
+	TasksDeleteResponseSchema,
+	TasksUpdateInputSchema,
+} from './endpoints/types';
 import { ClickupSchema } from './schema';
 
 describe('Clickup schema', () => {
@@ -13,5 +17,27 @@ describe('Clickup schema', () => {
 		for (const entity of Object.values(ClickupSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
+	});
+});
+
+describe('endpoint schemas', () => {
+	it('rejects task updates with only task_id', () => {
+		expect(TasksUpdateInputSchema.safeParse({ task_id: 'task1' }).success).toBe(
+			false,
+		);
+	});
+
+	it('accepts task updates with at least one mutable field', () => {
+		expect(
+			TasksUpdateInputSchema.safeParse({
+				task_id: 'task1',
+				name: 'Renamed',
+			}).success,
+		).toBe(true);
+	});
+
+	it('declares delete responses as no content', () => {
+		expect(TasksDeleteResponseSchema.safeParse(undefined).success).toBe(true);
+		expect(TasksDeleteResponseSchema.safeParse({}).success).toBe(false);
 	});
 });

@@ -4,9 +4,13 @@ import { makeClickupRequest } from '../client';
 import type { ClickupEndpointOutputs } from './types';
 
 export const list: ClickupEndpoints['tasksList'] = async (ctx, input) => {
+	const { list_id, page } = input;
 	const response = await makeClickupRequest<
 		ClickupEndpointOutputs['tasksList']
-	>(`list/${input.list_id}/task`, ctx.key, { method: 'GET' });
+	>(`list/${list_id}/task`, ctx.key, {
+		method: 'GET',
+		query: page !== undefined ? { page } : undefined,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -42,7 +46,7 @@ export const create: ClickupEndpoints['tasksCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'clickup.tasks.create',
-		{ ...input },
+		{ list_id },
 		'completed',
 	);
 	return response;
@@ -57,7 +61,7 @@ export const update: ClickupEndpoints['tasksUpdate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'clickup.tasks.update',
-		{ ...input },
+		{ task_id },
 		'completed',
 	);
 	return response;
