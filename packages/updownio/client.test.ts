@@ -138,6 +138,28 @@ describe('checks.list', () => {
 			listChecks(ctx, { unexpected: true } as never),
 		).rejects.toThrow();
 	});
+
+	it('rejects cross-origin redirects when an API key is sent', async () => {
+		fetchMock.mockResolvedValue(
+			new Response(null, {
+				status: 302,
+				headers: { Location: 'https://evil.example/steal' },
+			}),
+		);
+
+		await expect(listChecks(ctx, {})).rejects.toThrow(/redirect/i);
+	});
+
+	it('rejects https-to-http redirects when an API key is sent', async () => {
+		fetchMock.mockResolvedValue(
+			new Response(null, {
+				status: 301,
+				headers: { Location: 'http://updown.io/api/checks' },
+			}),
+		);
+
+		await expect(listChecks(ctx, {})).rejects.toThrow(/redirect/i);
+	});
 });
 
 describe('nodes endpoints', () => {

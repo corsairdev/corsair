@@ -18,9 +18,10 @@ export const NodeSchema = UpdownIONode;
 
 export const ChecksResponseSchema = z.array(CheckSchema);
 export const NodesResponseSchema = z.record(z.string(), NodeSchema);
-export const NodeIpsResponseSchema = z.array(z.string());
-export const NodeIpv4ResponseSchema = z.array(z.string());
-export const NodeIpv6ResponseSchema = z.array(z.string());
+const IpAddressSchema = z.union([z.ipv4(), z.ipv6()]);
+export const NodeIpsResponseSchema = z.array(IpAddressSchema);
+export const NodeIpv4ResponseSchema = z.array(z.ipv4());
+export const NodeIpv6ResponseSchema = z.array(z.ipv6());
 
 export type UpdownIOEndpointInputs = {
 	checksList: z.infer<typeof ListChecksInputSchema>;
