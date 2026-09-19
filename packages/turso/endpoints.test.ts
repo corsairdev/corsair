@@ -409,6 +409,8 @@ describe('Changes.listen', () => {
 					.mockResolvedValue('stored-tenant-db-token'),
 				set_api_key: jest.fn().mockResolvedValue(undefined),
 				set_database_token: jest.fn().mockResolvedValue(undefined),
+				get_webhook_signature: jest.fn().mockResolvedValue(null),
+				set_webhook_signature: jest.fn().mockResolvedValue(undefined),
 			},
 		});
 
