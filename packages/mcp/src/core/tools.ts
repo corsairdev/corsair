@@ -24,20 +24,26 @@ export type CorsairToolDef = {
 
 type Corsair = BaseMcpOptions['corsair'];
 
-// Serialize batch results without ever throwing OR collapsing the whole array:
-// a per-node replacer swaps only a BigInt (→ string) or a circular ref
-// (→ "[Circular]"), so one bad op can't discard its siblings' data.
+// Serialize batch results without ever throwing OR collapsing the whole array.
+// Only a true ancestor cycle becomes "[Circular]" (tracked via the ancestor
+// stack, so a repeated non-circular reference is still emitted in full); BigInt
+// becomes a string.
 function safeJson(value: unknown): string {
-	const seen = new WeakSet<object>();
+	const ancestors: unknown[] = [];
 	try {
 		return JSON.stringify(
 			value,
-			(_k, v) => {
+			function (this: unknown, _k, v) {
 				if (typeof v === 'bigint') return v.toString();
-				if (v !== null && typeof v === 'object') {
-					if (seen.has(v)) return '[Circular]';
-					seen.add(v);
+				if (v === null || typeof v !== 'object') return v;
+				while (
+					ancestors.length > 0 &&
+					ancestors[ancestors.length - 1] !== this
+				) {
+					ancestors.pop();
 				}
+				if (ancestors.includes(v)) return '[Circular]';
+				ancestors.push(v);
 				return v;
 			},
 			2,

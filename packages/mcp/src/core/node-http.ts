@@ -38,18 +38,26 @@ export function createNodeMcpHandler(
 	const idleMs = options.idleMs ?? DEFAULT_IDLE_MS;
 	const sessions = new Map<string, Session>();
 
+	// close() on the transport/server returns a promise that can reject; swallow
+	// both the sync throw and the async rejection so cleanup never produces an
+	// unhandled rejection.
+	function swallowClose(close: () => unknown): void {
+		try {
+			const r = close();
+			if (r && typeof (r as PromiseLike<unknown>).then === 'function') {
+				(r as PromiseLike<unknown>).then(undefined, () => {});
+			}
+		} catch {}
+	}
+
 	function cleanup(id: string): void {
 		const session = sessions.get(id);
 		if (!session) return;
 		// Delete first so a reentrant transport.onclose (fired by close()) no-ops.
 		sessions.delete(id);
 		clearTimeout(session.timer);
-		try {
-			session.transport.close();
-		} catch {}
-		try {
-			session.server.close();
-		} catch {}
+		swallowClose(() => session.transport.close());
+		swallowClose(() => session.server.close());
 	}
 
 	// Arm the idle reaper, but only when nothing is in flight — an active request
@@ -127,20 +135,20 @@ export function createNodeMcpHandler(
 				transport.onclose = () => cleanup(id);
 			},
 		});
-		await server.connect(transport);
-		await transport.handleRequest(req, res);
-		// The initialize POST is done; arm the reaper (nothing in flight yet — the
-		// GET stream arrives as a later request and brackets itself).
-		if (transport.sessionId) arm(transport.sessionId);
-		// A POST that wasn't a valid initialize never fires onsessioninitialized,
-		// so the pair was never stored — close it here or it leaks.
-		if (!transport.sessionId) {
-			try {
-				transport.close();
-			} catch {}
-			try {
-				server.close();
-			} catch {}
+		try {
+			await server.connect(transport);
+			await transport.handleRequest(req, res);
+			// The initialize POST is done; arm the reaper (nothing in flight yet —
+			// the GET stream arrives as a later request and brackets itself).
+			if (transport.sessionId) arm(transport.sessionId);
+		} finally {
+			// A POST that never initialized a session (bad init, or connect/
+			// handleRequest rejected) was never stored — close it here (in finally,
+			// so a rejection can't skip it) or the pair leaks.
+			if (!transport.sessionId) {
+				swallowClose(() => transport.close());
+				swallowClose(() => server.close());
+			}
 		}
 	}
 
