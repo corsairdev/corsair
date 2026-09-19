@@ -178,18 +178,45 @@ describe('request bodies', () => {
 	});
 });
 
+describe('pagination', () => {
+	it('passes zero-based page through on tasks.list', async () => {
+		const ctx = makeCtx();
+		await TasksEndpoints.list(ctx, { list_id: 'list1', page: 2 });
+
+		const url = new URL(lastUrl, 'https://api.clickup.com');
+		expect(url.searchParams.get('page')).toBe('2');
+	});
+});
+
 describe('event log', () => {
-	it('logs clickup.tasks.create as completed without echoing the full input', async () => {
+	it('logs clickup.tasks.create with list_id only', async () => {
 		const ctx = makeCtx();
 		await TasksEndpoints.create(ctx, {
 			list_id: 'list1',
 			name: 'Secret task title',
+			description: 'Sensitive details',
 		});
 
 		expect(mockLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'clickup.tasks.create',
-			{ list_id: 'list1', name: 'Secret task title' },
+			{ list_id: 'list1' },
+			'completed',
+		);
+	});
+
+	it('logs clickup.tasks.update with task_id only', async () => {
+		const ctx = makeCtx();
+		await TasksEndpoints.update(ctx, {
+			task_id: 'task1',
+			name: 'Renamed',
+			description: 'Sensitive details',
+		});
+
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'clickup.tasks.update',
+			{ task_id: 'task1' },
 			'completed',
 		);
 	});
