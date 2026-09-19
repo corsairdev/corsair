@@ -48,6 +48,11 @@ export function decodeOAuthState(
 }
 
 export function signState(payload: string, kek: string): string {
+	if (!kek) {
+		throw new Error(
+			'OAuth state signing requires a configured kek. Pass kek to createCorsair().',
+		);
+	}
 	const sig = crypto
 		.createHmac('sha256', kek)
 		.update(payload)
@@ -61,6 +66,9 @@ export function verifyAndDecodeState(
 	signed: string,
 	kek: string,
 ): OAuthState | null {
+	// An empty kek must never verify — otherwise a state signed with '' would be
+	// accepted as valid. Reject rather than compute an HMAC over an empty key.
+	if (!kek) return null;
 	const dotIdx = signed.lastIndexOf('.');
 	if (dotIdx === -1) return null;
 	const payload = signed.slice(0, dotIdx);
