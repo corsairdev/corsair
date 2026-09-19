@@ -1,0 +1,4927 @@
+{
+  "id": "heygen",
+  "displayName": "HeyGen",
+  "description": "AI video platform for creating avatar videos, translations, and personalized video content.",
+  "npmPackageName": "@corsair-dev/heygen",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 135,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "heygen.api.aiClipping.create",
+      "shortPath": "aiClipping.create",
+      "description": "Create an AI clipping job that turns a long video into short highlight clips",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video",
+            "optional": false,
+            "type": "{ type: url, url: string } | { type: asset_id, asset_id: string }"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "input_language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "output_settings",
+            "optional": true,
+            "type": "{ duration_types: 30 | 60 | 180 | long[], aspect_ratio?: landscape | portrait | square, captions?: boolean, caption_style?: string, prompt?: string }"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ai_clipping_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.aiClipping.delete",
+      "shortPath": "aiClipping.delete",
+      "description": "Soft-delete an AI clipping job and its clips",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.aiClipping.get",
+      "shortPath": "aiClipping.get",
+      "description": "Retrieve the status and generated clips of an AI clipping job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, status: pending | running | completed | failed | cancelled, input_language?: string | null, source_duration?: number | null, clips?: { id: string, status: pending | completed | failed, duration_seconds?: number | null, aspect_ratio?: landscape | portrait | square | null, title?: string | null, virality_score?: number | null, thumbnail_url?: string | null, video_url?: string | null, failure_message?: string | null }[], progress?: number, callback_id?: string | null, created_at?: number | null, failure_message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.aiClipping.list",
+      "shortPath": "aiClipping.list",
+      "description": "Retrieve a cursor-paginated list of AI clipping jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, status: pending | running | completed | failed | cancelled, input_language?: string | null, source_duration?: number | null, clips?: { id: string, status: pending | completed | failed, duration_seconds?: number | null, aspect_ratio?: landscape | portrait | square | null, title?: string | null, virality_score?: number | null, thumbnail_url?: string | null, video_url?: string | null, failure_message?: string | null }[], progress?: number, callback_id?: string | null, created_at?: number | null, failure_message?: string | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.completeUpload",
+      "shortPath": "assets.completeUpload",
+      "description": "Finalize a presigned direct-upload session into a usable asset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "checksum_sha256",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ asset_id: string, url: string, mime_type: string, size_bytes: number, status: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.createFolder",
+      "shortPath": "assets.createFolder",
+      "description": "Create a new folder to organize videos and assets",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parent_folder_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ folder_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.createUploadSession",
+      "shortPath": "assets.createUploadSession",
+      "description": "Create a presigned direct-upload session for a large asset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size_bytes",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "checksum_sha256",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ asset_id: string, upload_url: string, upload_headers: {}, expires_in_seconds: number, max_bytes: number, status: pending_upload }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.deleteAsset",
+      "shortPath": "assets.deleteAsset",
+      "description": "Permanently delete a specific media asset by ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.deleteAssetV3",
+      "shortPath": "assets.deleteAssetV3",
+      "description": "Permanently delete an asset via the v3 API",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.getAsset",
+      "shortPath": "assets.getAsset",
+      "description": "Retrieve metadata for an asset via the v3 API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, type: string, owner: string, space_id: string, folder_id?: string | null, uploaded_at: number, url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.getTemplate",
+      "shortPath": "assets.getTemplate",
+      "description": "Retrieve structure, placeholders, and avatar settings of a specific template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ template_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.listAssets",
+      "shortPath": "assets.listAssets",
+      "description": "Retrieve a paginated list of assets with type/folder filtering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ assets: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.listAssets2",
+      "shortPath": "assets.listAssets2",
+      "description": "Retrieve a list of uploaded assets with cursor/page pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ assets: {}[], next_cursor?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.listFolders",
+      "shortPath": "assets.listFolders",
+      "description": "Retrieve a paginated list of folders in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ folders: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.listTemplates",
+      "shortPath": "assets.listTemplates",
+      "description": "Retrieve a list of pre-designed avatar templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ templates: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.restoreFolder",
+      "shortPath": "assets.restoreFolder",
+      "description": "Recover a previously trashed folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.trashFolder",
+      "shortPath": "assets.trashFolder",
+      "description": "Soft-delete a folder by moving it to trash (recoverable via restoreFolder)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.updateFolder",
+      "shortPath": "assets.updateFolder",
+      "description": "Rename an existing folder by ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.uploadAsset",
+      "shortPath": "assets.uploadAsset",
+      "description": "Upload an image, video, or audio file asset to the platform",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileBase64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.assets.uploadAssetV3",
+      "shortPath": "assets.uploadAssetV3",
+      "description": "Upload an image, video, audio, or PDF asset via the v3 API",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileBase64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ asset_id: string, url: string, mime_type: string, size_bytes: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.audio.search",
+      "shortPath": "audio.search",
+      "description": "Search HeyGen's library of background music and sound effects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "music | sound_effects"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "min_score",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatarRealtime.appendText",
+      "shortPath": "avatarRealtime.appendText",
+      "description": "Append streamed text to an active text_stream avatar realtime session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stream_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "delta",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "final",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ok?: boolean, buffered_bytes: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatarRealtime.cancelSession",
+      "shortPath": "avatarRealtime.cancelSession",
+      "description": "Cancel an active avatar realtime streaming session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stream_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ stream_id: string, cancelled: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatarRealtime.createSession",
+      "shortPath": "avatarRealtime.createSession",
+      "description": "Create a low-latency HLS streaming session with an interactive avatar",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ type: tts, avatar_id: string, text: string, voice_id: string } | { type: audio, avatar_id: string, audio: { type: url, url: string } | { type: asset_id, asset_id: string } | { type: base64, media_type: string, data: string } } | { type: text_stream, avatar_id: string, voice_id: string, text: string }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ stream_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatarRealtime.getSession",
+      "shortPath": "avatarRealtime.getSession",
+      "description": "Retrieve the status and playback URL of an avatar realtime session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stream_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ stream_id: string, status: pending | streaming | completed | error, hls_url?: string | null, error_message?: string | null, end_reason?: final_marker | idle_timeout | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.addLooks",
+      "shortPath": "avatars.addLooks",
+      "description": "Add up to 4 image look variations to an existing photo avatar group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "image_keys",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "generation_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ generation_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.addMotion",
+      "shortPath": "avatars.addMotion",
+      "description": "Animate a still photo avatar into a moving lifelike motion avatar",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.checkLookStatus",
+      "shortPath": "avatars.checkLookStatus",
+      "description": "Monitor the generation status/progress of photo avatar looks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generation_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ generation_id?: string, status?: string, image_url_list?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.create",
+      "shortPath": "avatars.create",
+      "description": "Create a new avatar from a prompt, digital twin video, or photo",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ type: prompt, name: string, prompt: string, reference_images?: ({ type: url, url: string } | { type: asset_id, asset_id: string } | { type: base64, media_type: string, data: string })[], avatar_group_id?: string | null, avatar_id?: string | null } | { type: digital_twin, name: string, file: { type: url, url: string } | { type: asset_id, asset_id: string } | { type: base64, media_type: string, data: string }, avatar_group_id?: string | null } | { type: photo, name: string, file: { type: url, url: string } | { type: asset_id, asset_id: string } | { type: base64, media_type: string, data: string }, avatar_group_id?: string | null }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ avatar_item?: { id: string, name: string, avatar_type: studio_avatar | digital_twin | photo_avatar, group_id?: string | null, preview_image_url?: string | null, preview_video_url?: string | null, gender?: string | null, tags?: string[] | null, default_voice_id?: string | null, supported_api_engines?: string[] | null, image_width?: number | null, image_height?: number | null, preferred_orientation?: portrait | landscape | square | null, status?: processing | pending_consent | failed | completed | null, error?: { code: string, message: string } | null } | null, avatar_group?: { id: string, name: string, created_at: number, looks_count: number, preview_image_url?: string | null, preview_video_url?: string | null, gender?: string | null, default_voice_id?: string | null, consent_status?: string | null, status?: processing | pending_consent | failed | completed | null, error?: { code: string, message: string } | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.createConsent",
+      "shortPath": "avatars.createConsent",
+      "description": "Start the consent verification flow required for a custom avatar group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reroute_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "consent_text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ avatar_group: { id: string, name: string, created_at: number, looks_count: number, preview_image_url?: string | null, preview_video_url?: string | null, gender?: string | null, default_voice_id?: string | null, consent_status?: string | null, status?: processing | pending_consent | failed | completed | null, error?: { code: string, message: string } | null }, url: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.createPhotoGroup",
+      "shortPath": "avatars.createPhotoGroup",
+      "description": "Create an avatar group for AI-generated and user-uploaded photos",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "image_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "generation_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, image_url?: string, name?: string, status?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.deleteGroup",
+      "shortPath": "avatars.deleteGroup",
+      "description": "Permanently delete an avatar group by ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.deleteLook",
+      "shortPath": "avatars.deleteLook",
+      "description": "Permanently delete a photo avatar or digital twin look",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "look_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.deletePhoto",
+      "shortPath": "avatars.deletePhoto",
+      "description": "Delete a photo avatar by ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.deletePhotoGroup",
+      "shortPath": "avatars.deletePhotoGroup",
+      "description": "Delete a photo avatar group by ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.deleteTalkingPhoto",
+      "shortPath": "avatars.deleteTalkingPhoto",
+      "description": "Permanently delete a specific talking photo resource",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "talking_photo_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.generatePhotos",
+      "shortPath": "avatars.generatePhotos",
+      "description": "Generate AI avatar photos based on text prompts and attributes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "age",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ethnicity",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orientation",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pose",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "appearance",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ generation_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.getDetails",
+      "shortPath": "avatars.getDetails",
+      "description": "Retrieve comprehensive details, display properties, and preview media for an avatar",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "avatar_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ avatar_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.getGroup",
+      "shortPath": "avatars.getGroup",
+      "description": "Retrieve details for a specific avatar group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, created_at: number, looks_count: number, preview_image_url?: string | null, preview_video_url?: string | null, gender?: string | null, default_voice_id?: string | null, consent_status?: string | null, status?: processing | pending_consent | failed | completed | null, error?: { code: string, message: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.getLook",
+      "shortPath": "avatars.getLook",
+      "description": "Retrieve details for a specific avatar look",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "look_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, avatar_type: studio_avatar | digital_twin | photo_avatar, group_id?: string | null, preview_image_url?: string | null, preview_video_url?: string | null, gender?: string | null, tags?: string[] | null, default_voice_id?: string | null, supported_api_engines?: string[] | null, image_width?: number | null, image_height?: number | null, preferred_orientation?: portrait | landscape | square | null, status?: processing | pending_consent | failed | completed | null, error?: { code: string, message: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.getPhotoDetails",
+      "shortPath": "avatars.getPhotoDetails",
+      "description": "Retrieve comprehensive metadata and configuration for a photo avatar/look",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.getTrainingStatus",
+      "shortPath": "avatars.getTrainingStatus",
+      "description": "Monitor the training progress of a photo avatar training job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ status: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.list",
+      "shortPath": "avatars.list",
+      "description": "Retrieve a list of available public and private avatars with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ownership",
+            "optional": true,
+            "type": "public | private"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.listGroupAvatars",
+      "shortPath": "avatars.listGroupAvatars",
+      "description": "Retrieve all avatars within a specific avatar group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ avatar_list: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.listGroups",
+      "shortPath": "avatars.listGroups",
+      "description": "Retrieve a list of all avatar groups in the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ avatar_group_list: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.listLooks",
+      "shortPath": "avatars.listLooks",
+      "description": "Retrieve a paginated list of avatar looks (outfits, poses, styles)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar_type",
+            "optional": true,
+            "type": "studio_avatar | digital_twin | photo_avatar"
+          },
+          {
+            "key": "ownership",
+            "optional": true,
+            "type": "public | private"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, avatar_type: studio_avatar | digital_twin | photo_avatar, group_id?: string | null, preview_image_url?: string | null, preview_video_url?: string | null, gender?: string | null, tags?: string[] | null, default_voice_id?: string | null, supported_api_engines?: string[] | null, image_width?: number | null, image_height?: number | null, preferred_orientation?: portrait | landscape | square | null, status?: processing | pending_consent | failed | completed | null, error?: { code: string, message: string } | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.listTalkingPhotos",
+      "shortPath": "avatars.listTalkingPhotos",
+      "description": "Retrieve a list of existing interactive talking photo projects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.searchPublicGroups",
+      "shortPath": "avatars.searchPublicGroups",
+      "description": "Search public avatar groups with filters and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ avatar_group_list: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.updateLook",
+      "shortPath": "avatars.updateLook",
+      "description": "Rename a photo avatar or digital twin look",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "look_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, avatar_type: studio_avatar | digital_twin | photo_avatar, group_id?: string | null, preview_image_url?: string | null, preview_video_url?: string | null, gender?: string | null, tags?: string[] | null, default_voice_id?: string | null, supported_api_engines?: string[] | null, image_width?: number | null, image_height?: number | null, preferred_orientation?: portrait | landscape | square | null, status?: processing | pending_consent | failed | completed | null, error?: { code: string, message: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.uploadTalkingPhoto",
+      "shortPath": "avatars.uploadTalkingPhoto",
+      "description": "Create an interactive talking photo from an uploaded JPEG/PNG binary image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "imageBase64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ talking_photo_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.avatars.upscale",
+      "shortPath": "avatars.upscale",
+      "description": "Enhance the resolution and quality of an existing motion avatar",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.brand.listGlossaries",
+      "shortPath": "brand.listGlossaries",
+      "description": "Retrieve a paginated list of brand glossaries for custom term translation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ brand_glossary_id: string, name: string, created_at: string, updated_at: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.brand.listKits",
+      "shortPath": "brand.listKits",
+      "description": "Retrieve a paginated list of brand kits (logos, colors, fonts)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ brand_kit_id: string, name: string, logo_url?: string | null, colors?: string[] }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.hyperframes.create",
+      "shortPath": "hyperframes.create",
+      "description": "Create a HyperFrames cloud render from an HTML/motion-graphics project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "{ type: url, url: string } | { type: asset_id, asset_id: string } | { type: base64, media_type: string, data: string }"
+          },
+          {
+            "key": "fps",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "draft | standard | high"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "mp4 | webm | mov"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "1080p | 4k"
+          },
+          {
+            "key": "aspect_ratio",
+            "optional": true,
+            "type": "16:9 | 9:16 | 1:1"
+          },
+          {
+            "key": "composition",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ render_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.hyperframes.delete",
+      "shortPath": "hyperframes.delete",
+      "description": "Permanently delete a HyperFrames render",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "render_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ render_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.hyperframes.get",
+      "shortPath": "hyperframes.get",
+      "description": "Retrieve the status and details of a HyperFrames render",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "render_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ render_id: string, status: queued | rendering | completed | failed, format: mp4 | webm | mov, title?: string | null, callback_id?: string | null, video_url?: string | null, thumbnail_url?: string | null, duration?: number | null, fps?: number | null, quality?: draft | standard | high | null, resolution?: 1080p | 4k | null, aspect_ratio?: 16:9 | 9:16 | 1:1 | null, composition?: string | null, created_at?: number | null, completed_at?: number | null, failure_message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.hyperframes.list",
+      "shortPath": "hyperframes.list",
+      "description": "Retrieve a cursor-paginated list of HyperFrames renders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ render_id: string, status: queued | rendering | completed | failed, format: mp4 | webm | mov, title?: string | null, callback_id?: string | null, video_url?: string | null, thumbnail_url?: string | null, duration?: number | null, fps?: number | null, quality?: draft | standard | high | null, resolution?: 1080p | 4k | null, aspect_ratio?: 16:9 | 9:16 | 1:1 | null, composition?: string | null, created_at?: number | null, completed_at?: number | null, failure_message?: string | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.knowledgeBases.create",
+      "shortPath": "knowledgeBases.create",
+      "description": "Create a knowledge base with a custom name, opening line, and prompt for interactive sessions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opening",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ knowledge_base_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.knowledgeBases.delete",
+      "shortPath": "knowledgeBases.delete",
+      "description": "Permanently remove a knowledge base by ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.knowledgeBases.list",
+      "shortPath": "knowledgeBases.list",
+      "description": "Retrieve a list of all existing knowledge bases",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ list: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.knowledgeBases.update",
+      "shortPath": "knowledgeBases.update",
+      "description": "Modify the opening line, prompt, or name of an existing knowledge base",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opening",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.lipsync.create",
+      "shortPath": "lipsync.create",
+      "description": "Create a lipsync job that syncs a video to a separate audio track",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video",
+            "optional": false,
+            "type": "{ type: url, url: string } | { type: asset_id, asset_id: string }"
+          },
+          {
+            "key": "audio",
+            "optional": false,
+            "type": "{ type: url, url: string } | { type: asset_id, asset_id: string }"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "speed | precision"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enable_caption",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "keep_the_same_format",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enable_dynamic_duration",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disable_music_track",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enable_speech_enhancement",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enable_watermark",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fps_mode",
+            "optional": true,
+            "type": "vfr | cfr | passthrough"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ lipsync_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.lipsync.delete",
+      "shortPath": "lipsync.delete",
+      "description": "Permanently delete a lipsync job and its output",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lipsync_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.lipsync.get",
+      "shortPath": "lipsync.get",
+      "description": "Retrieve the status and details of a lipsync job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lipsync_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, status: pending | running | completed | failed, duration?: number | null, video_url?: string | null, caption_url?: string | null, callback_id?: string | null, created_at?: number | null, failure_message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.lipsync.list",
+      "shortPath": "lipsync.list",
+      "description": "Retrieve a cursor-paginated list of lipsync jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, status: pending | running | completed | failed, duration?: number | null, video_url?: string | null, caption_url?: string | null, callback_id?: string | null, created_at?: number | null, failure_message?: string | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.lipsync.update",
+      "shortPath": "lipsync.update",
+      "description": "Update the display title of a lipsync job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lipsync_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, status: pending | running | completed | failed, duration?: number | null, video_url?: string | null, caption_url?: string | null, callback_id?: string | null, created_at?: number | null, failure_message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.proofread.create",
+      "shortPath": "proofread.create",
+      "description": "Create a proofread session for reviewing a video translation before rendering",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video",
+            "optional": false,
+            "type": "{ type: url, url: string } | { type: asset_id, asset_id: string }"
+          },
+          {
+            "key": "output_languages",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "brand_voice_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "brand_glossary_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "speaker_num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enable_video_stretching",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disable_music_track",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enable_speech_enhancement",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "srt",
+            "optional": true,
+            "type": "{ type: url, url: string } | { type: asset_id, asset_id: string }"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "speed | precision"
+          },
+          {
+            "key": "keep_the_same_format",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ proofread_ids: string[], status: processing | completed | failed }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.proofread.downloadSrt",
+      "shortPath": "proofread.downloadSrt",
+      "description": "Retrieve presigned download URLs for a proofread session's SRT files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "proofread_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ srt_url: string, original_srt_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.proofread.generateVideo",
+      "shortPath": "proofread.generateVideo",
+      "description": "Render the final translated video from a completed proofread session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "proofread_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "captions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "translate_audio_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "callback_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ video_translation_id: string, status: processing | completed | failed }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.proofread.get",
+      "shortPath": "proofread.get",
+      "description": "Retrieve the status and details of a proofread session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "proofread_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, status: processing | completed | failed, title?: string | null, output_language?: string | null, input_language?: string | null, submitted_for_review?: boolean | null, created_at?: number | null, failure_message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.proofread.uploadSrt",
+      "shortPath": "proofread.uploadSrt",
+      "description": "Replace a proofread session's subtitles with an edited SRT file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "proofread_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "srt",
+            "optional": false,
+            "type": "{ type: url, url: string } | { type: asset_id, asset_id: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, status: processing | completed | failed, title?: string | null, output_language?: string | null, input_language?: string | null, submitted_for_review?: boolean | null, created_at?: number | null, failure_message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.streaming.createToken",
+      "shortPath": "streaming.createToken",
+      "description": "Generate a time-limited authentication token for streaming sessions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ token: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.streaming.ice",
+      "shortPath": "streaming.ice",
+      "description": "Submit ICE candidate information for WebRTC peer-to-peer negotiation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "candidate",
+            "optional": false,
+            "type": "{ candidate: string, sdpMLineIndex?: string | number, sdpMid?: string, usernameFragment?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.streaming.interrupt",
+      "shortPath": "streaming.interrupt",
+      "description": "Abruptly interrupt an avatar's ongoing action/speech for instant control",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.streaming.keepAlive",
+      "shortPath": "streaming.keepAlive",
+      "description": "Reset the idle timeout counter for an active streaming session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.streaming.list",
+      "shortPath": "streaming.list",
+      "description": "Retrieve a list of active or available streaming sessions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ sessions: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.streaming.listAvatars",
+      "shortPath": "streaming.listAvatars",
+      "description": "Retrieve a list of public and custom interactive avatars available for streaming",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.streaming.listSessionHistory",
+      "shortPath": "streaming.listSessionHistory",
+      "description": "Retrieve a paginated history and metadata of past streaming sessions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ sessions: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.streaming.new",
+      "shortPath": "streaming.new",
+      "description": "Initiate a streaming session with specified quality settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ session_id: string, sdp?: any }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.streaming.newSession",
+      "shortPath": "streaming.newSession",
+      "description": "Initiate a streaming session with an Interactive Avatar to get a WebSocket URL, session ID, and token",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voice",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "knowledge_base_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ session_id: string, sdp?: any, access_token?: string, url?: string, ice_servers?: any, session_duration_limit?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.streaming.start",
+      "shortPath": "streaming.start",
+      "description": "Establish a WebRTC SDP offer connection for real-time video/audio streaming",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sdp",
+            "optional": false,
+            "type": "{ type: string, sdp: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ sdp?: any }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.streaming.stop",
+      "shortPath": "streaming.stop",
+      "description": "Terminate an active WebRTC streaming session and free resources",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.streaming.task",
+      "shortPath": "streaming.task",
+      "description": "Send a real-time text speaking task to an active streaming avatar",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task_type",
+            "optional": true,
+            "type": "talk | repeat"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ duration_ms?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videoAgents.createSession",
+      "shortPath": "videoAgents.createSession",
+      "description": "Create a video agent session that generates a video from a text prompt",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "generate | chat"
+          },
+          {
+            "key": "avatar_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voice_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "style_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "brand_kit_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orientation",
+            "optional": true,
+            "type": "landscape | portrait"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "({ type: url, url: string } | { type: asset_id, asset_id: string } | { type: base64, media_type: string, data: string })[]"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "incognito_mode",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ session_id: string, status: generating | thinking | completed | failed, video_id?: string | null, created_at: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videoAgents.getResource",
+      "shortPath": "videoAgents.getResource",
+      "description": "Retrieve a specific resource generated within a video agent session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resource_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ resource_id: string, resource_type: string, source_type?: string | null, url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, created_at?: number | null, metadata?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videoAgents.getSession",
+      "shortPath": "videoAgents.getSession",
+      "description": "Retrieve the status, progress, and chat history of a video agent session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ session_id: string, status: thinking | waiting_for_input | reviewing | generating | completed | failed, progress?: number, title?: string | null, video_id?: string | null, created_at: number, messages: { role: string, content: string, type: text | resource | error, created_at?: number | null, resource_ids?: string[] | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videoAgents.listSessions",
+      "shortPath": "videoAgents.listSessions",
+      "description": "Retrieve a paginated list of video agent sessions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ session_id: string, title?: string | null, created_at: number }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videoAgents.listStyles",
+      "shortPath": "videoAgents.listStyles",
+      "description": "Retrieve a paginated list of available video agent styles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ style_id: string, name: string, thumbnail_url?: string | null, preview_video_url?: string | null, tags?: string[] | null, aspect_ratio?: string | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videoAgents.listVideos",
+      "shortPath": "videoAgents.listVideos",
+      "description": "Retrieve the videos generated within a video agent session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, status: pending | processing | completed | failed }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videoAgents.sendMessage",
+      "shortPath": "videoAgents.sendMessage",
+      "description": "Send a chat message or revision request to an active video agent session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "avatar_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voice_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "brand_kit_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "({ type: url, url: string } | { type: asset_id, asset_id: string } | { type: base64, media_type: string, data: string })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ session_id: string, run_id: string, title?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videoAgents.stopSession",
+      "shortPath": "videoAgents.stopSession",
+      "description": "Stop an in-progress video agent session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ session_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videos.createWebm",
+      "shortPath": "videos.createWebm",
+      "description": "Create a WebM format video with transparent background featuring studio avatars",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "avatar_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "avatar_style",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "input_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "input_audio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voice_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "background_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ video_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videos.delete",
+      "shortPath": "videos.delete",
+      "description": "Delete a generated or translated video by ID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videos.deleteV3",
+      "shortPath": "videos.deleteV3",
+      "description": "Permanently delete a video and its associated files via the v3 API",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, deleted?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videos.generate",
+      "shortPath": "videos.generate",
+      "description": "Generate a customized avatar video with voices and character configs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "avatar | image | cinematic_avatar"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aspect_ratio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ video_id: string, status?: string, output_format?: mp4 | webm }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videos.getSharableUrl",
+      "shortPath": "videos.getSharableUrl",
+      "description": "Generate a public, shareable URL for a video without authentication requirements",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ share_url: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videos.getStatus",
+      "shortPath": "videos.getStatus",
+      "description": "Retrieve asynchronous video processing status and time-limited download URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, status: pending | processing | completed | failed, created_at?: number | null, completed_at?: number | null, video_url?: string | null, thumbnail_url?: string | null, gif_url?: string | null, captioned_video_url?: string | null, subtitle_url?: string | null, duration?: number | null, folder_id?: string | null, output_language?: string | null, failure_code?: string | null, failure_message?: string | null, video_page_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videos.list",
+      "shortPath": "videos.list",
+      "description": "Retrieve a paginated list of videos associated with the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ videos: {}[], token?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videos.listV3",
+      "shortPath": "videos.listV3",
+      "description": "Retrieve a cursor-paginated list of videos via the v3 API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, status: pending | processing | completed | failed }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videos.personalizedAddContact",
+      "shortPath": "videos.personalizedAddContact",
+      "description": "Add recipient contacts (name/email) to a personalized video project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variables_list",
+            "optional": false,
+            "type": "{ email?: string, first_name?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videos.personalizedProjectDetail",
+      "shortPath": "videos.personalizedProjectDetail",
+      "description": "Retrieve details, status, and metadata for a personalized video project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ project_id?: string, status?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videos.templateGenerate",
+      "shortPath": "videos.templateGenerate",
+      "description": "Generate a customized video from a pre-existing template using variable definitions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dimension",
+            "optional": true,
+            "type": "{ width: number, height: number }"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ video_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videos.translate",
+      "shortPath": "videos.translate",
+      "description": "Translate video content or audio tracks across 77+ languages",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video",
+            "optional": false,
+            "type": "{ type: url, url: string } | { type: asset_id, asset_id: string }"
+          },
+          {
+            "key": "output_languages",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "audio",
+            "optional": true,
+            "type": "{ type: url, url: string } | { type: asset_id, asset_id: string }"
+          },
+          {
+            "key": "input_language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "translate_audio_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "speaker_num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "speed | precision"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enable_caption",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ video_translation_ids: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videos.translateStatus",
+      "shortPath": "videos.translateStatus",
+      "description": "Retrieve current progress/status of a video translation job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_translate_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, status: pending | running | completed | failed, title?: string | null, output_language?: string | null, input_language?: string | null, duration?: number | null, translate_audio_only?: boolean | null, video_url?: string | null, audio_url?: string | null, srt_caption_url?: string | null, vtt_caption_url?: string | null, callback_id?: string | null, created_at?: number | null, failure_message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videos.translateTargetLanguages",
+      "shortPath": "videos.translateTargetLanguages",
+      "description": "Retrieve the list of all supported target languages for video translation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ languages: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videoTranslations.delete",
+      "shortPath": "videoTranslations.delete",
+      "description": "Permanently delete a video translation and its associated files",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_translation_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videoTranslations.list",
+      "shortPath": "videoTranslations.list",
+      "description": "Retrieve a cursor-paginated list of video translation jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, status: pending | running | completed | failed, title?: string | null, output_language?: string | null, input_language?: string | null, duration?: number | null, translate_audio_only?: boolean | null, video_url?: string | null, audio_url?: string | null, srt_caption_url?: string | null, vtt_caption_url?: string | null, callback_id?: string | null, created_at?: number | null, failure_message?: string | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.videoTranslations.update",
+      "shortPath": "videoTranslations.update",
+      "description": "Update the display title of a video translation job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_translation_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, status: pending | running | completed | failed, title?: string | null, output_language?: string | null, input_language?: string | null, duration?: number | null, translate_audio_only?: boolean | null, video_url?: string | null, audio_url?: string | null, srt_caption_url?: string | null, vtt_caption_url?: string | null, callback_id?: string | null, created_at?: number | null, failure_message?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.voices.clone",
+      "shortPath": "voices.clone",
+      "description": "Clone a custom voice from a reference audio sample",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audio",
+            "optional": false,
+            "type": "{ type: url, url: string } | { type: asset_id, asset_id: string } | { type: base64, media_type: string, data: string }"
+          },
+          {
+            "key": "voice_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remove_background_noise",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ voice_clone_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.voices.deleteV3",
+      "shortPath": "voices.deleteV3",
+      "description": "Permanently delete a voice via the v3 API",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voice_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ voice_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.voices.design",
+      "shortPath": "voices.design",
+      "description": "Generate up to 3 candidate synthetic voices from a text description",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ voices: { voice_id: string, name?: string | null, language?: string | null, gender?: string | null, preview_audio_url?: string | null, support_pause?: boolean, support_locale?: boolean, type?: public | private }[], seed: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.voices.generatePreview",
+      "shortPath": "voices.generatePreview",
+      "description": "Generate a short audio preview clip (Enterprise Beta)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voice_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ audio_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.voices.generateSpeech",
+      "shortPath": "voices.generateSpeech",
+      "description": "Generate a speech audio file from text input using the Starfish TTS model",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "voice_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "speed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pitch",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "input_type",
+            "optional": true,
+            "type": "text | ssml"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ audio_url?: string, duration?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.voices.generateSpeechV3",
+      "shortPath": "voices.generateSpeechV3",
+      "description": "Generate a speech audio file from text via the v3 Starfish TTS engine",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "voice_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input_type",
+            "optional": true,
+            "type": "text | ssml"
+          },
+          {
+            "key": "speed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ audio_url: string, duration: number, request_id?: string | null, word_timestamps?: { word: string, start: number, end: number }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.voices.getV3",
+      "shortPath": "voices.getV3",
+      "description": "Retrieve the status and details of a voice via the v3 API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voice_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ voice_id: string, name?: string | null, language?: string | null, gender?: string | null, preview_audio_url?: string | null, status?: processing | complete | failed | null, failure_message?: string | null, support_pause?: boolean, support_interactive_avatar?: boolean, created_at?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.voices.listBrandVoices",
+      "shortPath": "voices.listBrandVoices",
+      "description": "Retrieve brand glossaries maintaining consistent terminology/pronunciation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ brand_voices: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.voices.listLocales",
+      "shortPath": "voices.listLocales",
+      "description": "Retrieve available locales/dialects for multilingual voices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ locales: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.voices.listTts",
+      "shortPath": "voices.listTts",
+      "description": "Retrieve public and custom voices compatible with the Starfish model",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ voices: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.voices.listV1",
+      "shortPath": "voices.listV1",
+      "description": "Retrieve a metadata list of all available studio voices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ voices: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.voices.listV2",
+      "shortPath": "voices.listV2",
+      "description": "Retrieve a comprehensive list of available voice models and characteristics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ voices: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.voices.listV3",
+      "shortPath": "voices.listV3",
+      "description": "Retrieve a cursor-paginated list of voices via the v3 API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "public | private"
+          },
+          {
+            "key": "engine",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "male | female"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ voice_id: string, name?: string | null, language?: string | null, gender?: string | null, preview_audio_url?: string | null, support_pause?: boolean, support_locale?: boolean, type?: public | private }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.webhooksQuota.addEndpoint",
+      "shortPath": "webhooksQuota.addEndpoint",
+      "description": "Configure a new webhook URL to receive notifications for specified events",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ endpoint_id: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.webhooksQuota.addEndpointV3",
+      "shortPath": "webhooksQuota.addEndpointV3",
+      "description": "Register a new v3 webhook endpoint URL to receive event notifications",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "entity_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ endpoint_id: string, url: string, events?: string[] | null, status: string, created_at: string, secret?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.webhooksQuota.deleteEndpoint",
+      "shortPath": "webhooksQuota.deleteEndpoint",
+      "description": "Permanently delete a webhook endpoint configuration",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.webhooksQuota.deleteEndpointV3",
+      "shortPath": "webhooksQuota.deleteEndpointV3",
+      "description": "Permanently delete a v3 webhook endpoint configuration",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.webhooksQuota.getCurrentUser",
+      "shortPath": "webhooksQuota.getCurrentUser",
+      "description": "Retrieve the authenticated user profile, quotas, and subscription details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ username: string, email?: string | null, first_name?: string | null, last_name?: string | null, billing_type?: wallet | subscription | usage_based | null, wallet?: {}, subscription?: {}, usage_based?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.webhooksQuota.listEndpoints",
+      "shortPath": "webhooksQuota.listEndpoints",
+      "description": "Retrieve a list of configured webhook endpoints and status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.webhooksQuota.listEndpointsV3",
+      "shortPath": "webhooksQuota.listEndpointsV3",
+      "description": "Retrieve a paginated list of configured v3 webhook endpoints",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ endpoint_id: string, url: string, events?: string[] | null, status: string, created_at: string, secret?: string | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.webhooksQuota.listEvents",
+      "shortPath": "webhooksQuota.listEvents",
+      "description": "Retrieve a paginated log of delivered v3 webhook events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entity_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ event_id: string, event_type: string, event_data: {}, created_at: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.webhooksQuota.listEventTypes",
+      "shortPath": "webhooksQuota.listEventTypes",
+      "description": "Retrieve a complete list of supported webhook event types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.webhooksQuota.listEventTypesV3",
+      "shortPath": "webhooksQuota.listEventTypesV3",
+      "description": "Retrieve all available v3 webhook event types with descriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ event_type: string, description: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "next_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.webhooksQuota.remainingQuota",
+      "shortPath": "webhooksQuota.remainingQuota",
+      "description": "Retrieve the current remaining API credit quota and available resources",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ remaining_quota?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.webhooksQuota.rotateSecret",
+      "shortPath": "webhooksQuota.rotateSecret",
+      "description": "Rotate the signing secret for a v3 webhook endpoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ endpoint_id: string, secret: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.webhooksQuota.updateEndpoint",
+      "shortPath": "webhooksQuota.updateEndpoint",
+      "description": "Modify the URL or subscribed events of an existing webhook endpoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "heygen.api.webhooksQuota.updateEndpointV3",
+      "shortPath": "webhooksQuota.updateEndpointV3",
+      "description": "Modify the URL or subscribed events of an existing v3 webhook endpoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ endpoint_id: string, url: string, events?: string[] | null, status: string, created_at: string, secret?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
