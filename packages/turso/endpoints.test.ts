@@ -10,12 +10,17 @@ import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { TursoAPIError } from './client';
 import { Changes, Regions, Tokens } from './endpoints';
 import type { ChangeAction } from './endpoints/types';
-import type {
-	TursoContext,
-	TursoKeyBuilderContext,
-	TursoPluginOptions,
-} from './index';
+import type { TursoContext, TursoKeyBuilderContext } from './index';
 import { turso } from './index';
+import {
+	createKeyBuilderContext,
+	createMockChangeEventsRepository,
+	createTestContext,
+	DB_URL,
+	jsonResponse,
+	sseResponse,
+	TEST_TOKEN,
+} from './test-harness';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -25,87 +30,6 @@ jest.mock('corsair/core', () => ({
 const mockLog = logEventFromContext as jest.MockedFunction<
 	typeof logEventFromContext
 >;
-
-const TEST_TOKEN = 'test-turso-token-123';
-const DB_URL = 'https://mydb-myorg.turso.io';
-
-/**
- * Creates an explicitly typed mock repository for the `changeEvents` entity table.
- *
- * @param overrides - Optional partial overrides for repository methods.
- * @returns A fully typed `TursoContext['db']['changeEvents']` repository client.
- */
-function createMockChangeEventsRepository(
-	overrides?: Partial<TursoContext['db']['changeEvents']>,
-): TursoContext['db']['changeEvents'] {
-	return {
-		findByEntityId: jest.fn().mockResolvedValue(null),
-		existsByEntityId: jest.fn().mockResolvedValue(false),
-		findIdByEntityId: jest.fn().mockResolvedValue(null),
-		findById: jest.fn().mockResolvedValue(null),
-		findManyByEntityIds: jest.fn().mockResolvedValue([]),
-		list: jest.fn().mockResolvedValue([]),
-		search: jest.fn().mockResolvedValue([]),
-		upsertByEntityId: jest.fn().mockResolvedValue({
-			id: 'mock-uuid-1',
-			account_id: 'test-account',
-			entity_type: 'changeEvents',
-			entity_id: 'mock-event-1',
-			version: '1.0.0',
-			data: {
-				databaseUrl: DB_URL,
-				table: 'users',
-				action: 'insert',
-				receivedAt: '2026-09-14T00:00:00.000Z',
-				data: null,
-			},
-			created_at: new Date(),
-			updated_at: new Date(),
-		}),
-		deleteById: jest.fn().mockResolvedValue(true),
-		deleteByEntityId: jest.fn().mockResolvedValue(true),
-		count: jest.fn().mockResolvedValue(0),
-		...overrides,
-	};
-}
-
-/**
- * Creates a strongly typed `TursoContext` mock fixture for endpoint unit tests.
- *
- * @param overrides - Partial options, credentials, key managers, or repository overrides.
- * @returns A typed `TursoContext` instance.
- */
-function createTestContext(
-	overrides: {
-		key?: string;
-		options?: TursoPluginOptions;
-		keys?: Partial<TursoContext['keys']>;
-		db?: Partial<TursoContext['db']>;
-	} = {},
-): TursoContext {
-	const defaultChangeEvents = createMockChangeEventsRepository();
-	return {
-		id: 'turso',
-		key: overrides.key ?? TEST_TOKEN,
-		options: overrides.options ?? {},
-		keys: {
-			get_api_key: jest.fn().mockResolvedValue(TEST_TOKEN),
-			get_database_token: jest.fn().mockResolvedValue(null),
-			set_api_key: jest.fn().mockResolvedValue(undefined),
-			set_database_token: jest.fn().mockResolvedValue(undefined),
-			get_webhook_signature: jest.fn().mockResolvedValue(null),
-			set_webhook_signature: jest.fn().mockResolvedValue(undefined),
-			get_dek: jest.fn().mockResolvedValue('test-dek'),
-			issue_new_dek: jest.fn().mockResolvedValue('new-dek'),
-			...overrides.keys,
-		},
-		db: {
-			changeEvents: overrides.db?.changeEvents ?? defaultChangeEvents,
-		},
-		$getAccountId: jest.fn().mockResolvedValue('test-account-id'),
-		endpoints: {},
-	} as TursoContext;
-}
 
 const ctx: TursoContext = createTestContext();
 
@@ -123,52 +47,10 @@ afterAll(() => {
 const mockFetch = (): jest.MockedFunction<typeof fetch> =>
 	global.fetch as jest.MockedFunction<typeof fetch>;
 
-/**
- * Creates a mock JSON Response object.
- *
- * @param payload - The response body to serialize as JSON. Using unknown because test responses mock arbitrary API response shapes.
- * @param status - The HTTP response status code (default: 200).
- * @returns A mocked Response instance.
- */
-function jsonResponse(payload: unknown, status: number = 200): Response {
-	return {
-		ok: status >= 200 && status < 300,
-		status,
-		headers: new Headers({ 'content-type': 'application/json' }),
-		// Using unknown return type to match Response.json() spec for untyped JSON parsing
-		json: async (): Promise<unknown> => payload,
-		text: async (): Promise<string> => JSON.stringify(payload),
-	} as Response;
-}
-
-/**
- * Builds a Response whose body streams the given SSE chunks.
- *
- * @param chunks - Array of raw SSE text chunks to stream.
- * @returns A mocked Response with a readable stream body.
- */
-function sseResponse(chunks: string[]): Response {
-	const encoder = new TextEncoder();
-	let i = 0;
-	// Using unknown type assertion to cast mock stream structure to Response
-	return {
-		ok: true,
-		status: 200,
-		headers: new Headers({ 'content-type': 'text/event-stream' }),
-		body: {
-			getReader: () => ({
-				read: async (): Promise<{
-					done: boolean;
-					value: Uint8Array | undefined;
-				}> =>
-					i < chunks.length
-						? { done: false, value: encoder.encode(chunks[i++]) }
-						: { done: true, value: undefined },
-				cancel: async (): Promise<void> => undefined,
-			}),
-		},
-	} as Response;
-}
+type KeyBuilderFn = (
+	ctx: TursoKeyBuilderContext,
+	source: 'endpoint' | 'webhook',
+) => Promise<string>;
 
 describe('plugin shape', () => {
 	it('registers the three claimed operations and no webhooks', () => {
@@ -193,51 +75,26 @@ describe('plugin shape', () => {
 	});
 
 	it('resolves the token from options or context and rejects webhook lookup', async () => {
-		const makeKeyBuilderCtx = (
-			apiKeyVal: string | null = TEST_TOKEN,
-		): TursoKeyBuilderContext =>
-			({
-				authType: 'api_key' as const,
-				options: {},
-				tenantId: 'test-tenant',
-				keys: {
-					get_api_key: jest.fn().mockResolvedValue(apiKeyVal),
-					get_database_token: jest.fn().mockResolvedValue(null),
-					set_api_key: jest.fn().mockResolvedValue(undefined),
-					set_database_token: jest.fn().mockResolvedValue(undefined),
-					get_webhook_signature: jest.fn().mockResolvedValue(null),
-					set_webhook_signature: jest.fn().mockResolvedValue(undefined),
-					get_dek: jest.fn().mockResolvedValue('test-dek'),
-					issue_new_dek: jest.fn().mockResolvedValue('new-dek'),
-				},
-			}) as TursoKeyBuilderContext;
-
 		const pluginWithKey = turso({ key: TEST_TOKEN });
+		const withKeyBuilder = pluginWithKey.keyBuilder as KeyBuilderFn;
 		await expect(
-			(
-				pluginWithKey.keyBuilder as (
-					c: TursoKeyBuilderContext,
-					s: 'endpoint' | 'webhook',
-				) => Promise<string>
-			)?.(makeKeyBuilderCtx(), 'endpoint'),
+			withKeyBuilder(createKeyBuilderContext(), 'endpoint'),
 		).resolves.toBe(TEST_TOKEN);
 
 		const plugin = turso();
+		const keyBuilder = plugin.keyBuilder as KeyBuilderFn;
 		await expect(
-			plugin.keyBuilder?.(makeKeyBuilderCtx(TEST_TOKEN), 'endpoint'),
+			keyBuilder(createKeyBuilderContext(TEST_TOKEN), 'endpoint'),
 		).resolves.toBe(TEST_TOKEN);
 
 		// A missing credential must raise, not resolve to an empty string.
 		await expect(
-			plugin.keyBuilder?.(makeKeyBuilderCtx(null), 'endpoint'),
+			keyBuilder(createKeyBuilderContext(null), 'endpoint'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 
 		// KeyBuilder only supports endpoint calls, webhook source must reject.
 		await expect(
-			plugin.keyBuilder?.(
-				makeKeyBuilderCtx(TEST_TOKEN),
-				'webhook' as 'endpoint',
-			),
+			keyBuilder(createKeyBuilderContext(TEST_TOKEN), 'webhook'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 });

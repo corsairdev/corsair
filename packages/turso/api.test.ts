@@ -6,7 +6,7 @@ import {
 } from './client';
 import { Changes, Tokens } from './endpoints';
 import { TursoEndpointOutputSchemas } from './endpoints/types';
-import type { TursoContext } from './index';
+import { createLiveTestContext } from './test-harness';
 
 const API_KEY = process.env.TURSO_API_KEY;
 const DATABASE_URL = process.env.TURSO_DATABASE_URL;
@@ -35,38 +35,7 @@ describeLive('Turso live API integration tests', () => {
 		expect(typeof parsed.exp).toBe('number');
 		expect(Number.isInteger(parsed.exp)).toBe(true);
 
-		const liveCtx = {
-			id: 'turso',
-			key,
-			options: { key },
-			keys: {
-				get_api_key: async () => key,
-				get_database_token: async () => null,
-				get_webhook_signature: async () => null,
-				set_api_key: async () => undefined,
-				set_database_token: async () => undefined,
-				set_webhook_signature: async () => undefined,
-				get_dek: async () => 'test-dek',
-				issue_new_dek: async () => 'new-dek',
-			},
-			$getAccountId: async () => 'acc_test',
-			db: {
-				changeEvents: {
-					findByEntityId: async () => null,
-					existsByEntityId: async () => false,
-					findIdByEntityId: async () => null,
-					findById: async () => null,
-					findManyByEntityIds: async () => [],
-					list: async () => [],
-					search: async () => [],
-					upsertByEntityId: async () => ({}) as never,
-					deleteById: async () => true,
-					deleteByEntityId: async () => true,
-					count: async () => 0,
-				},
-			},
-			endpoints: {},
-		} as TursoContext;
+		const liveCtx = createLiveTestContext(key, { key });
 
 		const endpointResult = await Tokens.validate(liveCtx, {});
 		expect(endpointResult.exp).toBe(parsed.exp);
@@ -75,41 +44,10 @@ describeLive('Turso live API integration tests', () => {
 	if (DATABASE_URL) {
 		it('3. TURSO_LISTEN_TO_CHANGES - queries database changes or health check fallback', async () => {
 			const key = API_KEY as string;
-			const liveCtx = {
-				id: 'turso',
+			const liveCtx = createLiveTestContext(key, {
 				key,
-				options: {
-					key,
-					databaseToken: DATABASE_TOKEN,
-				},
-				keys: {
-					get_api_key: async () => key,
-					get_database_token: async () => DATABASE_TOKEN ?? null,
-					get_webhook_signature: async () => null,
-					set_api_key: async () => undefined,
-					set_database_token: async () => undefined,
-					set_webhook_signature: async () => undefined,
-					get_dek: async () => 'test-dek',
-					issue_new_dek: async () => 'new-dek',
-				},
-				$getAccountId: async () => 'acc_test',
-				db: {
-					changeEvents: {
-						findByEntityId: async () => null,
-						existsByEntityId: async () => false,
-						findIdByEntityId: async () => null,
-						findById: async () => null,
-						findManyByEntityIds: async () => [],
-						list: async () => [],
-						search: async () => [],
-						upsertByEntityId: async () => ({}) as never,
-						deleteById: async () => true,
-						deleteByEntityId: async () => true,
-						count: async () => 0,
-					},
-				},
-				endpoints: {},
-			} as TursoContext;
+				databaseToken: DATABASE_TOKEN,
+			});
 
 			const endpointResult = await Changes.listen(liveCtx, {
 				databaseUrl: DATABASE_URL,
