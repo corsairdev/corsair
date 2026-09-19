@@ -53,11 +53,6 @@ type PluginDocsFile = {
 	displayName?: string;
 	/** Overrides Mintlify frontmatter `description` when set. */
 	description?: string;
-	/**
-	 * Brand website hostname used for plugin icons (e.g. `scale.com`).
-	 * Accepts bare hostnames or full URLs; `www.` is stripped.
-	 */
-	domain?: string;
 	/** Markdown inserted after the intro paragraph on the overview page. */
 	overviewNote?: string;
 	/**
@@ -711,20 +706,6 @@ function validatePluginDocsConfig(
 			errors.push(
 				`${prefix}: exampleWebhook.path "${path}" not found — webhook paths: ${known}`,
 			);
-		}
-	}
-
-	const domain = docsConfig.domain?.trim();
-	if (domain) {
-		try {
-			const hostname = new URL(
-				domain.includes('://') ? domain : `https://${domain}`,
-			).hostname;
-			if (!hostname || hostname.includes(' ')) {
-				errors.push(`${prefix}: domain "${domain}" is not a valid hostname`);
-			}
-		} catch {
-			errors.push(`${prefix}: domain "${domain}" is not a valid hostname`);
 		}
 	}
 
@@ -1504,22 +1485,6 @@ function buildDbMdx(
 	title: string,
 	data: PluginDocsIntrospection,
 ): string {
-	if (data.db.length === 0) {
-		const dbDescription = `${title} database surface: no local entities are currently synced.`;
-		return `---
-title: Database
-description: ${yamlDoubleQuotedScalar(dbDescription)}
----
-
-The ${title} plugin does not currently sync any local database entities.
-
-<Info>
-**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
-</Info>
-
-`;
-	}
-
 	const blocks: string[] = [];
 	for (const ent of data.db) {
 		const filterRows = ent.filters

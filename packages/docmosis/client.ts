@@ -8,7 +8,7 @@ export class DocmosisAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: number | string,
-		options?: { cause?: Error },
+		options?: { cause?: Error; retryAfter?: number },
 	) {
 		super(message, options);
 		this.name = 'DocmosisAPIError';
@@ -16,17 +16,121 @@ export class DocmosisAPIError extends Error {
 		if (options?.cause instanceof ApiError) {
 			this.status = options.cause.status;
 			this.retryAfter = options.cause.retryAfter;
+		} else if (options?.retryAfter !== undefined) {
+			this.retryAfter = options.retryAfter;
 		}
 	}
 }
 
 export type DocmosisRegion = 'us1' | 'eu1' | 'au1';
 
+type DocmosisResponseType = 'arrayBuffer';
+
 const DOCMOSIS_API_BASES: Record<DocmosisRegion, string> = {
 	us1: 'https://us1.dws4.docmosis.com/api',
 	eu1: 'https://eu1.dws4.docmosis.com/api',
 	au1: 'https://au1.dws4.docmosis.com/api',
 };
+
+const REQUEST_TIMEOUT_MS = 20_000;
+
+function buildFormData(data?: Record<string, unknown>): FormData | undefined {
+	if (!data) {
+		return undefined;
+	}
+
+	const formData = new FormData();
+	for (const [key, value] of Object.entries(data)) {
+		if (value === undefined || value === null) {
+			continue;
+		}
+
+		const appendValue = (item: unknown) => {
+			if (typeof item === 'string' || item instanceof Blob) {
+				formData.append(key, item);
+				return;
+			}
+			formData.append(key, JSON.stringify(item));
+		};
+
+		if (Array.isArray(value)) {
+			for (const item of value) {
+				appendValue(item);
+			}
+		} else {
+			appendValue(value);
+		}
+	}
+
+	return formData;
+}
+
+function buildUrl(
+	base: string,
+	endpoint: string,
+	query?: Record<string, string | number | boolean | undefined>,
+): string {
+	const path = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+	let url = `${base.replace(/\/$/, '')}/${path}`;
+
+	if (query) {
+		const params = new URLSearchParams();
+		for (const [key, value] of Object.entries(query)) {
+			if (value !== undefined) {
+				params.set(key, String(value));
+			}
+		}
+		const qs = params.toString();
+		if (qs) {
+			url = `${url}?${qs}`;
+		}
+	}
+
+	return url;
+}
+
+async function fetchBinaryResponse(
+	url: string,
+	options: {
+		method: string;
+		headers: Record<string, string>;
+		body?: FormData;
+	},
+): Promise<ArrayBuffer> {
+	const response = await fetch(url, {
+		method: options.method,
+		headers: options.headers,
+		body: options.body,
+		signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+	});
+
+	if (!response.ok) {
+		let message = response.statusText;
+		try {
+			const raw = await response.text();
+			const body = JSON.parse(raw) as {
+				shortMsg?: string;
+				longMsg?: string;
+			};
+			message = body.longMsg ?? body.shortMsg ?? message;
+		} catch {
+			// binary or non-JSON error body
+		}
+
+		const retryAfterHeader = response.headers.get('Retry-After');
+		const retryAfterSeconds = retryAfterHeader
+			? Number(retryAfterHeader)
+			: Number.NaN;
+
+		throw new DocmosisAPIError(message, response.status, {
+			retryAfter: Number.isFinite(retryAfterSeconds)
+				? retryAfterSeconds * 1000
+				: undefined,
+		});
+	}
+
+	return response.arrayBuffer();
+}
 
 export async function makeDocmosisRequest<T>(
 	endpoint: string,
@@ -37,7 +141,7 @@ export async function makeDocmosisRequest<T>(
 		query?: Record<string, string | number | boolean | undefined>;
 		formData?: Record<string, unknown>;
 		mediaType?: string;
-		responseType?: ApiRequestOptions['responseType'];
+		responseType?: DocmosisResponseType;
 		region?: DocmosisRegion;
 	} = {},
 ): Promise<T> {
@@ -50,6 +154,16 @@ export async function makeDocmosisRequest<T>(
 		responseType,
 		region = 'us1',
 	} = options;
+
+	if (responseType === 'arrayBuffer') {
+		const url = buildUrl(DOCMOSIS_API_BASES[region], endpoint, query);
+		const requestBody = buildFormData(formData);
+		return (await fetchBinaryResponse(url, {
+			method,
+			headers: { accessKey: apiKey },
+			body: requestBody,
+		})) as T;
+	}
 
 	const config: OpenAPIConfig = {
 		BASE: DOCMOSIS_API_BASES[region],
@@ -69,7 +183,6 @@ export async function makeDocmosisRequest<T>(
 		body,
 		formData,
 		mediaType: mediaType ?? 'application/x-www-form-urlencoded',
-		responseType,
 	};
 
 	try {

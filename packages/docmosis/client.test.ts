@@ -90,4 +90,29 @@ describe('makeDocmosisRequest', () => {
 			expect((error as DocmosisAPIError).status).toBeUndefined();
 		}
 	});
+
+	it('fetches binary responses without using the JSON transport', async () => {
+		const bytes = new Uint8Array([1, 2, 3, 4]).buffer;
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue({
+			ok: true,
+			arrayBuffer: async () => bytes,
+		} as Response);
+
+		const result = await makeDocmosisRequest('getImage', 'key-5', {
+			method: 'POST',
+			formData: { imageName: '/logo.png' },
+			responseType: 'arrayBuffer',
+		});
+
+		expect(result).toBe(bytes);
+		expect(fetchMock).toHaveBeenCalledWith(
+			'https://us1.dws4.docmosis.com/api/getImage',
+			expect.objectContaining({
+				method: 'POST',
+				headers: { accessKey: 'key-5' },
+			}),
+		);
+		expect(mockRequest).not.toHaveBeenCalled();
+		fetchMock.mockRestore();
+	});
 });
