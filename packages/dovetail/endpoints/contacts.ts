@@ -2,99 +2,114 @@ import { logEventFromContext } from 'corsair/core';
 import { makeDovetailRequest } from '../client';
 import type { DovetailEndpoints } from '../index';
 import type { DovetailEndpointOutputs } from './types';
+import {
+	DovetailEndpointInputSchemas,
+	DovetailEndpointOutputSchemas,
+} from './types';
 
 export const create: DovetailEndpoints['contactsCreate'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = DovetailEndpointInputSchemas.contactsCreate.parse(input);
 	// Justification: unknown is used in client body typing, and body payload here is typed strictly as Record<string, unknown>
 	const body: Record<string, unknown> = {
-		name: input.name,
-		email: input.email,
+		name: parsed.name,
+		email: parsed.email,
 	};
-	if (input.fields !== undefined) body.fields = input.fields;
+	if (parsed.fields !== undefined) body.fields = parsed.fields;
 
-	const result = await makeDovetailRequest<
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['contactsCreate']
 	>('/v1/contacts', ctx.key, {
 		method: 'POST',
 		body,
 	});
+	const validated =
+		DovetailEndpointOutputSchemas.contactsCreate.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.contacts.create',
-		{ id: result.data.id, name: result.data.name },
+		{ id: validated.data.id, name: validated.data.name },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const get: DovetailEndpoints['contactsGet'] = async (ctx, input) => {
-	const result = await makeDovetailRequest<
+	const parsed = DovetailEndpointInputSchemas.contactsGet.parse(input);
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['contactsGet']
-	>(`/v1/contacts/${encodeURIComponent(input.contact_id)}`, ctx.key, {
+	>(`/v1/contacts/${encodeURIComponent(parsed.contact_id)}`, ctx.key, {
 		method: 'GET',
 	});
+	const validated = DovetailEndpointOutputSchemas.contactsGet.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.contacts.get',
-		{ id: result.data.id },
+		{ id: validated.data.id },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const list: DovetailEndpoints['contactsList'] = async (ctx, input) => {
+	const parsed = DovetailEndpointInputSchemas.contactsList.parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input.page?.limit !== undefined) query['page[limit]'] = input.page.limit;
-	if (input.page?.start_cursor !== undefined)
-		query['page[start_cursor]'] = input.page.start_cursor;
-	if (input.filter?.name !== undefined)
-		query['filter[name]'] = input.filter.name;
-	if (input.sort !== undefined) query.sort = input.sort;
+	if (parsed.page?.limit !== undefined)
+		query['page[limit]'] = parsed.page.limit;
+	if (parsed.page?.start_cursor !== undefined)
+		query['page[start_cursor]'] = parsed.page.start_cursor;
+	if (parsed.filter?.name !== undefined)
+		query['filter[name]'] = parsed.filter.name;
+	if (parsed.sort !== undefined) query.sort = parsed.sort;
 
-	const result = await makeDovetailRequest<
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['contactsList']
 	>('/v1/contacts', ctx.key, {
 		method: 'GET',
 		query,
 	});
+	const validated = DovetailEndpointOutputSchemas.contactsList.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.contacts.list',
-		{ count: result.data.length },
+		{ count: validated.data.length },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const update: DovetailEndpoints['contactsUpdate'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = DovetailEndpointInputSchemas.contactsUpdate.parse(input);
 	// Justification: unknown is used in client body typing, and body payload here is typed strictly as Record<string, unknown>
 	const body: Record<string, unknown> = {};
-	if (input.name !== undefined) body.name = input.name;
-	if (input.email !== undefined) body.email = input.email;
-	if (input.fields !== undefined) body.fields = input.fields;
+	if (parsed.name !== undefined) body.name = parsed.name;
+	if (parsed.email !== undefined) body.email = parsed.email;
+	if (parsed.fields !== undefined) body.fields = parsed.fields;
 
-	const result = await makeDovetailRequest<
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['contactsUpdate']
-	>(`/v1/contacts/${encodeURIComponent(input.contact_id)}`, ctx.key, {
+	>(`/v1/contacts/${encodeURIComponent(parsed.contact_id)}`, ctx.key, {
 		method: 'PATCH',
 		body,
 	});
+	const validated =
+		DovetailEndpointOutputSchemas.contactsUpdate.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.contacts.update',
-		{ id: result.data.id },
+		{ id: validated.data.id },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const Contacts = {

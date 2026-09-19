@@ -2,226 +2,255 @@ import { logEventFromContext } from 'corsair/core';
 import { makeDovetailRequest } from '../client';
 import type { DovetailEndpoints } from '../index';
 import type { DovetailEndpointOutputs } from './types';
+import {
+	DovetailEndpointInputSchemas,
+	DovetailEndpointOutputSchemas,
+} from './types';
 
 export const create: DovetailEndpoints['insightsCreate'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = DovetailEndpointInputSchemas.insightsCreate.parse(input);
 	// Justification: unknown is used in client body typing, and body payload here is typed strictly as Record<string, unknown>
 	const body: Record<string, unknown> = {};
-	if (input.title !== undefined) body.title = input.title;
-	if (input.content !== undefined) body.content = input.content;
-	if (input.content_type !== undefined) body.content_type = input.content_type;
-	if (input.project_id !== undefined) body.project_id = input.project_id;
-	if (input.folder_id !== undefined) body.folder_id = input.folder_id;
-	if (input.fields !== undefined) body.fields = input.fields;
+	if (parsed.title !== undefined) body.title = parsed.title;
+	if (parsed.content !== undefined) body.content = parsed.content;
+	if (parsed.content_type !== undefined)
+		body.content_type = parsed.content_type;
+	if (parsed.project_id !== undefined) body.project_id = parsed.project_id;
+	if (parsed.folder_id !== undefined) body.folder_id = parsed.folder_id;
+	if (parsed.fields !== undefined) body.fields = parsed.fields;
 
-	const result = await makeDovetailRequest<
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['insightsCreate']
 	>('/v1/insights', ctx.key, {
 		method: 'POST',
 		body,
 	});
+	const validated =
+		DovetailEndpointOutputSchemas.insightsCreate.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.insights.create',
-		{ id: result.data.id, title: result.data.title },
+		{ id: validated.data.id, title: validated.data.title },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const get: DovetailEndpoints['insightsGet'] = async (ctx, input) => {
-	const result = await makeDovetailRequest<
+	const parsed = DovetailEndpointInputSchemas.insightsGet.parse(input);
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['insightsGet']
-	>(`/v1/insights/${encodeURIComponent(input.insight_id)}`, ctx.key, {
+	>(`/v1/insights/${encodeURIComponent(parsed.insight_id)}`, ctx.key, {
 		method: 'GET',
 	});
+	const validated = DovetailEndpointOutputSchemas.insightsGet.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.insights.get',
-		{ id: result.data.id },
+		{ id: validated.data.id },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const list: DovetailEndpoints['insightsList'] = async (ctx, input) => {
+	const parsed = DovetailEndpointInputSchemas.insightsList.parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input.page?.limit !== undefined) query['page[limit]'] = input.page.limit;
-	if (input.page?.start_cursor !== undefined)
-		query['page[start_cursor]'] = input.page.start_cursor;
-	if (input.filter?.project_id !== undefined)
-		query['filter[project_id]'] = input.filter.project_id;
-	if (input.filter?.folder_id !== undefined)
-		query['filter[folder_id]'] = input.filter.folder_id;
-	if (input.filter?.title !== undefined)
-		query['filter[title]'] = input.filter.title;
-	if (input.filter?.created_at?.gt !== undefined)
-		query['filter[created_at][gt]'] = input.filter.created_at.gt;
-	if (input.filter?.created_at?.gte !== undefined)
-		query['filter[created_at][gte]'] = input.filter.created_at.gte;
-	if (input.filter?.created_at?.lt !== undefined)
-		query['filter[created_at][lt]'] = input.filter.created_at.lt;
-	if (input.filter?.created_at?.lte !== undefined)
-		query['filter[created_at][lte]'] = input.filter.created_at.lte;
-	if (input.sort !== undefined) query.sort = input.sort;
+	if (parsed.page?.limit !== undefined)
+		query['page[limit]'] = parsed.page.limit;
+	if (parsed.page?.start_cursor !== undefined)
+		query['page[start_cursor]'] = parsed.page.start_cursor;
+	if (parsed.filter?.project_id !== undefined)
+		query['filter[project_id]'] = parsed.filter.project_id;
+	if (parsed.filter?.folder_id !== undefined)
+		query['filter[folder_id]'] = parsed.filter.folder_id;
+	if (parsed.filter?.title !== undefined)
+		query['filter[title]'] = parsed.filter.title;
+	if (parsed.filter?.created_at?.gt !== undefined)
+		query['filter[created_at][gt]'] = parsed.filter.created_at.gt;
+	if (parsed.filter?.created_at?.gte !== undefined)
+		query['filter[created_at][gte]'] = parsed.filter.created_at.gte;
+	if (parsed.filter?.created_at?.lt !== undefined)
+		query['filter[created_at][lt]'] = parsed.filter.created_at.lt;
+	if (parsed.filter?.created_at?.lte !== undefined)
+		query['filter[created_at][lte]'] = parsed.filter.created_at.lte;
+	if (parsed.sort !== undefined) query.sort = parsed.sort;
 
-	const result = await makeDovetailRequest<
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['insightsList']
 	>('/v1/insights', ctx.key, {
 		method: 'GET',
 		query,
 	});
+	const validated = DovetailEndpointOutputSchemas.insightsList.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.insights.list',
-		{ count: result.data.length },
+		{ count: validated.data.length },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const update: DovetailEndpoints['insightsUpdate'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = DovetailEndpointInputSchemas.insightsUpdate.parse(input);
 	// Justification: unknown is used in client body typing, and body payload here is typed strictly as Record<string, unknown>
 	const body: Record<string, unknown> = {};
-	if (input.title !== undefined) body.title = input.title;
-	if (input.folder_id !== undefined) body.folder_id = input.folder_id;
-	if (input.cover_image_file_id !== undefined)
-		body.cover_image_file_id = input.cover_image_file_id;
-	if (input.fields !== undefined) body.fields = input.fields;
+	if (parsed.title !== undefined) body.title = parsed.title;
+	if (parsed.folder_id !== undefined) body.folder_id = parsed.folder_id;
+	if (parsed.cover_image_file_id !== undefined)
+		body.cover_image_file_id = parsed.cover_image_file_id;
+	if (parsed.fields !== undefined) body.fields = parsed.fields;
 
-	const result = await makeDovetailRequest<
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['insightsUpdate']
-	>(`/v1/insights/${encodeURIComponent(input.insight_id)}`, ctx.key, {
+	>(`/v1/insights/${encodeURIComponent(parsed.insight_id)}`, ctx.key, {
 		method: 'PATCH',
 		body,
 	});
+	const validated =
+		DovetailEndpointOutputSchemas.insightsUpdate.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.insights.update',
-		{ id: result.data.id },
+		{ id: validated.data.id },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const deleteInsight: DovetailEndpoints['insightsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeDovetailRequest<
+	const parsed = DovetailEndpointInputSchemas.insightsDelete.parse(input);
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['insightsDelete']
-	>(`/v1/insights/${encodeURIComponent(input.insight_id)}`, ctx.key, {
+	>(`/v1/insights/${encodeURIComponent(parsed.insight_id)}`, ctx.key, {
 		method: 'DELETE',
 	});
+	const validated =
+		DovetailEndpointOutputSchemas.insightsDelete.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.insights.delete',
-		{ id: result.data.id },
+		{ id: validated.data.id },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const exportInsight: DovetailEndpoints['insightsExport'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeDovetailRequest<
+	const parsed = DovetailEndpointInputSchemas.insightsExport.parse(input);
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['insightsExport']
 	>(
-		`/v1/insights/${encodeURIComponent(input.insight_id)}/export/${encodeURIComponent(input.type)}`,
+		`/v1/insights/${encodeURIComponent(parsed.insight_id)}/export/${encodeURIComponent(parsed.type)}`,
 		ctx.key,
 		{
 			method: 'GET',
 		},
 	);
+	const validated =
+		DovetailEndpointOutputSchemas.insightsExport.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.insights.export',
-		{ id: result.data.id, type: input.type },
+		{ id: validated.data.id, type: parsed.type },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const importFile: DovetailEndpoints['insightsImportFile'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = DovetailEndpointInputSchemas.insightsImportFile.parse(input);
 	// Justification: unknown is used in client body typing, and body payload here is typed strictly as Record<string, unknown>
 	const body: Record<string, unknown> = {
-		title: input.title,
+		title: parsed.title,
 	};
-	if (input.project_id !== undefined) body.project_id = input.project_id;
-	if (input.folder_id !== undefined) body.folder_id = input.folder_id;
-	if (input.url !== undefined) body.url = input.url;
-	if (input.file_id !== undefined) body.file_id = input.file_id;
-	if (input.mime_type !== undefined) body.mime_type = input.mime_type;
+	if (parsed.project_id !== undefined) body.project_id = parsed.project_id;
+	if (parsed.folder_id !== undefined) body.folder_id = parsed.folder_id;
+	if (parsed.url !== undefined) body.url = parsed.url;
+	if (parsed.file_id !== undefined) body.file_id = parsed.file_id;
+	if (parsed.mime_type !== undefined) body.mime_type = parsed.mime_type;
 
-	const result = await makeDovetailRequest<
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['insightsImportFile']
 	>('/v1/insights/import/file', ctx.key, {
 		method: 'POST',
 		body,
 	});
+	const validated =
+		DovetailEndpointOutputSchemas.insightsImportFile.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.insights.importFile',
-		{ id: result.data.id },
+		{ id: validated.data.id },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const listUserInsights: DovetailEndpoints['insightsListUserInsights'] =
 	async (ctx, input) => {
+		const parsed =
+			DovetailEndpointInputSchemas.insightsListUserInsights.parse(input);
 		const query: Record<string, string | number | boolean | undefined> = {};
-		if (input.page?.limit !== undefined)
-			query['page[limit]'] = input.page.limit;
-		if (input.page?.start_cursor !== undefined)
-			query['page[start_cursor]'] = input.page.start_cursor;
-		if (input.filter?.project_id !== undefined)
-			query['filter[project_id]'] = input.filter.project_id;
-		if (input.filter?.folder_id !== undefined)
-			query['filter[folder_id]'] = input.filter.folder_id;
-		if (input.filter?.title !== undefined)
-			query['filter[title]'] = input.filter.title;
-		if (input.filter?.created_at?.gt !== undefined)
-			query['filter[created_at][gt]'] = input.filter.created_at.gt;
-		if (input.filter?.created_at?.gte !== undefined)
-			query['filter[created_at][gte]'] = input.filter.created_at.gte;
-		if (input.filter?.created_at?.lt !== undefined)
-			query['filter[created_at][lt]'] = input.filter.created_at.lt;
-		if (input.filter?.created_at?.lte !== undefined)
-			query['filter[created_at][lte]'] = input.filter.created_at.lte;
-		if (input.sort !== undefined) query.sort = input.sort;
+		if (parsed.page?.limit !== undefined)
+			query['page[limit]'] = parsed.page.limit;
+		if (parsed.page?.start_cursor !== undefined)
+			query['page[start_cursor]'] = parsed.page.start_cursor;
+		if (parsed.filter?.project_id !== undefined)
+			query['filter[project_id]'] = parsed.filter.project_id;
+		if (parsed.filter?.folder_id !== undefined)
+			query['filter[folder_id]'] = parsed.filter.folder_id;
+		if (parsed.filter?.title !== undefined)
+			query['filter[title]'] = parsed.filter.title;
+		if (parsed.filter?.created_at?.gt !== undefined)
+			query['filter[created_at][gt]'] = parsed.filter.created_at.gt;
+		if (parsed.filter?.created_at?.gte !== undefined)
+			query['filter[created_at][gte]'] = parsed.filter.created_at.gte;
+		if (parsed.filter?.created_at?.lt !== undefined)
+			query['filter[created_at][lt]'] = parsed.filter.created_at.lt;
+		if (parsed.filter?.created_at?.lte !== undefined)
+			query['filter[created_at][lte]'] = parsed.filter.created_at.lte;
+		if (parsed.sort !== undefined) query.sort = parsed.sort;
 
-		const result = await makeDovetailRequest<
+		const response = await makeDovetailRequest<
 			DovetailEndpointOutputs['insightsListUserInsights']
-		>(`/v1/insights/user/${encodeURIComponent(input.user_id)}`, ctx.key, {
+		>(`/v1/insights/user/${encodeURIComponent(parsed.user_id)}`, ctx.key, {
 			method: 'GET',
 			query,
 		});
+		const validated =
+			DovetailEndpointOutputSchemas.insightsListUserInsights.parse(response);
 
 		await logEventFromContext(
 			ctx,
 			'dovetail.insights.listUserInsights',
-			{ user_id: input.user_id, count: result.data.length },
+			{ user_id: parsed.user_id, count: validated.data.length },
 			'completed',
 		);
-		return result;
+		return validated;
 	};
 
 export const Insights = {

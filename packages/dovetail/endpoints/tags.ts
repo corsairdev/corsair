@@ -2,32 +2,37 @@ import { logEventFromContext } from 'corsair/core';
 import { makeDovetailRequest } from '../client';
 import type { DovetailEndpoints } from '../index';
 import type { DovetailEndpointOutputs } from './types';
+import {
+	DovetailEndpointInputSchemas,
+	DovetailEndpointOutputSchemas,
+} from './types';
 
 export const list: DovetailEndpoints['tagsList'] = async (ctx, input) => {
+	const parsed = DovetailEndpointInputSchemas.tagsList.parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input.page?.limit !== undefined) query['page[limit]'] = input.page.limit;
-	if (input.page?.start_cursor !== undefined)
-		query['page[start_cursor]'] = input.page.start_cursor;
-	if (input.filter?.project_id !== undefined)
-		query['filter[project_id]'] = input.filter.project_id;
-	if (input.filter?.tag_board_id !== undefined)
-		query['filter[tag_board_id]'] = input.filter.tag_board_id;
-	if (input.sort !== undefined) query.sort = input.sort;
+	if (parsed.page?.limit !== undefined)
+		query['page[limit]'] = parsed.page.limit;
+	if (parsed.page?.start_cursor !== undefined)
+		query['page[start_cursor]'] = parsed.page.start_cursor;
+	if (parsed.filter?.project_id !== undefined)
+		query['filter[project_id]'] = parsed.filter.project_id;
+	if (parsed.filter?.tag_board_id !== undefined)
+		query['filter[tag_board_id]'] = parsed.filter.tag_board_id;
+	if (parsed.sort !== undefined) query.sort = parsed.sort;
 
-	const result = await makeDovetailRequest<DovetailEndpointOutputs['tagsList']>(
-		'/v1/tags',
-		ctx.key,
-		{
-			method: 'GET',
-			query,
-		},
-	);
+	const response = await makeDovetailRequest<
+		DovetailEndpointOutputs['tagsList']
+	>('/v1/tags', ctx.key, {
+		method: 'GET',
+		query,
+	});
+	const validated = DovetailEndpointOutputSchemas.tagsList.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.tags.list',
-		{ count: result.data.length },
+		{ count: validated.data.length },
 		'completed',
 	);
-	return result;
+	return validated;
 };

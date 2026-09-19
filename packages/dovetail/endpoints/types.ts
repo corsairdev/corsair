@@ -93,7 +93,9 @@ export const ChannelsDeleteInputSchema = z.object({
 export const ChannelsCreateDataPointInputSchema = z.object({
 	channel_id: z.string(),
 	text: z.string().min(1).max(5000000),
-	timestamp: z.string().optional(),
+	// Required by POST /v1/channels/data (OpenAPI required: text, channel_id, timestamp).
+	// Records when the feedback was originally received, in ISO 8601 format.
+	timestamp: z.string(),
 	source_title: z.string().min(1).max(100).optional(),
 	source_url: z.string().min(1).max(5000).optional(),
 	// Justification: unknown is used here because metadata represents arbitrary key-value pairs associated with a data point
@@ -185,15 +187,31 @@ export const DataExportInputSchema = z.object({
 	include_file_content: z.boolean().optional(),
 });
 
-export const DataImportFileInputSchema = z.object({
-	project_id: z.string(),
-	url: z.string().url().optional(),
-	file_id: z.string().optional(),
-	mime_type: z.string().optional(),
-	author_id: z.string().optional(),
-	created_at: z.string().optional(),
-	fields: z.array(CustomFieldInputSchema).optional(),
-});
+export const DataImportFileInputSchema = z
+	.object({
+		project_id: z.string(),
+		// Required by POST /v1/data/import/file (OpenAPI required: project_id, title).
+		title: z.string().min(1),
+		// POST /v1/data/import/file accepts exactly one of url or file_id.
+		url: z.string().url().optional(),
+		file_id: z.string().optional(),
+		mime_type: z.string().optional(),
+		author_id: z.string().optional(),
+		created_at: z.string().optional(),
+		fields: z.array(CustomFieldInputSchema).optional(),
+	})
+	.superRefine((val, ctx) => {
+		const hasUrl = val.url !== undefined;
+		const hasFileId = val.file_id !== undefined;
+		if (hasUrl === hasFileId) {
+			ctx.addIssue({
+				code: 'custom',
+				message:
+					'Provide exactly one of `url` or `file_id` (POST /v1/data/import/file).',
+				path: hasUrl ? ['url', 'file_id'] : ['url'],
+			});
+		}
+	});
 
 // Docs
 export const DocsCreateInputSchema = z.object({

@@ -2,188 +2,205 @@ import { logEventFromContext } from 'corsair/core';
 import { makeDovetailRequest } from '../client';
 import type { DovetailEndpoints } from '../index';
 import type { DovetailEndpointOutputs } from './types';
+import {
+	DovetailEndpointInputSchemas,
+	DovetailEndpointOutputSchemas,
+} from './types';
 
 export const create: DovetailEndpoints['dataCreate'] = async (ctx, input) => {
+	const parsed = DovetailEndpointInputSchemas.dataCreate.parse(input);
 	// Justification: unknown is used in client body typing, and body payload here is typed strictly as Record<string, unknown>
 	const body: Record<string, unknown> = {
-		project_id: input.project_id,
+		project_id: parsed.project_id,
 	};
-	if (input.title !== undefined) body.title = input.title;
-	if (input.content !== undefined) body.content = input.content;
-	if (input.fields !== undefined) body.fields = input.fields;
+	if (parsed.title !== undefined) body.title = parsed.title;
+	if (parsed.content !== undefined) body.content = parsed.content;
+	if (parsed.fields !== undefined) body.fields = parsed.fields;
 
-	const result = await makeDovetailRequest<
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['dataCreate']
 	>('/v1/data', ctx.key, {
 		method: 'POST',
 		body,
 	});
+	const validated = DovetailEndpointOutputSchemas.dataCreate.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.data.create',
-		{ id: result.data.id, title: result.data.title },
+		{ id: validated.data.id, title: validated.data.title },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const get: DovetailEndpoints['dataGet'] = async (ctx, input) => {
-	const result = await makeDovetailRequest<DovetailEndpointOutputs['dataGet']>(
-		`/v1/data/${encodeURIComponent(input.data_id)}`,
-		ctx.key,
-		{
-			method: 'GET',
-		},
-	);
+	const parsed = DovetailEndpointInputSchemas.dataGet.parse(input);
+	const response = await makeDovetailRequest<
+		DovetailEndpointOutputs['dataGet']
+	>(`/v1/data/${encodeURIComponent(parsed.data_id)}`, ctx.key, {
+		method: 'GET',
+	});
+	const validated = DovetailEndpointOutputSchemas.dataGet.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.data.get',
-		{ id: result.data.id },
+		{ id: validated.data.id },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const list: DovetailEndpoints['dataList'] = async (ctx, input) => {
+	const parsed = DovetailEndpointInputSchemas.dataList.parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input.page?.limit !== undefined) query['page[limit]'] = input.page.limit;
-	if (input.page?.start_cursor !== undefined)
-		query['page[start_cursor]'] = input.page.start_cursor;
-	if (input.filter?.project_id !== undefined)
-		query['filter[project_id]'] = input.filter.project_id;
-	if (input.filter?.folder_id !== undefined)
-		query['filter[folder_id]'] = input.filter.folder_id;
-	if (input.filter?.title !== undefined)
-		query['filter[title]'] = input.filter.title;
-	if (input.filter?.created_at?.gt !== undefined)
-		query['filter[created_at][gt]'] = input.filter.created_at.gt;
-	if (input.filter?.created_at?.gte !== undefined)
-		query['filter[created_at][gte]'] = input.filter.created_at.gte;
-	if (input.filter?.created_at?.lt !== undefined)
-		query['filter[created_at][lt]'] = input.filter.created_at.lt;
-	if (input.filter?.created_at?.lte !== undefined)
-		query['filter[created_at][lte]'] = input.filter.created_at.lte;
-	if (input.sort !== undefined) query.sort = input.sort;
+	if (parsed.page?.limit !== undefined)
+		query['page[limit]'] = parsed.page.limit;
+	if (parsed.page?.start_cursor !== undefined)
+		query['page[start_cursor]'] = parsed.page.start_cursor;
+	if (parsed.filter?.project_id !== undefined)
+		query['filter[project_id]'] = parsed.filter.project_id;
+	if (parsed.filter?.folder_id !== undefined)
+		query['filter[folder_id]'] = parsed.filter.folder_id;
+	if (parsed.filter?.title !== undefined)
+		query['filter[title]'] = parsed.filter.title;
+	if (parsed.filter?.created_at?.gt !== undefined)
+		query['filter[created_at][gt]'] = parsed.filter.created_at.gt;
+	if (parsed.filter?.created_at?.gte !== undefined)
+		query['filter[created_at][gte]'] = parsed.filter.created_at.gte;
+	if (parsed.filter?.created_at?.lt !== undefined)
+		query['filter[created_at][lt]'] = parsed.filter.created_at.lt;
+	if (parsed.filter?.created_at?.lte !== undefined)
+		query['filter[created_at][lte]'] = parsed.filter.created_at.lte;
+	if (parsed.sort !== undefined) query.sort = parsed.sort;
 
-	const result = await makeDovetailRequest<DovetailEndpointOutputs['dataList']>(
-		'/v1/data',
-		ctx.key,
-		{
-			method: 'GET',
-			query,
-		},
-	);
+	const response = await makeDovetailRequest<
+		DovetailEndpointOutputs['dataList']
+	>('/v1/data', ctx.key, {
+		method: 'GET',
+		query,
+	});
+	const validated = DovetailEndpointOutputSchemas.dataList.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.data.list',
-		{ count: result.data.length },
+		{ count: validated.data.length },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const update: DovetailEndpoints['dataUpdate'] = async (ctx, input) => {
+	const parsed = DovetailEndpointInputSchemas.dataUpdate.parse(input);
 	// Justification: unknown is used in client body typing, and body payload here is typed strictly as Record<string, unknown>
 	const body: Record<string, unknown> = {};
-	if (input.title !== undefined) body.title = input.title;
-	if (input.fields !== undefined) body.fields = input.fields;
+	if (parsed.title !== undefined) body.title = parsed.title;
+	if (parsed.fields !== undefined) body.fields = parsed.fields;
 
-	const result = await makeDovetailRequest<
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['dataUpdate']
-	>(`/v1/data/${encodeURIComponent(input.data_id)}`, ctx.key, {
+	>(`/v1/data/${encodeURIComponent(parsed.data_id)}`, ctx.key, {
 		method: 'PATCH',
 		body,
 	});
+	const validated = DovetailEndpointOutputSchemas.dataUpdate.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.data.update',
-		{ id: result.data.id },
+		{ id: validated.data.id },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const deleteData: DovetailEndpoints['dataDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeDovetailRequest<
+	const parsed = DovetailEndpointInputSchemas.dataDelete.parse(input);
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['dataDelete']
-	>(`/v1/data/${encodeURIComponent(input.data_id)}`, ctx.key, {
+	>(`/v1/data/${encodeURIComponent(parsed.data_id)}`, ctx.key, {
 		method: 'DELETE',
 	});
+	const validated = DovetailEndpointOutputSchemas.dataDelete.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.data.delete',
-		{ id: result.data.id },
+		{ id: validated.data.id },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const exportData: DovetailEndpoints['dataExport'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = DovetailEndpointInputSchemas.dataExport.parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input.include_file_content !== undefined) {
-		query.include_file_content = input.include_file_content;
+	if (parsed.include_file_content !== undefined) {
+		query.include_file_content = parsed.include_file_content;
 	}
 
-	const result = await makeDovetailRequest<
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['dataExport']
 	>(
-		`/v1/data/${encodeURIComponent(input.data_id)}/export/${encodeURIComponent(input.type)}`,
+		`/v1/data/${encodeURIComponent(parsed.data_id)}/export/${encodeURIComponent(parsed.type)}`,
 		ctx.key,
 		{
 			method: 'GET',
 			query,
 		},
 	);
+	const validated = DovetailEndpointOutputSchemas.dataExport.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.data.export',
-		{ id: result.data.id, type: input.type },
+		{ id: validated.data.id, type: parsed.type },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const importFile: DovetailEndpoints['dataImportFile'] = async (
 	ctx,
 	input,
 ) => {
+	const parsed = DovetailEndpointInputSchemas.dataImportFile.parse(input);
 	// Justification: unknown is used in client body typing, and body payload here is typed strictly as Record<string, unknown>
 	const body: Record<string, unknown> = {
-		project_id: input.project_id,
+		project_id: parsed.project_id,
+		title: parsed.title,
 	};
-	if (input.url !== undefined) body.url = input.url;
-	if (input.file_id !== undefined) body.file_id = input.file_id;
-	if (input.mime_type !== undefined) body.mime_type = input.mime_type;
-	if (input.author_id !== undefined) body.author_id = input.author_id;
-	if (input.created_at !== undefined) body.created_at = input.created_at;
-	if (input.fields !== undefined) body.fields = input.fields;
+	if (parsed.url !== undefined) body.url = parsed.url;
+	if (parsed.file_id !== undefined) body.file_id = parsed.file_id;
+	if (parsed.mime_type !== undefined) body.mime_type = parsed.mime_type;
+	if (parsed.author_id !== undefined) body.author_id = parsed.author_id;
+	if (parsed.created_at !== undefined) body.created_at = parsed.created_at;
+	if (parsed.fields !== undefined) body.fields = parsed.fields;
 
-	const result = await makeDovetailRequest<
+	const response = await makeDovetailRequest<
 		DovetailEndpointOutputs['dataImportFile']
 	>('/v1/data/import/file', ctx.key, {
 		method: 'POST',
 		body,
 	});
+	const validated =
+		DovetailEndpointOutputSchemas.dataImportFile.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'dovetail.data.importFile',
-		{ id: result.data.id },
+		{ id: validated.data.id },
 		'completed',
 	);
-	return result;
+	return validated;
 };
 
 export const Data = {
