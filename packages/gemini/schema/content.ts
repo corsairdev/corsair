@@ -7,6 +7,7 @@ import { z } from 'zod';
  */
 export const PartSchema = z.object({
 	text: z.string().optional(),
+	thought: z.boolean().optional(),
 	inlineData: z
 		.object({
 			mimeType: z.string(),

@@ -141,6 +141,7 @@ await corsair.gemini.api.content.generateContent({});
 |------|------|----------|-------------|
 | `model` | `string` | Yes | Gemini model to generate with, e.g. gemini-2.5-flash, gemini-2.5-pro |
 | `contents` | `object[]` | Yes | Conversation contents to generate a response for |
+| `stripFences` | `boolean` | No | Strip one outer markdown code fence from the convenience text field |
 | `generationConfig` | `object` | No | — |
 | `safetySettings` | `object[]` | No | — |
 | `systemInstruction` | `object` | No | — |
@@ -153,6 +154,7 @@ await corsair.gemini.api.content.generateContent({});
   role?: user | model,
   parts: {
     text?: string,
+    thought?: boolean,
     inlineData?: {
       mimeType: string,
       data: string
@@ -212,7 +214,7 @@ await corsair.gemini.api.content.generateContent({});
 |------|------|----------|-------------|
 | `candidates` | `object[]` | No | — |
 | `usageMetadata` | `object` | No | — |
-| `text` | `string` | No | Convenience field: first candidate text with markdown code fences stripped |
+| `text` | `string` | No | Convenience field: concatenated non-thought text from the first candidate |
 
 <AccordionGroup>
 <Accordion title="candidates full type">
@@ -223,6 +225,7 @@ await corsair.gemini.api.content.generateContent({});
     role?: user | model,
     parts: {
       text?: string,
+      thought?: boolean,
       inlineData?: {
         mimeType: string,
         data: string

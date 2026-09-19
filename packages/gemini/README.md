@@ -31,7 +31,7 @@ Missing credentials throw `AuthMissingError` (never an empty string).
 
 - **Model-scoped paths require `/models/`.** e.g. `/models/gemini-2.5-flash:generateContent` (not bare `/{model}:…`).
 - **Image generation forces `responseModalities: ['IMAGE']`** after merging caller `generationConfig`, so callers cannot accidentally drop the IMAGE modality.
-- **`generateContent` convenience field `text`** is the first candidate text with markdown fences stripped.
+- **`generateContent` convenience field `text`** concatenates non-thought text parts from the first candidate and preserves markdown fences by default. Pass `stripFences: true` to strip a single outer fence.
 - **Veo is long-running.** `generateVideos` returns an operation name; use `getVideosOperation` or `waitForVideo` to poll. Video models may require special access / billing.
 - **Image / Veo free-tier quotas** are strict; text ops (listModels, countTokens, generateContent) are the most reliable smoke path. Image/Veo may return HTTP 429 under free tier.
 
