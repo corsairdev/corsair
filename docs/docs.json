@@ -31,6 +31,7 @@
             "pages": [
               "introduction",
               "quick-start",
+              "cloud/overview",
               {
                 "group": "Use cases",
                 "pages": [
@@ -66,6 +67,10 @@
                   "frameworks/hono",
                   "frameworks/nestjs"
                 ]
+              },
+              {
+                "group": "Clients",
+                "pages": ["clients/python", "clients/go", "clients/swift"]
               }
             ]
           },
@@ -1145,6 +1150,14 @@
                 ]
               },
               {
+                "group": "Cosmic",
+                "pages": [
+                  "plugins/cosmic/overview",
+                  "plugins/cosmic/api",
+                  "plugins/cosmic/database"
+                ]
+              },
+              {
                 "group": "CountdownApi",
                 "pages": [
                   "plugins/countdownapi/overview",
@@ -1325,6 +1338,14 @@
                   "plugins/studiobyai21labs/overview",
                   "plugins/studiobyai21labs/api",
                   "plugins/studiobyai21labs/database"
+                ]
+              },
+              {
+                "group": "Emelia",
+                "pages": [
+                  "plugins/emelia/overview",
+                  "plugins/emelia/api",
+                  "plugins/emelia/database"
                 ]
               },
               {
@@ -1712,6 +1733,14 @@
                   "plugins/kaggle/overview",
                   "plugins/kaggle/api",
                   "plugins/kaggle/database"
+                ]
+              },
+              {
+                "group": "Kibana",
+                "pages": [
+                  "plugins/kibana/overview",
+                  "plugins/kibana/api",
+                  "plugins/kibana/database"
                 ]
               },
               {
@@ -2364,6 +2393,14 @@
                   "plugins/vercel/api",
                   "plugins/vercel/database",
                   "plugins/vercel/webhooks"
+                ]
+              },
+              {
+                "group": "Veriphone",
+                "pages": [
+                  "plugins/veriphone/overview",
+                  "plugins/veriphone/api",
+                  "plugins/veriphone/database"
                 ]
               },
               {
