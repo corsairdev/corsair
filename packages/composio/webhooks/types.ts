@@ -207,11 +207,10 @@ export function verifyComposioWebhookSignature(
 		return { valid: false, error: SIGNATURE_FAILED };
 	}
 
-	const WEBHOOK_TOLERANCE_MS = 5 * 60 * 1000;
 	const timestampMs = parseInt(webhookTimestamp, 10) * 1000;
 	if (
 		Number.isNaN(timestampMs) ||
-		Math.abs(Date.now() - timestampMs) > WEBHOOK_TOLERANCE_MS
+		Math.abs(Date.now() - timestampMs) > WEBHOOK_REPLAY_WINDOW_MS
 	) {
 		return { valid: false, error: SIGNATURE_FAILED };
 	}
