@@ -9,6 +9,6 @@ overviewNote: |
   zohoinvoice({ region: 'eu' })
   ```
 
-  Most API calls are organization-scoped. Provide `organization_id` on each
-  request, or omit it and the plugin will resolve and cache the first linked
-  tenant via OAuth tenant linking.
+  Most API calls are organization-scoped. Pass `organization_id` on every
+  request. OAuth tenant linking resolves the default organization during
+  connection setup; it does not auto-fill endpoint inputs.

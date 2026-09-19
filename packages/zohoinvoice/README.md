@@ -38,7 +38,7 @@ Auth: OAuth 2.0 (default OAuth 2.0).
 
 ## Webhooks
 
-No webhooks.
+Webhook tenant matching is supported. Zoho webhook signature verification is not supported.
 
 ## Reference
 
