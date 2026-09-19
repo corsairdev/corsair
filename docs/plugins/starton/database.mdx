@@ -1,0 +1,123 @@
+---
+title: Database
+description: "Starton local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Starton plugin syncs data locally. Use `corsair.starton.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Smart Contracts
+
+Path: `starton.db.smartContracts.search`
+
+```ts
+const rows = await corsair.starton.db.smartContracts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `network` | `string` | equals, contains, startsWith, endsWith, in |
+| `address` | `string` | equals, contains, startsWith, endsWith, in |
+| `creationHash` | `string` | equals, contains, startsWith, endsWith, in |
+| `minedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `blockNumber` | `number` | equals, gt, gte, lt, lte, in |
+| `templateId` | `string` | equals, contains, startsWith, endsWith, in |
+| `projectId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Transactions
+
+Path: `starton.db.transactions.search`
+
+```ts
+const rows = await corsair.starton.db.transactions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `blockHash` | `string` | equals, contains, startsWith, endsWith, in |
+| `blockNumber` | `number` | equals, gt, gte, lt, lte, in |
+| `chainId` | `number` | equals, gt, gte, lt, lte, in |
+| `network` | `string` | equals, contains, startsWith, endsWith, in |
+| `data` | `string` | equals, contains, startsWith, endsWith, in |
+| `from` | `string` | equals, contains, startsWith, endsWith, in |
+| `gasLimit` | `string` | equals, contains, startsWith, endsWith, in |
+| `gasPrice` | `string` | equals, contains, startsWith, endsWith, in |
+| `maxFeePerGas` | `string` | equals, contains, startsWith, endsWith, in |
+| `maxPriorityFeePerGas` | `string` | equals, contains, startsWith, endsWith, in |
+| `nonce` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+| `signerWallet` | `string` | equals, contains, startsWith, endsWith, in |
+| `publishedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `minedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `signedTransaction` | `string` | equals, contains, startsWith, endsWith, in |
+| `to` | `string` | equals, contains, startsWith, endsWith, in |
+| `transactionHash` | `string` | equals, contains, startsWith, endsWith, in |
+| `value` | `string` | equals, contains, startsWith, endsWith, in |
+| `automaticNonce` | `boolean` | equals |
+| `isDeployTransaction` | `boolean` | equals |
+| `projectId` | `string` | equals, contains, startsWith, endsWith, in |
+| `parentTransaction` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Wallets
+
+Path: `starton.db.wallets.search`
+
+```ts
+const rows = await corsair.starton.db.wallets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `address` | `string` | equals, contains, startsWith, endsWith, in |
+| `providerKeyId` | `string` | equals, contains, startsWith, endsWith, in |
+| `kmsId` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `projectId` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
