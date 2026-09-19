@@ -1504,6 +1504,22 @@ function buildDbMdx(
 	title: string,
 	data: PluginDocsIntrospection,
 ): string {
+	if (data.db.length === 0) {
+		const dbDescription = `${title} database surface: no local entities are currently synced.`;
+		return `---
+title: Database
+description: ${yamlDoubleQuotedScalar(dbDescription)}
+---
+
+The ${title} plugin does not currently sync any local database entities.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+`;
+	}
+
 	const blocks: string[] = [];
 	for (const ent of data.db) {
 		const filterRows = ent.filters

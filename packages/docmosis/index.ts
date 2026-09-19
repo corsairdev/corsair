@@ -59,7 +59,6 @@ export type DocmosisEndpoints = {
 	pingService: DocmosisEndpoint<'pingService'>;
 	deleteImage: DocmosisEndpoint<'deleteImage'>;
 	deleteTemplate: DocmosisEndpoint<'deleteTemplate'>;
-	getApiKey: DocmosisEndpoint<'getApiKey'>;
 	listImages: DocmosisEndpoint<'listImages'>;
 	listTemplates: DocmosisEndpoint<'listTemplates'>;
 	getImage: DocmosisEndpoint<'getImage'>;
@@ -70,6 +69,7 @@ export type DocmosisEndpoints = {
 	getTemplateStructure: DocmosisEndpoint<'getTemplateStructure'>;
 	getRenderTags: DocmosisEndpoint<'getRenderTags'>;
 	getSampleData: DocmosisEndpoint<'getSampleData'>;
+	render: DocmosisEndpoint<'render'>;
 };
 
 const docmosisEndpointsNested = {
@@ -81,7 +81,6 @@ const docmosisEndpointsNested = {
 		getRenderQueue: Admin.getRenderQueue,
 		getRenderTags: Admin.getRenderTags,
 		getBatchUploadStatus: Admin.getBatchUploadStatus,
-		getApiKey: Admin.getApiKey,
 	},
 	images: {
 		delete: Images.deleteImage,
@@ -95,6 +94,7 @@ const docmosisEndpointsNested = {
 		getDetails: Templates.getTemplateDetails,
 		getStructure: Templates.getTemplateStructure,
 		getSampleData: Templates.getSampleData,
+		render: Templates.render,
 	},
 } as const;
 
@@ -128,10 +128,6 @@ export const docmosisEndpointSchemas = {
 	'admin.getBatchUploadStatus': {
 		input: DocmosisEndpointInputSchemas.getBatchUploadStatus,
 		output: DocmosisEndpointOutputSchemas.getBatchUploadStatus,
-	},
-	'admin.getApiKey': {
-		input: DocmosisEndpointInputSchemas.getApiKey,
-		output: DocmosisEndpointOutputSchemas.getApiKey,
 	},
 	'images.delete': {
 		input: DocmosisEndpointInputSchemas.deleteImage,
@@ -169,6 +165,10 @@ export const docmosisEndpointSchemas = {
 		input: DocmosisEndpointInputSchemas.getSampleData,
 		output: DocmosisEndpointOutputSchemas.getSampleData,
 	},
+	'templates.render': {
+		input: DocmosisEndpointInputSchemas.render,
+		output: DocmosisEndpointOutputSchemas.render,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof docmosisEndpointsNested
 >;
@@ -201,10 +201,6 @@ const docmosisEndpointMeta = {
 	'admin.getBatchUploadStatus': {
 		riskLevel: 'read',
 		description: 'Check status for a template batch upload job',
-	},
-	'admin.getApiKey': {
-		riskLevel: 'read',
-		description: 'Return the currently configured Docmosis access key',
 	},
 	'images.delete': {
 		riskLevel: 'destructive',
@@ -243,6 +239,10 @@ const docmosisEndpointMeta = {
 	'templates.getSampleData': {
 		riskLevel: 'read',
 		description: 'Generate sample JSON or XML data from a template structure',
+	},
+	'templates.render': {
+		riskLevel: 'write',
+		description: 'Generate a document from a template and JSON/XML data',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof docmosisEndpointsNested>;
 

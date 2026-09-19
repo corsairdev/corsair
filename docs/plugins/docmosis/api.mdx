@@ -30,7 +30,7 @@ await corsair.docmosis.api.admin.environmentReady({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `succeeded` | `boolean` | No | — |
+| `succeeded` | `boolean` | Yes | — |
 | `shortMsg` | `string` | No | — |
 | `longMsg` | `string` | No | — |
 
@@ -57,7 +57,7 @@ await corsair.docmosis.api.admin.environmentSummary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `succeeded` | `boolean` | No | — |
+| `succeeded` | `boolean` | Yes | — |
 | `shortMsg` | `string` | No | — |
 | `longMsg` | `string` | No | — |
 | `accountEnvironmentSummary` | `object` | No | — |
@@ -98,31 +98,6 @@ await corsair.docmosis.api.admin.environmentSummary({});
 
 ---
 
-### getApiKey
-
-`admin.getApiKey`
-
-Return the currently configured Docmosis access key
-
-**Risk:** `read`
-
-```ts
-await corsair.docmosis.api.admin.getApiKey({});
-```
-
-**Input:** _empty object_
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `apiKey` | `string` | Yes | — |
-
-
-
----
-
 ### getBatchUploadStatus
 
 `admin.getBatchUploadStatus`
@@ -147,7 +122,7 @@ await corsair.docmosis.api.admin.getBatchUploadStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `succeeded` | `boolean` | No | — |
+| `succeeded` | `boolean` | Yes | — |
 | `shortMsg` | `string` | No | — |
 | `longMsg` | `string` | No | — |
 | `jobStatus` | `object` | No | — |
@@ -202,7 +177,7 @@ await corsair.docmosis.api.admin.getRenderQueue({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `succeeded` | `boolean` | No | — |
+| `succeeded` | `boolean` | Yes | — |
 | `shortMsg` | `string` | No | — |
 | `longMsg` | `string` | No | — |
 | `queue` | `object` | No | — |
@@ -252,7 +227,7 @@ await corsair.docmosis.api.admin.getRenderTags({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `succeeded` | `boolean` | No | — |
+| `succeeded` | `boolean` | Yes | — |
 | `shortMsg` | `string` | No | — |
 | `longMsg` | `string` | No | — |
 | `renderTags` | `object[]` | No | — |
@@ -293,7 +268,17 @@ await corsair.docmosis.api.admin.ping({});
 **Input:** _empty object_
 
 
-**Output:** `any`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `shortMsg` | `string` | No | — |
+| `longMsg` | `string` | No | — |
+| `environment` | `string` | No | — |
+| `time` | `string` | No | — |
+| `succeeded` | `boolean` | No | — |
+
 
 
 ---
@@ -313,7 +298,17 @@ await corsair.docmosis.api.admin.pingService({});
 **Input:** _empty object_
 
 
-**Output:** `any`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `shortMsg` | `string` | No | — |
+| `longMsg` | `string` | No | — |
+| `environment` | `string` | No | — |
+| `time` | `string` | No | — |
+| `succeeded` | `boolean` | No | — |
+
 
 
 ---
@@ -344,7 +339,7 @@ await corsair.docmosis.api.images.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `succeeded` | `boolean` | No | — |
+| `succeeded` | `boolean` | Yes | — |
 | `shortMsg` | `string` | No | — |
 | `longMsg` | `string` | No | — |
 
@@ -372,7 +367,7 @@ await corsair.docmosis.api.images.get({});
 
 
 
-**Output:** `string`
+**Output:** `custom`
 
 
 ---
@@ -402,7 +397,7 @@ await corsair.docmosis.api.images.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `succeeded` | `boolean` | No | — |
+| `succeeded` | `boolean` | Yes | — |
 | `shortMsg` | `string` | No | — |
 | `longMsg` | `string` | No | — |
 | `imageListStale` | `boolean` | No | — |
@@ -453,7 +448,7 @@ await corsair.docmosis.api.templates.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `succeeded` | `boolean` | No | — |
+| `succeeded` | `boolean` | Yes | — |
 | `shortMsg` | `string` | No | — |
 | `longMsg` | `string` | No | — |
 
@@ -481,7 +476,7 @@ await corsair.docmosis.api.templates.get({});
 
 
 
-**Output:** `string`
+**Output:** `custom`
 
 
 ---
@@ -511,7 +506,7 @@ await corsair.docmosis.api.templates.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `succeeded` | `boolean` | No | — |
+| `succeeded` | `boolean` | Yes | — |
 | `shortMsg` | `string` | No | — |
 | `longMsg` | `string` | No | — |
 | `templateDetails` | `object` | No | — |
@@ -566,7 +561,7 @@ await corsair.docmosis.api.templates.getSampleData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `succeeded` | `boolean` | No | — |
+| `succeeded` | `boolean` | Yes | — |
 | `shortMsg` | `string` | No | — |
 | `longMsg` | `string` | No | — |
 | `templateSampleData` | `object` | No | — |
@@ -621,12 +616,25 @@ await corsair.docmosis.api.templates.getStructure({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `succeeded` | `boolean` | No | — |
+| `succeeded` | `boolean` | Yes | — |
 | `shortMsg` | `string` | No | — |
 | `longMsg` | `string` | No | — |
 | `templateHasErrors` | `boolean` | No | — |
 | `templateErrorMessage` | `string` | No | — |
-| `templateStructure` | `any[]` | No | — |
+| `templateStructure` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="templateStructure full type">
+
+```ts
+{
+  name?: string,
+  type?: string,
+  children?: lazy
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -661,7 +669,7 @@ await corsair.docmosis.api.templates.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `succeeded` | `boolean` | No | — |
+| `succeeded` | `boolean` | Yes | — |
 | `shortMsg` | `string` | No | — |
 | `longMsg` | `string` | No | — |
 | `templateListStale` | `boolean` | No | — |
@@ -689,6 +697,47 @@ await corsair.docmosis.api.templates.list({});
 </Accordion>
 </AccordionGroup>
 
+
+
+---
+
+### render
+
+`templates.render`
+
+Generate a document from a template and JSON/XML data
+
+**Risk:** `write`
+
+```ts
+await corsair.docmosis.api.templates.render({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateName` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `outputName` | `string` | No | — |
+| `outputFormat` | `string` | No | — |
+| `renderName` | `string` | No | — |
+| `test` | `boolean \| y \| yes \| true \| n \| no \| false` | No | — |
+| `tag` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `custom`
 
 
 ---

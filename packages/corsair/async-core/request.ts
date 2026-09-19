@@ -256,9 +256,22 @@ const getResponseHeader = (
 	return undefined;
 };
 
-const getResponseBody = async (response: Response): Promise<any> => {
+const getResponseBody = async (
+	response: Response,
+	responseType?: ApiRequestOptions['responseType'],
+): Promise<any> => {
 	if (response.status !== 204) {
 		try {
+			if (responseType === 'arrayBuffer') {
+				return await response.arrayBuffer();
+			}
+			if (responseType === 'text') {
+				return await response.text();
+			}
+			if (responseType === 'json') {
+				return await response.json();
+			}
+
 			const contentType = response.headers.get('Content-Type');
 			if (contentType) {
 				const jsonTypes = ['application/json', 'application/problem+json'];
@@ -365,7 +378,10 @@ export const request = <T>(
 					onCancel,
 				);
 
-				const responseBody = await getResponseBody(response);
+				const responseBody = await getResponseBody(
+					response,
+					options.responseType,
+				);
 				const responseHeader = getResponseHeader(
 					response,
 					options.responseHeader,

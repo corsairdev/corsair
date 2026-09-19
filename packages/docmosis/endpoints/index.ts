@@ -3,7 +3,6 @@ import {
 	deleteTemplate,
 	environmentReady,
 	environmentSummary,
-	getApiKey,
 	getBatchUploadStatus,
 	getImage,
 	getRenderQueue,
@@ -16,6 +15,7 @@ import {
 	listTemplates,
 	ping,
 	pingService,
+	render,
 } from './operations';
 
 export const Admin = {
@@ -26,7 +26,6 @@ export const Admin = {
 	getRenderQueue,
 	getRenderTags,
 	getBatchUploadStatus,
-	getApiKey,
 };
 
 export const Images = {
@@ -42,6 +41,7 @@ export const Templates = {
 	getTemplateDetails,
 	getTemplateStructure,
 	getSampleData,
+	render,
 };
 
 export * from './operations';

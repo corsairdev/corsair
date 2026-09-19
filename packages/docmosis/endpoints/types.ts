@@ -1,5 +1,19 @@
 import { z } from 'zod';
 
+type JsonValue =
+	| string
+	| number
+	| boolean
+	| null
+	| JsonValue[]
+	| { [key: string]: JsonValue };
+
+export type TemplateStructureField = {
+	name?: string;
+	type?: string;
+	children?: TemplateStructureField[];
+};
+
 const BooleanLikeSchema = z.union([
 	z.boolean(),
 	z.enum(['y', 'yes', 'true', 'n', 'no', 'false']),
@@ -10,9 +24,20 @@ const StringOrArraySchema = z.union([
 	z.array(z.string().min(1)).min(1),
 ]);
 
+const JsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
+	z.union([
+		z.string(),
+		z.number(),
+		z.boolean(),
+		z.null(),
+		z.array(JsonValueSchema),
+		z.record(z.string(), JsonValueSchema),
+	]),
+);
+
 const DocmosisBaseResponseSchema = z
 	.object({
-		succeeded: z.boolean().optional(),
+		succeeded: z.boolean(),
 		shortMsg: z.string().optional(),
 		longMsg: z.string().optional(),
 	})
@@ -136,6 +161,28 @@ const RenderTagsSchema = z
 	})
 	.passthrough();
 
+const TemplateStructureFieldSchema: z.ZodType<TemplateStructureField> = z
+	.object({
+		name: z.string().optional(),
+		type: z.string().optional(),
+		children: z.lazy(() => z.array(TemplateStructureFieldSchema)).optional(),
+	})
+	.passthrough();
+
+const DocmosisPingSchema = z
+	.object({
+		status: z.string().optional(),
+		shortMsg: z.string().optional(),
+		longMsg: z.string().optional(),
+		environment: z.string().optional(),
+		time: z.string().optional(),
+		succeeded: z.boolean().optional(),
+	})
+	.passthrough();
+
+const TemplateSampleDataRecordSchema: z.ZodType<Record<string, JsonValue>> =
+	z.record(z.string(), JsonValueSchema);
+
 const GetSampleDataTemplateDetailsSchema = z
 	.object({
 		templateHasErrors: z.boolean().optional(),
@@ -186,7 +233,15 @@ export const DocmosisEndpointInputSchemas = {
 		stringify: BooleanLikeSchema.optional(),
 		format: z.enum(['json', 'xml']).optional(),
 	}),
-	getApiKey: z.object({}),
+	render: z.object({
+		templateName: z.string().min(1),
+		data: z.union([z.string().min(1), z.record(z.string(), JsonValueSchema)]),
+		outputName: z.string().min(1).optional(),
+		outputFormat: z.string().min(1).optional(),
+		renderName: z.string().min(1).optional(),
+		test: BooleanLikeSchema.optional(),
+		tag: z.string().min(1).optional(),
+	}),
 } as const;
 
 export const DocmosisEndpointOutputSchemas = {
@@ -194,8 +249,8 @@ export const DocmosisEndpointOutputSchemas = {
 	environmentSummary: DocmosisBaseResponseSchema.extend({
 		accountEnvironmentSummary: AccountEnvironmentSummarySchema.optional(),
 	}),
-	ping: z.unknown(),
-	pingService: z.unknown(),
+	ping: DocmosisPingSchema,
+	pingService: DocmosisPingSchema,
 	deleteImage: DocmosisBaseResponseSchema,
 	deleteTemplate: DocmosisBaseResponseSchema,
 	listImages: DocmosisBaseResponseSchema.extend({
@@ -208,8 +263,8 @@ export const DocmosisEndpointOutputSchemas = {
 		pageSize: z.number().optional(),
 		templateList: z.array(TemplateDetailsSchema).optional(),
 	}),
-	getImage: z.string(),
-	getTemplate: z.string(),
+	getImage: z.instanceof(ArrayBuffer),
+	getTemplate: z.instanceof(ArrayBuffer),
 	getBatchUploadStatus: DocmosisBaseResponseSchema.extend({
 		jobStatus: JobStatusSchema.optional(),
 	}),
@@ -222,18 +277,18 @@ export const DocmosisEndpointOutputSchemas = {
 	getTemplateStructure: DocmosisBaseResponseSchema.extend({
 		templateHasErrors: z.boolean().optional(),
 		templateErrorMessage: z.string().optional(),
-		templateStructure: z.array(z.unknown()).optional(),
+		templateStructure: z.array(TemplateStructureFieldSchema).optional(),
 	}),
 	getRenderTags: DocmosisBaseResponseSchema.extend({
 		renderTags: z.array(RenderTagsSchema).optional(),
 	}),
 	getSampleData: DocmosisBaseResponseSchema.extend({
 		templateSampleData: z
-			.union([z.record(z.string(), z.unknown()), z.string()])
+			.union([TemplateSampleDataRecordSchema, z.string()])
 			.optional(),
 		templateDetails: GetSampleDataTemplateDetailsSchema.optional(),
 	}),
-	getApiKey: z.object({ apiKey: z.string().min(1) }),
+	render: z.instanceof(ArrayBuffer),
 } as const;
 
 export type DocmosisEndpointInputs = {

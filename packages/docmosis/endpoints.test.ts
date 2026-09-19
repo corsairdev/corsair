@@ -63,7 +63,7 @@ describe('Docmosis endpoints', () => {
 	});
 
 	it('ping and pingService GET /ping', async () => {
-		mockRequest.mockResolvedValue(undefined);
+		mockRequest.mockResolvedValue({ status: 'ok' });
 		await endpoints.admin.ping(ctx, {});
 		await endpoints.admin.pingService(ctx, {});
 
@@ -140,8 +140,8 @@ describe('Docmosis endpoints', () => {
 		});
 	});
 
-	it('getImage and getTemplate return binary body text', async () => {
-		mockRequest.mockResolvedValue('BINARY_PAYLOAD');
+	it('getImage and getTemplate request binary responses', async () => {
+		mockRequest.mockResolvedValue(new ArrayBuffer(4));
 		const image = await endpoints.images.get(ctx, {
 			imageName: '/logo.png',
 		});
@@ -149,8 +149,47 @@ describe('Docmosis endpoints', () => {
 			templateName: '/template.docx',
 		});
 
-		expect(image).toBe('BINARY_PAYLOAD');
-		expect(template).toBe('BINARY_PAYLOAD');
+		expect(image).toBeInstanceOf(ArrayBuffer);
+		expect(template).toBeInstanceOf(ArrayBuffer);
+		expect(mockRequest).toHaveBeenNthCalledWith(1, 'getImage', 'test-key', {
+			method: 'POST',
+			formData: { imageName: ['/logo.png'] },
+			responseType: 'arrayBuffer',
+		});
+		expect(mockRequest).toHaveBeenNthCalledWith(2, 'getTemplate', 'test-key', {
+			method: 'POST',
+			formData: { templateName: ['/template.docx'] },
+			responseType: 'arrayBuffer',
+		});
+	});
+
+	it('templates.render forwards render options and requests binary response', async () => {
+		mockRequest.mockResolvedValue(new ArrayBuffer(8));
+
+		const result = await endpoints.templates.render(ctx, {
+			templateName: '/invoice.docx',
+			data: { invoiceId: 'inv_123', total: 199.5 },
+			outputName: 'invoice.pdf',
+			outputFormat: 'pdf',
+			renderName: 'invoice-render',
+			test: true,
+			tag: 'billing',
+		});
+
+		expect(result).toBeInstanceOf(ArrayBuffer);
+		expect(mockRequest).toHaveBeenCalledWith('render', 'test-key', {
+			method: 'POST',
+			formData: {
+				templateName: '/invoice.docx',
+				data: JSON.stringify({ invoiceId: 'inv_123', total: 199.5 }),
+				outputName: 'invoice.pdf',
+				outputFormat: 'pdf',
+				renderName: 'invoice-render',
+				test: 'true',
+				tag: 'billing',
+			},
+			responseType: 'arrayBuffer',
+		});
 	});
 
 	it('getBatchUploadStatus POSTs to uploadTemplateBatchStatus', async () => {
@@ -263,13 +302,6 @@ describe('Docmosis endpoints', () => {
 				padBlanks: 'true',
 			},
 		});
-	});
-
-	it('getApiKey returns key from context without HTTP call', async () => {
-		const result = await endpoints.admin.getApiKey(ctx, {});
-
-		expect(result).toEqual({ apiKey: 'test-key' });
-		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('rejects invalid provider payloads via output zod schemas', async () => {

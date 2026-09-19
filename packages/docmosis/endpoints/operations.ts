@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DocmosisEndpoints } from '..';
 import { makeDocmosisRequest } from '../client';
-import type { DocmosisEndpointOutputs } from './types';
+import type { DocmosisEndpointInputs } from './types';
 import { DocmosisEndpointOutputSchemas } from './types';
 
 function asArray(value: string | string[]): string[] {
@@ -161,6 +161,7 @@ export const getImage: DocmosisEndpoints['getImage'] = async (ctx, input) => {
 	const raw = await makeDocmosisRequest<unknown>('getImage', ctx.key, {
 		method: 'POST',
 		formData: { imageName: asArray(input.imageName) },
+		responseType: 'arrayBuffer',
 	});
 	const response = DocmosisEndpointOutputSchemas.getImage.parse(raw);
 
@@ -180,6 +181,7 @@ export const getTemplate: DocmosisEndpoints['getTemplate'] = async (
 	const raw = await makeDocmosisRequest<unknown>('getTemplate', ctx.key, {
 		method: 'POST',
 		formData: { templateName: asArray(input.templateName) },
+		responseType: 'arrayBuffer',
 	});
 	const response = DocmosisEndpointOutputSchemas.getTemplate.parse(raw);
 
@@ -325,10 +327,42 @@ export const getSampleData: DocmosisEndpoints['getSampleData'] = async (
 	return response;
 };
 
-export const getApiKey: DocmosisEndpoints['getApiKey'] = async (ctx) => {
-	const response: DocmosisEndpointOutputs['getApiKey'] = { apiKey: ctx.key };
-	const parsed = DocmosisEndpointOutputSchemas.getApiKey.parse(response);
+function renderDataToString(
+	data: DocmosisEndpointInputs['render']['data'],
+): string {
+	if (typeof data === 'string') {
+		return data;
+	}
 
-	await logEventFromContext(ctx, 'docmosis.auth.getApiKey', {}, 'completed');
-	return parsed;
+	return JSON.stringify(data);
+}
+
+export const render: DocmosisEndpoints['render'] = async (ctx, input) => {
+	const raw = await makeDocmosisRequest<unknown>('render', ctx.key, {
+		method: 'POST',
+		formData: {
+			templateName: input.templateName,
+			data: renderDataToString(input.data),
+			outputName: input.outputName,
+			outputFormat: input.outputFormat,
+			renderName: input.renderName,
+			test: boolLikeToString(input.test),
+			tag: input.tag,
+		},
+		responseType: 'arrayBuffer',
+	});
+	const response = DocmosisEndpointOutputSchemas.render.parse(raw);
+
+	await logEventFromContext(
+		ctx,
+		'docmosis.templates.render',
+		{
+			templateName: input.templateName,
+			outputName: input.outputName,
+			outputFormat: input.outputFormat,
+			renderName: input.renderName,
+		},
+		'completed',
+	);
+	return response;
 };

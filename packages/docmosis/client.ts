@@ -37,6 +37,7 @@ export async function makeDocmosisRequest<T>(
 		query?: Record<string, string | number | boolean | undefined>;
 		formData?: Record<string, unknown>;
 		mediaType?: string;
+		responseType?: ApiRequestOptions['responseType'];
 		region?: DocmosisRegion;
 	} = {},
 ): Promise<T> {
@@ -46,6 +47,7 @@ export async function makeDocmosisRequest<T>(
 		query,
 		formData,
 		mediaType,
+		responseType,
 		region = 'us1',
 	} = options;
 
@@ -67,6 +69,7 @@ export async function makeDocmosisRequest<T>(
 		body,
 		formData,
 		mediaType: mediaType ?? 'application/x-www-form-urlencoded',
+		responseType,
 	};
 
 	try {

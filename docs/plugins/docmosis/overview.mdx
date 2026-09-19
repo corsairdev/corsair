@@ -100,7 +100,7 @@ await tenant.docmosis.api.admin.environmentReady({});
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.docmosis.api.images.delete({});
+await tenant.docmosis.api.images.delete({ imageName: '/logo.png' });
 ```
 
 

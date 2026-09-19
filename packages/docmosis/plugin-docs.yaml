@@ -1,2 +1,7 @@
 displayName: Docmosis
 description: Generate documents from templates with Docmosis Cloud, including template/image management and environment diagnostics.
+examples:
+  write:
+    path: images.delete
+    args:
+      imageName: /logo.png
