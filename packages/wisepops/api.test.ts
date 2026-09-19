@@ -149,7 +149,7 @@ describe('Wisepops API & Endpoints Unit Tests', () => {
 			).rejects.toBe(rawError);
 		});
 
-		it('matches rate limit by status and returns maxRetries 3 for reads', async () => {
+		it('matches rate limit by status and defers retries to transport for reads', async () => {
 			const rawError = createApiError(429, 'Too Many Requests', 3500);
 			expect(errorHandlers.RATE_LIMIT_ERROR.match(rawError)).toBe(true);
 
@@ -160,7 +160,7 @@ describe('Wisepops API & Endpoints Unit Tests', () => {
 				originalError: rawError,
 			});
 
-			expect(strategy).toEqual({ maxRetries: 3, headersRetryAfterMs: 3500 });
+			expect(strategy).toEqual({ maxRetries: 0, headersRetryAfterMs: 3500 });
 		});
 
 		it('returns maxRetries 0 for non-retryable write operations', async () => {

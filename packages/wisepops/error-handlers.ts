@@ -38,7 +38,7 @@ export const errorHandlers = {
 				return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
 			}
 
-			return { maxRetries: 3, headersRetryAfterMs: retryAfterMs };
+			return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
