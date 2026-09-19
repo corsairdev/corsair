@@ -16,6 +16,9 @@ export class DocmosisAPIError extends Error {
 		if (options?.cause instanceof ApiError) {
 			this.status = options.cause.status;
 			this.retryAfter = options.cause.retryAfter;
+		} else if (typeof code === 'number') {
+			this.status = code;
+			this.retryAfter = options?.retryAfter;
 		} else if (options?.retryAfter !== undefined) {
 			this.retryAfter = options.retryAfter;
 		}
@@ -89,6 +92,16 @@ function buildUrl(
 	return url;
 }
 
+export type DocmosisBinaryResponse = {
+	contentType: string;
+	dataBase64: string;
+	byteLength: number;
+};
+
+function bufferToBase64(buffer: ArrayBuffer): string {
+	return Buffer.from(buffer).toString('base64');
+}
+
 async function fetchBinaryResponse(
 	url: string,
 	options: {
@@ -96,7 +109,7 @@ async function fetchBinaryResponse(
 		headers: Record<string, string>;
 		body?: FormData;
 	},
-): Promise<ArrayBuffer> {
+): Promise<DocmosisBinaryResponse> {
 	const response = await fetch(url, {
 		method: options.method,
 		headers: options.headers,
@@ -129,7 +142,16 @@ async function fetchBinaryResponse(
 		});
 	}
 
-	return response.arrayBuffer();
+	const buffer = await response.arrayBuffer();
+	const contentType =
+		response.headers.get('Content-Type')?.split(';')[0]?.trim() ??
+		'application/octet-stream';
+
+	return {
+		contentType,
+		dataBase64: bufferToBase64(buffer),
+		byteLength: buffer.byteLength,
+	};
 }
 
 export async function makeDocmosisRequest<T>(

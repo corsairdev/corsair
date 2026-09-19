@@ -159,6 +159,12 @@ const GetSampleDataTemplateDetailsSchema = z.object({
 	templateFirstError: z.string().optional(),
 });
 
+const DocmosisBinaryResponseSchema = z.object({
+	contentType: z.string().min(1),
+	dataBase64: z.base64().min(1),
+	byteLength: z.number().int().nonnegative(),
+});
+
 export const DocmosisEndpointInputSchemas = {
 	environmentReady: z.object({}),
 	environmentSummary: z.object({}),
@@ -232,8 +238,8 @@ export const DocmosisEndpointOutputSchemas = {
 		pageSize: z.number().optional(),
 		templateList: z.array(TemplateDetailsSchema).optional(),
 	}),
-	getImage: z.instanceof(ArrayBuffer),
-	getTemplate: z.instanceof(ArrayBuffer),
+	getImage: DocmosisBinaryResponseSchema,
+	getTemplate: DocmosisBinaryResponseSchema,
 	getBatchUploadStatus: DocmosisBaseResponseSchema.extend({
 		jobStatus: JobStatusSchema.optional(),
 	}),
@@ -257,7 +263,7 @@ export const DocmosisEndpointOutputSchemas = {
 			.optional(),
 		templateDetails: GetSampleDataTemplateDetailsSchema.optional(),
 	}),
-	render: z.instanceof(ArrayBuffer),
+	render: DocmosisBinaryResponseSchema,
 } as const;
 
 export type DocmosisEndpointInputs = {

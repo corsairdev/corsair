@@ -95,6 +95,7 @@ describe('makeDocmosisRequest', () => {
 		const bytes = new Uint8Array([1, 2, 3, 4]).buffer;
 		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue({
 			ok: true,
+			headers: new Headers({ 'Content-Type': 'image/png' }),
 			arrayBuffer: async () => bytes,
 		} as Response);
 
@@ -104,7 +105,11 @@ describe('makeDocmosisRequest', () => {
 			responseType: 'arrayBuffer',
 		});
 
-		expect(result).toBe(bytes);
+		expect(result).toEqual({
+			contentType: 'image/png',
+			dataBase64: Buffer.from(bytes).toString('base64'),
+			byteLength: 4,
+		});
 		expect(fetchMock).toHaveBeenCalledWith(
 			'https://us1.dws4.docmosis.com/api/getImage',
 			expect.objectContaining({
@@ -113,6 +118,34 @@ describe('makeDocmosisRequest', () => {
 			}),
 		);
 		expect(mockRequest).not.toHaveBeenCalled();
+		fetchMock.mockRestore();
+	});
+
+	it('preserves HTTP status and retryAfter for binary transport errors', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue({
+			ok: false,
+			status: 429,
+			statusText: 'Too Many Requests',
+			headers: new Headers({ 'Retry-After': '2' }),
+			text: async () =>
+				JSON.stringify({
+					shortMsg: 'Rate limited',
+					longMsg: 'Try again later',
+				}),
+		} as Response);
+
+		await expect(
+			makeDocmosisRequest('render', 'key-6', {
+				method: 'POST',
+				formData: { templateName: '/t.docx' },
+				responseType: 'arrayBuffer',
+			}),
+		).rejects.toMatchObject({
+			name: 'DocmosisAPIError',
+			status: 429,
+			retryAfter: 2000,
+		});
+
 		fetchMock.mockRestore();
 	});
 });

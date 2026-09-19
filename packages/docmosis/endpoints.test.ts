@@ -141,7 +141,12 @@ describe('Docmosis endpoints', () => {
 	});
 
 	it('getImage and getTemplate request binary responses', async () => {
-		mockRequest.mockResolvedValue(new ArrayBuffer(4));
+		const binary = {
+			contentType: 'application/octet-stream',
+			dataBase64: 'AQIDBA==',
+			byteLength: 4,
+		};
+		mockRequest.mockResolvedValue(binary);
 		const image = await endpoints.images.get(ctx, {
 			imageName: '/logo.png',
 		});
@@ -149,8 +154,8 @@ describe('Docmosis endpoints', () => {
 			templateName: '/template.docx',
 		});
 
-		expect(image).toBeInstanceOf(ArrayBuffer);
-		expect(template).toBeInstanceOf(ArrayBuffer);
+		expect(image).toEqual(binary);
+		expect(template).toEqual(binary);
 		expect(mockRequest).toHaveBeenNthCalledWith(1, 'getImage', 'test-key', {
 			method: 'POST',
 			formData: { imageName: ['/logo.png'] },
@@ -164,7 +169,12 @@ describe('Docmosis endpoints', () => {
 	});
 
 	it('templates.render forwards render options and requests binary response', async () => {
-		mockRequest.mockResolvedValue(new ArrayBuffer(8));
+		const binary = {
+			contentType: 'application/pdf',
+			dataBase64: 'AQIDBAUGBwg=',
+			byteLength: 8,
+		};
+		mockRequest.mockResolvedValue(binary);
 
 		const result = await endpoints.templates.render(ctx, {
 			templateName: '/invoice.docx',
@@ -176,7 +186,7 @@ describe('Docmosis endpoints', () => {
 			tag: 'billing',
 		});
 
-		expect(result).toBeInstanceOf(ArrayBuffer);
+		expect(result).toEqual(binary);
 		expect(mockRequest).toHaveBeenCalledWith('render', 'test-key', {
 			method: 'POST',
 			formData: {
