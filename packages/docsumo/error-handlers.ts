@@ -20,7 +20,12 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 401) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('invalid_auth') ||
+				msg.includes('token is invalid') ||
+				msg.includes('token is missing')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
