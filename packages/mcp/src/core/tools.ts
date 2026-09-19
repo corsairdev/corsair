@@ -24,6 +24,20 @@ export type CorsairToolDef = {
 
 type Corsair = BaseMcpOptions['corsair'];
 
+// Endpoint results are HTTP-derived JSON, but guard the edge cases (BigInt, a
+// circular ref) so serializing a batch can never throw and reject the handler.
+function safeJson(value: unknown): string {
+	try {
+		return JSON.stringify(
+			value,
+			(_k, v) => (typeof v === 'bigint' ? v.toString() : v),
+			2,
+		);
+	} catch {
+		return JSON.stringify(String(value));
+	}
+}
+
 // Resolve and invoke `corsair[plugin].api.<op>` on the (already tenant-scoped)
 // instance. Own-property walk only — never cross a prototype boundary — and the
 // method is called on its parent so its bound receiver is preserved. A leading
@@ -221,7 +235,7 @@ function runBatchDef(corsair: Corsair): CorsairToolDef {
 				}
 			}
 			return {
-				content: [{ type: 'text', text: JSON.stringify(results, null, 2) }],
+				content: [{ type: 'text', text: safeJson(results) }],
 			};
 		},
 	};

@@ -37,10 +37,15 @@ export function createNodeMcpHandler(
 	function cleanup(id: string): void {
 		const session = sessions.get(id);
 		if (!session) return;
-		clearTimeout(session.timer);
-		session.transport.close();
-		session.server.close();
+		// Delete first so a reentrant transport.onclose (fired by close()) no-ops.
 		sessions.delete(id);
+		clearTimeout(session.timer);
+		try {
+			session.transport.close();
+		} catch {}
+		try {
+			session.server.close();
+		} catch {}
 	}
 
 	function touch(id: string): void {
@@ -48,9 +53,15 @@ export function createNodeMcpHandler(
 		if (!session) return;
 		clearTimeout(session.timer);
 		session.timer = setTimeout(() => cleanup(id), idleMs);
+		// Never let the reaper timer itself keep the process alive — a live SSE
+		// socket holds the loop open long enough for it to fire and reap.
+		session.timer.unref();
 	}
 
-	return async (req, res) => {
+	async function handle(
+		req: IncomingMessage,
+		res: ServerResponse,
+	): Promise<void> {
 		const sessionId = req.headers['mcp-session-id'] as string | undefined;
 		const method = req.method ?? 'GET';
 
@@ -92,10 +103,36 @@ export function createNodeMcpHandler(
 			sessionIdGenerator: () => randomUUID(),
 			onsessioninitialized: (id) => {
 				const timer = setTimeout(() => cleanup(id), idleMs);
+				timer.unref();
 				sessions.set(id, { server, transport, timer });
+				transport.onclose = () => cleanup(id);
 			},
 		});
 		await server.connect(transport);
 		await transport.handleRequest(req, res);
+		// A POST that wasn't a valid initialize never fires onsessioninitialized,
+		// so the pair was never stored — close it here or it leaks.
+		if (!transport.sessionId) {
+			try {
+				transport.close();
+			} catch {}
+			try {
+				server.close();
+			} catch {}
+		}
+	}
+
+	return async (req, res) => {
+		try {
+			await handle(req, res);
+		} catch {
+			// A throw on the raw node handler would be an unhandled rejection (a
+			// known process-killer here); answer 500 instead.
+			if (!res.headersSent) {
+				try {
+					sendJson(res, 500, { error: 'internal error' });
+				} catch {}
+			}
+		}
 	};
 }
