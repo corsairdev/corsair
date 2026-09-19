@@ -236,6 +236,7 @@ export const BaseProviders = [
 	'removebg',
 	'resend',
 	'retailed',
+	'revai',
 	'runpod',
 	'salesforce',
 	'sapsuccessfactors',
@@ -526,6 +527,7 @@ export const ProviderDisplayNames = {
 	removebg: 'remove.bg',
 	resend: 'Resend',
 	retailed: 'Retailed',
+	revai: 'RevAI',
 	runpod: 'RunPod',
 	salesforce: 'Salesforce',
 	sapsuccessfactors: 'SAP SuccessFactors',
@@ -823,6 +825,7 @@ export type AllProviders =
 	| 'removebg'
 	| 'resend'
 	| 'retailed'
+	| 'revai'
 	| 'runpod'
 	| 'salesforce'
 	| 'sapsuccessfactors'
