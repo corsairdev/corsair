@@ -53,7 +53,7 @@ Create a new contact list
 **Risk:** `write`
 
 ```ts
-await corsair.clicksend.api.contactLists.create({});
+await corsair.clicksend.api.contactLists.create({ list_name: 'VIP Leads' });
 ```
 
 **Input**
@@ -135,7 +135,10 @@ Add a new contact to a specific list
 **Risk:** `write`
 
 ```ts
-await corsair.clicksend.api.contacts.create({});
+await corsair.clicksend.api.contacts.create({
+  list_id: 101,
+  phone_number: '+15555550100'
+});
 ```
 
 **Input**
@@ -174,7 +177,7 @@ List contacts within a specific contact list
 **Risk:** `read`
 
 ```ts
-await corsair.clicksend.api.contacts.list({});
+await corsair.clicksend.api.contacts.list({ list_id: 101 });
 ```
 
 **Input**
@@ -392,7 +395,9 @@ Send one or more SMS messages
 **Risk:** `write`
 
 ```ts
-await corsair.clicksend.api.sms.send({});
+await corsair.clicksend.api.sms.send({
+  messages: [{ to: '+15555550100', body: 'Hello from Corsair!' }]
+});
 ```
 
 **Input**
@@ -522,7 +527,9 @@ Initiate outbound text-to-speech voice call
 **Risk:** `write`
 
 ```ts
-await corsair.clicksend.api.voice.send({});
+await corsair.clicksend.api.voice.send({
+  messages: [{ to: '+15555550100', body: 'Hello', voice: 'female' }]
+});
 ```
 
 **Input**
@@ -538,7 +545,7 @@ await corsair.clicksend.api.voice.send({});
 {
   to: string,
   body: string,
-  voice?: female | male,
+  voice?: 'female' | 'male',
   lang?: string,
   schedule?: number,
   require_input?: number,
@@ -579,4 +586,3 @@ await corsair.clicksend.api.voice.send({});
 
 
 ---
-

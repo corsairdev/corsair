@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { ZodType } from 'zod';
 
 export class ClickSendAPIError extends Error {
 	constructor(
@@ -54,6 +55,7 @@ export async function makeClickSendRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		responseSchema?: ZodType<T>;
 	} = {},
 ): Promise<T> {
 	// Guard against missing credentials
@@ -74,7 +76,7 @@ export async function makeClickSendRequest<T>(
 		);
 	}
 
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, responseSchema } = options;
 
 	const basicAuth = Buffer.from(`${username}:${apiKey}`).toString('base64');
 
@@ -113,10 +115,12 @@ export async function makeClickSendRequest<T>(
 				);
 			}
 			if (envelope.data !== undefined) {
-				return envelope.data;
+				return responseSchema
+					? responseSchema.parse(envelope.data)
+					: envelope.data;
 			}
 		}
-		return res as T;
+		return responseSchema ? responseSchema.parse(res) : (res as T);
 	} catch (error) {
 		if (error instanceof ApiError || error instanceof ClickSendAPIError) {
 			throw error;

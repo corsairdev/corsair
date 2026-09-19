@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { getClickSendCredentials, makeClickSendRequest } from '../client';
 import type { ClickSendEndpoints } from '../index';
-import type { ClickSendEndpointOutputs } from './types';
+import { ClickSendEndpointOutputSchemas } from './types';
 
 export const getAllLists: ClickSendEndpoints['contactListsGetAll'] = async (
 	ctx,
@@ -9,14 +9,13 @@ export const getAllLists: ClickSendEndpoints['contactListsGetAll'] = async (
 ) => {
 	const { username, apiKey } = await getClickSendCredentials(ctx);
 
-	const response = await makeClickSendRequest<
-		ClickSendEndpointOutputs['contactListsGetAll']
-	>('lists', username, apiKey, {
+	const response = await makeClickSendRequest('lists', username, apiKey, {
 		method: 'GET',
 		query: {
 			page: input.page,
 			limit: input.limit,
 		},
+		responseSchema: ClickSendEndpointOutputSchemas.contactListsGetAll,
 	});
 
 	await logEventFromContext(
@@ -35,11 +34,10 @@ export const createList: ClickSendEndpoints['contactListsCreate'] = async (
 ) => {
 	const { username, apiKey } = await getClickSendCredentials(ctx);
 
-	const response = await makeClickSendRequest<
-		ClickSendEndpointOutputs['contactListsCreate']
-	>('lists', username, apiKey, {
+	const response = await makeClickSendRequest('lists', username, apiKey, {
 		method: 'POST',
 		body: { list_name: input.list_name },
+		responseSchema: ClickSendEndpointOutputSchemas.contactListsCreate,
 	});
 
 	await logEventFromContext(
@@ -58,17 +56,21 @@ export const createContact: ClickSendEndpoints['contactsCreate'] = async (
 ) => {
 	const { username, apiKey } = await getClickSendCredentials(ctx);
 
-	const response = await makeClickSendRequest<
-		ClickSendEndpointOutputs['contactsCreate']
-	>(`lists/${input.list_id}/contacts`, username, apiKey, {
-		method: 'POST',
-		body: {
-			first_name: input.first_name,
-			last_name: input.last_name,
-			phone_number: input.phone_number,
-			email: input.email,
+	const response = await makeClickSendRequest(
+		`lists/${input.list_id}/contacts`,
+		username,
+		apiKey,
+		{
+			method: 'POST',
+			body: {
+				first_name: input.first_name,
+				last_name: input.last_name,
+				phone_number: input.phone_number,
+				email: input.email,
+			},
+			responseSchema: ClickSendEndpointOutputSchemas.contactsCreate,
 		},
-	});
+	);
 
 	if (response.contact_id && ctx.db.contacts) {
 		try {
@@ -102,15 +104,19 @@ export const listContacts: ClickSendEndpoints['contactsList'] = async (
 ) => {
 	const { username, apiKey } = await getClickSendCredentials(ctx);
 
-	const response = await makeClickSendRequest<
-		ClickSendEndpointOutputs['contactsList']
-	>(`lists/${input.list_id}/contacts`, username, apiKey, {
-		method: 'GET',
-		query: {
-			page: input.page,
-			limit: input.limit,
+	const response = await makeClickSendRequest(
+		`lists/${input.list_id}/contacts`,
+		username,
+		apiKey,
+		{
+			method: 'GET',
+			query: {
+				page: input.page,
+				limit: input.limit,
+			},
+			responseSchema: ClickSendEndpointOutputSchemas.contactsList,
 		},
-	});
+	);
 
 	if (response.data && ctx.db.contacts) {
 		try {

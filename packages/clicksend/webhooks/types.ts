@@ -11,6 +11,8 @@ export const InboundSmsEventSchema = z.object({
 	from: z.string().min(1),
 	to: z.string().min(1),
 	body: z.string(),
+	username: z.string().min(1).optional(),
+	user_id: z.union([z.number(), z.string()]).optional(),
 	timestamp: z.union([z.number(), z.string()]).optional(),
 	original_message_id: z.string().optional(),
 });
@@ -19,6 +21,8 @@ export type InboundSmsEvent = z.infer<typeof InboundSmsEventSchema>;
 export const DeliveryReceiptEventSchema = z.object({
 	message_id: z.string().min(1),
 	status: z.string().min(1),
+	username: z.string().min(1).optional(),
+	user_id: z.union([z.number(), z.string()]).optional(),
 	status_code: z.string().optional(),
 	status_text: z.string().optional(),
 	timestamp: z.union([z.number(), z.string()]).optional(),
@@ -53,7 +57,13 @@ export function createClickSendInboundMatcher(): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsed = parseBody(request.body);
 		if (!parsed) return false;
-		return 'body' in parsed && 'from' in parsed && !('status' in parsed);
+		return (
+			'message_id' in parsed &&
+			'body' in parsed &&
+			'from' in parsed &&
+			'to' in parsed &&
+			!('status' in parsed)
+		);
 	};
 }
 
@@ -76,20 +86,44 @@ export function verifyClickSendWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret?: string,
 ): { valid: boolean; error?: string } {
-	if (!secret) {
+	if (request.hubVerified === true) {
 		return { valid: true };
 	}
-	const headers = (request.headers ?? {}) as Record<string, string | undefined>;
+
+	if (!secret) {
+		return {
+			valid: false,
+			error: 'Missing webhook secret configuration',
+		};
+	}
+
+	const firstValue = (
+		value: string | string[] | undefined,
+	): string | undefined => {
+		if (Array.isArray(value)) {
+			return value.find(
+				(entry) => typeof entry === 'string' && entry.length > 0,
+			);
+		}
+		return typeof value === 'string' && value.length > 0 ? value : undefined;
+	};
+
+	const headers = (request.headers ?? {}) as Record<
+		string,
+		string | string[] | undefined
+	>;
 	const query = ((
-		request as unknown as { query?: Record<string, string | undefined> }
-	).query ?? {}) as Record<string, string | undefined>;
+		request as unknown as {
+			query?: Record<string, string | string[] | undefined>;
+		}
+	).query ?? {}) as Record<string, string | string[] | undefined>;
 
 	const authHeader =
-		headers['authorization'] ||
-		headers['x-clicksend-token'] ||
-		headers['x-webhook-secret'] ||
-		query['secret'] ||
-		query['token'];
+		firstValue(headers.authorization) ||
+		firstValue(headers['x-clicksend-token']) ||
+		firstValue(headers['x-webhook-secret']) ||
+		firstValue(query.secret) ||
+		firstValue(query.token);
 
 	if (!authHeader) {
 		return { valid: false, error: 'Missing webhook authorization header' };

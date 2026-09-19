@@ -6,6 +6,29 @@ import {
 	verifyClickSendWebhookSignature,
 } from './types';
 
+function toTimestampISOString(timestamp?: number | string): string {
+	if (typeof timestamp === 'number' && Number.isFinite(timestamp)) {
+		return new Date(timestamp * 1000).toISOString();
+	}
+
+	if (typeof timestamp === 'string') {
+		const trimmed = timestamp.trim();
+		if (trimmed.length > 0) {
+			const numeric = Number(trimmed);
+			if (Number.isFinite(numeric)) {
+				return new Date(numeric * 1000).toISOString();
+			}
+
+			const parsed = new Date(trimmed);
+			if (!Number.isNaN(parsed.getTime())) {
+				return parsed.toISOString();
+			}
+		}
+	}
+
+	return new Date().toISOString();
+}
+
 export const inbound: ClickSendWebhooks['inboundSms'] = {
 	match: createClickSendInboundMatcher(),
 	handler: async (ctx, request) => {
@@ -30,13 +53,7 @@ export const inbound: ClickSendWebhooks['inboundSms'] = {
 					body: payload.body,
 					status: 'received',
 					direction: 'in',
-					date_sent: payload.timestamp
-						? new Date(
-								typeof payload.timestamp === 'number'
-									? payload.timestamp * 1000
-									: payload.timestamp,
-							).toISOString()
-						: new Date().toISOString(),
+					date_sent: toTimestampISOString(payload.timestamp),
 				});
 			} catch (error) {
 				console.warn('Failed to save inbound webhook SMS to database:', error);

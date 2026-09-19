@@ -1,16 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import { getClickSendCredentials, makeClickSendRequest } from '../client';
 import type { ClickSendEndpoints } from '../index';
-import type { ClickSendEndpointOutputs } from './types';
+import { ClickSendEndpointOutputSchemas } from './types';
 
 export const send: ClickSendEndpoints['voiceSend'] = async (ctx, input) => {
 	const { username, apiKey } = await getClickSendCredentials(ctx);
 
-	const response = await makeClickSendRequest<
-		ClickSendEndpointOutputs['voiceSend']
-	>('voice/send', username, apiKey, {
+	const response = await makeClickSendRequest('voice/send', username, apiKey, {
 		method: 'POST',
 		body: { messages: input.messages },
+		responseSchema: ClickSendEndpointOutputSchemas.voiceSend,
 	});
 
 	await logEventFromContext(
@@ -29,15 +28,19 @@ export const history: ClickSendEndpoints['voiceHistory'] = async (
 ) => {
 	const { username, apiKey } = await getClickSendCredentials(ctx);
 
-	const response = await makeClickSendRequest<
-		ClickSendEndpointOutputs['voiceHistory']
-	>('voice/history', username, apiKey, {
-		method: 'GET',
-		query: {
-			page: input.page,
-			limit: input.limit,
+	const response = await makeClickSendRequest(
+		'voice/history',
+		username,
+		apiKey,
+		{
+			method: 'GET',
+			query: {
+				page: input.page,
+				limit: input.limit,
+			},
+			responseSchema: ClickSendEndpointOutputSchemas.voiceHistory,
 		},
-	});
+	);
 
 	await logEventFromContext(
 		ctx,

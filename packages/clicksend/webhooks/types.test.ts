@@ -6,10 +6,20 @@ import {
 
 describe('ClickSend webhook verification and matchers', () => {
 	describe('verifyClickSendWebhookSignature', () => {
-		it('returns valid: true when no secret is configured', () => {
+		it('returns invalid when no secret is configured', () => {
 			const res = verifyClickSendWebhookSignature({
 				headers: {},
 				payload: {},
+			} as any);
+			expect(res.valid).toBe(false);
+			expect(res.error).toBe('Missing webhook secret configuration');
+		});
+
+		it('returns valid when hub has already verified the webhook', () => {
+			const res = verifyClickSendWebhookSignature({
+				headers: {},
+				payload: {},
+				hubVerified: true,
 			} as any);
 			expect(res.valid).toBe(true);
 		});
@@ -72,6 +82,17 @@ describe('ClickSend webhook verification and matchers', () => {
 			expect(res.valid).toBe(true);
 		});
 
+		it('supports array header values', () => {
+			const res = verifyClickSendWebhookSignature(
+				{
+					headers: { authorization: ['Bearer my-secret', 'Bearer other'] },
+					payload: {},
+				} as any,
+				'my-secret',
+			);
+			expect(res.valid).toBe(true);
+		});
+
 		it('returns invalid on incorrect secret (timing safe check)', () => {
 			const res = verifyClickSendWebhookSignature(
 				{
@@ -91,7 +112,12 @@ describe('ClickSend webhook verification and matchers', () => {
 		it('matches inbound message body', () => {
 			expect(
 				matcher({
-					body: { from: '+1234567890', to: '+1098765432', body: 'Hello!' },
+					body: {
+						message_id: 'm1',
+						from: '+1234567890',
+						to: '+1098765432',
+						body: 'Hello!',
+					},
 					headers: {},
 					query: {},
 				} as any),
