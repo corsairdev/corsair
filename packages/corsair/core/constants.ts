@@ -484,6 +484,7 @@ export const ProviderDisplayNames = {
 	classmarker: 'ClassMarker',
 	clickhouse: 'Clickhouse',
 	clickmeeting: 'ClickMeeting',
+	clickup: 'ClickUp',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
 	cloudcart: 'CloudCart',
