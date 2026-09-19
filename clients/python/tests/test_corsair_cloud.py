@@ -58,6 +58,9 @@ def test_call_builds_url_bearer_body_and_returns_data(monkeypatch):
     )
     assert captured["method"] == "POST"
     assert captured["headers"]["Authorization"] == "Bearer ck_cloud_x"
+    # Explicit UA — urllib's default "Python-urllib/*" is 403'd by the edge WAF.
+    # (urllib title-cases header keys, so it's stored as "User-agent".)
+    assert captured["headers"]["User-agent"] == "corsair-cloud-python/0.1.0"
     assert captured["body"] == {"args": {"query": "hi"}}
     assert captured["timeout"] == corsair.timeout
 
