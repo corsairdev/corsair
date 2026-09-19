@@ -72,9 +72,14 @@ export async function makeUpdownIORequest<T>(
 	try {
 		const response = await fetch(url, {
 			method: 'GET',
-			redirect: 'error',
+			redirect: normalizedKey ? 'error' : 'follow',
 			headers,
 		});
+		if (normalizedKey && response.status >= 300 && response.status < 400) {
+			throw new UpdownIOAPIError(
+				`Refused to follow HTTP ${response.status} redirect while sending an API key`,
+			);
+		}
 		const body = await parseResponseBody(response);
 		if (!response.ok) {
 			throw new UpdownIOAPIError(

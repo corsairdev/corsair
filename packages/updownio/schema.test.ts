@@ -90,4 +90,32 @@ describe('endpoint schema registries', () => {
 			expect(() => schema.parse({ nope: 1 })).toThrow();
 		}
 	});
+
+	it('validates node IP list responses with IP schemas', () => {
+		expect(
+			UpdownIOEndpointOutputSchemas.nodesListIps.parse([
+				'45.32.74.41',
+				'2001:19f0:6001:2c6::1',
+			]),
+		).toHaveLength(2);
+		expect(() =>
+			UpdownIOEndpointOutputSchemas.nodesListIps.parse(['not-an-ip']),
+		).toThrow();
+
+		expect(
+			UpdownIOEndpointOutputSchemas.nodesListIpv4.parse(['45.32.74.41']),
+		).toHaveLength(1);
+		expect(() =>
+			UpdownIOEndpointOutputSchemas.nodesListIpv4.parse(['2001:19f0::1']),
+		).toThrow();
+
+		expect(
+			UpdownIOEndpointOutputSchemas.nodesListIpv6.parse([
+				'2001:19f0:6001:2c6::1',
+			]),
+		).toHaveLength(1);
+		expect(() =>
+			UpdownIOEndpointOutputSchemas.nodesListIpv6.parse(['45.32.74.41']),
+		).toThrow();
+	});
 });
