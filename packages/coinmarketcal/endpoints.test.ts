@@ -23,6 +23,7 @@ jest.mock('corsair/http', () => {
 const mockRequest = request as jest.Mock;
 const mockLog = jest.mocked(logEventFromContext);
 
+// unknown: jest stub is not the full plugin context
 const mockCtx = {
 	key: 'coinmarketcal_test_key',
 	$getAccountId: () => 'test-account-id',
@@ -59,6 +60,7 @@ describe('Coinmarketcal keyBuilder', () => {
 	it('returns options.key for endpoint requests', async () => {
 		const plugin = coinmarketcal({ key: 'from-options' });
 
+		// unknown: keyBuilder is not exported with a callable test type
 		await expect(
 			(plugin.keyBuilder as (ctx: unknown, source: string) => Promise<string>)(
 				{ authType: 'api_key' },
@@ -70,6 +72,7 @@ describe('Coinmarketcal keyBuilder', () => {
 	it('reads API key from managed credentials', async () => {
 		const plugin = coinmarketcal();
 
+		// unknown: jest stub is not the full keyBuilder context
 		const ctx = {
 			authType: 'api_key',
 			keys: {
@@ -77,6 +80,7 @@ describe('Coinmarketcal keyBuilder', () => {
 			},
 		} as unknown as CoinmarketcalKeyBuilderContext;
 
+		// unknown: keyBuilder is not exported with a callable test type
 		await expect(
 			(plugin.keyBuilder as (ctx: unknown, source: string) => Promise<string>)(
 				ctx,
@@ -88,6 +92,7 @@ describe('Coinmarketcal keyBuilder', () => {
 	it('throws AuthMissingError when API key is absent', async () => {
 		const plugin = coinmarketcal();
 
+		// unknown: jest stub is not the full keyBuilder context
 		const ctx = {
 			authType: 'api_key',
 			keys: {
@@ -95,6 +100,7 @@ describe('Coinmarketcal keyBuilder', () => {
 			},
 		} as unknown as CoinmarketcalKeyBuilderContext;
 
+		// unknown: keyBuilder is not exported with a callable test type
 		await expect(
 			(plugin.keyBuilder as (ctx: unknown, source: string) => Promise<string>)(
 				ctx,
