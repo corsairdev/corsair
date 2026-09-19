@@ -166,7 +166,10 @@ function runScriptDef(
 	};
 }
 
-function callOperationDef(corsair: Corsair): CorsairToolDef {
+function callOperationDef(
+	corsair: Corsair,
+	runOptions: BaseMcpOptions['runOptions'],
+): CorsairToolDef {
 	return {
 		name: 'call_operation',
 		description:
@@ -183,12 +186,11 @@ function callOperationDef(corsair: Corsair): CorsairToolDef {
 		},
 		handler: async ({ plugin, op, args }) => {
 			try {
-				const data = await callOperation(
-					corsair,
-					plugin as string,
-					op as string,
-					args,
-				);
+				const invoke = () =>
+					callOperation(corsair, plugin as string, op as string, args);
+				const data = runOptions?.readonly
+					? await runReadonly(invoke)
+					: await invoke();
 				return formatRunScriptResult(data);
 			} catch (err) {
 				return formatRunScriptError(err);
@@ -197,7 +199,10 @@ function callOperationDef(corsair: Corsair): CorsairToolDef {
 	};
 }
 
-function runBatchDef(corsair: Corsair): CorsairToolDef {
+function runBatchDef(
+	corsair: Corsair,
+	runOptions: BaseMcpOptions['runOptions'],
+): CorsairToolDef {
 	return {
 		name: 'run_batch',
 		description:
@@ -223,7 +228,10 @@ function runBatchDef(corsair: Corsair): CorsairToolDef {
 			const results: Array<Record<string, unknown>> = [];
 			for (const o of list) {
 				try {
-					const data = await callOperation(corsair, o.plugin, o.op, o.args);
+					const invoke = () => callOperation(corsair, o.plugin, o.op, o.args);
+					const data = runOptions?.readonly
+						? await runReadonly(invoke)
+						: await invoke();
 					results.push({ ok: true, plugin: o.plugin, op: o.op, data });
 				} catch (err) {
 					results.push({
@@ -258,11 +266,11 @@ export function buildCorsairToolDefs(
 // run_script eval, which on the shared runtime would expose process.env (KEK,
 // signing secret) and has no execution bound. Batching is declarative.
 export function buildHostedToolDefs(options: BaseMcpOptions): CorsairToolDef[] {
-	const { corsair } = options;
+	const { corsair, runOptions } = options;
 	return [
 		listOperationsDef(corsair),
 		getSchemaDef(corsair),
-		callOperationDef(corsair),
-		runBatchDef(corsair),
+		callOperationDef(corsair, runOptions),
+		runBatchDef(corsair, runOptions),
 	];
 }

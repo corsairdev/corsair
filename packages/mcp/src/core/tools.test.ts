@@ -102,6 +102,23 @@ test('run_batch runs ops in order and returns a result per op', async () => {
 	assert.equal(parsed[1]?.ok, true);
 });
 
+test('call_operation runs under a readonly scope when runOptions.readonly', async () => {
+	// Enforcement lives in corsair's endpoint binder (not exercised by the fake);
+	// this asserts the readonly option is threaded and a read still resolves.
+	const { corsair, calls } = fakeCorsair();
+	const def = buildHostedToolDefs({
+		corsair,
+		runOptions: { readonly: true },
+	}).find((d) => d.name === 'call_operation')!;
+	const out = await def.handler({
+		plugin: 'slack',
+		op: 'channels.list',
+		args: {},
+	});
+	assert.equal(calls[0]?.op, 'channels.list');
+	assert.match(text(out), /general/);
+});
+
 test('run_batch reports a failing op without aborting the rest', async () => {
 	const { corsair } = fakeCorsair();
 	const def = buildHostedToolDefs({ corsair }).find(
