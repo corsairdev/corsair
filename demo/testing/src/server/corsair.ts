@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 import { agentql } from '@corsair-dev/agentql';
-import { bugherd } from '@corsair-dev/bugherd';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
@@ -63,8 +62,5 @@ export const corsair = createCorsair({
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
 		}),
 		instagram(),
-		bugherd({
-			key: process.env.BUGHERD_API_KEY,
-		}),
 	],
 });
