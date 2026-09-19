@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class BuiltWithAPIError extends Error {
 	constructor(
@@ -29,7 +29,8 @@ export async function makeBuiltWithRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		// BuiltWith authenticates with `Authorization: API <key>` — not Bearer.
+		TOKEN: undefined,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Authorization: `API ${apiKey}`,
@@ -50,6 +51,10 @@ export async function makeBuiltWithRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		// ApiError carries status and rate-limit headers for error-handlers.ts.
+		if (error instanceof ApiError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new BuiltWithAPIError(error.message);
 		}
