@@ -1,7 +1,7 @@
 {
   "id": "monday",
-  "displayName": "Monday.com",
-  "description": "Work operating system for boards, workflows, automations, and cross-team project tracking.",
+  "displayName": "Monday",
+  "description": "Monday plugin for Corsair",
   "npmPackageName": "@corsair-dev/monday",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "anonyflow",
   "displayName": "Anonyflow",
-  "description": "Privacy-focused data tokenization service for protecting sensitive customer information.",
+  "description": "Anonyflow plugin for Corsair",
   "npmPackageName": "@corsair-dev/anonyflow",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

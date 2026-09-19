@@ -1,7 +1,7 @@
 {
   "id": "salesforce",
   "displayName": "Salesforce",
-  "description": "Enterprise CRM for leads, accounts, opportunities, service cases, and sales automation.",
+  "description": "Salesforce plugin for Corsair",
   "npmPackageName": "@corsair-dev/salesforce",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "oauth_2",

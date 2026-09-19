@@ -1,7 +1,7 @@
 {
   "id": "bettercontact",
   "displayName": "BetterContact",
-  "description": "Waterfall enrichment API for finding verified B2B emails and mobile phone numbers.",
+  "description": "BetterContact plugin for Corsair",
   "npmPackageName": "@corsair-dev/bettercontact",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

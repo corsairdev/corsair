@@ -1,7 +1,7 @@
 {
   "id": "collegefootballdata",
-  "displayName": "College Football Data",
-  "description": "College football statistics API for games, teams, players, and historical NCAA data.",
+  "displayName": "CollegeFootballData",
+  "description": "CollegeFootballData plugin for Corsair",
   "npmPackageName": "@corsair-dev/collegefootballdata",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

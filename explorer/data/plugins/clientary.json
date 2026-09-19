@@ -1,7 +1,7 @@
 {
   "id": "clientary",
   "displayName": "Clientary",
-  "description": "Client management software for freelancers tracking projects, invoices, and time.",
+  "description": "Clientary plugin for Corsair",
   "npmPackageName": "@corsair-dev/clientary",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -154,7 +154,7 @@
     {
       "path": "clientary.api.clients.delete",
       "shortPath": "clients.delete",
-      "description": "Delete a client and all associated projects, invoices, estimates, and contacts",
+      "description": "Delete a client and all associated projects, invoices, estimates, and contacts [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -566,7 +566,7 @@
     {
       "path": "clientary.api.contacts.delete",
       "shortPath": "contacts.delete",
-      "description": "Delete a contact",
+      "description": "Delete a contact [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1061,7 +1061,7 @@
     {
       "path": "clientary.api.estimates.delete",
       "shortPath": "estimates.delete",
-      "description": "Delete an estimate",
+      "description": "Delete an estimate [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1711,7 +1711,7 @@
     {
       "path": "clientary.api.expenses.delete",
       "shortPath": "expenses.delete",
-      "description": "Delete an expense",
+      "description": "Delete an expense [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2155,7 +2155,7 @@
     {
       "path": "clientary.api.hours.delete",
       "shortPath": "hours.delete",
-      "description": "Delete an hours entry",
+      "description": "Delete an hours entry [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2635,7 +2635,7 @@
     {
       "path": "clientary.api.invoices.delete",
       "shortPath": "invoices.delete",
-      "description": "Delete an invoice",
+      "description": "Delete an invoice [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -3467,7 +3467,7 @@
     {
       "path": "clientary.api.leads.delete",
       "shortPath": "leads.delete",
-      "description": "Delete a lead",
+      "description": "Delete a lead [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -3922,7 +3922,7 @@
     {
       "path": "clientary.api.paymentProfiles.delete",
       "shortPath": "paymentProfiles.delete",
-      "description": "Delete a payment profile",
+      "description": "Delete a payment profile [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -4089,7 +4089,7 @@
     {
       "path": "clientary.api.payments.delete",
       "shortPath": "payments.delete",
-      "description": "Delete (void) a payment",
+      "description": "Delete (void) a payment [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -4344,7 +4344,7 @@
     {
       "path": "clientary.api.projects.delete",
       "shortPath": "projects.delete",
-      "description": "Delete a project",
+      "description": "Delete a project [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -5034,7 +5034,7 @@
     {
       "path": "clientary.api.recurring.delete",
       "shortPath": "recurring.delete",
-      "description": "Delete a recurring schedule",
+      "description": "Delete a recurring schedule [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -5745,7 +5745,7 @@
     {
       "path": "clientary.api.tasks.delete",
       "shortPath": "tasks.delete",
-      "description": "Delete a task",
+      "description": "Delete a task [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

@@ -1,7 +1,7 @@
 {
   "id": "cloudflare",
   "displayName": "Cloudflare",
-  "description": "Edge cloud platform for DNS, CDN, security, Workers, and internet infrastructure services.",
+  "description": "Cloudflare plugin for Corsair",
   "npmPackageName": "@corsair-dev/cloudflare",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -132,7 +132,7 @@
     {
       "path": "cloudflare.api.dns.delete",
       "shortPath": "dns.delete",
-      "description": "Delete a DNS record",
+      "description": "Delete a DNS record [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -496,7 +496,7 @@
     {
       "path": "cloudflare.api.rulesets.delete",
       "shortPath": "rulesets.delete",
-      "description": "Delete a ruleset",
+      "description": "Delete a ruleset [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -729,7 +729,7 @@
     {
       "path": "cloudflare.api.workers.routes.delete",
       "shortPath": "workers.routes.delete",
-      "description": "Delete a Workers route",
+      "description": "Delete a Workers route [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -872,7 +872,7 @@
     {
       "path": "cloudflare.api.workers.scripts.delete",
       "shortPath": "workers.scripts.delete",
-      "description": "Delete a Workers script",
+      "description": "Delete a Workers script [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1094,7 +1094,7 @@
     {
       "path": "cloudflare.api.zones.delete",
       "shortPath": "zones.delete",
-      "description": "Delete a Cloudflare zone",
+      "description": "Delete a Cloudflare zone [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

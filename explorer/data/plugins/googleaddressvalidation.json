@@ -1,7 +1,7 @@
 {
   "id": "googleaddressvalidation",
   "displayName": "Google Address Validation",
-  "description": "Google API for validating, standardizing, and geocoding postal addresses worldwide.",
+  "description": "Google Address Validation plugin for Corsair",
   "npmPackageName": "@corsair-dev/googleaddressvalidation",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

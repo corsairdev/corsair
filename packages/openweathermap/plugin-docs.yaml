@@ -1,2 +1,2 @@
-displayName: OpenWeatherMap
-description: Weather data API for forecasts, current conditions, and historical climate information.
+# Overrides for scripts/generate-plugin-docs.ts (optional; commit next to package.json)
+displayName: Open Weather Map

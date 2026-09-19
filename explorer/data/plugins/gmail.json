@@ -1,7 +1,7 @@
 {
   "id": "gmail",
   "displayName": "Gmail",
-  "description": "Google email service for sending, reading, organizing messages, labels, and inbox automation.",
+  "description": "Gmail plugin for Corsair",
   "npmPackageName": "@corsair-dev/gmail",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -72,7 +72,7 @@
     {
       "path": "gmail.api.drafts.delete",
       "shortPath": "drafts.delete",
-      "description": "Delete a draft",
+      "description": "Delete a draft [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -385,7 +385,7 @@
     {
       "path": "gmail.api.labels.delete",
       "shortPath": "labels.delete",
-      "description": "Delete a label",
+      "description": "Delete a label [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

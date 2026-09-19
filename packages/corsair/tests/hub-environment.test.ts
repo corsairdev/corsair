@@ -1,8 +1,4 @@
-import {
-	inferHubEnvironmentSlug,
-	normalizeHubConfig,
-	resolveHubOAuthCallbackUrl,
-} from '../hub/config';
+import { normalizeHubConfig, resolveHubOAuthCallbackUrl } from '../hub/config';
 import {
 	isLoopbackUrl,
 	resolveDeliveryTransport,
@@ -40,21 +36,11 @@ function withEnv(
 }
 
 describe('hub environment delivery', () => {
-	it('infers the environment slug from the key prefix', () => {
-		expect(inferHubEnvironmentSlug('ck_dev_abc')).toBe('development');
-		expect(inferHubEnvironmentSlug('ck_prod_abc')).toBe('production');
-		expect(inferHubEnvironmentSlug('ck_cloud_abc')).toBe('cloud');
-		expect(() => inferHubEnvironmentSlug('ck_unknown_abc')).toThrow();
-	});
-
 	it('resolves transport from environment slug', () => {
 		expect(resolveDeliveryTransport('development')).toBe('browser');
 		expect(resolveDeliveryTransport('production')).toBe('server');
-		// Cloud is a reachable box — server delivery, no browser bridge.
-		expect(resolveDeliveryTransport('cloud')).toBe('server');
 		expect(usesBrowserDelivery('development')).toBe(true);
 		expect(usesBrowserDelivery('production')).toBe(false);
-		expect(usesBrowserDelivery('cloud')).toBe(false);
 	});
 
 	it('detects loopback URLs', () => {

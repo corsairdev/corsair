@@ -1,7 +1,7 @@
 {
   "id": "discord",
   "displayName": "Discord",
-  "description": "Community chat platform for servers, channels, voice, bots, and real-time group messaging.",
+  "description": "Discord plugin for Corsair",
   "npmPackageName": "@corsair-dev/discord",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -298,7 +298,7 @@
     {
       "path": "discord.api.messages.delete",
       "shortPath": "messages.delete",
-      "description": "Permanently delete a message",
+      "description": "Permanently delete a message [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {

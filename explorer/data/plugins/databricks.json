@@ -1,7 +1,7 @@
 {
   "id": "databricks",
   "displayName": "Databricks",
-  "description": "Unified data and AI platform for lakehouse analytics, notebooks, and machine learning.",
+  "description": "Databricks plugin for Corsair",
   "npmPackageName": "@corsair-dev/databricks",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

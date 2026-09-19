@@ -443,7 +443,7 @@ const breathehrEndpointMeta = {
 	},
 	'employeeExpenses.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete an employee expense',
+		description: 'Delete an employee expense [DESTRUCTIVE]',
 	},
 	'employeeExpenseClaims.list': {
 		riskLevel: 'read',
@@ -459,7 +459,7 @@ const breathehrEndpointMeta = {
 	},
 	'employeeTrainingCourses.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete an employee training course',
+		description: 'Delete an employee training course [DESTRUCTIVE]',
 	},
 	'employeeTrainingCourses.update': {
 		riskLevel: 'write',

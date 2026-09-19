@@ -1,7 +1,7 @@
 {
   "id": "strava",
   "displayName": "Strava",
-  "description": "Fitness tracking network for runs, rides, activities, segments, and athlete social data.",
+  "description": "Strava plugin for Corsair",
   "npmPackageName": "@corsair-dev/strava",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

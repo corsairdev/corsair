@@ -1,7 +1,7 @@
 {
   "id": "brandfetch",
   "displayName": "Brandfetch",
-  "description": "Brand asset API for logos, colors, fonts, and company visual identity data.",
+  "description": "Brandfetch plugin for Corsair",
   "npmPackageName": "@corsair-dev/brandfetch",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

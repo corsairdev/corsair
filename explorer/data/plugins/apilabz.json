@@ -1,7 +1,7 @@
 {
   "id": "apilabz",
   "displayName": "ApiLabz",
-  "description": "Collection of utility APIs for developers including conversion, validation, and lookup tools.",
+  "description": "ApiLabz plugin for Corsair",
   "npmPackageName": "@corsair-dev/apilabz",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

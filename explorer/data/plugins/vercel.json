@@ -1,7 +1,7 @@
 {
   "id": "vercel",
   "displayName": "Vercel",
-  "description": "Frontend cloud platform for deploying sites, serverless functions, and edge web applications.",
+  "description": "Vercel plugin for Corsair",
   "npmPackageName": "@corsair-dev/vercel",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

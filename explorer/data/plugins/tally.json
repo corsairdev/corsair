@@ -1,7 +1,7 @@
 {
   "id": "tally",
   "displayName": "Tally",
-  "description": "Simple form builder for surveys, signup flows, and collecting responses without code.",
+  "description": "Tally plugin for Corsair",
   "npmPackageName": "@corsair-dev/tally",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -102,7 +102,7 @@
     {
       "path": "tally.api.forms.delete",
       "shortPath": "forms.delete",
-      "description": "Delete a form",
+      "description": "Delete a form [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -320,7 +320,7 @@
     {
       "path": "tally.api.organizations.cancelInvite",
       "shortPath": "organizations.cancelInvite",
-      "description": "Cancel a pending organization invite",
+      "description": "Cancel a pending organization invite [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -415,7 +415,7 @@
     {
       "path": "tally.api.organizations.removeUser",
       "shortPath": "organizations.removeUser",
-      "description": "Remove a user from an organization",
+      "description": "Remove a user from an organization [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -471,7 +471,7 @@
     {
       "path": "tally.api.submissions.delete",
       "shortPath": "submissions.delete",
-      "description": "Delete a form submission",
+      "description": "Delete a form submission [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -724,7 +724,7 @@
     {
       "path": "tally.api.webhookManagement.delete",
       "shortPath": "webhookManagement.delete",
-      "description": "Delete a webhook subscription",
+      "description": "Delete a webhook subscription [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -972,7 +972,7 @@
     {
       "path": "tally.api.workspaces.delete",
       "shortPath": "workspaces.delete",
-      "description": "Delete a workspace",
+      "description": "Delete a workspace [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

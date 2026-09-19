@@ -306,7 +306,7 @@ const tallyEndpointMeta = {
 	},
 	'forms.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a form',
+		description: 'Delete a form [DESTRUCTIVE]',
 	},
 	'questions.list': {
 		riskLevel: 'read',
@@ -322,7 +322,7 @@ const tallyEndpointMeta = {
 	},
 	'submissions.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a form submission',
+		description: 'Delete a form submission [DESTRUCTIVE]',
 	},
 	'users.getMe': {
 		riskLevel: 'read',
@@ -334,7 +334,7 @@ const tallyEndpointMeta = {
 	},
 	'organizations.removeUser': {
 		riskLevel: 'destructive',
-		description: 'Remove a user from an organization',
+		description: 'Remove a user from an organization [DESTRUCTIVE]',
 	},
 	'organizations.listInvites': {
 		riskLevel: 'read',
@@ -346,7 +346,7 @@ const tallyEndpointMeta = {
 	},
 	'organizations.cancelInvite': {
 		riskLevel: 'destructive',
-		description: 'Cancel a pending organization invite',
+		description: 'Cancel a pending organization invite [DESTRUCTIVE]',
 	},
 	'workspaces.list': {
 		riskLevel: 'read',
@@ -366,7 +366,7 @@ const tallyEndpointMeta = {
 	},
 	'workspaces.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a workspace',
+		description: 'Delete a workspace [DESTRUCTIVE]',
 	},
 	'webhookManagement.list': {
 		riskLevel: 'read',
@@ -382,7 +382,7 @@ const tallyEndpointMeta = {
 	},
 	'webhookManagement.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a webhook subscription',
+		description: 'Delete a webhook subscription [DESTRUCTIVE]',
 	},
 	'webhookManagement.listEvents': {
 		riskLevel: 'read',

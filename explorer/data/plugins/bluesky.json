@@ -1,7 +1,7 @@
 {
   "id": "bluesky",
   "displayName": "Bluesky",
-  "description": "Decentralized social network for posting feeds, follows, and public conversations.",
+  "description": "Bluesky plugin for Corsair",
   "npmPackageName": "@corsair-dev/bluesky",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -97,7 +97,7 @@
     {
       "path": "bluesky.api.posts.deleteRecord",
       "shortPath": "posts.deleteRecord",
-      "description": "Delete a post on Bluesky",
+      "description": "Delete a post on Bluesky [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "irreversible": true,
       "input": {

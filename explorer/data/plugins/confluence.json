@@ -1,7 +1,7 @@
 {
   "id": "confluence",
   "displayName": "Confluence",
-  "description": "Team wiki and documentation platform for knowledge bases and collaborative page editing.",
+  "description": "Confluence plugin for Corsair",
   "npmPackageName": "@corsair-dev/confluence",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

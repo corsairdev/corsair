@@ -1,7 +1,7 @@
 {
   "id": "mailchimp",
   "displayName": "Mailchimp",
-  "description": "Email marketing platform for audiences, campaigns, automations, and audience analytics.",
+  "description": "Mailchimp plugin for Corsair",
   "npmPackageName": "@corsair-dev/mailchimp",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "oauth_2",

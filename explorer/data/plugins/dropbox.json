@@ -1,7 +1,7 @@
 {
   "id": "dropbox",
   "displayName": "Dropbox",
-  "description": "Cloud file storage and sync service for sharing documents and collaborating on files.",
+  "description": "Dropbox plugin for Corsair",
   "npmPackageName": "@corsair-dev/dropbox",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -75,7 +75,7 @@
     {
       "path": "dropbox.api.files.delete",
       "shortPath": "files.delete",
-      "description": "Delete a file",
+      "description": "Delete a file [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -361,7 +361,7 @@
     {
       "path": "dropbox.api.folders.delete",
       "shortPath": "folders.delete",
-      "description": "Delete a folder and all its contents",
+      "description": "Delete a folder and all its contents [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

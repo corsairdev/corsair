@@ -1,7 +1,7 @@
 {
   "id": "formbricks",
   "displayName": "Formbricks",
-  "description": "Open-source experience management platform for in-app surveys and user feedback collection.",
+  "description": "Formbricks plugin for Corsair",
   "npmPackageName": "@corsair-dev/formbricks",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

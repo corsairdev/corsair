@@ -1,7 +1,7 @@
 {
   "id": "dripcel",
   "displayName": "Dripcel",
-  "description": "SMS marketing platform for campaigns, automations, and two-way customer text messaging.",
+  "description": "Dripcel plugin for Corsair",
   "npmPackageName": "@corsair-dev/dripcel",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -199,7 +199,7 @@
     {
       "path": "dripcel.api.contacts.delete",
       "shortPath": "contacts.delete",
-      "description": "Delete a Dripcel contact by cell number",
+      "description": "Delete a Dripcel contact by cell number [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -658,7 +658,7 @@
     {
       "path": "dripcel.api.tags.delete",
       "shortPath": "tags.delete",
-      "description": "Delete a Dripcel tag by ID",
+      "description": "Delete a Dripcel tag by ID [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

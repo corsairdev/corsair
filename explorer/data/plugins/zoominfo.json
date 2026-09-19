@@ -1,7 +1,7 @@
 {
   "id": "zoominfo",
   "displayName": "ZoomInfo",
-  "description": "B2B contact database for sales intelligence, company data, and prospecting workflows.",
+  "description": "ZoomInfo plugin for Corsair",
   "npmPackageName": "@corsair-dev/zoominfo",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",

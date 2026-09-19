@@ -1,7 +1,7 @@
 {
   "id": "hackernews",
-  "displayName": "Hacker News",
-  "description": "Tech news community API for stories, comments, jobs, and startup discussion content.",
+  "displayName": "Hacker news",
+  "description": "Hacker news plugin for Corsair",
   "npmPackageName": "@corsair-dev/hackernews",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

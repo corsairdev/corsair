@@ -1,7 +1,7 @@
 {
   "id": "exa",
   "displayName": "Exa",
-  "description": "AI-native search API for finding high-quality web content and research results.",
+  "description": "Exa plugin for Corsair",
   "npmPackageName": "@corsair-dev/exa",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -271,7 +271,7 @@
     {
       "path": "exa.api.imports.delete",
       "shortPath": "imports.delete",
-      "description": "Delete an existing import",
+      "description": "Delete an existing import [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -703,7 +703,7 @@
     {
       "path": "exa.api.websets.delete",
       "shortPath": "websets.delete",
-      "description": "Delete a webset",
+      "description": "Delete a webset [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

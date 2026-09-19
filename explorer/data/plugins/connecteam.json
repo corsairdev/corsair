@@ -1,7 +1,7 @@
 {
   "id": "connecteam",
   "displayName": "Connecteam",
-  "description": "Workforce management app for deskless teams, scheduling, chat, and mobile operations.",
+  "description": "Connecteam plugin for Corsair",
   "npmPackageName": "@corsair-dev/connecteam",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

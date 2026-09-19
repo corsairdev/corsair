@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Collaborative design tool for UI mockups, prototypes, components, and design system files."
+description: "Figma plugin for Corsair"
 ---
 
 Use **Figma** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -92,19 +92,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Get file metadata**
+**`activityLogs.list`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.figma.api.files.getMetadata({ file_key: 'abcDEF123' });
+await tenant.figma.api.activityLogs.list({});
 ```
 
 
-**Add a comment**
+**`comments.add`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.figma.api.comments.add({ file_key: 'abcDEF123', message: 'Hello from Corsair' });
+await tenant.figma.api.comments.add({});
 ```
 
 
@@ -112,37 +112,15 @@ See the full list on the [API](/plugins/figma/api) page.
 
 ## Query synced data
 
-Search synced file metadata without hitting Figma.
+Synced entities support `tenant.figma.db.<entity>.search()` and `.list()`: `comments`, `components`, `fileMetadata`, `versions`, `webhookConfigs`.
 
-```ts
-const tenant = corsair.withTenant('acme');
-const rows = await tenant.figma.db.fileMetadata.search({
-	data: {},
-	limit: 50,
-});
-```
-
-Synced entities: `comments`, `components`, `fileMetadata`, `versions`, `webhookConfigs`. See [Database](/plugins/figma/database) for filters and operators.
+See [Database](/plugins/figma/database) for filters and operators.
 
 ## Webhooks
 
-Fires when a Figma file is updated. Do not use ping.ping.
+This plugin registers **6** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
 
-```ts
-figma({
-    webhookHooks: {
-        files: {
-            fileUpdate: {
-                after: async (ctx, result) => {
-                    console.log('Figma file updated:', result.data);
-                }
-            },
-        },
-    },
-})
-```
-
-Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/figma/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+See [Webhooks](/plugins/figma/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
 
 ## What's next
 

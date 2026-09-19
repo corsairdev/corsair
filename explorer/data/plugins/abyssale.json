@@ -1,7 +1,7 @@
 {
   "id": "abyssale",
   "displayName": "Abyssale",
-  "description": "Dynamic image and video generation API for automated marketing and social creatives.",
+  "description": "Abyssale plugin for Corsair",
   "npmPackageName": "@corsair-dev/abyssale",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -172,7 +172,7 @@ const airtableEndpointMeta = {
 	},
 	'records.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a record from a table',
+		description: 'Delete a record from a table [DESTRUCTIVE]',
 	},
 	'records.get': {
 		riskLevel: 'read',

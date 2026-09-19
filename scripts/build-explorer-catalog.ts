@@ -14,8 +14,7 @@
  *
  * Discovery logic mirrors `scripts/generate-plugin-docs.ts` but we intentionally
  * keep a small, self-contained copy here so the two scripts can evolve
- * independently. Display copy (`displayName`, `description`) is read from
- * `packages/<plugin>/plugin-docs.yaml` when present, with package.json fallbacks.
+ * independently.
  */
 import {
 	existsSync,
@@ -28,7 +27,6 @@ import {
 } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { parse as parseYaml } from 'yaml';
 import { buildSearchIndex } from '../explorer/src/catalog.ts';
 import type {
 	DocsApiEndpoint,
@@ -62,15 +60,6 @@ const KNOWN_AUTH_TYPES: readonly PluginAuthType[] = [
 	'api_key',
 	'bot_token',
 ];
-
-const PLUGIN_DOCS_FILE = 'plugin-docs.yaml';
-
-type PluginDocsFile = {
-	displayName?: string;
-	description?: string;
-	/** Brand website hostname for plugin icons (see scripts/plugin-icon-domains.ts). */
-	domain?: string;
-};
 
 type PackageJson = { name?: string; description?: string; version?: string };
 
@@ -145,20 +134,6 @@ function titleFromPackageDescription(desc: string | undefined): string | null {
 		raw = titleCaseSegment(raw);
 	}
 	return raw;
-}
-
-function readPluginDocsConfig(packageDir: string): PluginDocsFile {
-	const p = join(packageDir, PLUGIN_DOCS_FILE);
-	if (!existsSync(p)) return {};
-	try {
-		const doc = parseYaml(readFileSync(p, 'utf8')) as unknown;
-		if (doc && typeof doc === 'object' && !Array.isArray(doc)) {
-			return doc as PluginDocsFile;
-		}
-	} catch {
-		// ignore invalid yaml
-	}
-	return {};
 }
 
 function inferAuthTypesFromSource(source: string): PluginAuthType[] {
@@ -276,14 +251,9 @@ async function buildPluginEntry(
 	const entrySource = readFileSync(entryPath, 'utf8');
 	const authTypes = inferAuthTypesFromSource(entrySource);
 	const defaultAuthType = inferDefaultAuthTypeFromSource(entrySource);
-	const docsConfig = readPluginDocsConfig(packageDir);
 
 	const displayName =
-		docsConfig.displayName?.trim() ??
-		titleFromPackageDescription(pkg.description) ??
-		humanizePluginId(pluginId);
-	const description =
-		docsConfig.description?.trim() ?? pkg.description?.trim() ?? undefined;
+		titleFromPackageDescription(pkg.description) ?? humanizePluginId(pluginId);
 
 	const webhooks = hidesPlaceholderWebhooks(data.webhooks, pluginId)
 		? []
@@ -314,7 +284,7 @@ async function buildPluginEntry(
 	return {
 		id: pluginId,
 		displayName,
-		...(description ? { description } : {}),
+		...(pkg.description ? { description: pkg.description.trim() } : {}),
 		npmPackageName,
 		authTypes,
 		...(defaultAuthType ? { defaultAuthType } : {}),

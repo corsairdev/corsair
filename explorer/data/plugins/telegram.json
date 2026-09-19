@@ -1,7 +1,7 @@
 {
   "id": "telegram",
   "displayName": "Telegram",
-  "description": "Messaging platform for bots, channels, groups, and programmatic chat automation.",
+  "description": "Telegram plugin for Corsair",
   "npmPackageName": "@corsair-dev/telegram",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "bot_token",

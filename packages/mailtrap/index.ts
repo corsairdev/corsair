@@ -458,7 +458,7 @@ const mailtrapEndpointMeta = {
 	},
 	'contacts.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a contact',
+		description: 'Permanently delete a contact [DESTRUCTIVE]',
 	},
 	'contacts.createEvent': {
 		riskLevel: 'write',
@@ -498,7 +498,7 @@ const mailtrapEndpointMeta = {
 	},
 	'contactLists.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a contact list',
+		description: 'Permanently delete a contact list [DESTRUCTIVE]',
 	},
 	'contactFields.list': {
 		riskLevel: 'read',
@@ -519,7 +519,7 @@ const mailtrapEndpointMeta = {
 	'contactFields.delete': {
 		riskLevel: 'destructive',
 		description:
-			'Permanently delete a custom contact field, dropping its stored values off every contact',
+			'Permanently delete a custom contact field, dropping its stored values off every contact [DESTRUCTIVE]',
 	},
 	'suppressions.list': {
 		riskLevel: 'read',
@@ -543,7 +543,7 @@ const mailtrapEndpointMeta = {
 	},
 	'emailTemplates.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete an email template',
+		description: 'Permanently delete an email template [DESTRUCTIVE]',
 	},
 	'sendingDomains.list': {
 		riskLevel: 'read',
@@ -559,7 +559,7 @@ const mailtrapEndpointMeta = {
 	},
 	'sendingDomains.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently remove a sending domain',
+		description: 'Permanently remove a sending domain [DESTRUCTIVE]',
 	},
 	'stats.get': {
 		riskLevel: 'read',
@@ -593,7 +593,8 @@ const mailtrapEndpointMeta = {
 	'projects.update': { riskLevel: 'write', description: 'Rename a project' },
 	'projects.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a project and every inbox in it',
+		description:
+			'Permanently delete a project and every inbox in it [DESTRUCTIVE]',
 	},
 	'inboxes.list': { riskLevel: 'read', description: 'List sandbox inboxes' },
 	'inboxes.get': {
@@ -606,7 +607,7 @@ const mailtrapEndpointMeta = {
 	},
 	'inboxes.clean': {
 		riskLevel: 'destructive',
-		description: 'Delete every message in a sandbox inbox',
+		description: 'Delete every message in a sandbox inbox [DESTRUCTIVE]',
 	},
 	'inboxes.markAsRead': {
 		riskLevel: 'write',
@@ -615,7 +616,7 @@ const mailtrapEndpointMeta = {
 	'inboxes.resetCredentials': {
 		riskLevel: 'destructive',
 		description:
-			"Reset an inbox's SMTP credentials, invalidating the previous ones",
+			"Reset an inbox's SMTP credentials, invalidating the previous ones [DESTRUCTIVE]",
 	},
 	'messages.list': {
 		riskLevel: 'read',

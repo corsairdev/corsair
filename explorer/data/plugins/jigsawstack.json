@@ -1,7 +1,7 @@
 {
   "id": "jigsawstack",
   "displayName": "JigsawStack",
-  "description": "AI utility API collection for OCR, translation, sentiment, and common ML microservices.",
+  "description": "JigsawStack plugin for Corsair",
   "npmPackageName": "@corsair-dev/jigsawstack",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "trello",
   "displayName": "Trello",
-  "description": "Kanban board tool for organizing tasks, cards, lists, and lightweight project management.",
+  "description": "Trello plugin for Corsair",
   "npmPackageName": "@corsair-dev/trello",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -187,7 +187,7 @@
     {
       "path": "trello.api.boards.delete",
       "shortPath": "boards.delete",
-      "description": "Delete a board",
+      "description": "Delete a board [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -691,7 +691,7 @@
     {
       "path": "trello.api.cards.delete",
       "shortPath": "cards.delete",
-      "description": "Delete a card",
+      "description": "Delete a card [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1411,7 +1411,7 @@
     {
       "path": "trello.api.checklists.delete",
       "shortPath": "checklists.delete",
-      "description": "Delete a checklist",
+      "description": "Delete a checklist [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1554,7 +1554,7 @@
     {
       "path": "trello.api.labels.delete",
       "shortPath": "labels.delete",
-      "description": "Delete a label",
+      "description": "Delete a label [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

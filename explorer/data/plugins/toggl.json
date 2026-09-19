@@ -1,7 +1,7 @@
 {
   "id": "toggl",
-  "displayName": "Toggl Track",
-  "description": "Time tracking tool for logging work hours, projects, reports, and team billable time.",
+  "displayName": "Toggl",
+  "description": "Toggl plugin for Corsair",
   "npmPackageName": "@corsair-dev/toggl",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -112,7 +112,7 @@
     {
       "path": "toggl.api.clients.delete",
       "shortPath": "clients.delete",
-      "description": "Delete a client",
+      "description": "Delete a client [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1066,7 +1066,7 @@
     {
       "path": "toggl.api.organizations.deleteGroup",
       "shortPath": "organizations.deleteGroup",
-      "description": "Delete an organization group",
+      "description": "Delete an organization group [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1626,7 +1626,7 @@
     {
       "path": "toggl.api.projects.delete",
       "shortPath": "projects.delete",
-      "description": "Delete a project and its time entries",
+      "description": "Delete a project and its time entries [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1662,7 +1662,7 @@
     {
       "path": "toggl.api.projects.deleteGroup",
       "shortPath": "projects.deleteGroup",
-      "description": "Delete a project group",
+      "description": "Delete a project group [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2270,7 +2270,7 @@
     {
       "path": "toggl.api.tags.delete",
       "shortPath": "tags.delete",
-      "description": "Delete a tag",
+      "description": "Delete a tag [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2493,7 +2493,7 @@
     {
       "path": "toggl.api.tasks.delete",
       "shortPath": "tasks.delete",
-      "description": "Delete a task",
+      "description": "Delete a task [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2938,7 +2938,7 @@
     {
       "path": "toggl.api.timeEntries.delete",
       "shortPath": "timeEntries.delete",
-      "description": "Delete a time entry",
+      "description": "Delete a time entry [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -3447,7 +3447,7 @@
     {
       "path": "toggl.api.webhooks.deleteSubscription",
       "shortPath": "webhooks.deleteSubscription",
-      "description": "Delete a webhook subscription",
+      "description": "Delete a webhook subscription [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

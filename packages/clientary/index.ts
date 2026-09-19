@@ -549,7 +549,7 @@ const clientaryEndpointMeta = {
 	'clients.delete': {
 		riskLevel: 'destructive',
 		description:
-			'Delete a client and all associated projects, invoices, estimates, and contacts',
+			'Delete a client and all associated projects, invoices, estimates, and contacts [DESTRUCTIVE]',
 	},
 	'contacts.list': { riskLevel: 'read', description: 'List contacts' },
 	'contacts.listForClient': {
@@ -561,7 +561,7 @@ const clientaryEndpointMeta = {
 	'contacts.update': { riskLevel: 'write', description: 'Update a contact' },
 	'contacts.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a contact',
+		description: 'Delete a contact [DESTRUCTIVE]',
 	},
 	'estimates.list': { riskLevel: 'read', description: 'List estimates' },
 	'estimates.listForClient': {
@@ -577,7 +577,7 @@ const clientaryEndpointMeta = {
 	'estimates.update': { riskLevel: 'write', description: 'Update an estimate' },
 	'estimates.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete an estimate',
+		description: 'Delete an estimate [DESTRUCTIVE]',
 	},
 	'estimates.send': {
 		riskLevel: 'write',
@@ -597,7 +597,7 @@ const clientaryEndpointMeta = {
 	'expenses.update': { riskLevel: 'write', description: 'Update an expense' },
 	'expenses.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete an expense',
+		description: 'Delete an expense [DESTRUCTIVE]',
 	},
 	'hours.listForProject': {
 		riskLevel: 'read',
@@ -608,7 +608,7 @@ const clientaryEndpointMeta = {
 	'hours.update': { riskLevel: 'write', description: 'Update an hours entry' },
 	'hours.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete an hours entry',
+		description: 'Delete an hours entry [DESTRUCTIVE]',
 	},
 	'invoices.list': { riskLevel: 'read', description: 'List invoices' },
 	'invoices.listForClient': {
@@ -628,7 +628,7 @@ const clientaryEndpointMeta = {
 	'invoices.update': { riskLevel: 'write', description: 'Update an invoice' },
 	'invoices.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete an invoice',
+		description: 'Delete an invoice [DESTRUCTIVE]',
 	},
 	'invoices.send': {
 		riskLevel: 'write',
@@ -640,13 +640,13 @@ const clientaryEndpointMeta = {
 	'leads.update': { riskLevel: 'write', description: 'Update a lead' },
 	'leads.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a lead',
+		description: 'Delete a lead [DESTRUCTIVE]',
 	},
 	'payments.list': { riskLevel: 'read', description: 'List payments' },
 	'payments.create': { riskLevel: 'write', description: 'Record a payment' },
 	'payments.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete (void) a payment',
+		description: 'Delete (void) a payment [DESTRUCTIVE]',
 	},
 	'paymentProfiles.listForClient': {
 		riskLevel: 'read',
@@ -658,7 +658,7 @@ const clientaryEndpointMeta = {
 	},
 	'paymentProfiles.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a payment profile',
+		description: 'Delete a payment profile [DESTRUCTIVE]',
 	},
 	'projects.list': { riskLevel: 'read', description: 'List projects' },
 	'projects.listForClient': {
@@ -670,7 +670,7 @@ const clientaryEndpointMeta = {
 	'projects.update': { riskLevel: 'write', description: 'Update a project' },
 	'projects.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a project',
+		description: 'Delete a project [DESTRUCTIVE]',
 	},
 	'recurring.list': {
 		riskLevel: 'read',
@@ -690,7 +690,7 @@ const clientaryEndpointMeta = {
 	},
 	'recurring.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a recurring schedule',
+		description: 'Delete a recurring schedule [DESTRUCTIVE]',
 	},
 	'staff.list': { riskLevel: 'read', description: 'List staff members' },
 	'staff.get': { riskLevel: 'read', description: 'Get a staff member by ID' },
@@ -704,7 +704,7 @@ const clientaryEndpointMeta = {
 	'tasks.update': { riskLevel: 'write', description: 'Update a task' },
 	'tasks.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a task',
+		description: 'Delete a task [DESTRUCTIVE]',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof clientaryEndpointsNested

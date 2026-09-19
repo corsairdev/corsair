@@ -1,7 +1,7 @@
 {
   "id": "backendless",
   "displayName": "Backendless",
-  "description": "Backend-as-a-service for databases, user auth, file storage, and serverless logic.",
+  "description": "Backendless plugin for Corsair",
   "npmPackageName": "@corsair-dev/backendless",
   "authTypes": [],
   "defaultAuthType": "api_key",

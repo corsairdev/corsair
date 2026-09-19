@@ -1,7 +1,7 @@
 {
   "id": "api2pdf",
   "displayName": "API2PDF",
-  "description": "HTML and URL to PDF conversion API for generating documents from web content.",
+  "description": "API2PDF plugin for Corsair",
   "npmPackageName": "@corsair-dev/api2pdf",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

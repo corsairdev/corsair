@@ -608,7 +608,7 @@ const togglEndpointMeta = {
 	},
 	'clients.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a client',
+		description: 'Delete a client [DESTRUCTIVE]',
 	},
 	'projects.list': {
 		riskLevel: 'read',
@@ -619,7 +619,7 @@ const togglEndpointMeta = {
 	'projects.update': { riskLevel: 'write', description: 'Update a project' },
 	'projects.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a project and its time entries',
+		description: 'Delete a project and its time entries [DESTRUCTIVE]',
 	},
 	'tasks.list': { riskLevel: 'read', description: 'List tasks in a project' },
 	'tasks.get': { riskLevel: 'read', description: 'Get a task by id' },
@@ -627,14 +627,14 @@ const togglEndpointMeta = {
 	'tasks.update': { riskLevel: 'write', description: 'Update a task' },
 	'tasks.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a task',
+		description: 'Delete a task [DESTRUCTIVE]',
 	},
 	'tags.list': { riskLevel: 'read', description: 'List tags in a workspace' },
 	'tags.create': { riskLevel: 'write', description: 'Create a tag' },
 	'tags.update': { riskLevel: 'write', description: 'Rename a tag' },
 	'tags.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a tag',
+		description: 'Delete a tag [DESTRUCTIVE]',
 	},
 	'timeEntries.list': {
 		riskLevel: 'read',
@@ -662,7 +662,7 @@ const togglEndpointMeta = {
 	},
 	'timeEntries.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a time entry',
+		description: 'Delete a time entry [DESTRUCTIVE]',
 	},
 	'me.getLogged': {
 		riskLevel: 'read',
@@ -738,7 +738,7 @@ const togglEndpointMeta = {
 	},
 	'organizations.deleteGroup': {
 		riskLevel: 'destructive',
-		description: 'Delete an organization group',
+		description: 'Delete an organization group [DESTRUCTIVE]',
 	},
 	'organizations.getUsers': {
 		riskLevel: 'read',
@@ -770,7 +770,7 @@ const togglEndpointMeta = {
 	},
 	'projects.deleteGroup': {
 		riskLevel: 'destructive',
-		description: 'Delete a project group',
+		description: 'Delete a project group [DESTRUCTIVE]',
 	},
 	'timeEntries.bulkEdit': {
 		riskLevel: 'write',
@@ -790,7 +790,7 @@ const togglEndpointMeta = {
 	},
 	'webhooks.deleteSubscription': {
 		riskLevel: 'destructive',
-		description: 'Delete a webhook subscription',
+		description: 'Delete a webhook subscription [DESTRUCTIVE]',
 	},
 	'smail.sendDemo': {
 		riskLevel: 'write',

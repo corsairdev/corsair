@@ -11,6 +11,7 @@ export const OSS_CACHE_TAGS = {
 	stats: 'oss:stats',
 	activity: 'oss:activity',
 	tags: 'oss:tags',
+	leaderboard: 'oss:leaderboard',
 	list: 'oss:list',
 	contributors: 'oss:contributors',
 } as const;
@@ -18,6 +19,7 @@ export const OSS_CACHE_TAGS = {
 export function revalidateOssWriteSurface() {
 	revalidateTag(OSS_CACHE_TAGS.stats);
 	revalidateTag(OSS_CACHE_TAGS.activity);
+	revalidateTag(OSS_CACHE_TAGS.leaderboard);
 	revalidateTag(OSS_CACHE_TAGS.list);
 	revalidateTag(OSS_CACHE_TAGS.contributors);
 }
@@ -49,6 +51,13 @@ export const getCachedListTags = unstable_cache(
 	async () => createPublicCaller().integrations.listTags(),
 	['oss-list-tags'],
 	{ revalidate: 60, tags: [OSS_CACHE_TAGS.tags] },
+);
+
+export const getCachedLeaderboard = unstable_cache(
+	async (page: number) =>
+		createPublicCaller().integrations.leaderboard({ page }),
+	['oss-leaderboard'],
+	{ revalidate: 30, tags: [OSS_CACHE_TAGS.leaderboard] },
 );
 
 const getCachedIntegrationList = unstable_cache(

@@ -354,7 +354,7 @@ const jiraEndpointMeta = {
 	},
 	'issues.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Jira issue',
+		description: 'Delete a Jira issue [DESTRUCTIVE]',
 	},
 	'issues.search': {
 		riskLevel: 'read',
@@ -414,7 +414,7 @@ const jiraEndpointMeta = {
 	},
 	'comments.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a comment from a Jira issue',
+		description: 'Delete a comment from a Jira issue [DESTRUCTIVE]',
 	},
 	'projects.create': {
 		riskLevel: 'write',

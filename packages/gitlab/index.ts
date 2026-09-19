@@ -655,7 +655,7 @@ const gitlabEndpointMeta = {
 	'branches.create': { riskLevel: 'write', description: 'Create a new branch' },
 	'branches.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a branch',
+		description: 'Delete a branch [DESTRUCTIVE]',
 	},
 	'commits.list': {
 		riskLevel: 'read',
@@ -688,7 +688,7 @@ const gitlabEndpointMeta = {
 	},
 	'pipelines.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a pipeline',
+		description: 'Delete a pipeline [DESTRUCTIVE]',
 	},
 	'pipelines.listJobs': {
 		riskLevel: 'read',
@@ -712,7 +712,7 @@ const gitlabEndpointMeta = {
 	'labels.update': { riskLevel: 'write', description: 'Update a label' },
 	'labels.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a label',
+		description: 'Delete a label [DESTRUCTIVE]',
 	},
 	'milestones.list': {
 		riskLevel: 'read',
@@ -732,7 +732,7 @@ const gitlabEndpointMeta = {
 	},
 	'milestones.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a milestone',
+		description: 'Delete a milestone [DESTRUCTIVE]',
 	},
 	'releases.list': {
 		riskLevel: 'read',
@@ -746,7 +746,7 @@ const gitlabEndpointMeta = {
 	'releases.update': { riskLevel: 'write', description: 'Update a release' },
 	'releases.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a release',
+		description: 'Delete a release [DESTRUCTIVE]',
 	},
 	'repository.getTree': {
 		riskLevel: 'read',

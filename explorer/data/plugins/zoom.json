@@ -1,7 +1,7 @@
 {
   "id": "zoom",
   "displayName": "Zoom",
-  "description": "Video conferencing platform for meetings, webinars, recordings, and calendar scheduling.",
+  "description": "Zoom plugin for Corsair",
   "npmPackageName": "@corsair-dev/zoom",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -741,7 +741,7 @@
     {
       "path": "zoom.api.recordings.deleteMeeting",
       "shortPath": "recordings.deleteMeeting",
-      "description": "Delete cloud recordings for a meeting",
+      "description": "Delete cloud recordings for a meeting [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

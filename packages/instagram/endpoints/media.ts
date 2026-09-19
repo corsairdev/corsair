@@ -14,8 +14,6 @@ export const list: InstagramEndpoints['GetInstagramMediaList'] = async (
 		method: 'GET',
 		query: {
 			fields: input.q,
-			after: input.after,
-			before: input.before,
 		},
 	});
 
@@ -123,31 +121,6 @@ export const insights: InstagramEndpoints['GetMediaInsights'] = async (
 	await logEventFromContext(
 		ctx,
 		'instagram.media.insights',
-		{ ...input },
-		'completed',
-	);
-
-	return result;
-};
-
-export const children: InstagramEndpoints['GetIgMediaChildren'] = async (
-	ctx,
-	input,
-) => {
-	const result = await makeAuthenticatedInstagramRequest<
-		InstagramEndpointOutputs['GetIgMediaChildren']
-	>(`/${input.media_id}/children`, ctx, {
-		method: 'GET',
-		query: {
-			fields: input.fields,
-			after: input.after,
-			before: input.before,
-		},
-	});
-
-	await logEventFromContext(
-		ctx,
-		'instagram.media.children',
 		{ ...input },
 		'completed',
 	);

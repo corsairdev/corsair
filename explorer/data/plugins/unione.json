@@ -1,7 +1,7 @@
 {
   "id": "unione",
-  "displayName": "UniOne",
-  "description": "Transactional email service for sending bulk mail, templates, and deliverability management.",
+  "displayName": "Unione",
+  "description": "Unione plugin for Corsair",
   "npmPackageName": "@corsair-dev/unione",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

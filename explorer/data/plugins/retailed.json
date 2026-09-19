@@ -1,7 +1,7 @@
 {
   "id": "retailed",
   "displayName": "Retailed",
-  "description": "Retail data API for product pricing, availability, and e-commerce market intelligence.",
+  "description": "Retailed plugin for Corsair",
   "npmPackageName": "@corsair-dev/retailed",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

@@ -486,11 +486,12 @@ const calendlyEndpointMeta = {
 	},
 	'scheduledEvents.cancel': {
 		riskLevel: 'destructive',
-		description: 'Cancel a scheduled event',
+		description: 'Cancel a scheduled event [DESTRUCTIVE]',
 	},
 	'scheduledEvents.deleteData': {
 		riskLevel: 'destructive',
-		description: 'Delete all scheduled event data in a time range',
+		description:
+			'Delete all scheduled event data in a time range [DESTRUCTIVE]',
 	},
 	'eventTypes.get': {
 		riskLevel: 'read',
@@ -535,7 +536,7 @@ const calendlyEndpointMeta = {
 	},
 	'invitees.deleteData': {
 		riskLevel: 'destructive',
-		description: 'Delete all data for specified invitee emails',
+		description: 'Delete all data for specified invitee emails [DESTRUCTIVE]',
 	},
 	'invitees.getNoShow': {
 		riskLevel: 'read',
@@ -547,7 +548,7 @@ const calendlyEndpointMeta = {
 	},
 	'invitees.deleteNoShow': {
 		riskLevel: 'destructive',
-		description: 'Delete an invitee no-show record',
+		description: 'Delete an invitee no-show record [DESTRUCTIVE]',
 	},
 	'users.get': { riskLevel: 'read', description: 'Get a user by UUID' },
 	'users.getCurrent': {
@@ -596,7 +597,7 @@ const calendlyEndpointMeta = {
 	},
 	'organizations.deleteMembership': {
 		riskLevel: 'destructive',
-		description: 'Delete an organization membership',
+		description: 'Delete an organization membership [DESTRUCTIVE]',
 	},
 	'organizations.invite': {
 		riskLevel: 'write',
@@ -604,11 +605,11 @@ const calendlyEndpointMeta = {
 	},
 	'organizations.removeMember': {
 		riskLevel: 'destructive',
-		description: 'Remove a user from the organization',
+		description: 'Remove a user from the organization [DESTRUCTIVE]',
 	},
 	'organizations.revokeInvitation': {
 		riskLevel: 'destructive',
-		description: "Revoke a user's organization invitation",
+		description: "Revoke a user's organization invitation [DESTRUCTIVE]",
 	},
 	'groups.get': { riskLevel: 'read', description: 'Get a group by UUID' },
 	'groups.getRelationship': {
@@ -665,7 +666,7 @@ const calendlyEndpointMeta = {
 	},
 	'webhookSubscriptions.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a webhook subscription',
+		description: 'Delete a webhook subscription [DESTRUCTIVE]',
 	},
 	'activityLog.list': {
 		riskLevel: 'read',

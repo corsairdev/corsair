@@ -212,7 +212,7 @@ const dripcelEndpointMeta = {
 	},
 	'contacts.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Dripcel contact by cell number',
+		description: 'Delete a Dripcel contact by cell number [DESTRUCTIVE]',
 	},
 	'contacts.addTags': {
 		riskLevel: 'write',
@@ -252,7 +252,7 @@ const dripcelEndpointMeta = {
 	},
 	'tags.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Dripcel tag by ID',
+		description: 'Delete a Dripcel tag by ID [DESTRUCTIVE]',
 	},
 	'replies.search': {
 		riskLevel: 'read',

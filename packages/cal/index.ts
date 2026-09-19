@@ -178,7 +178,7 @@ const calEndpointMeta = {
 	},
 	'bookings.cancel': {
 		riskLevel: 'destructive',
-		description: 'Cancel a booking',
+		description: 'Cancel a booking [DESTRUCTIVE]',
 	},
 	'bookings.reschedule': {
 		riskLevel: 'write',

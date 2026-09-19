@@ -24,7 +24,7 @@ export type WorkdayRoute = {
 };
 
 /**
- * Workday REST routes (85 ops).
+ * Workday REST routes for the Composio-aligned surface (85 ops).
  * Paths verified against Workday REST Directory + Staffing v6 prompt/resource docs.
  * Base: https://{host}/ccx/api/{service}/{version}/{tenant}{path}
  */
@@ -898,9 +898,11 @@ export const workdayRoutes = [
 		method: 'GET',
 		service: 'recruiting',
 		version: 'v4',
+		// Composio resolves "my postings" via interviews → requisitions → postings.
 		// REST entry: Recruiting v4 GET /jobRequisitions (not identical to /jobPostings).
 		path: '/jobRequisitions',
-		description: 'Lists job requisitions (Recruiting v4 GET /jobRequisitions).',
+		description:
+			'Lists job requisitions (Recruiting v4 GET /jobRequisitions; Composio getMyJobPostings entry).',
 		pathParams: [] as const,
 		queryParams: [
 			'limit',
@@ -1221,7 +1223,7 @@ export const workdayRoutes = [
 		group: 'worker',
 		name: 'getWorkerInfo',
 		method: 'GET',
-		// Alias of Staffing WorkersApi.getStaffingInformation (same as
+		// Composio alias of Staffing WorkersApi.getStaffingInformation (same as
 		// getWorkerStaffingInformation). Workday docs do not expose a separate path.
 		service: 'staffing',
 		version: 'v6',
@@ -1419,9 +1421,10 @@ export const workdayRoutes = [
 		method: 'GET',
 		service: 'staffing',
 		version: 'v6',
-		// Alias of JobsApi.getCollection (same as getCollectionOfJobs).
+		// Composio alias of JobsApi.getCollection (same as getCollectionOfJobs).
 		path: '/jobs',
-		description: 'Lists jobs (Staffing v6 JobsApi.getCollection).',
+		description:
+			'Lists jobs (Staffing v6 JobsApi.getCollection; Composio alias of getCollectionOfJobs).',
 		pathParams: [] as const,
 		queryParams: ['limit', 'offset'] as const,
 		riskLevel: 'read' as const,

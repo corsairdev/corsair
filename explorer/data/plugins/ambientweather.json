@@ -1,7 +1,7 @@
 {
   "id": "ambientweather",
-  "displayName": "Ambient Weather",
-  "description": "Personal weather station network API for local and hyperlocal weather readings.",
+  "displayName": "AmbientWeather",
+  "description": "AmbientWeather plugin for Corsair",
   "npmPackageName": "@corsair-dev/ambientweather",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

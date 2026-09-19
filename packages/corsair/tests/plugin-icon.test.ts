@@ -1,7 +1,6 @@
 import {
 	pluginToDomain,
 	resolveIconUrl,
-	resolvePluginLogoUrl,
 	titleCasePlugin,
 } from '../client/react/plugin-icon';
 
@@ -14,22 +13,10 @@ describe('pluginToDomain', () => {
 
 	it('normalizes underscores and case in the id', () => {
 		expect(pluginToDomain('google_sheets')).toBe('docs.google.com');
-		expect(pluginToDomain('googledocs')).toBe('docs.google.com');
 	});
 
 	it('falls back to <id>.com when nothing matches', () => {
 		expect(pluginToDomain('madeupplugin')).toBe('madeupplugin.com');
-	});
-});
-
-describe('resolvePluginLogoUrl', () => {
-	it('uses the Docs product mark instead of the Sheets svgl for googledocs', () => {
-		expect(resolvePluginLogoUrl('googledocs')).toBe(
-			'https://www.gstatic.com/images/branding/product/2x/docs_2020q4_96dp.png',
-		);
-		expect(resolvePluginLogoUrl('googlesheets')).toBe(
-			'https://svgl.app/library/google-sheets.svg',
-		);
 	});
 });
 

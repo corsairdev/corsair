@@ -36,7 +36,7 @@ function createTriggerWebhook<K extends WorkdayTriggerEventName>(
 }
 
 /**
- * Workday webhook triggers (13).
+ * Composio-aligned Workday triggers (13).
  * Workday does not push these natively — deliver via a poller/Event Notification
  * bridge that POSTs `{ type, data }` with `x-workday-signature`.
  */

@@ -1,7 +1,7 @@
 {
   "id": "bigmailer",
-  "displayName": "BigMailer",
-  "description": "Email marketing platform built for Amazon SES with lists, campaigns, and automations.",
+  "displayName": "Bigmailer",
+  "description": "Bigmailer plugin for Corsair",
   "npmPackageName": "@corsair-dev/bigmailer",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

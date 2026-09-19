@@ -373,7 +373,7 @@ const sentryEndpointMeta = {
 	'issues.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Permanently delete an issue',
+		description: 'Permanently delete an issue [DESTRUCTIVE]',
 	},
 	'organizations.get': {
 		riskLevel: 'read',
@@ -410,7 +410,7 @@ const sentryEndpointMeta = {
 	'projects.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Permanently delete a project',
+		description: 'Permanently delete a project [DESTRUCTIVE]',
 	},
 	'releases.get': {
 		riskLevel: 'read',
@@ -431,7 +431,7 @@ const sentryEndpointMeta = {
 	'releases.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a release',
+		description: 'Delete a release [DESTRUCTIVE]',
 	},
 	'teams.get': {
 		riskLevel: 'read',
@@ -452,7 +452,7 @@ const sentryEndpointMeta = {
 	'teams.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a team',
+		description: 'Delete a team [DESTRUCTIVE]',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof sentryEndpointsNested>;
 

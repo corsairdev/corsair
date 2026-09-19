@@ -1,7 +1,7 @@
 {
   "id": "bigml",
-  "displayName": "BigML",
-  "description": "Machine learning platform for building, training, and deploying predictive models.",
+  "displayName": "Bigml",
+  "description": "Bigml plugin for Corsair",
   "npmPackageName": "@corsair-dev/bigml",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

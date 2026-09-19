@@ -1,7 +1,7 @@
 {
   "id": "wakatime",
   "displayName": "WakaTime",
-  "description": "Developer time tracker for coding activity, project stats, and programming productivity metrics.",
+  "description": "WakaTime plugin for Corsair",
   "npmPackageName": "@corsair-dev/wakatime",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

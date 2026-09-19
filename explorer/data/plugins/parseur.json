@@ -1,7 +1,7 @@
 {
   "id": "parseur",
   "displayName": "Parseur",
-  "description": "Document parsing service that extracts structured data from emails and PDF attachments.",
+  "description": "Parseur plugin for Corsair",
   "npmPackageName": "@corsair-dev/parseur",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "habitica",
   "displayName": "Habitica",
-  "description": "Gamified habit tracker that turns tasks and goals into a role-playing game experience.",
+  "description": "Habitica plugin for Corsair",
   "npmPackageName": "@corsair-dev/habitica",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "All-in-one workspace for notes, databases, wikis, tasks, and team documentation."
+description: "Notion plugin for Corsair"
 ---
 
 Use **Notion** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -124,21 +124,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Search pages**
+**`blocks.getManyChildBlocks`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.notion.api.pages.searchPage({});
+await tenant.notion.api.blocks.getManyChildBlocks({});
 ```
 
 
-**Create a new page**
+**`blocks.appendBlock`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.notion.api.pages.createPage({
-	parent: { type: 'database_id', database_id: 'd9824bdc-8445-4327-be8b-5b47500af6ce' },
-});
+await tenant.notion.api.blocks.appendBlock({});
 ```
 
 
@@ -146,38 +144,15 @@ See the full list on the [API](/plugins/notion/api) page.
 
 ## Query synced data
 
-Search synced pages without hitting Notion's API.
+Synced entities support `tenant.notion.db.<entity>.search()` and `.list()`: `blocks`, `databases`, `pages`, `users`.
 
-```ts
-const tenant = corsair.withTenant('acme');
-const rows = await tenant.notion.db.pages.search({
-	data: { archived: false },
-	limit: 50,
-});
-```
-
-Synced entities: `blocks`, `databases`, `pages`, `users`. See [Database](/plugins/notion/database) for filters and operators.
+See [Database](/plugins/notion/database) for filters and operators.
 
 ## Webhooks
 
-Fires when a page is created in a Notion database.
+This plugin registers **3** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
 
-```ts
-notion({
-    webhookHooks: {
-        databasePages: {
-            pageCreated: {
-                after: async (ctx, result) => {
-                    const pageId = result.data?.entity?.id;
-                    console.log('New Notion page created with ID:', pageId);
-                }
-            },
-        },
-    },
-})
-```
-
-Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/notion/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+See [Webhooks](/plugins/notion/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
 
 ## What's next
 

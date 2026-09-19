@@ -1,7 +1,7 @@
 {
   "id": "bugsnag",
-  "displayName": "Bugsnag",
-  "description": "Error monitoring platform for tracking application crashes and stability across releases.",
+  "displayName": "BugSnag",
+  "description": "BugSnag plugin for Corsair",
   "npmPackageName": "@corsair-dev/bugsnag",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

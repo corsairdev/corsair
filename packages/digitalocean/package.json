@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/digitalocean",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "description": "DigitalOcean plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -37,15 +37,9 @@
     "digitalocean",
     "plugin"
   ],
-  "author": "Corsair (https://corsair.dev)",
+  "author": "",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/corsairdev/corsair.git",
-    "directory": "packages/digitalocean"
-  },
-  "homepage": "https://docs.corsair.dev/plugins/digitalocean"
+  ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/stripe",
-  "version": "0.1.6",
+  "version": "0.1.5",
   "description": "Stripe plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -36,15 +36,9 @@
     "stripe",
     "plugin"
   ],
-  "author": "Corsair (https://corsair.dev)",
+  "author": "",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/corsairdev/corsair.git",
-    "directory": "packages/stripe"
-  },
-  "homepage": "https://docs.corsair.dev/plugins/stripe"
+  ]
 }

@@ -1,7 +1,7 @@
 {
   "id": "vestaboard",
   "displayName": "Vestaboard",
-  "description": "Split-flap display API for sending messages to mechanical message boards and signage.",
+  "description": "Vestaboard plugin for Corsair",
   "npmPackageName": "@corsair-dev/vestaboard",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

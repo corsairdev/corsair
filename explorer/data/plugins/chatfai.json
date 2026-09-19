@@ -1,7 +1,7 @@
 {
   "id": "chatfai",
   "displayName": "ChatFAI",
-  "description": "Character chat platform for creating AI personas and interactive fictional conversations.",
+  "description": "ChatFAI plugin for Corsair",
   "npmPackageName": "@corsair-dev/chatfai",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

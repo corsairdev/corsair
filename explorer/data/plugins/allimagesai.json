@@ -1,7 +1,7 @@
 {
   "id": "allimagesai",
   "displayName": "All Images AI",
-  "description": "AI image generation service for creating visuals from text prompts and styles.",
+  "description": "All Images AI plugin for Corsair",
   "npmPackageName": "@corsair-dev/allimagesai",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

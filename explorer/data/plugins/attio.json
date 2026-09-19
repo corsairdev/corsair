@@ -1,7 +1,7 @@
 {
   "id": "attio",
   "displayName": "Attio",
-  "description": "Flexible CRM for managing relationships, deals, companies, and custom sales pipelines.",
+  "description": "Attio plugin for Corsair",
   "npmPackageName": "@corsair-dev/attio",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "oauth_2",

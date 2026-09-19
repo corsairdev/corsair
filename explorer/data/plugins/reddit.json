@@ -1,7 +1,7 @@
 {
   "id": "reddit",
   "displayName": "Reddit",
-  "description": "Social news platform for subreddits, posts, comments, moderation, and community discussions.",
+  "description": "Reddit plugin for Corsair",
   "npmPackageName": "@corsair-dev/reddit",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -1,7 +1,7 @@
 {
   "id": "mailtrap",
   "displayName": "Mailtrap",
-  "description": "Email testing and delivery platform for safe staging inboxes and transactional sending.",
+  "description": "Mailtrap plugin for Corsair",
   "npmPackageName": "@corsair-dev/mailtrap",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -145,7 +145,7 @@
     {
       "path": "mailtrap.api.contactFields.delete",
       "shortPath": "contactFields.delete",
-      "description": "Permanently delete a custom contact field, dropping its stored values off every contact",
+      "description": "Permanently delete a custom contact field, dropping its stored values off every contact [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -322,7 +322,7 @@
     {
       "path": "mailtrap.api.contactLists.delete",
       "shortPath": "contactLists.delete",
-      "description": "Permanently delete a contact list",
+      "description": "Permanently delete a contact list [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -597,7 +597,7 @@
     {
       "path": "mailtrap.api.contacts.delete",
       "shortPath": "contacts.delete",
-      "description": "Permanently delete a contact",
+      "description": "Permanently delete a contact [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1003,7 +1003,7 @@
     {
       "path": "mailtrap.api.emailTemplates.delete",
       "shortPath": "emailTemplates.delete",
-      "description": "Permanently delete an email template",
+      "description": "Permanently delete an email template [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1194,7 +1194,7 @@
     {
       "path": "mailtrap.api.inboxes.clean",
       "shortPath": "inboxes.clean",
-      "description": "Delete every message in a sandbox inbox",
+      "description": "Delete every message in a sandbox inbox [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1631,7 +1631,7 @@
     {
       "path": "mailtrap.api.inboxes.resetCredentials",
       "shortPath": "inboxes.resetCredentials",
-      "description": "Reset an inbox's SMTP credentials, invalidating the previous ones",
+      "description": "Reset an inbox's SMTP credentials, invalidating the previous ones [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1989,7 +1989,7 @@
     {
       "path": "mailtrap.api.projects.delete",
       "shortPath": "projects.delete",
-      "description": "Permanently delete a project and every inbox in it",
+      "description": "Permanently delete a project and every inbox in it [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2212,7 +2212,7 @@
     {
       "path": "mailtrap.api.sendingDomains.delete",
       "shortPath": "sendingDomains.delete",
-      "description": "Permanently remove a sending domain",
+      "description": "Permanently remove a sending domain [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

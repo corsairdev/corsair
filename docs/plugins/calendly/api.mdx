@@ -1065,7 +1065,7 @@ await corsair.calendly.api.invitees.create({});
 
 `invitees.deleteData`
 
-Delete all data for specified invitee emails
+Delete all data for specified invitee emails [DESTRUCTIVE]
 
 **Risk:** `destructive`
 
@@ -1090,7 +1090,7 @@ await corsair.calendly.api.invitees.deleteData({});
 
 `invitees.deleteNoShow`
 
-Delete an invitee no-show record
+Delete an invitee no-show record [DESTRUCTIVE]
 
 **Risk:** `destructive`
 
@@ -1387,7 +1387,7 @@ await corsair.calendly.api.invitees.markNoShow({});
 
 `organizations.deleteMembership`
 
-Delete an organization membership
+Delete an organization membership [DESTRUCTIVE]
 
 **Risk:** `destructive`
 
@@ -1755,7 +1755,7 @@ await corsair.calendly.api.organizations.listMemberships({});
 
 `organizations.removeMember`
 
-Remove a user from the organization
+Remove a user from the organization [DESTRUCTIVE]
 
 **Risk:** `destructive`
 
@@ -1780,7 +1780,7 @@ await corsair.calendly.api.organizations.removeMember({});
 
 `organizations.revokeInvitation`
 
-Revoke a user's organization invitation
+Revoke a user's organization invitation [DESTRUCTIVE]
 
 **Risk:** `destructive`
 
@@ -2011,7 +2011,7 @@ await corsair.calendly.api.routingForms.list({});
 
 `scheduledEvents.cancel`
 
-Cancel a scheduled event
+Cancel a scheduled event [DESTRUCTIVE]
 
 **Risk:** `destructive`
 
@@ -2055,7 +2055,7 @@ await corsair.calendly.api.scheduledEvents.cancel({});
 
 `scheduledEvents.deleteData`
 
-Delete all scheduled event data in a time range
+Delete all scheduled event data in a time range [DESTRUCTIVE]
 
 **Risk:** `destructive`
 
@@ -2815,7 +2815,7 @@ await corsair.calendly.api.webhookSubscriptions.create({});
 
 `webhookSubscriptions.delete`
 
-Delete a webhook subscription
+Delete a webhook subscription [DESTRUCTIVE]
 
 **Risk:** `destructive`
 

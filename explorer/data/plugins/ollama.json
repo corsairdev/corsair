@@ -1,7 +1,7 @@
 {
   "id": "ollama",
   "displayName": "Ollama",
-  "description": "Local LLM runtime API for running open-source language models on your own infrastructure.",
+  "description": "Ollama plugin for Corsair",
   "npmPackageName": "@corsair-dev/ollama",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

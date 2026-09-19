@@ -1,7 +1,7 @@
 {
   "id": "outlook",
   "displayName": "Outlook",
-  "description": "Microsoft email and calendar service for messages, events, contacts, and scheduling.",
+  "description": "Outlook plugin for Corsair",
   "npmPackageName": "@corsair-dev/outlook",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -135,7 +135,7 @@
     {
       "path": "outlook.api.calendars.delete",
       "shortPath": "calendars.delete",
-      "description": "Delete a calendar",
+      "description": "Delete a calendar [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -519,7 +519,7 @@
     {
       "path": "outlook.api.contacts.delete",
       "shortPath": "contacts.delete",
-      "description": "Delete a contact",
+      "description": "Delete a contact [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1210,7 +1210,7 @@
     {
       "path": "outlook.api.events.delete",
       "shortPath": "events.delete",
-      "description": "Delete a calendar event",
+      "description": "Delete a calendar event [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2007,7 +2007,7 @@
     {
       "path": "outlook.api.folders.delete",
       "shortPath": "folders.delete",
-      "description": "Delete a mail folder",
+      "description": "Delete a mail folder [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2670,7 +2670,7 @@
     {
       "path": "outlook.api.messages.delete",
       "shortPath": "messages.delete",
-      "description": "Delete an email message",
+      "description": "Delete an email message [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

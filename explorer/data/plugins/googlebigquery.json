@@ -1,7 +1,7 @@
 {
   "id": "googlebigquery",
   "displayName": "Google BigQuery",
-  "description": "Serverless data warehouse for running SQL analytics on massive datasets at scale.",
+  "description": "Google BigQuery plugin for Corsair",
   "npmPackageName": "@corsair-dev/googlebigquery",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -2230,7 +2230,7 @@
     {
       "path": "googlebigquery.api.queries.cancelJob",
       "shortPath": "queries.cancelJob",
-      "description": "Request cancellation of a running job",
+      "description": "Request cancellation of a running job [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2271,7 +2271,7 @@
     {
       "path": "googlebigquery.api.queries.deleteJobMetadata",
       "shortPath": "queries.deleteJobMetadata",
-      "description": "Delete a job's metadata",
+      "description": "Delete a job's metadata [DESTRUCTIVE]",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

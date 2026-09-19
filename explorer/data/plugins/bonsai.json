@@ -1,7 +1,7 @@
 {
   "id": "bonsai",
   "displayName": "Bonsai",
-  "description": "Freelance business management for contracts, invoices, proposals, and client billing.",
+  "description": "Bonsai plugin for Corsair",
   "npmPackageName": "@corsair-dev/bonsai",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

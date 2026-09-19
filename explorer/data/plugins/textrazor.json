@@ -1,7 +1,7 @@
 {
   "id": "textrazor",
   "displayName": "TextRazor",
-  "description": "Natural language processing API for entity extraction, classification, and text analysis.",
+  "description": "TextRazor plugin for Corsair",
   "npmPackageName": "@corsair-dev/textrazor",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

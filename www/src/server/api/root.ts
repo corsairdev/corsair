@@ -1,6 +1,5 @@
 import { accountRouter } from './routers/account';
 import { adminRouter } from './routers/admin';
-import { catalogIntegrationsRouter } from './routers/catalog-integrations';
 import { contactRouter } from './routers/contact';
 import { contributorsRouter } from './routers/contributors';
 import { healthRouter } from './routers/health';
@@ -10,7 +9,6 @@ import { createTRPCRouter } from './trpc';
 export const appRouter = createTRPCRouter({
 	account: accountRouter,
 	admin: adminRouter,
-	catalogIntegrations: catalogIntegrationsRouter,
 	contact: contactRouter,
 	contributors: contributorsRouter,
 	health: healthRouter,

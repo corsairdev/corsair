@@ -1,7 +1,7 @@
 {
   "id": "autom",
   "displayName": "Autom",
-  "description": "Workflow automation platform for connecting apps and automating repetitive business tasks.",
+  "description": "Autom plugin for Corsair",
   "npmPackageName": "@corsair-dev/autom",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
