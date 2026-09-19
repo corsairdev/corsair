@@ -5747,9 +5747,6 @@ importers:
 
   packages/starton:
     devDependencies:
-      '@babel/core':
-        specifier: ^7.29.7
-        version: 7.29.7
       '@types/jest':
         specifier: ^29.5.14
         version: 29.5.14

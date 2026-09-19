@@ -23,7 +23,6 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
     "@types/jest": "^29.5.14",
     "corsair": "workspace:*",
     "jest": "^29.7.0",
