@@ -1,3 +1,5 @@
+import type { Candidate } from '../schema/content';
+
 /**
  * Strips a single leading/trailing markdown code fence (e.g. ```html ... ```)
  * and surrounding explanatory prose is left untouched — Gemini sometimes wraps
@@ -6,4 +8,20 @@
 export function stripMarkdownFences(text: string): string {
 	const fenced = text.trim().match(/^```[^\n]*\n([\s\S]*?)\n```$/);
 	return fenced?.[1] !== undefined ? fenced[1].trim() : text;
+}
+
+export function extractCandidateText(
+	candidate: Candidate | undefined,
+	options: { stripFences?: boolean } = {},
+): string | undefined {
+	const textParts = candidate?.content?.parts.filter(
+		(part) => part.thought !== true && typeof part.text === 'string',
+	);
+
+	if (!textParts || textParts.length === 0) {
+		return undefined;
+	}
+
+	const text = textParts.map((part) => part.text).join('');
+	return options.stripFences ? stripMarkdownFences(text) : text;
 }
