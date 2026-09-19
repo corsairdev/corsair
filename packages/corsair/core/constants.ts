@@ -74,6 +74,7 @@ export const BaseProviders = [
 	'beaconstac',
 	'beeminder',
 	'benchmarkemail',
+	'benzinga',
 	'bestbuy',
 	'bettercontact',
 	'betterproposals',
@@ -364,6 +365,7 @@ export const ProviderDisplayNames = {
 	beaconstac: 'Beaconstac',
 	beeminder: 'Beeminder',
 	benchmarkemail: 'BenchmarkEmail',
+	benzinga: 'Benzinga',
 	bestbuy: 'Best Buy',
 	bettercontact: 'BetterContact',
 	betterproposals: 'Better Proposals',
@@ -661,6 +663,7 @@ export type AllProviders =
 	| 'beaconstac'
 	| 'beeminder'
 	| 'benchmarkemail'
+	| 'benzinga'
 	| 'bestbuy'
 	| 'bettercontact'
 	| 'betterproposals'
