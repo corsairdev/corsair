@@ -136,35 +136,29 @@ export const getNotaryUserSettings = async (
 	return GetNotaryUserSettingsOutputSchema.parse(data);
 };
 
-export const ListNotaryJournalsInputSchema = z.object({
-	count: z.string().optional(),
-	search_text: z.string().optional(),
-	start_position: z.string().optional(),
+export const GetNotaryJurisdictionSealInputSchema = z.object({
+	jurisdictionId: z.string(),
 });
 
-export const ListNotaryJournalsOutputSchema = z.object({}).passthrough();
+export const GetNotaryJurisdictionSealOutputSchema = z.object({}).passthrough();
 
-export type ListNotaryJournalsParams = z.infer<
-	typeof ListNotaryJournalsInputSchema
+export type GetNotaryJurisdictionSealParams = z.infer<
+	typeof GetNotaryJurisdictionSealInputSchema
 >;
 
-export const listNotaryJournals = async (
+export const getNotaryJurisdictionSeal = async (
 	ctxOrClient: DocusignExecutionContext,
-	params: ListNotaryJournalsParams,
+	params: GetNotaryJurisdictionSealParams,
 ) => {
-	const input = ListNotaryJournalsInputSchema.parse(params);
+	const input = GetNotaryJurisdictionSealInputSchema.parse(params);
 	const client = resolveClient(ctxOrClient);
-	const query = new URLSearchParams();
-	if (input.count !== undefined) query.append('count', String(input.count));
-	if (input.search_text !== undefined)
-		query.append('search_text', String(input.search_text));
-	if (input.start_position !== undefined)
-		query.append('start_position', String(input.start_position));
-	const qs = query.toString() ? `?${query.toString()}` : '';
-	const data = await client.request(`/v2.1/current_user/notary/journals` + qs, {
-		method: 'GET',
-	});
-	return ListNotaryJournalsOutputSchema.parse(data);
+	const data = await client.request(
+		`/v2.1/current_user/notary/jurisdictions/${encodeURIComponent(input.jurisdictionId)}/seal`,
+		{
+			method: 'GET',
+		},
+	);
+	return GetNotaryJurisdictionSealOutputSchema.parse(data);
 };
 
 export const ListRegisteredNotaryJurisdictionsInputSchema = z.object({});
@@ -274,7 +268,7 @@ export const NotaryInputSchemas = {
 	getNotaryJournals: GetNotaryJournalsInputSchema,
 	getNotaryJurisdictionObject: GetNotaryJurisdictionObjectInputSchema,
 	getNotaryUserSettings: GetNotaryUserSettingsInputSchema,
-	listNotaryJournals: ListNotaryJournalsInputSchema,
+	getNotaryJurisdictionSeal: GetNotaryJurisdictionSealInputSchema,
 	listRegisteredNotaryJurisdictions:
 		ListRegisteredNotaryJurisdictionsInputSchema,
 	registerCurrentUserAsNotary: RegisterCurrentUserAsNotaryInputSchema,
@@ -288,7 +282,7 @@ export const NotaryOutputSchemas = {
 	getNotaryJournals: GetNotaryJournalsOutputSchema,
 	getNotaryJurisdictionObject: GetNotaryJurisdictionObjectOutputSchema,
 	getNotaryUserSettings: GetNotaryUserSettingsOutputSchema,
-	listNotaryJournals: ListNotaryJournalsOutputSchema,
+	getNotaryJurisdictionSeal: GetNotaryJurisdictionSealOutputSchema,
 	listRegisteredNotaryJurisdictions:
 		ListRegisteredNotaryJurisdictionsOutputSchema,
 	registerCurrentUserAsNotary: RegisterCurrentUserAsNotaryOutputSchema,

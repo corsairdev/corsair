@@ -763,16 +763,16 @@ import {
 	GetNotaryJournalsOutputSchema,
 	GetNotaryJurisdictionObjectInputSchema,
 	GetNotaryJurisdictionObjectOutputSchema,
+	GetNotaryJurisdictionSealInputSchema,
+	GetNotaryJurisdictionSealOutputSchema,
 	GetNotaryUserSettingsInputSchema,
 	GetNotaryUserSettingsOutputSchema,
 	getNotaryJournals,
 	getNotaryJurisdictionObject,
+	getNotaryJurisdictionSeal,
 	getNotaryUserSettings,
-	ListNotaryJournalsInputSchema,
-	ListNotaryJournalsOutputSchema,
 	ListRegisteredNotaryJurisdictionsInputSchema,
 	ListRegisteredNotaryJurisdictionsOutputSchema,
-	listNotaryJournals,
 	listRegisteredNotaryJurisdictions,
 	RegisterCurrentUserAsNotaryInputSchema,
 	RegisterCurrentUserAsNotaryOutputSchema,
@@ -1280,7 +1280,7 @@ export const generatedEndpointsNested = {
 	getNotaryJournals,
 	getNotaryJurisdictionObject,
 	getNotaryUserSettings,
-	listNotaryJournals,
+	getNotaryJurisdictionSeal,
 	listRegisteredNotaryJurisdictions,
 	registerCurrentUserAsNotary,
 	updateNotaryJurisdictionInfo,
@@ -2598,9 +2598,9 @@ export const generatedEndpointMeta = {
 			'Retrieves notary settings and configuration for the currently authenticated user. This endpoint returns comprehensive notary account information including personal details (name, email, userId), notary status (enabled/disabled), and optionally jurisdiction details when include\\_jurisdictions is set ',
 		riskLevel: 'read',
 	},
-	listNotaryJournals: {
+	getNotaryJurisdictionSeal: {
 		description:
-			'Gets notary journals for the current user. This is a legacy endpoint that returns journal information for notaries. Use when you need to retrieve notary journal data.',
+			'Retrieves the notary seal for a specific jurisdiction registered to the current user.',
 		riskLevel: 'read',
 	},
 	listRegisteredNotaryJurisdictions: {
@@ -4013,9 +4013,9 @@ export const generatedEndpointSchemas: Record<
 		input: GetNotaryUserSettingsInputSchema,
 		output: GetNotaryUserSettingsOutputSchema,
 	},
-	listNotaryJournals: {
-		input: ListNotaryJournalsInputSchema,
-		output: ListNotaryJournalsOutputSchema,
+	getNotaryJurisdictionSeal: {
+		input: GetNotaryJurisdictionSealInputSchema,
+		output: GetNotaryJurisdictionSealOutputSchema,
 	},
 	listRegisteredNotaryJurisdictions: {
 		input: ListRegisteredNotaryJurisdictionsInputSchema,
@@ -4663,7 +4663,7 @@ export const generatedInputSchemas = {
 	getNotaryJournals: GetNotaryJournalsInputSchema,
 	getNotaryJurisdictionObject: GetNotaryJurisdictionObjectInputSchema,
 	getNotaryUserSettings: GetNotaryUserSettingsInputSchema,
-	listNotaryJournals: ListNotaryJournalsInputSchema,
+	getNotaryJurisdictionSeal: GetNotaryJurisdictionSealInputSchema,
 	listRegisteredNotaryJurisdictions:
 		ListRegisteredNotaryJurisdictionsInputSchema,
 	registerCurrentUserAsNotary: RegisterCurrentUserAsNotaryInputSchema,
@@ -5092,7 +5092,7 @@ export const generatedOutputSchemas = {
 	getNotaryJournals: GetNotaryJournalsOutputSchema,
 	getNotaryJurisdictionObject: GetNotaryJurisdictionObjectOutputSchema,
 	getNotaryUserSettings: GetNotaryUserSettingsOutputSchema,
-	listNotaryJournals: ListNotaryJournalsOutputSchema,
+	getNotaryJurisdictionSeal: GetNotaryJurisdictionSealOutputSchema,
 	listRegisteredNotaryJurisdictions:
 		ListRegisteredNotaryJurisdictionsOutputSchema,
 	registerCurrentUserAsNotary: RegisterCurrentUserAsNotaryOutputSchema,
