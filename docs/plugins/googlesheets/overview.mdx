@@ -92,23 +92,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Get rows**
+**`sheets.getRows`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.googlesheets.api.sheets.getRows({ spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms', sheetName: 'Class Data' });
+await tenant.googlesheets.api.sheets.getRows({});
 ```
 
 
-**Append a row**
+**`sheets.appendOrUpdateRow`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.googlesheets.api.sheets.appendRow({
-	spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
-	sheetName: 'Class Data',
-	values: ['Hello', 'from Corsair'],
-});
+await tenant.googlesheets.api.sheets.appendOrUpdateRow({});
 ```
 
 
@@ -116,35 +112,15 @@ See the full list on the [API](/plugins/googlesheets/api) page.
 
 ## Query synced data
 
-Search synced rows without hitting Sheets.
+Synced entities support `tenant.googlesheets.db.<entity>.search()` and `.list()`: `rows`, `sheets`, `spreadsheets`.
 
-```ts
-const tenant = corsair.withTenant('acme');
-const rows = await tenant.googlesheets.db.rows.search({
-	data: { spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms' },
-	limit: 50,
-});
-```
-
-Synced entities: `rows`, `sheets`, `spreadsheets`. See [Database](/plugins/googlesheets/database) for filters and operators.
+See [Database](/plugins/googlesheets/database) for filters and operators.
 
 ## Webhooks
 
-Fires when a range of cells is updated.
+This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
 
-```ts
-googlesheets({
-    webhookHooks: {
-        rangeUpdated: {
-            after: async (ctx, result) => {
-                console.log('Sheet range updated:', result.data?.spreadsheetId, result.data?.sheetName, result.data?.range);
-            }
-        },
-    },
-})
-```
-
-Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/googlesheets/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+See [Webhooks](/plugins/googlesheets/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
 
 ## What's next
 

@@ -49,38 +49,22 @@ function getCachedCatalogIntegrationById(id: string) {
 	)();
 }
 
-// At build time Vercel preview environments have no DATABASE_URL, so the
-// catalog queries fail. Fall back to empty only when no database is configured;
-// when a DB is configured, propagate the error so runtime outages surface.
-const noDB = !process.env.DATABASE_URL;
-
 export const getCatalogIntegrationsList = cache(
 	async (): Promise<IntegrationCatalogEntry[]> => {
-		try {
-			return await getCachedCatalogIntegrationsList();
-		} catch (err) {
-			if (noDB) return [];
-			throw err;
-		}
+		return getCachedCatalogIntegrationsList();
 	},
 );
 
 export const getCatalogIntegrationIds = cache(async (): Promise<string[]> => {
-	try {
-		return await getCachedCatalogIntegrationIds();
-	} catch (err) {
-		if (noDB) return [];
-		throw err;
-	}
+	return getCachedCatalogIntegrationIds();
 });
 
 export const getCatalogIntegrationById = cache(
 	async (id: string): Promise<IntegrationDetailData | null> => {
 		try {
 			return await getCachedCatalogIntegrationById(id);
-		} catch (err) {
-			if (noDB) return null;
-			throw err;
+		} catch {
+			return null;
 		}
 	},
 );

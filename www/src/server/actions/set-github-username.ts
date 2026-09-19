@@ -12,6 +12,7 @@ export async function setGithubUsername(username: string) {
 		const result = await api.account.setGithubUsername({ username });
 		revalidatePath('/oss');
 		revalidateTag(OSS_CACHE_TAGS.activity);
+		revalidateTag(OSS_CACHE_TAGS.leaderboard);
 		return result;
 	} catch (error) {
 		throw new Error(

@@ -4,6 +4,7 @@ import { getSession } from '@/lib/auth-server';
 import { getCurrentProfile } from '@/lib/current-user-server';
 import { getApi } from '@/server/api/caller';
 import {
+	getCachedLeaderboard,
 	getCachedListTags,
 	getCachedOssStats,
 	getCachedRecentActivity,
@@ -18,8 +19,12 @@ import { HowItWorks } from './how-it-works';
 import { IntegrationCard } from './integration-card';
 import { IntegrationListSkeleton } from './integration-list-skeleton';
 import { IntegrationTagFilter } from './integration-tag-filter';
+import { LeaderboardPodium } from './leaderboard-podium';
+import { LeaderboardTable } from './leaderboard-table';
 import { OssHero } from './oss-hero';
 import { buildOssHref } from './oss-url';
+import { TopContributors } from './top-contributors';
+import type { OssIntegrationsView } from './view-tabs';
 
 export async function OssHeroSection() {
 	const [session, stats] = await Promise.all([
@@ -153,28 +158,80 @@ export async function OssIntegrationsSection({
 					totalPages={integrationsData.totalPages}
 					q={q}
 					tags={selectedTags}
+					view="integrations"
 				/>
 			) : null}
 		</div>
 	);
 }
 
-export async function OssSidebarSection() {
+type OssLeaderboardSectionProps = {
+	page: number;
+	q: string;
+	selectedTags: string[];
+};
+
+export async function OssLeaderboardSection({
+	page,
+	q,
+	selectedTags,
+}: OssLeaderboardSectionProps) {
+	const leaderboardData = await getCachedLeaderboard(page);
+	const showPodium = page === 1;
+	const tableItems = showPodium
+		? leaderboardData.items.slice(3)
+		: leaderboardData.items;
+
+	if (leaderboardData.items.length === 0) {
+		return (
+			<div className="border border-dashed border-[#1c1c1c33] px-6 py-12 text-center">
+				<p className="text-sm text-[#1c1c1c66]">No claimed integrations yet.</p>
+			</div>
+		);
+	}
+
+	return (
+		<>
+			{showPodium ? (
+				<LeaderboardPodium entries={leaderboardData.items.slice(0, 3)} />
+			) : null}
+			<LeaderboardTable entries={tableItems} />
+			{leaderboardData.totalPages > 1 ? (
+				<OssPagination
+					page={page}
+					totalPages={leaderboardData.totalPages}
+					q={q}
+					tags={selectedTags}
+					view="leaderboard"
+				/>
+			) : null}
+		</>
+	);
+}
+
+type OssSidebarSectionProps = {
+	view: OssIntegrationsView;
+};
+
+export async function OssSidebarSection({ view }: OssSidebarSectionProps) {
 	const session = await getSession();
 	const api = session ? await getApi() : null;
 
-	const [recentActivityResult, myIntegrationsResult] = await Promise.allSettled(
-		[
+	const [recentActivityResult, leaderboardResult, myIntegrationsResult] =
+		await Promise.allSettled([
 			getCachedRecentActivity(10),
+			getCachedLeaderboard(1),
 			api ? api.integrations.listMine() : Promise.resolve(null),
-		],
-	);
+		]);
 
 	if (recentActivityResult.status === 'rejected') {
 		console.error(
 			'[oss sidebar] recent activity failed',
 			recentActivityResult.reason,
 		);
+	}
+	if (leaderboardResult.status === 'rejected') {
+		console.error('[oss sidebar] leaderboard failed', leaderboardResult.reason);
 	}
 	if (myIntegrationsResult.status === 'rejected') {
 		console.error('[oss sidebar] listMine failed', myIntegrationsResult.reason);
@@ -184,6 +241,10 @@ export async function OssSidebarSection() {
 		recentActivityResult.status === 'fulfilled'
 			? recentActivityResult.value
 			: { items: [] };
+	const leaderboardData =
+		leaderboardResult.status === 'fulfilled'
+			? leaderboardResult.value
+			: { items: [], totalPages: 1 };
 	const myIntegrations =
 		myIntegrationsResult.status === 'fulfilled'
 			? myIntegrationsResult.value
@@ -211,6 +272,9 @@ export async function OssSidebarSection() {
 				</section>
 			) : null}
 			<ActivityFeed items={recentActivity.items} />
+			{view !== 'leaderboard' ? (
+				<TopContributors items={leaderboardData.items.slice(0, 5)} />
+			) : null}
 			<HowItWorks signedIn={Boolean(session)} />
 		</aside>
 	);
@@ -238,11 +302,13 @@ function OssPagination({
 	totalPages,
 	q,
 	tags,
+	view,
 }: {
 	page: number;
 	totalPages: number;
 	q: string;
 	tags: string[];
+	view: OssIntegrationsView;
 }) {
 	return (
 		<nav
@@ -251,7 +317,7 @@ function OssPagination({
 		>
 			{page > 1 ? (
 				<Link
-					href={buildOssHref({ page: page - 1, q, tags })}
+					href={buildOssHref({ page: page - 1, q, tags, view })}
 					className="px-3 py-1.5 text-[#1c1c1c66] transition-colors hover:text-[#1c1c1c]"
 				>
 					← prev
@@ -277,7 +343,7 @@ function OssPagination({
 				) : (
 					<Link
 						key={item}
-						href={buildOssHref({ page: item, q, tags })}
+						href={buildOssHref({ page: item, q, tags, view })}
 						className="inline-flex size-8 items-center justify-center border border-transparent tabular-nums text-[#1c1c1c66] transition-colors hover:border-[#1c1c1c1a] hover:text-[#1c1c1c]"
 					>
 						{item}
@@ -286,7 +352,7 @@ function OssPagination({
 			)}
 			{page < totalPages ? (
 				<Link
-					href={buildOssHref({ page: page + 1, q, tags })}
+					href={buildOssHref({ page: page + 1, q, tags, view })}
 					className="px-3 py-1.5 text-[#1c1c1c66] transition-colors hover:text-[#1c1c1c]"
 				>
 					next →
