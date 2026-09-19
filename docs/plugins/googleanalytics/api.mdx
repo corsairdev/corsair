@@ -1,0 +1,3033 @@
+---
+title: API
+description: "API reference for Google Analytics: every `googleanalytics.api.*` operation with input and output types."
+---
+
+Every `googleanalytics.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### get
+
+`accounts.get`
+
+Lookup a single Google Analytics account
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.accounts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `displayName` | `string` | No | — |
+| `regionCode` | `string` | No | — |
+| `countryCode` | `string` | No | — |
+| `createTime` | `string` | No | — |
+| `updateTime` | `string` | No | — |
+| `createdAt` | `Date` | No | — |
+
+
+
+---
+
+### getDataSharingSettings
+
+`accounts.getDataSharingSettings`
+
+Get data sharing settings for an account
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.accounts.getDataSharingSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`accounts.list`
+
+List accounts accessible to the caller [DEPRECATED: use accounts.listV1Beta]
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.accounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accounts` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="accounts full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSummaries
+
+`accounts.listSummaries`
+
+List summaries of all accessible accounts and their properties
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.accounts.listSummaries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountSummaries` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="accountSummaries full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listV1Beta
+
+`accounts.listV1Beta`
+
+List accounts accessible to the caller (v1beta)
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.accounts.listV1Beta({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accounts` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="accounts full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### provisionAccountTicket
+
+`accounts.provisionAccountTicket`
+
+Request a ticket for creating a Google Analytics account
+
+**Risk:** `write`
+
+```ts
+await corsair.googleanalytics.api.accounts.provisionAccountTicket({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `any` | No | — |
+| `redirectUri` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Audience Exports
+
+### create
+
+`audienceExports.create`
+
+Create an audience export for later retrieval of users
+
+**Risk:** `write`
+
+```ts
+await corsair.googleanalytics.api.audienceExports.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `audienceExport` | `any` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`audienceExports.get`
+
+Get metadata about an audience export
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.audienceExports.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`audienceExports.list`
+
+List audience exports on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.audienceExports.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audienceExports` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="audienceExports full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`audienceExports.query`
+
+Retrieve user rows from an audience export
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.audienceExports.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Audience Lists
+
+### create
+
+`audienceLists.create`
+
+Create an audience list for later retrieval of users
+
+**Risk:** `write`
+
+```ts
+await corsair.googleanalytics.api.audienceLists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `audienceList` | `any` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`audienceLists.get`
+
+Get metadata about an audience list
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.audienceLists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`audienceLists.list`
+
+List audience lists on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.audienceLists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audienceLists` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="audienceLists full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`audienceLists.query`
+
+Retrieve user rows from an audience list
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.audienceLists.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `returnAllRows` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Audiences
+
+### get
+
+`audiences.get`
+
+Lookup a single audience configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.audiences.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`audiences.list`
+
+List audiences on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.audiences.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audiences` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="audiences full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Calculated Metrics
+
+### list
+
+`calculatedMetrics.list`
+
+List calculated metrics on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.calculatedMetrics.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calculatedMetrics` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="calculatedMetrics full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Channel Groups
+
+### list
+
+`channelGroups.list`
+
+List channel groups on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.channelGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelGroups` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="channelGroups full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Conversion Events
+
+### list
+
+`conversionEvents.list`
+
+List conversion events [DEPRECATED: use keyEvents.list]
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.conversionEvents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversionEvents` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="conversionEvents full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Custom Dimensions
+
+### archive
+
+`customDimensions.archive`
+
+Archive a custom dimension on a property [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googleanalytics.api.customDimensions.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`customDimensions.create`
+
+Create a custom dimension on a property
+
+**Risk:** `write`
+
+```ts
+await corsair.googleanalytics.api.customDimensions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `customDimension` | `any` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`customDimensions.get`
+
+Lookup a single custom dimension
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.customDimensions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`customDimensions.list`
+
+List custom dimensions on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.customDimensions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customDimensions` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="customDimensions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Custom Metrics
+
+### create
+
+`customMetrics.create`
+
+Create a custom metric on a property
+
+**Risk:** `write`
+
+```ts
+await corsair.googleanalytics.api.customMetrics.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `customMetric` | `any` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`customMetrics.list`
+
+List custom metrics on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.customMetrics.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customMetrics` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="customMetrics full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Data Streams
+
+### list
+
+`dataStreams.list`
+
+List data streams on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.dataStreams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataStreams` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="dataStreams full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEventCreateRules
+
+`dataStreams.listEventCreateRules`
+
+List event create rules on a web data stream
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.dataStreams.listEventCreateRules({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventCreateRules` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="eventCreateRules full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMeasurementProtocolSecrets
+
+`dataStreams.listMeasurementProtocolSecrets`
+
+List measurement protocol secrets under a data stream
+
+**Risk:** `write`
+
+```ts
+await corsair.googleanalytics.api.dataStreams.listMeasurementProtocolSecrets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `measurementProtocolSecrets` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="measurementProtocolSecrets full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSKAdNetworkConversionValueSchemas
+
+`dataStreams.listSKAdNetworkConversionValueSchemas`
+
+List SKAdNetwork conversion value schemas on an iOS data stream
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.dataStreams.listSKAdNetworkConversionValueSchemas({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sKAdNetworkConversionValueSchemas` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="sKAdNetworkConversionValueSchemas full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Expanded Data Sets
+
+### create
+
+`expandedDataSets.create`
+
+Create an expanded data set on a property
+
+**Risk:** `write`
+
+```ts
+await corsair.googleanalytics.api.expandedDataSets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `expandedDataSet` | `any` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`expandedDataSets.list`
+
+List expanded data sets on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.expandedDataSets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expandedDataSets` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="expandedDataSets full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Key Events
+
+### get
+
+`keyEvents.get`
+
+Lookup a single key event (conversion)
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.keyEvents.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`keyEvents.list`
+
+List key events on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.keyEvents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyEvents` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="keyEvents full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Links
+
+### listAdSense
+
+`links.listAdSense`
+
+List AdSense links on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.links.listAdSense({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adSenseLinks` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="adSenseLinks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBigQuery
+
+`links.listBigQuery`
+
+List BigQuery links on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.links.listBigQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bigqueryLinks` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="bigqueryLinks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDV360Advertiser
+
+`links.listDV360Advertiser`
+
+List Display & Video 360 advertiser links on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.links.listDV360Advertiser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `displayVideo360AdvertiserLinks` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="displayVideo360AdvertiserLinks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDV360Proposals
+
+`links.listDV360Proposals`
+
+List Display & Video 360 advertiser link proposals on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.links.listDV360Proposals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `displayVideo360AdvertiserLinkProposals` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="displayVideo360AdvertiserLinkProposals full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFirebase
+
+`links.listFirebase`
+
+List Firebase links on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.links.listFirebase({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firebaseLinks` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="firebaseLinks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listGoogleAds
+
+`links.listGoogleAds`
+
+List Google Ads links on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.links.listGoogleAds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `googleAdsLinks` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="googleAdsLinks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSearchAds360
+
+`links.listSearchAds360`
+
+List Search Ads 360 links on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.links.listSearchAds360({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchAds360Links` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="searchAds360Links full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Measurement Protocol
+
+### sendEvents
+
+`measurementProtocol.sendEvents`
+
+Send events to GA4 via the Measurement Protocol. Requires the stream api_secret (not the OAuth token) plus measurementId (web) or firebaseAppId (app)
+
+**Risk:** `write`
+
+```ts
+await corsair.googleanalytics.api.measurementProtocol.sendEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiSecret` | `string` | Yes | — |
+| `measurementId` | `string` | No | — |
+| `firebaseAppId` | `string` | No | — |
+| `clientId` | `string` | No | — |
+| `appInstanceId` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `timestampMicros` | `number` | No | — |
+| `userProperties` | `object` | No | — |
+| `consent` | `any` | No | — |
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="userProperties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="events full type">
+
+```ts
+{
+  name: string,
+  params?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### validateEvents
+
+`measurementProtocol.validateEvents`
+
+Validate Measurement Protocol events against the debug endpoint before sending. Requires the stream api_secret
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.measurementProtocol.validateEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiSecret` | `string` | Yes | — |
+| `measurementId` | `string` | No | — |
+| `firebaseAppId` | `string` | No | — |
+| `clientId` | `string` | No | — |
+| `appInstanceId` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `timestampMicros` | `number` | No | — |
+| `userProperties` | `object` | No | — |
+| `consent` | `any` | No | — |
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="userProperties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="events full type">
+
+```ts
+{
+  name: string,
+  params?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Properties
+
+### createRollup
+
+`properties.createRollup`
+
+Create a roll-up property aggregating multiple properties
+
+**Risk:** `write`
+
+```ts
+await corsair.googleanalytics.api.properties.createRollup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rollupProperty` | `any` | No | — |
+| `sourceProperties` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`properties.get`
+
+Lookup a single GA4 property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.properties.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `parent` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `propertyType` | `string` | No | — |
+| `timeZone` | `string` | No | — |
+| `currencyCode` | `string` | No | — |
+| `industryCategory` | `string` | No | — |
+| `account` | `string` | No | — |
+| `createTime` | `string` | No | — |
+| `updateTime` | `string` | No | — |
+| `createdAt` | `Date` | No | — |
+
+
+
+---
+
+### getAttributionSettings
+
+`properties.getAttributionSettings`
+
+Get attribution settings for a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.properties.getAttributionSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDataRetentionSettings
+
+`properties.getDataRetentionSettings`
+
+Get data retention settings for a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.properties.getDataRetentionSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getGoogleSignalsSettings
+
+`properties.getGoogleSignalsSettings`
+
+Get Google Signals settings for a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.properties.getGoogleSignalsSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPropertyQuotasSnapshot
+
+`properties.getPropertyQuotasSnapshot`
+
+Get a snapshot of property quota usage by category
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.properties.getPropertyQuotasSnapshot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`properties.list`
+
+List child properties under an account [DEPRECATED: use properties.listFiltered]
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.properties.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `filter` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFiltered
+
+`properties.listFiltered`
+
+List GA4 properties matching a filter
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.properties.listFiltered({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `filter` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`properties.update`
+
+Update a GA4 property
+
+**Risk:** `write`
+
+```ts
+await corsair.googleanalytics.api.properties.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `property` | `object` | Yes | — |
+| `updateMask` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="property full type">
+
+```ts
+{
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Recurring Audience Lists
+
+### create
+
+`recurringAudienceLists.create`
+
+Create a recurring audience list that refreshes daily
+
+**Risk:** `write`
+
+```ts
+await corsair.googleanalytics.api.recurringAudienceLists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `recurringAudienceList` | `any` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`recurringAudienceLists.get`
+
+Get metadata about a recurring audience list
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.recurringAudienceLists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`recurringAudienceLists.list`
+
+List recurring audience lists on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.recurringAudienceLists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recurringAudienceLists` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="recurringAudienceLists full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reporting Data
+
+### listAnnotations
+
+`reportingData.listAnnotations`
+
+List reporting data annotations on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.reportingData.listAnnotations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reportingDataAnnotations` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="reportingDataAnnotations full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSubpropertyEventFilters
+
+`reportingData.listSubpropertyEventFilters`
+
+List subproperty event filters on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.reportingData.listSubpropertyEventFilters({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subpropertyEventFilters` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="subpropertyEventFilters full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSubpropertySyncConfigs
+
+`reportingData.listSubpropertySyncConfigs`
+
+List subproperty sync configs on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.reportingData.listSubpropertySyncConfigs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subpropertySyncConfigs` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="subpropertySyncConfigs full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reports
+
+### batchRun
+
+`reports.batchRun`
+
+Run multiple reports in a single batch request
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.reports.batchRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `property` | `string` | Yes | — |
+| `requests` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  dateRanges?: {
+    startDate?: string,
+    endDate?: string,
+    name?: string
+  }[],
+  dimensions?: {
+    name: string,
+    dimensionExpression?: any
+  }[],
+  metrics?: {
+    name?: string,
+    expression?: string,
+    invisible?: boolean
+  }[],
+  dimensionFilter?: any,
+  metricFilter?: any,
+  orderBys?: any[],
+  limit?: number,
+  offset?: number,
+  metricAggregations?: string[],
+  currencyCode?: string,
+  keepEmptyRows?: boolean,
+  returnPropertyQuota?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### batchRunPivot
+
+`reports.batchRunPivot`
+
+Run multiple pivot reports in a single batch request
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.reports.batchRunPivot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `property` | `string` | Yes | — |
+| `requests` | `any[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### checkCompatibility
+
+`reports.checkCompatibility`
+
+List dimensions and metrics compatible with a report request
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.reports.checkCompatibility({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `property` | `string` | Yes | — |
+| `dateRanges` | `object[]` | No | — |
+| `dimensions` | `object[]` | No | — |
+| `metrics` | `object[]` | No | — |
+| `dimensionFilter` | `any` | No | — |
+| `metricFilter` | `any` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `orderBys` | `any[]` | No | — |
+| `returnPropertyQuota` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="dateRanges full type">
+
+```ts
+{
+  startDate?: string,
+  endDate?: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="dimensions full type">
+
+```ts
+{
+  name: string,
+  dimensionExpression?: any
+}[]
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+  name?: string,
+  expression?: string,
+  invisible?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMetadata
+
+`reports.getMetadata`
+
+Get metadata for available dimensions and metrics. Use apiNames from here in report requests
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.reports.getMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### run
+
+`reports.run`
+
+Run a customized GA4 report. Derive dimension/metric apiNames from reports.getMetadata
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.reports.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dateRanges` | `object[]` | No | — |
+| `dimensions` | `object[]` | No | — |
+| `metrics` | `object[]` | No | — |
+| `dimensionFilter` | `any` | No | — |
+| `metricFilter` | `any` | No | — |
+| `orderBys` | `any[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `metricAggregations` | `string[]` | No | — |
+| `currencyCode` | `string` | No | — |
+| `keepEmptyRows` | `boolean` | No | — |
+| `returnPropertyQuota` | `boolean` | No | — |
+| `property` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="dateRanges full type">
+
+```ts
+{
+  startDate?: string,
+  endDate?: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="dimensions full type">
+
+```ts
+{
+  name: string,
+  dimensionExpression?: any
+}[]
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+  name?: string,
+  expression?: string,
+  invisible?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### runFunnel
+
+`reports.runFunnel`
+
+Run a customized funnel report
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.reports.runFunnel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `property` | `string` | Yes | — |
+| `funnel` | `any` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### runPivot
+
+`reports.runPivot`
+
+Run a customized pivot report
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.reports.runPivot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `property` | `string` | Yes | — |
+| `dateRanges` | `object[]` | No | — |
+| `dimensions` | `object[]` | No | — |
+| `metrics` | `object[]` | No | — |
+| `pivots` | `any[]` | No | — |
+| `dimensionFilter` | `any` | No | — |
+| `metricFilter` | `any` | No | — |
+| `orderBys` | `any[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `returnPropertyQuota` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="dateRanges full type">
+
+```ts
+{
+  startDate?: string,
+  endDate?: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="dimensions full type">
+
+```ts
+{
+  name: string,
+  dimensionExpression?: any
+}[]
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+  name?: string,
+  expression?: string,
+  invisible?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### runRealtime
+
+`reports.runRealtime`
+
+Run a realtime report (last 30-60 minutes)
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.reports.runRealtime({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `property` | `string` | Yes | — |
+| `dimensions` | `object[]` | No | — |
+| `metrics` | `object[]` | No | — |
+| `dimensionFilter` | `any` | No | — |
+| `metricFilter` | `any` | No | — |
+| `orderBys` | `any[]` | No | — |
+| `limit` | `number` | No | — |
+| `metricAggregations` | `string[]` | No | — |
+| `returnPropertyQuota` | `boolean` | No | — |
+| `minuteRanges` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="dimensions full type">
+
+```ts
+{
+  name: string,
+  dimensionExpression?: any
+}[]
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+  name?: string,
+  expression?: string,
+  invisible?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Report Tasks
+
+### create
+
+`reportTasks.create`
+
+Create an asynchronous report task
+
+**Risk:** `write`
+
+```ts
+await corsair.googleanalytics.api.reportTasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | — |
+| `reportTask` | `any` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`reportTasks.get`
+
+Get metadata about a report task
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.reportTasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`reportTasks.list`
+
+List report tasks on a property
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.reportTasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `parent` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reportTasks` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="reportTasks full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`reportTasks.query`
+
+Retrieve a report task content (only when ACTIVE)
+
+**Risk:** `read`
+
+```ts
+await corsair.googleanalytics.api.reportTasks.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
