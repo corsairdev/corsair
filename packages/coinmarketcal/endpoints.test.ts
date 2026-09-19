@@ -148,20 +148,20 @@ describe('Coinmarketcal endpoints', () => {
 		);
 	});
 
-	it('coins.get calls GET /v2/coins/:symbol', async () => {
+	it('coins.get calls GET /v2/coins/:slug', async () => {
 		mockRequest.mockResolvedValue({
 			symbol: 'BTC',
 			name: 'Bitcoin',
 			slug: 'bitcoin',
 		});
 
-		const result = await endpoints.coins.get(mockCtx, { symbol: 'BTC' });
+		const result = await endpoints.coins.get(mockCtx, { slug: 'bitcoin' });
 
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.anything(),
 			expect.objectContaining({
 				method: 'GET',
-				url: '/v2/coins/BTC',
+				url: '/v2/coins/bitcoin',
 			}),
 		);
 		expect(CoinmarketcalEndpointOutputSchemas.coinsGet.parse(result)).toEqual(
@@ -170,7 +170,7 @@ describe('Coinmarketcal endpoints', () => {
 		expect(mockLog).toHaveBeenCalledWith(
 			mockCtx,
 			'coinmarketcal.coins.get',
-			{ symbol: 'BTC' },
+			{ slug: 'bitcoin' },
 			'completed',
 		);
 	});

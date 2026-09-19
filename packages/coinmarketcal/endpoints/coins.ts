@@ -24,14 +24,14 @@ export const list: CoinmarketcalEndpoints['coinsList'] = async (ctx, input) => {
 export const get: CoinmarketcalEndpoints['coinsGet'] = async (ctx, input) => {
 	const response = await makeCoinmarketcalRequest<
 		CoinmarketcalEndpointOutputs['coinsGet']
-	>(`/v2/coins/${encodeURIComponent(input.symbol)}`, ctx.key, {
+	>(`/v2/coins/${encodeURIComponent(input.slug)}`, ctx.key, {
 		method: 'GET',
 	});
 
 	await logEventFromContext(
 		ctx,
 		'coinmarketcal.coins.get',
-		{ symbol: input.symbol },
+		{ slug: input.slug },
 		'completed',
 	);
 
