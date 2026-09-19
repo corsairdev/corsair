@@ -12,7 +12,6 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { BugherdAPIError, makeBugherdRequest } from './client';
 import { Bugherd } from './endpoints';
 import type {
 	BugherdEndpointInputs,
@@ -26,7 +25,7 @@ import { errorHandlers } from './error-handlers';
 import { BugherdSchema } from './schema';
 
 export type BugherdPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalBugherdPlugin['hooks'];
@@ -334,9 +333,6 @@ export const bugherdAuthConfig = {
 	api_key: {
 		account: ['project_id'] as const,
 	},
-	oauth_2: {
-		account: ['project_id'] as const,
-	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseBugherdPlugin<T extends BugherdPluginOptions> = CorsairPlugin<
@@ -390,11 +386,6 @@ export function bugherd<const T extends BugherdPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
 				return res ?? '';
 			}
 

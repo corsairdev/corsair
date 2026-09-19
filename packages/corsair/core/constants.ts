@@ -394,7 +394,7 @@ export const ProviderDisplayNames = {
 	browserless: 'Browserless',
 	browsertool: 'Browser Tool',
 	bubble: 'Bubble',
-	bugherd: 'Bugherd',
+	bugherd: 'BugHerd',
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
 	bunnycdn: 'Bunnycdn',
