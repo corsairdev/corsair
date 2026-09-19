@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeUpdownIORequest } from '../client';
 import type { UpdownIOEndpoints } from '../index';
+import type { UpdownIOEndpointOutputs } from './types';
 import {
 	ListNodeIpsInputSchema,
 	ListNodeIpv4InputSchema,
@@ -15,7 +16,10 @@ import {
 export const list: UpdownIOEndpoints['nodesList'] = async (ctx, rawInput) => {
 	ListNodesInputSchema.parse(rawInput);
 	const response = NodesResponseSchema.parse(
-		await makeUpdownIORequest<unknown>('/nodes', ctx.key),
+		await makeUpdownIORequest<UpdownIOEndpointOutputs['nodesList']>(
+			'/nodes',
+			ctx.key,
+		),
 	);
 	await logEventFromContext(
 		ctx,
@@ -31,7 +35,10 @@ export const listIps: UpdownIOEndpoints['nodesListIps'] = async (
 ) => {
 	ListNodeIpsInputSchema.parse(rawInput);
 	const response = NodeIpsResponseSchema.parse(
-		await makeUpdownIORequest<unknown>('/nodes/ips', ctx.key),
+		await makeUpdownIORequest<UpdownIOEndpointOutputs['nodesListIps']>(
+			'/nodes/ips',
+			ctx.key,
+		),
 	);
 	await logEventFromContext(
 		ctx,
@@ -47,7 +54,10 @@ export const listIpv4: UpdownIOEndpoints['nodesListIpv4'] = async (
 ) => {
 	ListNodeIpv4InputSchema.parse(rawInput);
 	const response = NodeIpv4ResponseSchema.parse(
-		await makeUpdownIORequest<unknown>('/nodes/ipv4', ctx.key),
+		await makeUpdownIORequest<UpdownIOEndpointOutputs['nodesListIpv4']>(
+			'/nodes/ipv4',
+			ctx.key,
+		),
 	);
 	await logEventFromContext(
 		ctx,
@@ -63,7 +73,10 @@ export const listIpv6: UpdownIOEndpoints['nodesListIpv6'] = async (
 ) => {
 	ListNodeIpv6InputSchema.parse(rawInput);
 	const response = NodeIpv6ResponseSchema.parse(
-		await makeUpdownIORequest<unknown>('/nodes/ipv6', ctx.key),
+		await makeUpdownIORequest<UpdownIOEndpointOutputs['nodesListIpv6']>(
+			'/nodes/ipv6',
+			ctx.key,
+		),
 	);
 	await logEventFromContext(
 		ctx,

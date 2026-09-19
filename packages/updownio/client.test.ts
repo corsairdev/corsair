@@ -101,6 +101,10 @@ describe('checks.list', () => {
 		const checks = await listChecks(ctx, {});
 
 		expect(requestedUrl()).toBe('https://updown.io/api/checks');
+		expect(fetchMock.mock.calls[0]?.[1]).toMatchObject({
+			method: 'GET',
+			redirect: 'error',
+		});
 		expect(requestedHeaders().get('X-API-KEY')).toBe('updown-test-key');
 		expect(checks[0]?.token).toBe('ngg8');
 	});

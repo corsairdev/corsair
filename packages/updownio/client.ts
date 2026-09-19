@@ -1,6 +1,3 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
-
 /** https://updown.io/api */
 export const UPDOWN_IO_API_BASE = 'https://updown.io/api';
 
@@ -9,14 +6,20 @@ export class UpdownIOAPIError extends Error {
 	public readonly statusText?: string;
 	public readonly body?: unknown;
 
-	constructor(message: string, options?: { cause?: Error }) {
+	constructor(
+		message: string,
+		options?: {
+			cause?: Error;
+			status?: number;
+			statusText?: string;
+			body?: unknown;
+		},
+	) {
 		super(message, options);
 		this.name = 'UpdownIOAPIError';
-		if (options?.cause instanceof ApiError) {
-			this.status = options.cause.status;
-			this.statusText = options.cause.statusText;
-			this.body = options.cause.body;
-		}
+		this.status = options?.status;
+		this.statusText = options?.statusText;
+		this.body = options?.body;
 	}
 }
 
@@ -28,6 +31,24 @@ export type UpdownIORequestOptions = {
 	 */
 	requiresAuth?: boolean;
 };
+
+async function parseResponseBody(response: Response): Promise<unknown> {
+	const contentType = response.headers.get('Content-Type')?.toLowerCase() ?? '';
+	if (contentType.startsWith('application/json')) {
+		return await response.json();
+	}
+	const text = await response.text();
+	return text.length > 0 ? text : undefined;
+}
+
+function messageFromBody(body: unknown): string | undefined {
+	if (body && typeof body === 'object' && 'error' in body) {
+		const nested = (body as Record<string, unknown>).error;
+		if (typeof nested === 'string') return nested;
+	}
+	if (typeof body === 'string' && body.length > 0) return body;
+	return undefined;
+}
 
 export async function makeUpdownIORequest<T>(
 	endpoint: string,
@@ -42,28 +63,34 @@ export async function makeUpdownIORequest<T>(
 	const headers: Record<string, string> = { Accept: 'application/json' };
 	if (normalizedKey) headers['X-API-KEY'] = normalizedKey;
 
-	const config: OpenAPIConfig = {
-		BASE: UPDOWN_IO_API_BASE,
-		VERSION: '1',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: undefined,
-		HEADERS: headers,
-	};
-	const requestOptions: ApiRequestOptions = { method: 'GET', url: endpoint };
+	const base = UPDOWN_IO_API_BASE.endsWith('/')
+		? UPDOWN_IO_API_BASE.slice(0, -1)
+		: UPDOWN_IO_API_BASE;
+	const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+	const url = `${base}${path}`;
 
 	try {
-		return await request<T>(config, requestOptions);
+		const response = await fetch(url, {
+			method: 'GET',
+			redirect: 'error',
+			headers,
+		});
+		const body = await parseResponseBody(response);
+		if (!response.ok) {
+			throw new UpdownIOAPIError(
+				messageFromBody(body) ??
+					`Updown.io request failed (${response.status})`,
+				{
+					status: response.status,
+					statusText: response.statusText,
+					body,
+				},
+			);
+		}
+		return body as T;
 	} catch (error) {
-		if (error instanceof ApiError) {
-			// updown.io reports failures as `{ "error": "..." }`.
-			const body = error.body;
-			let message = error.message;
-			if (body && typeof body === 'object' && 'error' in body) {
-				const nested = (body as Record<string, unknown>).error;
-				if (typeof nested === 'string') message = nested;
-			}
-			throw new UpdownIOAPIError(message, { cause: error });
+		if (error instanceof UpdownIOAPIError) {
+			throw error;
 		}
 		if (error instanceof Error) {
 			throw new UpdownIOAPIError(error.message, { cause: error });

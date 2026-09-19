@@ -1047,14 +1047,12 @@ ${formatTenantApiCall(pluginId, exRead.shortPath, readArgs)}
 ${formatTenantApiCall(pluginId, exWrite.shortPath, writeArgs)}
 \`\`\`
 `
-		: '_No write-style endpoint inferred; pick any operation from the [API](' +
-			base +
-			'/api) reference._\n';
+		: '';
 
 	const readHeading =
 		readTitle ?? (exRead ? `\`${exRead.shortPath}\`` : 'Read');
 	const writeHeading =
-		writeTitle ?? (exWrite ? `\`${exWrite.shortPath}\`` : 'Write');
+		writeTitle ?? (exWrite ? `\`${exWrite.shortPath}\`` : undefined);
 
 	// DB section
 	let dbSection = '';
@@ -1245,11 +1243,14 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 **${readHeading}**
 
-${exampleRead}
-
+${exampleRead}${
+	writeHeading && exampleWrite
+		? `
 **${writeHeading}**
 
-${exampleWrite}
+${exampleWrite}`
+		: ''
+}
 
 See the full list on the [API](${base}/api) page.
 
