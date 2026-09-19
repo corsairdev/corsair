@@ -90,9 +90,11 @@ function createTestContext(
 		options: overrides.options ?? {},
 		keys: {
 			get_api_key: jest.fn().mockResolvedValue(TEST_TOKEN),
-			get_database_token: jest.fn().mockResolvedValue(undefined),
+			get_database_token: jest.fn().mockResolvedValue(null),
 			set_api_key: jest.fn().mockResolvedValue(undefined),
 			set_database_token: jest.fn().mockResolvedValue(undefined),
+			get_webhook_signature: jest.fn().mockResolvedValue(null),
+			set_webhook_signature: jest.fn().mockResolvedValue(undefined),
 			get_dek: jest.fn().mockResolvedValue('test-dek'),
 			issue_new_dek: jest.fn().mockResolvedValue('new-dek'),
 			...overrides.keys,
@@ -102,7 +104,7 @@ function createTestContext(
 		},
 		$getAccountId: jest.fn().mockResolvedValue('test-account-id'),
 		endpoints: {},
-	} as unknown as TursoContext;
+	} as TursoContext;
 }
 
 const ctx: TursoContext = createTestContext();
@@ -165,7 +167,7 @@ function sseResponse(chunks: string[]): Response {
 				cancel: async (): Promise<void> => undefined,
 			}),
 		},
-	} as unknown as Response;
+	} as Response;
 }
 
 describe('plugin shape', () => {
@@ -200,13 +202,15 @@ describe('plugin shape', () => {
 				tenantId: 'test-tenant',
 				keys: {
 					get_api_key: jest.fn().mockResolvedValue(apiKeyVal),
-					get_database_token: jest.fn().mockResolvedValue(undefined),
+					get_database_token: jest.fn().mockResolvedValue(null),
 					set_api_key: jest.fn().mockResolvedValue(undefined),
 					set_database_token: jest.fn().mockResolvedValue(undefined),
+					get_webhook_signature: jest.fn().mockResolvedValue(null),
+					set_webhook_signature: jest.fn().mockResolvedValue(undefined),
 					get_dek: jest.fn().mockResolvedValue('test-dek'),
 					issue_new_dek: jest.fn().mockResolvedValue('new-dek'),
 				},
-			}) as unknown as TursoKeyBuilderContext;
+			}) as TursoKeyBuilderContext;
 
 		const pluginWithKey = turso({ key: TEST_TOKEN });
 		await expect(
@@ -548,6 +552,8 @@ describe('Changes.listen', () => {
 					.mockResolvedValue('stored-tenant-db-token'),
 				set_api_key: jest.fn().mockResolvedValue(undefined),
 				set_database_token: jest.fn().mockResolvedValue(undefined),
+				get_webhook_signature: jest.fn().mockResolvedValue(null),
+				set_webhook_signature: jest.fn().mockResolvedValue(undefined),
 			},
 		});
 

@@ -41,9 +41,13 @@ describeLive('Turso live API integration tests', () => {
 			options: { key },
 			keys: {
 				get_api_key: async () => key,
-				get_database_token: async () => undefined,
+				get_database_token: async () => null,
+				get_webhook_signature: async () => null,
 				set_api_key: async () => undefined,
 				set_database_token: async () => undefined,
+				set_webhook_signature: async () => undefined,
+				get_dek: async () => 'test-dek',
+				issue_new_dek: async () => 'new-dek',
 			},
 			$getAccountId: async () => 'acc_test',
 			db: {
@@ -62,7 +66,7 @@ describeLive('Turso live API integration tests', () => {
 				},
 			},
 			endpoints: {},
-		} as unknown as TursoContext;
+		} as TursoContext;
 
 		const endpointResult = await Tokens.validate(liveCtx, {});
 		expect(endpointResult.exp).toBe(parsed.exp);
@@ -80,9 +84,13 @@ describeLive('Turso live API integration tests', () => {
 				},
 				keys: {
 					get_api_key: async () => key,
-					get_database_token: async () => DATABASE_TOKEN,
+					get_database_token: async () => DATABASE_TOKEN ?? null,
+					get_webhook_signature: async () => null,
 					set_api_key: async () => undefined,
 					set_database_token: async () => undefined,
+					set_webhook_signature: async () => undefined,
+					get_dek: async () => 'test-dek',
+					issue_new_dek: async () => 'new-dek',
 				},
 				$getAccountId: async () => 'acc_test',
 				db: {
@@ -101,7 +109,7 @@ describeLive('Turso live API integration tests', () => {
 					},
 				},
 				endpoints: {},
-			} as unknown as TursoContext;
+			} as TursoContext;
 
 			const endpointResult = await Changes.listen(liveCtx, {
 				databaseUrl: DATABASE_URL,
