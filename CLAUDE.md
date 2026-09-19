@@ -1,6 +1,7 @@
 # Corsair — agent guide
 
-Corsair is an open-source integration layer for agents (~70 plugin packages).
+Corsair is an open-source integration layer for agents (~290 plugin packages;
+count of truth = the `BaseProviders` array in `packages/corsair/core/constants.ts`).
 
 ## Layout
 
