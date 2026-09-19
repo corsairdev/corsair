@@ -127,4 +127,25 @@ await assert.rejects(
 	assert.equal(seen.tenant, 'real');
 }
 
+// resolveToolsVNext refuses a slug that is not an exposed API operation, so a
+// caller cannot execute a management/non-API path (CWE-470). An instance with
+// no plugins exposes no operations, so every slug is out of the allowed set.
+{
+	const emptyInstance = {
+		[Symbol.for('corsair:internal')]: { plugins: [] },
+	} as unknown as CorsairToolProviderConfig['corsair'];
+	await assert.rejects(
+		new CorsairToolProvider({
+			corsair: emptyInstance,
+			tenantId: 'acme',
+		}).resolveToolsVNext({
+			toolSlugs: ['manage.disconnect'],
+			connectionId: encodeConnectionId('acme', 'slack'),
+			toolkit: 'slack',
+			toolMeta: {},
+		}),
+		/not an exposed API operation/,
+	);
+}
+
 console.log('corsair-tool-provider.check: all assertions passed');
