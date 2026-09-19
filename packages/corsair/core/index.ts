@@ -343,12 +343,12 @@ export type {
 	CorsairTenantWrapper,
 } from './client';
 export type {
+	CorsairCloudConfig,
 	CorsairCloudInstance,
 	CorsairCloudRegistry,
-	CreateCorsairCloudConfig,
 } from './cloud';
-// Cloud surface (createCorsairCloud)
-export { createCorsairCloud } from './cloud';
+// Cloud surface (corsairCloud)
+export { corsairCloud } from './cloud';
 // Connect link utilities
 export type { ResolveConnectLinkResult } from './connect';
 export { resolveConnectLink } from './connect';
