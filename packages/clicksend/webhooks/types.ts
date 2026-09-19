@@ -146,8 +146,11 @@ export function verifyClickSendWebhookSignature(
 		return { valid: true };
 	}
 
-	const parts = token.split(':');
-	if (parts.length > 1 && safeTimingEqual(parts[1]!, secret)) {
+	const colonIndex = token.indexOf(':');
+	if (
+		colonIndex !== -1 &&
+		safeTimingEqual(token.slice(colonIndex + 1), secret)
+	) {
 		return { valid: true };
 	}
 
