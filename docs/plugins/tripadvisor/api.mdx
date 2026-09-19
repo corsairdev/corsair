@@ -1,0 +1,127 @@
+---
+title: API
+description: "API reference for Tripadvisor: every `tripadvisor.api.*` operation with input and output types."
+---
+
+Every `tripadvisor.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Catalog
+
+### locationsNearby
+
+`catalog.locationsNearby`
+
+Search nearby Tripadvisor catalog locations by coordinates or location ID
+
+**Risk:** `read`
+
+```ts
+await corsair.tripadvisor.api.catalog.locationsNearby({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `string` | No | - |
+| `lat` | `number` | No | - |
+| `lon` | `number` | No | - |
+| `radius` | `number` | No | - |
+| `unit` | `MI \| KM` | No | - |
+| `sw_lat` | `number` | No | - |
+| `sw_lon` | `number` | No | - |
+| `ne_lat` | `number` | No | - |
+| `ne_lon` | `number` | No | - |
+| `category` | `RESTAURANT \| ATTRACTION \| HOTEL` | No | - |
+| `min_rating` | `number` | No | - |
+| `locale` | `string[]` | No | - |
+| `page` | `number` | No | - |
+| `size` | `number` | No | - |
+| `sort` | `string[]` | No | - |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | - |
+| `pagination` | `object` | Yes | - |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  bearing?: number,
+  distance_kilometers?: number,
+  distance_miles?: number,
+  location: {
+    addresses?: {
+      city?: string,
+      country_code?: string,
+      country_name?: string,
+      formatted?: string,
+      language?: string,
+      postal_code?: string,
+      state?: string,
+      street_address?: string,
+      street_address2?: string
+    }[],
+    coordinates?: {
+      latitude: number,
+      longitude: number
+    },
+    descriptions?: {
+      language: string,
+      value: string
+    }[],
+    geo?: string,
+    geo_id?: number,
+    id: number,
+    names: {
+      language: string,
+      value: string,
+      primary?: boolean
+    }[],
+    overall_rating?: {
+      count?: number,
+      icon_url?: string,
+      rating?: number
+    },
+    urls?: {
+      android_intent?: string,
+      menu?: string,
+      official?: string,
+      tripadvisor?: {
+        main?: string,
+        photos?: string,
+        questions_answers?: string,
+        write_review?: string
+      }
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  size?: number,
+  total_elements?: number,
+  total_pages?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---

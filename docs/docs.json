@@ -2295,6 +2295,14 @@
                 ]
               },
               {
+                "group": "Tripadvisor",
+                "pages": [
+                  "plugins/tripadvisor/overview",
+                  "plugins/tripadvisor/api",
+                  "plugins/tripadvisor/database"
+                ]
+              },
+              {
                 "group": "TwentyOne Risk",
                 "pages": [
                   "plugins/twentyonerisk/overview",
