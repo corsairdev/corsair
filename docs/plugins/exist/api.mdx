@@ -1,0 +1,824 @@
+---
+title: API
+description: "API reference for Exist: every `exist.api.*` operation with input and output types."
+---
+
+Every `exist.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Attributes
+
+### acquire
+
+`attributes.acquire`
+
+Take ownership of attributes so this client can write their values, creating templated attributes the user does not have yet
+
+**Risk:** `write`
+
+```ts
+await corsair.exist.api.attributes.acquire({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `object[]` | Yes | — |
+| `success_objects` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  template?: string,
+  name?: string,
+  manual?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `object[]` | Yes | — |
+| `failed` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="success full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="failed full type">
+
+```ts
+{
+  error: string,
+  error_code: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### increment
+
+`attributes.increment`
+
+Add a delta to owned attributes' values for a given day
+
+**Risk:** `write`
+
+```ts
+await corsair.exist.api.attributes.increment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  name: string,
+  date?: string,
+  value: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `object[]` | Yes | — |
+| `failed` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="success full type">
+
+```ts
+{
+  name: string,
+  value: number,
+  current?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="failed full type">
+
+```ts
+{
+  error: string,
+  error_code: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`attributes.list`
+
+List the user's attributes without their values
+
+**Risk:** `read`
+
+```ts
+await corsair.exist.api.attributes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `groups` | `string[]` | No | — |
+| `attributes` | `string[]` | No | — |
+| `exclude_custom` | `boolean` | No | — |
+| `manual` | `boolean` | No | — |
+| `include_inactive` | `boolean` | No | — |
+| `include_low_priority` | `boolean` | No | — |
+| `owned` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  template?: string | null,
+  name: string,
+  label: string,
+  group: {
+    name: string,
+    label: string,
+    priority: number
+  },
+  service?: {
+    name: string,
+    label: string
+  } | null,
+  active: boolean,
+  priority: number,
+  manual: boolean,
+  value_type: number,
+  value_type_description: string,
+  available_services?: {
+    name: string,
+    label: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listOwned
+
+`attributes.listOwned`
+
+List the attributes currently owned by this client
+
+**Risk:** `read`
+
+```ts
+await corsair.exist.api.attributes.listOwned({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `groups` | `string[]` | No | — |
+| `attributes` | `string[]` | No | — |
+| `exclude_custom` | `boolean` | No | — |
+| `manual` | `boolean` | No | — |
+| `include_inactive` | `boolean` | No | — |
+| `include_low_priority` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  template?: string | null,
+  name: string,
+  label: string,
+  group: {
+    name: string,
+    label: string,
+    priority: number
+  },
+  service?: {
+    name: string,
+    label: string
+  } | null,
+  active: boolean,
+  priority: number,
+  manual: boolean,
+  value_type: number,
+  value_type_description: string,
+  available_services?: {
+    name: string,
+    label: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTemplates
+
+`attributes.listTemplates`
+
+List the attribute templates Exist supports
+
+**Risk:** `read`
+
+```ts
+await corsair.exist.api.attributes.listTemplates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `include_low_priority` | `boolean` | No | — |
+| `groups` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  name: string,
+  label: string,
+  group: {
+    name: string,
+    label: string,
+    priority: number
+  },
+  priority: number,
+  value_type: number,
+  value_type_description: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listWithValues
+
+`attributes.listWithValues`
+
+List the user's attributes along with recent day values
+
+**Risk:** `read`
+
+```ts
+await corsair.exist.api.attributes.listWithValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `days` | `number` | No | — |
+| `date_max` | `string` | No | — |
+| `groups` | `string[]` | No | — |
+| `attributes` | `string[]` | No | — |
+| `templates` | `string[]` | No | — |
+| `manual` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  template?: string | null,
+  name: string,
+  label: string,
+  group: {
+    name: string,
+    label: string,
+    priority: number
+  },
+  service?: {
+    name: string,
+    label: string
+  } | null,
+  active: boolean,
+  priority: number,
+  manual: boolean,
+  value_type: number,
+  value_type_description: string,
+  available_services?: {
+    name: string,
+    label: string
+  }[],
+  values: {
+    date: string,
+    value?: string | number | boolean | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### release
+
+`attributes.release`
+
+Release ownership of attributes, passing them to another service or making them inactive
+
+**Risk:** `write`
+
+```ts
+await corsair.exist.api.attributes.release({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `object[]` | Yes | — |
+| `failed` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="success full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="failed full type">
+
+```ts
+{
+  error: string,
+  error_code: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`attributes.update`
+
+Overwrite owned attributes' total values for a given day, in batches of up to 35
+
+**Risk:** `write`
+
+```ts
+await corsair.exist.api.attributes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attributes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  name: string,
+  date: string,
+  value?: string | number | boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `object[]` | Yes | — |
+| `failed` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="success full type">
+
+```ts
+{
+  name: string,
+  date: string,
+  value?: string | number | boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="failed full type">
+
+```ts
+{
+  error: string,
+  error_code: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Averages
+
+### list
+
+`averages.list`
+
+List weekly average values per attribute
+
+**Risk:** `read`
+
+```ts
+await corsair.exist.api.averages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `date_min` | `string` | No | — |
+| `date_max` | `string` | No | — |
+| `groups` | `string[]` | No | — |
+| `attributes` | `string[]` | No | — |
+| `include_historical` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  attribute: string,
+  date: string,
+  overall?: number | null,
+  monday?: number | null,
+  tuesday?: number | null,
+  wednesday?: number | null,
+  thursday?: number | null,
+  friday?: number | null,
+  saturday?: number | null,
+  sunday?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Correlations
+
+### list
+
+`correlations.list`
+
+List correlations Exist computed between the user's attributes
+
+**Risk:** `read`
+
+```ts
+await corsair.exist.api.correlations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `strong` | `boolean` | No | — |
+| `confident` | `boolean` | No | — |
+| `attribute` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  date: string,
+  period: number,
+  offset: number,
+  attribute: string,
+  attribute2: string,
+  value: number,
+  p: number,
+  percentage: number,
+  stars: number,
+  second_person: string,
+  second_person_elements: string[],
+  attribute_category?: string | null,
+  strength_description?: string | null,
+  stars_description?: string | null,
+  description?: string | null,
+  occurrence?: string | null,
+  rating?: {
+    positive: boolean,
+    rating_type: number,
+    rating: string
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Insights
+
+### list
+
+`insights.list`
+
+List insights Exist generated about the user's data
+
+**Risk:** `read`
+
+```ts
+await corsair.exist.api.insights.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `date_min` | `string` | No | — |
+| `date_max` | `string` | No | — |
+| `priority` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  created: string,
+  target_date?: string | null,
+  type: {
+    name: string,
+    period: number,
+    priority: number,
+    attribute?: {
+      name: string,
+      label: string,
+      group: {
+        name: string,
+        label: string,
+        priority: number
+      },
+      priority: number,
+      value_type: number,
+      value_type_description: string
+    } | null
+  },
+  html: string,
+  text: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Oauth
+
+### authorize
+
+`oauth.authorize`
+
+Build the Exist OAuth2 authorisation URL a user visits to grant access, with a CSRF state value; makes no API call
+
+**Risk:** `read`
+
+```ts
+await corsair.exist.api.oauth.authorize({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scopes` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `state` | `string` | Yes | — |
+| `scopes` | `string[]` | Yes | — |
+
+
+
+---
+
+## Users
+
+### getProfile
+
+`users.getProfile`
+
+Get the authenticated Exist user profile and unit preferences
+
+**Risk:** `read`
+
+```ts
+await corsair.exist.api.users.getProfile({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | Yes | — |
+| `avatar` | `string` | No | — |
+| `timezone` | `string` | Yes | — |
+| `local_time` | `string` | Yes | — |
+| `imperial_distance` | `boolean` | Yes | — |
+| `imperial_weight` | `boolean` | Yes | — |
+| `imperial_energy` | `boolean` | Yes | — |
+| `imperial_liquid` | `boolean` | Yes | — |
+| `imperial_temperature` | `boolean` | Yes | — |
+| `trial` | `boolean` | Yes | — |
+| `delinquent` | `boolean` | Yes | — |
+
+
+
+---
+

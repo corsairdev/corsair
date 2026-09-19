@@ -453,10 +453,11 @@ export function CorsairProvider({
 /**
  * Internal accessor for the raw Corsair Connect context — the management client
  * plus the connect/call API and the bits {@link CorsairErrorBoundary} relies on.
- * Not part of the public surface; app code uses {@link useConnections}. Throws if
- * used outside {@link CorsairProvider}.
+ * Not part of the public surface; app code uses {@link useConnections} or the
+ * public `useCorsair` (see `client/react/index.ts`). Throws if used outside
+ * {@link CorsairProvider}.
  */
-export function useCorsair(): CorsairContextValue {
+export function useCorsairContext(): CorsairContextValue {
 	const ctx = useContext(CorsairContext);
 	if (!ctx) {
 		throw new Error('useConnections must be used within <CorsairProvider>');
@@ -494,7 +495,8 @@ export type UseConnectionsResult = {
  * read regions gate through {@link CorsairErrorBoundary} (a Next `error.tsx`).
  */
 export function useConnections(): UseConnectionsResult {
-	const { connect, call, connections, connectionsLoading } = useCorsair();
+	const { connect, call, connections, connectionsLoading } =
+		useCorsairContext();
 	const isConnected = useCallback(
 		(plugin: string) => connections?.[plugin] === 'connected',
 		[connections],
