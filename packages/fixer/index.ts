@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Rates, Symbols } from './endpoints';
 import type {
 	FixerEndpointInputs,
@@ -184,10 +185,13 @@ export function fixer<const T extends FixerPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('fixer', 'api_key');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('fixer', 'api_key');
 		},
 	} satisfies InternalFixerPlugin;
 }

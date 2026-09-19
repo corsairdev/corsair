@@ -52,7 +52,7 @@ export type RatesHistoricalResponse = z.infer<
 export const RatesConvertInputSchema = z.object({
 	from: z.string(),
 	to: z.string(),
-	amount: z.number().positive(),
+	amount: z.number(),
 	date: z
 		.string()
 		.regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format')
