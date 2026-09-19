@@ -147,6 +147,21 @@ describe('DocusignClient', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('routes version-root global endpoints without the account suffix', async () => {
+		const client = makeClient();
+		await client.request('/v2.1/accounts/provisioning');
+		expect(lastCall().config.BASE).toBe(
+			'https://demo.docusign.net/restapi/v2.1',
+		);
+		expect(lastCall().options.url).toBe('/accounts/provisioning');
+
+		await client.request('/v2.1/billing_plans');
+		expect(lastCall().config.BASE).toBe(
+			'https://demo.docusign.net/restapi/v2.1',
+		);
+		expect(lastCall().options.url).toBe('/billing_plans');
+	});
+
 	it('rejects path traversal segments without calling the api', async () => {
 		const client = makeClient();
 		await expect(client.request('/templates/../accounts')).rejects.toThrow(

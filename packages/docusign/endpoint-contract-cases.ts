@@ -2751,27 +2751,11 @@ export const endpointContractCases: EndpointContractCase[] = [
 		hasBody: false,
 	},
 	{
-		name: 'listNotaryJournals',
+		name: 'getNotaryJurisdictionSeal',
 		method: 'GET',
-		path: '/v2.1/current_user/notary/journals',
-		pathParams: [],
-		queryParams: [
-			{
-				name: 'count',
-				type: 'string',
-				required: false,
-			},
-			{
-				name: 'search_text',
-				type: 'string',
-				required: false,
-			},
-			{
-				name: 'start_position',
-				type: 'string',
-				required: false,
-			},
-		],
+		path: '/v2.1/current_user/notary/jurisdictions/{jurisdictionId}/seal',
+		pathParams: ['jurisdictionId'],
+		queryParams: [],
 		hasBody: false,
 	},
 	{
