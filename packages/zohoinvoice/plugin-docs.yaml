@@ -9,6 +9,6 @@ overviewNote: |
   zohoinvoice({ region: 'eu' })
   ```
 
-  Most API calls are organization-scoped. Pass `organization_id` on every
+  Most API calls are organization-scoped. Pass `organizationId` on every
   request. OAuth tenant linking resolves the default organization during
   connection setup; it does not auto-fill endpoint inputs.
