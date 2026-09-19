@@ -1,4 +1,4 @@
-DROP TABLE `corsair_permissions`;--> statement-breakpoint
+DROP TABLE IF EXISTS `corsair_permissions`;--> statement-breakpoint
 
 CREATE TABLE `corsair_permissions` (
 	`id` text PRIMARY KEY NOT NULL,
@@ -14,4 +14,4 @@ CREATE TABLE `corsair_permissions` (
 	`error` text
 );
 --> statement-breakpoint
-CREATE INDEX `corsair_events_account_type_created_idx` ON `corsair_events` (`account_id`,`event_type`,`created_at`);
+CREATE INDEX IF NOT EXISTS `corsair_events_account_type_created_idx` ON `corsair_events` (`account_id`,`event_type`,`created_at`);
