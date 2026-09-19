@@ -1,0 +1,671 @@
+---
+title: API
+description: "API reference for Runpod: every `runpod.api.*` operation with input and output types."
+---
+
+Every `runpod.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### myself
+
+`account.myself`
+
+Get the authenticated RunPod user id, email, MFA, and SSH public key
+
+**Risk:** `read`
+
+```ts
+await corsair.runpod.api.account.myself({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `multiFactorEnabled` | `boolean` | No | — |
+| `pubKey` | `string` | No | — |
+
+
+
+---
+
+### updateSettings
+
+`account.updateSettings`
+
+Update the account SSH public key used for Pod access
+
+**Risk:** `write`
+
+```ts
+await corsair.runpod.api.account.updateSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pubKey` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `pubKey` | `string` | No | — |
+| `keys` | `string[]` | No | — |
+
+
+
+---
+
+## Catalog
+
+### cpuTypes
+
+`catalog.cpuTypes`
+
+List CPU types with vCPU range, RAM, and pricing
+
+**Risk:** `read`
+
+```ts
+await corsair.runpod.api.catalog.cpuTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include` | `AVAILABILITY` | No | — |
+| `product` | `POD \| SERVERLESS` | No | — |
+| `vcpuCount` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cpus` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="cpus full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  group: string,
+  vcpu: {
+    min: number,
+    max: number
+  },
+  ramGbPerVcpu: number,
+  price: {
+    securePerVcpu: number,
+    serverlessPerVcpu: number
+  },
+  availability?: NONE | LOW | MEDIUM | HIGH
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### gpuTypes
+
+`catalog.gpuTypes`
+
+List GPU types with memory, cloud availability, pricing, and stock
+
+**Risk:** `read`
+
+```ts
+await corsair.runpod.api.catalog.gpuTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `gpuCount` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  displayName?: string,
+  memoryInGb?: number,
+  secureCloud?: boolean,
+  communityCloud?: boolean,
+  lowestPrice?: {
+    uninterruptablePrice?: number | null,
+    stockStatus?: string | null,
+    availableGpuCounts?: number[] | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Clusters
+
+### create
+
+`clusters.create`
+
+Create a multi-node GPU cluster for distributed workloads
+
+**Risk:** `write`
+
+```ts
+await corsair.runpod.api.clusters.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `APPLICATION \| TRAINING \| SLURM \| RAY` | Yes | — |
+| `compute` | `object` | Yes | — |
+| `image` | `string` | No | — |
+| `disk` | `number` | No | — |
+| `env` | `object` | No | — |
+| `ports` | `string[]` | No | — |
+| `args` | `string` | No | — |
+| `dataCenterIds` | `string[]` | No | — |
+| `startJupyter` | `boolean` | No | — |
+| `startSsh` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="compute full type">
+
+```ts
+{
+  gpuTypeId: string,
+  gpuCountPerPod: number,
+  podCount: number
+}
+```
+</Accordion>
+
+<Accordion title="env full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `APPLICATION \| TRAINING \| SLURM \| RAY` | Yes | — |
+| `compute` | `object` | Yes | — |
+| `createdAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="compute full type">
+
+```ts
+{
+  gpuTypeId: string,
+  gpuCountPerPod: number,
+  podCount: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Endpoints
+
+### save
+
+`endpoints.save`
+
+Create or update a Serverless endpoint and scaling settings
+
+**Risk:** `write`
+
+```ts
+await corsair.runpod.api.endpoints.save({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `templateId` | `string` | Yes | — |
+| `gpuIds` | `string` | Yes | — |
+| `type` | `QB \| LB` | No | — |
+| `idleTimeout` | `number` | No | — |
+| `locations` | `string` | No | — |
+| `flashBootType` | `FLASHBOOT` | No | — |
+| `scalerType` | `QUEUE_DELAY \| REQUEST_COUNT` | No | — |
+| `scalerValue` | `number` | No | — |
+| `workersMin` | `number` | No | — |
+| `workersMax` | `number` | No | — |
+| `networkVolumeId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `gpuIds` | `string` | No | — |
+| `templateId` | `string` | No | — |
+| `idleTimeout` | `number` | No | — |
+| `locations` | `string` | No | — |
+| `flashBootType` | `string` | No | — |
+| `scalerType` | `string` | No | — |
+| `scalerValue` | `number` | No | — |
+| `workersMin` | `number` | No | — |
+| `workersMax` | `number` | No | — |
+
+
+
+---
+
+## Pods
+
+### get
+
+`pods.get`
+
+Get a Pod by id including status, cost, GPU, and memory
+
+**Risk:** `read`
+
+```ts
+await corsair.runpod.api.pods.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `podId` | `string` | Yes | — |
+| `includeMachine` | `boolean` | No | — |
+| `includeNetworkVolume` | `boolean` | No | — |
+| `includeSavingsPlans` | `boolean` | No | — |
+| `includeTemplate` | `boolean` | No | — |
+| `includeWorkers` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `image` | `string` | No | — |
+| `desiredStatus` | `RUNNING \| EXITED \| TERMINATED` | No | — |
+| `costPerHr` | `number` | No | — |
+| `memoryInGb` | `number` | No | — |
+| `vcpuCount` | `number` | No | — |
+| `gpu` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="gpu full type">
+
+```ts
+{
+  id?: string,
+  count?: number,
+  displayName?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`pods.list`
+
+List Pods with optional status, GPU, image, and location filters
+
+**Risk:** `read`
+
+```ts
+await corsair.runpod.api.pods.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `computeType` | `GPU \| CPU` | No | — |
+| `cpuFlavorId` | `string \| string[]` | No | — |
+| `dataCenterId` | `string \| string[]` | No | — |
+| `desiredStatus` | `RUNNING \| EXITED \| TERMINATED` | No | — |
+| `endpointId` | `string` | No | — |
+| `gpuTypeId` | `string \| string[]` | No | — |
+| `id` | `string` | No | — |
+| `imageName` | `string` | No | — |
+| `includeMachine` | `boolean` | No | — |
+| `includeNetworkVolume` | `boolean` | No | — |
+| `includeSavingsPlans` | `boolean` | No | — |
+| `includeTemplate` | `boolean` | No | — |
+| `includeWorkers` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `networkVolumeId` | `string` | No | — |
+| `templateId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  image?: string,
+  desiredStatus?: RUNNING | EXITED | TERMINATED,
+  costPerHr?: number,
+  memoryInGb?: number,
+  vcpuCount?: number,
+  gpu?: {
+    id?: string,
+    count?: number,
+    displayName?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Registries
+
+### delete
+
+`registries.delete`
+
+Delete stored container registry credentials
+
+**Risk:** `write`
+
+```ts
+await corsair.runpod.api.registries.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `containerRegistryAuthId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### save
+
+`registries.save`
+
+Store credentials for a private container registry
+
+**Risk:** `write`
+
+```ts
+await corsair.runpod.api.registries.save({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `username` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`registries.update`
+
+Update username or password for a saved registry auth
+
+**Risk:** `write`
+
+```ts
+await corsair.runpod.api.registries.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `username` | `string` | Yes | — |
+| `password` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+## Secrets
+
+### create
+
+`secrets.create`
+
+Create an encrypted secret referenced as RUNPOD_SECRET_<name>
+
+**Risk:** `write`
+
+```ts
+await corsair.runpod.api.secrets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+## Templates
+
+### delete
+
+`templates.delete`
+
+Delete a template that is not in use by pods or endpoints
+
+**Risk:** `write`
+
+```ts
+await corsair.runpod.api.templates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### save
+
+`templates.save`
+
+Create or update a reusable Pod or Serverless template
+
+**Risk:** `write`
+
+```ts
+await corsair.runpod.api.templates.save({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `imageName` | `string` | Yes | — |
+| `containerDiskInGb` | `number` | Yes | — |
+| `volumeInGb` | `number` | Yes | — |
+| `dockerArgs` | `string` | Yes | — |
+| `env` | `object[]` | No | — |
+| `ports` | `string` | No | — |
+| `readme` | `string` | No | — |
+| `volumeMountPath` | `string` | No | — |
+| `isServerless` | `boolean` | No | — |
+| `containerRegistryAuthId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="env full type">
+
+```ts
+{
+  key: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `imageName` | `string` | No | — |
+| `containerDiskInGb` | `number` | No | — |
+| `volumeInGb` | `number` | No | — |
+| `isServerless` | `boolean` | No | — |
+| `dockerArgs` | `string` | No | — |
+| `ports` | `string` | No | — |
+| `readme` | `string` | No | — |
+| `volumeMountPath` | `string` | No | — |
+| `env` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="env full type">
+
+```ts
+{
+  key: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
