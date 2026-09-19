@@ -1,0 +1,128 @@
+---
+title: Overview
+description: "Sports data API covering fixtures, standings, statistics, and live scores worldwide."
+---
+
+Use **API-Sports** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 67 typed API operations
+- 1 synced entity (`queries`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/apisports
+```
+```bash yarn
+yarn add corsair @corsair-dev/apisports
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/apisports
+```
+```bash bun
+bun add corsair @corsair-dev/apisports
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { apisports } from '@corsair-dev/apisports';
+
+export const corsair = createCorsair({
+	plugins: [
+		apisports(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+apisports()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'apisports',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`afl.getAflGamePlayerStatistics`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.apisports.api.afl.getAflGamePlayerStatistics({});
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/apisports/api) reference._
+
+
+See the full list on the [API](/plugins/apisports/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.apisports.db.<entity>.search()` and `.list()`: `queries`.
+
+See [Database](/plugins/apisports/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/apisports/api">
+    Every `apisports.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/apisports/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

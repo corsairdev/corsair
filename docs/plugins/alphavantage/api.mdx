@@ -1,0 +1,2578 @@
+---
+title: API
+description: "API reference for Alpha Vantage: every `alphavantage.api.*` operation with input and output types."
+---
+
+Every `alphavantage.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Commodities
+
+### all
+
+`commodities.all`
+
+Get the global commodities price index
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.commodities.all({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `monthly \| quarterly \| annual` | No | Sampling interval. Defaults to monthly. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### aluminum
+
+`commodities.aluminum`
+
+Get global aluminum prices
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.commodities.aluminum({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `monthly \| quarterly \| annual` | No | Sampling interval. Defaults to monthly. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### brent
+
+`commodities.brent`
+
+Get Brent crude oil prices
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.commodities.brent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `daily \| weekly \| monthly` | No | Sampling interval. Defaults to monthly. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### coffee
+
+`commodities.coffee`
+
+Get global coffee prices
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.commodities.coffee({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `monthly \| quarterly \| annual` | No | Sampling interval. Defaults to monthly. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### copper
+
+`commodities.copper`
+
+Get global copper prices
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.commodities.copper({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `monthly \| quarterly \| annual` | No | Sampling interval. Defaults to monthly. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### corn
+
+`commodities.corn`
+
+Get global corn prices
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.commodities.corn({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `monthly \| quarterly \| annual` | No | Sampling interval. Defaults to monthly. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### cotton
+
+`commodities.cotton`
+
+Get global cotton prices
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.commodities.cotton({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `monthly \| quarterly \| annual` | No | Sampling interval. Defaults to monthly. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sugar
+
+`commodities.sugar`
+
+Get global sugar prices
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.commodities.sugar({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `monthly \| quarterly \| annual` | No | Sampling interval. Defaults to monthly. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### wheat
+
+`commodities.wheat`
+
+Get global wheat prices
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.commodities.wheat({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `monthly \| quarterly \| annual` | No | Sampling interval. Defaults to monthly. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Crypto
+
+### daily
+
+`crypto.daily`
+
+Get daily bars for a digital currency
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.crypto.daily({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `market` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### intraday
+
+`crypto.intraday`
+
+Get intraday bars for a digital currency [PREMIUM PLAN]
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.crypto.intraday({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | Crypto ticker, e.g. BTC. |
+| `market` | `string` | Yes | Quote currency, e.g. USD. |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 60min` | Yes | — |
+| `outputsize` | `compact \| full` | No | compact returns the latest 100 points, full the full history. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### monthly
+
+`crypto.monthly`
+
+Get monthly bars for a digital currency
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.crypto.monthly({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `market` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### weekly
+
+`crypto.weekly`
+
+Get weekly bars for a digital currency
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.crypto.weekly({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `market` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Economic
+
+### cpi
+
+`economic.cpi`
+
+Get the US consumer price index
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.economic.cpi({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `monthly \| semiannual` | No | Sampling interval. Defaults to monthly. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### durables
+
+`economic.durables`
+
+Get US durable goods orders
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.economic.durables({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### federalFundsRate
+
+`economic.federalFundsRate`
+
+Get the US federal funds rate
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.economic.federalFundsRate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `daily \| weekly \| monthly` | No | Sampling interval. Defaults to monthly. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### inflation
+
+`economic.inflation`
+
+Get annual US inflation
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.economic.inflation({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### nonfarmPayroll
+
+`economic.nonfarmPayroll`
+
+Get US nonfarm payroll totals
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.economic.nonfarmPayroll({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### realGdp
+
+`economic.realGdp`
+
+Get US real gross domestic product
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.economic.realGdp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `quarterly \| annual` | No | Sampling interval. Defaults to annual. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### realGdpPerCapita
+
+`economic.realGdpPerCapita`
+
+Get US real GDP per capita
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.economic.realGdpPerCapita({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retailSales
+
+`economic.retailSales`
+
+Get US advance retail sales
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.economic.retailSales({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### treasuryYield
+
+`economic.treasuryYield`
+
+Get US treasury yield for a constant maturity
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.economic.treasuryYield({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `daily \| weekly \| monthly` | No | — |
+| `maturity` | `3month \| 2year \| 5year \| 7year \| 10year \| 30year` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unemployment
+
+`economic.unemployment`
+
+Get the US unemployment rate
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.economic.unemployment({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `string` | Yes | — |
+| `unit` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Forex
+
+### daily
+
+`forex.daily`
+
+Get daily bars for a currency pair
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.forex.daily({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_symbol` | `string` | Yes | — |
+| `to_symbol` | `string` | Yes | — |
+| `outputsize` | `compact \| full` | No | compact returns the latest 100 points, full the full history. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### exchangeRate
+
+`forex.exchangeRate`
+
+Get the current rate for a currency pair
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.forex.exchangeRate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_currency` | `string` | Yes | — |
+| `to_currency` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Realtime Currency Exchange Rate` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Realtime Currency Exchange Rate full type">
+
+```ts
+{
+  1. From_Currency Code: string,
+  2. From_Currency Name: string,
+  3. To_Currency Code: string,
+  4. To_Currency Name: string,
+  5. Exchange Rate: string,
+  6. Last Refreshed: string,
+  7. Time Zone: string,
+  8. Bid Price?: string,
+  9. Ask Price?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### intraday
+
+`forex.intraday`
+
+Get intraday bars for a currency pair [PREMIUM PLAN]
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.forex.intraday({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_symbol` | `string` | Yes | — |
+| `to_symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 60min` | Yes | — |
+| `outputsize` | `compact \| full` | No | compact returns the latest 100 points, full the full history. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### monthly
+
+`forex.monthly`
+
+Get monthly bars for a currency pair
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.forex.monthly({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_symbol` | `string` | Yes | — |
+| `to_symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### weekly
+
+`forex.weekly`
+
+Get weekly bars for a currency pair
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.forex.weekly({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_symbol` | `string` | Yes | — |
+| `to_symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fundamentals
+
+### balanceSheet
+
+`fundamentals.balanceSheet`
+
+Get annual and quarterly balance sheets
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.fundamentals.balanceSheet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `annualReports` | `object[]` | Yes | — |
+| `quarterlyReports` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="annualReports full type">
+
+```ts
+{
+  fiscalDateEnding: string,
+  reportedCurrency: string
+}[]
+```
+</Accordion>
+
+<Accordion title="quarterlyReports full type">
+
+```ts
+{
+  fiscalDateEnding: string,
+  reportedCurrency: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### cashFlow
+
+`fundamentals.cashFlow`
+
+Get annual and quarterly cash flow statements
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.fundamentals.cashFlow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `annualReports` | `object[]` | Yes | — |
+| `quarterlyReports` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="annualReports full type">
+
+```ts
+{
+  fiscalDateEnding: string,
+  reportedCurrency: string
+}[]
+```
+</Accordion>
+
+<Accordion title="quarterlyReports full type">
+
+```ts
+{
+  fiscalDateEnding: string,
+  reportedCurrency: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### companyOverview
+
+`fundamentals.companyOverview`
+
+Get a company profile with sector and valuation figures
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.fundamentals.companyOverview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Symbol` | `string` | Yes | — |
+| `AssetType` | `string` | No | — |
+| `Name` | `string` | No | — |
+| `Description` | `string` | No | — |
+| `CIK` | `string` | No | — |
+| `Exchange` | `string` | No | — |
+| `Currency` | `string` | No | — |
+| `Country` | `string` | No | — |
+| `Sector` | `string` | No | — |
+| `Industry` | `string` | No | — |
+| `Address` | `string` | No | — |
+| `OfficialSite` | `string` | No | — |
+| `FiscalYearEnd` | `string` | No | — |
+| `LatestQuarter` | `string` | No | — |
+| `MarketCapitalization` | `string` | No | — |
+| `EBITDA` | `string` | No | — |
+| `PERatio` | `string` | No | — |
+| `PEGRatio` | `string` | No | — |
+| `BookValue` | `string` | No | — |
+| `DividendPerShare` | `string` | No | — |
+| `DividendYield` | `string` | No | — |
+| `EPS` | `string` | No | — |
+| `RevenuePerShareTTM` | `string` | No | — |
+| `ProfitMargin` | `string` | No | — |
+| `OperatingMarginTTM` | `string` | No | — |
+| `ReturnOnAssetsTTM` | `string` | No | — |
+| `ReturnOnEquityTTM` | `string` | No | — |
+| `RevenueTTM` | `string` | No | — |
+| `GrossProfitTTM` | `string` | No | — |
+| `DilutedEPSTTM` | `string` | No | — |
+| `QuarterlyEarningsGrowthYOY` | `string` | No | — |
+| `QuarterlyRevenueGrowthYOY` | `string` | No | — |
+| `AnalystTargetPrice` | `string` | No | — |
+| `AnalystRatingStrongBuy` | `string` | No | — |
+| `AnalystRatingBuy` | `string` | No | — |
+| `AnalystRatingHold` | `string` | No | — |
+| `AnalystRatingSell` | `string` | No | — |
+| `AnalystRatingStrongSell` | `string` | No | — |
+| `TrailingPE` | `string` | No | — |
+| `ForwardPE` | `string` | No | — |
+| `PriceToSalesRatioTTM` | `string` | No | — |
+| `PriceToBookRatio` | `string` | No | — |
+| `EVToRevenue` | `string` | No | — |
+| `EVToEBITDA` | `string` | No | — |
+| `Beta` | `string` | No | — |
+| `52WeekHigh` | `string` | No | — |
+| `52WeekLow` | `string` | No | — |
+| `50DayMovingAverage` | `string` | No | — |
+| `200DayMovingAverage` | `string` | No | — |
+| `SharesOutstanding` | `string` | No | — |
+| `SharesFloat` | `string` | No | — |
+| `PercentInsiders` | `string` | No | — |
+| `PercentInstitutions` | `string` | No | — |
+| `DividendDate` | `string` | No | — |
+| `ExDividendDate` | `string` | No | — |
+
+
+
+---
+
+### dividends
+
+`fundamentals.dividends`
+
+Get historical and declared dividends
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.fundamentals.dividends({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ex_dividend_date: string,
+  declaration_date?: string,
+  record_date?: string,
+  payment_date?: string,
+  amount: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### earnings
+
+`fundamentals.earnings`
+
+Get reported and estimated earnings per share
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.fundamentals.earnings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `annualEarnings` | `object[]` | Yes | — |
+| `quarterlyEarnings` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="annualEarnings full type">
+
+```ts
+{
+  fiscalDateEnding: string,
+  reportedEPS: string
+}[]
+```
+</Accordion>
+
+<Accordion title="quarterlyEarnings full type">
+
+```ts
+{
+  fiscalDateEnding: string,
+  reportedDate: string,
+  reportedEPS: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### earningsCalendar
+
+`fundamentals.earningsCalendar`
+
+List upcoming earnings dates (CSV upstream)
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.fundamentals.earningsCalendar({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | No | — |
+| `horizon` | `3month \| 6month \| 12month` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### earningsCallTranscript
+
+`fundamentals.earningsCallTranscript`
+
+Get an earnings call transcript with per-speaker sentiment
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.fundamentals.earningsCallTranscript({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `quarter` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `quarter` | `string` | Yes | — |
+| `transcript` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="transcript full type">
+
+```ts
+{
+  speaker: string,
+  title?: string,
+  content: string,
+  sentiment?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### incomeStatement
+
+`fundamentals.incomeStatement`
+
+Get annual and quarterly income statements
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.fundamentals.incomeStatement({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `annualReports` | `object[]` | Yes | — |
+| `quarterlyReports` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="annualReports full type">
+
+```ts
+{
+  fiscalDateEnding: string,
+  reportedCurrency: string
+}[]
+```
+</Accordion>
+
+<Accordion title="quarterlyReports full type">
+
+```ts
+{
+  fiscalDateEnding: string,
+  reportedCurrency: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ipoCalendar
+
+`fundamentals.ipoCalendar`
+
+List IPOs expected in the next three months (CSV upstream)
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.fundamentals.ipoCalendar({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### splits
+
+`fundamentals.splits`
+
+Get historical stock splits
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.fundamentals.splits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  effective_date: string,
+  split_factor: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Intelligence
+
+### historicalOptions
+
+`intelligence.historicalOptions`
+
+Get a full options chain for one date [PREMIUM PLAN]
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.intelligence.historicalOptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint` | `string` | No | — |
+| `message` | `string` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  contractID: string,
+  symbol: string,
+  expiration: string,
+  strike: string,
+  type: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### newsSentiment
+
+`intelligence.newsSentiment`
+
+Get market news with article and ticker sentiment scores
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.intelligence.newsSentiment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tickers` | `string[]` | No | — |
+| `topics` | `string[]` | No | — |
+| `time_from` | `string` | No | — |
+| `time_to` | `string` | No | — |
+| `sort` | `LATEST \| EARLIEST \| RELEVANCE` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `string` | Yes | — |
+| `sentiment_score_definition` | `string` | Yes | — |
+| `relevance_score_definition` | `string` | Yes | — |
+| `feed` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="feed full type">
+
+```ts
+{
+  title: string,
+  url: string,
+  time_published: string,
+  summary: string,
+  source: string,
+  overall_sentiment_score: number,
+  overall_sentiment_label: string,
+  ticker_sentiment?: {
+    ticker: string,
+    relevance_score: string,
+    ticker_sentiment_score: string,
+    ticker_sentiment_label: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### slidingWindowAnalytics
+
+`intelligence.slidingWindowAnalytics`
+
+Get rolling-window statistics across a set of tickers
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.intelligence.slidingWindowAnalytics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbols` | `string[]` | Yes | — |
+| `range` | `string` | Yes | Lookback window, e.g. 2month, 6month, full. |
+| `interval` | `DAILY \| WEEKLY \| MONTHLY` | Yes | — |
+| `window_size` | `number` | Yes | — |
+| `calculations` | `string[]` | Yes | e.g. MEAN, STDDEV, CORRELATION. |
+| `ohlc` | `open \| high \| low \| close` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta_data` | `object` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meta_data full type">
+
+```ts
+{
+  symbols: string,
+  window_size: number,
+  min_dt: string,
+  max_dt: string,
+  ohlc: string,
+  interval: string
+}
+```
+</Accordion>
+
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Market
+
+### listingStatus
+
+`market.listingStatus`
+
+List every covered security, active or delisted (CSV upstream)
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.market.listingStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | No | — |
+| `state` | `active \| delisted` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### sector
+
+`market.sector`
+
+Get sector performance [DEPRECATED UPSTREAM: returns an empty body]
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.market.sector({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### status
+
+`market.status`
+
+Get the open or closed state of global exchanges
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.market.status({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint` | `string` | Yes | — |
+| `markets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="markets full type">
+
+```ts
+{
+  market_type: string,
+  region: string,
+  primary_exchanges: string,
+  local_open: string,
+  local_close: string,
+  current_status: string,
+  notes?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### symbolSearch
+
+`market.symbolSearch`
+
+Search securities by name or ticker fragment
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.market.symbolSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bestMatches` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="bestMatches full type">
+
+```ts
+{
+  1. symbol: string,
+  2. name: string,
+  3. type: string,
+  4. region: string,
+  5. marketOpen: string,
+  6. marketClose: string,
+  7. timezone: string,
+  8. currency: string,
+  9. matchScore: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### topGainersLosers
+
+`market.topGainersLosers`
+
+Get the top gainers, losers and most actively traded US tickers
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.market.topGainersLosers({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metadata` | `string` | Yes | — |
+| `last_updated` | `string` | Yes | — |
+| `top_gainers` | `object[]` | Yes | — |
+| `top_losers` | `object[]` | Yes | — |
+| `most_actively_traded` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="top_gainers full type">
+
+```ts
+{
+  ticker: string,
+  price: string,
+  change_amount: string,
+  change_percentage: string,
+  volume: string
+}[]
+```
+</Accordion>
+
+<Accordion title="top_losers full type">
+
+```ts
+{
+  ticker: string,
+  price: string,
+  change_amount: string,
+  change_percentage: string,
+  volume: string
+}[]
+```
+</Accordion>
+
+<Accordion title="most_actively_traded full type">
+
+```ts
+{
+  ticker: string,
+  price: string,
+  change_amount: string,
+  change_percentage: string,
+  volume: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Technical
+
+### indicator
+
+`technical.indicator`
+
+Calculate any technical indicator (SMA, EMA, RSI, MACD, ...)
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.technical.indicator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `indicator` | `string` | Yes | — |
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 60min \| daily \| weekly \| monthly` | Yes | — |
+| `time_period` | `number` | No | — |
+| `series_type` | `close \| open \| high \| low` | No | — |
+| `month` | `string` | No | — |
+| `extra_params` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="extra_params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Time Series
+
+### daily
+
+`timeSeries.daily`
+
+Get daily OHLCV bars
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.timeSeries.daily({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `outputsize` | `compact \| full` | No | compact returns the latest 100 points, full the full history. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### globalQuote
+
+`timeSeries.globalQuote`
+
+Get the latest price and volume for one ticker
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.timeSeries.globalQuote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Global Quote` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Global Quote full type">
+
+```ts
+{
+  01. symbol: string,
+  02. open: string,
+  03. high: string,
+  04. low: string,
+  05. price: string,
+  06. volume: string,
+  07. latest trading day: string,
+  08. previous close: string,
+  09. change: string,
+  10. change percent: string
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### intraday
+
+`timeSeries.intraday`
+
+Get intraday OHLCV bars at 1-60 minute resolution [PREMIUM PLAN]
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.timeSeries.intraday({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 60min` | Yes | — |
+| `adjusted` | `boolean` | No | — |
+| `extended_hours` | `boolean` | No | — |
+| `month` | `string` | No | — |
+| `outputsize` | `compact \| full` | No | compact returns the latest 100 points, full the full history. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### intradayExtended
+
+`timeSeries.intradayExtended`
+
+Get historical intraday bars beyond the default window [PREMIUM PLAN]
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.timeSeries.intradayExtended({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `interval` | `1min \| 5min \| 15min \| 30min \| 60min` | Yes | — |
+| `slice` | `string` | No | — |
+| `month` | `string` | No | — |
+| `adjusted` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### monthly
+
+`timeSeries.monthly`
+
+Get monthly OHLCV bars
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.timeSeries.monthly({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### monthlyAdjusted
+
+`timeSeries.monthlyAdjusted`
+
+Get monthly bars adjusted for splits and dividends
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.timeSeries.monthlyAdjusted({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### realtimeBulkQuotes
+
+`timeSeries.realtimeBulkQuotes`
+
+Get quotes for up to 100 tickers at once [PREMIUM PLAN]
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.timeSeries.realtimeBulkQuotes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbols` | `string[]` | Yes | Up to 100 tickers, sent to the API as a comma-separated list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint` | `string` | No | — |
+| `message` | `string` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  symbol: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### weekly
+
+`timeSeries.weekly`
+
+Get weekly OHLCV bars
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.timeSeries.weekly({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### weeklyAdjusted
+
+`timeSeries.weeklyAdjusted`
+
+Get weekly bars adjusted for splits and dividends
+
+**Risk:** `read`
+
+```ts
+await corsair.alphavantage.api.timeSeries.weeklyAdjusted({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Meta Data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta Data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
