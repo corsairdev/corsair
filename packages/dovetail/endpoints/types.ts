@@ -95,7 +95,8 @@ export const ChannelsCreateDataPointInputSchema = z.object({
 	text: z.string().min(1).max(5000000),
 	// Required by POST /v1/channels/data (OpenAPI required: text, channel_id, timestamp).
 	// Records when the feedback was originally received, in ISO 8601 format.
-	timestamp: z.string(),
+	// offset:true because ISO 8601 allows numeric timezone offsets, not just Z.
+	timestamp: z.iso.datetime({ offset: true }),
 	source_title: z.string().min(1).max(100).optional(),
 	source_url: z.string().min(1).max(5000).optional(),
 	// Justification: unknown is used here because metadata represents arbitrary key-value pairs associated with a data point

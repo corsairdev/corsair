@@ -1449,6 +1449,24 @@ describe('Dovetail plugin configuration', () => {
 				timestamp: '2025-01-01T00:00:00Z',
 			});
 		expect(valid.success).toBe(true);
+
+		// ISO 8601 with a numeric timezone offset is accepted
+		const withOffset =
+			DovetailEndpointInputSchemas.channelsCreateDataPoint.safeParse({
+				channel_id: 'chn_1',
+				text: 'Great product',
+				timestamp: '2025-01-01T00:00:00+05:30',
+			});
+		expect(withOffset.success).toBe(true);
+
+		// Non-datetime strings are rejected before any HTTP call
+		const invalid =
+			DovetailEndpointInputSchemas.channelsCreateDataPoint.safeParse({
+				channel_id: 'chn_1',
+				text: 'Great product',
+				timestamp: 'not-a-date',
+			});
+		expect(invalid.success).toBe(false);
 	});
 
 	it('requires title and exactly one of url/file_id for data.importFile (POST /v1/data/import/file)', () => {

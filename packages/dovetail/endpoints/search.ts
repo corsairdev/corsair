@@ -31,7 +31,10 @@ export const magicSearch: DovetailEndpoints['searchMagicSearch'] = async (
 	await logEventFromContext(
 		ctx,
 		'dovetail.search.magicSearch',
-		{ query: parsed.query },
+		{
+			...(parsed.limit !== undefined ? { limit: parsed.limit } : {}),
+			...(parsed.offset !== undefined ? { offset: parsed.offset } : {}),
+		},
 		'completed',
 	);
 	return validated;

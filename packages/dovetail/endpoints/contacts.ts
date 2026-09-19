@@ -31,7 +31,7 @@ export const create: DovetailEndpoints['contactsCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'dovetail.contacts.create',
-		{ id: validated.data.id, name: validated.data.name },
+		{ id: validated.data.id },
 		'completed',
 	);
 	return validated;
