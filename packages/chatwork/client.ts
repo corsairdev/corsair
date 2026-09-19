@@ -61,7 +61,7 @@ export async function makeChatworkRequest<T>(
 		headers['X-ChatWorkToken'] = token;
 	}
 
-	let requestBody: any;
+	let requestBody: string | Record<string, unknown> | undefined;
 	let effectiveMediaType = mediaType ?? 'application/json; charset=utf-8';
 
 	if (method === 'POST' || method === 'PUT') {
