@@ -1,0 +1,392 @@
+---
+title: Webhooks
+description: "Abyssale incoming webhooks: event paths, payloads, and response data."
+---
+
+The Abyssale plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/abyssale/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `banners`
+  - `batchCompleted` (`banners.batchCompleted`)
+  - `created` (`banners.created`)
+- `designs`
+  - `statusChanged` (`designs.statusChanged`)
+- `exports`
+  - `completed` (`exports.completed`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Banners
+
+### Batch Completed
+
+`banners.batchCompleted`
+
+An asynchronous batch generation request completed (NEW_BANNER_BATCH event)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `NEW_BANNER_BATCH` | Yes | — |
+| `generation_request_id` | `string` | Yes | — |
+| `banners` | `object[]` | Yes | — |
+| `errors` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="banners full type">
+
+```ts
+{
+  id: string,
+  version?: number,
+  sharing_id?: string,
+  file?: {
+    type?: string,
+    url?: string,
+    cdn_url?: string,
+    fallback_image_url?: string,
+    filename?: string
+  },
+  format?: {
+    id?: string,
+    width?: number,
+    height?: number,
+    unit?: string
+  },
+  template?: {
+    id?: string,
+    name?: string,
+    created_at?: number,
+    updated_at?: number
+  },
+  project?: {
+    id?: string,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  template_format_name: string,
+  reason: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: NEW_BANNER_BATCH,
+  generation_request_id: string,
+  banners: {
+    id: string,
+    version?: number,
+    sharing_id?: string,
+    file?: {
+      type?: string,
+      url?: string,
+      cdn_url?: string,
+      fallback_image_url?: string,
+      filename?: string
+    },
+    format?: {
+      id?: string,
+      width?: number,
+      height?: number,
+      unit?: string
+    },
+    template?: {
+      id?: string,
+      name?: string,
+      created_at?: number,
+      updated_at?: number
+    },
+    project?: {
+      id?: string,
+      name?: string
+    }
+  }[],
+  errors: {
+    template_format_name: string,
+    reason: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+abyssale({
+    webhookHooks: {
+        banners: {
+            batchCompleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Created
+
+`banners.created`
+
+A visual was generated or saved in Abyssale (NEW_BANNER event)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `NEW_BANNER` | Yes | — |
+| `id` | `string` | Yes | — |
+| `version` | `number` | No | — |
+| `sharing_id` | `string` | No | — |
+| `file` | `object` | No | — |
+| `format` | `object` | No | — |
+| `template` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  type?: string,
+  url?: string,
+  cdn_url?: string,
+  fallback_image_url?: string,
+  filename?: string
+}
+```
+</Accordion>
+
+<Accordion title="format full type">
+
+```ts
+{
+  id?: string,
+  width?: number,
+  height?: number,
+  unit?: string
+}
+```
+</Accordion>
+
+<Accordion title="template full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  created_at?: number,
+  updated_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: NEW_BANNER,
+  id: string,
+  version?: number,
+  sharing_id?: string,
+  file?: {
+    type?: string,
+    url?: string,
+    cdn_url?: string,
+    fallback_image_url?: string,
+    filename?: string
+  },
+  format?: {
+    id?: string,
+    width?: number,
+    height?: number,
+    unit?: string
+  },
+  template?: {
+    id?: string,
+    name?: string,
+    created_at?: number,
+    updated_at?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+abyssale({
+    webhookHooks: {
+        banners: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Designs
+
+### Status Changed
+
+`designs.statusChanged`
+
+A design's workflow status was updated (TEMPLATE_STATUS event)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `TEMPLATE_STATUS` | Yes | — |
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `created_at` | `number` | No | — |
+| `updated_at` | `number` | No | — |
+| `status_updated_at` | `number` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: TEMPLATE_STATUS,
+  id: string,
+  name?: string,
+  status: string,
+  created_at?: number,
+  updated_at?: number,
+  status_updated_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+abyssale({
+    webhookHooks: {
+        designs: {
+            statusChanged: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Exports
+
+### Completed
+
+`exports.completed`
+
+A workspace export archive finished processing (NEW_EXPORT event)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `NEW_EXPORT` | Yes | — |
+| `export_id` | `string` | Yes | — |
+| `archive_url` | `string` | Yes | — |
+| `requested_at` | `number` | No | — |
+| `generated_at` | `number` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: NEW_EXPORT,
+  export_id: string,
+  archive_url: string,
+  requested_at?: number,
+  generated_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+abyssale({
+    webhookHooks: {
+        exports: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

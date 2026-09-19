@@ -1,0 +1,4116 @@
+---
+title: API
+description: "API reference for Bitbucket: every `bitbucket.api.*` operation with input and output types."
+---
+
+Every `bitbucket.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Commits And Insights
+
+### createRepositoriesCommitReportsAnnotations
+
+`commitsAndInsights.createRepositoriesCommitReportsAnnotations`
+
+Adds multiple annotations to a commit report in bulk. Use when you need to add code analysis findings (vulnerabilities, code smells, bugs) to a report attached to a specific commit.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.createRepositoriesCommitReportsAnnotations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `commit` | `string` | Yes | — |
+| `reportId` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createRepositoriesCommits2
+
+`commitsAndInsights.createRepositoriesCommits2`
+
+Tool to list commits from a revision using POST method. Identical to GET endpoint but allows sending include/exclude parameters in request body to avoid URL length limits. Use when include/exclude parameters are too long for query strings.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.createRepositoriesCommits2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `body` | `object[]` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteCommitComment
+
+`commitsAndInsights.deleteCommitComment`
+
+Permanently deletes a specific comment on a commit. Use when removing outdated, incorrect, or unwanted feedback on a commit.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.deleteCommitComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string \| number` | Yes | — |
+| `commit` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### deleteRepositoriesCommitReportsAnnotations
+
+`commitsAndInsights.deleteRepositoriesCommitReportsAnnotations`
+
+Deletes a single annotation matching the provided ID from a commit report. Use when you need to remove a specific annotation from a code analysis report.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.deleteRepositoriesCommitReportsAnnotations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `commit` | `string` | Yes | — |
+| `reportId` | `string` | Yes | — |
+| `annotationId` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### getCommitBuildStatus
+
+`commitsAndInsights.getCommitBuildStatus`
+
+Get a specific build status for a commit in Bitbucket. Use when you need to check the status of a particular build/CI run for a commit.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.getCommitBuildStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commit` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCommitChanges
+
+`commitsAndInsights.getCommitChanges`
+
+Tool to retrieve a page of changes made in a specified commit, showing all changed files with their change statistics (lines added/removed, status). Use when you need to enumerate files modified in a specific commit or commit range.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.getCommitChanges({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `spec` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `ignore_whitespace` | `boolean` | No | — |
+| `merge` | `boolean` | No | — |
+| `path` | `string` | No | — |
+| `renames` | `boolean` | No | — |
+| `topic` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCommitComment
+
+`commitsAndInsights.getCommitComment`
+
+Retrieves a specific comment from a commit by its ID. Use when you need to fetch details of a particular commit comment including content, author, timestamps, and inline location.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.getCommitComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string \| number` | Yes | — |
+| `commit` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCommitDiff
+
+`commitsAndInsights.getCommitDiff`
+
+Tool to retrieve the unified diff between two provided revisions or for a single commit in a Bitbucket repository. Use when you need to see the actual code changes in a commit or between two commits. Supports filtering by file path and various diff options.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.getCommitDiff({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `spec` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `context` | `number` | No | — |
+| `path` | `string` | No | — |
+| `ignore_whitespace` | `boolean` | No | — |
+| `binary` | `boolean` | No | — |
+| `renames` | `boolean` | No | — |
+| `merge` | `boolean` | No | — |
+| `topic` | `boolean` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getRepositoriesCommit
+
+`commitsAndInsights.getRepositoriesCommit`
+
+Tool to retrieve detailed information about a specific commit in a Bitbucket repository. Use when you need to get complete commit details including author, message, date, parents, and related links.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commit` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesCommitComments
+
+`commitsAndInsights.getRepositoriesCommitComments`
+
+Retrieves all comments on a specific commit in a Bitbucket repository. Returns both global and inline code comments. Use when you need to view feedback, discussions, or notes left on a specific commit.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitComments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commit` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesCommitReport
+
+`commitsAndInsights.getRepositoriesCommitReport`
+
+Returns a single report matching the provided ID from a commit. Use when you need to retrieve details of a specific analysis report (e.g., security scan, code coverage, test results, or bug report) for a commit.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitReport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `commit` | `string` | Yes | — |
+| `reportId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesCommitReports
+
+`commitsAndInsights.getRepositoriesCommitReports`
+
+Tool to get reports linked to a specific commit. Use when you need to retrieve analysis results, test reports, security scans, or code coverage data associated with a commit.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitReports({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `commit` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesCommitReportsAnnotations
+
+`commitsAndInsights.getRepositoriesCommitReportsAnnotations`
+
+Returns a single annotation matching the provided ID from a commit report. Use when you need to retrieve details of a specific code analysis finding (e.g., vulnerability, code smell, or bug) identified in a commit.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitReportsAnnotations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `commit` | `string` | Yes | — |
+| `reportId` | `string` | Yes | — |
+| `annotationId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesCommitStatuses
+
+`commitsAndInsights.getRepositoriesCommitStatuses`
+
+Returns all build statuses (e.g., CI/CD pipeline results) for a specific commit. Use when you need to check build status, verify test results, or monitor deployment pipelines for a particular commit.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.getRepositoriesCommitStatuses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commit` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `refname` | `string` | No | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesMergeBase
+
+`commitsAndInsights.getRepositoriesMergeBase`
+
+Get the merge base (best common ancestor) between two commits in a Bitbucket repository. Use when you need to find the common ancestor commit between two branches or commits for comparison or merge operations.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.getRepositoriesMergeBase({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `revspec` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoryPatch
+
+`commitsAndInsights.getRepositoryPatch`
+
+Tool to retrieve the git patch content for a Bitbucket repository at a specified revision or commit range. Use when you need to review code changes, generate diffs, or analyze modifications between commits. Returns raw patch in unified diff format.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.getRepositoryPatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `spec` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### listCommits
+
+`commitsAndInsights.listCommits`
+
+Tool to retrieve a page of commits from a Bitbucket repository. Returns commits in reverse chronological order (newest first), similar to git log. Use when you need to browse commit history, filter commits by branch/tag, or restrict to commits affecting a specific path.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.listCommits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listCommitsFromRevision
+
+`commitsAndInsights.listCommitsFromRevision`
+
+Tool to list commits starting from a specific revision in a Bitbucket repository. Commits are paginated and returned in reverse chronological order. Use when you need to retrieve commit history from a specific commit, branch, or tag.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.listCommitsFromRevision({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `revision` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listCommitsOnMaster
+
+`commitsAndInsights.listCommitsOnMaster`
+
+Lists commits on the master branch of a Bitbucket repository. Use when you need to retrieve the commit history for the master branch, including commit messages, authors, dates, and parent relationships.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.listCommitsOnMaster({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateInsightsProjectsReposCommitsReports
+
+`commitsAndInsights.updateInsightsProjectsReposCommitsReports`
+
+Create or update an insight report for a commit. Creates a new report if it doesn't exist, or replaces the existing one if a report already exists for the given repository, commit, and report key. Note: replacing an existing report will be rejected if the authenticated user was not the creator of the specified report.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.updateInsightsProjectsReposCommitsReports({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `commit` | `string` | Yes | — |
+| `reportId` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateRepositoriesCommitComments
+
+`commitsAndInsights.updateRepositoriesCommitComments`
+
+Updates the contents of a comment on a commit. Use when you need to modify an existing comment's text on a commit.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.updateRepositoriesCommitComments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string \| number` | Yes | — |
+| `commit` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateRepositoriesCommitReportsAnnotations
+
+`commitsAndInsights.updateRepositoriesCommitReportsAnnotations`
+
+Creates or updates an individual annotation for a commit report. Use when you need to add or modify code analysis findings (vulnerabilities, code smells, or bugs) identified in a commit.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.commitsAndInsights.updateRepositoriesCommitReportsAnnotations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `commit` | `string` | Yes | — |
+| `reportId` | `string` | Yes | — |
+| `annotationId` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Issues
+
+### createIssue
+
+`issues.createIssue`
+
+Creates a new issue in a Bitbucket repository, setting the authenticated user as reporter; ensures assignee (if provided) has repository access, and that any specified milestone, version, or component IDs exist.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.issues.createIssue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  title: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createIssueComment
+
+`issues.createIssueComment`
+
+Adds a new comment with markdown support to an existing Bitbucket issue.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.issues.createIssueComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id` | `string \| number` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteIssue
+
+`issues.deleteIssue`
+
+Permanently deletes a specific issue, identified by its `issue_id`, from the repository specified by `repo_slug` within the given `workspace`.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.bitbucket.api.issues.deleteIssue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id` | `string \| number` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### getRepositoriesIssuesVote
+
+`issues.getRepositoriesIssuesVote`
+
+Tool to check whether the authenticated user has voted for a specific issue in a Bitbucket repository. Use when you need to verify if the current user has already voted on an issue before attempting to vote or unvote.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.issues.getRepositoriesIssuesVote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id` | `string \| number` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listIssues
+
+`issues.listIssues`
+
+Lists issues in a Bitbucket repository with optional filtering by state, priority, kind, or assignee. Use when you need to discover issue IDs or get an overview of repository issues.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.issues.listIssues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listVersions
+
+`issues.listVersions`
+
+Lists versions (milestones) in a Bitbucket repository's issue tracker. Use when you need to discover available versions for associating with issues, or to retrieve version IDs for use with create_issue.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.issues.listVersions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateIssue
+
+`issues.updateIssue`
+
+Updates an existing issue in a Bitbucket repository by modifying specified attributes; requires `workspace`, `repo_slug`, `issue_id`, and at least one attribute to update.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.issues.updateIssue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issue_id` | `string \| number` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  title?: string,
+  content?: {
+    raw: string
+  },
+  state?: new | open | resolved | on hold | invalid | duplicate | wontfix | closed,
+  kind?: bug | enhancement | proposal | task,
+  priority?: trivial | minor | major | critical | blocker,
+  assignee?: {
+  } | null,
+  milestone?: {
+  } | null,
+  component?: {
+  } | null,
+  version?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Pipelines And Deployments
+
+### createTeamsPipelinesConfigVariables
+
+`pipelinesAndDeployments.createTeamsPipelinesConfigVariables`
+
+Creates a team-level pipeline configuration variable in Bitbucket. Use when you need to add environment variables or configuration values that should be available to all pipelines within a team.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.createTeamsPipelinesConfigVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `body` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createUsersPipelinesConfigVariables
+
+`pipelinesAndDeployments.createUsersPipelinesConfigVariables`
+
+Creates a user-level pipeline variable for Bitbucket pipelines. Use when you need to create account-level configuration variables that can be used across all repositories owned by the user.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.createUsersPipelinesConfigVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `selected_user` | `string` | Yes | — |
+| `body` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteUserPipelineVariable
+
+`pipelinesAndDeployments.deleteUserPipelineVariable`
+
+Permanently deletes a user-level pipeline configuration variable identified by its UUID. Use this to remove pipeline variables that are no longer needed at the account level.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.deleteUserPipelineVariable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `selected_user` | `string` | Yes | — |
+| `variable_uuid` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### getDeploymentEnvironmentVariables
+
+`pipelinesAndDeployments.getDeploymentEnvironmentVariables`
+
+Retrieves deployment environment level variables for a specific Bitbucket repository environment. Use when you need to view or audit environment-specific configuration variables for deployments.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.getDeploymentEnvironmentVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `environment_uuid` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getOpenidConfiguration
+
+`pipelinesAndDeployments.getOpenidConfiguration`
+
+Retrieves the OpenID Connect discovery configuration for Bitbucket Pipelines OIDC. Use when integrating Bitbucket Pipelines with resource servers (AWS, GCP, Vault) using OpenID Connect authentication. Returns issuer URL, JWKS URI, and supported capabilities.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.getOpenidConfiguration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesEnvironments2
+
+`pipelinesAndDeployments.getRepositoriesEnvironments2`
+
+Retrieve detailed information about a specific deployment environment in a Bitbucket repository. Use when you need to get environment configuration, deployment settings, or check environment properties like locks and restrictions.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesEnvironments2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `environment_uuid` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesPipelines2
+
+`pipelinesAndDeployments.getRepositoriesPipelines2`
+
+Retrieve a specified pipeline from a Bitbucket repository. Use when you need to get detailed information about a specific pipeline execution including its status, build number, and results.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelines2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `pipeline_uuid` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesPipelinesConfigCaches
+
+`pipelinesAndDeployments.getRepositoriesPipelinesConfigCaches`
+
+Retrieves the repository pipelines caches. Use when you need to list all caches configured for Bitbucket Pipelines in a specific repository.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigCaches({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesPipelinesConfigRunners
+
+`pipelinesAndDeployments.getRepositoriesPipelinesConfigRunners`
+
+Retrieves the list of self-hosted runners configured for a repository's pipelines. Use when you need to view available runners for pipeline execution.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigRunners({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesPipelinesConfigSchedules
+
+`pipelinesAndDeployments.getRepositoriesPipelinesConfigSchedules`
+
+Retrieves configured pipeline schedules for a Bitbucket repository. Use when you need to view scheduled pipeline runs and their cron patterns.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigSchedules({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesPipelinesConfigSshKnownHosts
+
+`pipelinesAndDeployments.getRepositoriesPipelinesConfigSshKnownHosts`
+
+Retrieves repository-level SSH known hosts configured for Bitbucket Pipelines. Use when you need to list or verify SSH known hosts that Pipelines can connect to during builds.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigSshKnownHosts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesPipelinesConfigVariables
+
+`pipelinesAndDeployments.getRepositoriesPipelinesConfigVariables`
+
+Retrieves repository-level pipeline variables for a specific Bitbucket repository. Use when you need to view or audit pipeline configuration variables that are scoped to a repository.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesConfigVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesPipelinesSteps
+
+`pipelinesAndDeployments.getRepositoriesPipelinesSteps`
+
+Retrieves all steps for a given pipeline. Use when you need to inspect the individual steps of a pipeline execution, including their state, duration, and commands.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.getRepositoriesPipelinesSteps({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `pipeline_uuid` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listDeployments
+
+`pipelinesAndDeployments.listDeployments`
+
+Lists deployments for a specified Bitbucket repository. Use when you need to view deployment history and status across environments.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.listDeployments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listPipelines
+
+`pipelinesAndDeployments.listPipelines`
+
+Tool to find pipelines in a Bitbucket repository. Returns pipeline metadata including state, trigger, and duration. Use when you need to browse pipeline history or check pipeline status.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.listPipelines({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `creator.uuid` | `string` | No | — |
+| `target.ref_type` | `BRANCH \| TAG \| ANNOTATED_TAG` | No | — |
+| `target.ref_name` | `string` | No | — |
+| `target.branch` | `string` | No | — |
+| `target.commit.hash` | `string` | No | — |
+| `target.selector.pattern` | `string` | No | — |
+| `target.selector.type` | `BRANCH \| TAG \| CUSTOM \| PULLREQUESTS \| DEFAULT` | No | — |
+| `created_on` | `string` | No | — |
+| `trigger_type` | `PUSH \| MANUAL \| SCHEDULED \| PARENT_STEP` | No | — |
+| `status` | `PARSING \| PENDING \| PAUSED \| HALTED \| BUILDING \| ERROR \| PASSED \| FAILED \| STOPPED \| UNKNOWN` | No | — |
+| `sort` | `creator.uuid \| created_on \| run_creation_date` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listRepositoriesEnvironments
+
+`pipelinesAndDeployments.listRepositoriesEnvironments`
+
+List all deployment environments configured for a Bitbucket repository. Use when you need to view available environments for deployments, check environment configurations, or select an environment for deployment operations.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.listRepositoriesEnvironments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateTeamsPipelinesConfigVariables
+
+`pipelinesAndDeployments.updateTeamsPipelinesConfigVariables`
+
+Updates a team-level pipeline configuration variable in Bitbucket. Use when you need to modify existing environment variables or configuration values that are available to all pipelines within a team.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.updateTeamsPipelinesConfigVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `variable_uuid` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateUsersPipelinesConfigVariables
+
+`pipelinesAndDeployments.updateUsersPipelinesConfigVariables`
+
+Updates a user-level pipeline variable for Bitbucket pipelines. Use when you need to modify account-level configuration variables such as changing the value, key name, or security status.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.pipelinesAndDeployments.updateUsersPipelinesConfigVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `selected_user` | `string` | Yes | — |
+| `variable_uuid` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Pull Requests
+
+### approvePullRequest
+
+`pullRequests.approvePullRequest`
+
+Tool to approve a pull request as the authenticated user. Use when you need to formally approve changes in a pull request review process.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.pullRequests.approvePullRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pull_request_id` | `string \| number` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createPullRequest
+
+`pullRequests.createPullRequest`
+
+Creates a new pull request in a specified Bitbucket repository, ensuring the source branch exists and is distinct from the (optional) destination branch.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.pullRequests.createPullRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  title: string,
+  source: {
+    branch: {
+      name: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createPullRequestComment
+
+`pullRequests.createPullRequestComment`
+
+Creates a new comment on a Bitbucket pull request. Supports top-level comments, threaded replies, and inline code comments. Use when providing feedback on a PR, replying to existing comments, or commenting on specific code lines.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.pullRequests.createPullRequestComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pull_request_id` | `string \| number` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPullRequest
+
+`pullRequests.getPullRequest`
+
+Get a single pull request by ID with complete details.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pullRequests.getPullRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pull_request_id` | `string \| number` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPullRequestComment
+
+`pullRequests.getPullRequestComment`
+
+Tool to retrieve a specific comment from a pull request by its ID. Use when you need to fetch details of a particular pull request comment including content, author, timestamps, and inline location.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pullRequests.getPullRequestComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment_id` | `string \| number` | Yes | — |
+| `pull_request_id` | `string \| number` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPullRequestCommits
+
+`pullRequests.getPullRequestCommits`
+
+Tool to retrieve commits for a specified pull request. Use when reviewing the commit history of a PR or analyzing changes included in a pull request.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pullRequests.getPullRequestCommits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pull_request_id` | `string \| number` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPullRequestDiff
+
+`pullRequests.getPullRequestDiff`
+
+Tool to fetch the unified diff for a Bitbucket pull request (follows 302 redirect to repository diff). Use when reviewing code changes in a PR. Supports optional truncation for large diffs via max_chars parameter.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pullRequests.getPullRequestDiff({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pull_request_id` | `string \| number` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getPullRequestDiffstat
+
+`pullRequests.getPullRequestDiffstat`
+
+Tool to get the diffstat for a Bitbucket pull request, showing all changed files with their change statistics (lines added/removed, status). Use when you need to enumerate files modified in a PR.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pullRequests.getPullRequestDiffstat({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pull_request_id` | `string \| number` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesPullrequestsActivity
+
+`pullRequests.getRepositoriesPullrequestsActivity`
+
+Get paginated activity log for all pull requests in a repository. Returns comments, updates, approvals, and request changes. Use when you need to track pull request activity history.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pullRequests.getRepositoriesPullrequestsActivity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesPullrequestsComments
+
+`pullRequests.getRepositoriesPullrequestsComments`
+
+Retrieves a paginated list of comments on a specific pull request in a Bitbucket repository. Returns global, inline, and threaded comments. Use when you need to view feedback, discussions, or reviews left on a pull request.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pullRequests.getRepositoriesPullrequestsComments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pull_request_id` | `string \| number` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesPullrequestsStatuses
+
+`pullRequests.getRepositoriesPullrequestsStatuses`
+
+Returns all build statuses (e.g., CI/CD pipeline results) for a specific pull request. Use when you need to check build status, verify test results, or monitor deployment pipelines for a pull request.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pullRequests.getRepositoriesPullrequestsStatuses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pull_request_id` | `string \| number` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listPullRequests
+
+`pullRequests.listPullRequests`
+
+Lists pull requests in a specified, accessible Bitbucket repository, optionally filtering by state (OPEN, MERGED, DECLINED).
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pullRequests.listPullRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `state` | `OPEN \| MERGED \| DECLINED \| SUPERSEDED` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listPullRequestTasks
+
+`pullRequests.listPullRequestTasks`
+
+Lists all tasks associated with a pull request in a Bitbucket repository. Use when you need to view or track tasks on a PR.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.pullRequests.listPullRequestTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pull_request_id` | `string \| number` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `pagelen` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### requestPullRequestChanges
+
+`pullRequests.requestPullRequestChanges`
+
+Tool to request changes on a pull request as the authenticated user. Use when you need to formally request changes in a pull request review process, indicating the PR needs modifications before approval.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.pullRequests.requestPullRequestChanges({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pull_request_id` | `string \| number` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Repositories
+
+### createRepository
+
+`repositories.createRepository`
+
+Creates a new Bitbucket 'git' repository in a specified workspace, defaulting to the workspace's oldest project if `project_key` is not provided.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.repositories.createRepository({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `body` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteRepository
+
+`repositories.deleteRepository`
+
+Permanently deletes a specified Bitbucket repository; this action is irreversible and does not affect forks.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.bitbucket.api.repositories.deleteRepository({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `redirect_to` | `string` | No | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### getRepositoriesWatchers
+
+`repositories.getRepositoriesWatchers`
+
+Retrieves a paginated list of all the watchers on the specified repository. Use when you need to see who is watching a particular repository.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.repositories.getRepositoriesWatchers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepository
+
+`repositories.getRepository`
+
+Retrieves detailed information about a specific repository in a Bitbucket workspace. Use when you need to get repository metadata, settings, or details.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.repositories.getRepository({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listRepositories
+
+`repositories.listRepositories`
+
+Retrieves a paginated list of all public repositories on Bitbucket. Use when you need to discover or search across public repositories, optionally filtered by role, query string, creation date, or sorted by various fields.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.repositories.listRepositories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after` | `string` | No | — |
+| `role` | `admin \| contributor \| member \| owner` | No | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listRepositoriesInWorkspace
+
+`repositories.listRepositoriesInWorkspace`
+
+Lists repositories in a specified Bitbucket workspace, accessible to the authenticated user, with options to filter by role or query string, and sort results. Responses are paginated; iterate using the `next` field in each response until it is absent to retrieve all repositories.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.repositories.listRepositoriesInWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `role` | `admin \| contributor \| member \| owner` | No | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Search And Discovery
+
+### getHookEvents
+
+`searchAndDiscovery.getHookEvents`
+
+Retrieves a paginated list of all valid webhook events for a specified entity type (repository or workspace). Use when you need to discover available webhook event types for subscription or webhook configuration.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.searchAndDiscovery.getHookEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject_type` | `repository \| workspace` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getWorkspacesSearchCode
+
+`searchAndDiscovery.getWorkspacesSearchCode`
+
+Tool to search for code in the repositories of the specified workspace. Use when you need to find specific code patterns, function definitions, or text across all repositories in a workspace.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.searchAndDiscovery.getWorkspacesSearchCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `search_query` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### searchTeamCode
+
+`searchAndDiscovery.searchTeamCode`
+
+Search for code in repositories of a specified team. Matches can occur in file content or paths. Note: Teams endpoints were deprecated in Oct 2020; use workspace search endpoints for new integrations.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.searchAndDiscovery.searchTeamCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `search_query` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### searchUserRepositoriesCode
+
+`searchAndDiscovery.searchUserRepositoriesCode`
+
+Tool to search for code in the repositories of a specified user. Use when you need to find specific code patterns, functions, or text across all repositories owned by a user.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.searchAndDiscovery.searchUserRepositoriesCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `selected_user` | `string` | Yes | — |
+| `search_query` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Snippets
+
+### createSnippetComment
+
+`snippets.createSnippetComment`
+
+Posts a new top-level comment or a threaded reply to an existing comment on a specified Bitbucket snippet.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.snippets.createSnippetComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `encoded_id` | `string \| number` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteSnippetsWatch
+
+`snippets.deleteSnippetsWatch`
+
+Stops watching a specific snippet. Use when you want to unsubscribe from notifications for a snippet.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.snippets.deleteSnippetsWatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `encoded_id` | `string \| number` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### getSnippet
+
+`snippets.getSnippet`
+
+Retrieves a specific Bitbucket snippet by its encoded ID from an existing workspace, returning its metadata and file structure.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.snippets.getSnippet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `encoded_id` | `string \| number` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSnippetsWatch
+
+`snippets.getSnippetsWatch`
+
+Checks if the current user is watching a specific snippet. Use when you need to verify watch status for a snippet.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.snippets.getSnippetsWatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `encoded_id` | `string \| number` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listSnippets
+
+`snippets.listSnippets`
+
+Returns all snippets accessible to the authenticated user. Use when you need to discover or list snippets, optionally filtered by role (owner, contributor, or member).
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.snippets.listSnippets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `role` | `owner \| contributor \| member` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Source And Refs
+
+### browseRepositoryPath
+
+`sourceAndRefs.browseRepositoryPath`
+
+Tool to retrieve content for a file path or browse directory contents at a specified revision in a Bitbucket repository. Use when you need flexible access to repository content - returns raw file data for files or paginated directory listings for directories.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.sourceAndRefs.browseRepositoryPath({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commit` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `format` | `meta \| rendered` | No | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `max_depth` | `number` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createBranch
+
+`sourceAndRefs.createBranch`
+
+Creates a new branch in a Bitbucket repository from a target commit hash; the branch name must be unique, adhere to Bitbucket's naming conventions, and not include the 'refs/heads/' prefix.
+
+**Risk:** `write`
+
+```ts
+await corsair.bitbucket.api.sourceAndRefs.createBranch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  target: {
+    hash: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getBranch
+
+`sourceAndRefs.getBranch`
+
+Retrieves detailed information about a specific branch in a Bitbucket repository. Use when you need to get branch metadata, the commit it points to, or verify a branch exists.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.sourceAndRefs.getBranch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getFileFromRepository
+
+`sourceAndRefs.getFileFromRepository`
+
+Retrieves a specific file's content from a Bitbucket repository at a given commit (hash, branch, or tag), failing if the file path is invalid for that commit.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.sourceAndRefs.getFileFromRepository({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commit` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `format` | `meta \| rendered` | No | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `max_depth` | `number` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRawFileContent
+
+`sourceAndRefs.getRawFileContent`
+
+Tool to retrieve the raw content of a file from a Bitbucket repository at a specified commit, branch, or tag. Use when you need to read file contents from a specific revision.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.sourceAndRefs.getRawFileContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commit` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `format` | `meta \| rendered` | No | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `max_depth` | `number` | No | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getRepositoriesBranchingModel
+
+`sourceAndRefs.getRepositoriesBranchingModel`
+
+Return the branching model as applied to the repository. Use when you need to understand the repository's branch workflow configuration, including development/production branches and branch type prefixes.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.sourceAndRefs.getRepositoriesBranchingModel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesEffectiveBranchingModel
+
+`sourceAndRefs.getRepositoriesEffectiveBranchingModel`
+
+Retrieves the effective branching model for a Bitbucket repository, showing which branching model is currently applied (including any inheritance from project-level settings). Use when you need to understand the repository's branch workflow configuration, including development and production branches and branch type prefixes.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.sourceAndRefs.getRepositoriesEffectiveBranchingModel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesFilehistory
+
+`sourceAndRefs.getRepositoriesFilehistory`
+
+Returns a paginated list of commits that modified the specified file. Use when you need to track file changes over time, find who modified a file, or determine when a file was created or last changed.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.sourceAndRefs.getRepositoriesFilehistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commit` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `renames` | `string` | No | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesRefs
+
+`sourceAndRefs.getRepositoriesRefs`
+
+Returns the branches and tags in the repository. Use when you need to list all refs (both branches and tags) in a single API call with optional filtering by type, name pattern, or commit hash.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.sourceAndRefs.getRepositoriesRefs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesRefsTags
+
+`sourceAndRefs.getRepositoriesRefsTags`
+
+Retrieves detailed information about a specific tag in a Bitbucket repository. Use when you need to get tag metadata, target commit details, or verify a tag exists.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.sourceAndRefs.getRepositoriesRefsTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRepositoriesSrc
+
+`sourceAndRefs.getRepositoriesSrc`
+
+Lists the contents of the root directory on the repository's main branch without needing to specify a commit or branch. This endpoint redirects to the main branch automatically.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.sourceAndRefs.getRepositoriesSrc({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `format` | `meta` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listBranches
+
+`sourceAndRefs.listBranches`
+
+Lists branches in a Bitbucket repository with optional server-side filtering by name pattern (BBQL) and sorting. Use when you need to discover available branches, search for specific branch patterns, or navigate repository branch structure.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.sourceAndRefs.listBranches({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listRepositoryPaths
+
+`sourceAndRefs.listRepositoryPaths`
+
+Lists file and directory entries under a repository path at a given revision, with optional breadth-first recursion via max_depth for repository traversal and scanning. Fails if the path points to a file rather than a directory.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.sourceAndRefs.listRepositoryPaths({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commit` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `format` | `meta \| rendered` | No | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `max_depth` | `number` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listTags
+
+`sourceAndRefs.listTags`
+
+Lists tags in a Bitbucket repository with optional server-side filtering by name pattern or commit hash (BBQL) and sorting. Use when you need to discover available tags, search for specific tag patterns, or find tags pointing to specific commits.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.sourceAndRefs.listTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_slug` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Users And Permissions
+
+### getCurrentUser2
+
+`usersAndPermissions.getCurrentUser2`
+
+Tool to retrieve complete profile information for the currently authenticated Bitbucket user. Use when you need comprehensive user details including account_id, username, nickname, and other profile fields.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.usersAndPermissions.getCurrentUser2({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSshLatestKeys
+
+`usersAndPermissions.getSshLatestKeys`
+
+Retrieves a paginated list of SSH keys for a specified Bitbucket user. Use when you need to view or audit SSH keys configured for a user account.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.usersAndPermissions.getSshLatestKeys({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `selected_user` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUser
+
+`usersAndPermissions.getUser`
+
+Retrieves public profile information for a specific Bitbucket user by username or UUID. Use when you need to get user details like display name, avatar, creation date, and links to related resources.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.usersAndPermissions.getUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `selected_user` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserEmails
+
+`usersAndPermissions.getUserEmails`
+
+Returns all the authenticated user's email addresses, both confirmed and unconfirmed. Use when you need to retrieve all email addresses associated with the current user's account.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.usersAndPermissions.getUserEmails({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserEmails2
+
+`usersAndPermissions.getUserEmails2`
+
+Retrieves details about a specific email address for the authenticated user. Use when you need to check if an email is primary, confirmed, or verify email ownership.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.usersAndPermissions.getUserEmails2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserPermissionsRepositories
+
+`usersAndPermissions.getUserPermissionsRepositories`
+
+Returns an object for each repository the caller has explicit access to, including their permission level. Use when you need to discover which repositories the authenticated user can access and their specific permissions.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.usersAndPermissions.getUserPermissionsRepositories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserPermissionsWorkspaces
+
+`usersAndPermissions.getUserPermissionsWorkspaces`
+
+Retrieves workspace memberships and permission levels for the authenticated user. Returns an object for each workspace the caller is a member of, along with their effective role (highest privilege level). Use when you need to determine which workspaces a user can access and their permission level in each.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.usersAndPermissions.getUserPermissionsWorkspaces({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserWorkspaces
+
+`usersAndPermissions.getUserWorkspaces`
+
+Tool to retrieve all workspaces accessible to the authenticated user. Use when you need to list workspaces the current user can access, optionally filtered by workspace slug or permission level.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.usersAndPermissions.getUserWorkspaces({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | — |
+| `administrator` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Workspaces And Projects
+
+### getProjectsRepos
+
+`workspacesAndProjects.getProjectsRepos`
+
+Retrieves repositories from a project in a Bitbucket workspace. Use when you need to list all repositories belonging to a specific project key within a workspace.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.workspacesAndProjects.getProjectsRepos({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `role` | `admin \| contributor \| member \| owner` | No | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `project_key` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getWorkspace
+
+`workspacesAndProjects.getWorkspace`
+
+Retrieves detailed information about a specific Bitbucket workspace. Use when you need to get workspace metadata, settings, or details.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.workspacesAndProjects.getWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getWorkspacesPullrequests
+
+`workspacesAndProjects.getWorkspacesPullrequests`
+
+Tool to get all workspace pull requests authored by a specified user. Use when you need to retrieve pull requests created by a specific user across all repositories in a workspace.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.workspacesAndProjects.getWorkspacesPullrequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `selected_user` | `string` | Yes | — |
+| `workspace` | `string` | Yes | — |
+| `state` | `OPEN \| MERGED \| DECLINED \| SUPERSEDED` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listWorkspaceMembers
+
+`workspacesAndProjects.listWorkspaceMembers`
+
+Lists all members of a specified Bitbucket workspace; the workspace must exist.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.workspacesAndProjects.listWorkspaceMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listWorkspaceProjects
+
+`workspacesAndProjects.listWorkspaceProjects`
+
+Lists projects in a specified Bitbucket workspace. Use when you need to retrieve all projects belonging to a workspace.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.workspacesAndProjects.listWorkspaceProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listWorkspaces
+
+`workspacesAndProjects.listWorkspaces`
+
+Lists Bitbucket workspaces accessible to the authenticated user, optionally filtered and sorted. Results are paginated; follow the `next` field in each response to retrieve subsequent pages until `next` is absent. When multiple workspaces are returned, verify the correct `slug` or UUID before passing to downstream tools.
+
+**Risk:** `read`
+
+```ts
+await corsair.bitbucket.api.workspacesAndProjects.listWorkspaces({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `role` | `owner \| collaborator \| member` | No | — |
+| `q` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pagelen` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[] | string | number | boolean | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

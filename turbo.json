@@ -3,7 +3,7 @@
   "globalDependencies": [
     "package.json",
     "tsconfig.json",
-    "pnpm-lock.yaml",
+    "tsconfig.base.json",
     "pnpm-workspace.yaml"
   ],
   "tasks": {

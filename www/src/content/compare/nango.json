@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "title": "Corsair vs Nango",
+    "description": "Corsair vs Nango: typed SDK in your app, tokens in your database, built-in API calls, and agent permissions."
+  },
+  "hero": {
+    "competitor": "Nango",
+    "title": "Corsair vs Nango",
+    "description": "Corsair gives you a suite of operations for every plugin. Nango only offers authentication for most plugins."
+  },
+  "sections": [
+    {
+      "title": "Limited API Operations",
+      "body": "<p><p>Every Corsair plugin ships a full suite of typed operations out of the box. Inputs and outputs are inferred at compile time, so your app and agents get a real API surface (not just a connection and a passthrough).</p>"
+    },
+    {
+      "title": "Build-Time Type Safety",
+      "body": "<p>Every API operation has a schema: the arguments you send in the API and the response you receive. With Corsair, that schema is right in your SDK. TypeScript tells you on the spot if you called an operation correctly, so a lot of mistakes get caught while you're still writing code.</p><p>With Nango, the app-side types mostly default to <code>any</code>. Action names are strings and inputs and outputs aren't checked at build time. This means that operations can look fine until they break in run-time. Note that Nango does let you add your own types, but that's extra work on your end.</p>"
+    },
+    {
+      "title": "Credentials and Data Storage",
+      "body": "<p>Nango requires self-hosting if you don't want them to touch your data or credentials. This is a huge infra burden and lot of ongoing maintenance. With Corsair Hub, our hosted option, we never touch your data or credentials. They will always pass through from your app directly to the integration provider. This means you have the security of a self-hosted app without the associated maintenance burden.</p>"
+    },
+    {
+      "title": "Database Layer",
+      "body": "<p>With Corsair, all data is immediately cached in your database (not ours). This doesn't require dedicated syncs, as it does for Nango. An API operation serves as a sync so that when data comes in, your cached data is automatically up to date.</p><p>For example, if you send a Slack message through Corsair, it would automatically save it into the database. Later on, if that message is ever edited, Corsair processes the webhook and updates that exact Slack message's record. You do not have to wait for the next sync to pick up these changes.</p>"
+    }
+  ],
+  "recap": {
+    "title": "Recap",
+    "columns": {
+      "feature": "Feature",
+      "corsair": "Corsair",
+      "competitor": "Nango"
+    },
+    "rows": [
+      {
+        "feature": "API operations for all integrations",
+        "corsair": true,
+        "competitor": false
+      },
+      {
+        "feature": "Only you touch your credentials",
+        "corsair": true,
+        "competitor": false
+      },
+      {
+        "feature": "Automatically sync data to your database",
+        "corsair": true,
+        "competitor": false
+      },
+      {
+        "feature": "Permission modes + approval",
+        "corsair": true,
+        "competitor": false
+      },
+      {
+        "feature": "Fully-typed TypeScript API",
+        "corsair": true,
+        "competitor": false
+      },
+      { "feature": "OAuth connect", "corsair": true, "competitor": true },
+      { "feature": "Webhooks", "corsair": true, "competitor": true },
+      { "feature": "Self-hostable", "corsair": true, "competitor": true }
+    ],
+    "footer": "<p>Nango is a strong choice if you mainly need authorization.</p><p>Reach for Corsair if you need operations on every API, automatic data caching, and a more secure hosting option.</p>"
+  }
+}

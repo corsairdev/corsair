@@ -117,6 +117,8 @@
   "license": "Apache-2.0",
   "packageManager": "pnpm@10.20.0",
   "files": [
-    "dist"
+    "dist",
+    "scripts/postinstall-frpc.mjs",
+    "scripts/frpc-release.json"
   ]
 }

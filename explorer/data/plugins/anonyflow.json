@@ -1,0 +1,174 @@
+{
+  "id": "anonyflow",
+  "displayName": "Anonyflow",
+  "description": "Privacy-focused data tokenization service for protecting sensitive customer information.",
+  "npmPackageName": "@corsair-dev/anonyflow",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "anonyflow.api.core.anonymize",
+      "shortPath": "core.anonymize",
+      "description": "Anonymize sensitive data in text",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "The raw text to anonymize"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "anonymizedText",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anonyflow.api.core.anonymizePacket",
+      "shortPath": "core.anonymizePacket",
+      "description": "Encrypt field values within a data packet based on keys",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}",
+            "description": "The data packet to anonymize"
+          },
+          {
+            "key": "keys",
+            "optional": false,
+            "type": "string[]",
+            "description": "The keys within the data packet to anonymize"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anonyflow.api.core.deanonymize",
+      "shortPath": "core.deanonymize",
+      "description": "Restore original text from anonymized mapping",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "anonymizedText",
+            "optional": false,
+            "type": "string",
+            "description": "The anonymized text to decode"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "originalText",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anonyflow.api.core.deanonymizePacket",
+      "shortPath": "core.deanonymizePacket",
+      "description": "Decrypt field values within a data packet based on keys",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}",
+            "description": "The data packet to deanonymize"
+          },
+          {
+            "key": "keys",
+            "optional": false,
+            "type": "string[]",
+            "description": "The keys within the data packet to deanonymize"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "anonyflow.api.core.testConnection",
+      "shortPath": "core.testConnection",
+      "description": "Verify API key and connectivity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
