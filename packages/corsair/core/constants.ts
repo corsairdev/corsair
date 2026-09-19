@@ -269,6 +269,7 @@ export const BaseProviders = [
 	'todoist',
 	'toggl',
 	'trello',
+	'tripadvisor',
 	'twentyonerisk',
 	'twilio',
 	'twitter',
@@ -559,6 +560,7 @@ export const ProviderDisplayNames = {
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
+	tripadvisor: 'Tripadvisor',
 	twentyonerisk: 'TwentyOneRisk',
 	twilio: 'Twilio',
 	twitter: 'Twitter',
@@ -856,6 +858,7 @@ export type AllProviders =
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
+	| 'tripadvisor'
 	| 'twentyonerisk'
 	| 'twilio'
 	| 'twitter'
