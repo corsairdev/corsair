@@ -4,9 +4,9 @@
   "type": "module",
   "packageManager": "pnpm@10.20.0",
   "scripts": {
-    "build": "turbo --filter \"./packages/*\" build",
-    "dev": "turbo --filter \"./packages/*\" dev",
-    "clean": "turbo --filter \"./packages/*\" clean && rm -rf node_modules",
+    "build": "turbo --filter \"./packages/*\" --filter \"./adapters/*\" build",
+    "dev": "turbo --filter \"./packages/*\" --filter \"./adapters/*\" dev",
+    "clean": "turbo --filter \"./packages/*\" --filter \"./adapters/*\" clean && rm -rf node_modules",
     "format": "biome format . --write",
     "lint": "biome check .",
     "lint:fix": "biome check . --fix --unsafe",
@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.5",
+    "@openapitools/openapi-generator-cli": "2.41.0",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/bun": "^1.3.1",
     "@types/node": "^24.9.2",

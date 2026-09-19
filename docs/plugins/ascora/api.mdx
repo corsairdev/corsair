@@ -1,0 +1,1482 @@
+---
+title: API
+description: "API reference for Ascora: every `ascora.api.*` operation with input and output types."
+---
+
+Every `ascora.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Attachments
+
+### upload
+
+`attachments.upload`
+
+Upload a file attachment to an Ascora entity
+
+**Risk:** `write`
+
+```ts
+await corsair.ascora.api.attachments.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entityId` | `string` | Yes | Official entity GUID. |
+| `entityType` | `Enquiry \| Job \| Quotation \| Task \| SupplierInvoice \| Invoice \| Supply \| Customer` | Yes | Official `EntityType`. |
+| `fileName` | `string` | Yes | — |
+| `fileBase64` | `string` | Yes | File contents as base64. |
+| `contentType` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entityId` | `string` | No | — |
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+## Contacts
+
+### get
+
+`contacts.get`
+
+Get a contact by GUID
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | Official contact GUID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `contact` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  contactId: string,
+  customerId?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  emailAddress?: string | null,
+  phoneNumber?: string | null,
+  mobileNumber?: string | null,
+  faxNumber?: string | null,
+  defaultContact?: boolean,
+  contactRole?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`contacts.upsert`
+
+Create or update a contact on a customer
+
+**Risk:** `write`
+
+```ts
+await corsair.ascora.api.contacts.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | Official customer GUID. |
+| `contactId` | `string` | No | Set to update an existing contact. |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `emailAddress` | `string` | No | — |
+| `phoneNumber` | `string` | No | — |
+| `mobileNumber` | `string` | No | — |
+| `faxNumber` | `string` | No | — |
+| `defaultContact` | `boolean` | No | — |
+| `contactRole` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `contact` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  contactId: string,
+  customerId?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  emailAddress?: string | null,
+  phoneNumber?: string | null,
+  mobileNumber?: string | null,
+  faxNumber?: string | null,
+  defaultContact?: boolean,
+  contactRole?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customers
+
+### get
+
+`customers.get`
+
+Get a customer by GUID
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.customers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | Yes | Official customer GUID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `customer` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  customerId: string,
+  customerNumber?: string | null,
+  customerName?: string | null,
+  companyName?: string | null,
+  contactFirstName?: string | null,
+  contactLastName?: string | null,
+  emailAddress?: string | null,
+  phoneNumber?: string | null,
+  mobileNumber?: string | null,
+  onHold?: boolean,
+  billingCustomerOnHold?: boolean,
+  streetLine1?: string | null,
+  streetLine2?: string | null,
+  streetSuburb?: string | null,
+  streetPostcode?: string | null,
+  streetState?: string | null,
+  streetCountry?: string | null,
+  postalLine1?: string | null,
+  postalLine2?: string | null,
+  postalSuburb?: string | null,
+  postalState?: string | null,
+  postalPostcode?: string | null,
+  postalCountry?: string | null,
+  customerType?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  leadSource?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  billingCustomer?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  assignedUser?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  customFields?: {
+    fieldName?: string,
+    fieldValue?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers with optional filters (FilterText, type, assigned user, pagination)
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.customers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Official `Page`. Default 1. |
+| `pageSize` | `number` | No | Official `PageSize`. Default 250. |
+| `filterText` | `string` | No | Official `FilterText`. Customer number, email, phone, name. |
+| `customerType` | `string` | No | Official `CustomerType`. |
+| `leadSource` | `string` | No | Official `LeadSource`. |
+| `assignedUser` | `string` | No | Official `AssignedUser`. |
+| `siteBillingType` | `string` | No | Official `SiteBillingType`. Site / Billing / All. |
+| `phoneNumber` | `string` | No | Official `PhoneNumber`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+| `totalPages` | `number` | No | — |
+| `totalRecords` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  customerId: string,
+  customerNumber?: string | null,
+  customerName?: string | null,
+  companyName?: string | null,
+  contactFirstName?: string | null,
+  contactLastName?: string | null,
+  emailAddress?: string | null,
+  phoneNumber?: string | null,
+  mobileNumber?: string | null,
+  onHold?: boolean,
+  billingCustomerOnHold?: boolean,
+  streetLine1?: string | null,
+  streetLine2?: string | null,
+  streetSuburb?: string | null,
+  streetPostcode?: string | null,
+  streetState?: string | null,
+  streetCountry?: string | null,
+  postalLine1?: string | null,
+  postalLine2?: string | null,
+  postalSuburb?: string | null,
+  postalState?: string | null,
+  postalPostcode?: string | null,
+  postalCountry?: string | null,
+  customerType?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  leadSource?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  billingCustomer?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  assignedUser?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  customFields?: {
+    fieldName?: string,
+    fieldValue?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`customers.upsert`
+
+Create a customer or update one when customerId is provided
+
+**Risk:** `write`
+
+```ts
+await corsair.ascora.api.customers.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `string` | No | Set to update an existing customer. |
+| `customerNumber` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `contactFirstName` | `string` | No | — |
+| `contactLastName` | `string` | No | — |
+| `emailAddress` | `string` | No | — |
+| `phoneNumber` | `string` | No | — |
+| `mobileNumber` | `string` | No | — |
+| `onHold` | `boolean` | No | — |
+| `billingCustomerOnHold` | `boolean` | No | — |
+| `streetLine1` | `string` | No | — |
+| `streetLine2` | `string` | No | — |
+| `streetSuburb` | `string` | No | — |
+| `streetPostcode` | `string` | No | — |
+| `streetState` | `string` | No | — |
+| `streetCountry` | `string` | No | — |
+| `postalLine1` | `string` | No | — |
+| `postalLine2` | `string` | No | — |
+| `postalSuburb` | `string` | No | — |
+| `postalState` | `string` | No | — |
+| `postalPostcode` | `string` | No | — |
+| `postalCountry` | `string` | No | — |
+| `customerType` | `object` | No | — |
+| `leadSource` | `object` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customerType full type">
+
+```ts
+{
+  id?: string,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="leadSource full type">
+
+```ts
+{
+  id?: string,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  fieldName: string,
+  fieldValue: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `customer` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  customerId: string,
+  customerNumber?: string | null,
+  customerName?: string | null,
+  companyName?: string | null,
+  contactFirstName?: string | null,
+  contactLastName?: string | null,
+  emailAddress?: string | null,
+  phoneNumber?: string | null,
+  mobileNumber?: string | null,
+  onHold?: boolean,
+  billingCustomerOnHold?: boolean,
+  streetLine1?: string | null,
+  streetLine2?: string | null,
+  streetSuburb?: string | null,
+  streetPostcode?: string | null,
+  streetState?: string | null,
+  streetCountry?: string | null,
+  postalLine1?: string | null,
+  postalLine2?: string | null,
+  postalSuburb?: string | null,
+  postalState?: string | null,
+  postalPostcode?: string | null,
+  postalCountry?: string | null,
+  customerType?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  leadSource?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  billingCustomer?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  assignedUser?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  customFields?: {
+    fieldName?: string,
+    fieldValue?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Enquiries
+
+### create
+
+`enquiries.create`
+
+Create a quotation/enquiry (POST /Enquiry)
+
+**Risk:** `write`
+
+```ts
+await corsair.ascora.api.enquiries.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companyName` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `mobile` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `addressLine1` | `string` | No | — |
+| `addressLine2` | `string` | No | — |
+| `addressSuburb` | `string` | No | — |
+| `addressState` | `string` | No | — |
+| `addressPostcode` | `string` | No | — |
+| `addressCountry` | `string` | No | — |
+| `enquiryDescription` | `string` | No | — |
+| `leadSource` | `string` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+  fieldName: string,
+  fieldValue: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entityId` | `string` | No | — |
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+## Inventory
+
+### categories
+
+`inventory.categories`
+
+List inventory categories
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.inventory.categories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Official `Page`. Default 1. |
+| `pageSize` | `number` | No | Official `PageSize`. Default 250. |
+| `filterText` | `string` | No | Official `FilterText`. |
+| `parentOnly` | `boolean` | No | Official `ParentOnly`. |
+| `categoryNumber` | `number` | No | Official `CategoryNumber`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+| `totalPages` | `number` | No | — |
+| `totalRecords` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  categoryId: string,
+  name?: string | null,
+  categoryNumber?: number,
+  parentCategoryId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### kits
+
+`inventory.kits`
+
+List inventory kits
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.inventory.kits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Official `Page`. Default 1. |
+| `pageSize` | `number` | No | Official `PageSize`. Default 250. |
+| `filterText` | `string` | No | Official `FilterText`. |
+| `favouriteOnly` | `boolean` | No | Official `FavouriteOnly`. |
+| `categoryOneId` | `string` | No | Official `CategoryOneId`. |
+| `categoryTwoId` | `string` | No | Official `CategoryTwoId`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+| `totalPages` | `number` | No | — |
+| `totalRecords` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  kitId: string,
+  partNumber?: string | null,
+  description?: string | null,
+  annotation?: string | null,
+  markup?: number,
+  unitCostExTax?: number,
+  unitSellExTax?: number,
+  unitSellIncTax?: number,
+  isTaxable?: boolean,
+  isFavourite?: boolean,
+  pricingMethod?: string | null,
+  categoryOne?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  unitOfMeasure?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### supplies
+
+`inventory.supplies`
+
+List inventory supplies with pricing
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.inventory.supplies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Official `Page`. Default 1. |
+| `pageSize` | `number` | No | Official `PageSize`. Default 250. |
+| `filterText` | `string` | No | Official `FilterText`. |
+| `favouriteOnly` | `boolean` | No | Official `FavouriteOnly`. |
+| `categoryOneId` | `string` | No | Official `CategoryOneId`. |
+| `categoryTwoId` | `string` | No | Official `CategoryTwoId`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+| `totalPages` | `number` | No | — |
+| `totalRecords` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  supplyId: string,
+  partNumber?: string | null,
+  description?: string | null,
+  annotation?: string | null,
+  unitCostExTax?: number,
+  unitSellExTax?: number,
+  unitSellIncTax?: number,
+  averageCost?: number,
+  isTaxable?: boolean,
+  isFavourite?: boolean,
+  mustBeOrdered?: boolean,
+  packOrBoxQuantity?: number,
+  location?: string | null,
+  defaultSupplier?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  categoryOne?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  unitOfMeasure?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Jobs
+
+### get
+
+`jobs.get`
+
+Get a job by full job number (e.g. J1)
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.jobs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobNumber` | `string` | Yes | Official full job number, e.g. J1. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `job` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  jobId: string,
+  topLevelJobNumber?: string | null,
+  jobNumber?: string | null,
+  jobName?: string | null,
+  jobDescription?: string | null,
+  workUndertaken?: string | null,
+  jobStatus?: number,
+  jobStatusText?: string | null,
+  dateCreated?: string | null,
+  pricingMethod?: string | null,
+  totalIncTax?: number,
+  totalExTax?: number,
+  purchaseOrderNumber?: string | null,
+  clientOrderNumber?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  suburb?: string | null,
+  state?: string | null,
+  postcode?: string | null,
+  country?: string | null,
+  jobType?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  siteCustomer?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  billingCustomer?: {
+    id?: string | null,
+    name?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`jobs.list`
+
+List jobs filtered by status, type, dates, and assignment
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.jobs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Official `Page`. Default 1. |
+| `pageSize` | `number` | No | Official `PageSize`. Default 250. |
+| `jobStatus` | `string` | No | Official `JobStatus`. NEW, IN-PROGRESS, COMPLETED, CANCELLED, BOOKED, ALL-OPEN, ALL, etc. |
+| `jobType` | `string` | No | Official `JobType`. |
+| `assignedUser` | `string` | No | Official `AssignedUser`. |
+| `startDate` | `string` | No | Official `StartDate`. |
+| `endDate` | `string` | No | Official `EndDate`. |
+| `includeChildJobs` | `boolean` | No | Official `IncludeChildJobs`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+| `totalPages` | `number` | No | — |
+| `totalRecords` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  jobId: string,
+  topLevelJobNumber?: string | null,
+  jobNumber?: string | null,
+  jobName?: string | null,
+  jobDescription?: string | null,
+  workUndertaken?: string | null,
+  jobStatus?: number,
+  jobStatusText?: string | null,
+  dateCreated?: string | null,
+  pricingMethod?: string | null,
+  totalIncTax?: number,
+  totalExTax?: number,
+  purchaseOrderNumber?: string | null,
+  clientOrderNumber?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  suburb?: string | null,
+  state?: string | null,
+  postcode?: string | null,
+  country?: string | null,
+  jobType?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  siteCustomer?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  billingCustomer?: {
+    id?: string | null,
+    name?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`jobs.search`
+
+Search jobs by number, name, address, or customer name
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.jobs.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Official `Page`. Default 1. |
+| `pageSize` | `number` | No | Official `PageSize`. Default 250. |
+| `filterText` | `string` | No | Official `FilterText`. Job number, name, or address. |
+| `customerName` | `string` | No | Official `CustomerName`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+| `totalPages` | `number` | No | — |
+| `totalRecords` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  jobId: string,
+  topLevelJobNumber?: string | null,
+  jobNumber?: string | null,
+  jobName?: string | null,
+  jobDescription?: string | null,
+  workUndertaken?: string | null,
+  jobStatus?: number,
+  jobStatusText?: string | null,
+  dateCreated?: string | null,
+  pricingMethod?: string | null,
+  totalIncTax?: number,
+  totalExTax?: number,
+  purchaseOrderNumber?: string | null,
+  clientOrderNumber?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  suburb?: string | null,
+  state?: string | null,
+  postcode?: string | null,
+  country?: string | null,
+  jobType?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  siteCustomer?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  billingCustomer?: {
+    id?: string | null,
+    name?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Notes
+
+### create
+
+`notes.create`
+
+Create a note on an enquiry, job, quotation, invoice, or customer
+
+**Risk:** `write`
+
+```ts
+await corsair.ascora.api.notes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entityId` | `string` | Yes | Official entity GUID. |
+| `entityType` | `Enquiry \| Job \| Quotation \| Invoice \| Customer` | Yes | Official `entityType`. |
+| `noteContent` | `string` | Yes | Official `noteContent`. |
+| `createdByName` | `string` | No | Official `createdByName`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entityId` | `string` | No | — |
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+## Quotes
+
+### labourRoles
+
+`quotes.labourRoles`
+
+List labour roles and hourly rates for quotes
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.quotes.labourRoles({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  labourRoleId: string,
+  name?: string | null,
+  hourlyRateExTax?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`quotes.list`
+
+List quotes with optional status, date, and customer filters
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.quotes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Official `Page`. Default 1. |
+| `pageSize` | `number` | No | Official `PageSize`. Default 250. |
+| `filterText` | `string` | No | Official `FilterText`. |
+| `quoteStatus` | `string` | No | Official `QuoteStatus`. IN-PROGRESS, SENT-TO-CUSTOMER, OPEN, WON, LAST-7-DAYS, ALL, ACCEPTED. |
+| `jobType` | `string` | No | Official `JobType`. |
+| `assignedUser` | `string` | No | Official `AssignedUser`. |
+| `customerName` | `string` | No | Official `CustomerName`. |
+| `startDate` | `string` | No | Official `StartDate`. |
+| `endDate` | `string` | No | Official `EndDate`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+| `totalPages` | `number` | No | — |
+| `totalRecords` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  quoteId: string,
+  quoteNumber?: string | null,
+  quoteName?: string | null,
+  quoteDescription?: string | null,
+  quoteStatus?: number,
+  quotationDate?: string | null,
+  totalIncTax?: number,
+  totalExTax?: number,
+  pricingMethod?: string | null,
+  purchaseOrderNumber?: string | null,
+  clientOrderNumber?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  suburb?: string | null,
+  postcode?: string | null,
+  country?: string | null,
+  jobType?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  siteCustomer?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  billingCustomer?: {
+    id?: string | null,
+    name?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### standardSections
+
+`quotes.standardSections`
+
+List standard quote sections
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.quotes.standardSections({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string,
+  displayOrder?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### standardStages
+
+`quotes.standardStages`
+
+List standard quote stages
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.quotes.standardStages({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string,
+  displayOrder?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Supplier Invoices
+
+### list
+
+`supplierInvoices.list`
+
+List supplier invoices with optional pagination and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.supplierInvoices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Official `Page`. Default 1. |
+| `pageSize` | `number` | No | Official `PageSize`. Default 250. |
+| `supplierName` | `string` | No | Official `SupplierName`. |
+| `trackingNumber` | `string` | No | Official `TrackingNumber`. |
+| `toBeSentToAccounting` | `boolean` | No | Official `ToBeSentToAccounting`. |
+| `invoiceDateStart` | `string` | No | Official `InvoiceDateStart`. |
+| `invoiceDateEnd` | `string` | No | Official `InvoiceDateEnd`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+| `totalPages` | `number` | No | — |
+| `totalRecords` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  supplierInvoiceId: string,
+  supplier?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  createdOn?: string | null,
+  invoiceDate?: string | null,
+  dueDate?: string | null,
+  trackingNumber?: string | null,
+  accepted?: boolean,
+  type?: string | null,
+  accountCode?: string | null,
+  isExpense?: boolean,
+  sentToAccounts?: boolean,
+  totalAmountExTax?: number,
+  totalAmountIncTax?: number,
+  lines?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Suppliers
+
+### get
+
+`suppliers.get`
+
+Get a supplier by GUID
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.suppliers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `supplierId` | `string` | Yes | Official supplier GUID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `supplier` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="supplier full type">
+
+```ts
+{
+  supplierId: string,
+  supplierNumber?: string | null,
+  name?: string | null,
+  businessNumber?: string | null,
+  contactFirstName?: string | null,
+  contactLastName?: string | null,
+  notes?: string | null,
+  phone?: string | null,
+  fax?: string | null,
+  mobile?: string | null,
+  emailAddress?: string | null,
+  expenseAccount?: string | null,
+  streetLine1?: string | null,
+  streetLine2?: string | null,
+  streetSuburb?: string | null,
+  streetState?: string | null,
+  streetPostcode?: string | null,
+  postalLine1?: string | null,
+  postalLine2?: string | null,
+  postalSuburb?: string | null,
+  postalState?: string | null,
+  postalPostcode?: string | null,
+  invoiceDueDaysType?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`suppliers.list`
+
+List suppliers by name, number, or ABN
+
+**Risk:** `read`
+
+```ts
+await corsair.ascora.api.suppliers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Official `Page`. Default 1. |
+| `pageSize` | `number` | No | Official `PageSize`. Default 250. |
+| `supplierName` | `string` | No | Official `SupplierName`. |
+| `supplierNumber` | `string` | No | Official `SupplierNumber`. |
+| `businessNumber` | `string` | No | Official `BusinessNumber`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+| `totalPages` | `number` | No | — |
+| `totalRecords` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  supplierId: string,
+  supplierNumber?: string | null,
+  name?: string | null,
+  businessNumber?: string | null,
+  contactFirstName?: string | null,
+  contactLastName?: string | null,
+  notes?: string | null,
+  phone?: string | null,
+  fax?: string | null,
+  mobile?: string | null,
+  emailAddress?: string | null,
+  expenseAccount?: string | null,
+  streetLine1?: string | null,
+  streetLine2?: string | null,
+  streetSuburb?: string | null,
+  streetState?: string | null,
+  streetPostcode?: string | null,
+  postalLine1?: string | null,
+  postalLine2?: string | null,
+  postalSuburb?: string | null,
+  postalState?: string | null,
+  postalPostcode?: string | null,
+  invoiceDueDaysType?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`suppliers.upsert`
+
+Create a supplier or update one when supplierId is provided
+
+**Risk:** `write`
+
+```ts
+await corsair.ascora.api.suppliers.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `supplierId` | `string` | No | Set to update an existing supplier. |
+| `supplierNumber` | `string` | No | — |
+| `name` | `string` | No | — |
+| `businessNumber` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `fax` | `string` | No | — |
+| `mobile` | `string` | No | — |
+| `emailAddress` | `string` | No | — |
+| `streetLine1` | `string` | No | — |
+| `streetLine2` | `string` | No | — |
+| `streetSuburb` | `string` | No | — |
+| `streetState` | `string` | No | — |
+| `streetPostcode` | `string` | No | — |
+| `postalLine1` | `string` | No | — |
+| `postalLine2` | `string` | No | — |
+| `postalSuburb` | `string` | No | — |
+| `postalState` | `string` | No | — |
+| `postalPostcode` | `string` | No | — |
+| `contactFirstName` | `string` | No | — |
+| `contactLastName` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `supplier` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="supplier full type">
+
+```ts
+{
+  supplierId: string,
+  supplierNumber?: string | null,
+  name?: string | null,
+  businessNumber?: string | null,
+  contactFirstName?: string | null,
+  contactLastName?: string | null,
+  notes?: string | null,
+  phone?: string | null,
+  fax?: string | null,
+  mobile?: string | null,
+  emailAddress?: string | null,
+  expenseAccount?: string | null,
+  streetLine1?: string | null,
+  streetLine2?: string | null,
+  streetSuburb?: string | null,
+  streetState?: string | null,
+  streetPostcode?: string | null,
+  postalLine1?: string | null,
+  postalLine2?: string | null,
+  postalSuburb?: string | null,
+  postalState?: string | null,
+  postalPostcode?: string | null,
+  invoiceDueDaysType?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,2889 @@
+{
+  "id": "mailtrap",
+  "displayName": "Mailtrap",
+  "description": "Email testing and delivery platform for safe staging inboxes and transactional sending.",
+  "npmPackageName": "@corsair-dev/mailtrap",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 49,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "account_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "mailtrap.api.account.getBillingUsage",
+      "shortPath": "account.getBillingUsage",
+      "description": "Get billing usage against the account's testing/sending/marketing plan limits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ cycle_start?: string | null, cycle_end?: string | null }"
+          },
+          {
+            "key": "testing",
+            "optional": true,
+            "type": "{ plan?: { name?: string | null } | null, usage?: { sent_messages_count?: { current?: number | null, limit?: number | null } | null, forwarded_messages_count?: { current?: number | null, limit?: number | null } | null } | null }"
+          },
+          {
+            "key": "sending",
+            "optional": true,
+            "type": "{ plan?: { name?: string | null } | null, usage?: { sent_messages_count?: { current?: number | null, limit?: number | null } | null } | null }"
+          },
+          {
+            "key": "marketing",
+            "optional": true,
+            "type": "{ plan?: { name?: string | null } | null, usage?: { sent_messages_count?: { current?: number | null, limit?: number | null } | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.account.getPermissionResources",
+      "shortPath": "account.getPermissionResources",
+      "description": "Get every resource (inboxes, projects, domains, billing, account) the token has admin access to, nested by hierarchy",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "lazy[]"
+      }
+    },
+    {
+      "path": "mailtrap.api.account.listAccounts",
+      "shortPath": "account.listAccounts",
+      "description": "List Mailtrap accounts the token can access",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string | null, access_levels?: number[] | null }[]"
+      }
+    },
+    {
+      "path": "mailtrap.api.contactFields.create",
+      "shortPath": "contactFields.create",
+      "description": "Create a custom contact field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "merge_tag",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data_type",
+            "optional": false,
+            "type": "text | number | boolean | date"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "merge_tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_type",
+            "optional": true,
+            "type": "text | number | boolean | date"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.contactFields.delete",
+      "shortPath": "contactFields.delete",
+      "description": "Permanently delete a custom contact field, dropping its stored values off every contact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "mailtrap.api.contactFields.get",
+      "shortPath": "contactFields.get",
+      "description": "Get a custom contact field by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "merge_tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_type",
+            "optional": true,
+            "type": "text | number | boolean | date"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.contactFields.list",
+      "shortPath": "contactFields.list",
+      "description": "List custom contact fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, merge_tag?: string | null, data_type?: text | number | boolean | date | null, created_at?: number | null, updated_at?: number | null }[]"
+      }
+    },
+    {
+      "path": "mailtrap.api.contactFields.update",
+      "shortPath": "contactFields.update",
+      "description": "Update a custom contact field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merge_tag",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "merge_tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_type",
+            "optional": true,
+            "type": "text | number | boolean | date"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.contactLists.create",
+      "shortPath": "contactLists.create",
+      "description": "Create a contact list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.contactLists.delete",
+      "shortPath": "contactLists.delete",
+      "description": "Permanently delete a contact list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "mailtrap.api.contactLists.get",
+      "shortPath": "contactLists.get",
+      "description": "Get a contact list by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.contactLists.list",
+      "shortPath": "contactLists.list",
+      "description": "List contact lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string }[]"
+      }
+    },
+    {
+      "path": "mailtrap.api.contactLists.update",
+      "shortPath": "contactLists.update",
+      "description": "Rename a contact list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "unsubscribed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "subscribed | unsubscribed"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.contacts.createEvent",
+      "shortPath": "contacts.createEvent",
+      "description": "Record a custom event against a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.contacts.createExport",
+      "shortPath": "contacts.createExport",
+      "description": "Start an async export of contacts matching a filter",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "{ name: string, operator: equal | not_equal | contains | not_contains | is_empty | is_not_empty, value: string | number | boolean | string[] | number[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "started | created | finished"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Permanently delete a contact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "mailtrap.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a contact by id or email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "subscribed | unsubscribed"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.contacts.getExport",
+      "shortPath": "contacts.getExport",
+      "description": "Get the status/download URL of a contact export job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "export_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "started | created | finished"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.contacts.getImport",
+      "shortPath": "contacts.getImport",
+      "description": "Get the status of a contact import job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "import_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "created | started | finished | failed"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_contacts_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_contacts_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "contacts_over_limit_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.contacts.import",
+      "shortPath": "contacts.import",
+      "description": "Bulk-import contacts, upserting by email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ email: string, fields?: {}, list_ids_included?: number[], list_ids_excluded?: number[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "created | started | finished | failed"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_contacts_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_contacts_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "contacts_over_limit_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact by id or email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "unsubscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "list_ids_included",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "list_ids_excluded",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "subscribed | unsubscribed"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.emailTemplates.create",
+      "shortPath": "emailTemplates.create",
+      "description": "Create an email template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body_html",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body_text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body_html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.emailTemplates.delete",
+      "shortPath": "emailTemplates.delete",
+      "description": "Permanently delete an email template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "mailtrap.api.emailTemplates.get",
+      "shortPath": "emailTemplates.get",
+      "description": "Get an email template by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body_html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.emailTemplates.list",
+      "shortPath": "emailTemplates.list",
+      "description": "List email templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, uuid?: string | null, name: string, subject?: string | null, category?: string | null, body_html?: string | null, body_text?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "mailtrap.api.emailTemplates.update",
+      "shortPath": "emailTemplates.update",
+      "description": "Update an email template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body_html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body_text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body_html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.inboxes.clean",
+      "shortPath": "inboxes.clean",
+      "description": "Delete every message in a sandbox inbox",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inbox_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_username_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sent_messages_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "forwarded_messages_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "used",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "forward_from_email_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pop3_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "api_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "smtp_ports",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "pop3_ports",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "emails_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "emails_unread_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_message_sent_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_message_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.inboxes.get",
+      "shortPath": "inboxes.get",
+      "description": "Get an inbox's attributes, including its SMTP credentials",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inbox_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_username_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sent_messages_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "forwarded_messages_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "used",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "forward_from_email_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pop3_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "api_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "smtp_ports",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "pop3_ports",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "emails_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "emails_unread_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_message_sent_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_message_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.inboxes.list",
+      "shortPath": "inboxes.list",
+      "description": "List sandbox inboxes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, username?: string | null, password?: string | null, max_size?: number | null, status?: string | null, email_username?: string | null, email_username_enabled?: boolean | null, sent_messages_count?: number | null, forwarded_messages_count?: number | null, used?: boolean | null, forward_from_email_address?: string | null, project_id?: number | null, domain?: string | null, pop3_domain?: string | null, email_domain?: string | null, api_domain?: string | null, smtp_ports?: number[] | null, pop3_ports?: number[] | null, emails_count?: number | null, emails_unread_count?: number | null, last_message_sent_at?: string | null, max_message_size?: number | null, permissions?: { can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null }[]"
+      }
+    },
+    {
+      "path": "mailtrap.api.inboxes.markAsRead",
+      "shortPath": "inboxes.markAsRead",
+      "description": "Mark every message in a sandbox inbox as read",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inbox_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_username_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sent_messages_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "forwarded_messages_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "used",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "forward_from_email_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pop3_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "api_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "smtp_ports",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "pop3_ports",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "emails_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "emails_unread_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_message_sent_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_message_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.inboxes.resetCredentials",
+      "shortPath": "inboxes.resetCredentials",
+      "description": "Reset an inbox's SMTP credentials, invalidating the previous ones",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inbox_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_username_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sent_messages_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "forwarded_messages_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "used",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "forward_from_email_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pop3_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "api_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "smtp_ports",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "pop3_ports",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "emails_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "emails_unread_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_message_sent_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_message_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.inboxes.update",
+      "shortPath": "inboxes.update",
+      "description": "Update an inbox's name and/or email username",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inbox_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_username",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_username_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sent_messages_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "forwarded_messages_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "used",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "forward_from_email_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pop3_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "api_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "smtp_ports",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "pop3_ports",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "emails_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "emails_unread_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_message_sent_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_message_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.messages.getHtml",
+      "shortPath": "messages.getHtml",
+      "description": "Get the formatted HTML body of a message",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inbox_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List messages in a sandbox inbox",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inbox_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "last_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, inbox_id?: number | null, subject?: string | null, sent_at?: string | null, from_email?: string | null, from_name?: string | null, to_email?: string | null, to_name?: string | null, email_size?: number | null, is_read?: boolean | null, created_at?: string | null, updated_at?: string | null, html_body_size?: number | null, text_body_size?: number | null, human_size?: string | null, html_path?: string | null, txt_path?: string | null, raw_path?: string | null, download_path?: string | null, html_source_path?: string | null }[]"
+      }
+    },
+    {
+      "path": "mailtrap.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Permanently delete a project and every inbox in it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a project and its inboxes by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "share_links",
+            "optional": true,
+            "type": "{ admin?: string | null, viewer?: string | null }"
+          },
+          {
+            "key": "inboxes",
+            "optional": true,
+            "type": "{ id: number, name: string, username?: string | null, password?: string | null, max_size?: number | null, status?: string | null, email_username?: string | null, email_username_enabled?: boolean | null, sent_messages_count?: number | null, forwarded_messages_count?: number | null, used?: boolean | null, forward_from_email_address?: string | null, project_id?: number | null, domain?: string | null, pop3_domain?: string | null, email_domain?: string | null, api_domain?: string | null, smtp_ports?: number[] | null, pop3_ports?: number[] | null, emails_count?: number | null, emails_unread_count?: number | null, last_message_sent_at?: string | null, max_message_size?: number | null, permissions?: { can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null }[]"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects and their sandbox inboxes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, share_links?: { admin?: string | null, viewer?: string | null } | null, inboxes?: { id: number, name: string, username?: string | null, password?: string | null, max_size?: number | null, status?: string | null, email_username?: string | null, email_username_enabled?: boolean | null, sent_messages_count?: number | null, forwarded_messages_count?: number | null, used?: boolean | null, forward_from_email_address?: string | null, project_id?: number | null, domain?: string | null, pop3_domain?: string | null, email_domain?: string | null, api_domain?: string | null, smtp_ports?: number[] | null, pop3_ports?: number[] | null, emails_count?: number | null, emails_unread_count?: number | null, last_message_sent_at?: string | null, max_message_size?: number | null, permissions?: { can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null }[] | null, permissions?: { can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null }[]"
+      }
+    },
+    {
+      "path": "mailtrap.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Rename a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "share_links",
+            "optional": true,
+            "type": "{ admin?: string | null, viewer?: string | null }"
+          },
+          {
+            "key": "inboxes",
+            "optional": true,
+            "type": "{ id: number, name: string, username?: string | null, password?: string | null, max_size?: number | null, status?: string | null, email_username?: string | null, email_username_enabled?: boolean | null, sent_messages_count?: number | null, forwarded_messages_count?: number | null, used?: boolean | null, forward_from_email_address?: string | null, project_id?: number | null, domain?: string | null, pop3_domain?: string | null, email_domain?: string | null, api_domain?: string | null, smtp_ports?: number[] | null, pop3_ports?: number[] | null, emails_count?: number | null, emails_unread_count?: number | null, last_message_sent_at?: string | null, max_message_size?: number | null, permissions?: { can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null } | null }[]"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "{ can_read?: boolean | null, can_update?: boolean | null, can_destroy?: boolean | null, can_leave?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.sendingDomains.create",
+      "shortPath": "sendingDomains.create",
+      "description": "Register a sending domain for DNS verification",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "domain_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "demo",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inbound_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inbound_verified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "open_tracking_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "click_tracking_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "auto_unsubscribe_link_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_domain_tracking_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "health_alerts_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "critical_alerts_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "alert_recipient_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dns_records",
+            "optional": true,
+            "type": "{ key?: string | null, domain?: string | null, name?: string | null, type?: string | null, value?: string | null, status?: string | null, actual?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.sendingDomains.delete",
+      "shortPath": "sendingDomains.delete",
+      "description": "Permanently remove a sending domain",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "mailtrap.api.sendingDomains.get",
+      "shortPath": "sendingDomains.get",
+      "description": "Get a sending domain by id, including its DNS records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "domain_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "demo",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inbound_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inbound_verified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "open_tracking_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "click_tracking_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "auto_unsubscribe_link_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_domain_tracking_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "health_alerts_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "critical_alerts_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "alert_recipient_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dns_records",
+            "optional": true,
+            "type": "{ key?: string | null, domain?: string | null, name?: string | null, type?: string | null, value?: string | null, status?: string | null, actual?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.sendingDomains.list",
+      "shortPath": "sendingDomains.list",
+      "description": "List sending domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, domain_name: string, demo?: boolean | null, inbound_enabled?: boolean | null, inbound_verified?: boolean | null, open_tracking_enabled?: boolean | null, click_tracking_enabled?: boolean | null, auto_unsubscribe_link_enabled?: boolean | null, custom_domain_tracking_enabled?: boolean | null, health_alerts_enabled?: boolean | null, critical_alerts_enabled?: boolean | null, alert_recipient_email?: string | null, dns_records?: { key?: string | null, domain?: string | null, name?: string | null, type?: string | null, value?: string | null, status?: string | null, actual?: string | null }[] | null }[]"
+      }
+    },
+    {
+      "path": "mailtrap.api.stats.byCategories",
+      "shortPath": "stats.byCategories",
+      "description": "Get sending stats broken down by category",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sending_domain_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "sending_streams",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "email_service_providers",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ category?: string | null, stats: { delivery_count?: number | null, delivery_rate?: number | null, bounce_count?: number | null, bounce_rate?: number | null, open_count?: number | null, open_rate?: number | null, click_count?: number | null, click_rate?: number | null, spam_count?: number | null, spam_rate?: number | null } }[]"
+      }
+    },
+    {
+      "path": "mailtrap.api.stats.byDate",
+      "shortPath": "stats.byDate",
+      "description": "Get sending stats broken down by day",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sending_domain_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "sending_streams",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "email_service_providers",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ date?: string | null, stats: { delivery_count?: number | null, delivery_rate?: number | null, bounce_count?: number | null, bounce_rate?: number | null, open_count?: number | null, open_rate?: number | null, click_count?: number | null, click_rate?: number | null, spam_count?: number | null, spam_rate?: number | null } }[]"
+      }
+    },
+    {
+      "path": "mailtrap.api.stats.byDomains",
+      "shortPath": "stats.byDomains",
+      "description": "Get sending stats broken down by sending domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sending_domain_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "sending_streams",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "email_service_providers",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ sending_domain_id?: number | null, stats: { delivery_count?: number | null, delivery_rate?: number | null, bounce_count?: number | null, bounce_rate?: number | null, open_count?: number | null, open_rate?: number | null, click_count?: number | null, click_rate?: number | null, spam_count?: number | null, spam_rate?: number | null } }[]"
+      }
+    },
+    {
+      "path": "mailtrap.api.stats.byEsp",
+      "shortPath": "stats.byEsp",
+      "description": "Get sending stats broken down by recipient email service provider",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sending_domain_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "sending_streams",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "email_service_providers",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ email_service_provider?: string | null, stats: { delivery_count?: number | null, delivery_rate?: number | null, bounce_count?: number | null, bounce_rate?: number | null, open_count?: number | null, open_rate?: number | null, click_count?: number | null, click_rate?: number | null, spam_count?: number | null, spam_rate?: number | null } }[]"
+      }
+    },
+    {
+      "path": "mailtrap.api.stats.get",
+      "shortPath": "stats.get",
+      "description": "Get aggregated sending stats for a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sending_domain_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "sending_streams",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "email_service_providers",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delivery_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delivery_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bounce_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bounce_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "open_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "open_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "click_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "click_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "spam_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "spam_rate",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailtrap.api.suppressions.list",
+      "shortPath": "suppressions.list",
+      "description": "List (and optionally search) suppressed email addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, type?: hard bounce | spam complaint | unsubscription | manual import | null, created_at?: string | null, email: string, sending_stream?: transactional | bulk | null, domain_name?: string | null, message_bounce_category?: string | null, message_category?: string | null, message_client_ip?: string | null, message_created_at?: string | null, message_outgoing_ip?: string | null, message_recipient_mx_name?: string | null, message_sender_email?: string | null, message_subject?: string | null }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "mailtrap.db.contactFields.search",
+      "entityName": "contactFields",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "merge_tag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "mailtrap.db.contactLists.search",
+      "entityName": "contactLists",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "mailtrap.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "mailtrap.db.emailTemplates.search",
+      "entityName": "emailTemplates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "body_html",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "body_text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "mailtrap.db.inboxes.search",
+      "entityName": "inboxes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email_username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sent_messages_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "emails_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "emails_unread_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "mailtrap.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "mailtrap.db.sendingDomains.search",
+      "entityName": "sendingDomains",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "domain_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "demo",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "inbound_enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "inbound_verified",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "open_tracking_enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "click_tracking_enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8204 @@
+---
+title: API
+description: "API reference for Salesforce: every `salesforce.api.*` operation with input and output types."
+---
+
+Every `salesforce.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### accountCreationWithContentTypeOption
+
+`accounts.accountCreationWithContentTypeOption`
+
+Create account (deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.accounts.accountCreationWithContentTypeOption({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### createAccount
+
+`accounts.createAccount`
+
+Create account in Salesforce
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.accounts.createAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | Yes | — |
+| `Type` | `string` | No | — |
+| `Industry` | `string` | No | — |
+| `Phone` | `string` | No | — |
+| `Website` | `string` | No | — |
+| `BillingStreet` | `string` | No | — |
+| `BillingCity` | `string` | No | — |
+| `BillingState` | `string` | No | — |
+| `BillingPostalCode` | `string` | No | — |
+| `BillingCountry` | `string` | No | — |
+| `CustomFields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `success` | `boolean` | No | — |
+| `errors` | `any[]` | No | — |
+
+
+
+---
+
+### deleteAccount
+
+`accounts.deleteAccount`
+
+Delete account
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.accounts.deleteAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### fetchAccountByIdWithQuery
+
+`accounts.fetchAccountByIdWithQuery`
+
+Fetch account by ID with query (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.accounts.fetchAccountByIdWithQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `string` | Yes | — |
+
+
+
+---
+
+### getAccount
+
+`accounts.getAccount`
+
+Get account by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.accounts.getAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `string` | Yes | — |
+| `Name` | `string` | No | — |
+
+
+
+---
+
+### listAccounts
+
+`accounts.listAccounts`
+
+List accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.accounts.listAccounts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalSize` | `number` | Yes | — |
+| `done` | `boolean` | Yes | — |
+| `records` | `object[]` | Yes | — |
+| `nextRecordsUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeAccountByUniqueIdentifier
+
+`accounts.removeAccountByUniqueIdentifier`
+
+Remove account by unique identifier (deprecated)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.accounts.removeAccountByUniqueIdentifier({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### retrieveAccountDataAndErrorResponses
+
+`accounts.retrieveAccountDataAndErrorResponses`
+
+Retrieve account data and error responses (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.accounts.retrieveAccountDataAndErrorResponses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectDescribe` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="objectDescribe full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchAccounts
+
+`accounts.searchAccounts`
+
+Search accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.accounts.searchAccounts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `industry` | `string` | No | — |
+| `type` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateAccount
+
+`accounts.updateAccount`
+
+Update account
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.accounts.updateAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | No | — |
+| `Type` | `string` | No | — |
+| `Industry` | `string` | No | — |
+| `Phone` | `string` | No | — |
+| `Website` | `string` | No | — |
+| `BillingStreet` | `string` | No | — |
+| `BillingCity` | `string` | No | — |
+| `BillingState` | `string` | No | — |
+| `BillingPostalCode` | `string` | No | — |
+| `BillingCountry` | `string` | No | — |
+| `CustomFields` | `object` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### updateAccountObjectById
+
+`accounts.updateAccountObjectById`
+
+Update account by id (deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.accounts.updateAccountObjectById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | No | — |
+| `Type` | `string` | No | — |
+| `Industry` | `string` | No | — |
+| `Phone` | `string` | No | — |
+| `Website` | `string` | No | — |
+| `BillingStreet` | `string` | No | — |
+| `BillingCity` | `string` | No | — |
+| `BillingState` | `string` | No | — |
+| `BillingPostalCode` | `string` | No | — |
+| `BillingCountry` | `string` | No | — |
+| `CustomFields` | `object` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Analytics Reports
+
+### getDashboard
+
+`analyticsReports.getDashboard`
+
+Get dashboard metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.analyticsReports.getDashboard({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dashboardId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getReport
+
+`analyticsReports.getReport`
+
+Get report metadata (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.analyticsReports.getReport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reportId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getReportInstance
+
+`analyticsReports.getReportInstance`
+
+Get report instance results (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.analyticsReports.getReportInstance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reportId` | `string` | Yes | — |
+| `instanceId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listAnalyticsTemplates
+
+`analyticsReports.listAnalyticsTemplates`
+
+List CRM Analytics templates
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.analyticsReports.listAnalyticsTemplates({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDashboards
+
+`analyticsReports.listDashboards`
+
+List all dashboards
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.analyticsReports.listDashboards({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dashboards` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="dashboards full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEmailTemplates
+
+`analyticsReports.listEmailTemplates`
+
+List email templates
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.analyticsReports.listEmailTemplates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `developerName` | `string` | No | — |
+| `folderId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listReports
+
+`analyticsReports.listReports`
+
+List all reports
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.analyticsReports.listReports({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reports` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="reports full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryReport
+
+`analyticsReports.queryReport`
+
+Query report (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.analyticsReports.queryReport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `reportType` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### runReport
+
+`analyticsReports.runReport`
+
+Run report and return results
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.analyticsReports.runReport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reportId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Campaigns
+
+### addContactToCampaign
+
+`campaigns.addContactToCampaign`
+
+Add contact to campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.campaigns.addContactToCampaign({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `contactId` | `string` | Yes | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### addLeadToCampaign
+
+`campaigns.addLeadToCampaign`
+
+Add lead to campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.campaigns.addLeadToCampaign({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+| `lead_id` | `string` | Yes | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createCampaign
+
+`campaigns.createCampaign`
+
+Create campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.campaigns.createCampaign({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | Yes | — |
+| `Type` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `StartDate` | `string` | No | — |
+| `EndDate` | `string` | No | — |
+| `IsActive` | `boolean` | No | — |
+| `ParentId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### createCampaignRecordViaPost
+
+`campaigns.createCampaignRecordViaPost`
+
+Create campaign record via POST (deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.campaigns.createCampaignRecordViaPost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | Yes | — |
+| `ParentId` | `string` | No | — |
+| `OwnerId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### deleteCampaign
+
+`campaigns.deleteCampaign`
+
+Delete campaign
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.campaigns.deleteCampaign({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getCampaign
+
+`campaigns.getCampaign`
+
+Get campaign by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.campaigns.getCampaign({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `string` | Yes | — |
+
+
+
+---
+
+### listCampaigns
+
+`campaigns.listCampaigns`
+
+List campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.campaigns.listCampaigns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalSize` | `number` | Yes | — |
+| `done` | `boolean` | Yes | — |
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeCampaignObjectById
+
+`campaigns.removeCampaignObjectById`
+
+Remove campaign object by ID (deprecated)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.campaigns.removeCampaignObjectById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### removeFromCampaign
+
+`campaigns.removeFromCampaign`
+
+Remove member from campaign
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.campaigns.removeFromCampaign({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member_id` | `string` | No | — |
+| `campaign_member_id` | `string` | No | — |
+| `campaign_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### retrieveCampaignDataWithErrorHandling
+
+`campaigns.retrieveCampaignDataWithErrorHandling`
+
+Retrieve campaign data (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.campaigns.retrieveCampaignDataWithErrorHandling({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveSpecificCampaignObjectDetails
+
+`campaigns.retrieveSpecificCampaignObjectDetails`
+
+Retrieve specific campaign details (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.campaigns.retrieveSpecificCampaignObjectDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `string` | Yes | — |
+
+
+
+---
+
+### searchCampaigns
+
+`campaigns.searchCampaigns`
+
+Search campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.campaigns.searchCampaigns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateCampaign
+
+`campaigns.updateCampaign`
+
+Update campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.campaigns.updateCampaign({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | No | — |
+| `Type` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `StartDate` | `string` | No | — |
+| `EndDate` | `string` | No | — |
+| `IsActive` | `boolean` | No | — |
+| `ParentId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### updateCampaignByIdWithJson
+
+`campaigns.updateCampaignByIdWithJson`
+
+Update campaign by id (deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.campaigns.updateCampaignByIdWithJson({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | No | — |
+| `Type` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `StartDate` | `string` | No | — |
+| `EndDate` | `string` | No | — |
+| `IsActive` | `boolean` | No | — |
+| `ParentId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Composite
+
+### compositeGraphAction
+
+`composite.compositeGraphAction`
+
+Execute composite graph (deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.composite.compositeGraphAction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `graphs` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="graphs full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `graphs` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="graphs full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createSobjectTree
+
+`composite.createSobjectTree`
+
+Create sObject tree
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.composite.createSobjectTree({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hasErrors` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteSobjectCollections
+
+`composite.deleteSobjectCollections`
+
+Delete sObject collections
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.composite.deleteSobjectCollections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `allOrNone` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getABatchOfRecords
+
+`composite.getABatchOfRecords`
+
+Get batch of UI API records
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.composite.getABatchOfRecords({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCompositeResources
+
+`composite.getCompositeResources`
+
+Get composite resources
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.composite.getCompositeResources({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCompositeSobjects
+
+`composite.getCompositeSobjects`
+
+Get composite sObjects
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.composite.getCompositeSobjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `fields` | `string[]` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSobjectCollections
+
+`composite.getSobjectCollections`
+
+Get sObject collections
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.composite.getSobjectCollections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `fields` | `string[]` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### patchCompositeSobjects
+
+`composite.patchCompositeSobjects`
+
+Upsert records using external ID
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.composite.patchCompositeSobjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `allOrNone` | `boolean` | No | — |
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | No | — |
+
+
+
+---
+
+### postCompositeGraph
+
+`composite.postCompositeGraph`
+
+Execute composite graph
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.composite.postCompositeGraph({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `graphs` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="graphs full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `graphs` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="graphs full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postCompositeSobjects
+
+`composite.postCompositeSobjects`
+
+Create records using sObject Collections
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.composite.postCompositeSobjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `allOrNone` | `boolean` | No | — |
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contacts
+
+### associateContactToAccount
+
+`contacts.associateContactToAccount`
+
+Associate contact to account
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.contacts.associateContactToAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+| `accountId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### createContact
+
+`contacts.createContact`
+
+Create contact
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.contacts.createContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `LastName` | `string` | Yes | — |
+| `FirstName` | `string` | No | — |
+| `Email` | `string` | No | — |
+| `Phone` | `string` | No | — |
+| `AccountId` | `string` | No | — |
+| `Title` | `string` | No | — |
+| `CustomFields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### createNewContactWithJsonHeader
+
+`contacts.createNewContactWithJsonHeader`
+
+Create new contact with JSON header (deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.contacts.createNewContactWithJsonHeader({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `LastName` | `string` | Yes | — |
+| `AccountId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### deleteContact
+
+`contacts.deleteContact`
+
+Delete contact
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.contacts.deleteContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getContact
+
+`contacts.getContact`
+
+Get contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.contacts.getContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `string` | Yes | — |
+| `LastName` | `string` | No | — |
+
+
+
+---
+
+### getContactById
+
+`contacts.getContactById`
+
+Get contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.contacts.getContactById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `string` | Yes | — |
+
+
+
+---
+
+### listContacts
+
+`contacts.listContacts`
+
+List contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.contacts.listContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `accountId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalSize` | `number` | Yes | — |
+| `done` | `boolean` | Yes | — |
+| `records` | `object[]` | Yes | — |
+| `nextRecordsUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryContactsByName
+
+`contacts.queryContactsByName`
+
+Query contacts by name (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.contacts.queryContactsByName({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeASpecificContactById
+
+`contacts.removeASpecificContactById`
+
+Remove contact by ID (deprecated)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.contacts.removeASpecificContactById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### retrieveContactInfoWithStandardResponses
+
+`contacts.retrieveContactInfoWithStandardResponses`
+
+Retrieve contact info (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.contacts.retrieveContactInfoWithStandardResponses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchContacts
+
+`contacts.searchContacts`
+
+Search contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.contacts.searchContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `title` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateContact
+
+`contacts.updateContact`
+
+Update contact
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.contacts.updateContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `LastName` | `string` | No | — |
+| `FirstName` | `string` | No | — |
+| `Email` | `string` | No | — |
+| `Phone` | `string` | No | — |
+| `AccountId` | `string` | No | — |
+| `Title` | `string` | No | — |
+| `CustomFields` | `object` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### updateContactById
+
+`contacts.updateContactById`
+
+Update contact by id (deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.contacts.updateContactById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `LastName` | `string` | No | — |
+| `FirstName` | `string` | No | — |
+| `Email` | `string` | No | — |
+| `Phone` | `string` | No | — |
+| `AccountId` | `string` | No | — |
+| `Title` | `string` | No | — |
+| `CustomFields` | `object` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Files
+
+### deleteFile
+
+`files.deleteFile`
+
+Delete file permanently
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.files.deleteFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getFileContent
+
+`files.getFileContent`
+
+Get binary file content
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.files.getFileContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | — |
+
+
+
+---
+
+### getFileInformation
+
+`files.getFileInformation`
+
+Get file metadata information
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.files.getFileInformation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getFileShares
+
+`files.getFileShares`
+
+Get file shares information
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.files.getFileShares({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shares` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="shares full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadFile
+
+`files.uploadFile`
+
+Upload a file to Salesforce Files
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.files.uploadFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `versionData` | `string` | Yes | — |
+| `pathOnClient` | `string` | No | — |
+| `firstPublishLocationId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+## Jobs
+
+### closeOrAbortJob
+
+`jobs.closeOrAbortJob`
+
+Close or abort bulk job
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.jobs.closeOrAbortJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+| `state` | `UploadComplete \| Aborted` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `state` | `string` | Yes | — |
+
+
+
+---
+
+### deleteJobQuery
+
+`jobs.deleteJobQuery`
+
+Delete query job
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.jobs.deleteJobQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getJobFailedRecordResults
+
+`jobs.getJobFailedRecordResults`
+
+Get job failed record results
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.jobs.getJobFailedRecordResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJobSuccessfulRecordResults
+
+`jobs.getJobSuccessfulRecordResults`
+
+Get job successful record results
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.jobs.getJobSuccessfulRecordResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJobUnprocessedRecordResults
+
+`jobs.getJobUnprocessedRecordResults`
+
+Get job unprocessed record results
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.jobs.getJobUnprocessedRecordResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getQueryJobInfo
+
+`jobs.getQueryJobInfo`
+
+Get query job info
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.jobs.getQueryJobInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `state` | `string` | Yes | — |
+
+
+
+---
+
+### getQueryJobResults
+
+`jobs.getQueryJobResults`
+
+Get query job results
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.jobs.getQueryJobResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+| `maxRecords` | `number` | No | — |
+| `locator` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+string | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadJobData
+
+`jobs.uploadJobData`
+
+Upload CSV data to a bulk ingest job
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.jobs.uploadJobData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+| `csv` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Leads
+
+### applyLeadAssignmentRules
+
+`leads.applyLeadAssignmentRules`
+
+Apply lead assignment rules
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.leads.applyLeadAssignmentRules({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leadId` | `string` | Yes | — |
+| `assignmentRuleId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### createLead
+
+`leads.createLead`
+
+Create lead
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.leads.createLead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `LastName` | `string` | Yes | — |
+| `Company` | `string` | Yes | — |
+| `FirstName` | `string` | No | — |
+| `Email` | `string` | No | — |
+| `Phone` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `Title` | `string` | No | — |
+| `CustomFields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### createLeadWithSpecifiedContentType
+
+`leads.createLeadWithSpecifiedContentType`
+
+Create lead with content type (deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.leads.createLeadWithSpecifiedContentType({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `LastName` | `string` | Yes | — |
+| `Company` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### deleteALeadObjectByItsId
+
+`leads.deleteALeadObjectByItsId`
+
+Delete lead object by ID (deprecated)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.leads.deleteALeadObjectByItsId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteLead
+
+`leads.deleteLead`
+
+Delete lead
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.leads.deleteLead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getLead
+
+`leads.getLead`
+
+Get lead by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.leads.getLead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `string` | Yes | — |
+
+
+
+---
+
+### listLeads
+
+`leads.listLeads`
+
+List leads
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.leads.listLeads({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalSize` | `number` | Yes | — |
+| `done` | `boolean` | Yes | — |
+| `records` | `object[]` | Yes | — |
+| `nextRecordsUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveLeadById
+
+`leads.retrieveLeadById`
+
+Retrieve lead by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.leads.retrieveLeadById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `string` | Yes | — |
+
+
+
+---
+
+### retrieveLeadDataWithVariousResponses
+
+`leads.retrieveLeadDataWithVariousResponses`
+
+Retrieve lead data (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.leads.retrieveLeadDataWithVariousResponses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchLeads
+
+`leads.searchLeads`
+
+Search leads
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.leads.searchLeads({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `company` | `string` | No | — |
+| `status` | `string` | No | — |
+| `title` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateLead
+
+`leads.updateLead`
+
+Update lead
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.leads.updateLead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `LastName` | `string` | No | — |
+| `Company` | `string` | No | — |
+| `FirstName` | `string` | No | — |
+| `Email` | `string` | No | — |
+| `Phone` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `Title` | `string` | No | — |
+| `CustomFields` | `object` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### updateLeadByIdWithJsonPayload
+
+`leads.updateLeadByIdWithJsonPayload`
+
+Update lead by id (deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.leads.updateLeadByIdWithJsonPayload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `LastName` | `string` | No | — |
+| `Company` | `string` | No | — |
+| `FirstName` | `string` | No | — |
+| `Email` | `string` | No | — |
+| `Phone` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `Title` | `string` | No | — |
+| `CustomFields` | `object` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Metadata
+
+### cloneRecord
+
+`metadata.cloneRecord`
+
+Clone record
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.metadata.cloneRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `overrides` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="overrides full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createCustomField
+
+`metadata.createCustomField`
+
+Create custom field via Tooling API
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.metadata.createCustomField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `developerName` | `string` | Yes | — |
+| `label` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `length` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### createCustomObject
+
+`metadata.createCustomObject`
+
+Create custom object via Metadata API
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.metadata.createCustomObject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `developerName` | `string` | Yes | — |
+| `label` | `string` | Yes | — |
+| `pluralLabel` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### createSObjectRecord
+
+`metadata.createSObjectRecord`
+
+Create sObject record
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.metadata.createSObjectRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `fields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### deleteSobject
+
+`metadata.deleteSobject`
+
+Delete sObject record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.metadata.deleteSobject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### deleteSobjectRows
+
+`metadata.deleteSobjectRows`
+
+Delete sObject rows
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.metadata.deleteSobjectRows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### executeSobjectQuickAction
+
+`metadata.executeSobjectQuickAction`
+
+Execute sObject quick action
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.metadata.executeSobjectQuickAction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `actionName` | `string` | Yes | — |
+| `contextId` | `string` | No | — |
+| `record` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="record full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `recordId` | `string` | No | — |
+
+
+
+---
+
+### getAllCustomObjects
+
+`metadata.getAllCustomObjects`
+
+Get all custom objects
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getAllCustomObjects({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobjects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sobjects full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAllFieldsForObject
+
+`metadata.getAllFieldsForObject`
+
+Get all fields for object
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getAllFieldsForObject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getApi
+
+`metadata.getApi`
+
+Get API resources by version
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getApi({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getChatterResources
+
+`metadata.getChatterResources`
+
+Get Chatter resources
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getChatterResources({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getChildRecords
+
+`metadata.getChildRecords`
+
+Get child records
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getChildRecords({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parentId` | `string` | Yes | — |
+| `relationshipName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getConsentAction
+
+`metadata.getConsentAction`
+
+Get consent action preferences
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getConsentAction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action` | `string` | Yes | — |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getGlobalActions
+
+`metadata.getGlobalActions`
+
+Get global actions
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getGlobalActions({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrgLimits
+
+`metadata.getOrgLimits`
+
+Get org limits
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getOrgLimits({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPicklistValuesByRecordType
+
+`metadata.getPicklistValuesByRecordType`
+
+Get picklist values by record type
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getPicklistValuesByRecordType({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `recordTypeId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getQuickActions
+
+`metadata.getQuickActions`
+
+Get quick actions
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getQuickActions({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRecordCounts
+
+`metadata.getRecordCounts`
+
+Get record counts
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getRecordCounts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobjects` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sObjects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sObjects full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSobjectApprovalLayouts
+
+`metadata.getSobjectApprovalLayouts`
+
+Get approval layouts for sObject
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getSobjectApprovalLayouts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSobjectByExternalId
+
+`metadata.getSobjectByExternalId`
+
+Get sObject by external ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getSobjectByExternalId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `fieldName` | `string` | Yes | — |
+| `fieldValue` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSobjectPlatformaction
+
+`metadata.getSobjectPlatformaction`
+
+Get PlatformAction metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getSobjectPlatformaction({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSobjectQuickActionDefaultValues
+
+`metadata.getSobjectQuickActionDefaultValues`
+
+Get quick action default values
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getSobjectQuickActionDefaultValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `actionName` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSObjectQuickActionDefaultValues
+
+`metadata.getSObjectQuickActionDefaultValues`
+
+Get quick action default values
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getSObjectQuickActionDefaultValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `actionName` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSObjectRecord
+
+`metadata.getSObjectRecord`
+
+Get sObject record by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getSObjectRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `fields` | `string[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSobjectRelationship
+
+`metadata.getSobjectRelationship`
+
+Get sObject relationship
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getSobjectRelationship({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `fieldName` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSobjects
+
+`metadata.getSobjects`
+
+Describe global sObjects
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getSobjects({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `encoding` | `string` | No | — |
+| `maxBatchSize` | `number` | No | — |
+| `sobjects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sobjects full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSObjectsDescribeLayoutsRecordTypeId
+
+`metadata.getSObjectsDescribeLayoutsRecordTypeId`
+
+Get layouts for object with record type
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getSObjectsDescribeLayoutsRecordTypeId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `recordTypeId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSobjectsSobjectDescribeApprovallayouts
+
+`metadata.getSobjectsSobjectDescribeApprovallayouts`
+
+Get approval layouts for object
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getSobjectsSobjectDescribeApprovallayouts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSObjectsUpdated
+
+`metadata.getSObjectsUpdated`
+
+Get updated sObject records
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getSObjectsUpdated({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `start` | `string` | Yes | — |
+| `end` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `latestDateCovered` | `string` | Yes | — |
+
+
+
+---
+
+### getSupport
+
+`metadata.getSupport`
+
+Get support knowledge root
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getSupport({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSupportedObjectsDirectory
+
+`metadata.getSupportedObjectsDirectory`
+
+Get supported objects directory
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getSupportedObjectsDirectory({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSupportKnowledgeArticles
+
+`metadata.getSupportKnowledgeArticles`
+
+Get support knowledge articles
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getSupportKnowledgeArticles({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTheme
+
+`metadata.getTheme`
+
+Get theme metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getTheme({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserInfo
+
+`metadata.getUserInfo`
+
+Get user info
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.getUserInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### headActionsCustom
+
+`metadata.headActionsCustom`
+
+Head custom actions
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.headActionsCustom({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+
+
+
+---
+
+### headActionsStandard
+
+`metadata.headActionsStandard`
+
+Head standard actions
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.headActionsStandard({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+
+
+
+---
+
+### headProcessRulesSObject
+
+`metadata.headProcessRulesSObject`
+
+Head process rules for sObject
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.headProcessRulesSObject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+
+
+
+---
+
+### headQuickActions
+
+`metadata.headQuickActions`
+
+Head Quick Actions
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.headQuickActions({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+
+
+
+---
+
+### headSobjectQuickActionDefaultValues
+
+`metadata.headSobjectQuickActionDefaultValues`
+
+Head quick action default values
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.headSobjectQuickActionDefaultValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `actionName` | `string` | Yes | — |
+| `contextId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+
+
+
+---
+
+### headSobjectsGlobalDescribeLayouts
+
+`metadata.headSobjectsGlobalDescribeLayouts`
+
+Head global describe layouts
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.headSobjectsGlobalDescribeLayouts({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+
+
+
+---
+
+### headSobjectsQuickAction
+
+`metadata.headSobjectsQuickAction`
+
+Head sObject quick action
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.headSobjectsQuickAction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `actionName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+
+
+
+---
+
+### headSobjectsUserPassword
+
+`metadata.headSobjectsUserPassword`
+
+Head user password status
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.headSobjectsUserPassword({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+
+
+
+---
+
+### listCustomInvocableActions
+
+`metadata.listCustomInvocableActions`
+
+List custom invocable actions
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.listCustomInvocableActions({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listStandardInvocableActions
+
+`metadata.listStandardInvocableActions`
+
+List standard invocable actions
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.listStandardInvocableActions({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### massTransferOwnership
+
+`metadata.massTransferOwnership`
+
+Mass transfer record ownership
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.metadata.massTransferOwnership({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `fromUserId` | `string` | Yes | — |
+| `toUserId` | `string` | Yes | — |
+| `recordIds` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `transferred` | `number` | No | — |
+| `failed` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="failed full type">
+
+```ts
+{
+  id?: string,
+  errors?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setUserPassword
+
+`metadata.setUserPassword`
+
+Set user password
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.metadata.setUserPassword({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `password` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | No | — |
+
+
+
+---
+
+### sobjectRowsUpdate
+
+`metadata.sobjectRowsUpdate`
+
+Update sObject rows
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.metadata.sobjectRowsUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `fields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### sobjectUserPassword
+
+`metadata.sobjectUserPassword`
+
+Check user password expiration status
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.metadata.sobjectUserPassword({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `isExpired` | `boolean` | No | — |
+
+
+
+---
+
+### updateSobject
+
+`metadata.updateSobject`
+
+Update sObject fields
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.metadata.updateSobject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `fields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### upsertSobjectByExternalId
+
+`metadata.upsertSobjectByExternalId`
+
+Upsert sObject by external ID
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.metadata.upsertSobjectByExternalId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `fieldName` | `string` | Yes | — |
+| `fieldValue` | `string` | Yes | — |
+| `fields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `created` | `boolean` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+## Notes
+
+### createNote
+
+`notes.createNote`
+
+Create note
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.notes.createNote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Title` | `string` | Yes | — |
+| `Body` | `string` | No | — |
+| `ParentId` | `string` | No | — |
+| `IsPrivate` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### createNoteRecordWithContentTypeHeader
+
+`notes.createNoteRecordWithContentTypeHeader`
+
+Create note record (deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.notes.createNoteRecordWithContentTypeHeader({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Title` | `string` | Yes | — |
+| `ParentId` | `string` | Yes | — |
+| `Body` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### deleteNote
+
+`notes.deleteNote`
+
+Delete note
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.notes.deleteNote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getNote
+
+`notes.getNote`
+
+Get note by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.notes.getNote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `string` | Yes | — |
+| `Title` | `string` | No | — |
+| `Body` | `string` | No | — |
+
+
+
+---
+
+### getNoteByIdWithFields
+
+`notes.getNoteByIdWithFields`
+
+Get note by ID with fields (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.notes.getNoteByIdWithFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `string` | Yes | — |
+
+
+
+---
+
+### listNotes
+
+`notes.listNotes`
+
+List notes
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.notes.listNotes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parentId` | `string` | No | — |
+| `query` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeNoteObjectById
+
+`notes.removeNoteObjectById`
+
+Remove note object by ID (deprecated)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.notes.removeNoteObjectById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### retrieveNoteObjectInformation
+
+`notes.retrieveNoteObjectInformation`
+
+Retrieve note object info (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.notes.retrieveNoteObjectInformation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchNotes
+
+`notes.searchNotes`
+
+Search notes
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.notes.searchNotes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `body` | `string` | No | — |
+| `parentId` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateNote
+
+`notes.updateNote`
+
+Update note
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.notes.updateNote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Title` | `string` | No | — |
+| `Body` | `string` | No | — |
+| `ParentId` | `string` | No | — |
+| `IsPrivate` | `boolean` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### updateSpecificNoteById
+
+`notes.updateSpecificNoteById`
+
+Update note by id (deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.notes.updateSpecificNoteById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Title` | `string` | No | — |
+| `Body` | `string` | No | — |
+| `ParentId` | `string` | No | — |
+| `IsPrivate` | `boolean` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Opportunities
+
+### addOpportunityLineItem
+
+`opportunities.addOpportunityLineItem`
+
+Add line item to opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.opportunities.addOpportunityLineItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OpportunityId` | `string` | Yes | — |
+| `PricebookEntryId` | `string` | Yes | — |
+| `Quantity` | `number` | Yes | — |
+| `UnitPrice` | `number` | No | — |
+| `TotalPrice` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### cloneOpportunityWithProducts
+
+`opportunities.cloneOpportunityWithProducts`
+
+Clone opportunity with products
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.opportunities.cloneOpportunityWithProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `cloneProducts` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createOpportunity
+
+`opportunities.createOpportunity`
+
+Create opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.opportunities.createOpportunity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | Yes | — |
+| `StageName` | `string` | Yes | — |
+| `CloseDate` | `string` | Yes | — |
+| `AccountId` | `string` | No | — |
+| `Amount` | `number` | No | — |
+| `Probability` | `number` | No | — |
+| `CustomFields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### createOpportunityRecord
+
+`opportunities.createOpportunityRecord`
+
+Create opportunity record (deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.opportunities.createOpportunityRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | Yes | — |
+| `StageName` | `string` | Yes | — |
+| `CloseDate` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### deleteOpportunity
+
+`opportunities.deleteOpportunity`
+
+Delete opportunity
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.opportunities.deleteOpportunity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### getOpportunity
+
+`opportunities.getOpportunity`
+
+Get opportunity by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.opportunities.getOpportunity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `string` | Yes | — |
+
+
+
+---
+
+### listOpportunities
+
+`opportunities.listOpportunities`
+
+List opportunities
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.opportunities.listOpportunities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalSize` | `number` | Yes | — |
+| `done` | `boolean` | Yes | — |
+| `records` | `object[]` | Yes | — |
+| `nextRecordsUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPricebookEntries
+
+`opportunities.listPricebookEntries`
+
+List pricebook entries
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.opportunities.listPricebookEntries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pricebookId` | `string` | No | — |
+| `query` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPricebooks
+
+`opportunities.listPricebooks`
+
+List pricebooks
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.opportunities.listPricebooks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeOpportunityById
+
+`opportunities.removeOpportunityById`
+
+Remove opportunity by ID (deprecated)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.salesforce.api.opportunities.removeOpportunityById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### retrieveOpportunitiesData
+
+`opportunities.retrieveOpportunitiesData`
+
+Retrieve opportunities data
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.opportunities.retrieveOpportunitiesData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveOpportunityByIdWithOptionalFields
+
+`opportunities.retrieveOpportunityByIdWithOptionalFields`
+
+Retrieve opportunity by ID with fields (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.opportunities.retrieveOpportunityByIdWithOptionalFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `string` | Yes | — |
+
+
+
+---
+
+### searchOpportunities
+
+`opportunities.searchOpportunities`
+
+Search opportunities
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.opportunities.searchOpportunities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `accountId` | `string` | No | — |
+| `stageName` | `string` | No | — |
+| `isClosed` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateOpportunity
+
+`opportunities.updateOpportunity`
+
+Update opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.opportunities.updateOpportunity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | No | — |
+| `StageName` | `string` | No | — |
+| `CloseDate` | `string` | No | — |
+| `AccountId` | `string` | No | — |
+| `Amount` | `number` | No | — |
+| `Probability` | `number` | No | — |
+| `CustomFields` | `object` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### updateOpportunityById
+
+`opportunities.updateOpportunityById`
+
+Update opportunity by id (deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.opportunities.updateOpportunityById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Name` | `string` | No | — |
+| `StageName` | `string` | No | — |
+| `CloseDate` | `string` | No | — |
+| `AccountId` | `string` | No | — |
+| `Amount` | `number` | No | — |
+| `Probability` | `number` | No | — |
+| `CustomFields` | `object` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Soql Sosl
+
+### executeSoqlQuery
+
+`soqlSosl.executeSoqlQuery`
+
+Execute SOQL query (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.soqlSosl.executeSoqlQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalSize` | `number` | Yes | — |
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### executeSoslSearch
+
+`soqlSosl.executeSoslSearch`
+
+Execute SOSL search
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.soqlSosl.executeSoslSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchRecords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="searchRecords full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getParameterizedSearch
+
+`soqlSosl.getParameterizedSearch`
+
+Parameterized search via GET
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.soqlSosl.getParameterizedSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `sobjects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="sobjects full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchRecords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="searchRecords full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSearchLayout
+
+`soqlSosl.getSearchLayout`
+
+Get search layout
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.soqlSosl.getSearchLayout({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobjects` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSearchSuggestions
+
+`soqlSosl.getSearchSuggestions`
+
+Get search suggestions
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.soqlSosl.getSearchSuggestions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `sobject` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | No | — |
+
+
+
+---
+
+### parameterizedSearch
+
+`soqlSosl.parameterizedSearch`
+
+Run parameterized search
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.soqlSosl.parameterizedSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `sobjects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="sobjects full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchRecords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="searchRecords full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postParameterizedSearch
+
+`soqlSosl.postParameterizedSearch`
+
+Post parameterized search
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.soqlSosl.postParameterizedSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchRecords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="searchRecords full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`soqlSosl.query`
+
+Execute SOQL query (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.soqlSosl.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalSize` | `number` | Yes | — |
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryAll
+
+`soqlSosl.queryAll`
+
+Run queryAll including deleted records
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.soqlSosl.queryAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalSize` | `number` | Yes | — |
+| `done` | `boolean` | Yes | — |
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runSoqlQuery
+
+`soqlSosl.runSoqlQuery`
+
+Run SOQL query
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.soqlSosl.runSoqlQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalSize` | `number` | Yes | — |
+| `done` | `boolean` | Yes | — |
+| `records` | `object[]` | Yes | — |
+| `nextRecordsUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`soqlSosl.search`
+
+Run SOSL search
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.soqlSosl.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchRecords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="searchRecords full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchKnowledgeArticles
+
+`soqlSosl.searchKnowledgeArticles`
+
+Search knowledge articles
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.soqlSosl.searchKnowledgeArticles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | No | — |
+
+
+
+---
+
+### toolingQuery
+
+`soqlSosl.toolingQuery`
+
+Run Tooling API SOQL query
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.soqlSosl.toolingQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalSize` | `number` | Yes | — |
+| `done` | `boolean` | Yes | — |
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### completeTask
+
+`tasks.completeTask`
+
+Complete task
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.tasks.completeTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `completionNotes` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### createTask
+
+`tasks.createTask`
+
+Create task
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.tasks.createTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Subject` | `string` | Yes | — |
+| `Status` | `string` | No | — |
+| `Priority` | `string` | No | — |
+| `WhoId` | `string` | No | — |
+| `WhatId` | `string` | No | — |
+| `OwnerId` | `string` | No | — |
+| `ActivityDate` | `string` | No | — |
+| `Description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### logCall
+
+`tasks.logCall`
+
+Log phone call activity
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.tasks.logCall({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Subject` | `string` | Yes | — |
+| `CallDurationInSeconds` | `number` | No | — |
+| `CallType` | `string` | No | — |
+| `CallDisposition` | `string` | No | — |
+| `Description` | `string` | No | — |
+| `WhoId` | `string` | No | — |
+| `WhatId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### logEmailActivity
+
+`tasks.logEmailActivity`
+
+Log email activity
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.tasks.logEmailActivity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Subject` | `string` | Yes | — |
+| `TextBody` | `string` | No | — |
+| `HtmlBody` | `string` | No | — |
+| `FromAddress` | `string` | No | — |
+| `ToAddress` | `string` | No | — |
+| `RelatedToId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### searchTasks
+
+`tasks.searchTasks`
+
+Search tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.tasks.searchTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject` | `string` | No | — |
+| `status` | `string` | No | — |
+| `priority` | `string` | No | — |
+| `whoId` | `string` | No | — |
+| `whatId` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendEmail
+
+`tasks.sendEmail`
+
+Send email
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.tasks.sendEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `toAddresses` | `string[]` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `senderType` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | No | — |
+
+
+
+---
+
+### sendEmailFromTemplate
+
+`tasks.sendEmailFromTemplate`
+
+Send email from template
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.tasks.sendEmailFromTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `toAddresses` | `string[]` | No | — |
+| `templateId` | `string` | Yes | — |
+| `targetObjectId` | `string` | No | — |
+| `senderType` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | No | — |
+
+
+
+---
+
+### sendMassEmail
+
+`tasks.sendMassEmail`
+
+Send mass email
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.tasks.sendMassEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `toAddresses` | `string[]` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `templateId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | No | — |
+
+
+
+---
+
+### updateTask
+
+`tasks.updateTask`
+
+Update task
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.tasks.updateTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Subject` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `Priority` | `string` | No | — |
+| `WhoId` | `string` | No | — |
+| `WhatId` | `string` | No | — |
+| `OwnerId` | `string` | No | — |
+| `ActivityDate` | `string` | No | — |
+| `Description` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Ui Api
+
+### createARecord
+
+`uiApi.createARecord`
+
+Create record via UI API
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.uiApi.createARecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiName` | `string` | Yes | — |
+| `fields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `apiName` | `string` | No | — |
+
+
+
+---
+
+### createRecordUiApi
+
+`uiApi.createRecordUiApi`
+
+Create record using UI API
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.uiApi.createRecordUiApi({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiName` | `string` | Yes | — |
+| `fields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `apiName` | `string` | No | — |
+
+
+
+---
+
+### getAllNavigationItems
+
+`uiApi.getAllNavigationItems`
+
+Get all navigation items
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getAllNavigationItems({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getApp
+
+`uiApi.getApp`
+
+Get app metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getApp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getApps
+
+`uiApi.getApps`
+
+Get apps metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getApps({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCompactLayouts
+
+`uiApi.getCompactLayouts`
+
+Get compact layouts
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getCompactLayouts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobjects` | `string[]` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getLastSelectedApp
+
+`uiApi.getLastSelectedApp`
+
+Get last selected app
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getLastSelectedApp({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getListViewActions
+
+`uiApi.getListViewActions`
+
+Get list view actions
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getListViewActions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getListViewMetadataBatch
+
+`uiApi.getListViewMetadataBatch`
+
+Get batch list view metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getListViewMetadataBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listViewIds` | `string[]` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getListViewMetadataByName
+
+`uiApi.getListViewMetadataByName`
+
+Get list view metadata by API name
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getListViewMetadataByName({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `listViewName` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getListViewRecordsById
+
+`uiApi.getListViewRecordsById`
+
+Get list view records by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getListViewRecordsById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listViewId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getListViewRecordsByName
+
+`uiApi.getListViewRecordsByName`
+
+Get list view records by API name
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getListViewRecordsByName({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `listViewName` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getListViewResults
+
+`uiApi.getListViewResults`
+
+Get list view results by sObject
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getListViewResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `listViewId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getLookupFieldSuggestions
+
+`uiApi.getLookupFieldSuggestions`
+
+Get lookup field suggestions
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getLookupFieldSuggestions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `field` | `string` | Yes | — |
+| `q` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getLookupSuggestionsCaseContact
+
+`uiApi.getLookupSuggestionsCaseContact`
+
+Get lookup field suggestions for Case ContactId with POST
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getLookupSuggestionsCaseContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getLookupSuggestionsOpportunityAccount
+
+`uiApi.getLookupSuggestionsOpportunityAccount`
+
+Get lookup field suggestions for Opportunity AccountId with POST
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getLookupSuggestionsOpportunityAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMruListViewMetadata
+
+`uiApi.getMruListViewMetadata`
+
+Get MRU list view metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getMruListViewMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMruListViewRecords
+
+`uiApi.getMruListViewRecords`
+
+Get MRU list view records
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getMruListViewRecords({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getObjectListViews
+
+`uiApi.getObjectListViews`
+
+Get list views for an object
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getObjectListViews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPhotoActions
+
+`uiApi.getPhotoActions`
+
+Get photo actions
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getPhotoActions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageId` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRecordEditPageActions
+
+`uiApi.getRecordEditPageActions`
+
+Get record edit page actions
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getRecordEditPageActions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `recordId` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRecordUiDataAndMetadata
+
+`uiApi.getRecordUiDataAndMetadata`
+
+Get record UI data and metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getRecordUiDataAndMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recordId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRelatedListActions
+
+`uiApi.getRelatedListActions`
+
+Get related list actions
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getRelatedListActions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parentRecordId` | `string` | Yes | — |
+| `relationshipName` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRelatedListPreferencesBatch
+
+`uiApi.getRelatedListPreferencesBatch`
+
+Get batch related list user preferences
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getRelatedListPreferencesBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `relatedListIds` | `string[]` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRelatedListRecordsContacts
+
+`uiApi.getRelatedListRecordsContacts`
+
+Get related list records for Contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getRelatedListRecordsContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parentRecordId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSobjectListView
+
+`uiApi.getSobjectListView`
+
+Get sObject list view information
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getSobjectListView({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `listViewId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSobjectListViews
+
+`uiApi.getSobjectListViews`
+
+Get list views for sObject
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getSobjectListViews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUiApiActionsLookupAccount
+
+`uiApi.getUiApiActionsLookupAccount`
+
+Get lookup field actions for Account
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getUiApiActionsLookupAccount({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUiapiActionsMruListAccount
+
+`uiApi.getUiapiActionsMruListAccount`
+
+Get MRU list view actions
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getUiapiActionsMruListAccount({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUiApiActionsRecordRelatedList
+
+`uiApi.getUiApiActionsRecordRelatedList`
+
+Get record related list actions
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getUiApiActionsRecordRelatedList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parentRecordId` | `string` | Yes | — |
+| `relationshipName` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUiApiAppsUserNavItems
+
+`uiApi.getUiApiAppsUserNavItems`
+
+Get user navigation items
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getUiApiAppsUserNavItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appId` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUiapiListInfoAccountAllAccounts
+
+`uiApi.getUiapiListInfoAccountAllAccounts`
+
+Get Account AllAccounts list view metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getUiapiListInfoAccountAllAccounts({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUiapiListInfoAccountRecent
+
+`uiApi.getUiapiListInfoAccountRecent`
+
+Get Account Recent list view metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getUiapiListInfoAccountRecent({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUiapiListInfoAccountSearchResult
+
+`uiApi.getUiapiListInfoAccountSearchResult`
+
+Get Account SearchResult list view metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getUiapiListInfoAccountSearchResult({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUiApiListInfoRecent
+
+`uiApi.getUiApiListInfoRecent`
+
+Get Recent list view metadata for object
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getUiApiListInfoRecent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUiapiLookupsOpportunityAccountId
+
+`uiApi.getUiapiLookupsOpportunityAccountId`
+
+Get lookup field suggestions for Opportunity AccountId
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getUiapiLookupsOpportunityAccountId({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUiapimruListInfoAccount
+
+`uiApi.getUiapimruListInfoAccount`
+
+Get MRU list info for Account (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getUiapimruListInfoAccount({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUiApiMruListRecordsAccount
+
+`uiApi.getUiApiMruListRecordsAccount`
+
+Get MRU list records for Account (deprecated)
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getUiApiMruListRecordsAccount({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUiapiRelatedListPreferences
+
+`uiApi.getUiapiRelatedListPreferences`
+
+Get related list user preferences
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.getUiapiRelatedListPreferences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parentRecordId` | `string` | Yes | — |
+| `relationshipName` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### headAppmenuSalesforce1
+
+`uiApi.headAppmenuSalesforce1`
+
+Head AppMenu Salesforce1
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.headAppmenuSalesforce1({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | No | — |
+
+
+
+---
+
+### listViewResults
+
+`uiApi.listViewResults`
+
+Get list view results
+
+**Risk:** `read`
+
+```ts
+await corsair.salesforce.api.uiApi.listViewResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listViewId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateFavorite
+
+`uiApi.updateFavorite`
+
+Update a favorite
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.uiApi.updateFavorite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `favoriteId` | `string` | Yes | — |
+| `fields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | No | — |
+
+
+
+---
+
+### updateListViewPreferences
+
+`uiApi.updateListViewPreferences`
+
+Update list view preferences
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.uiApi.updateListViewPreferences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sobject` | `string` | Yes | — |
+| `listViewId` | `string` | Yes | — |
+| `preferences` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="preferences full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | No | — |
+
+
+
+---
+
+### updateRecord
+
+`uiApi.updateRecord`
+
+Update a record via UI API
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.uiApi.updateRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recordId` | `string` | Yes | — |
+| `apiName` | `string` | Yes | — |
+| `fields` | `object` | Yes | — |
+| `ifUnmodifiedSince` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### updateRelatedListPreferences
+
+`uiApi.updateRelatedListPreferences`
+
+Update related list preferences
+
+**Risk:** `write`
+
+```ts
+await corsair.salesforce.api.uiApi.updateRelatedListPreferences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `relatedListId` | `string` | Yes | — |
+| `preferences` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="preferences full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | No | — |
+
+
+
+---
+

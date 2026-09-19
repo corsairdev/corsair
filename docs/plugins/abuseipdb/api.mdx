@@ -1,0 +1,307 @@
+---
+title: API
+description: "API reference for AbuseIPDB: every `abuseipdb.api.*` operation with input and output types."
+---
+
+Every `abuseipdb.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Address
+
+### clear
+
+`address.clear`
+
+Remove all reports for an IP address from your account and return the number deleted
+
+**Risk:** `destructive`
+
+```ts
+await corsair.abuseipdb.api.address.clear({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ipAddress` | `string \| string` | Yes | IPv4 or IPv6 address to clear reports for |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `numReportsDeleted` | `number` | Yes | — |
+
+
+
+---
+
+## Blacklist
+
+### get
+
+`blacklist.get`
+
+Download the blacklist of most-reported IPs, optionally filtered by confidence minimum, country, and IP version
+
+**Risk:** `read`
+
+```ts
+await corsair.abuseipdb.api.blacklist.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `confidenceMinimum` | `number` | No | Minimum abuse confidence score (25–100) |
+| `limit` | `number` | No | Maximum number of entries to return |
+| `onlyCountries` | `string[]` | No | Only include IPs from these ISO 3166 alpha-2 country codes |
+| `exceptCountries` | `string[]` | No | Exclude IPs from these ISO 3166 alpha-2 country codes |
+| `ipVersion` | `4 \| 6` | No | Restrict to a single IP version (4 or 6) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generatedAt` | `string` | Yes | — |
+| `entries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  ipAddress: string,
+  abuseConfidenceScore: number,
+  lastReportedAt?: string | null,
+  countryCode?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Block
+
+### check
+
+`block.check`
+
+Check a CIDR network block and list the reported addresses within it
+
+**Risk:** `read`
+
+```ts
+await corsair.abuseipdb.api.block.check({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network` | `string \| string` | Yes | CIDR notation network block, e.g. "127.0.0.1/24" |
+| `maxAgeInDays` | `number` | No | Only consider reports from the last N days (1–365) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `networkAddress` | `string` | Yes | — |
+| `netmask` | `string` | Yes | — |
+| `minAddress` | `string` | Yes | — |
+| `maxAddress` | `string` | Yes | — |
+| `numPossibleHosts` | `number` | Yes | — |
+| `addressSpaceDesc` | `string` | No | — |
+| `reportedAddress` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="reportedAddress full type">
+
+```ts
+{
+  ipAddress: string,
+  numReports: number,
+  mostRecentReport?: string | null,
+  abuseConfidenceScore: number,
+  countryCode?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Check
+
+### ip
+
+`check.ip`
+
+Look up an IP address and get its abuse confidence score, country, ISP, usage type, and optionally recent reports
+
+**Risk:** `read`
+
+```ts
+await corsair.abuseipdb.api.check.ip({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ipAddress` | `string \| string` | Yes | IPv4 or IPv6 address to check |
+| `maxAgeInDays` | `number` | No | Only consider reports from the last N days (1–365) |
+| `verbose` | `boolean` | No | Include the full reports array |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ipAddress` | `string` | Yes | — |
+| `isPublic` | `boolean` | Yes | — |
+| `ipVersion` | `number` | Yes | — |
+| `isWhitelisted` | `boolean` | No | — |
+| `abuseConfidenceScore` | `number` | Yes | — |
+| `countryCode` | `string` | No | — |
+| `countryName` | `string` | No | — |
+| `usageType` | `string` | No | — |
+| `isp` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `hostnames` | `string[]` | Yes | — |
+| `isTor` | `boolean` | Yes | — |
+| `totalReports` | `number` | Yes | — |
+| `numDistinctUsers` | `number` | Yes | — |
+| `lastReportedAt` | `string` | No | — |
+| `reports` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="reports full type">
+
+```ts
+{
+  reportedAt: string,
+  comment?: string | null,
+  categories: number[],
+  reporterId: number,
+  reporterCountryCode?: string | null,
+  reporterCountryName?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Report
+
+### ip
+
+`report.ip`
+
+Submit an abuse report for an IP address with one or more abuse category IDs
+
+**Risk:** `write`
+
+```ts
+await corsair.abuseipdb.api.report.ip({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string \| string` | Yes | IPv4 or IPv6 address being reported |
+| `categories` | `number[]` | Yes | Abuse category IDs (integers 1–30) |
+| `comment` | `string` | No | Descriptive text of the attack; avoid any PII |
+| `timestamp` | `string` | No | ISO 8601 datetime of the attack, defaults to now |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ipAddress` | `string` | Yes | — |
+| `abuseConfidenceScore` | `number` | Yes | — |
+
+
+
+---
+
+## Reports
+
+### list
+
+`reports.list`
+
+Get a paginated list of abuse reports filed against a single IP address
+
+**Risk:** `read`
+
+```ts
+await corsair.abuseipdb.api.reports.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ipAddress` | `string \| string` | Yes | IPv4 or IPv6 address to fetch reports for |
+| `maxAgeInDays` | `number` | No | Only consider reports from the last N days (1–365) |
+| `page` | `number` | No | Page number (starts at 1) |
+| `perPage` | `number` | No | Reports per page (1–100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `count` | `number` | Yes | — |
+| `perPage` | `number` | Yes | — |
+| `lastPage` | `number` | Yes | — |
+| `nextPageUrl` | `string` | No | — |
+| `previousPageUrl` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  reportedAt: string,
+  comment?: string | null,
+  categories: number[],
+  reporterId: number,
+  reporterCountryCode?: string | null,
+  reporterCountryName?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
