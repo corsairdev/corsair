@@ -195,4 +195,12 @@ describe('DocusignClient', () => {
 		);
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
+
+	it('rejects braces that would hit the OpenAPI ReDoS regex', async () => {
+		const client = makeClient();
+		await expect(
+			client.request('/templates/{aaaaaaaaaaaaaaaa}'),
+		).rejects.toThrow('brace characters are not allowed');
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
 });

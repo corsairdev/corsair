@@ -94,6 +94,14 @@ function toRequestBody(body: string | Uint8Array | undefined): {
 
 function assertSafePath(endpoint: string): void {
 	const pathPart = endpoint.split('?')[0] ?? '';
+	// corsair/http runs /{(.*?)}/g on options.url (CodeQL js/polynomial-redos).
+	// DocuSign paths are fully interpolated before request(); reject braces so
+	// user-controlled ids never reach that regex.
+	if (pathPart.includes('{') || pathPart.includes('}')) {
+		throw new Error(
+			'Invalid DocuSign request path: brace characters are not allowed.',
+		);
+	}
 	const segments = pathPart.split('/');
 	for (let index = 1; index < segments.length; index++) {
 		const segment = segments[index];
