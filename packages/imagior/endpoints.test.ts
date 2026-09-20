@@ -96,6 +96,7 @@ describe('imagior keyBuilder', () => {
 	it('returns options.key for endpoint calls', async () => {
 		const plugin = imagior({ key: 'imagior_test_key' });
 		await expect(
+			// unknown: plugin surface is structural in tests; production typing comes from Corsair core
 			(plugin.keyBuilder as (ctx: unknown, source: string) => Promise<string>)(
 				{ authType: 'api_key' },
 				'endpoint',
@@ -108,8 +109,10 @@ describe('imagior keyBuilder', () => {
 		const ctx = {
 			authType: 'api_key',
 			keys: { get_api_key: async () => 'stored_key' },
+		// unknown: test/fixture cast; production types are Zod-validated
 		} as unknown as ImagiorKeyBuilderContext;
 		await expect(
+			// unknown: plugin surface is structural in tests; production typing comes from Corsair core
 			(plugin.keyBuilder as (ctx: unknown, source: string) => Promise<string>)(
 				ctx,
 				'endpoint',
@@ -122,8 +125,10 @@ describe('imagior keyBuilder', () => {
 		const ctx = {
 			authType: 'api_key',
 			keys: { get_api_key: async (): Promise<string | null> => null },
+		// unknown: test/fixture cast; production types are Zod-validated
 		} as unknown as ImagiorKeyBuilderContext;
 		await expect(
+			// unknown: plugin surface is structural in tests; production typing comes from Corsair core
 			(plugin.keyBuilder as (ctx: unknown, source: string) => Promise<string>)(
 				ctx,
 				'endpoint',
