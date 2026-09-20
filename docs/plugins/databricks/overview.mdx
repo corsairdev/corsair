@@ -1,144 +1,154 @@
 ---
 title: Overview
-description: "Unified data and AI platform for lakehouse analytics, notebooks, and machine learning."
+description: "Databricks plugin for Corsair"
 ---
 
-Use **Databricks** through Corsair: one client, typed API calls, local DB sync.
+Use **Databricks** through Corsair: one client, typed API calls, optional local DB sync.
 
 **What you get:**
 
 - 130 typed API operations
-- 4 synced entities (`catalog`, `cluster`, `job`, `warehouse`) for fast `.search()` / `.list()`
+- 4 database entities synced for fast `.search()` / `.list()` queries
 
 ## Setup
 
 <Steps>
 
 <Step title="Install">
-<CodeGroup>
-```bash npm
-npm install corsair @corsair-dev/databricks
+```bash
+pnpm install @corsair-dev/databricks
 ```
-```bash yarn
-yarn add corsair @corsair-dev/databricks
-```
-```bash pnpm
-pnpm install corsair @corsair-dev/databricks
-```
-```bash bun
-bun add corsair @corsair-dev/databricks
-```
-</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
-import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { databricks } from '@corsair-dev/databricks';
 
 export const corsair = createCorsair({
-	plugins: [
-		databricks(),
-	],
-	database: new Database('corsair.db'),
-	kek: process.env.CORSAIR_KEK!,
-	hub: {
-		projectApiKey: process.env.CORSAIR_API_KEY!,
-		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
-	},
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [databricks()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { databricks } from '@corsair-dev/databricks';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [databricks()],
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Step>
-
-<Step title="Choose authentication">
-<Tabs>
-<Tab title="API Key (Recommended)">
-
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
-
-```ts
-databricks()
-```
-
-More: [API Key](/concepts/api-key)
-
-</Tab>
-<Tab title="OAuth 2.0">
-
-Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Databricks OAuth app.
-
-```ts
-databricks({
-	authType: 'oauth_2',
-})
-```
-
-More: [OAuth 2.0](/concepts/oauth)
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Tab>
 </Tabs>
 
 </Step>
 
-<Step title="Connect a tenant">
-Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/databricks/get-credentials) if you need help getting keys.
 
-```ts
-const { connectUrl } = await corsair.manage.connect.createLink({
-	plugin: 'databricks',
-	tenantId: 'acme',
-});
-// redirect the user's browser to connectUrl
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=databricks
 ```
+
+Use the key names documented in [Get Credentials](/plugins/databricks/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=databricks --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
 
 </Step>
 
 </Steps>
 
-## Example API calls
+## Authentication
 
-**`catalog.checkTableExists`**
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
 
-```ts
-const tenant = corsair.withTenant('acme');
-await tenant.databricks.api.catalog.checkTableExists({});
+<Tabs>
+<Tab title="API Key (Default)">
+
+```ts corsair.ts
+databricks()
 ```
 
+Store credentials with `pnpm corsair setup --plugin=databricks` (see [Get Credentials](/plugins/databricks/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
-**`apps.createDatabricksApp`**
+More: [API Key](/concepts/api-key)
 
-```ts
-const tenant = corsair.withTenant('acme');
-await tenant.databricks.api.apps.createDatabricksApp({});
+</Tab>
+<Tab title="OAuth 2.0">
+
+```ts corsair.ts
+databricks({
+    authType: 'oauth_2',
+})
 ```
 
+Store credentials with `pnpm corsair setup --plugin=databricks` (see [Get Credentials](/plugins/databricks/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
-See the full list on the [API](/plugins/databricks/api) page.
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
 
 ## Query synced data
 
-Synced entities support `tenant.databricks.db.<entity>.search()` and `.list()`: `catalog`, `cluster`, `job`, `warehouse`.
+Synced entities support `corsair.databricks.db.<entity>.search()` and `.list()`. See [Database](/plugins/databricks/database) for filters and operators.
 
-See [Database](/plugins/databricks/database) for filters and operators.
 
-## What's next
+## Example API calls
 
-<CardGroup cols={2}>
-  <Card title="API reference" href="/plugins/databricks/api">
-    Every `databricks.api.*` operation with input and output types.
-  </Card>
-  <Card title="Database" href="/plugins/databricks/database">
-    Synced entities, search filters, and operators.
-  </Card>
-  <Card title="Connect / OAuth" href="/management/connect">
-    createLink, Hub delivery, and tenant connect flows.
-  </Card>
-  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
-    Expose this plugin's operations as MCP tools.
-  </Card>
-</CardGroup>
+**Read-style (read):** `catalog.checkTableExists`
+
+```ts
+await corsair.databricks.api.catalog.checkTableExists({});
+```
+
+
+**Write-style (write):** `apps.createDatabricksApp`
+
+```ts
+await corsair.databricks.api.apps.createDatabricksApp({});
+```
+
+
+See the full list on the [API](/plugins/databricks/api) page. Use `pnpm corsair list --plugin=databricks` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/databricks/api) |
+| Database | [Database](/plugins/databricks/database) |
+| Credentials | [Get credentials](/plugins/databricks/get-credentials) |
+

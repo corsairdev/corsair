@@ -1,173 +1,149 @@
 ---
 title: Overview
-description: "Developer email API for sending transactional messages, broadcasts, and deliverability tools."
+description: "Resend plugin for Corsair"
 ---
 
-Use **Resend** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+Use **Resend** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
 
 **What you get:**
 
-- 15 typed API operations
-- 3 synced entities (`contacts`, `domains`, `emails`) for fast `.search()` / `.list()`
-- 16 incoming webhook event types
+- 8 typed API operations
+- 2 database entities synced for fast `.search()` / `.list()` queries
+- 10 incoming webhook event types
 
 ## Setup
 
 <Steps>
 
 <Step title="Install">
-<CodeGroup>
-```bash npm
-npm install corsair @corsair-dev/resend
+```bash
+pnpm install @corsair-dev/resend
 ```
-```bash yarn
-yarn add corsair @corsair-dev/resend
-```
-```bash pnpm
-pnpm install corsair @corsair-dev/resend
-```
-```bash bun
-bun add corsair @corsair-dev/resend
-```
-</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
-import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { resend } from '@corsair-dev/resend';
 
 export const corsair = createCorsair({
-	plugins: [
-		resend(),
-	],
-	database: new Database('corsair.db'),
-	kek: process.env.CORSAIR_KEK!,
-	hub: {
-		projectApiKey: process.env.CORSAIR_API_KEY!,
-		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
-	},
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [resend()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { resend } from '@corsair-dev/resend';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [resend()],
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Step>
-
-<Step title="Choose authentication">
-<Tabs>
-<Tab title="API Key (Recommended)">
-
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
-
-Provider walkthrough: [Get Credentials](/plugins/resend/get-credentials).
-
-```ts
-resend()
-```
-
-More: [API Key](/concepts/api-key)
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Tab>
 </Tabs>
 
 </Step>
 
-<Step title="Connect a tenant">
-Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/resend/get-credentials) if you need help getting keys.
 
-```ts
-const { connectUrl } = await corsair.manage.connect.createLink({
-	plugin: 'resend',
-	tenantId: 'acme',
-});
-// redirect the user's browser to connectUrl
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=resend
 ```
+
+Use the key names documented in [Get Credentials](/plugins/resend/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=resend --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
 
 </Step>
 
 </Steps>
 
-## Example API calls
+## Authentication
 
-**List emails**
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
 
-```ts
-const tenant = corsair.withTenant('acme');
-await tenant.resend.api.emails.list({});
+<Tabs>
+<Tab title="API Key (Default)">
+
+```ts corsair.ts
+resend()
 ```
 
+Store credentials with `pnpm corsair setup --plugin=resend` (see [Get Credentials](/plugins/resend/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
-**Send an email**
+More: [API Key](/concepts/api-key)
 
-```ts
-const tenant = corsair.withTenant('acme');
-await tenant.resend.api.emails.send({
-	from: 'corsair@example.com',
-	to: 'you@example.com',
-	subject: 'Hello from Corsair',
-	text: 'Hello from Corsair',
-});
-```
-
-
-See the full list on the [API](/plugins/resend/api) page.
-
-## Query synced data
-
-Search synced emails without hitting Resend.
-
-```ts
-const tenant = corsair.withTenant('acme');
-const rows = await tenant.resend.db.emails.search({
-	data: {},
-	limit: 50,
-});
-```
-
-Synced entities: `contacts`, `domains`, `emails`. See [Database](/plugins/resend/database) for filters and operators.
+</Tab>
+</Tabs>
 
 ## Webhooks
 
-Fires when Resend accepts an outbound email.
+This plugin registers **10** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+
+See [Webhooks](/plugins/resend/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+
+
+## Query synced data
+
+Synced entities support `corsair.resend.db.<entity>.search()` and `.list()`. See [Database](/plugins/resend/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `domains.get`
 
 ```ts
-resend({
-    webhookHooks: {
-        emails: {
-            sent: {
-                after: async (ctx, result) => {
-                    console.log('Email sent:', result.data);
-                }
-            },
-        },
-    },
-})
+await corsair.resend.api.domains.get({});
 ```
 
-Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/resend/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
-## What's next
+**Write-style (write):** `domains.create`
 
-<CardGroup cols={2}>
-  <Card title="API reference" href="/plugins/resend/api">
-    Every `resend.api.*` operation with input and output types.
-  </Card>
-  <Card title="Database" href="/plugins/resend/database">
-    Synced entities, search filters, and operators.
-  </Card>
-  <Card title="Webhooks" href="/plugins/resend/webhooks">
-    Event paths, payloads, and `webhookHooks` examples.
-  </Card>
-  <Card title="Connect / OAuth" href="/management/connect">
-    createLink, Hub delivery, and tenant connect flows.
-  </Card>
-  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
-    Expose this plugin's operations as MCP tools.
-  </Card>
-  <Card title="Get credentials" href="/plugins/resend/get-credentials">
-    Provider-console walkthrough for keys and OAuth apps.
-  </Card>
-</CardGroup>
+```ts
+await corsair.resend.api.domains.create({});
+```
+
+
+See the full list on the [API](/plugins/resend/api) page. Use `pnpm corsair list --plugin=resend` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/resend/webhooks) page for payload types.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/resend/api) |
+| Database | [Database](/plugins/resend/database) |
+| Webhooks | [Webhooks](/plugins/resend/webhooks) |
+| Credentials | [Get credentials](/plugins/resend/get-credentials) |
+

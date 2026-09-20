@@ -1,14 +1,14 @@
 ---
 title: Overview
-description: "Communications API for SMS, voice calls, WhatsApp messaging, and programmable telephony."
+description: "Twilio plugin for Corsair"
 ---
 
-Use **Twilio** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+Use **Twilio** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
 
 **What you get:**
 
 - 6 typed API operations
-- 2 synced entities (`calls`, `messages`) for fast `.search()` / `.list()`
+- 2 database entities synced for fast `.search()` / `.list()` queries
 - 3 incoming webhook event types
 
 ## Setup
@@ -16,148 +16,134 @@ Use **Twilio** through Corsair: one client, typed API calls, local DB sync, and 
 <Steps>
 
 <Step title="Install">
-<CodeGroup>
-```bash npm
-npm install corsair @corsair-dev/twilio
+```bash
+pnpm install @corsair-dev/twilio
 ```
-```bash yarn
-yarn add corsair @corsair-dev/twilio
-```
-```bash pnpm
-pnpm install corsair @corsair-dev/twilio
-```
-```bash bun
-bun add corsair @corsair-dev/twilio
-```
-</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
-import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { twilio } from '@corsair-dev/twilio';
 
 export const corsair = createCorsair({
-	plugins: [
-		twilio(),
-	],
-	database: new Database('corsair.db'),
-	kek: process.env.CORSAIR_KEK!,
-	hub: {
-		projectApiKey: process.env.CORSAIR_API_KEY!,
-		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
-	},
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [twilio()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { twilio } from '@corsair-dev/twilio';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [twilio()],
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Step>
-
-<Step title="Choose authentication">
-<Tabs>
-<Tab title="API Key (Recommended)">
-
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
-
-```ts
-twilio()
-```
-
-More: [API Key](/concepts/api-key)
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Tab>
 </Tabs>
 
 </Step>
 
-<Step title="Connect a tenant">
-Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/twilio/get-credentials) if you need help getting keys.
 
-```ts
-const { connectUrl } = await corsair.manage.connect.createLink({
-	plugin: 'twilio',
-	tenantId: 'acme',
-});
-// redirect the user's browser to connectUrl
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=twilio
 ```
+
+Use the key names documented in [Get Credentials](/plugins/twilio/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=twilio --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
 
 </Step>
 
 </Steps>
 
-## Example API calls
+## Authentication
 
-**List messages**
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
 
-```ts
-const tenant = corsair.withTenant('acme');
-await tenant.twilio.api.messages.list({});
+<Tabs>
+<Tab title="API Key (Default)">
+
+```ts corsair.ts
+twilio()
 ```
 
+Store credentials with `pnpm corsair setup --plugin=twilio` (see [Get Credentials](/plugins/twilio/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
-**Send a message**
+More: [API Key](/concepts/api-key)
 
-```ts
-const tenant = corsair.withTenant('acme');
-await tenant.twilio.api.messages.send({ To: '+15555550100', From: '+15555550101', Body: 'Hello from Corsair' });
-```
-
-
-See the full list on the [API](/plugins/twilio/api) page.
-
-## Query synced data
-
-Search synced messages without hitting Twilio.
-
-```ts
-const tenant = corsair.withTenant('acme');
-const rows = await tenant.twilio.db.messages.search({
-	data: {},
-	limit: 50,
-});
-```
-
-Synced entities: `calls`, `messages`. See [Database](/plugins/twilio/database) for filters and operators.
+</Tab>
+</Tabs>
 
 ## Webhooks
 
-Fires when an inbound SMS arrives.
+This plugin registers **3** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+
+See [Webhooks](/plugins/twilio/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+
+
+## Query synced data
+
+Synced entities support `corsair.twilio.db.<entity>.search()` and `.list()`. See [Database](/plugins/twilio/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `calls.get`
 
 ```ts
-twilio({
-    webhookHooks: {
-        message: {
-            received: {
-                after: async (ctx, result) => {
-                    console.log('Twilio message:', result.data);
-                }
-            },
-        },
-    },
-})
+await corsair.twilio.api.calls.get({});
 ```
 
-Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/twilio/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
-## What's next
+**Write-style (write):** `calls.create`
 
-<CardGroup cols={2}>
-  <Card title="API reference" href="/plugins/twilio/api">
-    Every `twilio.api.*` operation with input and output types.
-  </Card>
-  <Card title="Database" href="/plugins/twilio/database">
-    Synced entities, search filters, and operators.
-  </Card>
-  <Card title="Webhooks" href="/plugins/twilio/webhooks">
-    Event paths, payloads, and `webhookHooks` examples.
-  </Card>
-  <Card title="Connect / OAuth" href="/management/connect">
-    createLink, Hub delivery, and tenant connect flows.
-  </Card>
-  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
-    Expose this plugin's operations as MCP tools.
-  </Card>
-</CardGroup>
+```ts
+await corsair.twilio.api.calls.create({});
+```
+
+
+See the full list on the [API](/plugins/twilio/api) page. Use `pnpm corsair list --plugin=twilio` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/twilio/webhooks) page for payload types.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/twilio/api) |
+| Database | [Database](/plugins/twilio/database) |
+| Webhooks | [Webhooks](/plugins/twilio/webhooks) |
+| Credentials | [Get credentials](/plugins/twilio/get-credentials) |
+

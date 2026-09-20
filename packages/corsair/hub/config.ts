@@ -13,30 +13,18 @@ export class HubNotConfiguredError extends Error {
 	}
 }
 
-export class HubCredentialsMissingError extends Error {
-	constructor() {
-		super(
-			'Hub credentials are missing. Pass hub: { projectApiKey, signingSecret } to createCorsair() ' +
-				'with non-empty values, or omit `hub` entirely if you are not using Corsair Hub.',
-		);
-		this.name = 'HubCredentialsMissingError';
-	}
-}
-
 export function normalizeHubConfig(input: HubConfigInput): HubConfig {
 	const apiUrl = (input.apiUrl?.trim() || DEFAULT_HUB_API_URL).replace(
 		/\/$/,
 		'',
 	);
-	const projectApiKey = input.projectApiKey?.trim() ?? '';
-	const signingSecret = input.signingSecret?.trim() ?? '';
+	const projectApiKey = input.projectApiKey.trim();
+	const signingSecret = input.signingSecret.trim();
 
-	// ck_cloud_ keys don't sign anything Hub-side (the hosted runtime itself
-	// holds the key) — signingSecret is only required for ck_dev_/ck_prod_.
-	const isCloudKey = projectApiKey.startsWith('ck_cloud_');
-
-	if (!projectApiKey || (!signingSecret && !isCloudKey)) {
-		throw new HubCredentialsMissingError();
+	if (!projectApiKey || !signingSecret) {
+		throw new Error(
+			'Hub config requires non-empty projectApiKey and signingSecret',
+		);
 	}
 
 	return {
@@ -52,22 +40,11 @@ export function normalizeHubConfig(input: HubConfigInput): HubConfig {
 	};
 }
 
-/**
- * Validates and normalizes hub config when `hub` is passed to createCorsair().
- * Omit `hub` entirely to disable Hub; when enabled, credentials are required at init.
- */
-export function resolveHubConfigInput(input: HubConfigInput): HubConfig {
-	return normalizeHubConfig(input);
-}
-
 function isHubConfigComplete(hub: HubConfig): boolean {
-	// ck_cloud_ keys carry no signingSecret (see normalizeHubConfig) — the hosted
-	// runtime is fully configured without one, so getHubConfig must not reject it.
-	const isCloudKey = hub.projectApiKey.startsWith('ck_cloud_');
 	return (
 		hub.apiUrl.trim().length > 0 &&
 		hub.projectApiKey.trim().length > 0 &&
-		(isCloudKey || hub.signingSecret.trim().length > 0)
+		hub.signingSecret.trim().length > 0
 	);
 }
 
@@ -92,17 +69,14 @@ export function resolveHubOAuthCallbackUrl(config: HubConfig): string {
 
 export function inferHubEnvironmentSlug(
 	apiKey: string,
-): 'development' | 'production' | 'cloud' {
+): 'development' | 'production' {
 	if (apiKey.startsWith('ck_dev_')) {
 		return 'development';
 	}
 	if (apiKey.startsWith('ck_prod_')) {
 		return 'production';
 	}
-	if (apiKey.startsWith('ck_cloud_')) {
-		return 'cloud';
-	}
 	throw new Error(
-		'Hub API key must start with ck_dev_ (development), ck_prod_ (production), or ck_cloud_ (cloud)',
+		'Hub API key must start with ck_dev_ (development) or ck_prod_ (production)',
 	);
 }

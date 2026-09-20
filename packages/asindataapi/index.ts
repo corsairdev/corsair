@@ -350,7 +350,7 @@ export const asinDataApiEndpointMeta = {
 	},
 	'collections.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Collection',
+		description: 'Delete a Collection [DESTRUCTIVE]',
 	},
 	'collections.start': {
 		riskLevel: 'write',
@@ -370,11 +370,12 @@ export const asinDataApiEndpointMeta = {
 	},
 	'requests.clear': {
 		riskLevel: 'destructive',
-		description: 'Bulk-delete multiple Requests from a Collection by their IDs',
+		description:
+			'Bulk-delete multiple Requests from a Collection by their IDs [DESTRUCTIVE]',
 	},
 	'requests.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a single Request from a Collection',
+		description: 'Delete a single Request from a Collection [DESTRUCTIVE]',
 	},
 	'resultSets.list': {
 		riskLevel: 'read',
@@ -400,7 +401,7 @@ export const asinDataApiEndpointMeta = {
 	},
 	'destinations.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Destination',
+		description: 'Delete a Destination [DESTRUCTIVE]',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof asinDataApiEndpointsNested>;
 

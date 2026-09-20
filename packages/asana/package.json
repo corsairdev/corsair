@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/asana",
-  "version": "0.1.6",
+  "version": "0.1.5",
   "description": "Asana plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -36,15 +36,9 @@
     "asana",
     "plugin"
   ],
-  "author": "Corsair (https://corsair.dev)",
+  "author": "",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/corsairdev/corsair.git",
-    "directory": "packages/asana"
-  },
-  "homepage": "https://docs.corsair.dev/plugins/asana"
+  ]
 }

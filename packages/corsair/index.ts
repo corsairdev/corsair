@@ -1,27 +1,14 @@
 export type {
-	BuildCorsairToolsOptions,
-	CorsairOperationTool,
-} from './adapters';
-export { buildCorsairTools, formFieldToZod } from './adapters';
-export type {
 	CorsairClientOptions,
 	CorsairManagementClient,
 } from './client';
 export { CorsairClientError, createCorsairClient } from './client';
-export type {
-	CorsairCloudConfig,
-	CorsairCloudInstance,
-	CorsairCloudRegistry,
-	ResolveConnectLinkResult,
-} from './core';
+export type { ResolveConnectLinkResult } from './core';
 export {
 	AuthMissingError,
-	CorsairKekMissingError,
-	corsairCloud,
 	createCorsair,
 	PermissionRequiredError,
 	ReadonlyForbiddenError,
-	ReconnectRequiredError,
 	resolveConnectLink,
 	runReadonly,
 } from './core';
@@ -32,13 +19,9 @@ export type {
 	CreateConnectLinkInput,
 	CreateTenantInput,
 	ExpressHandler,
-	FastifyHandler,
 	HonoHandler,
 	ManagementHandlerOptions,
 	ManagementOk,
-	NodeHandler,
-	NodeLikeRequest,
-	NodeLikeResponse,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
 	PermissionLookupInput,
@@ -49,23 +32,10 @@ export type {
 	Tenant,
 } from './core/management';
 export {
-	DEFAULT_BODY_STALL_TIMEOUT_MS,
-	DEFAULT_MAX_BODY_BYTES,
 	managementHandler,
-	registerCorsairRawBodyParser,
-	resolveBodyStallTimeoutMs,
-	resolveMaxBodyBytes,
-	toAstroHandler,
 	toExpressHandler,
-	toFastifyHandler,
 	toHonoHandler,
 	toNextJsHandler,
-	toNodeHandler,
-	toNuxtHandler,
-	toRemixHandler,
-	toSvelteKitHandler,
-	toTanStackHandler,
-	toWebHandler,
 } from './core/management';
 export type {
 	CorsairManualConfig,
@@ -90,7 +60,6 @@ export {
 	type AnyCorsairInstance,
 	type FormFieldSchema,
 	formatDocSchemaShape,
-	getInputSchema,
 	getSchema,
 	getStructuredSchema,
 	type ListOperationsOptions,

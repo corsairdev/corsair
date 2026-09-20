@@ -1,27 +1,17 @@
 /**
- * Error thrown when a plugin endpoint is called but the required auth
- * credentials are missing.
+ * Error thrown when a plugin endpoint is called but the required auth credentials
+ * are missing. Endpoint binding enriches the message with a connect link when hub
+ * or manual config is available, then rethrows this error for callers to handle.
  */
 export class AuthMissingError extends Error {
 	pluginId: string;
 	authType: string;
-	/** Scoped connect link when one could be minted — lets a UI open Connect
-	 * without parsing the message. Null when no link was available. */
-	connectUrl: string | null;
-	tenantId: string | null;
 
-	constructor(
-		pluginId: string,
-		authType: string,
-		message?: string,
-		link?: { connectUrl: string | null; tenantId: string | null },
-	) {
+	constructor(pluginId: string, authType: string, message?: string) {
 		super(message ?? `[auth-missing:${pluginId}:${authType}]`);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.name = 'AuthMissingError';
 		this.pluginId = pluginId;
 		this.authType = authType;
-		this.connectUrl = link?.connectUrl ?? null;
-		this.tenantId = link?.tenantId ?? null;
 	}
 }

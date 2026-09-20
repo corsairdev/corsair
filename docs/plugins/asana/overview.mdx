@@ -1,14 +1,14 @@
 ---
 title: Overview
-description: "Work management platform for tasks, projects, teams, and cross-functional collaboration."
+description: "Asana plugin for Corsair"
 ---
 
-Use **Asana** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+Use **Asana** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
 
 **What you get:**
 
 - 84 typed API operations
-- 7 synced entities (`projects`, `sections`, `stories`, `tags`, `tasks`, `teams`, and 1 more) for fast `.search()` / `.list()`
+- 7 database entities synced for fast `.search()` / `.list()` queries
 - 2 incoming webhook event types
 
 ## Setup
@@ -16,187 +16,147 @@ Use **Asana** through Corsair: one client, typed API calls, local DB sync, and i
 <Steps>
 
 <Step title="Install">
-<CodeGroup>
-```bash npm
-npm install corsair @corsair-dev/asana
+```bash
+pnpm install @corsair-dev/asana
 ```
-```bash yarn
-yarn add corsair @corsair-dev/asana
-```
-```bash pnpm
-pnpm install corsair @corsair-dev/asana
-```
-```bash bun
-bun add corsair @corsair-dev/asana
-```
-</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
 ```ts corsair.ts
-import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { asana } from '@corsair-dev/asana';
 
 export const corsair = createCorsair({
-	plugins: [
-		asana({
-			authType: 'managed',
-		}),
-	],
-	database: new Database('corsair.db'),
-	kek: process.env.CORSAIR_KEK!,
-	hub: {
-		projectApiKey: process.env.CORSAIR_API_KEY!,
-		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
-	},
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [asana()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { asana } from '@corsair-dev/asana';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [asana()],
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Step>
-
-<Step title="Choose authentication">
-<Tabs>
-<Tab title="Managed OAuth (Recommended)">
-
-No setup required. Corsair hosts the OAuth app for **Asana** — your tenants connect through Hub when they sign in.
-
-Provider walkthrough: [Get Credentials](/plugins/asana/get-credentials).
-
-```ts
-asana({
-	authType: 'managed',
-})
-```
-
-More: [Managed OAuth](/concepts/auth#managed)
-
-</Tab>
-<Tab title="API Key">
-
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
-
-Provider walkthrough: [Get Credentials](/plugins/asana/get-credentials).
-
-```ts
-asana()
-```
-
-More: [API Key](/concepts/api-key)
-
-</Tab>
-<Tab title="OAuth 2.0">
-
-Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Asana OAuth app.
-
-Provider walkthrough: [Get Credentials](/plugins/asana/get-credentials).
-
-```ts
-asana({
-	authType: 'oauth_2',
-})
-```
-
-More: [OAuth 2.0](/concepts/oauth)
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Tab>
 </Tabs>
 
 </Step>
 
-<Step title="Connect a tenant">
-Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/asana/get-credentials) if you need help getting keys.
 
-```ts
-const { connectUrl } = await corsair.manage.connect.createLink({
-	plugin: 'asana',
-	tenantId: 'acme',
-});
-// redirect the user's browser to connectUrl
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=asana
 ```
+
+Use the key names documented in [Get Credentials](/plugins/asana/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=asana --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
 
 </Step>
 
 </Steps>
 
-## Example API calls
+## Authentication
 
-**List tasks**
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
 
-```ts
-const tenant = corsair.withTenant('acme');
-await tenant.asana.api.tasks.list({});
+<Tabs>
+<Tab title="API Key (Default)">
+
+```ts corsair.ts
+asana()
 ```
 
+Store credentials with `pnpm corsair setup --plugin=asana` (see [Get Credentials](/plugins/asana/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
-**Create a task**
+More: [API Key](/concepts/api-key)
 
-```ts
-const tenant = corsair.withTenant('acme');
-await tenant.asana.api.tasks.create({
-	data: { name: 'Follow up from Corsair' },
-});
-```
+</Tab>
+<Tab title="OAuth 2.0">
 
-
-See the full list on the [API](/plugins/asana/api) page.
-
-## Query synced data
-
-Search synced tasks without hitting Asana.
-
-```ts
-const tenant = corsair.withTenant('acme');
-const rows = await tenant.asana.db.tasks.search({
-	data: { completed: false },
-	limit: 50,
-});
-```
-
-Synced entities: `projects`, `sections`, `stories`, `tags`, `tasks`, `teams`, `users`. See [Database](/plugins/asana/database) for filters and operators.
-
-## Webhooks
-
-Fires on Asana task create/update events. Do not use challenge.challenge.
-
-```ts
+```ts corsair.ts
 asana({
-    webhookHooks: {
-        tasks: {
-            taskEvent: {
-                after: async (ctx, result) => {
-                    console.log('Asana task event:', result.data);
-                }
-            },
-        },
-    },
+    authType: 'oauth_2',
 })
 ```
 
-Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/asana/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+Store credentials with `pnpm corsair setup --plugin=asana` (see [Get Credentials](/plugins/asana/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
-## What's next
+More: [OAuth 2.0](/concepts/oauth)
 
-<CardGroup cols={2}>
-  <Card title="API reference" href="/plugins/asana/api">
-    Every `asana.api.*` operation with input and output types.
-  </Card>
-  <Card title="Database" href="/plugins/asana/database">
-    Synced entities, search filters, and operators.
-  </Card>
-  <Card title="Webhooks" href="/plugins/asana/webhooks">
-    Event paths, payloads, and `webhookHooks` examples.
-  </Card>
-  <Card title="Connect / OAuth" href="/management/connect">
-    createLink, Hub delivery, and tenant connect flows.
-  </Card>
-  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
-    Expose this plugin's operations as MCP tools.
-  </Card>
-  <Card title="Get credentials" href="/plugins/asana/get-credentials">
-    Provider-console walkthrough for keys and OAuth apps.
-  </Card>
-</CardGroup>
+</Tab>
+</Tabs>
+
+## Webhooks
+
+This plugin registers **2** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+
+See [Webhooks](/plugins/asana/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+
+
+## Query synced data
+
+Synced entities support `corsair.asana.db.<entity>.search()` and `.list()`. See [Database](/plugins/asana/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `projects.get`
+
+```ts
+await corsair.asana.api.projects.get({});
+```
+
+
+**Write-style (write):** `projects.addFollowers`
+
+```ts
+await corsair.asana.api.projects.addFollowers({});
+```
+
+
+See the full list on the [API](/plugins/asana/api) page. Use `pnpm corsair list --plugin=asana` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/asana/webhooks) page for payload types.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/asana/api) |
+| Database | [Database](/plugins/asana/database) |
+| Webhooks | [Webhooks](/plugins/asana/webhooks) |
+| Credentials | [Get credentials](/plugins/asana/get-credentials) |
+

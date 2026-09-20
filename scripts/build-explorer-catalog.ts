@@ -1,41 +1,35 @@
 /**
- * Builds `explorer/data/catalog.json` plus one JSON file per plugin under
- * `explorer/data/plugins/` by scanning every `@corsair-dev/*` plugin package
- * under `packages/*`, importing its factory, running `introspectPluginForDocs`,
- * and serialising the result.
+ * Builds `explorer/data/plugins.json` by scanning every `@corsair-dev/*`
+ * plugin package under `packages/*`, importing its factory, running
+ * `introspectPluginForDocs`, and serialising the result.
  *
  * The `explorer/` app itself lives outside the monorepo's workspace (it has
  * its own `pnpm-workspace.yaml` and lockfile) — this script is the only link
- * between the two: it reads plugin source from the monorepo and writes static
- * JSON artifacts into `explorer/data/`.
+ * between the two: it reads plugin source from the monorepo and writes a
+ * static JSON artifact into `explorer/data/`.
  *
  * Run manually whenever plugins change:
  *   pnpm build:explorer-catalog
  *
  * Discovery logic mirrors `scripts/generate-plugin-docs.ts` but we intentionally
  * keep a small, self-contained copy here so the two scripts can evolve
- * independently. Display copy (`displayName`, `description`) is read from
- * `packages/<plugin>/plugin-docs.yaml` when present, with package.json fallbacks.
+ * independently.
  */
 import {
 	existsSync,
 	mkdirSync,
 	readdirSync,
 	readFileSync,
-	rmSync,
-	unlinkSync,
 	writeFileSync,
 } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { parse as parseYaml } from 'yaml';
-import { buildSearchIndex } from '../explorer/src/catalog.ts';
 import type {
 	DocsApiEndpoint,
 	DocsWebhook,
 	PluginAuthFields,
 	PluginAuthType,
-	PluginCatalogIndex,
+	PluginCatalog,
 	PluginEntry,
 } from '../explorer/src/types.ts';
 import { BASE_AUTH_FIELDS } from '../packages/corsair/core/auth/types.ts';
@@ -62,15 +56,6 @@ const KNOWN_AUTH_TYPES: readonly PluginAuthType[] = [
 	'api_key',
 	'bot_token',
 ];
-
-const PLUGIN_DOCS_FILE = 'plugin-docs.yaml';
-
-type PluginDocsFile = {
-	displayName?: string;
-	description?: string;
-	/** Brand website hostname for plugin icons (see scripts/plugin-icon-domains.ts). */
-	domain?: string;
-};
 
 type PackageJson = { name?: string; description?: string; version?: string };
 
@@ -145,20 +130,6 @@ function titleFromPackageDescription(desc: string | undefined): string | null {
 		raw = titleCaseSegment(raw);
 	}
 	return raw;
-}
-
-function readPluginDocsConfig(packageDir: string): PluginDocsFile {
-	const p = join(packageDir, PLUGIN_DOCS_FILE);
-	if (!existsSync(p)) return {};
-	try {
-		const doc = parseYaml(readFileSync(p, 'utf8')) as unknown;
-		if (doc && typeof doc === 'object' && !Array.isArray(doc)) {
-			return doc as PluginDocsFile;
-		}
-	} catch {
-		// ignore invalid yaml
-	}
-	return {};
 }
 
 function inferAuthTypesFromSource(source: string): PluginAuthType[] {
@@ -276,14 +247,9 @@ async function buildPluginEntry(
 	const entrySource = readFileSync(entryPath, 'utf8');
 	const authTypes = inferAuthTypesFromSource(entrySource);
 	const defaultAuthType = inferDefaultAuthTypeFromSource(entrySource);
-	const docsConfig = readPluginDocsConfig(packageDir);
 
 	const displayName =
-		docsConfig.displayName?.trim() ??
-		titleFromPackageDescription(pkg.description) ??
-		humanizePluginId(pluginId);
-	const description =
-		docsConfig.description?.trim() ?? pkg.description?.trim() ?? undefined;
+		titleFromPackageDescription(pkg.description) ?? humanizePluginId(pluginId);
 
 	const webhooks = hidesPlaceholderWebhooks(data.webhooks, pluginId)
 		? []
@@ -314,7 +280,7 @@ async function buildPluginEntry(
 	return {
 		id: pluginId,
 		displayName,
-		...(description ? { description } : {}),
+		...(pkg.description ? { description: pkg.description.trim() } : {}),
 		npmPackageName,
 		authTypes,
 		...(defaultAuthType ? { defaultAuthType } : {}),
@@ -323,27 +289,6 @@ async function buildPluginEntry(
 		api,
 		webhooks,
 		db,
-	};
-}
-
-function toSummary(entry: PluginEntry) {
-	const {
-		id,
-		displayName,
-		description,
-		npmPackageName,
-		authTypes,
-		defaultAuthType,
-		counts,
-	} = entry;
-	return {
-		id,
-		displayName,
-		description,
-		npmPackageName,
-		authTypes,
-		defaultAuthType,
-		counts,
 	};
 }
 
@@ -379,43 +324,20 @@ async function main(): Promise<void> {
 
 	const corsairPkg =
 		readJson<PackageJson>(join(packagesDir, 'corsair', 'package.json')) ?? {};
-
-	const outDir = join(root, 'explorer', 'data');
-	const pluginsDir = join(outDir, 'plugins');
-	mkdirSync(pluginsDir, { recursive: true });
-
-	const activePluginIds = new Set(plugins.map((p) => p.id));
-	for (const fileName of readdirSync(pluginsDir)) {
-		if (!fileName.endsWith('.json')) continue;
-		const pluginId = fileName.slice(0, -'.json'.length);
-		if (!activePluginIds.has(pluginId)) {
-			unlinkSync(join(pluginsDir, fileName));
-		}
-	}
-
-	for (const plugin of plugins) {
-		const pluginPath = join(pluginsDir, `${plugin.id}.json`);
-		writeFileSync(pluginPath, `${JSON.stringify(plugin, null, 2)}\n`, 'utf8');
-	}
-
-	const catalog: PluginCatalogIndex = {
+	const catalog: PluginCatalog = {
 		generatedAt: new Date().toISOString(),
 		corsairVersion: corsairPkg.version ?? '0.0.0',
-		catalogVersion: 2,
-		plugins: plugins.map(toSummary),
-		search: buildSearchIndex(plugins),
+		catalogVersion: 1,
+		plugins,
 	};
 
-	const catalogPath = join(outDir, 'catalog.json');
-	writeFileSync(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`, 'utf8');
-
-	const legacyCatalogPath = join(outDir, 'plugins.json');
-	if (existsSync(legacyCatalogPath)) {
-		rmSync(legacyCatalogPath);
-	}
+	const outDir = join(root, 'explorer', 'data');
+	mkdirSync(outDir, { recursive: true });
+	const outPath = join(outDir, 'plugins.json');
+	writeFileSync(outPath, `${JSON.stringify(catalog, null, 2)}\n`, 'utf8');
 
 	console.log(
-		`\n[explorer:catalog] Wrote ${catalogPath} and ${plugins.length} files under ${pluginsDir}/`,
+		`\n[explorer:catalog] Wrote ${outPath} — ${plugins.length} plugins.`,
 	);
 	if (failures.length > 0) {
 		console.error(`[explorer:catalog] ${failures.length} plugin(s) failed:`);

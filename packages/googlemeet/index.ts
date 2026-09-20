@@ -203,7 +203,7 @@ const googleMeetEndpointMeta = {
 	'spaces.endActiveConference': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'End an active conference',
+		description: 'End an active conference [DESTRUCTIVE]',
 	},
 	'conferenceRecords.get': {
 		riskLevel: 'read',

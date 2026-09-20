@@ -3,7 +3,7 @@
   "globalDependencies": [
     "package.json",
     "tsconfig.json",
-    "tsconfig.base.json",
+    "pnpm-lock.yaml",
     "pnpm-workspace.yaml"
   ],
   "tasks": {
@@ -14,7 +14,15 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": [
+        "BETTER_AUTH_SECRET",
+        "BETTER_AUTH_URL",
+        "DATABASE_URL",
+        "RESEND_API_KEY",
+        "RESEND_FROM_EMAIL",
+        "CORSAIR_KEK"
+      ]
     },
     "clean": {},
     "format": {

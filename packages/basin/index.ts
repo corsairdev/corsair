@@ -281,7 +281,8 @@ const basinEndpointMeta = {
 	'forms.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Permanently delete a form and its configuration',
+		description:
+			'Permanently delete a form and its configuration [DESTRUCTIVE]',
 	},
 	'submissions.list': {
 		riskLevel: 'read',
@@ -294,7 +295,7 @@ const basinEndpointMeta = {
 	'submissions.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Permanently delete a form submission',
+		description: 'Permanently delete a form submission [DESTRUCTIVE]',
 	},
 	'submissions.update': {
 		riskLevel: 'write',
@@ -335,7 +336,7 @@ const basinEndpointMeta = {
 	'projects.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Permanently delete a project',
+		description: 'Permanently delete a project [DESTRUCTIVE]',
 	},
 	'webhooks.list': {
 		riskLevel: 'read',
@@ -356,7 +357,7 @@ const basinEndpointMeta = {
 	'webhooks.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Permanently delete a form webhook integration',
+		description: 'Permanently delete a form webhook integration [DESTRUCTIVE]',
 	},
 	'formViews.list': {
 		riskLevel: 'read',

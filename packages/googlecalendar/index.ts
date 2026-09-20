@@ -175,7 +175,7 @@ const googleCalendarEndpointMeta = {
 	},
 	'events.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a calendar event',
+		description: 'Delete a calendar event [DESTRUCTIVE]',
 	},
 	'calendar.getAvailability': {
 		riskLevel: 'read',

@@ -494,8 +494,6 @@ export function formatServerDeliveryError(
  * Used by the hub for production credential transfer, OAuth callbacks, permission decisions,
  * and connect status introspection.
  */
-const DELIVERY_REQUEST_TIMEOUT_MS = 15_000;
-
 export async function deliverSignedEnvelope(input: {
 	deliveryUrl: string;
 	projectId: string;
@@ -510,7 +508,6 @@ export async function deliverSignedEnvelope(input: {
 			method: 'POST',
 			headers,
 			body,
-			signal: AbortSignal.timeout(DELIVERY_REQUEST_TIMEOUT_MS),
 		});
 
 		const text = await response.text();

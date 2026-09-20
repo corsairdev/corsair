@@ -1,9 +1,0 @@
-export * as Account from './account';
-export * as ApiApps from './api-apps';
-export * as BulkSend from './bulk-send';
-export * as Drafts from './drafts';
-export * as Embedded from './embedded';
-export * as FaxAndReports from './fax-and-reports';
-export * as SignatureRequests from './signature-requests';
-export * as Teams from './teams';
-export * as Templates from './templates';

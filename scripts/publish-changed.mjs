@@ -1,19 +1,10 @@
-import { execFileSync } from 'node:child_process';
+import { execSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { isAlreadyPublished } from './npm-publish-errors.mjs';
 import { orderForPublish } from './publish-order.mjs';
 
-// Publishable workspace roots. Plugins live in packages/; framework adapters
-// (mcp, mastra) live in adapters/ — both publish to npm.
-const PACKAGE_ROOTS = ['packages', 'adapters'];
-const PACKAGE_NAME_RE = /^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/;
-
-function assertPackageName(name) {
-	if (typeof name !== 'string' || !PACKAGE_NAME_RE.test(name)) {
-		throw new Error(`invalid package name: ${String(name)}`);
-	}
-}
+const PACKAGES_DIR = 'packages';
 
 // Deps declared with the workspace protocol get their spec rewritten to a fixed
 // version on publish, so a dependent must not ship before its dependency lands
@@ -31,12 +22,10 @@ function workspaceDeps(pkg) {
 }
 
 function getPublishedVersion(name) {
-	assertPackageName(name);
 	try {
 		return (
-			execFileSync('npm', ['view', name, 'version'], {
+			execSync(`npm view ${name} version 2>/dev/null`, {
 				encoding: 'utf-8',
-				stdio: ['ignore', 'pipe', 'ignore'],
 			}).trim() || null
 		);
 	} catch {
@@ -44,18 +33,14 @@ function getPublishedVersion(name) {
 	}
 }
 
-const dirs = PACKAGE_ROOTS.flatMap((root) =>
-	existsSync(root)
-		? readdirSync(root, { withFileTypes: true })
-				.filter((d) => d.isDirectory())
-				.map((d) => join(root, d.name))
-		: [],
-);
+const dirs = readdirSync(PACKAGES_DIR, { withFileTypes: true })
+	.filter((d) => d.isDirectory())
+	.map((d) => d.name);
 
 const toPublish = [];
 
 for (const dir of dirs) {
-	const pkgPath = join(dir, 'package.json');
+	const pkgPath = join(PACKAGES_DIR, dir, 'package.json');
 	if (!existsSync(pkgPath)) continue;
 
 	const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
@@ -93,13 +78,9 @@ const ordered = orderForPublish(toPublish);
 
 console.log(`\nBuilding ${ordered.length} package(s)...`);
 for (const { name } of ordered) {
-	assertPackageName(name);
+	console.log(`  Building ${name}...`);
+	execSync(`pnpm --filter ${name} build`, { stdio: 'inherit' });
 }
-execFileSync(
-	'pnpm',
-	['exec', 'turbo', 'build', ...ordered.map((p) => `--filter=${p.name}`)],
-	{ stdio: 'inherit' },
-);
 
 console.log(`\nPublishing ${ordered.length} package(s)...`);
 
@@ -130,31 +111,22 @@ for (const { name, version, deps } of ordered) {
 		continue;
 	}
 
-	assertPackageName(name);
 	console.log(`  Publishing ${name}@${version}...`);
 	try {
-		const out = execFileSync(
-			'pnpm',
-			[
-				'--filter',
-				name,
-				'publish',
-				'--provenance',
-				'--access',
-				'public',
-				'--no-git-checks',
-			],
+		// npm writes errors to stderr but execSync only returns stdout, so redirect
+		// stderr into stdout to capture the failure text for classification below.
+		const out = execSync(
+			`pnpm --filter ${name} publish --provenance --access public --no-git-checks 2>&1`,
 			{
 				encoding: 'utf-8',
 				maxBuffer: 10 * 1024 * 1024,
-				stdio: ['ignore', 'pipe', 'pipe'],
 				env: { ...process.env, NODE_AUTH_TOKEN: token },
 			},
 		);
 		process.stdout.write(out);
 		publishedCount++;
 	} catch (err) {
-		const out = `${err.stdout ?? ''}${err.stderr ?? ''}`;
+		const out = err.stdout ?? '';
 		process.stdout.write(out);
 		if (isAlreadyPublished(out)) {
 			console.log(`  SKIP ${name}@${version} (already on npm)`);

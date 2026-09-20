@@ -2,21 +2,11 @@ import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
 
-import * as authSchema from './auth-schema';
-import * as catalogSchema from './catalog-schema';
-import * as corsairSchema from './corsair-schema';
 import * as schema from './schema';
-
-const fullSchema = {
-	...schema,
-	...authSchema,
-	...corsairSchema,
-	...catalogSchema,
-};
 
 const globalForDb = globalThis as unknown as {
 	pool: pg.Pool | undefined;
-	db: NodePgDatabase<typeof fullSchema> | undefined;
+	db: NodePgDatabase<typeof schema> | undefined;
 };
 
 /** pg v8+ warns when sslmode is prefer/require/verify-ca; use verify-full explicitly. */
@@ -56,13 +46,13 @@ function getPool() {
 
 function getDb() {
 	if (!globalForDb.db) {
-		globalForDb.db = drizzle(getPool(), { schema: fullSchema });
+		globalForDb.db = drizzle(getPool(), { schema });
 	}
 
 	return globalForDb.db;
 }
 
-export const db = new Proxy({} as NodePgDatabase<typeof fullSchema>, {
+export const db = new Proxy({} as NodePgDatabase<typeof schema>, {
 	get(_target, prop, receiver) {
 		return Reflect.get(getDb() as object, prop, receiver);
 	},

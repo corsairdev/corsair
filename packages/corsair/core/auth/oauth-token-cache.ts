@@ -11,11 +11,7 @@ export function isAccessTokenFresh(input: {
 	forceRefresh?: boolean;
 }): boolean {
 	if (input.forceRefresh) return false;
-	if (!input.accessToken) return false;
-	// A non-expiring token (Notion et al.) carries no expires_at — a present access
-	// token is fresh. If a provider that really does expire ever omits it, the call
-	// gets a 401 and the endpoint's 401-retry forces a refresh.
-	if (!input.expiresAt) return true;
+	if (!input.accessToken || !input.expiresAt) return false;
 	const now = input.now ?? Math.floor(Date.now() / 1000);
 	return Number(input.expiresAt) > now + TOKEN_REFRESH_BUFFER_SECONDS;
 }

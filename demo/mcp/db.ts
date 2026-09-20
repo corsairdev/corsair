@@ -44,21 +44,13 @@ sqlite.exec(`
 		status TEXT
 	);
 
-	CREATE INDEX IF NOT EXISTS corsair_events_account_type_created_idx
-		ON corsair_events (account_id, event_type, created_at);
-
 	CREATE TABLE IF NOT EXISTS corsair_permissions (
 		id TEXT PRIMARY KEY,
 		created_at TEXT NOT NULL,
 		updated_at TEXT NOT NULL,
-		token TEXT NOT NULL,
-		plugin TEXT NOT NULL,
+		account_id TEXT NOT NULL,
 		endpoint TEXT NOT NULL,
-		args TEXT NOT NULL,
-		tenant_id TEXT NOT NULL DEFAULT 'default',
-		status TEXT NOT NULL DEFAULT 'pending',
-		expires_at TEXT NOT NULL,
-		error TEXT NULL
+		status TEXT NOT NULL
 	);
 `);
 

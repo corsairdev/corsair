@@ -153,9 +153,7 @@ export function IntegrationCard({
 						integration.isClaimed ? 'text-[#1c1c1c33]' : 'text-[#1c1c1c66]'
 					}
 				/>
-				{session &&
-				integration.claimedByCurrentUser &&
-				!integration.urls.prUrl ? (
+				{session && integration.claimedByCurrentUser ? (
 					<UnclaimIntegrationButton integrationId={integration.id} />
 				) : null}
 				{session && !integration.isClaimed ? (

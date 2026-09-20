@@ -15,7 +15,7 @@ import { Id, N, S } from './primitives';
  * GET /jobs/{id}/responses is 404; responses live on GET /interviews.
  *
  * Agent docs (input field names for write ops):
- *   https://app.asyncinterview.ai/docs
+ *   https://docs.composio.dev/toolkits/async_interview
  *
  * Jobs and interviews are the slow-changing hiring records this plugin
  * mirrors. GET /me is the current team and includes payment/webhook

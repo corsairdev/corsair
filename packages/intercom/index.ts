@@ -483,7 +483,7 @@ const intercomEndpointMeta = {
 	},
 	'contacts.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a contact',
+		description: 'Delete a contact [DESTRUCTIVE]',
 	},
 	'contacts.addTag': {
 		riskLevel: 'write',
@@ -584,7 +584,7 @@ const intercomEndpointMeta = {
 	},
 	'companies.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a company',
+		description: 'Delete a company [DESTRUCTIVE]',
 	},
 	'companies.retrieve': {
 		riskLevel: 'read',
@@ -613,7 +613,7 @@ const intercomEndpointMeta = {
 	},
 	'articles.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete an article',
+		description: 'Delete an article [DESTRUCTIVE]',
 	},
 	'articles.search': { riskLevel: 'read', description: 'Search for articles' },
 	'collections.get': {
@@ -634,7 +634,7 @@ const intercomEndpointMeta = {
 	},
 	'collections.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a collection',
+		description: 'Delete a collection [DESTRUCTIVE]',
 	},
 	'admins.identify': {
 		riskLevel: 'read',

@@ -54,8 +54,6 @@ CREATE TABLE IF NOT EXISTS ${TEST_SCHEMA}.corsair_events (
     payload JSONB NOT NULL DEFAULT '{}',
     status TEXT
 );
-CREATE INDEX IF NOT EXISTS corsair_events_account_type_created_idx
-    ON ${TEST_SCHEMA}.corsair_events (account_id, event_type, created_at);
 CREATE TABLE IF NOT EXISTS ${TEST_SCHEMA}.corsair_permissions (
     id TEXT PRIMARY KEY,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),

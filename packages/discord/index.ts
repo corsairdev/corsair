@@ -325,7 +325,7 @@ const discordEndpointMeta = {
 	'messages.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Permanently delete a message',
+		description: 'Permanently delete a message [DESTRUCTIVE]',
 	},
 	'threads.create': {
 		riskLevel: 'write',

@@ -278,7 +278,7 @@ const firefliesEndpointMeta = {
 	},
 	'askFred.deleteThread': {
 		riskLevel: 'destructive',
-		description: 'Delete an AskFred conversation thread',
+		description: 'Delete an AskFred conversation thread [DESTRUCTIVE]',
 	},
 	'audio.upload': {
 		riskLevel: 'write',

@@ -965,11 +965,11 @@ const sharepointEndpointMeta = {
 	},
 	'lists.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a SharePoint list by GUID',
+		description: 'Delete a SharePoint list by GUID [DESTRUCTIVE]',
 	},
 	'lists.deleteByTitle': {
 		riskLevel: 'destructive',
-		description: 'Delete a SharePoint list by title',
+		description: 'Delete a SharePoint list by title [DESTRUCTIVE]',
 	},
 	'lists.listColumns': {
 		riskLevel: 'read',
@@ -1013,7 +1013,7 @@ const sharepointEndpointMeta = {
 	},
 	'items.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a SharePoint list item',
+		description: 'Permanently delete a SharePoint list item [DESTRUCTIVE]',
 	},
 	'items.recycle': {
 		riskLevel: 'write',
@@ -1089,7 +1089,8 @@ const sharepointEndpointMeta = {
 	},
 	'folders.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a SharePoint folder and all its contents',
+		description:
+			'Delete a SharePoint folder and all its contents [DESTRUCTIVE]',
 	},
 	'folders.rename': {
 		riskLevel: 'write',
@@ -1109,7 +1110,7 @@ const sharepointEndpointMeta = {
 	},
 	'users.remove': {
 		riskLevel: 'destructive',
-		description: 'Remove a user from the SharePoint site',
+		description: 'Remove a user from the SharePoint site [DESTRUCTIVE]',
 	},
 	'users.ensure': {
 		riskLevel: 'write',
@@ -1237,7 +1238,8 @@ const sharepointEndpointMeta = {
 	},
 	'recycleBin.deletePermanent': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete an item from the recycle bin',
+		description:
+			'Permanently delete an item from the recycle bin [DESTRUCTIVE]',
 	},
 	'drive.getAnalytics': {
 		riskLevel: 'read',
@@ -1253,7 +1255,7 @@ const sharepointEndpointMeta = {
 	},
 	'drive.deleteVersion': {
 		riskLevel: 'destructive',
-		description: 'Delete a specific version of a drive item',
+		description: 'Delete a specific version of a drive item [DESTRUCTIVE]',
 	},
 	'drive.createSharingLink': {
 		riskLevel: 'write',

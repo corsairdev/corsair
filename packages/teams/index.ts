@@ -296,7 +296,7 @@ const teamsEndpointMeta = {
 	'teams.update': { riskLevel: 'write', description: 'Update team settings' },
 	'teams.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a team',
+		description: 'Delete a team [DESTRUCTIVE]',
 	},
 	'channels.list': {
 		riskLevel: 'read',
@@ -313,7 +313,7 @@ const teamsEndpointMeta = {
 	'channels.update': { riskLevel: 'write', description: 'Update a channel' },
 	'channels.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a channel',
+		description: 'Delete a channel [DESTRUCTIVE]',
 	},
 	'messages.list': {
 		riskLevel: 'read',
@@ -337,7 +337,7 @@ const teamsEndpointMeta = {
 	},
 	'messages.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a channel message',
+		description: 'Delete a channel message [DESTRUCTIVE]',
 	},
 	'members.list': { riskLevel: 'read', description: 'List members of a team' },
 	'members.get': {
@@ -347,7 +347,7 @@ const teamsEndpointMeta = {
 	'members.add': { riskLevel: 'write', description: 'Add a member to a team' },
 	'members.remove': {
 		riskLevel: 'destructive',
-		description: 'Remove a member from a team',
+		description: 'Remove a member from a team [DESTRUCTIVE]',
 	},
 	'chats.list': {
 		riskLevel: 'read',

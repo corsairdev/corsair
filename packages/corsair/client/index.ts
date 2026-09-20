@@ -1,7 +1,6 @@
 import type {
 	ConnectionStatus,
 	ConnectLink,
-	ConnectRequest,
 	ManagementOk,
 	OAuthCallbackResult,
 	PermissionRecord,
@@ -109,29 +108,6 @@ export function createCorsairClient(
 				getJson<ResolvedConnectLink>('/connect/resolve', { state }),
 			oauthCallback: (input) =>
 				postJson<OAuthCallbackResult>('/connect/oauth/callback', input),
-		},
-		connectRequest: {
-			get: (q) => {
-				const query: Record<string, string> = {};
-				if (q?.tenantId) query.tenantId = q.tenantId;
-				return getJson<{ request: ConnectRequest | null }>(
-					'/connect/request',
-					query,
-				);
-			},
-			clear: (input) =>
-				postJson<{ ok: true }>('/connect/request/clear', input ?? {}),
-		},
-		call<T = unknown>(
-			plugin: string,
-			op: string,
-			tenantId: string,
-			args?: unknown,
-		) {
-			return postJson<{ data: T }>(
-				`/${enc(tenantId)}/${enc(plugin)}/call/${enc(op)}`,
-				{ args },
-			).then((r) => r.data);
 		},
 	};
 }
