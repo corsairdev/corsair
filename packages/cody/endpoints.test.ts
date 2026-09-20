@@ -209,6 +209,20 @@ describe('Cody endpoints', () => {
 		expect(result.completion).toBe('hello');
 	});
 
+	it('completions.stream posts to the Sourcegraph stream API', async () => {
+		const { stream } = await import('./endpoints/completions');
+		mockRequest.mockResolvedValue({ completion: 'hi', stopReason: 'STOP' });
+		const result = await stream(apiKeyCtx, {
+			messages: [{ speaker: 'human', text: 'Hi' }],
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/.api/completions/stream',
+			'test-cody-key',
+			expect.objectContaining({ method: 'POST' }),
+		);
+		expect(result.completion).toBe('hi');
+	});
+
 	it('models.list fetches supported-models.json', async () => {
 		mockRequest.mockResolvedValue({ models: [] });
 		const result = await listModels(apiKeyCtx, {});
@@ -420,11 +434,30 @@ describe('Cody error handlers', () => {
 		expect(errorHandlers.AUTH_ERROR.match(error2)).toBe(true);
 	});
 
+	it('matches PERMISSION_ERROR for ApiError with status 403', async () => {
+		const error = new ApiError(
+			{ url: 'https://sourcegraph.com/.api/graphql', method: 'POST' },
+			{
+				url: 'https://sourcegraph.com/.api/graphql',
+				status: 403,
+				statusText: 'Forbidden',
+				body: {},
+				ok: false,
+			},
+			'Forbidden',
+		);
+
+		expect(errorHandlers.PERMISSION_ERROR.match(error)).toBe(true);
+		const strategy = await errorHandlers.PERMISSION_ERROR.handler(error);
+		expect(strategy).toEqual({ maxRetries: 0 });
+	});
+
 	it('DEFAULT matches all other errors', async () => {
 		const error = new Error('Something generic went wrong');
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
 		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(false);
+		expect(errorHandlers.PERMISSION_ERROR.match(error)).toBe(false);
 		expect(errorHandlers.DEFAULT.match(error)).toBe(true);
 	});
 });
