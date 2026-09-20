@@ -307,12 +307,29 @@ const PrismaDatabaseUsageSchema = z
 			])
 			.optional(),
 	})
-	.passthrough();
+	.passthrough()
+	.refine(
+		(data) =>
+			data.storage !== undefined ||
+			data.operations !== undefined ||
+			data.reads !== undefined ||
+			data.writes !== undefined ||
+			data.totalOperations !== undefined ||
+			data.metrics !== undefined ||
+			data.databaseId !== undefined ||
+			data.id !== undefined,
+		{
+			message:
+				'database usage payload must contain at least one recognized usage field',
+		},
+	);
 
 const GetDatabaseUsageOutputSchema = z.union([
 	PrismaDatabaseUsageSchema,
 	z.object({ data: PrismaDatabaseUsageSchema }).passthrough(),
 	z.object({ usage: PrismaDatabaseUsageSchema }).passthrough(),
+	z.array(PrismaUsageMetricPointSchema),
+	z.object({ data: z.array(PrismaUsageMetricPointSchema) }).passthrough(),
 ]);
 const CreateConnectionOutputSchema = singleResource(PrismaConnectionSchema);
 const ListConnectionsOutputSchema = resourceOrList(PrismaConnectionSchema);

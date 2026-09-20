@@ -302,7 +302,7 @@ export function isReadOnlySql(sql: string): boolean {
 				if (c === '"') {
 					state = 'code';
 					const k = skipSqlTrivia(i + 1);
-					if (s.charAt(k) === '(' && prevWord !== 'as') {
+					if (s.charAt(k) === '(') {
 						const quotedName = s
 							.slice(identStart, i)
 							.replace(/""/g, '"')
@@ -318,6 +318,7 @@ export function isReadOnlySql(sql: string): boolean {
 			case 'dollarQuote':
 				if (c === '$' && s.startsWith(dollarTag, i)) {
 					state = 'code';
+					prevWord = '';
 					i += dollarTag.length;
 					continue;
 				}
@@ -341,12 +342,14 @@ export function isReadOnlySql(sql: string): boolean {
 		}
 		if (c === "'") {
 			state = 'string';
+			prevWord = '';
 			i += 1;
 			continue;
 		}
 		if (c === '"') {
 			state = 'ident';
 			identStart = i + 1;
+			prevWord = '';
 			i += 1;
 			continue;
 		}
@@ -357,6 +360,7 @@ export function isReadOnlySql(sql: string): boolean {
 			if (tagMatch) {
 				state = 'dollarQuote';
 				dollarTag = tagMatch[0];
+				prevWord = '';
 				i += dollarTag.length;
 				continue;
 			}
@@ -371,11 +375,13 @@ export function isReadOnlySql(sql: string): boolean {
 			// E'...' / U&'...' strings use backslash escapes
 			if (word === 'e' && s.charAt(j) === "'") {
 				state = 'estring';
+				prevWord = '';
 				i = j + 1;
 				continue;
 			}
 			if (word === 'u' && s.charAt(j) === '&' && s.charAt(j + 1) === "'") {
 				state = 'estring';
+				prevWord = '';
 				i = j + 2;
 				continue;
 			}
@@ -383,18 +389,14 @@ export function isReadOnlySql(sql: string): boolean {
 			if (TRANSACTION_CONTROL.has(word)) return false;
 			if (WRITE_STATEMENT_KEYWORDS.has(word)) return false;
 			if (word === 'into') sawSelectInto = true;
-			// Check for side-effecting function invocations: a word followed by '('
-			// (skipping whitespace and comments) is a call site. Unless it is the
-			// `AS` alias column-list form (`FROM f(x) AS t(a, b)`), functions in
-			// DISALLOWED_FUNCTIONS are refused. Safe built-in and application-defined
-			// functions are permitted, protected by PostgreSQL's read-only session.
+			// Reject side-effecting function invocations: a word followed by '('
+			// (skipping whitespace and comments) is a call site. Denylisted functions
+			// are unconditionally rejected before connecting. Safe built-in and
+			// application-defined functions are permitted, protected by PostgreSQL's
+			// read-only session.
 			{
 				const k = skipSqlTrivia(j);
-				if (
-					s.charAt(k) === '(' &&
-					prevWord !== 'as' &&
-					DISALLOWED_FUNCTIONS.has(word)
-				) {
+				if (s.charAt(k) === '(' && DISALLOWED_FUNCTIONS.has(word)) {
 					return false;
 				}
 			}
@@ -420,6 +422,11 @@ export function isReadOnlySql(sql: string): boolean {
 			continue;
 		}
 
+		// Any non-word, non-whitespace character (such as commas or parens)
+		// ends word adjacency and clears previous word tracking.
+		if (!/\s/.test(c)) {
+			prevWord = '';
+		}
 		i += 1;
 	}
 

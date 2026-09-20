@@ -269,6 +269,11 @@ describe('isReadOnlySql token-aware validation', () => {
 		expect(isReadOnlySql('SELECT my_custom_function(1)')).toBe(true);
 		expect(isReadOnlySql('SELECT public.my_custom_function(1)')).toBe(true);
 		expect(isReadOnlySql('SELECT "my_custom_function"(1)')).toBe(true);
+		// alias state cannot bypass function guard
+		expect(isReadOnlySql('SELECT 1 AS x, pg_sleep(30)')).toBe(false);
+		expect(isReadOnlySql('SELECT 1 AS "x", pg_sleep(30)')).toBe(false);
+		expect(isReadOnlySql('SELECT 1 AS pg_sleep(30)')).toBe(false);
+		expect(isReadOnlySql('SELECT 1 AS x, (SELECT pg_sleep(30))')).toBe(false);
 		// ...but a quoted identifier that is not invoked stays allowed
 		expect(isReadOnlySql('SELECT "pg_advisory_lock" FROM functions')).toBe(
 			true,

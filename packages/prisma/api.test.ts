@@ -174,6 +174,33 @@ describe('Prisma plugin shape', () => {
 				storage: 'should-not-be-a-string',
 			}).success,
 		).toBe(false);
+		// empty objects or payloads containing only unrelated properties must fail validation
+		expect(
+			PrismaEndpointOutputSchemas.getDatabaseUsage!.safeParse({}).success,
+		).toBe(false);
+		expect(
+			PrismaEndpointOutputSchemas.getDatabaseUsage!.safeParse({
+				unrelated: 'field',
+				another: 123,
+			}).success,
+		).toBe(false);
+		expect(
+			PrismaEndpointOutputSchemas.getDatabaseUsage!.safeParse({
+				data: {},
+			}).success,
+		).toBe(false);
+		expect(
+			PrismaEndpointOutputSchemas.getDatabaseUsage!.safeParse({
+				data: { unrelated: 'field' },
+			}).success,
+		).toBe(false);
+		expect(
+			PrismaEndpointOutputSchemas.getDatabaseUsage!.safeParse([]).success,
+		).toBe(true);
+		expect(
+			PrismaEndpointOutputSchemas.getDatabaseUsage!.safeParse({ data: [] })
+				.success,
+		).toBe(true);
 	});
 
 	it('marks destructive operations as irreversible', () => {
