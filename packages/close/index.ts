@@ -17,7 +17,10 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
+	activitiesCreateCall,
 	activitiesCreateNote,
+	activitiesCreateSms,
+	activitiesDeleteCall,
 	activitiesListCalls,
 	activitiesListEmails,
 	activitiesListNotes,
@@ -128,6 +131,9 @@ export type CloseEndpoints = {
 	activitiesListNotes: CloseEndpoint<'activitiesListNotes'>;
 	activitiesCreateNote: CloseEndpoint<'activitiesCreateNote'>;
 	activitiesListCalls: CloseEndpoint<'activitiesListCalls'>;
+	activitiesCreateCall: CloseEndpoint<'activitiesCreateCall'>;
+	activitiesDeleteCall: CloseEndpoint<'activitiesDeleteCall'>;
+	activitiesCreateSms: CloseEndpoint<'activitiesCreateSms'>;
 	activitiesListEmails: CloseEndpoint<'activitiesListEmails'>;
 	usersGetMe: CloseEndpoint<'usersGetMe'>;
 	usersList: CloseEndpoint<'usersList'>;
@@ -191,6 +197,9 @@ const closeEndpointsNested = {
 		listNotes: activitiesListNotes,
 		createNote: activitiesCreateNote,
 		listCalls: activitiesListCalls,
+		createCall: activitiesCreateCall,
+		deleteCall: activitiesDeleteCall,
+		createSms: activitiesCreateSms,
 		listEmails: activitiesListEmails,
 	},
 	users: {
@@ -315,6 +324,18 @@ export const closeEndpointSchemas = {
 		input: CloseEndpointInputSchemas.activitiesListCalls,
 		output: CloseEndpointOutputSchemas.activitiesListCalls,
 	},
+	'activities.createCall': {
+		input: CloseEndpointInputSchemas.activitiesCreateCall,
+		output: CloseEndpointOutputSchemas.activitiesCreateCall,
+	},
+	'activities.deleteCall': {
+		input: CloseEndpointInputSchemas.activitiesDeleteCall,
+		output: CloseEndpointOutputSchemas.activitiesDeleteCall,
+	},
+	'activities.createSms': {
+		input: CloseEndpointInputSchemas.activitiesCreateSms,
+		output: CloseEndpointOutputSchemas.activitiesCreateSms,
+	},
 	'activities.listEmails': {
 		input: CloseEndpointInputSchemas.activitiesListEmails,
 		output: CloseEndpointOutputSchemas.activitiesListEmails,
@@ -434,6 +455,18 @@ const closeEndpointMeta = {
 	'activities.listCalls': {
 		riskLevel: 'read',
 		description: 'List call activities',
+	},
+	'activities.createCall': {
+		riskLevel: 'write',
+		description: 'Log an external call activity',
+	},
+	'activities.deleteCall': {
+		riskLevel: 'destructive',
+		description: 'Delete a call activity',
+	},
+	'activities.createSms': {
+		riskLevel: 'write',
+		description: 'Create an SMS activity',
 	},
 	'activities.listEmails': {
 		riskLevel: 'read',

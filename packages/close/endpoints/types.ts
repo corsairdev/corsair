@@ -3,6 +3,7 @@ import {
 	CloseActivityCall,
 	CloseActivityEmail,
 	CloseActivityNote,
+	CloseActivitySms,
 	CloseContact,
 	CloseCustomField,
 	CloseLead,
@@ -342,6 +343,59 @@ export type ActivitiesListCallsResponse = z.infer<
 	typeof ActivitiesListCallsResponseSchema
 >;
 
+export const ActivitiesCreateCallInputSchema = z.object({
+	lead_id: z.string(),
+	direction: z.enum(['inbound', 'outbound']).optional(),
+	contact_id: z.string().optional(),
+	phone: z.string().optional(),
+	duration: z.number().int().nonnegative().optional(),
+	note: z.string().optional(),
+	recording_url: z.string().optional(),
+	user_id: z.string().optional(),
+});
+export type ActivitiesCreateCallInput = z.infer<
+	typeof ActivitiesCreateCallInputSchema
+>;
+
+export const ActivitiesCreateCallResponseSchema = CloseActivityCall;
+export type ActivitiesCreateCallResponse = z.infer<
+	typeof ActivitiesCreateCallResponseSchema
+>;
+
+export const ActivitiesDeleteCallInputSchema = z.object({
+	id: z.string(),
+});
+export type ActivitiesDeleteCallInput = z.infer<
+	typeof ActivitiesDeleteCallInputSchema
+>;
+
+export const ActivitiesDeleteCallResponseSchema = z.object({
+	success: z.boolean(),
+	id: z.string(),
+});
+export type ActivitiesDeleteCallResponse = z.infer<
+	typeof ActivitiesDeleteCallResponseSchema
+>;
+
+export const ActivitiesCreateSmsInputSchema = z.object({
+	lead_id: z.string(),
+	local_phone: z.string(),
+	text: z.string().optional(),
+	direction: z.enum(['inbound', 'outbound']).optional(),
+	status: z
+		.enum(['inbox', 'draft', 'scheduled', 'outbox', 'sent', 'error'])
+		.optional(),
+	contact_id: z.string().optional(),
+});
+export type ActivitiesCreateSmsInput = z.infer<
+	typeof ActivitiesCreateSmsInputSchema
+>;
+
+export const ActivitiesCreateSmsResponseSchema = CloseActivitySms;
+export type ActivitiesCreateSmsResponse = z.infer<
+	typeof ActivitiesCreateSmsResponseSchema
+>;
+
 export const ActivitiesListEmailsInputSchema = z
 	.object({
 		lead_id: z.string().optional(),
@@ -430,6 +484,9 @@ export type CloseEndpointInputs = {
 	activitiesListNotes: ActivitiesListNotesInput;
 	activitiesCreateNote: ActivitiesCreateNoteInput;
 	activitiesListCalls: ActivitiesListCallsInput;
+	activitiesCreateCall: ActivitiesCreateCallInput;
+	activitiesDeleteCall: ActivitiesDeleteCallInput;
+	activitiesCreateSms: ActivitiesCreateSmsInput;
 	activitiesListEmails: ActivitiesListEmailsInput;
 	usersGetMe: UsersGetMeInput;
 	usersList: UsersListInput;
@@ -461,6 +518,9 @@ export type CloseEndpointOutputs = {
 	activitiesListNotes: ActivitiesListNotesResponse;
 	activitiesCreateNote: ActivitiesCreateNoteResponse;
 	activitiesListCalls: ActivitiesListCallsResponse;
+	activitiesCreateCall: ActivitiesCreateCallResponse;
+	activitiesDeleteCall: ActivitiesDeleteCallResponse;
+	activitiesCreateSms: ActivitiesCreateSmsResponse;
 	activitiesListEmails: ActivitiesListEmailsResponse;
 	usersGetMe: UsersGetMeResponse;
 	usersList: UsersListResponse;
@@ -492,6 +552,9 @@ export const CloseEndpointInputSchemas = {
 	activitiesListNotes: ActivitiesListNotesInputSchema,
 	activitiesCreateNote: ActivitiesCreateNoteInputSchema,
 	activitiesListCalls: ActivitiesListCallsInputSchema,
+	activitiesCreateCall: ActivitiesCreateCallInputSchema,
+	activitiesDeleteCall: ActivitiesDeleteCallInputSchema,
+	activitiesCreateSms: ActivitiesCreateSmsInputSchema,
 	activitiesListEmails: ActivitiesListEmailsInputSchema,
 	usersGetMe: UsersGetMeInputSchema,
 	usersList: UsersListInputSchema,
@@ -523,6 +586,9 @@ export const CloseEndpointOutputSchemas = {
 	activitiesListNotes: ActivitiesListNotesResponseSchema,
 	activitiesCreateNote: ActivitiesCreateNoteResponseSchema,
 	activitiesListCalls: ActivitiesListCallsResponseSchema,
+	activitiesCreateCall: ActivitiesCreateCallResponseSchema,
+	activitiesDeleteCall: ActivitiesDeleteCallResponseSchema,
+	activitiesCreateSms: ActivitiesCreateSmsResponseSchema,
 	activitiesListEmails: ActivitiesListEmailsResponseSchema,
 	usersGetMe: UsersGetMeResponseSchema,
 	usersList: UsersListResponseSchema,
