@@ -17,6 +17,7 @@ import {
 	Availability,
 	BulkWhois,
 	Dns,
+	Domainer,
 	DomainReputation,
 	Geolocation,
 	IpReputation,
@@ -87,6 +88,7 @@ export type WhoisfreaksEndpoints = {
 	domainReputationLookup: WhoisfreaksEndpoint<'domainReputationLookup'>;
 	asnWhoisLookup: WhoisfreaksEndpoint<'asnWhoisLookup'>;
 	ipWhoisLookup: WhoisfreaksEndpoint<'ipWhoisLookup'>;
+	getDomainerFilesStatus: WhoisfreaksEndpoint<'getDomainerFilesStatus'>;
 };
 
 const whoisfreaksEndpointsNested = {
@@ -137,6 +139,9 @@ const whoisfreaksEndpointsNested = {
 	},
 	ipWhois: {
 		lookup: IpWhois.lookup,
+	},
+	domainer: {
+		filesStatus: Domainer.filesStatus,
 	},
 } as const;
 
@@ -229,6 +234,10 @@ export const whoisfreaksEndpointSchemas = {
 		input: WhoisfreaksEndpointInputSchemas.ipWhoisLookup,
 		output: WhoisfreaksEndpointOutputSchemas.ipWhoisLookup,
 	},
+	'domainer.filesStatus': {
+		input: WhoisfreaksEndpointInputSchemas.getDomainerFilesStatus,
+		output: WhoisfreaksEndpointOutputSchemas.getDomainerFilesStatus,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof whoisfreaksEndpointsNested
 >;
@@ -315,6 +324,11 @@ const whoisfreaksEndpointMeta = {
 	'ipWhois.lookup': {
 		riskLevel: 'read',
 		description: 'Fetch WHOIS data for an IP address',
+	},
+	'domainer.filesStatus': {
+		riskLevel: 'read',
+		description:
+			'Check availability and update status of domain data files',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof whoisfreaksEndpointsNested

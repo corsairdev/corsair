@@ -379,6 +379,20 @@ const IpWhoisLookupOutputSchema = z
 	})
 	.loose();
 
+// GET /v3.4/status — public database file freshness
+const GetDomainerFilesStatusInputSchema = z.object({});
+
+const GetDomainerFilesStatusOutputSchema = z
+	.object({
+		newly: z.unknown().optional(),
+		expired: z.unknown().optional(),
+		cleaned_expired: z.unknown().optional(),
+		dropped: z.unknown().optional(),
+		dropped_with_backlinks: z.unknown().optional(),
+		database_updates: z.unknown().optional(),
+	})
+	.loose();
+
 export const WhoisfreaksEndpointInputSchemas = {
 	whoisLiveLookupV2: WhoisLiveLookupV2InputSchema,
 	whoisHistoryLookup: WhoisHistoryLookupInputSchema,
@@ -400,6 +414,7 @@ export const WhoisfreaksEndpointInputSchemas = {
 	domainReputationLookup: DomainReputationLookupInputSchema,
 	asnWhoisLookup: AsnWhoisLookupInputSchema,
 	ipWhoisLookup: IpWhoisLookupInputSchema,
+	getDomainerFilesStatus: GetDomainerFilesStatusInputSchema,
 } as const;
 
 export const WhoisfreaksEndpointOutputSchemas = {
@@ -423,6 +438,7 @@ export const WhoisfreaksEndpointOutputSchemas = {
 	domainReputationLookup: DomainReputationLookupOutputSchema,
 	asnWhoisLookup: AsnWhoisLookupOutputSchema,
 	ipWhoisLookup: IpWhoisLookupOutputSchema,
+	getDomainerFilesStatus: GetDomainerFilesStatusOutputSchema,
 } as const;
 
 export type WhoisfreaksEndpointInputs = {

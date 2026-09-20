@@ -1,6 +1,7 @@
 import { AsnWhois, IpWhois } from './asn-ip';
 import { Availability } from './availability';
 import { Dns } from './dns';
+import { Domainer } from './files';
 import { Geolocation } from './geolocation';
 import { DomainReputation, IpReputation } from './reputation';
 import { Ssl } from './ssl';
@@ -23,6 +24,7 @@ export {
 	DomainReputation,
 	AsnWhois,
 	IpWhois,
+	Domainer,
 };
 
 export * from './types';

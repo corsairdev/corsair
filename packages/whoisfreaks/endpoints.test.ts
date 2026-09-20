@@ -8,6 +8,7 @@ import { makeWhoisfreaksRequest } from './client';
 import { AsnWhois, IpWhois } from './endpoints/asn-ip';
 import { Availability } from './endpoints/availability';
 import { Dns } from './endpoints/dns';
+import { Domainer } from './endpoints/files';
 import { Geolocation } from './endpoints/geolocation';
 import { DomainReputation, IpReputation } from './endpoints/reputation';
 import { Ssl } from './endpoints/ssl';
@@ -349,6 +350,15 @@ const cases: Case[] = [
 			{ method: 'GET', query: { ip: '8.8.8.8' } },
 		],
 		event: 'whoisfreaks.ip_whois.lookup',
+	},
+	{
+		name: 'domainer.filesStatus',
+		run: (ctx) => Domainer.filesStatus(ctx, {}),
+		response: {
+			newly: { gtld: { last_update: '2026-09-20', available_from: '2026-01-01' } },
+		},
+		expectedArgs: ['/v3.4/status', 'test-key', { method: 'GET' }],
+		event: 'whoisfreaks.domainer.files_status',
 	},
 ];
 
