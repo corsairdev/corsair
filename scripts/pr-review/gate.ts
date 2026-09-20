@@ -35,6 +35,7 @@ const GATE_RULE_FILES = new Set([
 	'scripts/pr-review/gate.ts',
 	'scripts/pr-review/gate.test.ts',
 	'scripts/pr-review/pr-scope.ts',
+	'scripts/pr-review/pr-scope.test.ts',
 	'.github/PLUGIN_PR_RULES.md',
 	'greptile.json',
 ]);
