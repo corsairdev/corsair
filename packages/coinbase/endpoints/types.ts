@@ -161,8 +161,101 @@ export type GetExchangeCurrencyInput = z.infer<
 	typeof GetExchangeCurrencyInputSchema
 >;
 
-export const BrokerageOutputSchema = z.unknown();
-export type BrokerageOutput = unknown;
+export const CoinbaseBrokerageProduct = z
+	.object({
+		product_id: z.string().optional(),
+		price: z.string().optional(),
+		base_currency_id: z.string().optional(),
+		quote_currency_id: z.string().optional(),
+		status: z.string().optional(),
+		volume_24h: z.string().optional(),
+	})
+	.loose();
+export type CoinbaseBrokerageProduct = z.infer<typeof CoinbaseBrokerageProduct>;
+
+export const ListMarketProductsOutputSchema = z
+	.object({
+		products: z.array(CoinbaseBrokerageProduct).optional(),
+		num_products: z.number().optional(),
+	})
+	.loose();
+export type ListMarketProductsOutput = z.infer<
+	typeof ListMarketProductsOutputSchema
+>;
+
+export const GetProductOutputSchema = CoinbaseBrokerageProduct;
+export type GetProductOutput = z.infer<typeof GetProductOutputSchema>;
+
+export const ProductBookLevelSchema = z
+	.object({
+		price: z.string().optional(),
+		size: z.string().optional(),
+	})
+	.loose();
+
+export const ProductBookOutputSchema = z
+	.object({
+		pricebook: z
+			.object({
+				product_id: z.string().optional(),
+				bids: z.array(ProductBookLevelSchema).optional(),
+				asks: z.array(ProductBookLevelSchema).optional(),
+				time: z.string().optional(),
+			})
+			.loose()
+			.optional(),
+	})
+	.loose();
+export type ProductBookOutput = z.infer<typeof ProductBookOutputSchema>;
+
+export const MarketTradesOutputSchema = z
+	.object({
+		trades: z.array(z.record(z.string(), z.unknown())).optional(),
+		best_bid: z.string().optional(),
+		best_ask: z.string().optional(),
+	})
+	.loose();
+export type MarketTradesOutput = z.infer<typeof MarketTradesOutputSchema>;
+
+export const ProductCandlesOutputSchema = z
+	.object({
+		candles: z
+			.array(
+				z
+					.object({
+						start: z.string().optional(),
+						low: z.string().optional(),
+						high: z.string().optional(),
+						open: z.string().optional(),
+						close: z.string().optional(),
+						volume: z.string().optional(),
+					})
+					.loose(),
+			)
+			.optional(),
+	})
+	.loose();
+export type ProductCandlesOutput = z.infer<typeof ProductCandlesOutputSchema>;
+
+export const BrokerageServerTimeOutputSchema = z
+	.object({
+		iso: z.string().optional(),
+		epochSeconds: z.union([z.string(), z.number()]).optional(),
+		epochMillis: z.union([z.string(), z.number()]).optional(),
+	})
+	.loose();
+export type BrokerageServerTimeOutput = z.infer<
+	typeof BrokerageServerTimeOutputSchema
+>;
+
+export const GetExchangeCurrencyOutputSchema = z
+	.object({
+		data: CoinbaseCurrency,
+	})
+	.loose();
+export type GetExchangeCurrencyOutput = z.infer<
+	typeof GetExchangeCurrencyOutputSchema
+>;
 
 export type CoinbaseEndpointInputs = {
 	pricesGetSpot: PricesGetSpotInput;
@@ -207,20 +300,20 @@ export type CoinbaseEndpointOutputs = {
 	transactionsList: TransactionsListOutput;
 	transactionsGet: TransactionsGetOutput;
 	paymentMethodsList: PaymentMethodsListOutput;
-	listMarketProducts: BrokerageOutput;
-	listExchangeProducts: BrokerageOutput;
-	getProduct: BrokerageOutput;
-	getMarketProductBook: BrokerageOutput;
-	getProductBook: BrokerageOutput;
-	getProductsTicker: BrokerageOutput;
-	getPublicMarketTrades: BrokerageOutput;
-	listProductsTrades: BrokerageOutput;
-	listProductCandles: BrokerageOutput;
-	listProductsCandles: BrokerageOutput;
-	getProductsVolumeSummary: BrokerageOutput;
-	listProductsStats: BrokerageOutput;
-	getServerTime: BrokerageOutput;
-	getExchangeCurrency: BrokerageOutput;
+	listMarketProducts: ListMarketProductsOutput;
+	listExchangeProducts: ListMarketProductsOutput;
+	getProduct: GetProductOutput;
+	getMarketProductBook: ProductBookOutput;
+	getProductBook: ProductBookOutput;
+	getProductsTicker: MarketTradesOutput;
+	getPublicMarketTrades: MarketTradesOutput;
+	listProductsTrades: MarketTradesOutput;
+	listProductCandles: ProductCandlesOutput;
+	listProductsCandles: ProductCandlesOutput;
+	getProductsVolumeSummary: ListMarketProductsOutput;
+	listProductsStats: GetProductOutput;
+	getServerTime: BrokerageServerTimeOutput;
+	getExchangeCurrency: GetExchangeCurrencyOutput;
 	listWallets: AccountsListOutput;
 };
 
@@ -267,19 +360,19 @@ export const CoinbaseEndpointOutputSchemas = {
 	transactionsList: TransactionsListOutputSchema,
 	transactionsGet: TransactionsGetOutputSchema,
 	paymentMethodsList: PaymentMethodsListOutputSchema,
-	listMarketProducts: BrokerageOutputSchema,
-	listExchangeProducts: BrokerageOutputSchema,
-	getProduct: BrokerageOutputSchema,
-	getMarketProductBook: BrokerageOutputSchema,
-	getProductBook: BrokerageOutputSchema,
-	getProductsTicker: BrokerageOutputSchema,
-	getPublicMarketTrades: BrokerageOutputSchema,
-	listProductsTrades: BrokerageOutputSchema,
-	listProductCandles: BrokerageOutputSchema,
-	listProductsCandles: BrokerageOutputSchema,
-	getProductsVolumeSummary: BrokerageOutputSchema,
-	listProductsStats: BrokerageOutputSchema,
-	getServerTime: BrokerageOutputSchema,
-	getExchangeCurrency: BrokerageOutputSchema,
+	listMarketProducts: ListMarketProductsOutputSchema,
+	listExchangeProducts: ListMarketProductsOutputSchema,
+	getProduct: GetProductOutputSchema,
+	getMarketProductBook: ProductBookOutputSchema,
+	getProductBook: ProductBookOutputSchema,
+	getProductsTicker: MarketTradesOutputSchema,
+	getPublicMarketTrades: MarketTradesOutputSchema,
+	listProductsTrades: MarketTradesOutputSchema,
+	listProductCandles: ProductCandlesOutputSchema,
+	listProductsCandles: ProductCandlesOutputSchema,
+	getProductsVolumeSummary: ListMarketProductsOutputSchema,
+	listProductsStats: GetProductOutputSchema,
+	getServerTime: BrokerageServerTimeOutputSchema,
+	getExchangeCurrency: GetExchangeCurrencyOutputSchema,
 	listWallets: AccountsListOutputSchema,
 } as const;

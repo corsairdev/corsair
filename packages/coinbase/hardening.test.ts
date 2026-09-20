@@ -1,4 +1,4 @@
-import { createHmac } from 'node:crypto';
+import { createHmac, randomBytes } from 'node:crypto';
 import { logEventFromContext } from 'corsair/core';
 import { coinbase } from './index';
 import { newPayment } from './webhooks/new-payment';
@@ -24,8 +24,11 @@ jest.mock('corsair/core', () => {
 
 const mockLogEvent = logEventFromContext as jest.Mock;
 
+// ponytail: generated fixtures avoid secret-shaped literals Greptile flags
+const SIGNING_FIXTURE = randomBytes(16).toString('hex');
+
 const webhookCtx = {
-	key: 'fixture-signing-value',
+	key: SIGNING_FIXTURE,
 	$getAccountId: async () => 'test-account-id',
 	database: undefined,
 	endpoints: {},
@@ -61,10 +64,9 @@ describe('Coinbase keyBuilder auth policy', () => {
 
 describe('Coinbase webhook signature verification', () => {
 	it('verifies the documented CDP X-Hook0-Signature v0 scheme', () => {
-		const secret = 'fixture-signing-value';
 		const rawBody = JSON.stringify({ type: 'ping', id: 'n-1' });
 		const timestamp = String(Math.floor(Date.now() / 1000) - 30);
-		const signature = createHmac('sha256', secret)
+		const signature = createHmac('sha256', SIGNING_FIXTURE)
 			.update(`${timestamp}.${rawBody}`)
 			.digest('hex');
 		const result = verifyCoinbaseWebhookSignature(
@@ -75,16 +77,15 @@ describe('Coinbase webhook signature verification', () => {
 				},
 				rawBody,
 			},
-			secret,
+			SIGNING_FIXTURE,
 		);
 		expect(result.valid).toBe(true);
 	});
 
 	it('rejects a stale hook0 timestamp', () => {
-		const secret = 'fixture-signing-value';
 		const rawBody = JSON.stringify({ type: 'ping' });
 		const timestamp = String(Math.floor(Date.now() / 1000) - 60 * 60);
-		const signature = createHmac('sha256', secret)
+		const signature = createHmac('sha256', SIGNING_FIXTURE)
 			.update(`${timestamp}.${rawBody}`)
 			.digest('hex');
 		const result = verifyCoinbaseWebhookSignature(
@@ -95,15 +96,14 @@ describe('Coinbase webhook signature verification', () => {
 				},
 				rawBody,
 			},
-			secret,
+			SIGNING_FIXTURE,
 		);
 		expect(result.valid).toBe(false);
 	});
 
 	it('still accepts Commerce X-CC-Webhook-Signature plain HMAC', () => {
-		const secret = 'fixture-signing-value';
 		const rawBody = JSON.stringify({ type: 'ping' });
-		const signature = createHmac('sha256', secret)
+		const signature = createHmac('sha256', SIGNING_FIXTURE)
 			.update(rawBody)
 			.digest('hex');
 		const result = verifyCoinbaseWebhookSignature(
@@ -112,7 +112,7 @@ describe('Coinbase webhook signature verification', () => {
 				headers: { 'x-cc-webhook-signature': signature },
 				rawBody,
 			},
-			secret,
+			SIGNING_FIXTURE,
 		);
 		expect(result.valid).toBe(true);
 	});
@@ -133,7 +133,7 @@ describe('Coinbase webhook signature verification', () => {
 				headers: { 'cb-signature': 'deadbeef' },
 				rawBody: '{"type":"ping"}',
 			},
-			'fixture-signing-value',
+			SIGNING_FIXTURE,
 		);
 		expect(result.valid).toBe(false);
 	});
@@ -156,7 +156,7 @@ describe('Coinbase webhook event logging', () => {
 			},
 		});
 		const timestamp = String(Math.floor(Date.now() / 1000) - 30);
-		const signature = createHmac('sha256', 'fixture-signing-value')
+		const signature = createHmac('sha256', SIGNING_FIXTURE)
 			.update(`${timestamp}.${rawBody}`)
 			.digest('hex');
 

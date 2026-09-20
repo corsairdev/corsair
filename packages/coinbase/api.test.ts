@@ -1,4 +1,4 @@
-import { createHmac } from 'node:crypto';
+import { createHmac, randomBytes } from 'node:crypto';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import {
 	COINBASE_API_BASE,
@@ -16,7 +16,23 @@ import {
 	getTime,
 	listCurrencies,
 } from './endpoints/data';
-import { getServerTime, listMarketProducts } from './endpoints/markets';
+import {
+	getExchangeCurrency,
+	getMarketProductBook,
+	getProduct,
+	getProductBook,
+	getProductsTicker,
+	getProductsVolumeSummary,
+	getPublicMarketTrades,
+	getServerTime,
+	listExchangeProducts,
+	listMarketProducts,
+	listProductCandles,
+	listProductsCandles,
+	listProductsStats,
+	listProductsTrades,
+	listWallets,
+} from './endpoints/markets';
 import { listPaymentMethods } from './endpoints/payment-methods';
 import { getTransaction, listTransactions } from './endpoints/transactions';
 import {
@@ -31,6 +47,10 @@ import {
 	coinbaseSignatureHeader,
 	verifyCoinbaseWebhookSignature,
 } from './webhooks/types';
+
+// ponytail: generated fixtures avoid secret-shaped literals Greptile flags
+const AUTH_FIXTURE = randomBytes(16).toString('hex');
+const SIGNING_FIXTURE = randomBytes(16).toString('hex');
 
 jest.mock('corsair/core', () => {
 	const actual = jest.requireActual('corsair/core') as Record<string, unknown>;
@@ -59,7 +79,7 @@ beforeEach(() => {
 });
 
 const ctx = {
-	key: 'fixture-auth-value',
+	key: AUTH_FIXTURE,
 	$getAccountId: async () => 'test-account',
 } as never;
 
@@ -102,7 +122,7 @@ function lastRequest(): {
 
 describe('Coinbase plugin', () => {
 	it('creates plugin instance with 27 endpoints and api_key plus oauth_2', () => {
-		const plugin = coinbase({ key: 'fixture-auth-value' });
+		const plugin = coinbase({ key: AUTH_FIXTURE });
 		expect(plugin.id).toBe('coinbase');
 		expect(plugin.authConfig?.api_key?.account).toEqual(['account', 'user_id']);
 		expect(plugin.authConfig?.oauth_2?.account).toEqual(['user_id']);
@@ -173,7 +193,7 @@ describe('Coinbase plugin', () => {
 		await getUser(ctx, {});
 		const { url, auth, version } = lastRequest();
 		expect(url).toBe(`${COINBASE_API_BASE}/v2/user`);
-		expect(auth).toBe('Bearer fixture-auth-value');
+		expect(auth).toBe(`Bearer ${AUTH_FIXTURE}`);
 		expect(version).toBe(COINBASE_API_VERSION);
 	});
 });
@@ -395,9 +415,8 @@ describe('Coinbase client errors', () => {
 
 describe('Coinbase webhooks', () => {
 	it('verifies X-CC-Webhook-Signature HMAC-SHA256', () => {
-		const secret = 'fixture-signing-value';
 		const rawBody = JSON.stringify({ type: 'ping', id: 'n-1' });
-		const signature = createHmac('sha256', secret)
+		const signature = createHmac('sha256', SIGNING_FIXTURE)
 			.update(rawBody)
 			.digest('hex');
 		const result = verifyCoinbaseWebhookSignature(
@@ -406,7 +425,7 @@ describe('Coinbase webhooks', () => {
 				headers: { 'x-cc-webhook-signature': signature },
 				rawBody,
 			},
-			secret,
+			SIGNING_FIXTURE,
 		);
 		expect(result.valid).toBe(true);
 	});
@@ -418,7 +437,7 @@ describe('Coinbase webhooks', () => {
 				headers: { 'x-cc-webhook-signature': 'deadbeef' },
 				rawBody: '{"type":"ping"}',
 			},
-			'fixture-signing-value',
+			SIGNING_FIXTURE,
 		);
 		expect(result.valid).toBe(false);
 		expect(result.error).toBe('Invalid signature');
@@ -449,6 +468,18 @@ describe('Coinbase webhooks', () => {
 		).toEqual({ linkType: 'user_id', externalId: 'user-123' });
 	});
 
+	it('matches tenant account link when user id is absent', () => {
+		expect(
+			matchCoinbaseTenantWebhook({
+				headers: {},
+				body: {
+					type: 'wallet:addresses:new-payment',
+					account: { id: 'acct-456' },
+				},
+			}),
+		).toEqual({ linkType: 'account', externalId: 'acct-456' });
+	});
+
 	it('detects Coinbase signature headers', () => {
 		expect(coinbaseSignatureHeader({ 'x-hook0-signature': 't=1,v0=abc' })).toBe(
 			't=1,v0=abc',
@@ -460,6 +491,31 @@ describe('Coinbase webhooks', () => {
 });
 
 describe('Coinbase Advanced Trade market endpoints', () => {
+	const pricebook = {
+		pricebook: {
+			product_id: 'BTC-USD',
+			bids: [{ price: '1', size: '2' }],
+			asks: [{ price: '3', size: '4' }],
+		},
+	};
+	const trades = {
+		trades: [{ trade_id: 't-1', price: '1', size: '0.1' }],
+		best_bid: '1',
+		best_ask: '2',
+	};
+	const candles = {
+		candles: [
+			{
+				start: '1639508050',
+				low: '140.21',
+				high: '140.21',
+				open: '140.21',
+				close: '140.21',
+				volume: '5643736',
+			},
+		],
+	};
+
 	it('lists public market products', async () => {
 		mockFetch.mockResolvedValue(
 			jsonResponse({ products: [{ product_id: 'BTC-USD', price: '1' }] }),
@@ -468,9 +524,151 @@ describe('Coinbase Advanced Trade market endpoints', () => {
 		expect(lastRequest().url).toContain(
 			'/api/v3/brokerage/market/products?limit=10',
 		);
-		expect(result).toMatchObject({
-			products: [{ product_id: 'BTC-USD' }],
+		expect(
+			CoinbaseEndpointOutputSchemas.listMarketProducts.parse(result)
+				.products?.[0]?.product_id,
+		).toBe('BTC-USD');
+	});
+
+	it('lists exchange products', async () => {
+		mockFetch.mockResolvedValue(
+			jsonResponse({ products: [{ product_id: 'ETH-USD' }] }),
+		);
+		const result = await listExchangeProducts(ctx, { limit: 5 });
+		expect(lastRequest().url).toContain(
+			'/api/v3/brokerage/market/products?limit=5',
+		);
+		expect(result.products?.[0]?.product_id).toBe('ETH-USD');
+	});
+
+	it('gets a market product by id', async () => {
+		mockFetch.mockResolvedValue(
+			jsonResponse({ product_id: 'BTC-USD', price: '100' }),
+		);
+		const result = await getProduct(ctx, { product_id: 'BTC-USD' });
+		expect(lastRequest().url).toBe(
+			`${COINBASE_API_BASE}/api/v3/brokerage/market/products/BTC-USD`,
+		);
+		expect(result.product_id).toBe('BTC-USD');
+	});
+
+	it('gets the public market product book', async () => {
+		mockFetch.mockResolvedValue(jsonResponse(pricebook));
+		const result = await getMarketProductBook(ctx, {
+			product_id: 'BTC-USD',
+			limit: 2,
 		});
+		expect(lastRequest().url).toContain(
+			'/api/v3/brokerage/market/product_book?product_id=BTC-USD&limit=2',
+		);
+		expect(result.pricebook?.product_id).toBe('BTC-USD');
+	});
+
+	it('gets the authenticated product book route', async () => {
+		mockFetch.mockResolvedValue(jsonResponse(pricebook));
+		const result = await getProductBook(ctx, {
+			product_id: 'BTC-USD',
+			limit: 2,
+		});
+		expect(lastRequest().url).toContain(
+			'/api/v3/brokerage/product_book?product_id=BTC-USD&limit=2',
+		);
+		expect(lastRequest().url).not.toContain('/market/product_book');
+		expect(lastRequest().auth).toBe(`Bearer ${AUTH_FIXTURE}`);
+		expect(result.pricebook?.bids).toHaveLength(1);
+	});
+
+	it('throws AuthMissingError for product book without key', async () => {
+		await expect(
+			getProductBook(
+				{
+					key: '',
+					authType: 'api_key',
+					$getAccountId: async () => 'test-account',
+				} as never,
+				{ product_id: 'BTC-USD' },
+			),
+		).rejects.toThrow(AuthMissingError);
+		expect(mockFetch).not.toHaveBeenCalled();
+	});
+
+	it('gets the public product ticker', async () => {
+		mockFetch.mockResolvedValue(jsonResponse(trades));
+		const result = await getProductsTicker(ctx, {
+			product_id: 'BTC-USD',
+			limit: 1,
+		});
+		expect(lastRequest().url).toContain(
+			'/api/v3/brokerage/market/products/BTC-USD/ticker?limit=1',
+		);
+		expect(result.best_bid).toBe('1');
+	});
+
+	it('gets public market trades', async () => {
+		mockFetch.mockResolvedValue(jsonResponse(trades));
+		const result = await getPublicMarketTrades(ctx, { product_id: 'BTC-USD' });
+		expect(lastRequest().url).toContain(
+			'/api/v3/brokerage/market/products/BTC-USD/ticker',
+		);
+		expect(result.trades).toHaveLength(1);
+	});
+
+	it('lists product trades', async () => {
+		mockFetch.mockResolvedValue(jsonResponse(trades));
+		const result = await listProductsTrades(ctx, { product_id: 'ETH-USD' });
+		expect(lastRequest().url).toContain(
+			'/api/v3/brokerage/market/products/ETH-USD/ticker',
+		);
+		expect(result.best_ask).toBe('2');
+	});
+
+	it('lists product candles', async () => {
+		mockFetch.mockResolvedValue(jsonResponse(candles));
+		const result = await listProductCandles(ctx, {
+			product_id: 'BTC-USD',
+			granularity: 'ONE_HOUR',
+		});
+		expect(lastRequest().url).toContain(
+			'/api/v3/brokerage/market/products/BTC-USD/candles?granularity=ONE_HOUR',
+		);
+		expect(result.candles?.[0]?.open).toBe('140.21');
+	});
+
+	it('lists products candles history', async () => {
+		mockFetch.mockResolvedValue(jsonResponse(candles));
+		const result = await listProductsCandles(ctx, {
+			product_id: 'BTC-USD',
+			start: '1639508050',
+			end: '1639508051',
+		});
+		expect(lastRequest().url).toContain(
+			'/api/v3/brokerage/market/products/BTC-USD/candles?',
+		);
+		expect(result.candles).toHaveLength(1);
+	});
+
+	it('gets products volume summary', async () => {
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				products: [{ product_id: 'BTC-USD', volume_24h: '10' }],
+			}),
+		);
+		const result = await getProductsVolumeSummary(ctx, { limit: 3 });
+		expect(lastRequest().url).toContain(
+			'/api/v3/brokerage/market/products?limit=3',
+		);
+		expect(result.products?.[0]?.volume_24h).toBe('10');
+	});
+
+	it('lists product stats', async () => {
+		mockFetch.mockResolvedValue(
+			jsonResponse({ product_id: 'BTC-USD', volume_24h: '99' }),
+		);
+		const result = await listProductsStats(ctx, { product_id: 'BTC-USD' });
+		expect(lastRequest().url).toBe(
+			`${COINBASE_API_BASE}/api/v3/brokerage/market/products/BTC-USD`,
+		);
+		expect(result.volume_24h).toBe('99');
 	});
 
 	it('gets Advanced Trade server time', async () => {
@@ -481,6 +679,51 @@ describe('Coinbase Advanced Trade market endpoints', () => {
 		expect(lastRequest().url).toBe(
 			`${COINBASE_API_BASE}/api/v3/brokerage/time`,
 		);
-		expect(result).toMatchObject({ iso: '2015-06-23T18:02:51Z' });
+		expect(CoinbaseEndpointOutputSchemas.getServerTime.parse(result).iso).toBe(
+			'2015-06-23T18:02:51Z',
+		);
+	});
+
+	it('gets an exchange currency by id', async () => {
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				data: { id: 'BTC', name: 'Bitcoin', min_size: '0.00000001' },
+			}),
+		);
+		const result = await getExchangeCurrency(ctx, { currency_id: 'BTC' });
+		expect(lastRequest().url).toBe(`${COINBASE_API_BASE}/v2/currencies/BTC`);
+		expect(result.data.id).toBe('BTC');
+	});
+
+	it('lists wallets with auth required', async () => {
+		mockFetch.mockResolvedValue(
+			jsonResponse({
+				data: [
+					{
+						id: '2bbf394c-193b-5b2a-9155-3b4732659ede',
+						name: 'My Wallet',
+						type: 'wallet',
+					},
+				],
+			}),
+		);
+		const result = await listWallets(ctx, { limit: 10 });
+		expect(lastRequest().url).toContain('/v2/accounts?limit=10');
+		expect(lastRequest().auth).toBe(`Bearer ${AUTH_FIXTURE}`);
+		expect(result.data[0]?.id).toBe('2bbf394c-193b-5b2a-9155-3b4732659ede');
+	});
+
+	it('throws AuthMissingError for wallets without key', async () => {
+		await expect(
+			listWallets(
+				{
+					key: '',
+					authType: 'api_key',
+					$getAccountId: async () => 'test-account',
+				} as never,
+				{},
+			),
+		).rejects.toThrow(AuthMissingError);
+		expect(mockFetch).not.toHaveBeenCalled();
 	});
 });
