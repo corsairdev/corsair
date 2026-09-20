@@ -26,10 +26,12 @@ import {
 	Mocks,
 	Monitors,
 	PullRequests,
+	Relations,
 	Scim,
 	Specs,
 	Tools,
 	Users,
+	Webhooks,
 	Workspaces,
 } from './endpoints';
 import type {
@@ -198,6 +200,17 @@ export type PostmanEndpoints = {
 	apisUpdateComment: PostmanEndpoint<'apisUpdateComment'>;
 	environmentsUpdate: PostmanEndpoint<'environmentsUpdate'>;
 	environmentsList: PostmanEndpoint<'environmentsList'>;
+	apisCreateRelations: PostmanEndpoint<'apisCreateRelations'>;
+	apisListReleases: PostmanEndpoint<'apisListReleases'>;
+	apisGetLinkedRelations: PostmanEndpoint<'apisGetLinkedRelations'>;
+	apisGetTestRelations: PostmanEndpoint<'apisGetTestRelations'>;
+	apisGetContractTestRelations: PostmanEndpoint<'apisGetContractTestRelations'>;
+	apisGetEnvironmentRelations: PostmanEndpoint<'apisGetEnvironmentRelations'>;
+	apisGetIntegrationTestRelations: PostmanEndpoint<'apisGetIntegrationTestRelations'>;
+	apisGetTestSuiteRelations: PostmanEndpoint<'apisGetTestSuiteRelations'>;
+	apisGetUnclassifiedRelations: PostmanEndpoint<'apisGetUnclassifiedRelations'>;
+	apisGetDocumentationRelations: PostmanEndpoint<'apisGetDocumentationRelations'>;
+	webhooksCreate: PostmanEndpoint<'webhooksCreate'>;
 };
 
 const postmanEndpointsNested = {
@@ -219,6 +232,16 @@ const postmanEndpointsNested = {
 		deleteComment: Apis.deleteComment,
 		update: Apis.update,
 		updateComment: Apis.updateComment,
+		createRelations: Relations.create,
+		listReleases: Relations.listReleases,
+		getLinkedRelations: Relations.listLinked,
+		getTestRelations: Relations.listTest,
+		getContractTestRelations: Relations.listContractTest,
+		getEnvironmentRelations: Relations.listEnvironment,
+		getIntegrationTestRelations: Relations.listIntegrationTest,
+		getTestSuiteRelations: Relations.listTestSuite,
+		getUnclassifiedRelations: Relations.listUnclassified,
+		getDocumentationRelations: Relations.listDocumentation,
 	},
 	specs: {
 		get: Specs.get,
@@ -356,6 +379,9 @@ const postmanEndpointsNested = {
 	pullRequests: {
 		review: PullRequests.review,
 		update: PullRequests.update,
+	},
+	webhooks: {
+		create: Webhooks.create,
 	},
 } as const;
 
@@ -855,6 +881,50 @@ export const postmanEndpointSchemas = {
 	'environments.list': {
 		input: PostmanEndpointInputSchemas.environmentsList,
 		output: PostmanEndpointOutputSchemas.environmentsList,
+	},
+	'apis.createRelations': {
+		input: PostmanEndpointInputSchemas.apisCreateRelations,
+		output: PostmanEndpointOutputSchemas.apisCreateRelations,
+	},
+	'apis.listReleases': {
+		input: PostmanEndpointInputSchemas.apisListReleases,
+		output: PostmanEndpointOutputSchemas.apisListReleases,
+	},
+	'apis.getLinkedRelations': {
+		input: PostmanEndpointInputSchemas.apisGetLinkedRelations,
+		output: PostmanEndpointOutputSchemas.apisGetLinkedRelations,
+	},
+	'apis.getTestRelations': {
+		input: PostmanEndpointInputSchemas.apisGetTestRelations,
+		output: PostmanEndpointOutputSchemas.apisGetTestRelations,
+	},
+	'apis.getContractTestRelations': {
+		input: PostmanEndpointInputSchemas.apisGetContractTestRelations,
+		output: PostmanEndpointOutputSchemas.apisGetContractTestRelations,
+	},
+	'apis.getEnvironmentRelations': {
+		input: PostmanEndpointInputSchemas.apisGetEnvironmentRelations,
+		output: PostmanEndpointOutputSchemas.apisGetEnvironmentRelations,
+	},
+	'apis.getIntegrationTestRelations': {
+		input: PostmanEndpointInputSchemas.apisGetIntegrationTestRelations,
+		output: PostmanEndpointOutputSchemas.apisGetIntegrationTestRelations,
+	},
+	'apis.getTestSuiteRelations': {
+		input: PostmanEndpointInputSchemas.apisGetTestSuiteRelations,
+		output: PostmanEndpointOutputSchemas.apisGetTestSuiteRelations,
+	},
+	'apis.getUnclassifiedRelations': {
+		input: PostmanEndpointInputSchemas.apisGetUnclassifiedRelations,
+		output: PostmanEndpointOutputSchemas.apisGetUnclassifiedRelations,
+	},
+	'apis.getDocumentationRelations': {
+		input: PostmanEndpointInputSchemas.apisGetDocumentationRelations,
+		output: PostmanEndpointOutputSchemas.apisGetDocumentationRelations,
+	},
+	'webhooks.create': {
+		input: PostmanEndpointInputSchemas.webhooksCreate,
+		output: PostmanEndpointOutputSchemas.webhooksCreate,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof postmanEndpointsNested
@@ -1358,6 +1428,50 @@ const postmanEndpointMeta = {
 	'environments.list': {
 		riskLevel: 'read',
 		description: 'Get all environments',
+	},
+	'apis.createRelations': {
+		riskLevel: 'write',
+		description: 'Create API version relations',
+	},
+	'apis.listReleases': {
+		riskLevel: 'read',
+		description: 'Get all API releases',
+	},
+	'apis.getLinkedRelations': {
+		riskLevel: 'read',
+		description: 'Get all linked relations',
+	},
+	'apis.getTestRelations': {
+		riskLevel: 'read',
+		description: 'Get all test relations',
+	},
+	'apis.getContractTestRelations': {
+		riskLevel: 'read',
+		description: 'Get contract test relations',
+	},
+	'apis.getEnvironmentRelations': {
+		riskLevel: 'read',
+		description: 'Get environment relations',
+	},
+	'apis.getIntegrationTestRelations': {
+		riskLevel: 'read',
+		description: 'Get integration test relations',
+	},
+	'apis.getTestSuiteRelations': {
+		riskLevel: 'read',
+		description: 'Get test suite relations',
+	},
+	'apis.getUnclassifiedRelations': {
+		riskLevel: 'read',
+		description: 'Get unclassified relations',
+	},
+	'apis.getDocumentationRelations': {
+		riskLevel: 'read',
+		description: 'Get documentation relations',
+	},
+	'webhooks.create': {
+		riskLevel: 'write',
+		description: 'Create a webhook',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof postmanEndpointsNested>;
 

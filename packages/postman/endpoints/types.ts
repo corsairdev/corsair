@@ -4898,6 +4898,36 @@ export const PullRequestsUpdateOutputSchema = z.object({
 	updatedAt: z.string().optional(),
 });
 
+export const ApisVersionRelationInputSchema = z.object({
+	apiId: z.string().min(1, 'ApiId is required'),
+	versionId: z.string().min(1, 'VersionId is required'),
+});
+
+export const ApisCreateRelationsInputSchema =
+	ApisVersionRelationInputSchema.passthrough();
+
+export const ApisRelationOutputSchema = z.record(z.string(), z.unknown());
+
+export const WebhooksCreateInputSchema = z.object({
+	name: z.string().min(1, 'Name is required'),
+	collection: z.string().min(1, 'Collection is required'),
+	workspace: z.string().optional(),
+});
+
+export const WebhooksCreateOutputSchema = z
+	.object({
+		webhook: z
+			.object({
+				id: z.string().optional(),
+				name: z.string().optional(),
+				collection: z.string().optional(),
+				webhookUrl: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
+
 // Aggregate Schemas
 export const PostmanEndpointInputSchemas = {
 	apisCreateSchema: ApisCreateSchemaInputSchema,
@@ -5024,6 +5054,17 @@ export const PostmanEndpointInputSchemas = {
 	apisUpdateComment: ApisUpdateCommentInputSchema,
 	environmentsUpdate: EnvironmentsUpdateInputSchema,
 	environmentsList: EnvironmentsListInputSchema,
+	apisCreateRelations: ApisCreateRelationsInputSchema,
+	apisListReleases: ApisVersionRelationInputSchema,
+	apisGetLinkedRelations: ApisVersionRelationInputSchema,
+	apisGetTestRelations: ApisVersionRelationInputSchema,
+	apisGetContractTestRelations: ApisVersionRelationInputSchema,
+	apisGetEnvironmentRelations: ApisVersionRelationInputSchema,
+	apisGetIntegrationTestRelations: ApisVersionRelationInputSchema,
+	apisGetTestSuiteRelations: ApisVersionRelationInputSchema,
+	apisGetUnclassifiedRelations: ApisVersionRelationInputSchema,
+	apisGetDocumentationRelations: ApisVersionRelationInputSchema,
+	webhooksCreate: WebhooksCreateInputSchema,
 } as const;
 
 export const PostmanEndpointOutputSchemas = {
@@ -5154,6 +5195,17 @@ export const PostmanEndpointOutputSchemas = {
 	apisUpdateComment: ApisUpdateCommentOutputSchema,
 	environmentsUpdate: EnvironmentsUpdateOutputSchema,
 	environmentsList: EnvironmentsListOutputSchema,
+	apisCreateRelations: ApisRelationOutputSchema,
+	apisListReleases: ApisRelationOutputSchema,
+	apisGetLinkedRelations: ApisRelationOutputSchema,
+	apisGetTestRelations: ApisRelationOutputSchema,
+	apisGetContractTestRelations: ApisRelationOutputSchema,
+	apisGetEnvironmentRelations: ApisRelationOutputSchema,
+	apisGetIntegrationTestRelations: ApisRelationOutputSchema,
+	apisGetTestSuiteRelations: ApisRelationOutputSchema,
+	apisGetUnclassifiedRelations: ApisRelationOutputSchema,
+	apisGetDocumentationRelations: ApisRelationOutputSchema,
+	webhooksCreate: WebhooksCreateOutputSchema,
 } as const;
 
 export type PostmanEndpointInputs = {
@@ -5451,6 +5503,37 @@ export type PostmanEndpointInputs = {
 	environmentsList: z.infer<
 		typeof PostmanEndpointInputSchemas.environmentsList
 	>;
+	apisCreateRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisCreateRelations
+	>;
+	apisListReleases: z.infer<
+		typeof PostmanEndpointInputSchemas.apisListReleases
+	>;
+	apisGetLinkedRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetLinkedRelations
+	>;
+	apisGetTestRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetTestRelations
+	>;
+	apisGetContractTestRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetContractTestRelations
+	>;
+	apisGetEnvironmentRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetEnvironmentRelations
+	>;
+	apisGetIntegrationTestRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetIntegrationTestRelations
+	>;
+	apisGetTestSuiteRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetTestSuiteRelations
+	>;
+	apisGetUnclassifiedRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetUnclassifiedRelations
+	>;
+	apisGetDocumentationRelations: z.infer<
+		typeof PostmanEndpointInputSchemas.apisGetDocumentationRelations
+	>;
+	webhooksCreate: z.infer<typeof PostmanEndpointInputSchemas.webhooksCreate>;
 };
 
 export type PostmanEndpointOutputs = {
@@ -5748,4 +5831,35 @@ export type PostmanEndpointOutputs = {
 	environmentsList: z.infer<
 		typeof PostmanEndpointOutputSchemas.environmentsList
 	>;
+	apisCreateRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisCreateRelations
+	>;
+	apisListReleases: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisListReleases
+	>;
+	apisGetLinkedRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetLinkedRelations
+	>;
+	apisGetTestRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetTestRelations
+	>;
+	apisGetContractTestRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetContractTestRelations
+	>;
+	apisGetEnvironmentRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetEnvironmentRelations
+	>;
+	apisGetIntegrationTestRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetIntegrationTestRelations
+	>;
+	apisGetTestSuiteRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetTestSuiteRelations
+	>;
+	apisGetUnclassifiedRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetUnclassifiedRelations
+	>;
+	apisGetDocumentationRelations: z.infer<
+		typeof PostmanEndpointOutputSchemas.apisGetDocumentationRelations
+	>;
+	webhooksCreate: z.infer<typeof PostmanEndpointOutputSchemas.webhooksCreate>;
 };

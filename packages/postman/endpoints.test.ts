@@ -54,9 +54,9 @@ describe('Postman Plugin Structure', () => {
 		expect(plugin.id).toBe('postman');
 		expect(plugin.schema).toBeDefined();
 		expect(plugin.endpoints).toBeDefined();
-		expect(Object.keys(PostmanEndpointInputSchemas)).toHaveLength(124);
-		expect(Object.keys(PostmanEndpointOutputSchemas)).toHaveLength(124);
-		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(124);
+		expect(Object.keys(PostmanEndpointInputSchemas)).toHaveLength(135);
+		expect(Object.keys(PostmanEndpointOutputSchemas)).toHaveLength(135);
+		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(135);
 		expect(typeof plugin.endpoints!.apis.createSchema).toBe('function');
 		expect(typeof plugin.endpoints!.apis.createCollectionFromSchema).toBe(
 			'function',
@@ -247,6 +247,29 @@ describe('Postman Plugin Structure', () => {
 		expect(typeof plugin.endpoints!.comments.resolve).toBe('function');
 		expect(typeof plugin.endpoints!.pullRequests.review).toBe('function');
 		expect(typeof plugin.endpoints!.pullRequests.update).toBe('function');
+		expect(typeof plugin.endpoints!.apis.createRelations).toBe('function');
+		expect(typeof plugin.endpoints!.apis.listReleases).toBe('function');
+		expect(typeof plugin.endpoints!.apis.getLinkedRelations).toBe('function');
+		expect(typeof plugin.endpoints!.apis.getTestRelations).toBe('function');
+		expect(typeof plugin.endpoints!.apis.getContractTestRelations).toBe(
+			'function',
+		);
+		expect(typeof plugin.endpoints!.apis.getEnvironmentRelations).toBe(
+			'function',
+		);
+		expect(typeof plugin.endpoints!.apis.getIntegrationTestRelations).toBe(
+			'function',
+		);
+		expect(typeof plugin.endpoints!.apis.getTestSuiteRelations).toBe(
+			'function',
+		);
+		expect(typeof plugin.endpoints!.apis.getUnclassifiedRelations).toBe(
+			'function',
+		);
+		expect(typeof plugin.endpoints!.apis.getDocumentationRelations).toBe(
+			'function',
+		);
+		expect(typeof plugin.endpoints!.webhooks.create).toBe('function');
 	});
 });
 
@@ -5524,6 +5547,130 @@ describe('Postman pullRequests', () => {
 				description: 'test-description',
 				reviewers: ['test-reviewersItem'],
 			}).success,
+		).toBe(true);
+	});
+});
+
+describe('Postman relations and webhooks', () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	const versioned = {
+		apiId: 'test-apiId',
+		versionId: 'test-versionId',
+	};
+
+	it.each([
+		[
+			'listReleases',
+			'/apis/{apiId}/versions/{versionId}/releases',
+			'apisListReleases',
+		],
+		[
+			'getLinkedRelations',
+			'/apis/{apiId}/versions/{versionId}/relations',
+			'apisGetLinkedRelations',
+		],
+		[
+			'getTestRelations',
+			'/apis/{apiId}/versions/{versionId}/relations/test',
+			'apisGetTestRelations',
+		],
+		[
+			'getContractTestRelations',
+			'/apis/{apiId}/versions/{versionId}/relations/contracttest',
+			'apisGetContractTestRelations',
+		],
+		[
+			'getEnvironmentRelations',
+			'/apis/{apiId}/versions/{versionId}/relations/environment',
+			'apisGetEnvironmentRelations',
+		],
+		[
+			'getIntegrationTestRelations',
+			'/apis/{apiId}/versions/{versionId}/relations/integrationtest',
+			'apisGetIntegrationTestRelations',
+		],
+		[
+			'getTestSuiteRelations',
+			'/apis/{apiId}/versions/{versionId}/relations/testsuite',
+			'apisGetTestSuiteRelations',
+		],
+		[
+			'getUnclassifiedRelations',
+			'/apis/{apiId}/versions/{versionId}/relations/unclassified',
+			'apisGetUnclassifiedRelations',
+		],
+		[
+			'getDocumentationRelations',
+			'/apis/{apiId}/versions/{versionId}/relations/documentation',
+			'apisGetDocumentationRelations',
+		],
+	] as const)('apis.%s', async (name, url, schemaKey) => {
+		const canned = { relations: [] };
+		let captured: ApiRequestOptions | undefined;
+		mockRequest.mockImplementationOnce(
+			async (_config: OpenAPIConfig, options: ApiRequestOptions) => {
+				captured = options;
+				return canned;
+			},
+		);
+		const plugin = postman();
+		const handler = plugin.endpoints!.apis[name];
+		const result = await handler(mockCtx, versioned);
+		expect(captured?.method).toBe('GET');
+		expect(captured?.url).toBe(url);
+		expect(captured?.path).toMatchObject(versioned);
+		expect(result).toEqual(canned);
+		expect(
+			PostmanEndpointOutputSchemas[schemaKey].safeParse(result).success,
+		).toBe(true);
+	});
+
+	it('apis.createRelations Create API version relations', async () => {
+		const canned = { unclassified: ['col-1'] };
+		let captured: ApiRequestOptions | undefined;
+		mockRequest.mockImplementationOnce(
+			async (_config: OpenAPIConfig, options: ApiRequestOptions) => {
+				captured = options;
+				return canned;
+			},
+		);
+		const result = await postman().endpoints!.apis.createRelations(mockCtx, {
+			...versioned,
+			unclassified: ['col-1'],
+		});
+		expect(captured?.method).toBe('POST');
+		expect(captured?.url).toBe(
+			'/apis/{apiId}/versions/{versionId}/relations',
+		);
+		expect(captured?.body).toMatchObject({ unclassified: ['col-1'] });
+		expect(result).toEqual(canned);
+	});
+
+	it('webhooks.create Create a webhook', async () => {
+		const canned = { webhook: { id: 'wh-1', webhookUrl: 'https://example' } };
+		let captured: ApiRequestOptions | undefined;
+		mockRequest.mockImplementationOnce(
+			async (_config: OpenAPIConfig, options: ApiRequestOptions) => {
+				captured = options;
+				return canned;
+			},
+		);
+		const result = await postman().endpoints!.webhooks.create(mockCtx, {
+			name: 'hook',
+			collection: 'col-1',
+			workspace: 'ws-1',
+		});
+		expect(captured?.method).toBe('POST');
+		expect(captured?.url).toBe('/webhooks');
+		expect(captured?.body).toMatchObject({
+			webhook: { name: 'hook', collection: 'col-1', workspace: 'ws-1' },
+		});
+		expect(result).toEqual(canned);
+		expect(
+			PostmanEndpointOutputSchemas.webhooksCreate.safeParse(result).success,
 		).toBe(true);
 	});
 });
