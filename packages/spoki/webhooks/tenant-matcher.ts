@@ -20,15 +20,15 @@ import crypto from 'crypto';
  *   outside that envelope. Tenant resolution therefore uses only an account
  *   id from the signed body. A body/header mismatch is rejected. Unsigned
  *   or invalid deliveries match no tenant.
- * - When the body arrives as a raw string it is forwarded byte-for-byte as
- *   `rawBody` and verified first, before any serialization fallbacks run.
+ * - When body arrives as a raw string or Buffer the matchers extract the exact
+ *   bytes directly and set rawBody before calling verifySpokiWebhookRequest.
  *   Non-standard JSON whitespace (e.g. `{"k" : "v"}`) is preserved exactly.
- * - When an adapter has already parsed the body to an object, `rawBody` is
- *   unavailable and bodyCandidates generates compact, 2-space, 4-space,
- *   single-space, and tab-indented forms plus their newline variants. An
- *   attacker cannot exploit extra candidates because every candidate must
- *   still pass the HMAC check. Prefer forwarding the raw string body for
- *   byte-exact verification.
+ *   Callers must forward the raw string body for byte-exact verification.
+ * - When an adapter pre-parses the body to an object (rawBody unavailable),
+ *   verifySpokiWebhookRequest falls back to bodyCandidates which generates
+ *   compact, 2-space, 4-space, single-space, and tab-indented forms. An
+ *   attacker cannot exploit extra candidates; each candidate must still pass
+ *   the HMAC before a delivery is accepted.
  * - Without a configured webhook secret nothing routes.
  */
 
@@ -243,6 +243,20 @@ function accountFromPayload(payload: unknown): string | undefined {
 	return undefined;
 }
 
+/**
+ * Extracts the raw body string from a RawWebhookRequest when the body is a
+ * string or Buffer, preserving the exact wire bytes. Returns undefined when the
+ * body is already a parsed object (rawBody is unrecoverable in that case).
+ */
+function extractRawBody(request: RawWebhookRequest): string | undefined {
+	const { body } = request;
+	if (typeof body === 'string') return body;
+	if (typeof Buffer !== 'undefined' && Buffer.isBuffer(body)) {
+		return body.toString('utf8');
+	}
+	return undefined;
+}
+
 export function matchSpokiPluginWebhook(
 	request: RawWebhookRequest,
 	webhookSecret: string | undefined,
@@ -251,7 +265,16 @@ export function matchSpokiPluginWebhook(
 
 	// Authenticate at match time — do not route on header presence alone.
 	// Validity is also re-checked by the registered spokiEvent handler.
+	//
+	// extractRawBody returns the exact wire bytes when body is a string/Buffer,
+	// so non-standard JSON whitespace is preserved for byte-exact HMAC checks.
+	// When body is a pre-parsed object the rawBody is absent and
+	// verifySpokiWebhookRequest falls back to serialization candidates.
+	const rawBody = extractRawBody(request);
 	const parsed = webhookRequestFromRaw(request);
+	if (rawBody !== undefined) {
+		parsed.rawBody = rawBody;
+	}
 	return verifySpokiWebhookRequest(parsed, webhookSecret).valid;
 }
 
@@ -261,7 +284,13 @@ export function matchSpokiTenantWebhook(
 ): WebhookTenantMatch | null {
 	if (!webhookSecret) return null;
 
+	// Extract raw bytes directly when body is a string/Buffer so non-standard
+	// JSON whitespace is preserved for byte-exact HMAC verification.
+	const rawBody = extractRawBody(request);
 	const parsed = webhookRequestFromRaw(request);
+	if (rawBody !== undefined) {
+		parsed.rawBody = rawBody;
+	}
 	if (!verifySpokiWebhookRequest(parsed, webhookSecret).valid) return null;
 
 	// Tenant id must come from the signed body. x-spoki-account is not covered
