@@ -104,6 +104,7 @@ describe('Replyio API client', () => {
 			method: 'GET',
 		}).then(
 			() => null,
+			// Justification for `unknown`: promise rejection value is untyped before instanceof check.
 			(error: unknown) => error,
 		);
 		expect(failure).toBeInstanceOf(ReplyioAPIError);
@@ -120,6 +121,7 @@ describe('Replyio API client', () => {
 			method: 'GET',
 		}).then(
 			() => null,
+			// Justification for `unknown`: promise rejection value is untyped before instanceof check.
 			(error: unknown) => error,
 		);
 		expect(failure).toBeInstanceOf(ReplyioAPIError);
@@ -135,6 +137,7 @@ describe('Replyio API client', () => {
 			method: 'GET',
 		}).then(
 			() => null,
+			// Justification for `unknown`: non-error rejection value is untyped before instanceof check.
 			(error: unknown) => error,
 		);
 		expect(failure).toBeInstanceOf(ReplyioAPIError);
@@ -185,6 +188,7 @@ describe('Replyio connect redirect helper', () => {
 			'test-api-key',
 		).then(
 			() => null,
+			// Justification for `unknown`: promise rejection value is untyped before instanceof check.
 			(error: unknown) => error,
 		);
 		expect(failure).toBeInstanceOf(ReplyioAPIError);
@@ -206,6 +210,7 @@ describe('Replyio connect redirect helper', () => {
 			'bad-key',
 		).then(
 			() => null,
+			// Justification for `unknown`: promise rejection value is untyped before instanceof check.
 			(error: unknown) => error,
 		);
 		expect(failure).toBeInstanceOf(ReplyioAPIError);
