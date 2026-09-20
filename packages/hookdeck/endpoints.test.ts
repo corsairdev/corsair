@@ -1,5 +1,4 @@
 import type { RawWebhookRequest, WebhookRequest } from 'corsair/core';
-import type { HookdeckContext } from './index';
 import { makeHookdeckRequest } from './client';
 import {
 	connectionsCreate,
@@ -9,6 +8,7 @@ import {
 	connectionsUpdate,
 } from './endpoints/connections';
 import type { ConnectionsGetResponse } from './endpoints/types';
+import type { HookdeckContext } from './index';
 import { matchHookdeckTenantWebhook } from './webhooks/tenant-matcher';
 import type { HookdeckWebhookPayload } from './webhooks/types';
 import {
@@ -266,25 +266,21 @@ describe('hookdeck webhook matching', () => {
 
 	it('matches the example event type on parsed and string bodies', () => {
 		const match = createHookdeckMatch('example');
-		expect(
-			match(rawRequest({ type: 'example', data: { id: 'evt_1' } })),
-		).toBe(true);
-		expect(
-			match(
-				rawRequest('{"type":"example","data":{"id":"evt_1"}}'),
-			),
-		).toBe(true);
+		expect(match(rawRequest({ type: 'example', data: { id: 'evt_1' } }))).toBe(
+			true,
+		);
+		expect(match(rawRequest('{"type":"example","data":{"id":"evt_1"}}'))).toBe(
+			true,
+		);
 		expect(match(rawRequest({ type: 'other', data: {} }))).toBe(false);
 	});
 
 	it('resolves the tenant from top-level and nested team ids', () => {
+		expect(matchHookdeckTenantWebhook(rawRequest({ team_id: 'tm_1' }))).toEqual(
+			{ linkType: 'tenant_external_id', externalId: 'tm_1' },
+		);
 		expect(
-			matchHookdeckTenantWebhook(rawRequest({ team_id: 'tm_1' })),
-		).toEqual({ linkType: 'tenant_external_id', externalId: 'tm_1' });
-		expect(
-			matchHookdeckTenantWebhook(
-				rawRequest({ data: { team_id: 'tm_2' } }),
-			),
+			matchHookdeckTenantWebhook(rawRequest({ data: { team_id: 'tm_2' } })),
 		).toEqual({ linkType: 'tenant_external_id', externalId: 'tm_2' });
 		expect(matchHookdeckTenantWebhook(rawRequest({ data: {} }))).toBeNull();
 	});

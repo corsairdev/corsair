@@ -17,17 +17,15 @@ function apiError(status: number, message: string): ApiError {
 
 describe('Hookdeck error handlers', () => {
 	it('matches rate-limit errors by status and message', () => {
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(apiError(429, 'Too Many'))).toBe(
-			true,
-		);
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(apiError(429, 'Too Many')),
+		).toBe(true);
 		expect(
 			errorHandlers.RATE_LIMIT_ERROR.match(
 				new Error('rate_limited: slow down'),
 			),
 		).toBe(true);
-		expect(
-			errorHandlers.RATE_LIMIT_ERROR.match(new Error('boom')),
-		).toBe(false);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(new Error('boom'))).toBe(false);
 	});
 
 	it('retries rate-limit errors up to 5 times', async () => {

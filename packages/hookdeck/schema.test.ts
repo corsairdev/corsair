@@ -49,9 +49,7 @@ describe('Hookdeck connections input schemas', () => {
 			order_by: 'created_at',
 			dir: 'desc',
 		});
-		expect(
-			HookdeckEndpointInputSchemas.connectionsList.parse({}),
-		).toEqual({});
+		expect(HookdeckEndpointInputSchemas.connectionsList.parse({})).toEqual({});
 	});
 
 	it('connections.list rejects limits above the provider maximum', () => {
