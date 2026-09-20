@@ -48,7 +48,7 @@ export const deleteSegment: WhautomateHandler<
 	>(
 		await resolveApiHost(ctx),
 		ctx.key,
-		`/segments/${input.id}`,
+		`/segments/${encodeURIComponent(input.id)}`,
 		WhautomateEndpointOutputSchemas.deleteSegment,
 		{
 			method: 'DELETE',

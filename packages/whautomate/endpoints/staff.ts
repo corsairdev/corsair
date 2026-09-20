@@ -48,7 +48,7 @@ export const getStaffById: WhautomateHandler<
 	>(
 		await resolveApiHost(ctx),
 		ctx.key,
-		`/staffs/${input.id}`,
+		`/staffs/${encodeURIComponent(input.id)}`,
 		WhautomateEndpointOutputSchemas.getStaffById,
 		{
 			method: 'GET',
@@ -78,7 +78,7 @@ export const getStaffAvailabilityBlocks: WhautomateHandler<
 	>(
 		await resolveApiHost(ctx),
 		ctx.key,
-		`/staffs/${staffId}/availabilityBlocks`,
+		`/staffs/${encodeURIComponent(staffId)}/availabilityBlocks`,
 		WhautomateEndpointOutputSchemas.getStaffAvailabilityBlocks,
 		{
 			method: 'GET',

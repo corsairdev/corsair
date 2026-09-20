@@ -47,7 +47,7 @@ export const deleteServiceCategory: WhautomateHandler<
 	>(
 		await resolveApiHost(ctx),
 		ctx.key,
-		`/serviceCategories/${input.id}`,
+		`/serviceCategories/${encodeURIComponent(input.id)}`,
 		WhautomateEndpointOutputSchemas.deleteServiceCategory,
 		{
 			method: 'DELETE',

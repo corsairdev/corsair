@@ -50,7 +50,7 @@ export const getServiceById: WhautomateHandler<
 	>(
 		await resolveApiHost(ctx),
 		ctx.key,
-		`/services/${input.id}`,
+		`/services/${encodeURIComponent(input.id)}`,
 		WhautomateEndpointOutputSchemas.getServiceById,
 		{
 			method: 'GET',
@@ -76,7 +76,7 @@ export const updateService: WhautomateHandler<
 	>(
 		await resolveApiHost(ctx),
 		ctx.key,
-		`/services/${id}`,
+		`/services/${encodeURIComponent(id)}`,
 		WhautomateEndpointOutputSchemas.updateService,
 		{
 			method: 'PUT',

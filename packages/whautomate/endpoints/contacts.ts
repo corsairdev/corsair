@@ -77,7 +77,7 @@ export const getMessagesOfContact: WhautomateHandler<
 	>(
 		await resolveApiHost(ctx),
 		ctx.key,
-		`/messages/${contactId}`,
+		`/messages/${encodeURIComponent(contactId)}`,
 		WhautomateEndpointOutputSchemas.getMessagesOfContact,
 		{
 			method: 'GET',

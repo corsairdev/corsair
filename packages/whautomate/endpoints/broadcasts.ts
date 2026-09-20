@@ -50,7 +50,7 @@ export const getBroadcastById: WhautomateHandler<
 	>(
 		await resolveApiHost(ctx),
 		ctx.key,
-		`/broadcasts/${input.id}`,
+		`/broadcasts/${encodeURIComponent(input.id)}`,
 		WhautomateEndpointOutputSchemas.getBroadcastById,
 		{
 			method: 'GET',
