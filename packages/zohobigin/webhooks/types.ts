@@ -34,6 +34,7 @@ export type ZohoBiginWebhookOutputs = {
 };
 
 function parseBody(body: unknown): Record<string, unknown> | null {
+	// unknown: webhook body may arrive as a JSON string or a parsed object.
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
