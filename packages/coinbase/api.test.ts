@@ -53,7 +53,7 @@ const AUTH_FIXTURE = randomBytes(16).toString('hex');
 const SIGNING_FIXTURE = randomBytes(16).toString('hex');
 
 jest.mock('corsair/core', () => {
-	// biome-ignore lint/suspicious/noExplicitAny: test mock requires broad assertion for core module shape
+	// unknown: test mock shape varies - jest.requireActual returns generic core module
 	const actual = jest.requireActual('corsair/core') as Record<string, unknown>;
 	class AuthMissingError extends Error {
 		constructor(plugin: string, authType: string) {

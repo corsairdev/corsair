@@ -8,7 +8,7 @@ import {
 } from './webhooks/types';
 
 jest.mock('corsair/core', () => {
-	// biome-ignore lint/suspicious/noExplicitAny: test mock requires broad assertion for core module shape
+	// unknown: test mock shape varies - jest.requireActual returns generic core module
 	const actual = jest.requireActual('corsair/core') as Record<string, unknown>;
 	class AuthMissingError extends Error {
 		constructor(plugin: string, authType: string) {
@@ -170,7 +170,7 @@ describe('Coinbase webhook event logging', () => {
 		});
 
 		expect(mockLogEvent).toHaveBeenCalledTimes(1);
-		// biome-ignore lint/suspicious/noExplicitAny: test inspects logged payload shape as generic record
+		// unknown: logged payload shape varies - test inspects generic record
 		const payload = mockLogEvent.mock.calls[0]?.[2] as Record<string, unknown>;
 		const serialized = JSON.stringify(payload);
 		expect(serialized).toContain('notif-1');
