@@ -31,6 +31,7 @@ const ctx = {
 	$getAccountId: async () => 'test-account',
 } as never;
 
+// unknown: provider error/response JSON has no single stable schema
 function json(body: unknown): Response {
 	return new Response(JSON.stringify(body), {
 		status: 200,

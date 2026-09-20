@@ -18,6 +18,7 @@ export const listCountries: ZenserpEndpoints['metadataListCountries'] = async (
 ) => {
 	ListCountriesInputSchema.parse(rawInput);
 	const response = CountriesResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeZenserpRequest<unknown>('/api/v2/gl', ctx.key),
 	);
 	await logEventFromContext(
@@ -35,6 +36,7 @@ export const listLocations: ZenserpEndpoints['metadataListLocations'] = async (
 ) => {
 	const input = ListLocationsInputSchema.parse(rawInput);
 	const response = LocationsResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeZenserpRequest<unknown>('/api/v2/locations', ctx.key, input),
 	);
 	await logEventFromContext(
@@ -50,6 +52,7 @@ export const listSearchEngines: ZenserpEndpoints['metadataListSearchEngines'] =
 	async (ctx, rawInput) => {
 		ListSearchEnginesInputSchema.parse(rawInput);
 		const response = SearchEnginesResponseSchema.parse(
+			// unknown: JSON is untyped until the endpoint Zod schema parses it
 			await makeZenserpRequest<unknown>('/api/v2/search_engines', ctx.key),
 		);
 		await logEventFromContext(
@@ -67,6 +70,7 @@ export const listLanguages: ZenserpEndpoints['metadataListLanguages'] = async (
 ) => {
 	ListLanguagesInputSchema.parse(rawInput);
 	const response = LanguagesResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeZenserpRequest<unknown>('/api/v2/hl', ctx.key),
 	);
 	await logEventFromContext(

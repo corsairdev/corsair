@@ -12,6 +12,7 @@ export const getProduct: ZenserpEndpoints['shoppingGetProduct'] = async (
 ) => {
 	const input = ShoppingProductInputSchema.parse(rawInput);
 	const response = ShoppingProductResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeZenserpRequest<unknown>('/api/v1/shopping', ctx.key, {
 			product_id: input.productId,
 			location: input.location,

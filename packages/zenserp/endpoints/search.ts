@@ -20,6 +20,7 @@ export const google: ZenserpEndpoints['searchGoogle'] = async (
 ) => {
 	const input = GoogleSearchInputSchema.parse(rawInput);
 	const response = SearchResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeZenserpRequest<unknown>('/api/v2/search', ctx.key, input),
 	);
 	await logEventFromContext(
@@ -34,6 +35,7 @@ export const google: ZenserpEndpoints['searchGoogle'] = async (
 export const bing: ZenserpEndpoints['searchBing'] = async (ctx, rawInput) => {
 	const input = BingSearchInputSchema.parse(rawInput);
 	const response = SearchResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeZenserpRequest<unknown>('/api/v2/search', ctx.key, {
 			...input,
 			search_engine: 'bing.com',
@@ -54,6 +56,7 @@ export const yandex: ZenserpEndpoints['searchYandex'] = async (
 ) => {
 	const input = YandexSearchInputSchema.parse(rawInput);
 	const response = SearchResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeZenserpRequest<unknown>('/api/v2/search', ctx.key, {
 			...input,
 			search_engine: 'yandex.com',
@@ -74,6 +77,7 @@ export const reverseImage: ZenserpEndpoints['searchReverseImage'] = async (
 ) => {
 	const input = ReverseImageSearchInputSchema.parse(rawInput);
 	const response = SearchResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeZenserpRequest<unknown>('/api/v2/search', ctx.key, {
 			image_url: input.imageUrl,
 			location: input.location,

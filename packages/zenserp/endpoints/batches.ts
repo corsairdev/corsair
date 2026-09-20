@@ -6,6 +6,7 @@ import { BatchesResponseSchema, ListBatchesInputSchema } from './types';
 export const list: ZenserpEndpoints['batchesList'] = async (ctx, rawInput) => {
 	const input = ListBatchesInputSchema.parse(rawInput);
 	const response = BatchesResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeZenserpRequest<unknown>('/api/v1/batches', ctx.key, input),
 	);
 	await logEventFromContext(

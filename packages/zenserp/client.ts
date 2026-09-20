@@ -18,6 +18,7 @@ function retryAfterMs(response: Response): number | undefined {
 	return Number.isNaN(date) ? undefined : Math.max(0, date - Date.now());
 }
 
+// unknown: response body is untyped JSON/text until the caller parses it
 async function responseBody(response: Response): Promise<unknown> {
 	if (response.status === 204) return undefined;
 	const text = await response.text();
@@ -67,6 +68,7 @@ export async function makeZenserpRequest<T>(
 	if (!response.ok) {
 		const providerMessage =
 			typeof body === 'object' && body !== null && 'error' in body
+				// unknown: catch/error boundary accepts any thrown value
 				? String((body as { error: unknown }).error)
 				: response.statusText || `Zenserp request failed (${response.status})`;
 		throw new ApiError(

@@ -6,6 +6,7 @@ import { TrendsInputSchema, TrendsResponseSchema } from './types';
 export const get: ZenserpEndpoints['trendsGet'] = async (ctx, rawInput) => {
 	const input = TrendsInputSchema.parse(rawInput);
 	const response = TrendsResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeZenserpRequest<unknown>('/api/v1/trends', ctx.key, {
 			'keyword[]': input.keywords,
 			location: input.location,

@@ -9,6 +9,7 @@ export const getStatus: ZenserpEndpoints['accountGetStatus'] = async (
 ) => {
 	StatusInputSchema.parse(rawInput);
 	const response = StatusResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeZenserpRequest<unknown>('/api/v2/status', ctx.key),
 	);
 	await logEventFromContext(
