@@ -9,6 +9,8 @@ import {
 	CloseTask,
 } from '../schema/database';
 
+export const CLOSE_TIMESTAMP_TOLERANCE_MS = 5 * 60 * 1000;
+
 function headerValue(
 	headers: Record<string, string | string[] | undefined>,
 	name: string,
@@ -49,6 +51,14 @@ export function verifyCloseWebhookSignature(
 		};
 	}
 
+	const sentAtMs = Number(timestamp);
+	if (!Number.isFinite(sentAtMs)) {
+		return { valid: false, error: 'Invalid close-sig-timestamp header' };
+	}
+	if (Math.abs(Date.now() - sentAtMs * 1000) > CLOSE_TIMESTAMP_TOLERANCE_MS) {
+		return { valid: false, error: 'Stale close-sig-timestamp header' };
+	}
+
 	try {
 		const key = Buffer.from(signatureKey, 'hex');
 		const expected = createHmac('sha256', key)
@@ -68,56 +78,91 @@ export function verifyCloseWebhookSignature(
 	}
 }
 
-export const CloseWebhookBaseEventSchema = z
+export const CloseWebhookEventSchema = z
 	.object({
-		event_type: z.string(),
+		id: z.string().optional(),
+		object_type: z.string(),
+		object_id: z.string().optional(),
+		action: z.string(),
 		organization_id: z.string().optional(),
-		object_type: z.string().optional(),
-		action: z.string().optional(),
+		data: z.unknown().optional(),
+		previous_data: z.unknown().optional(),
+		changed_fields: z.array(z.string()).optional(),
+		date_created: z.string().optional(),
+		date_updated: z.string().optional(),
+		user_id: z.string().optional(),
+		lead_id: z.string().optional(),
+		request_id: z.string().optional(),
 	})
 	.loose();
 
-export const CloseLeadCreatedEventSchema = CloseWebhookBaseEventSchema.extend({
-	event_type: z.literal('lead.created'),
-	data: CloseLead,
-});
+export const CloseWebhookEnvelopeSchema = z
+	.object({
+		subscription_id: z.string().optional(),
+		event: CloseWebhookEventSchema,
+	})
+	.loose();
+
+function closeWebhookEventSchema<
+	const TType extends string,
+	const TAction extends string,
+	TData extends z.ZodTypeAny,
+>(objectType: TType, action: TAction, data: TData) {
+	return CloseWebhookEnvelopeSchema.extend({
+		event: CloseWebhookEventSchema.extend({
+			object_type: z.literal(objectType),
+			action: z.literal(action),
+			data,
+		}),
+	});
+}
+
+export const CloseLeadCreatedEventSchema = closeWebhookEventSchema(
+	'lead',
+	'created',
+	CloseLead,
+);
 export type CloseLeadCreatedEvent = z.infer<typeof CloseLeadCreatedEventSchema>;
 
-export const CloseLeadUpdatedEventSchema = CloseWebhookBaseEventSchema.extend({
-	event_type: z.literal('lead.updated'),
-	data: CloseLead,
-});
+export const CloseLeadUpdatedEventSchema = closeWebhookEventSchema(
+	'lead',
+	'updated',
+	CloseLead,
+);
 export type CloseLeadUpdatedEvent = z.infer<typeof CloseLeadUpdatedEventSchema>;
 
-export const CloseContactCreatedEventSchema =
-	CloseWebhookBaseEventSchema.extend({
-		event_type: z.literal('contact.created'),
-		data: CloseContact,
-	});
+export const CloseContactCreatedEventSchema = closeWebhookEventSchema(
+	'contact',
+	'created',
+	CloseContact,
+);
 export type CloseContactCreatedEvent = z.infer<
 	typeof CloseContactCreatedEventSchema
 >;
 
-export const CloseOpportunityCreatedEventSchema =
-	CloseWebhookBaseEventSchema.extend({
-		event_type: z.literal('opportunity.created'),
-		data: CloseOpportunity,
-	});
+export const CloseOpportunityCreatedEventSchema = closeWebhookEventSchema(
+	'opportunity',
+	'created',
+	CloseOpportunity,
+);
 export type CloseOpportunityCreatedEvent = z.infer<
 	typeof CloseOpportunityCreatedEventSchema
 >;
 
-export const CloseTaskCreatedEventSchema = CloseWebhookBaseEventSchema.extend({
-	event_type: z.literal('task.created'),
-	data: CloseTask,
+export const CloseTaskCreatedEventSchema = CloseWebhookEnvelopeSchema.extend({
+	event: CloseWebhookEventSchema.extend({
+		object_type: z.string(),
+		action: z.literal('created'),
+		data: CloseTask,
+	}),
 });
 export type CloseTaskCreatedEvent = z.infer<typeof CloseTaskCreatedEventSchema>;
 
-export const CloseActivityNoteCreatedEventSchema =
-	CloseWebhookBaseEventSchema.extend({
-		event_type: z.literal('activity.note.created'),
-		data: CloseActivityNote,
-	});
+export const CloseActivityNoteCreatedEventSchema = closeWebhookEventSchema(
+	'activity.note',
+	'created',
+	CloseActivityNote,
+);
 export type CloseActivityNoteCreatedEvent = z.infer<
 	typeof CloseActivityNoteCreatedEventSchema
 >;

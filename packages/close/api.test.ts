@@ -123,8 +123,16 @@ describe('Close plugin initialization & metadata', () => {
 	it('verifies Close webhook signatures from close-sig-hash headers', () => {
 		const signatureKey =
 			'058bfb6a3d8cfdc4da7c3be5901b16ae11da982b46a25fb2cd7016e97a140a1c';
-		const rawBody = '{"event_type":"lead.created"}';
-		const timestamp = '1544271440';
+		const rawBody = JSON.stringify({
+			subscription_id: 'whsub_test',
+			event: {
+				object_type: 'lead',
+				action: 'created',
+				organization_id: 'orga_999',
+				data: { id: 'lead_1' },
+			},
+		});
+		const timestamp = String(Math.floor(Date.now() / 1000));
 		const hash = createHmac('sha256', Buffer.from(signatureKey, 'hex'))
 			.update(timestamp + rawBody)
 			.digest('hex');
@@ -154,6 +162,60 @@ describe('Close plugin initialization & metadata', () => {
 			signatureKey,
 		);
 		expect(invalid.valid).toBe(false);
+	});
+
+	it('rejects stale Close webhook timestamps', () => {
+		const signatureKey =
+			'058bfb6a3d8cfdc4da7c3be5901b16ae11da982b46a25fb2cd7016e97a140a1c';
+		const rawBody =
+			'{"subscription_id":"whsub_test","event":{"object_type":"lead","action":"created"}}';
+		const timestamp = '1544271440';
+		const hash = createHmac('sha256', Buffer.from(signatureKey, 'hex'))
+			.update(timestamp + rawBody)
+			.digest('hex');
+
+		const result = verifyCloseWebhookSignature(
+			{
+				payload: JSON.parse(rawBody),
+				headers: {
+					'close-sig-hash': hash,
+					'close-sig-timestamp': timestamp,
+				},
+				rawBody,
+			},
+			signatureKey,
+		);
+		expect(result).toEqual({
+			valid: false,
+			error: 'Stale close-sig-timestamp header',
+		});
+	});
+
+	it('matches Close webhook events from the documented envelope', () => {
+		const plugin = close({ key: 'test_api_key' });
+		const envelope = {
+			subscription_id: 'whsub_test',
+			event: {
+				object_type: 'lead',
+				action: 'created',
+				organization_id: 'orga_999',
+				data: { id: 'lead_1' },
+			},
+		};
+		expect(
+			plugin.webhooks?.lead?.created?.match?.({
+				headers: {},
+				body: envelope,
+			}),
+		).toBe(true);
+		expect(
+			plugin.webhooks?.task?.created?.match?.({
+				headers: {},
+				body: {
+					event: { object_type: 'task.lead', action: 'created', data: {} },
+				},
+			}),
+		).toBe(true);
 	});
 
 	it('throws when webhook signature secret is missing', async () => {
@@ -193,7 +255,15 @@ describe('Close plugin initialization & metadata', () => {
 		const plugin = close({ key: 'test_api_key' });
 		const match = plugin.pluginTenantWebhookMatcher?.({
 			headers: {},
-			body: JSON.stringify({ organization_id: 'orga_999' }),
+			body: JSON.stringify({
+				subscription_id: 'whsub_test',
+				event: {
+					object_type: 'lead',
+					action: 'created',
+					organization_id: 'orga_999',
+					data: { id: 'lead_1' },
+				},
+			}),
 		});
 		expect(match).toEqual({
 			linkType: 'organization_id',

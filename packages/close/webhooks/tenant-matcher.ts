@@ -14,7 +14,10 @@ export function matchCloseTenantWebhook(
 	}
 	if (!body) return null;
 
+	const event = asRecord(body.event);
 	const externalId = firstString([
+		event?.organization_id,
+		asRecord(event?.data)?.organization_id,
 		body.organization_id,
 		asRecord(body.data)?.organization_id,
 		body.tenant_external_id,
