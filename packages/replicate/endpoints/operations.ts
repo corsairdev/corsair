@@ -1,19 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
-import { z } from 'zod';
 import { makeReplicateRequest } from '../client';
 import type { ReplicateEndpoints } from '../index';
 import {
 	ReplicateEndpointInputSchemas,
 	ReplicateEndpointOutputSchemas,
 } from './types';
-
-const PaginatedDeploymentsResponseSchema = z
-	.object({
-		next: z.string().nullable().optional(),
-		previous: z.string().nullable().optional(),
-		results: z.array(ReplicateEndpointOutputSchemas.deploymentsGet),
-	})
-	.loose();
 
 function encodePath(...parts: string[]): string {
 	return parts.map((part) => encodeURIComponent(part)).join('/');
@@ -79,16 +70,13 @@ export const deploymentsList: ReplicateEndpoints['deploymentsList'] = async (
 	rawInput,
 ) => {
 	const input = ReplicateEndpointInputSchemas.deploymentsList.parse(rawInput);
-	const paginatedResponse = PaginatedDeploymentsResponseSchema.parse(
+	const response = ReplicateEndpointOutputSchemas.deploymentsList.parse(
 		await makeReplicateRequest('/deployments', ctx.key, {
 			method: 'GET',
 			query: {
 				cursor: input.cursor,
 			},
 		}),
-	);
-	const response = ReplicateEndpointOutputSchemas.deploymentsList.parse(
-		paginatedResponse.results,
 	);
 	await logEventFromContext(
 		ctx,
@@ -386,13 +374,18 @@ export const modelsExamplesList: ReplicateEndpoints['modelsExamplesList'] =
 			await makeReplicateRequest(
 				`/models/${encodePath(input.owner, input.name)}/examples`,
 				ctx.key,
-				{ method: 'GET' },
+				{
+					method: 'GET',
+					query: {
+						cursor: input.cursor,
+					},
+				},
 			),
 		);
 		await logEventFromContext(
 			ctx,
 			'replicate.models.examples_list',
-			{ owner: input.owner, name: input.name },
+			{ owner: input.owner, name: input.name, cursor: input.cursor },
 			'completed',
 		);
 		return response;

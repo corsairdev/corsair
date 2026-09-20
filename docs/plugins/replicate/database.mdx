@@ -1,12 +1,9 @@
 ---
 title: Database
-description: "Replicate local sync: searchable entities, `.search()` filters, and operators."
+description: "Replicate does not currently expose database entities."
 ---
 
-The Replicate plugin syncs data locally. Use `corsair.replicate.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+The Replicate plugin currently exposes API operations only and does not define `replicate.db.*` entities.
 
-<Info>
-**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
-</Info>
-
+Use `tenant.replicate.api.*` endpoints from the [API reference](/plugins/replicate/api) and [Overview](/plugins/replicate/overview) pages.
 
