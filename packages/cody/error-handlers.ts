@@ -27,6 +27,14 @@ export const errorHandlers = {
 		},
 		handler: async (error?: Error) => ({ maxRetries: 0 }),
 	},
+	PERMISSION_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 403) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('forbidden') || msg.includes('permission');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
 	DEFAULT: {
 		match: (error?: Error) => true,
 		handler: async (error?: Error) => ({ maxRetries: 0 }),

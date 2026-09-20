@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Graphql, Search, Viewer } from './endpoints';
+import { ClientConfig, Completions, Graphql, Models, Search, Viewer } from './endpoints';
 import type {
 	CodyEndpointInputs,
 	CodyEndpointOutputs,
@@ -34,6 +34,16 @@ const codyEndpointsNested = {
 	},
 	graphql: {
 		post: Graphql.post,
+	},
+	completions: {
+		code: Completions.code,
+		stream: Completions.stream,
+	},
+	models: {
+		list: Models.list,
+	},
+	clientConfig: {
+		get: ClientConfig.get,
 	},
 } as const;
 
@@ -64,6 +74,10 @@ export type CodyEndpoints = {
 	viewer: CodyEndpoint<'viewer'>;
 	search: CodyEndpoint<'search'>;
 	graphql: CodyEndpoint<'graphql'>;
+	completionsCode: CodyEndpoint<'completionsCode'>;
+	completionsStream: CodyEndpoint<'completionsStream'>;
+	listModels: CodyEndpoint<'listModels'>;
+	getClientConfig: CodyEndpoint<'getClientConfig'>;
 };
 
 export type CodyBoundEndpoints = BindEndpoints<typeof codyEndpointsNested>;
@@ -81,6 +95,22 @@ export const codyEndpointSchemas = {
 		input: CodyEndpointInputSchemas.graphql,
 		output: CodyEndpointOutputSchemas.graphql,
 	},
+	'completions.code': {
+		input: CodyEndpointInputSchemas.completionsCode,
+		output: CodyEndpointOutputSchemas.completionsCode,
+	},
+	'completions.stream': {
+		input: CodyEndpointInputSchemas.completionsStream,
+		output: CodyEndpointOutputSchemas.completionsStream,
+	},
+	'models.list': {
+		input: CodyEndpointInputSchemas.listModels,
+		output: CodyEndpointOutputSchemas.listModels,
+	},
+	'clientConfig.get': {
+		input: CodyEndpointInputSchemas.getClientConfig,
+		output: CodyEndpointOutputSchemas.getClientConfig,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof codyEndpointsNested>;
 
 const defaultAuthType: AuthTypes = 'api_key';
@@ -97,6 +127,22 @@ const codyEndpointMeta = {
 	'graphql.post': {
 		riskLevel: 'write',
 		description: 'Run a raw Sourcegraph GraphQL operation',
+	},
+	'completions.code': {
+		riskLevel: 'write',
+		description: 'Non-streaming Cody LLM completion',
+	},
+	'completions.stream': {
+		riskLevel: 'write',
+		description: 'Streaming Cody chat completion',
+	},
+	'models.list': {
+		riskLevel: 'read',
+		description: 'List Cody supported models',
+	},
+	'clientConfig.get': {
+		riskLevel: 'read',
+		description: 'Get Cody client configuration',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof codyEndpointsNested>;
 

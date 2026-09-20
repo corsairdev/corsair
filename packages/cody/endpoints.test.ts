@@ -2,6 +2,7 @@ import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
 import { makeCodyRequest } from './client';
+import { getClientConfig, listModels } from './endpoints/completions';
 import { post as graphql } from './endpoints/graphql';
 import { get as search } from './endpoints/search';
 import type {
@@ -190,6 +191,44 @@ describe('Cody endpoints', () => {
 			unknown
 		>;
 		expect(body).not.toHaveProperty('variables');
+	});
+
+	it('completions.code posts to the Sourcegraph Cody completions API', async () => {
+		const { code } = await import('./endpoints/completions');
+		mockRequest.mockResolvedValue({ completion: 'hello', stopReason: 'STOP' });
+		const result = await code(apiKeyCtx, {
+			messages: [{ speaker: 'human', text: 'Who are you?' }],
+			model: 'anthropic/claude-3-haiku',
+			maxTokensToSample: 30,
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/.api/completions/code',
+			'test-cody-key',
+			expect.objectContaining({ method: 'POST' }),
+		);
+		expect(result.completion).toBe('hello');
+	});
+
+	it('models.list fetches supported-models.json', async () => {
+		mockRequest.mockResolvedValue({ models: [] });
+		const result = await listModels(apiKeyCtx, {});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/.api/modelconfig/supported-models.json',
+			'test-cody-key',
+			expect.objectContaining({ method: 'GET' }),
+		);
+		expect(result).toEqual({ models: [] });
+	});
+
+	it('clientConfig.get fetches /.api/client-config', async () => {
+		mockRequest.mockResolvedValue({ codyEnabled: true });
+		const result = await getClientConfig(apiKeyCtx, {});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/.api/client-config',
+			'test-cody-key',
+			expect.objectContaining({ method: 'GET' }),
+		);
+		expect(result).toEqual({ codyEnabled: true });
 	});
 
 	it('viewer throws Zod validation error on malformed response', async () => {
