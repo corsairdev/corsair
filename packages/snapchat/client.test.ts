@@ -1,9 +1,14 @@
 import { request } from 'corsair/http';
 import { executeSnapchatTool } from './client';
 
-jest.mock('corsair/http', () => ({
-	request: jest.fn(),
-}));
+jest.mock('corsair/http', () => {
+	const actual =
+		jest.requireActual<typeof import('corsair/http')>('corsair/http');
+	return {
+		...actual,
+		request: jest.fn(),
+	};
+});
 
 const requestMock = request as jest.MockedFunction<typeof request>;
 

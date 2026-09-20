@@ -87,7 +87,7 @@ describe('Snapchat actions endpoints', () => {
 			Actions.addSegmentUsers(ctx, {
 				users: undefined,
 				segment_id: 'seg_1',
-			} as unknown as Record<string, unknown>),
+			} as never),
 		).rejects.toThrow();
 	});
 

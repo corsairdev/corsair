@@ -166,63 +166,127 @@ export const SNAPCHAT_REQUIRED_OUTPUT_FIELDS = SNAPCHAT_OPERATIONS.reduce(
 	{} as RequiredFieldsByOperation,
 );
 
-function createEndpointSchema(
-	requiredFields: readonly string[],
-	isOutput = false,
-) {
+function getFieldSchema(field: string): z.ZodTypeAny {
+	if (field === 'users') {
+		return z
+			.array(z.string())
+			.min(1)
+			.or(z.string().min(1))
+			.describe(
+				'User identifiers (SHA-256 hashed email, phone, or mobile ad ID)',
+			);
+	}
+	if (field === 'events') {
+		return z
+			.union([
+				z.array(z.record(z.string(), z.unknown())),
+				z.record(z.string(), z.unknown()),
+				z.string().min(1),
+			])
+			.describe('Conversion events array, object, or string to validate');
+	}
+	if (
+		field === 'base_spec' ||
+		field === 'targeting_spec' ||
+		field === 'targeting' ||
+		field === 'placement_v2' ||
+		field === 'delivery_constraint' ||
+		field === 'cap_and_exclusion_config'
+	) {
+		return z
+			.union([z.record(z.string(), z.unknown()), z.string().min(1)])
+			.describe(`Targeting or delivery specification for ${field}`);
+	}
+	if (
+		field.endsWith('_id') ||
+		field === 'id' ||
+		field === 'report_run_id' ||
+		field === 'pixel_id'
+	) {
+		return z.string().min(1).describe(`Unique identifier for ${field}`);
+	}
+	if (
+		field === 'name' ||
+		field === 'creator_name' ||
+		field === 'country_code' ||
+		field === 'default_currency'
+	) {
+		return z.string().min(1).describe(`Value for ${field}`);
+	}
+	if (field === 'start_time' || field === 'end_time') {
+		return z.string().min(1).or(z.date()).describe(`Timestamp for ${field}`);
+	}
+	if (field === 'entity_ids') {
+		return z
+			.array(z.string())
+			.or(z.string())
+			.describe('List of entity identifiers or single identifier');
+	}
+	return z
+		.union([
+			z.string().min(1),
+			z.record(z.string(), z.unknown()),
+			z.array(z.unknown()),
+		])
+		.describe(`Parameter ${field}`);
+}
+
+function createInputEndpointSchema(requiredFields: readonly string[]) {
 	const shape: Record<string, z.ZodTypeAny> = {};
 
 	for (const field of requiredFields) {
-		shape[field] = z
-			.unknown()
-			.describe(`Required ${field} parameter`)
-			.refine((value) => value !== undefined, {
-				message: `${field} is required`,
-			});
+		shape[field] = getFieldSchema(field);
 	}
 
 	return z
 		.object(shape)
-		.catchall(
-			z
-				.unknown()
-				.describe(
-					isOutput
-						? 'Response envelope or payload property'
-						: 'Additional operation argument',
-				),
-		)
-		.describe(
-			isOutput
-				? 'Snapchat API response envelope and payload'
-				: 'Snapchat API operation arguments',
-		);
+		.catchall(z.unknown().describe('Additional operation argument'))
+		.describe('Snapchat API operation arguments');
 }
+
+export const SnapchatToolOutputSchema = z
+	.object({
+		successful: z
+			.boolean()
+			.optional()
+			.describe('Indicates whether operation was successful'),
+		data: z
+			.unknown()
+			.optional()
+			.describe('Response payload returned from tool execution'),
+		error: z
+			.unknown()
+			.optional()
+			.describe('Error details if tool execution failed'),
+		log_id: z.string().optional().describe('Composio execution log id'),
+		status: z.string().optional().describe('Execution status message'),
+		request_id: z.string().optional().describe('Execution request id'),
+	})
+	.catchall(z.unknown().describe('Additional response property'))
+	.describe('Snapchat API operation execution result');
 
 const inputEntries = SNAPCHAT_OPERATIONS.map((operation) => [
 	operation.name,
-	createEndpointSchema(SNAPCHAT_REQUIRED_INPUT_FIELDS[operation.name], false),
+	createInputEndpointSchema(SNAPCHAT_REQUIRED_INPUT_FIELDS[operation.name]),
 ]);
 
 const outputEntries = SNAPCHAT_OPERATIONS.map((operation) => [
 	operation.name,
-	createEndpointSchema(SNAPCHAT_REQUIRED_OUTPUT_FIELDS[operation.name], true),
+	SnapchatToolOutputSchema,
 ]);
 
 export const SnapchatEndpointInputSchemas = Object.fromEntries(
 	inputEntries,
 ) as {
 	[K in (typeof SNAPCHAT_OPERATIONS)[number]['name']]: ReturnType<
-		typeof createEndpointSchema
+		typeof createInputEndpointSchema
 	>;
 };
 
 export const SnapchatEndpointOutputSchemas = Object.fromEntries(
 	outputEntries,
 ) as {
-	[K in (typeof SNAPCHAT_OPERATIONS)[number]['name']]: ReturnType<
-		typeof createEndpointSchema
-	>;
+	[K in (typeof SNAPCHAT_OPERATIONS)[number]['name']]: typeof SnapchatToolOutputSchema;
 };
 
 export type SnapchatEndpointInputs = {
