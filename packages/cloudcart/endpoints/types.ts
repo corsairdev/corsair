@@ -154,6 +154,7 @@ export const UpdateCustomerTagInputSchema = IdRequiredInputSchema;
 export const DeleteCustomerTagInputSchema = IdRequiredInputSchema;
 
 export const CreateOrderInputSchema = BaseEntityInputSchema;
+export const GetOrderInputSchema = IdRequiredInputSchema;
 export const ListOrdersInputSchema = BaseEntityInputSchema;
 export const UpdateOrderInputSchema = IdRequiredInputSchema;
 export const DeleteOrderInputSchema = IdRequiredInputSchema;
@@ -357,6 +358,7 @@ export type CloudcartEndpointInputs = {
 	deleteCustomerTag: z.infer<typeof DeleteCustomerTagInputSchema>;
 
 	createOrder: z.infer<typeof CreateOrderInputSchema>;
+	getOrder: z.infer<typeof GetOrderInputSchema>;
 	listOrders: z.infer<typeof ListOrdersInputSchema>;
 	updateOrder: z.infer<typeof UpdateOrderInputSchema>;
 	deleteOrder: z.infer<typeof DeleteOrderInputSchema>;
@@ -530,6 +532,7 @@ export const CloudcartEndpointInputSchemas = {
 	deleteCustomerTag: DeleteCustomerTagInputSchema,
 
 	createOrder: CreateOrderInputSchema,
+	getOrder: GetOrderInputSchema,
 	listOrders: ListOrdersInputSchema,
 	updateOrder: UpdateOrderInputSchema,
 	deleteOrder: DeleteOrderInputSchema,
@@ -693,6 +696,7 @@ export const CloudcartEndpointOutputSchemas = {
 	deleteCustomerTag: JsonApiMutationResponseSchema,
 
 	createOrder: JsonApiDocumentSchema,
+	getOrder: JsonApiDocumentSchema,
 	listOrders: JsonApiDocumentSchema,
 	updateOrder: JsonApiDocumentSchema,
 	deleteOrder: JsonApiMutationResponseSchema,

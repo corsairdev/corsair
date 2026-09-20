@@ -293,6 +293,7 @@ const cases: Case[] = [
 	['customers', 'deleteCustomerTag', ID, 'DELETE', 'customer-tags/1'],
 
 	['orders', 'createOrder', DATA, 'POST', 'orders'],
+	['orders', 'getOrder', ID, 'GET', 'orders/1'],
 	['orders', 'listOrders', {}, 'GET', 'orders'],
 	['orders', 'updateOrder', ID_DATA, 'PATCH', 'orders/1'],
 	['orders', 'deleteOrder', ID, 'DELETE', 'orders/1'],

@@ -95,7 +95,13 @@ describe('cloudcart plugin shape', () => {
 		});
 		expect(instance.pluginWebhookMatcher).toEqual(expect.any(Function));
 		expect(instance.oauthWebhookTenantLinkResolver).toBeUndefined();
-		expect(CloudcartSchema.entities).toEqual({});
+		expect(Object.keys(CloudcartSchema.entities).sort()).toEqual([
+			'categories',
+			'customers',
+			'orders',
+			'products',
+			'variants',
+		]);
 	});
 });
 

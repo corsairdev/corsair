@@ -7,10 +7,13 @@ describe('Cloudcart schema and plugin', () => {
 		expect(CloudcartSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an empty entities map', () => {
+	it('declares the expected cacheable entity keys', () => {
 		expect(typeof CloudcartSchema.entities).toBe('object');
 		expect(CloudcartSchema.entities).not.toBeNull();
-		expect(CloudcartSchema.entities).toEqual({});
+		const keys = Object.keys(CloudcartSchema.entities).sort();
+		expect(keys).toEqual(
+			['categories', 'customers', 'orders', 'products', 'variants'].sort(),
+		);
 	});
 
 	it('instantiates plugin correctly with key and options', () => {

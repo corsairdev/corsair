@@ -4,6 +4,7 @@ import {
 	CloudcartEndpointOutputSchemas,
 	CreateOrderInputSchema,
 	DeleteOrderInputSchema,
+	GetOrderInputSchema,
 	ListOrderBillingAddressesInputSchema,
 	ListOrderPaymentsInputSchema,
 	ListOrderProductsInputSchema,
@@ -30,6 +31,14 @@ export const listOrders: CloudcartEndpoints['listOrders'] = (ctx, input) =>
 		inputSchema: ListOrdersInputSchema,
 		outputSchema: CloudcartEndpointOutputSchemas.listOrders,
 		path: 'orders',
+	});
+
+export const getOrder: CloudcartEndpoints['getOrder'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.orders.getOrder',
+		inputSchema: GetOrderInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.getOrder,
+		path: (parsed) => `orders/${pathId(parsed.id)}`,
 	});
 
 export const updateOrder: CloudcartEndpoints['updateOrder'] = (ctx, input) =>

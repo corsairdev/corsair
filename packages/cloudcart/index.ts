@@ -203,6 +203,7 @@ const cloudcartEndpointsNested = {
 	},
 	orders: {
 		createOrder: Orders.createOrder,
+		getOrder: Orders.getOrder,
 		listOrders: Orders.listOrders,
 		updateOrder: Orders.updateOrder,
 		deleteOrder: Orders.deleteOrder,
@@ -619,6 +620,10 @@ export const cloudcartEndpointSchemas = {
 	'orders.createOrder': {
 		input: CloudcartEndpointInputSchemas.createOrder,
 		output: CloudcartEndpointOutputSchemas.createOrder,
+	},
+	'orders.getOrder': {
+		input: CloudcartEndpointInputSchemas.getOrder,
+		output: CloudcartEndpointOutputSchemas.getOrder,
 	},
 	'orders.listOrders': {
 		input: CloudcartEndpointInputSchemas.listOrders,
@@ -1225,6 +1230,7 @@ const cloudcartEndpointMeta = {
 	},
 
 	'orders.createOrder': { riskLevel: 'write', description: 'Create order' },
+	'orders.getOrder': { riskLevel: 'read', description: 'Get order' },
 	'orders.listOrders': { riskLevel: 'read', description: 'List orders' },
 	'orders.updateOrder': { riskLevel: 'write', description: 'Update order' },
 	'orders.deleteOrder': {

@@ -1,4 +1,4 @@
-﻿# @corsair-dev/cloudcart
+# @corsair-dev/cloudcart
 
 CloudCart plugin for Corsair.
 
@@ -90,6 +90,7 @@ pnpm add @corsair-dev/cloudcart
 | `customers.updateCustomerTag` | `cloudcart.api.customers.updateCustomerTag` | `write` | Update customer tag |
 | `customers.deleteCustomerTag` | `cloudcart.api.customers.deleteCustomerTag` | `destructive` | Delete customer tag |
 | `orders.createOrder` | `cloudcart.api.orders.createOrder` | `write` | Create order |
+| `orders.getOrder` | `cloudcart.api.orders.getOrder` | `read` | Get order |
 | `orders.listOrders` | `cloudcart.api.orders.listOrders` | `read` | List orders |
 | `orders.updateOrder` | `cloudcart.api.orders.updateOrder` | `write` | Update order |
 | `orders.deleteOrder` | `cloudcart.api.orders.deleteOrder` | `destructive` | Delete order |
@@ -157,6 +158,11 @@ pnpm add @corsair-dev/cloudcart
 | `webhooks.listWebhooks` | `cloudcart.api.webhooks.listWebhooks` | `read` | List webhooks |
 | `webhooks.updateWebhook` | `cloudcart.api.webhooks.updateWebhook` | `write` | Update webhook |
 | `webhooks.deleteWebhook` | `cloudcart.api.webhooks.deleteWebhook` | `destructive` | Delete webhook |
+| `carts.addToCart` | `cloudcart.api.carts.addToCart` | `write` | Add to cart |
+| `carts.getCart` | `cloudcart.api.carts.getCart` | `read` | Get cart |
+| `carts.updateCartItem` | `cloudcart.api.carts.updateCartItem` | `write` | Update cart item |
+| `carts.removeFromCart` | `cloudcart.api.carts.removeFromCart` | `destructive` | Remove from cart |
+| `carts.clearCart` | `cloudcart.api.carts.clearCart` | `destructive` | Clear cart |
 
 ## Auth
 
