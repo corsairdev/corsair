@@ -6,37 +6,34 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('too many requests') ||
-				msg.includes('rate_limited') ||
-				msg.includes('rate limit') ||
-				msg.includes('429')
-			);
+			return msg.includes('rate_limited') || msg.includes('429');
 		},
-		handler: async (error?: Error) => {
-			const retryAfterMs =
-				error instanceof ApiError ? error.retryAfter : undefined;
+		handler: async (error: Error) => {
+			let retryAfterMs: number | undefined;
+			if (error instanceof ApiError && error.retryAfter !== undefined) {
+				retryAfterMs = error.retryAfter;
+			}
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			if (
+				error instanceof ApiError &&
+				(error.status === 401 || error.status === 403)
+			)
+				return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('invalid_auth') ||
+				msg.includes('forbidden')
+			);
 		},
-		handler: async (error?: Error) => ({ maxRetries: 0 }),
-	},
-	PERMISSION_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 403) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('forbidden') || msg.includes('permission');
-		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (_error: Error) => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
-		match: (error?: Error) => true,
-		handler: async (error?: Error) => ({ maxRetries: 0 }),
+		match: (_error: Error) => true,
+		handler: async (_error: Error) => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;

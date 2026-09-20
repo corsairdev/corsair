@@ -14,12 +14,12 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
-	ClientConfig,
-	Completions,
-	Graphql,
-	Models,
-	Search,
-	Viewer,
+	Bots,
+	Conversations,
+	Documents,
+	Folders,
+	Messages,
+	Uploads,
 } from './endpoints';
 import type {
 	CodyEndpointInputs,
@@ -32,31 +32,8 @@ import {
 import { errorHandlers } from './error-handlers';
 import { CodySchema } from './schema';
 
-const codyEndpointsNested = {
-	viewer: {
-		get: Viewer.get,
-	},
-	search: {
-		get: Search.get,
-	},
-	graphql: {
-		post: Graphql.post,
-	},
-	completions: {
-		code: Completions.code,
-	},
-	models: {
-		list: Models.list,
-	},
-	clientConfig: {
-		get: ClientConfig.get,
-	},
-} as const;
-
-const codyWebhooksNested = {} as const;
-
 export type CodyPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
 	hooks?: InternalCodyPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -70,6 +47,8 @@ export type CodyContext = CorsairPluginContext<
 
 export type CodyKeyBuilderContext = KeyBuilderContext<CodyPluginOptions>;
 
+export type CodyBoundEndpoints = BindEndpoints<typeof codyEndpointsNested>;
+
 type CodyEndpoint<K extends keyof CodyEndpointOutputs> = CorsairEndpoint<
 	CodyContext,
 	CodyEndpointInputs[K],
@@ -77,77 +56,250 @@ type CodyEndpoint<K extends keyof CodyEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type CodyEndpoints = {
-	viewer: CodyEndpoint<'viewer'>;
-	search: CodyEndpoint<'search'>;
-	graphql: CodyEndpoint<'graphql'>;
-	completionsCode: CodyEndpoint<'completionsCode'>;
-	listModels: CodyEndpoint<'listModels'>;
-	getClientConfig: CodyEndpoint<'getClientConfig'>;
+	botsList: CodyEndpoint<'botsList'>;
+	conversationsList: CodyEndpoint<'conversationsList'>;
+	conversationsCreate: CodyEndpoint<'conversationsCreate'>;
+	conversationsGet: CodyEndpoint<'conversationsGet'>;
+	conversationsUpdate: CodyEndpoint<'conversationsUpdate'>;
+	conversationsDelete: CodyEndpoint<'conversationsDelete'>;
+	documentsList: CodyEndpoint<'documentsList'>;
+	documentsCreate: CodyEndpoint<'documentsCreate'>;
+	documentsCreateFromFile: CodyEndpoint<'documentsCreateFromFile'>;
+	documentsCreateFromWebpage: CodyEndpoint<'documentsCreateFromWebpage'>;
+	documentsGet: CodyEndpoint<'documentsGet'>;
+	documentsDelete: CodyEndpoint<'documentsDelete'>;
+	foldersList: CodyEndpoint<'foldersList'>;
+	foldersCreate: CodyEndpoint<'foldersCreate'>;
+	foldersGet: CodyEndpoint<'foldersGet'>;
+	foldersUpdate: CodyEndpoint<'foldersUpdate'>;
+	messagesList: CodyEndpoint<'messagesList'>;
+	messagesSend: CodyEndpoint<'messagesSend'>;
+	messagesGet: CodyEndpoint<'messagesGet'>;
+	messagesSendForStream: CodyEndpoint<'messagesSendForStream'>;
+	uploadsGetSignedUrl: CodyEndpoint<'uploadsGetSignedUrl'>;
 };
 
-export type CodyBoundEndpoints = BindEndpoints<typeof codyEndpointsNested>;
+const codyEndpointsNested = {
+	bots: {
+		list: Bots.list,
+	},
+	conversations: {
+		list: Conversations.list,
+		create: Conversations.create,
+		get: Conversations.get,
+		update: Conversations.update,
+		delete: Conversations.delete,
+	},
+	documents: {
+		list: Documents.list,
+		create: Documents.create,
+		createFromFile: Documents.createFromFile,
+		createFromWebpage: Documents.createFromWebpage,
+		get: Documents.get,
+		delete: Documents.delete,
+	},
+	folders: {
+		list: Folders.list,
+		create: Folders.create,
+		get: Folders.get,
+		update: Folders.update,
+	},
+	messages: {
+		list: Messages.list,
+		send: Messages.send,
+		get: Messages.get,
+		sendForStream: Messages.sendForStream,
+	},
+	uploads: {
+		getSignedUrl: Uploads.getSignedUrl,
+	},
+} as const;
 
 export const codyEndpointSchemas = {
-	'viewer.get': {
-		input: CodyEndpointInputSchemas.viewer,
-		output: CodyEndpointOutputSchemas.viewer,
+	'bots.list': {
+		input: CodyEndpointInputSchemas.botsList,
+		output: CodyEndpointOutputSchemas.botsList,
 	},
-	'search.get': {
-		input: CodyEndpointInputSchemas.search,
-		output: CodyEndpointOutputSchemas.search,
+	'conversations.list': {
+		input: CodyEndpointInputSchemas.conversationsList,
+		output: CodyEndpointOutputSchemas.conversationsList,
 	},
-	'graphql.post': {
-		input: CodyEndpointInputSchemas.graphql,
-		output: CodyEndpointOutputSchemas.graphql,
+	'conversations.create': {
+		input: CodyEndpointInputSchemas.conversationsCreate,
+		output: CodyEndpointOutputSchemas.conversationsCreate,
 	},
-	'completions.code': {
-		input: CodyEndpointInputSchemas.completionsCode,
-		output: CodyEndpointOutputSchemas.completionsCode,
+	'conversations.get': {
+		input: CodyEndpointInputSchemas.conversationsGet,
+		output: CodyEndpointOutputSchemas.conversationsGet,
 	},
-	'models.list': {
-		input: CodyEndpointInputSchemas.listModels,
-		output: CodyEndpointOutputSchemas.listModels,
+	'conversations.update': {
+		input: CodyEndpointInputSchemas.conversationsUpdate,
+		output: CodyEndpointOutputSchemas.conversationsUpdate,
 	},
-	'clientConfig.get': {
-		input: CodyEndpointInputSchemas.getClientConfig,
-		output: CodyEndpointOutputSchemas.getClientConfig,
+	'conversations.delete': {
+		input: CodyEndpointInputSchemas.conversationsDelete,
+		output: CodyEndpointOutputSchemas.conversationsDelete,
+	},
+	'documents.list': {
+		input: CodyEndpointInputSchemas.documentsList,
+		output: CodyEndpointOutputSchemas.documentsList,
+	},
+	'documents.create': {
+		input: CodyEndpointInputSchemas.documentsCreate,
+		output: CodyEndpointOutputSchemas.documentsCreate,
+	},
+	'documents.createFromFile': {
+		input: CodyEndpointInputSchemas.documentsCreateFromFile,
+		output: CodyEndpointOutputSchemas.documentsCreateFromFile,
+	},
+	'documents.createFromWebpage': {
+		input: CodyEndpointInputSchemas.documentsCreateFromWebpage,
+		output: CodyEndpointOutputSchemas.documentsCreateFromWebpage,
+	},
+	'documents.get': {
+		input: CodyEndpointInputSchemas.documentsGet,
+		output: CodyEndpointOutputSchemas.documentsGet,
+	},
+	'documents.delete': {
+		input: CodyEndpointInputSchemas.documentsDelete,
+		output: CodyEndpointOutputSchemas.documentsDelete,
+	},
+	'folders.list': {
+		input: CodyEndpointInputSchemas.foldersList,
+		output: CodyEndpointOutputSchemas.foldersList,
+	},
+	'folders.create': {
+		input: CodyEndpointInputSchemas.foldersCreate,
+		output: CodyEndpointOutputSchemas.foldersCreate,
+	},
+	'folders.get': {
+		input: CodyEndpointInputSchemas.foldersGet,
+		output: CodyEndpointOutputSchemas.foldersGet,
+	},
+	'folders.update': {
+		input: CodyEndpointInputSchemas.foldersUpdate,
+		output: CodyEndpointOutputSchemas.foldersUpdate,
+	},
+	'messages.list': {
+		input: CodyEndpointInputSchemas.messagesList,
+		output: CodyEndpointOutputSchemas.messagesList,
+	},
+	'messages.send': {
+		input: CodyEndpointInputSchemas.messagesSend,
+		output: CodyEndpointOutputSchemas.messagesSend,
+	},
+	'messages.get': {
+		input: CodyEndpointInputSchemas.messagesGet,
+		output: CodyEndpointOutputSchemas.messagesGet,
+	},
+	'messages.sendForStream': {
+		input: CodyEndpointInputSchemas.messagesSendForStream,
+		output: CodyEndpointOutputSchemas.messagesSendForStream,
+	},
+	'uploads.getSignedUrl': {
+		input: CodyEndpointInputSchemas.uploadsGetSignedUrl,
+		output: CodyEndpointOutputSchemas.uploadsGetSignedUrl,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof codyEndpointsNested>;
 
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const codyEndpointMeta = {
-	'viewer.get': {
+	'bots.list': {
 		riskLevel: 'read',
-		description: 'Get the authenticated Sourcegraph user',
+		description: 'Get all bots with optional keyword filtering',
 	},
-	'search.get': {
+	'conversations.list': {
 		riskLevel: 'read',
-		description: 'Search Sourcegraph code and count matches',
+		description:
+			'Get all conversations with optional filtering by bot, keyword, or includes',
 	},
-	'graphql.post': {
+	'conversations.create': {
 		riskLevel: 'write',
-		description: 'Run a raw Sourcegraph GraphQL operation',
+		description:
+			'Create a new conversation with a specified bot and optional focus mode documents',
 	},
-	'completions.code': {
+	'conversations.get': {
+		riskLevel: 'read',
+		description: 'Fetch a conversation by its ID from Cody AI',
+	},
+	'conversations.update': {
 		riskLevel: 'write',
-		description: 'Non-streaming Cody LLM completion',
+		description:
+			'Update a conversation by its ID including name, bot_id, and document_ids',
 	},
-	'models.list': {
-		riskLevel: 'read',
-		description: 'List Cody supported models',
+	'conversations.delete': {
+		riskLevel: 'write',
+		description: 'Delete a conversation by its ID',
 	},
-	'clientConfig.get': {
+	'documents.list': {
 		riskLevel: 'read',
-		description: 'Get Cody client configuration',
+		description:
+			'Retrieve all documents from Cody AI account with optional filtering',
+	},
+	'documents.create': {
+		riskLevel: 'write',
+		description: 'Create a new document with text or HTML content in Cody AI',
+	},
+	'documents.createFromFile': {
+		riskLevel: 'write',
+		description: 'Create a document by uploading a file (up to 100 MB)',
+	},
+	'documents.createFromWebpage': {
+		riskLevel: 'write',
+		description: 'Create a document from a publicly accessible webpage URL',
+	},
+	'documents.get': {
+		riskLevel: 'read',
+		description: 'Retrieve a specific document by its identifier from Cody AI',
+	},
+	'documents.delete': {
+		riskLevel: 'write',
+		description: 'Delete a document by id',
+	},
+	'folders.list': {
+		riskLevel: 'read',
+		description: 'Retrieve all folders with optional keyword filtering',
+	},
+	'folders.create': {
+		riskLevel: 'write',
+		description: 'Create a new folder in Cody AI for organizing content',
+	},
+	'folders.get': {
+		riskLevel: 'read',
+		description: 'Retrieve a specific folder by its identifier',
+	},
+	'folders.update': {
+		riskLevel: 'write',
+		description: 'Update a folder by its ID',
+	},
+	'messages.list': {
+		riskLevel: 'read',
+		description:
+			'Retrieve a paginated list of messages from Cody, optionally filtered by conversation',
+	},
+	'messages.send': {
+		riskLevel: 'write',
+		description:
+			'Send a message to Cody AI and receive an AI-generated response',
+	},
+	'messages.get': {
+		riskLevel: 'read',
+		description: 'Fetch a specific message by its ID from Cody AI',
+	},
+	'messages.sendForStream': {
+		riskLevel: 'write',
+		description:
+			'Send a message to Cody AI and receive a Server-Sent Events (SSE) stream URL for the AI response',
+	},
+	'uploads.getSignedUrl': {
+		riskLevel: 'read',
+		description: 'Get an AWS S3 signed upload URL for file uploads',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof codyEndpointsNested>;
 
 export const codyAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -156,7 +308,7 @@ export type BaseCodyPlugin<T extends CodyPluginOptions> = CorsairPlugin<
 	'cody',
 	typeof CodySchema,
 	typeof codyEndpointsNested,
-	typeof codyWebhooksNested,
+	never,
 	T,
 	typeof defaultAuthType
 >;
@@ -172,21 +324,13 @@ export function cody<const T extends CodyPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
-
 	return {
 		id: 'cody',
 		authConfig: codyAuthConfig,
 		schema: CodySchema,
-		options,
-		oauthConfig: {
-			providerName: 'Sourcegraph',
-			authUrl: 'https://sourcegraph.com/.auth/idp/oauth/authorize',
-			tokenUrl: 'https://sourcegraph.com/.auth/idp/oauth/token',
-			scopes: ['user:all'],
-		},
+		options: options,
 		hooks: options.hooks,
 		endpoints: codyEndpointsNested,
-		webhooks: codyWebhooksNested,
 		endpointMeta: codyEndpointMeta,
 		endpointSchemas: codyEndpointSchemas,
 		errorHandlers: {
@@ -194,31 +338,22 @@ export function cody<const T extends CodyPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CodyKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (source !== 'endpoint') {
+				throw new AuthMissingError('cody', 'api_key');
 			}
 
-			if (ctx.authType === 'api_key') {
-				const key = await ctx.keys.get_api_key();
-
-				if (!key) {
-					throw new AuthMissingError('cody', 'api_key');
-				}
-
-				return key;
+			const configuredKey = options.key?.trim();
+			if (configuredKey) {
+				return configuredKey;
 			}
 
-			if (ctx.authType === 'oauth_2') {
-				const token = await ctx.keys.get_access_token();
-
-				if (!token) {
-					throw new AuthMissingError('cody', 'oauth_2');
-				}
-
-				return token;
+			const res = await ctx.keys?.get_api_key();
+			const storedKey = res?.trim();
+			if (!storedKey) {
+				throw new AuthMissingError('cody', 'api_key');
 			}
 
-			throw new AuthMissingError('cody', 'api_key');
+			return storedKey;
 		},
 	} satisfies InternalCodyPlugin;
 }
@@ -226,9 +361,4 @@ export function cody<const T extends CodyPluginOptions>(
 export type {
 	CodyEndpointInputs,
 	CodyEndpointOutputs,
-	GraphqlInput,
-	GraphqlResponse,
-	SearchInput,
-	SearchResponse,
-	ViewerResponse,
 } from './endpoints/types';

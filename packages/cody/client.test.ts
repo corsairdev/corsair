@@ -1,78 +1,113 @@
-import { request } from 'corsair/http';
-import { makeCodyRequest } from './client';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
+import { CODY_API_BASE, CodyAPIError, makeCodyRequest } from './client';
 
-jest.mock('corsair/http', () => ({
-	request: jest.fn(),
-}));
+jest.mock('corsair/http', () => {
+	const actual = jest.requireActual('corsair/http');
+	return { ...actual, request: jest.fn() };
+});
 
-const mockHttpRequest = request as jest.MockedFunction<typeof request>;
+const mockRequest = request as jest.MockedFunction<typeof request>;
+
+function lastCall(): [OpenAPIConfig, ApiRequestOptions] {
+	const call = mockRequest.mock.calls.at(-1);
+	if (!call) throw new Error('request() was never called');
+	// unknown: jest stores mocked call tuples without preserving the generic function signature.
+	return call as unknown as [OpenAPIConfig, ApiRequestOptions];
+}
+
+function apiError(status: number, retryAfter?: number): ApiError {
+	return new ApiError(
+		{ method: 'GET', url: '/bots' },
+		{
+			url: `${CODY_API_BASE}/bots`,
+			ok: false,
+			status,
+			statusText: status === 429 ? 'Too Many Requests' : 'Unauthorized',
+			body: { message: 'failed' },
+		},
+		status === 429 ? 'Too Many Requests' : 'Unauthorized',
+		{ retryAfter },
+	);
+}
+
+beforeEach(() => {
+	mockRequest.mockReset();
+});
 
 describe('makeCodyRequest', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-		mockHttpRequest.mockResolvedValue({ ok: true });
-	});
+	it('sends the API key as bearer token in config', async () => {
+		mockRequest.mockResolvedValue({ data: [] });
 
-	it('sends a POST to the Sourcegraph host with token auth', async () => {
-		await makeCodyRequest('/.api/graphql', 'test-api-key', {
-			method: 'POST',
-			body: { query: 'query { currentUser { username } }' },
+		await makeCodyRequest('/bots', 'test-cody-token', {
+			query: { search: 'test' },
 		});
 
-		expect(mockHttpRequest).toHaveBeenCalledTimes(1);
-		expect(mockHttpRequest).toHaveBeenCalledWith(
-			expect.objectContaining({
-				BASE: 'https://sourcegraph.com',
-				HEADERS: expect.objectContaining({
-					Authorization: 'token test-api-key',
-				}),
-			}),
-			expect.objectContaining({
-				method: 'POST',
-				url: '/.api/graphql',
-				body: { query: 'query { currentUser { username } }' },
-			}),
+		const [config, options] = lastCall();
+		expect(config.BASE).toBe(CODY_API_BASE);
+		expect(config.TOKEN).toBe('test-cody-token');
+		expect(config.HEADERS).toEqual({
+			'Content-Type': 'application/json',
+		});
+		expect(options.query).toEqual({
+			search: 'test',
+		});
+	});
+
+	it('rejects an empty API key before issuing a request', async () => {
+		await expect(makeCodyRequest('/bots', '')).rejects.toThrow(CodyAPIError);
+		await expect(makeCodyRequest('/bots', '   ')).rejects.toThrow(
+			'Cody API key is required',
+		);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('re-throws ApiError directly preserving status and retryAfter metadata', async () => {
+		const rateLimitError = apiError(429, 3000);
+		mockRequest.mockRejectedValue(rateLimitError);
+
+		try {
+			await makeCodyRequest('/bots', 'token');
+			throw new Error('should have thrown');
+		} catch (error) {
+			expect(error).toBe(rateLimitError);
+			expect(error).toBeInstanceOf(ApiError);
+			expect((error as ApiError).status).toBe(429);
+			expect((error as ApiError).retryAfter).toBe(3000);
+		}
+	});
+
+	it('re-throws 401 ApiError directly for auth error handling', async () => {
+		const authError = apiError(401);
+		mockRequest.mockRejectedValue(authError);
+
+		try {
+			await makeCodyRequest('/bots', 'invalid-token');
+			throw new Error('should have thrown');
+		} catch (error) {
+			expect(error).toBe(authError);
+			expect(error).toBeInstanceOf(ApiError);
+			expect((error as ApiError).status).toBe(401);
+		}
+	});
+
+	it('wraps generic non-ApiError in CodyAPIError', async () => {
+		mockRequest.mockRejectedValue(new Error('Network disconnected'));
+
+		await expect(makeCodyRequest('/bots', 'token')).rejects.toThrow(
+			CodyAPIError,
+		);
+
+		await expect(makeCodyRequest('/bots', 'token')).rejects.toThrow(
+			'Network disconnected',
 		);
 	});
 
-	it('sends Bearer auth for OAuth tokens', async () => {
-		await makeCodyRequest('/.api/graphql', 'test-oauth-token', {
-			method: 'POST',
-			authScheme: 'Bearer',
-			body: { query: 'query { currentUser { username } }' },
-		});
+	it('wraps unknown non-Error throws in CodyAPIError', async () => {
+		mockRequest.mockRejectedValue('something unexpected');
 
-		expect(mockHttpRequest).toHaveBeenCalledWith(
-			expect.objectContaining({
-				HEADERS: expect.objectContaining({
-					Authorization: 'Bearer test-oauth-token',
-				}),
-			}),
-			expect.anything(),
+		await expect(makeCodyRequest('/bots', 'token')).rejects.toThrow(
+			new CodyAPIError('Unknown error'),
 		);
-	});
-
-	it('passes query params through on every method', async () => {
-		await makeCodyRequest('/.api/graphql', 'test-api-key', {
-			method: 'POST',
-			body: { query: 'query { currentUser { username } }' },
-			query: { display: 10, extra: undefined },
-		});
-
-		const options = mockHttpRequest.mock.calls[0]?.[1];
-		expect(options?.query).toEqual({ display: 10 });
-		expect(options?.query).not.toHaveProperty('extra');
-	});
-
-	it('propagates ApiError without wrapping', async () => {
-		const apiError = new Error('Unauthorized');
-		mockHttpRequest.mockRejectedValue(apiError);
-
-		await expect(
-			makeCodyRequest('/.api/graphql', 'test-api-key', {
-				method: 'POST',
-				body: { query: 'query { currentUser { username } }' },
-			}),
-		).rejects.toBe(apiError);
 	});
 });

@@ -6,7 +6,19 @@ describe('Cody schema', () => {
 		expect(CodySchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an empty entities map', () => {
-		expect(Object.keys(CodySchema.entities)).toEqual([]);
+	it('declares an entities map with all labeled database models', () => {
+		expect(typeof CodySchema.entities).toBe('object');
+		expect(CodySchema.entities).not.toBeNull();
+		expect(Object.keys(CodySchema.entities).sort()).toEqual([
+			'bots',
+			'conversations',
+			'documents',
+			'folders',
+			'messages',
+			'usage',
+		]);
+		for (const entity of Object.values(CodySchema.entities)) {
+			expect(entity).toBeDefined();
+		}
 	});
 });
