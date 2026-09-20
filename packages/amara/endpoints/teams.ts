@@ -153,6 +153,8 @@ export const updateProject: AmaraEndpoints['teamsUpdateProject'] = async (
 		ctx.key,
 		{
 			method: 'PUT',
+			// Use !== undefined (not truthiness) so callers can pass an empty
+			// string to explicitly clear description or guidelines on the project.
 			body: {
 				...(input.name !== undefined ? { name: input.name } : {}),
 				...(input.description !== undefined
