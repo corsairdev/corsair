@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Gallery } from './endpoints';
+import { Assets, Gallery, General } from './endpoints';
 import type {
 	CincopaEndpointInputs,
 	CincopaEndpointOutputs,
@@ -52,11 +52,25 @@ type CincopaEndpoint<K extends keyof CincopaEndpointOutputs> = CorsairEndpoint<
 
 export type CincopaEndpoints = {
 	galleryList: CincopaEndpoint<'galleryList'>;
+	ping: CincopaEndpoint<'ping'>;
+	uploadFromUrl: CincopaEndpoint<'uploadFromUrl'>;
+	getUploadFromUrlStatus: CincopaEndpoint<'getUploadFromUrlStatus'>;
+	abortUploadFromUrl: CincopaEndpoint<'abortUploadFromUrl'>;
+	getUploadIframe: CincopaEndpoint<'getUploadIframe'>;
 };
 
 const cincopaEndpointsNested = {
 	gallery: {
 		list: Gallery.list,
+	},
+	general: {
+		ping: General.ping,
+		getUploadIframe: General.getUploadIframe,
+	},
+	asset: {
+		uploadFromUrl: Assets.uploadFromUrl,
+		getUploadFromUrlStatus: Assets.getUploadFromUrlStatus,
+		abortUploadFromUrl: Assets.abortUploadFromUrl,
 	},
 } as const;
 
@@ -64,6 +78,26 @@ export const cincopaEndpointSchemas = {
 	'gallery.list': {
 		input: CincopaEndpointInputSchemas.galleryList,
 		output: CincopaEndpointOutputSchemas.galleryList,
+	},
+	'general.ping': {
+		input: CincopaEndpointInputSchemas.ping,
+		output: CincopaEndpointOutputSchemas.ping,
+	},
+	'general.getUploadIframe': {
+		input: CincopaEndpointInputSchemas.getUploadIframe,
+		output: CincopaEndpointOutputSchemas.getUploadIframe,
+	},
+	'asset.uploadFromUrl': {
+		input: CincopaEndpointInputSchemas.uploadFromUrl,
+		output: CincopaEndpointOutputSchemas.uploadFromUrl,
+	},
+	'asset.getUploadFromUrlStatus': {
+		input: CincopaEndpointInputSchemas.getUploadFromUrlStatus,
+		output: CincopaEndpointOutputSchemas.getUploadFromUrlStatus,
+	},
+	'asset.abortUploadFromUrl': {
+		input: CincopaEndpointInputSchemas.abortUploadFromUrl,
+		output: CincopaEndpointOutputSchemas.abortUploadFromUrl,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof cincopaEndpointsNested
@@ -75,6 +109,26 @@ const cincopaEndpointMeta = {
 	'gallery.list': {
 		riskLevel: 'read',
 		description: 'List galleries',
+	},
+	'general.ping': {
+		riskLevel: 'read',
+		description: 'Validate the Cincopa API connection',
+	},
+	'general.getUploadIframe': {
+		riskLevel: 'read',
+		description: 'Get an embeddable upload iframe URL for a gallery',
+	},
+	'asset.uploadFromUrl': {
+		riskLevel: 'write',
+		description: 'Start uploading an asset from a remote URL',
+	},
+	'asset.getUploadFromUrlStatus': {
+		riskLevel: 'read',
+		description: 'Check the status of an asset upload from URL',
+	},
+	'asset.abortUploadFromUrl': {
+		riskLevel: 'write',
+		description: 'Abort an in-progress asset upload from URL',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof cincopaEndpointsNested>;
 

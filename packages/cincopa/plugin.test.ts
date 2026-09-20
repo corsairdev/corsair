@@ -25,6 +25,11 @@ describe('Cincopa plugin', () => {
 		expect(cincopaEndpointSchemas['gallery.list']).toBeDefined();
 		expect(cincopaEndpointSchemas['gallery.list'].input).toBeDefined();
 		expect(cincopaEndpointSchemas['gallery.list'].output).toBeDefined();
+		expect(cincopaEndpointSchemas['general.ping']).toBeDefined();
+		expect(cincopaEndpointSchemas['asset.uploadFromUrl']).toBeDefined();
+		expect(cincopaEndpointSchemas['asset.getUploadFromUrlStatus']).toBeDefined();
+		expect(cincopaEndpointSchemas['asset.abortUploadFromUrl']).toBeDefined();
+		expect(cincopaEndpointSchemas['general.getUploadIframe']).toBeDefined();
 	});
 
 	describe('keyBuilder', () => {

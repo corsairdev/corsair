@@ -35,18 +35,102 @@ const GalleryListResponseSchema = z.object({
 
 export type GalleryListResponse = z.infer<typeof GalleryListResponseSchema>;
 
+const PingInputSchema = z.object({});
+
+const PingResponseSchema = z.object({
+	success: z.boolean(),
+	ping: z.string().optional(),
+	runtime: z.number().optional(),
+	accemail: z.string().optional(),
+	accid: z.string().optional(),
+	accid_num: z.union([z.number(), z.string()]).optional(),
+	permissions: z.string().optional(),
+	useremail: z.string().optional(),
+	userid: z.string().optional(),
+	userid_num: z.union([z.number(), z.string()]).optional(),
+});
+
+const UploadFromUrlInputSchema = z.object({
+	input: z.string().url(),
+	fid: z.string().optional(),
+	rid: z.string().optional(),
+	type: z.string().optional(),
+});
+
+const UploadFromUrlResponseSchema = z.object({
+	success: z.boolean(),
+	runtime: z.number().optional(),
+	status_id: z.string(),
+});
+
+const UploadStatusInputSchema = z.object({
+	statusId: z.string().min(1),
+});
+
+const UploadStatusResponseSchema = z.object({
+	success: z.boolean(),
+	runtime: z.number().optional(),
+	status: z.string().optional(),
+	progress: z.union([z.string(), z.number()]).optional(),
+	progress_bytes: z.union([z.string(), z.number()]).optional(),
+	file_size_bytes: z.union([z.string(), z.number()]).optional(),
+	resid: z.string().optional(),
+	more: z.string().optional(),
+	debug: z.string().optional(),
+});
+
+const UploadAbortInputSchema = z.object({
+	statusId: z.string().min(1),
+});
+
+const UploadAbortResponseSchema = z.object({
+	success: z.boolean(),
+	runtime: z.number().optional(),
+	status_id: z.string().optional(),
+});
+
+const UploadIframeInputSchema = z.object({
+	fid: z.string().optional(),
+	rrid: z.string().optional(),
+});
+
+const UploadIframeResponseSchema = z.object({
+	url: z.string().url(),
+	html: z.string(),
+});
+
 export type CincopaEndpointInputs = {
 	galleryList: GalleryListInput;
+	ping: z.infer<typeof PingInputSchema>;
+	uploadFromUrl: z.infer<typeof UploadFromUrlInputSchema>;
+	getUploadFromUrlStatus: z.infer<typeof UploadStatusInputSchema>;
+	abortUploadFromUrl: z.infer<typeof UploadAbortInputSchema>;
+	getUploadIframe: z.infer<typeof UploadIframeInputSchema>;
 };
 
 export type CincopaEndpointOutputs = {
 	galleryList: GalleryListResponse;
+	ping: z.infer<typeof PingResponseSchema>;
+	uploadFromUrl: z.infer<typeof UploadFromUrlResponseSchema>;
+	getUploadFromUrlStatus: z.infer<typeof UploadStatusResponseSchema>;
+	abortUploadFromUrl: z.infer<typeof UploadAbortResponseSchema>;
+	getUploadIframe: z.infer<typeof UploadIframeResponseSchema>;
 };
 
 export const CincopaEndpointInputSchemas = {
 	galleryList: GalleryListInputSchema,
+	ping: PingInputSchema,
+	uploadFromUrl: UploadFromUrlInputSchema,
+	getUploadFromUrlStatus: UploadStatusInputSchema,
+	abortUploadFromUrl: UploadAbortInputSchema,
+	getUploadIframe: UploadIframeInputSchema,
 } as const;
 
 export const CincopaEndpointOutputSchemas = {
 	galleryList: GalleryListResponseSchema,
+	ping: PingResponseSchema,
+	uploadFromUrl: UploadFromUrlResponseSchema,
+	getUploadFromUrlStatus: UploadStatusResponseSchema,
+	abortUploadFromUrl: UploadAbortResponseSchema,
+	getUploadIframe: UploadIframeResponseSchema,
 } as const;
