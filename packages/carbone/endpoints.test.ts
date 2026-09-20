@@ -65,7 +65,7 @@ function createMockContext(key = 'test-carbone-key'): CarboneContext {
 				deleteByEntityId: jest.fn().mockResolvedValue(undefined as never),
 			},
 		},
-	// unknown: test/fixture cast; production types are Zod-validated
+		// unknown: test/fixture cast; production types are Zod-validated
 	} as unknown as CarboneContext;
 }
 
@@ -196,7 +196,7 @@ describe('Carbone endpoints execution', () => {
 			const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
 				ok: true,
 				arrayBuffer: async () => expectedBuffer,
-			// unknown: test/fixture cast; production types are Zod-validated
+				// unknown: test/fixture cast; production types are Zod-validated
 			} as unknown as Response);
 
 			const ctx = createMockContext();

@@ -133,7 +133,7 @@ describe('Carbone client', () => {
 				get: (name: string) =>
 					name.toLowerCase() === 'retry-after' ? '2' : null,
 			},
-		// unknown: test/fixture cast; production types are Zod-validated
+			// unknown: test/fixture cast; production types are Zod-validated
 		} as unknown as Response);
 
 		await expect(
