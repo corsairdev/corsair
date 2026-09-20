@@ -41,6 +41,7 @@ export async function makeChaserRequest<T>(
 	packedKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// unknown justified: request body is arbitrary caller-supplied JSON.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
