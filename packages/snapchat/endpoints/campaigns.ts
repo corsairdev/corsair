@@ -12,28 +12,28 @@ export const getCampaignEndpoint = createEndpoint('getCampaign', {
 export const createCampaignEndpoint = createEndpoint('createCampaign', {
 	method: 'POST',
 	path: (input) => `/adaccounts/${String(input.ad_account_id)}/campaigns`,
-	body: (input) => ({
-		campaigns: [
-			{
-				name: input.name,
-				start_time: input.start_time,
-				...(input as Record<string, unknown>),
-			},
-		],
-	}),
+	body: (input) => {
+		const { ad_account_id: _adAccountId, ...campaignData } = input;
+		return {
+			campaigns: [campaignData],
+		};
+	},
 });
 
 export const updateCampaignEndpoint = createEndpoint('updateCampaign', {
 	method: 'PUT',
 	path: (input) => `/adaccounts/${String(input.ad_account_id)}/campaigns`,
-	body: (input) => ({
-		campaigns: [
-			{
-				id: input.campaign_id,
-				...(input as Record<string, unknown>),
-			},
-		],
-	}),
+	body: (input) => {
+		const { ad_account_id: _adAccountId, campaign_id, ...campaignData } = input;
+		return {
+			campaigns: [
+				{
+					id: campaign_id,
+					...campaignData,
+				},
+			],
+		};
+	},
 });
 
 export const deleteCampaignEndpoint = createEndpoint('deleteCampaign', {

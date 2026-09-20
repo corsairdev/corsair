@@ -77,6 +77,30 @@ describe('makeSnapchatRequest', () => {
 			(config.HEADERS as Record<string, string>)['Content-Type'],
 		).toBeUndefined();
 	});
+
+	it('forwards timeoutMs to OpenAPIConfig', async () => {
+		await makeSnapchatRequest('/me', 'token', { timeoutMs: 5000 });
+		const [config] = requestMock.mock.calls[0]!;
+		expect(config.TIMEOUT).toBe(5000);
+	});
+
+	it('cancels request when abort signal is triggered', async () => {
+		const cancel = jest.fn();
+		const cancelable = Object.assign(Promise.resolve({ ok: true }), { cancel });
+		requestMock.mockReturnValueOnce(
+			cancelable as unknown as ReturnType<typeof request>,
+		);
+
+		const controller = new AbortController();
+		const promise = makeSnapchatRequest('/me', 'token', {
+			signal: controller.signal,
+		});
+
+		controller.abort();
+		await promise;
+
+		expect(cancel).toHaveBeenCalledTimes(1);
+	});
 });
 
 describe('requireString', () => {

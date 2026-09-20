@@ -48,6 +48,8 @@ export function createEndpoint<K extends SnapchatOperationName>(
 			body,
 			query,
 			multipart: config.multipart,
+			timeoutMs: ctx.options?.timeoutMs,
+			signal: ctx.options?.signal,
 		});
 
 		const parsed = SnapchatEndpointOutputSchemas[name].parse(response);

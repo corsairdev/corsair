@@ -21,6 +21,8 @@ export type SnapchatRequestOptions = {
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 	multipart?: boolean;
+	timeoutMs?: number;
+	signal?: AbortSignal;
 };
 
 export async function makeSnapchatRequest<T>(
@@ -34,11 +36,14 @@ export async function makeSnapchatRequest<T>(
 		body,
 		query,
 		multipart = false,
+		timeoutMs,
+		signal,
 	} = options;
 
 	const config: OpenAPIConfig = {
 		BASE: base,
 		VERSION: '1.0.0',
+		TIMEOUT: timeoutMs,
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: accessToken,
@@ -60,7 +65,27 @@ export async function makeSnapchatRequest<T>(
 		query,
 	};
 
-	return request<T>(config, requestOptions);
+	const requestPromise = request<T>(config, requestOptions);
+
+	if (!signal) {
+		return requestPromise;
+	}
+
+	const onAbort = () => {
+		requestPromise.cancel();
+	};
+
+	if (signal.aborted) {
+		onAbort();
+	}
+
+	signal.addEventListener('abort', onAbort, { once: true });
+
+	try {
+		return await requestPromise;
+	} finally {
+		signal.removeEventListener('abort', onAbort);
+	}
 }
 
 export function requireString(value: unknown, name: string): string {
