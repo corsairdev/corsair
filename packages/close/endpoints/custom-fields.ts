@@ -17,9 +17,10 @@ export const customFieldsListLead = async (
 	ctx: CloseContext,
 	input?: CustomFieldsListLeadInput,
 ): Promise<CustomFieldsListLeadResponse> => {
-	const parsedInput = input
-		? CustomFieldsListLeadInputSchema.parse(input)
-		: undefined;
+	const parsedInput =
+		input === undefined
+			? undefined
+			: CustomFieldsListLeadInputSchema.parse(input);
 	const res = await makeCloseRequest<unknown>('custom_field/lead/', ctx.key, {
 		method: 'GET',
 		query: parsedInput,
@@ -31,9 +32,10 @@ export const customFieldsListContact = async (
 	ctx: CloseContext,
 	input?: CustomFieldsListContactInput,
 ): Promise<CustomFieldsListContactResponse> => {
-	const parsedInput = input
-		? CustomFieldsListContactInputSchema.parse(input)
-		: undefined;
+	const parsedInput =
+		input === undefined
+			? undefined
+			: CustomFieldsListContactInputSchema.parse(input);
 	const res = await makeCloseRequest<unknown>(
 		'custom_field/contact/',
 		ctx.key,

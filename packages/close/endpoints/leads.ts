@@ -29,7 +29,8 @@ export const leadsList = async (
 	ctx: CloseContext,
 	input?: LeadsListInput,
 ): Promise<LeadsListResponse> => {
-	const parsedInput = input ? LeadsListInputSchema.parse(input) : undefined;
+	const parsedInput =
+		input === undefined ? undefined : LeadsListInputSchema.parse(input);
 	const res = await makeCloseRequest<unknown>('lead/', ctx.key, {
 		method: 'GET',
 		query: parsedInput,

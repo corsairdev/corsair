@@ -37,7 +37,7 @@ function formatAuthHeader(key: string): string {
 	if (key.startsWith('Bearer ') || key.startsWith('Basic ')) {
 		return key;
 	}
-	if (key.startsWith('api_') || key.includes('_')) {
+	if (key.startsWith('api_')) {
 		const encoded = Buffer.from(`${key}:`).toString('base64');
 		return `Basic ${encoded}`;
 	}

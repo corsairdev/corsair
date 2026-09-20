@@ -61,6 +61,25 @@ function jsonResponse(
 	} as unknown as Response;
 }
 
+function getFetchAuthorizationHeader(): string | undefined {
+	const [, init] = (globalThis.fetch as jest.Mock).mock.calls[0] as [
+		string,
+		RequestInit,
+	];
+	if (!init.headers) return undefined;
+	if (init.headers instanceof Headers) {
+		return init.headers.get('Authorization') ?? undefined;
+	}
+	if (Array.isArray(init.headers)) {
+		const match = init.headers.find(
+			([key]) => key.toLowerCase() === 'authorization',
+		);
+		return match?.[1];
+	}
+	const record = init.headers as Record<string, string>;
+	return record['Authorization'] ?? record['authorization'];
+}
+
 beforeEach(() => {
 	globalThis.fetch = jest.fn(async () =>
 		jsonResponse({ id: 'test_123', data: [] }),
@@ -74,6 +93,37 @@ afterEach(() => {
 const ctx = { key: 'test_api_key' } as never;
 
 describe('Close plugin initialization & metadata', () => {
+	it('matches plugin webhook header only on x-close-signature', () => {
+		const plugin = close({ key: 'test_api_key' });
+		expect(
+			plugin.pluginWebhookMatcher?.({
+				headers: { 'x-close-signature': 'sig' },
+				body: '{}',
+			}),
+		).toBe(true);
+		expect(
+			plugin.pluginWebhookMatcher?.({
+				headers: { 'close-signature': 'sig' },
+				body: '{}',
+			}),
+		).toBe(false);
+	});
+
+	it('throws when webhook signature secret is missing', async () => {
+		const plugin = close({ key: 'test_api_key' });
+		await expect(
+			plugin.keyBuilder?.(
+				{
+					authType: 'api_key',
+					keys: {
+						get_webhook_signature: async () => undefined,
+					},
+				} as never,
+				'webhook',
+			),
+		).rejects.toThrow('[auth-missing:close:webhook_signature]');
+	});
+
 	it('initializes with default options', () => {
 		const plugin = close({ key: 'test_api_key' });
 		expect(plugin.id).toBe('close');
@@ -350,9 +400,41 @@ describe('Close API endpoints behavioral coverage', () => {
 			expect(calledUrl).toContain(endpoint);
 		},
 	);
+
+	it.each([
+		['activities.listNotes', activitiesListNotes],
+		['activities.listCalls', activitiesListCalls],
+		['activities.listEmails', activitiesListEmails],
+		['contacts.list', contactsList],
+		['leads.list', leadsList],
+		['opportunities.list', opportunitiesList],
+		['tasks.list', tasksList],
+		['users.getMe', usersGetMe],
+		['users.list', usersList],
+		['customFields.listLead', customFieldsListLead],
+		['customFields.listContact', customFieldsListContact],
+	] as const)('%s rejects null optional input', async (_name, handler) => {
+		await expect(
+			(handler as (c: typeof ctx, i?: unknown) => Promise<unknown>)(ctx, null),
+		).rejects.toThrow();
+	});
 });
 
 describe('Error handling & rate limits', () => {
+	it('uses Bearer auth for OAuth tokens that include underscores', async () => {
+		globalThis.fetch = jest.fn(async () => jsonResponse({ id: 'lead_1' }));
+		await makeCloseRequest('lead/', 'oauth_access_token');
+		expect(getFetchAuthorizationHeader()).toBe('Bearer oauth_access_token');
+	});
+
+	it('uses Basic auth for api_ keys', async () => {
+		globalThis.fetch = jest.fn(async () => jsonResponse({ id: 'lead_1' }));
+		await makeCloseRequest('lead/', 'api_test_key');
+		expect(getFetchAuthorizationHeader()).toBe(
+			`Basic ${Buffer.from('api_test_key:').toString('base64')}`,
+		);
+	});
+
 	it('preserves 429 Retry-After metadata on CloseRateLimitError', async () => {
 		globalThis.fetch = jest.fn(async () =>
 			jsonResponse({ error: 'rate_limit_exceeded' }, 429, {

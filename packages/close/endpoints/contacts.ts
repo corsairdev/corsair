@@ -29,7 +29,8 @@ export const contactsList = async (
 	ctx: CloseContext,
 	input?: ContactsListInput,
 ): Promise<ContactsListResponse> => {
-	const parsedInput = input ? ContactsListInputSchema.parse(input) : undefined;
+	const parsedInput =
+		input === undefined ? undefined : ContactsListInputSchema.parse(input);
 	const res = await makeCloseRequest<unknown>('contact/', ctx.key, {
 		method: 'GET',
 		query: parsedInput,
