@@ -1,0 +1,3109 @@
+---
+title: API
+description: "API reference for Ashby: every `ashby.api.*` operation with input and output types."
+---
+
+Every `ashby.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Api Key
+
+### info
+
+`apiKey.info`
+
+Retrieve information and permission scopes for the current API key
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.apiKey.info({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  scopes?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Application
+
+### changeStage
+
+`application.changeStage`
+
+Move an application to a different interview stage
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.application.changeStage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `applicationId` | `string` | Yes | — |
+| `interviewStageId` | `string` | Yes | — |
+| `archiveReasonId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  candidateId: string,
+  jobId: string,
+  status?: string,
+  currentInterviewStageId?: string | null,
+  archiveReasonId?: string | null,
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  hiringTeam?: {
+    userId: string,
+    role: string,
+    firstName?: string,
+    lastName?: string,
+    email?: string
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`application.create`
+
+Create an application linking a candidate to a job
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.application.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidateId` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+| `interviewStageId` | `string` | No | — |
+| `sourceId` | `string` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+  value: any,
+  customFieldDefinitionId: string,
+  title?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  candidateId: string,
+  jobId: string,
+  status?: string,
+  currentInterviewStageId?: string | null,
+  archiveReasonId?: string | null,
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  hiringTeam?: {
+    userId: string,
+    role: string,
+    firstName?: string,
+    lastName?: string,
+    email?: string
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### info
+
+`application.info`
+
+Retrieve details for a specific application
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.application.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `applicationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  candidateId: string,
+  jobId: string,
+  status?: string,
+  currentInterviewStageId?: string | null,
+  archiveReasonId?: string | null,
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  hiringTeam?: {
+    userId: string,
+    role: string,
+    firstName?: string,
+    lastName?: string,
+    email?: string
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`application.list`
+
+List applications filtered by candidate, job, or status
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.application.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+| `candidateId` | `string` | No | — |
+| `jobId` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `moreDataAvailable` | `boolean` | No | — |
+| `nextCursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  candidateId: string,
+  jobId: string,
+  status?: string,
+  currentInterviewStageId?: string | null,
+  archiveReasonId?: string | null,
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  hiringTeam?: {
+    userId: string,
+    role: string,
+    firstName?: string,
+    lastName?: string,
+    email?: string
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### transfer
+
+`application.transfer`
+
+Transfer an application to another job
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.application.transfer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `applicationId` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+| `interviewStageId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  candidateId: string,
+  jobId: string,
+  status?: string,
+  currentInterviewStageId?: string | null,
+  archiveReasonId?: string | null,
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  hiringTeam?: {
+    userId: string,
+    role: string,
+    firstName?: string,
+    lastName?: string,
+    email?: string
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`application.update`
+
+Update application metadata or archive status
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.application.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `applicationId` | `string` | Yes | — |
+| `archiveReasonId` | `string` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+  value: any,
+  customFieldDefinitionId: string,
+  title?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  candidateId: string,
+  jobId: string,
+  status?: string,
+  currentInterviewStageId?: string | null,
+  archiveReasonId?: string | null,
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  hiringTeam?: {
+    userId: string,
+    role: string,
+    firstName?: string,
+    lastName?: string,
+    email?: string
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Candidate
+
+### addTag
+
+`candidate.addTag`
+
+Add a tag to a candidate
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.candidate.addTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidateId` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  primaryEmailAddress?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  } | null,
+  emailAddresses?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  }[],
+  primaryPhoneNumber?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  } | null,
+  phoneNumbers?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  }[],
+  socialLinks?: {
+    url: string,
+    type?: string
+  }[],
+  tags?: string[],
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  applicationIds?: string[],
+  fileIds?: string[],
+  createdAt?: string,
+  updatedAt?: string,
+  anonymizedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### anonymize
+
+`candidate.anonymize`
+
+Anonymize candidate personally identifiable data for GDPR compliance
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ashby.api.candidate.anonymize({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidateId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  candidateId: string,
+  anonymizedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`candidate.create`
+
+Create a new candidate in Ashby
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.candidate.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `phoneNumber` | `string` | No | — |
+| `socialLinks` | `object[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `customFields` | `object[]` | No | — |
+| `notes` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="socialLinks full type">
+
+```ts
+{
+  url: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  value: any,
+  customFieldDefinitionId: string,
+  title?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  primaryEmailAddress?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  } | null,
+  emailAddresses?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  }[],
+  primaryPhoneNumber?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  } | null,
+  phoneNumbers?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  }[],
+  socialLinks?: {
+    url: string,
+    type?: string
+  }[],
+  tags?: string[],
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  applicationIds?: string[],
+  fileIds?: string[],
+  createdAt?: string,
+  updatedAt?: string,
+  anonymizedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createNote
+
+`candidate.createNote`
+
+Create a note on a candidate record
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.candidate.createNote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidateId` | `string` | Yes | — |
+| `note` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  candidateId: string,
+  note: string,
+  authorUserId?: string,
+  createdAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### info
+
+`candidate.info`
+
+Retrieve detailed candidate information by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.candidate.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidateId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  primaryEmailAddress?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  } | null,
+  emailAddresses?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  }[],
+  primaryPhoneNumber?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  } | null,
+  phoneNumbers?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  }[],
+  socialLinks?: {
+    url: string,
+    type?: string
+  }[],
+  tags?: string[],
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  applicationIds?: string[],
+  fileIds?: string[],
+  createdAt?: string,
+  updatedAt?: string,
+  anonymizedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`candidate.list`
+
+List candidates with cursor-based pagination and time filters
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.candidate.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+| `createdAfter` | `string` | No | — |
+| `updatedAfter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `moreDataAvailable` | `boolean` | No | — |
+| `nextCursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  primaryEmailAddress?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  } | null,
+  emailAddresses?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  }[],
+  primaryPhoneNumber?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  } | null,
+  phoneNumbers?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  }[],
+  socialLinks?: {
+    url: string,
+    type?: string
+  }[],
+  tags?: string[],
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  applicationIds?: string[],
+  fileIds?: string[],
+  createdAt?: string,
+  updatedAt?: string,
+  anonymizedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listNotes
+
+`candidate.listNotes`
+
+List all notes for a specific candidate
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.candidate.listNotes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidateId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  candidateId: string,
+  note: string,
+  authorUserId?: string,
+  createdAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeTag
+
+`candidate.removeTag`
+
+Remove a tag from a candidate
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.candidate.removeTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidateId` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  primaryEmailAddress?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  } | null,
+  emailAddresses?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  }[],
+  primaryPhoneNumber?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  } | null,
+  phoneNumbers?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  }[],
+  socialLinks?: {
+    url: string,
+    type?: string
+  }[],
+  tags?: string[],
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  applicationIds?: string[],
+  fileIds?: string[],
+  createdAt?: string,
+  updatedAt?: string,
+  anonymizedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`candidate.search`
+
+Search candidates by name, email address, or phone number
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.candidate.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `phone` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  primaryEmailAddress?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  } | null,
+  emailAddresses?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  }[],
+  primaryPhoneNumber?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  } | null,
+  phoneNumbers?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  }[],
+  socialLinks?: {
+    url: string,
+    type?: string
+  }[],
+  tags?: string[],
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  applicationIds?: string[],
+  fileIds?: string[],
+  createdAt?: string,
+  updatedAt?: string,
+  anonymizedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`candidate.update`
+
+Update candidate profile information and custom fields
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.candidate.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidateId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `primaryEmailAddress` | `string` | No | — |
+| `primaryPhoneNumber` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+  value: any,
+  customFieldDefinitionId: string,
+  title?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  primaryEmailAddress?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  } | null,
+  emailAddresses?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  }[],
+  primaryPhoneNumber?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  } | null,
+  phoneNumbers?: {
+    value: string,
+    type?: string,
+    isPrimary?: boolean
+  }[],
+  socialLinks?: {
+    url: string,
+    type?: string
+  }[],
+  tags?: string[],
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  applicationIds?: string[],
+  fileIds?: string[],
+  createdAt?: string,
+  updatedAt?: string,
+  anonymizedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Custom Field
+
+### info
+
+`customField.info`
+
+Retrieve custom field definition details
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.customField.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customFieldDefinitionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  objectType: string,
+  fieldType: string,
+  isArchived?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customField.list`
+
+List custom field definitions filtered by object type
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.customField.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+| `objectType` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `moreDataAvailable` | `boolean` | No | — |
+| `nextCursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  objectType: string,
+  fieldType: string,
+  isArchived?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setValue
+
+`customField.setValue`
+
+Set a custom field value on a candidate, application, job, or offer
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.customField.setValue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectType` | `string` | Yes | — |
+| `objectId` | `string` | Yes | — |
+| `customFieldDefinitionId` | `string` | Yes | — |
+| `value` | `any` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Department
+
+### archive
+
+`department.archive`
+
+Archive a department
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ashby.api.department.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `departmentId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  parentId?: string | null,
+  isArchived?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`department.create`
+
+Create a new department
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.department.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `parentId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  parentId?: string | null,
+  isArchived?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### info
+
+`department.info`
+
+Retrieve department details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.department.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `departmentId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  parentId?: string | null,
+  isArchived?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`department.list`
+
+List all departments in the organization
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.department.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+| `includeArchived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `moreDataAvailable` | `boolean` | No | — |
+| `nextCursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  parentId?: string | null,
+  isArchived?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`department.update`
+
+Update department name or parent department
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.department.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `departmentId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `parentId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  parentId?: string | null,
+  isArchived?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Interview
+
+### info
+
+`interview.info`
+
+Retrieve interview details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.interview.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interviewId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  interviewStageId?: string,
+  interviewPlanId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`interview.list`
+
+List interviews for an interview plan
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.interview.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+| `interviewPlanId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `moreDataAvailable` | `boolean` | No | — |
+| `nextCursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  interviewStageId?: string,
+  interviewPlanId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### scheduleInfo
+
+`interview.scheduleInfo`
+
+Retrieve details of an interview schedule
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.interview.scheduleInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interviewScheduleId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  applicationId: string,
+  interviewStageId?: string,
+  scheduledStartTime?: string | null,
+  scheduledEndTime?: string | null,
+  status?: string,
+  interviewers?: {
+    userId: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### scheduleList
+
+`interview.scheduleList`
+
+List scheduled interviews for an application
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.interview.scheduleList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+| `applicationId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `moreDataAvailable` | `boolean` | No | — |
+| `nextCursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  applicationId: string,
+  interviewStageId?: string,
+  scheduledStartTime?: string | null,
+  scheduledEndTime?: string | null,
+  status?: string,
+  interviewers?: {
+    userId: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stageList
+
+`interview.stageList`
+
+List interview stages for a job or interview plan
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.interview.stageList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | No | — |
+| `interviewPlanId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  type?: string,
+  orderInJob?: number,
+  jobId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Job
+
+### create
+
+`job.create`
+
+Create a new job in Ashby
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.job.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `departmentId` | `string` | No | — |
+| `locationId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+  value: any,
+  customFieldDefinitionId: string,
+  title?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  status?: string,
+  departmentId?: string | null,
+  locationId?: string | null,
+  hiringTeam?: {
+    userId: string,
+    role: string,
+    firstName?: string,
+    lastName?: string,
+    email?: string
+  }[],
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  openings?: {
+    id: string,
+    identifier?: string,
+    isArchived?: boolean,
+    targetStartDate?: string | null
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### info
+
+`job.info`
+
+Retrieve job details by job ID
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.job.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  status?: string,
+  departmentId?: string | null,
+  locationId?: string | null,
+  hiringTeam?: {
+    userId: string,
+    role: string,
+    firstName?: string,
+    lastName?: string,
+    email?: string
+  }[],
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  openings?: {
+    id: string,
+    identifier?: string,
+    isArchived?: boolean,
+    targetStartDate?: string | null
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`job.list`
+
+List jobs with status, department, and location filters
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.job.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+| `status` | `string` | No | — |
+| `departmentId` | `string` | No | — |
+| `locationId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `moreDataAvailable` | `boolean` | No | — |
+| `nextCursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  status?: string,
+  departmentId?: string | null,
+  locationId?: string | null,
+  hiringTeam?: {
+    userId: string,
+    role: string,
+    firstName?: string,
+    lastName?: string,
+    email?: string
+  }[],
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  openings?: {
+    id: string,
+    identifier?: string,
+    isArchived?: boolean,
+    targetStartDate?: string | null
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`job.search`
+
+Search jobs by title or status
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.job.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  status?: string,
+  departmentId?: string | null,
+  locationId?: string | null,
+  hiringTeam?: {
+    userId: string,
+    role: string,
+    firstName?: string,
+    lastName?: string,
+    email?: string
+  }[],
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  openings?: {
+    id: string,
+    identifier?: string,
+    isArchived?: boolean,
+    targetStartDate?: string | null
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`job.update`
+
+Update job details, department, or status
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.job.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `departmentId` | `string` | No | — |
+| `locationId` | `string` | No | — |
+| `status` | `string` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+  value: any,
+  customFieldDefinitionId: string,
+  title?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  status?: string,
+  departmentId?: string | null,
+  locationId?: string | null,
+  hiringTeam?: {
+    userId: string,
+    role: string,
+    firstName?: string,
+    lastName?: string,
+    email?: string
+  }[],
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  openings?: {
+    id: string,
+    identifier?: string,
+    isArchived?: boolean,
+    targetStartDate?: string | null
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Job Posting
+
+### info
+
+`jobPosting.info`
+
+Retrieve job posting information by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.jobPosting.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobPostingId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  jobId: string,
+  departmentId?: string | null,
+  locationId?: string | null,
+  secondaryLocationIds?: string[],
+  isListed?: boolean,
+  publishedDate?: string | null,
+  teamNameHierarchy?: string[],
+  descriptionHtml?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`jobPosting.list`
+
+List published and unpublished job postings
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.jobPosting.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+| `jobId` | `string` | No | — |
+| `departmentId` | `string` | No | — |
+| `locationId` | `string` | No | — |
+| `listedOnly` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `moreDataAvailable` | `boolean` | No | — |
+| `nextCursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  jobId: string,
+  departmentId?: string | null,
+  locationId?: string | null,
+  secondaryLocationIds?: string[],
+  isListed?: boolean,
+  publishedDate?: string | null,
+  teamNameHierarchy?: string[],
+  descriptionHtml?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Location
+
+### archive
+
+`location.archive`
+
+Archive a location
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ashby.api.location.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  parentId?: string | null,
+  isArchived?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`location.create`
+
+Create a new location
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.location.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `parentId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  parentId?: string | null,
+  isArchived?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### info
+
+`location.info`
+
+Retrieve location details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.location.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  parentId?: string | null,
+  isArchived?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`location.list`
+
+List all locations in the organization
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.location.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+| `includeArchived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `moreDataAvailable` | `boolean` | No | — |
+| `nextCursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  parentId?: string | null,
+  isArchived?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`location.update`
+
+Update location name or hierarchy
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.location.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locationId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `parentId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  parentId?: string | null,
+  isArchived?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Offer
+
+### create
+
+`offer.create`
+
+Create a new job offer for an application
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.offer.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `applicationId` | `string` | Yes | — |
+| `salary` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+  value: any,
+  customFieldDefinitionId: string,
+  title?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  applicationId: string,
+  status?: string,
+  salary?: number | null,
+  currency?: string | null,
+  startDate?: string | null,
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### info
+
+`offer.info`
+
+Retrieve details for a specific offer
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.offer.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offerId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  applicationId: string,
+  status?: string,
+  salary?: number | null,
+  currency?: string | null,
+  startDate?: string | null,
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`offer.list`
+
+List offers filtered by application or status
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.offer.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+| `applicationId` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `moreDataAvailable` | `boolean` | No | — |
+| `nextCursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  applicationId: string,
+  status?: string,
+  salary?: number | null,
+  currency?: string | null,
+  startDate?: string | null,
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`offer.update`
+
+Update job offer details or status
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.offer.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offerId` | `string` | Yes | — |
+| `salary` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `status` | `string` | No | — |
+| `customFields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+  value: any,
+  customFieldDefinitionId: string,
+  title?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  applicationId: string,
+  status?: string,
+  salary?: number | null,
+  currency?: string | null,
+  startDate?: string | null,
+  customFields?: {
+    value: any,
+    customFieldDefinitionId: string,
+    title?: string
+  }[],
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### info
+
+`user.info`
+
+Retrieve organization user details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.user.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email: string,
+  globalRole?: string,
+  isEnabled?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`user.list`
+
+List users in the organization
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.user.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+| `isEnabled` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `moreDataAvailable` | `boolean` | No | — |
+| `nextCursor` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email: string,
+  globalRole?: string,
+  isEnabled?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`user.search`
+
+Search users by name or email address
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.user.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email: string,
+  globalRole?: string,
+  isEnabled?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhook
+
+### create
+
+`webhook.create`
+
+Register a new webhook subscription in Ashby
+
+**Risk:** `write`
+
+```ts
+await corsair.ashby.api.webhook.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `requestActionNames` | `string[]` | Yes | — |
+| `description` | `string` | No | — |
+| `secretToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  description?: string,
+  requestActionNames?: string[],
+  isEnabled?: boolean,
+  secretToken?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhook.delete`
+
+Delete a webhook subscription
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ashby.api.webhook.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### info
+
+`webhook.info`
+
+Retrieve webhook configuration details by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.ashby.api.webhook.info({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `results` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  description?: string,
+  requestActionNames?: string[],
+  isEnabled?: boolean,
+  secretToken?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

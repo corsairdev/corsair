@@ -1,0 +1,862 @@
+{
+  "id": "brevo",
+  "displayName": "Brevo",
+  "description": "Brevo plugin for Corsair",
+  "npmPackageName": "@corsair-dev/brevo",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 13,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "brevo.api.account.get",
+      "shortPath": "account.get",
+      "description": "Get Brevo account details, plans, and relay settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ street?: string, city?: string, zipCode?: string, country?: string }"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "{ type: string, credits: number, creditsType?: string, startDate?: string, endDate?: string }[]"
+          },
+          {
+            "key": "relay",
+            "optional": true,
+            "type": "{ enabled: boolean, data?: { userName?: string, relay?: string, port?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brevo.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a new Brevo contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ext_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "emailBlacklisted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "smsBlacklisted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "listIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "updateEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "smtpBlacklistSender",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brevo.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a Brevo contact [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brevo.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a Brevo contact by ID or email identifier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailBlacklisted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "smsBlacklisted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "listIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "listUnsubscribed",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brevo.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List Brevo contacts with filtering and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "modifiedSince",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "segmentId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "listId",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id: number, email?: string | null, emailBlacklisted?: boolean, smsBlacklisted?: boolean, createdAt?: string, modifiedAt?: string, listIds?: number[], listUnsubscribed?: number[], attributes?: {} }[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brevo.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update an existing Brevo contact by ID or email identifier",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "emailBlacklisted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "smsBlacklisted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "listIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "unlinkListIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "smtpBlacklistSender",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brevo.api.emailCampaigns.create",
+      "shortPath": "emailCampaigns.create",
+      "description": "Create a new Brevo email campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sender",
+            "optional": false,
+            "type": "{ name?: string, email?: string, id?: number }"
+          },
+          {
+            "key": "htmlContent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "htmlUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "scheduledAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ lists?: number[], exclusionLists?: number[] }"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toField",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "header",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "footer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utmCampaign",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brevo.api.emailCampaigns.delete",
+      "shortPath": "emailCampaigns.delete",
+      "description": "Delete a Brevo email campaign [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brevo.api.emailCampaigns.get",
+      "shortPath": "emailCampaigns.get",
+      "description": "Get a Brevo email campaign by campaign ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "htmlContent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheduledAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender",
+            "optional": true,
+            "type": "{ name?: string, email?: string, id?: number }"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toField",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "htmlUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ lists?: number[], exclusionLists?: number[] }"
+          },
+          {
+            "key": "statistics",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brevo.api.emailCampaigns.list",
+      "shortPath": "emailCampaigns.list",
+      "description": "List Brevo email campaigns with filtering and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "classic | trigger"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "suspended | archive | sent | queued | draft | in_process"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaigns",
+            "optional": false,
+            "type": "{ id: number, name: string, subject?: string, type?: string, status?: string, scheduledAt?: string, sentDate?: string, createdAt?: string, modifiedAt?: string, recipients?: { lists?: number[], exclusionLists?: number[] } }[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brevo.api.emailCampaigns.sendNow",
+      "shortPath": "emailCampaigns.sendNow",
+      "description": "Send a Brevo email campaign immediately",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brevo.api.emailCampaigns.sendTest",
+      "shortPath": "emailCampaigns.sendTest",
+      "description": "Send a test email for a Brevo email campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "emailTo",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brevo.api.emailCampaigns.update",
+      "shortPath": "emailCampaigns.update",
+      "description": "Update an existing Brevo email campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender",
+            "optional": true,
+            "type": "{ name?: string, email?: string, id?: number }"
+          },
+          {
+            "key": "htmlContent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "htmlUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "scheduledAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ lists?: number[], exclusionLists?: number[] }"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toField",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "header",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "footer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utmCampaign",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "brevo.db.campaigns.search",
+      "entityName": "campaigns",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scheduledAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "modifiedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "brevo.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "emailBlacklisted",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "smsBlacklisted",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "modifiedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}
