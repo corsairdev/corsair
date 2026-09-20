@@ -327,8 +327,7 @@ const whoisfreaksEndpointMeta = {
 	},
 	'domainer.filesStatus': {
 		riskLevel: 'read',
-		description:
-			'Check availability and update status of domain data files',
+		description: 'Check availability and update status of domain data files',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof whoisfreaksEndpointsNested

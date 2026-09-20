@@ -355,7 +355,9 @@ const cases: Case[] = [
 		name: 'domainer.filesStatus',
 		run: (ctx) => Domainer.filesStatus(ctx, {}),
 		response: {
-			newly: { gtld: { last_update: '2026-09-20', available_from: '2026-01-01' } },
+			newly: {
+				gtld: { last_update: '2026-09-20', available_from: '2026-01-01' },
+			},
 		},
 		expectedArgs: ['/v3.4/status', 'test-key', { method: 'GET' }],
 		event: 'whoisfreaks.domainer.files_status',
