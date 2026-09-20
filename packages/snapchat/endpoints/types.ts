@@ -2,6 +2,10 @@ import { z } from 'zod';
 import type { SnapchatOperationName } from '../operations';
 import { SNAPCHAT_OPERATIONS } from '../operations';
 
+// Snapchat Marketing API accepts flexible JSON payloads for targeting, creative, and delivery configs.
+// z.unknown() is used intentionally for fields where the API accepts arbitrary JSON objects/arrays/strings
+// per https://marketingapi.snapchat.com/docs/ – specific shapes vary by operation.
+
 type RequiredFieldsByOperation = Record<
 	SnapchatOperationName,
 	readonly string[]

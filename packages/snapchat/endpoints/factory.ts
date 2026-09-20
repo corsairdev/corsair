@@ -11,6 +11,8 @@ export type SnapchatEndpointFactory<K extends SnapchatOperationName> =
 	SnapchatEndpoints[K];
 
 // Generic endpoint builder: resolves path and options from per-operation config
+// Factory accepts flexible input shapes per Snapchat Marketing API - Record<string, unknown> is intentional
+// as operations have varying required fields; zod schemas validate per-operation at runtime.
 export type EndpointConfig = {
 	path: (input: Record<string, unknown>) => string;
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
