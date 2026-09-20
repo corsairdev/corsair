@@ -6,11 +6,10 @@ import { useState } from 'react';
 import { integrationIconUrl } from '@/lib/integrations-catalog';
 import { cn } from '@/lib/utils';
 
-const OFFICIAL_ICONS: Record<string, { src: string; fit: 'glyph' | 'tile' }> =
-	{
-		slack: { src: '/brand/slack.svg', fit: 'glyph' },
-		linear: { src: '/brand/linear.svg', fit: 'tile' },
-	};
+const OFFICIAL_ICONS: Record<string, { src: string; fit: 'glyph' | 'tile' }> = {
+	slack: { src: '/brand/slack.svg', fit: 'glyph' },
+	linear: { src: '/brand/linear.svg', fit: 'tile' },
+};
 
 function hashColor(id: string): string {
 	let hash = 0;

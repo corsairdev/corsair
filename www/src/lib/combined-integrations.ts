@@ -3,13 +3,8 @@ import 'server-only';
 import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-import {
-	comboDataSchema,
-	worksWithFor,
-	type ComboData,
-	type ComboWorksWithItem,
-} from '@/lib/combo-types';
+import type { ComboData, ComboWorksWithItem } from '@/lib/combo-types';
+import { comboDataSchema, worksWithFor } from '@/lib/combo-types';
 
 export type {
 	AppDetail,
@@ -31,7 +26,9 @@ const COMBOS_DIR = join(
 );
 
 function loadCombos(): ComboData[] {
-	const names = readdirSync(COMBOS_DIR).filter((name) => name.endsWith('.json'));
+	const names = readdirSync(COMBOS_DIR).filter((name) =>
+		name.endsWith('.json'),
+	);
 	const combos: ComboData[] = [];
 	const keys = new Set<string>();
 

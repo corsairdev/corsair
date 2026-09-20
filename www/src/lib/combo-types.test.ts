@@ -4,11 +4,7 @@ import { dirname, join } from 'node:path';
 import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import {
-	comboCountsFor,
-	comboDataSchema,
-	worksWithFor,
-} from './combo-types';
+import { comboCountsFor, comboDataSchema, worksWithFor } from './combo-types';
 
 const slackLinear: unknown = JSON.parse(
 	readFileSync(

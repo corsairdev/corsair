@@ -3,11 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { IntegrationLogo } from '@/components/integrations/integration-logo';
-import type {
-	ComboAction,
-	ComboData,
-	ComboTrigger,
-} from '@/lib/combo-types';
+import type { ComboAction, ComboData, ComboTrigger } from '@/lib/combo-types';
 import { WorkflowNodePair } from './workflow-nodes';
 
 function keyOf(app: string, id: string) {

@@ -10,10 +10,7 @@ export function HowToConnect({ combo }: { combo: ComboData }) {
 				</h2>
 				<ol className="relative mt-7 before:absolute before:top-5 before:bottom-5 before:left-[19px] before:w-px before:bg-[#1c1c1c]/10">
 					{combo.connectSteps.map((step, i) => (
-						<li
-							key={step.title}
-							className="relative flex gap-4 pb-3 last:pb-0"
-						>
+						<li key={step.title} className="relative flex gap-4 pb-3 last:pb-0">
 							<span className="relative z-[1] mt-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#1c1c1c]/10 bg-white font-[family-name:var(--landing-font-mono)] text-[13px] text-[#4a38f5]">
 								{i + 1}
 							</span>

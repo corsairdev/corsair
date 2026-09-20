@@ -2,7 +2,8 @@ import { LightningIcon, PlugsIcon } from '@phosphor-icons/react/dist/ssr';
 import Link from 'next/link';
 
 import { IntegrationLogo } from '@/components/integrations/integration-logo';
-import { comboCountsFor, type ComboData } from '@/lib/combo-types';
+import type { ComboData } from '@/lib/combo-types';
+import { comboCountsFor } from '@/lib/combo-types';
 
 function AppCounts({
 	name,

@@ -45,13 +45,7 @@ function CheckMark() {
 	);
 }
 
-function ToolRow({
-	tool,
-	status,
-}: {
-	tool: ComboKbTool;
-	status: ToolStatus;
-}) {
+function ToolRow({ tool, status }: { tool: ComboKbTool; status: ToolStatus }) {
 	return (
 		<li
 			className={cn(
