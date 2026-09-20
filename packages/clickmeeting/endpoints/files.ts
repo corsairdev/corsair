@@ -8,6 +8,7 @@ export const getFileLibrary: ClickmeetingEndpoints['getFileLibrary'] = async (
 	input,
 ) => {
 	const query = input.page ? { page: input.page } : undefined;
+	// unknown: provider JSON shape is untyped before Zod parsing
 	const res = await makeClickmeetingRequest<unknown>('/file-library', ctx.key, {
 		method: 'GET',
 		query,
@@ -25,6 +26,7 @@ export const getFileDetails: ClickmeetingEndpoints['getFileDetails'] = async (
 	ctx,
 	input,
 ) => {
+	// unknown: provider JSON shape is untyped before Zod parsing
 	const res = await makeClickmeetingRequest<unknown>(
 		`/file-library/${encodeURIComponent(String(input.fileId))}`,
 		ctx.key,
@@ -75,6 +77,7 @@ export const uploadFile: ClickmeetingEndpoints['uploadFile'] = async (
 	if (input.conference_id !== undefined) {
 		formData.append('conference_id', String(input.conference_id));
 	}
+	// unknown: provider JSON shape is untyped before Zod parsing
 	const res = await makeClickmeetingRequest<unknown>('/file-library', ctx.key, {
 		method: 'POST',
 		body: formData,
@@ -92,6 +95,7 @@ export const deleteFile: ClickmeetingEndpoints['deleteFile'] = async (
 	ctx,
 	input,
 ) => {
+	// unknown: provider JSON shape is untyped before Zod parsing
 	const res = await makeClickmeetingRequest<unknown>(
 		`/file-library/${encodeURIComponent(String(input.fileId))}`,
 		ctx.key,
@@ -112,6 +116,7 @@ export const downloadFile: ClickmeetingEndpoints['downloadFile'] = async (
 	ctx,
 	input,
 ) => {
+	// unknown: provider JSON shape is untyped before Zod parsing
 	const res = await makeClickmeetingRequest<unknown>(
 		`/file-library/${encodeURIComponent(String(input.fileId))}/download`,
 		ctx.key,

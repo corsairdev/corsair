@@ -5,6 +5,7 @@ import { ClickmeetingEndpointOutputSchemas } from './types';
 
 export const getSessionRecordings: ClickmeetingEndpoints['getSessionRecordings'] =
 	async (ctx, input) => {
+		// unknown: provider JSON shape is untyped before Zod parsing
 		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/recordings`,
 			ctx.key,
@@ -25,6 +26,7 @@ export const deleteRecording: ClickmeetingEndpoints['deleteRecording'] = async (
 	ctx,
 	input,
 ) => {
+	// unknown: provider JSON shape is untyped before Zod parsing
 	const res = await makeClickmeetingRequest<unknown>(
 		`/conferences/${encodeURIComponent(String(input.roomId))}/recordings/${encodeURIComponent(String(input.recordingId))}`,
 		ctx.key,
@@ -43,6 +45,7 @@ export const deleteRecording: ClickmeetingEndpoints['deleteRecording'] = async (
 
 export const deleteRecordings: ClickmeetingEndpoints['deleteRecordings'] =
 	async (ctx, input) => {
+		// unknown: provider JSON shape is untyped before Zod parsing
 		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/recordings`,
 			ctx.key,

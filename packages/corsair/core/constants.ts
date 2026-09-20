@@ -135,6 +135,7 @@ export const BaseProviders = [
 	'contentfulgraphql',
 	'contextsevenmcp',
 	'convoloai',
+	'cosmic',
 	'countdownapi',
 	'crowterminal',
 	'cursor',
@@ -156,6 +157,7 @@ export const BaseProviders = [
 	'dropbox',
 	'dropboxsign',
 	'dynapictures',
+	'emelia',
 	'epicgames',
 	'exa',
 	'exist',
@@ -201,6 +203,7 @@ export const BaseProviders = [
 	'jigsawstack',
 	'jira',
 	'kaggle',
+	'kibana',
 	'linear',
 	'linkedin',
 	'loyverse',
@@ -278,6 +281,7 @@ export const BaseProviders = [
 	'uploadcare',
 	'vapi',
 	'vercel',
+	'veriphone',
 	'vestaboard',
 	'wakatime',
 	'webflow',
@@ -422,6 +426,7 @@ export const ProviderDisplayNames = {
 	contentfulgraphql: 'Contentful GraphQL',
 	contextsevenmcp: 'Context7',
 	convoloai: 'ConvoloAi',
+	cosmic: 'Cosmic',
 	countdownapi: 'Countdown API',
 	crowterminal: 'CrowTerminal',
 	cursor: 'Cursor',
@@ -443,6 +448,7 @@ export const ProviderDisplayNames = {
 	dropbox: 'Dropbox',
 	dropboxsign: 'Dropbox Sign',
 	dynapictures: 'Dynapictures',
+	emelia: 'Emelia',
 	epicgames: 'Epic Games',
 	exa: 'Exa',
 	exist: 'Exist',
@@ -488,6 +494,7 @@ export const ProviderDisplayNames = {
 	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
 	kaggle: 'Kaggle',
+	kibana: 'Kibana',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
 	loyverse: 'Loyverse',
@@ -565,6 +572,7 @@ export const ProviderDisplayNames = {
 	uploadcare: 'Uploadcare',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
+	veriphone: 'Veriphone',
 	vestaboard: 'Vestaboard',
 	wakatime: 'WakaTime',
 	webflow: 'Webflow',
@@ -716,6 +724,7 @@ export type AllProviders =
 	| 'contentfulgraphql'
 	| 'contextsevenmcp'
 	| 'convoloai'
+	| 'cosmic'
 	| 'countdownapi'
 	| 'crowterminal'
 	| 'cursor'
@@ -737,6 +746,7 @@ export type AllProviders =
 	| 'dropbox'
 	| 'dropboxsign'
 	| 'dynapictures'
+	| 'emelia'
 	| 'epicgames'
 	| 'exa'
 	| 'exist'
@@ -782,6 +792,7 @@ export type AllProviders =
 	| 'jigsawstack'
 	| 'jira'
 	| 'kaggle'
+	| 'kibana'
 	| 'linear'
 	| 'linkedin'
 	| 'loyverse'
@@ -859,6 +870,7 @@ export type AllProviders =
 	| 'uploadcare'
 	| 'vapi'
 	| 'vercel'
+	| 'veriphone'
 	| 'vestaboard'
 	| 'wakatime'
 	| 'webflow'

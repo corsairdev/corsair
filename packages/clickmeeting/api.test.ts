@@ -1,4 +1,5 @@
 import * as clientModule from './client';
+import type { ClickmeetingContext } from './index';
 import { clickmeeting } from './index';
 
 describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
@@ -8,14 +9,15 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 		key: 'test_api_key',
 	});
 
-	const mockContext: any = {
+	// unknown: mock context fixture in test suite
+	const mockContext = {
 		key: 'test_api_key',
 		authType: 'api_key',
 		options: { key: 'test_api_key' },
 		keys: {
 			get_api_key: async () => 'test_api_key',
 		},
-	};
+	} as unknown as ClickmeetingContext;
 
 	beforeEach(() => {
 		jest.clearAllMocks();

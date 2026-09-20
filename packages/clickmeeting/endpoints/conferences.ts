@@ -9,6 +9,7 @@ export const getConferences: ClickmeetingEndpoints['getConferences'] = async (
 ) => {
 	const status = input.status ?? 'active';
 	const query = input.page ? { page: input.page } : undefined;
+	// unknown: provider JSON shape is untyped before Zod parsing
 	const res = await makeClickmeetingRequest<unknown>(
 		`/conferences/${status}`,
 		ctx.key,
@@ -28,6 +29,7 @@ export const getConferences: ClickmeetingEndpoints['getConferences'] = async (
 
 export const getConferenceDetails: ClickmeetingEndpoints['getConferenceDetails'] =
 	async (ctx, input) => {
+		// unknown: provider JSON shape is untyped before Zod parsing
 		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}`,
 			ctx.key,
@@ -46,6 +48,7 @@ export const getConferenceDetails: ClickmeetingEndpoints['getConferenceDetails']
 
 export const createConference: ClickmeetingEndpoints['createConference'] =
 	async (ctx, input) => {
+		// unknown: provider JSON shape is untyped before Zod parsing
 		const res = await makeClickmeetingRequest<unknown>(
 			'/conferences',
 			ctx.key,
@@ -66,6 +69,7 @@ export const createConference: ClickmeetingEndpoints['createConference'] =
 export const updateConference: ClickmeetingEndpoints['updateConference'] =
 	async (ctx, input) => {
 		const { roomId, ...body } = input;
+		// unknown: provider JSON shape is untyped before Zod parsing
 		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(roomId))}`,
 			ctx.key,
@@ -85,6 +89,7 @@ export const updateConference: ClickmeetingEndpoints['updateConference'] =
 
 export const deleteConference: ClickmeetingEndpoints['deleteConference'] =
 	async (ctx, input) => {
+		// unknown: provider JSON shape is untyped before Zod parsing
 		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}`,
 			ctx.key,
@@ -103,6 +108,7 @@ export const deleteConference: ClickmeetingEndpoints['deleteConference'] =
 
 export const getConferenceFiles: ClickmeetingEndpoints['getConferenceFiles'] =
 	async (ctx, input) => {
+		// unknown: provider JSON shape is untyped before Zod parsing
 		const res = await makeClickmeetingRequest<unknown>(
 			`/file-library/conferences/${encodeURIComponent(String(input.roomId))}`,
 			ctx.key,
@@ -143,6 +149,7 @@ export const sendInvitation: ClickmeetingEndpoints['sendInvitation'] = async (
 	input,
 ) => {
 	const { roomId, lang, ...body } = input;
+	// unknown: provider JSON shape is untyped before Zod parsing
 	const res = await makeClickmeetingRequest<unknown>(
 		`/conferences/${encodeURIComponent(String(roomId))}/invitation/email/${encodeURIComponent(lang)}`,
 		ctx.key,
@@ -163,6 +170,7 @@ export const sendInvitation: ClickmeetingEndpoints['sendInvitation'] = async (
 export const generateAutologinUrl: ClickmeetingEndpoints['generateAutologinUrl'] =
 	async (ctx, input) => {
 		const { roomId, ...body } = input;
+		// unknown: provider JSON shape is untyped before Zod parsing
 		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(roomId))}/room/autologin_hash`,
 			ctx.key,

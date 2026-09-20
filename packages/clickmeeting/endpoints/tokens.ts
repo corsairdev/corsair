@@ -5,6 +5,7 @@ import { ClickmeetingEndpointOutputSchemas } from './types';
 
 export const createAccessTokens: ClickmeetingEndpoints['createAccessTokens'] =
 	async (ctx, input) => {
+		// unknown: provider JSON shape is untyped before Zod parsing
 		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/tokens`,
 			ctx.key,
@@ -24,6 +25,7 @@ export const createAccessTokens: ClickmeetingEndpoints['createAccessTokens'] =
 
 export const listAccessTokens: ClickmeetingEndpoints['listAccessTokens'] =
 	async (ctx, input) => {
+		// unknown: provider JSON shape is untyped before Zod parsing
 		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/tokens`,
 			ctx.key,
@@ -44,6 +46,7 @@ export const getTokenByEmail: ClickmeetingEndpoints['getTokenByEmail'] = async (
 	ctx,
 	input,
 ) => {
+	// unknown: provider JSON shape is untyped before Zod parsing
 	const res = await makeClickmeetingRequest<unknown>(
 		`/conferences/${encodeURIComponent(String(input.roomId))}/token`,
 		ctx.key,

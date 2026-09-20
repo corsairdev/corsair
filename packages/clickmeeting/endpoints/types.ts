@@ -337,6 +337,7 @@ export const GetTokenByEmailOutputSchema = AccessTokensEnvelopeSchema;
 
 export const RegisterParticipantInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
+	// unknown: custom participant registration fields can have arbitrary scalar JSON values
 	registration: z
 		.record(z.string(), z.unknown())
 		.describe(

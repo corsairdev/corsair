@@ -8,6 +8,7 @@ export const getChats: ClickmeetingEndpoints['getChats'] = async (
 	input,
 ) => {
 	const query = input.page ? { page: input.page } : undefined;
+	// unknown: provider JSON shape is untyped before Zod parsing
 	const res = await makeClickmeetingRequest<unknown>('/chats', ctx.key, {
 		method: 'GET',
 		query,
@@ -25,6 +26,7 @@ export const getChatDetails: ClickmeetingEndpoints['getChatDetails'] = async (
 	ctx,
 	input,
 ) => {
+	// unknown: provider JSON shape is untyped before Zod parsing
 	const res = await makeClickmeetingRequest<unknown>(
 		`/chats/${encodeURIComponent(String(input.chatId))}`,
 		ctx.key,

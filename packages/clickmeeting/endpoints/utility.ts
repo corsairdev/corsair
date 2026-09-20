@@ -4,6 +4,7 @@ import type { ClickmeetingEndpoints } from '../index';
 import { ClickmeetingEndpointOutputSchemas } from './types';
 
 export const getPing: ClickmeetingEndpoints['getPing'] = async (ctx) => {
+	// unknown: provider JSON shape is untyped before Zod parsing
 	const res = await makeClickmeetingRequest<unknown>('/ping', ctx.key, {
 		method: 'GET',
 	});
@@ -19,6 +20,7 @@ export const getPing: ClickmeetingEndpoints['getPing'] = async (ctx) => {
 export const getTimeZoneList: ClickmeetingEndpoints['getTimeZoneList'] = async (
 	ctx,
 ) => {
+	// unknown: provider JSON shape is untyped before Zod parsing
 	const res = await makeClickmeetingRequest<unknown>(
 		'/time_zone_list',
 		ctx.key,
@@ -37,6 +39,7 @@ export const getTimeZoneList: ClickmeetingEndpoints['getTimeZoneList'] = async (
 
 export const getTimeZoneListByCountry: ClickmeetingEndpoints['getTimeZoneListByCountry'] =
 	async (ctx, input) => {
+		// unknown: provider JSON shape is untyped before Zod parsing
 		const res = await makeClickmeetingRequest<unknown>(
 			`/time_zone_list/${encodeURIComponent(input.country)}`,
 			ctx.key,
@@ -57,6 +60,7 @@ export const getTimeZoneListByCountry: ClickmeetingEndpoints['getTimeZoneListByC
 
 export const getPhoneGateways: ClickmeetingEndpoints['getPhoneGateways'] =
 	async (ctx) => {
+		// unknown: provider JSON shape is untyped before Zod parsing
 		const res = await makeClickmeetingRequest<unknown>(
 			'/phone_gateways',
 			ctx.key,
