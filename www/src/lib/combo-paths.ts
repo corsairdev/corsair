@@ -12,7 +12,10 @@ export function resolveCombosDir(cwd = process.cwd()): string {
 	throw new Error(`combo JSON directory not found (cwd=${cwd})`);
 }
 
-/** Disk JSON is untrusted until `comboDataSchema.parse`. */
+/**
+ * Return type is `unknown` on purpose. JSON.parse is untrusted until
+ * `comboDataSchema.parse`.
+ */
 export function readComboFile(path: string): unknown {
 	return JSON.parse(readFileSync(path, 'utf8'));
 }

@@ -72,7 +72,7 @@ export const comboDataSchema = z
 		actions: z.array(comboActionSchema).min(1),
 		workflows: z.array(comboWorkflowSchema).min(1),
 		connectSteps: z.array(connectStepSchema).min(1),
-		appDetails: z.array(appDetailSchema).min(2),
+		appDetails: z.array(appDetailSchema).length(2),
 		worksWith: z.object({
 			a: text,
 			b: text,
@@ -106,11 +106,11 @@ export const comboDataSchema = z
 		{ message: 'counts must include slugA and slugB' },
 	)
 	.refine(
-		(combo) =>
-			combo.appDetails.every(
-				(app) => app.id === combo.slugA || app.id === combo.slugB,
-			),
-		{ message: 'appDetails ids must be slugA or slugB' },
+		(combo) => {
+			const ids = new Set(combo.appDetails.map((app) => app.id));
+			return ids.has(combo.slugA) && ids.has(combo.slugB);
+		},
+		{ message: 'appDetails must include slugA and slugB exactly once' },
 	)
 	.refine(
 		(combo) => {

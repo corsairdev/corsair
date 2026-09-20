@@ -38,6 +38,18 @@ describe('comboDataSchema', () => {
 		);
 	});
 
+	it('rejects appDetails that repeat one slug', () => {
+		const combo = comboDataSchema.parse(slackLinear);
+		const [first] = combo.appDetails;
+		assert.ok(first);
+		assert.throws(() =>
+			comboDataSchema.parse({
+				...combo,
+				appDetails: [first, first],
+			}),
+		);
+	});
+
 	it('rejects a workflow whose trigger is not in triggers', () => {
 		const combo = comboDataSchema.parse(slackLinear);
 		const [workflow] = combo.workflows;
