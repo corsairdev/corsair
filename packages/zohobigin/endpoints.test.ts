@@ -6,7 +6,9 @@ type Case = {
 	key: string;
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	path: string;
+	// unknown: case input varies by operation (record payload, search filters, void, etc.).
 	input: unknown;
+	// unknown: case response varies by operation (action result, list, binary, etc.).
 	response: unknown;
 };
 
