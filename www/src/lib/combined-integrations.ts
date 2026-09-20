@@ -1,8 +1,8 @@
 import 'server-only';
 
 import { readdirSync, readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
+import { resolveCombosDir } from '@/lib/combo-paths';
 import type { ComboData, ComboWorksWithItem } from '@/lib/combo-types';
 import { comboDataSchema, worksWithFor } from '@/lib/combo-types';
 
@@ -20,10 +20,7 @@ export type {
 } from '@/lib/combo-types';
 export { comboCountsFor, worksWithFor } from '@/lib/combo-types';
 
-const COMBOS_DIR = join(
-	dirname(fileURLToPath(import.meta.url)),
-	'../data/combos',
-);
+const COMBOS_DIR = resolveCombosDir();
 
 function loadCombos(): ComboData[] {
 	const names = readdirSync(COMBOS_DIR).filter((name) =>
