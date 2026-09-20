@@ -115,6 +115,33 @@ test('R1: MS Graph companion core files pass alongside a Graph plugin', () => {
 	assert.equal(r.plugin, 'teams');
 });
 
+test('R1: gate rule files fail for a non-Graph plugin', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/slack/index.ts',
+			'scripts/pr-review/gate.ts',
+			'pnpm-lock.yaml',
+		],
+	});
+	assert.ok(r.failures.some((f) => f.rule === 'R1'));
+});
+
+test('R1: gate rule files pass alongside a Graph plugin', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/teams/subscribe.ts',
+			'scripts/pr-review/gate.ts',
+			'scripts/pr-review/gate.test.ts',
+			'pnpm-lock.yaml',
+		],
+		prBody: goodBody.replace('onepassword', 'teams'),
+	});
+	assert.ok(!r.failures.some((f) => f.rule === 'R1'));
+	assert.equal(r.plugin, 'teams');
+});
+
 test('R1: two plugins in one PR fails', () => {
 	const r = runGate({
 		...goodInput,

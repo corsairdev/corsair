@@ -44,13 +44,13 @@ export function isAllowedExtraFile(
 	file: string,
 	plugin?: string | null,
 ): boolean {
-	if (ALLOWED_EXTRA.includes(file) || GATE_RULE_FILES.has(file)) {
+	if (ALLOWED_EXTRA.includes(file)) {
 		return true;
 	}
 	return (
 		plugin != null &&
 		MS_GRAPH_PLUGINS.has(plugin) &&
-		MS_GRAPH_COMPANION_FILES.has(file)
+		(MS_GRAPH_COMPANION_FILES.has(file) || GATE_RULE_FILES.has(file))
 	);
 }
 
