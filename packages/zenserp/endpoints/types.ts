@@ -58,6 +58,7 @@ export const ListLanguagesInputSchema = EmptyInputSchema;
  * result fields are preserved without asserting a shape the provider does not
  * guarantee.
  */
+// unknown: SERP verticals add ad-hoc keys; we keep them without a fake schema.
 const UnknownRecord = z.record(z.string(), z.unknown());
 export const SearchResponseSchema = z
 	.object({
@@ -70,7 +71,13 @@ export const SearchResponseSchema = z
 		number_of_results: z.number().optional(),
 		knowledge_graph: UnknownRecord.optional(),
 	})
-	.loose();
+	.loose()
+	.refine(
+		(data) =>
+			Object.keys(data.query).length > 0 ||
+			(data.organic !== undefined && data.organic.length > 0),
+		{ message: 'search payload is empty' },
+	);
 export const ShoppingProductResponseSchema = z
 	.object({
 		query: UnknownRecord,

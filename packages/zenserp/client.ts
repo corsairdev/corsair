@@ -83,5 +83,6 @@ export async function makeZenserpRequest<T>(
 		);
 	}
 
+	// unknown: JSON is untyped until the endpoint Zod schema parses it.
 	return body as T;
 }
