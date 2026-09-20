@@ -13,9 +13,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
-import { getValidSharepointAccessToken } from './client';
 import {
 	ContentTypes,
 	Drive,
@@ -966,11 +965,11 @@ const sharepointEndpointMeta = {
 	},
 	'lists.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a SharePoint list by GUID [DESTRUCTIVE]',
+		description: 'Delete a SharePoint list by GUID',
 	},
 	'lists.deleteByTitle': {
 		riskLevel: 'destructive',
-		description: 'Delete a SharePoint list by title [DESTRUCTIVE]',
+		description: 'Delete a SharePoint list by title',
 	},
 	'lists.listColumns': {
 		riskLevel: 'read',
@@ -1014,7 +1013,7 @@ const sharepointEndpointMeta = {
 	},
 	'items.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a SharePoint list item [DESTRUCTIVE]',
+		description: 'Permanently delete a SharePoint list item',
 	},
 	'items.recycle': {
 		riskLevel: 'write',
@@ -1090,8 +1089,7 @@ const sharepointEndpointMeta = {
 	},
 	'folders.delete': {
 		riskLevel: 'destructive',
-		description:
-			'Delete a SharePoint folder and all its contents [DESTRUCTIVE]',
+		description: 'Delete a SharePoint folder and all its contents',
 	},
 	'folders.rename': {
 		riskLevel: 'write',
@@ -1111,7 +1109,7 @@ const sharepointEndpointMeta = {
 	},
 	'users.remove': {
 		riskLevel: 'destructive',
-		description: 'Remove a user from the SharePoint site [DESTRUCTIVE]',
+		description: 'Remove a user from the SharePoint site',
 	},
 	'users.ensure': {
 		riskLevel: 'write',
@@ -1239,8 +1237,7 @@ const sharepointEndpointMeta = {
 	},
 	'recycleBin.deletePermanent': {
 		riskLevel: 'destructive',
-		description:
-			'Permanently delete an item from the recycle bin [DESTRUCTIVE]',
+		description: 'Permanently delete an item from the recycle bin',
 	},
 	'drive.getAnalytics': {
 		riskLevel: 'read',
@@ -1256,7 +1253,7 @@ const sharepointEndpointMeta = {
 	},
 	'drive.deleteVersion': {
 		riskLevel: 'destructive',
-		description: 'Delete a specific version of a drive item [DESTRUCTIVE]',
+		description: 'Delete a specific version of a drive item',
 	},
 	'drive.createSharingLink': {
 		riskLevel: 'write',
@@ -1402,74 +1399,11 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('sharepoint', 'oauth_2');
-				}
-
-				const creds = await ctx.keys.get_integration_credentials();
-
-				if (!creds.client_id || !creds.client_secret) {
-					throw new Error(
-						'[auth-missing:sharepoint:client_credentials]: SharePoint client credentials are missing',
-					);
-				}
-
-				let result: Awaited<ReturnType<typeof getValidSharepointAccessToken>>;
-				try {
-					result = await getValidSharepointAccessToken({
-						accessToken,
-						expiresAt,
-						refreshToken,
-						clientId: creds.client_id,
-						clientSecret: creds.client_secret,
-					});
-				} catch (error) {
-					throw new Error(
-						`[corsair:sharepoint] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
-
-				if (result.refreshed) {
-					try {
-						await ctx.keys.set_access_token(result.accessToken);
-						await ctx.keys.set_expires_at(String(result.expiresAt));
-						// Microsoft issues a new refresh token on each refresh — persist it
-						if (result.newRefreshToken) {
-							await ctx.keys.set_refresh_token(result.newRefreshToken);
-						}
-					} catch (error) {
-						throw new Error(
-							`[corsair:sharepoint] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
-						);
-					}
-				}
-
-				// Expose a force-refresh function so endpoints can retry on 401
-				// without waiting for expires_at to lapse
-				(ctx as Record<string, unknown>)._refreshAuth = async () => {
-					const freshResult = await getValidSharepointAccessToken({
-						accessToken: null,
-						expiresAt: null,
-						refreshToken,
-						clientId: creds.client_id!,
-						clientSecret: creds.client_secret!,
-						forceRefresh: true,
-					});
-					await ctx.keys.set_access_token(freshResult.accessToken);
-					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-					if (freshResult.newRefreshToken) {
-						await ctx.keys.set_refresh_token(freshResult.newRefreshToken);
-					}
-					return freshResult.accessToken;
-				};
-
-				return result.accessToken;
+				return getOAuthAccessToken(ctx, {
+					plugin: 'sharepoint',
+					tokenUrl:
+						'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+				});
 			}
 
 			// The webhook path above is terminal, so source is 'endpoint' here; this

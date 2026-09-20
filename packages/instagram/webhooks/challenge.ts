@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import { logEventFromContext } from 'corsair/core';
 import type { InstagramWebhooks } from '../index';
 import {
@@ -22,9 +23,12 @@ export const url_verification: InstagramWebhooks['url_verification'] = {
 		}
 
 		const expectedVerifyToken = ctx.options.webhookVerifyToken;
+		const a = Buffer.from(challengeRequest.verifyToken || '');
+		const b = Buffer.from(expectedVerifyToken || '');
 		if (
 			!expectedVerifyToken ||
-			challengeRequest.verifyToken !== expectedVerifyToken
+			a.length !== b.length ||
+			!timingSafeEqual(a, b)
 		) {
 			return {
 				success: false,
