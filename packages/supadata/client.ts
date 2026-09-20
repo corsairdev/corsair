@@ -123,7 +123,7 @@ export async function makeSupadataRequest(
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | string[] | undefined>;
 	} = {},
-// unknown: response body is untyped JSON/text until the caller parses it
+	// unknown: response body is untyped JSON/text until the caller parses it
 ): Promise<unknown> {
 	const { method = 'GET', body, query } = options;
 
