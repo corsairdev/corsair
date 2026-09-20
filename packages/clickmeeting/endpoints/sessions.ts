@@ -5,6 +5,7 @@ import { ClickmeetingEndpointOutputSchemas } from './types';
 
 export const getConferenceSessions: ClickmeetingEndpoints['getConferenceSessions'] =
 	async (ctx, input) => {
+		// unknown: ClickMeeting session JSON is untyped until the Zod schema runs.
 		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions`,
 			ctx.key,
@@ -23,6 +24,7 @@ export const getConferenceSessions: ClickmeetingEndpoints['getConferenceSessions
 
 export const getSessionDetails: ClickmeetingEndpoints['getSessionDetails'] =
 	async (ctx, input) => {
+		// unknown: ClickMeeting session JSON is untyped until the Zod schema runs.
 		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}`,
 			ctx.key,
@@ -41,6 +43,7 @@ export const getSessionDetails: ClickmeetingEndpoints['getSessionDetails'] =
 
 export const getSessionAttendees: ClickmeetingEndpoints['getSessionAttendees'] =
 	async (ctx, input) => {
+		// unknown: ClickMeeting session JSON is untyped until the Zod schema runs.
 		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}/attendees`,
 			ctx.key,
@@ -60,6 +63,7 @@ export const getSessionAttendees: ClickmeetingEndpoints['getSessionAttendees'] =
 export const generateSessionPdfReport: ClickmeetingEndpoints['generateSessionPdfReport'] =
 	async (ctx, input) => {
 		const lang = encodeURIComponent(String(input.lang ?? 'en'));
+		// unknown: ClickMeeting session JSON is untyped until the Zod schema runs.
 		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}/generate-pdf/${lang}`,
 			ctx.key,
@@ -80,6 +84,7 @@ export const generateSessionPdfReport: ClickmeetingEndpoints['generateSessionPdf
 
 export const getSessionRegistrations: ClickmeetingEndpoints['getSessionRegistrations'] =
 	async (ctx, input) => {
+		// unknown: ClickMeeting session JSON is untyped until the Zod schema runs.
 		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}/registrations`,
 			ctx.key,

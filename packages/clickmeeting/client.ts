@@ -15,11 +15,16 @@ export class ClickmeetingAPIError extends Error {
 
 const CLICKMEETING_API_BASE = 'https://api.clickmeeting.com/v1';
 
+/**
+ * Callers pass `unknown` for T: ClickMeeting JSON varies by route and is
+ * parsed by the endpoint's Zod schema before it is returned.
+ */
 export async function makeClickmeetingRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// unknown: JSON body shape differs per endpoint; Zod parses at the caller.
 		body?: unknown;
 		mediaType?: string;
 		query?: Record<string, string | number | boolean | undefined>;
