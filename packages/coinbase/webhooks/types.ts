@@ -12,6 +12,7 @@ export const CoinbaseNotificationSchema = z
 	.object({
 		id: z.string().optional(),
 		type: z.string(),
+		// unknown: Coinbase notification payloads vary by event type; callers narrow after match.
 		data: z.record(z.string(), z.unknown()).optional(),
 		user: z
 			.object({
@@ -57,6 +58,7 @@ export type CoinbaseWebhookOutputs = {
 };
 
 function parseBody(body: unknown): Record<string, unknown> | null {
+	// unknown: webhook body may be a raw string or already-parsed object.
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
@@ -89,70 +91,80 @@ function verifyHook0Signature(
 	secret: string,
 	header: string,
 ): boolean {
-	const parts = header.split(',');
-	const timestamp = parts
-		.find((part) => part.trim().startsWith('t='))
-		?.slice(2)
-		.trim();
-	const v0 = parts
-		.find((part) => part.trim().startsWith('v0='))
-		?.slice(3)
-		.trim();
-	if (!timestamp || !v0) return false;
+	try {
+		const parts = header.split(',');
+		const timestamp = parts
+			.find((part) => part.trim().startsWith('t='))
+			?.slice(2)
+			.trim();
+		const v0 = parts
+			.find((part) => part.trim().startsWith('v0='))
+			?.slice(3)
+			.trim();
+		if (!timestamp || !v0) return false;
 
-	const sentAt = Number(timestamp);
-	if (!Number.isFinite(sentAt) || sentAt <= 0) return false;
-	const ageSeconds = Math.floor(Date.now() / 1000) - sentAt;
-	if (ageSeconds > 300 || ageSeconds < -300) return false;
+		const sentAt = Number(timestamp);
+		if (!Number.isFinite(sentAt) || sentAt <= 0) return false;
+		const ageSeconds = Math.floor(Date.now() / 1000) - sentAt;
+		if (ageSeconds > 300 || ageSeconds < -300) return false;
 
-	const expected = createHmac('sha256', secret)
-		.update(`${timestamp}.${rawBody}`)
-		.digest('hex');
-	if (expected.length !== v0.length) {
+		const expected = createHmac('sha256', secret)
+			.update(`${timestamp}.${rawBody}`)
+			.digest('hex');
+		if (expected.length !== v0.length) {
+			return false;
+		}
+
+		return timingSafeEqual(Buffer.from(expected), Buffer.from(v0));
+	} catch {
+		// Malformed Hook0 headers or unequal buffers must not throw.
 		return false;
 	}
-
-	return timingSafeEqual(Buffer.from(expected), Buffer.from(v0));
 }
 
 export function verifyCoinbaseWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret?: string,
 ): { valid: boolean; error?: string } {
-	if (request.hubVerified === true) {
-		return { valid: true };
-	}
+	// unknown: WebhookRequest body type is transport-level until verified.
+	try {
+		if (request.hubVerified === true) {
+			return { valid: true };
+		}
 
-	if (!secret) {
-		return { valid: false, error: 'Missing webhook secret' };
-	}
+		if (!secret) {
+			return { valid: false, error: 'Missing webhook secret' };
+		}
 
-	const rawBody = request.rawBody;
-	if (!rawBody) {
-		return {
-			valid: false,
-			error: 'Missing raw body for signature verification',
-		};
-	}
+		const rawBody = request.rawBody;
+		if (!rawBody) {
+			return {
+				valid: false,
+				error: 'Missing raw body for signature verification',
+			};
+		}
 
-	const signature = coinbaseSignatureHeader(request.headers);
-	if (!signature) {
-		return {
-			valid: false,
-			error: 'Missing X-Hook0-Signature or X-CC-Webhook-Signature header',
-		};
-	}
+		const signature = coinbaseSignatureHeader(request.headers);
+		if (!signature) {
+			return {
+				valid: false,
+				error: 'Missing X-Hook0-Signature or X-CC-Webhook-Signature header',
+			};
+		}
 
-	if (signature.includes('t=')) {
-		if (!verifyHook0Signature(rawBody, secret, signature)) {
+		if (signature.includes('t=')) {
+			if (!verifyHook0Signature(rawBody, secret, signature)) {
+				return { valid: false, error: 'Invalid signature' };
+			}
+			return { valid: true };
+		}
+
+		if (!verifyHmacSignature(rawBody, secret, signature, 'sha256')) {
 			return { valid: false, error: 'Invalid signature' };
 		}
-		return { valid: true };
-	}
 
-	if (!verifyHmacSignature(rawBody, secret, signature, 'sha256')) {
+		return { valid: true };
+	} catch {
 		return { valid: false, error: 'Invalid signature' };
 	}
-
-	return { valid: true };
 }

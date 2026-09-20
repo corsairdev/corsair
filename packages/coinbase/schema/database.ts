@@ -106,6 +106,7 @@ export const CoinbaseTransaction = z
 		resource_path: z.string().optional(),
 		instant_exchange: z.boolean().optional(),
 		network: CoinbaseNetwork.optional(),
+		// unknown: counterparty objects vary by transaction type; no closed union.
 		to: z.record(z.string(), z.unknown()).optional(),
 		from: z.record(z.string(), z.unknown()).optional(),
 		details: z.record(z.string(), z.unknown()).optional(),
