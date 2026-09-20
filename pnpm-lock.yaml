@@ -168,9 +168,6 @@ importers:
       '@corsair-dev/bitwarden':
         specifier: workspace:*
         version: link:../../packages/bitwarden
-      '@corsair-dev/close':
-        specifier: workspace:*
-        version: link:../../packages/close
       '@corsair-dev/cursor':
         specifier: workspace:*
         version: link:../../packages/cursor
@@ -7378,9 +7375,6 @@ importers:
 
   www:
     dependencies:
-      '@corsair-dev/close':
-        specifier: workspace:*
-        version: link:../packages/close
       '@corsair-dev/github':
         specifier: workspace:*
         version: link:../packages/github
