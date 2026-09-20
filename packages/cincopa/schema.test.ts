@@ -6,15 +6,17 @@ describe('Cincopa schema', () => {
 		expect(CincopaSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
+	it('declares an entities map with all labeled database models', () => {
 		expect(typeof CincopaSchema.entities).toBe('object');
 		expect(CincopaSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(CincopaSchema.entities))).toBe(true);
+		expect(Object.keys(CincopaSchema.entities).sort()).toEqual([
+			'account',
+			'assets',
+			'galleries',
+			'uploadStatus',
+		]);
 		for (const entity of Object.values(CincopaSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

@@ -12,12 +12,11 @@ pnpm add @corsair-dev/cincopa
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `asset.abortUploadFromUrl` | `cincopa.api.asset.abortUploadFromUrl` | `write` | Abort an in-progress asset upload from URL |
-| `asset.getUploadFromUrlStatus` | `cincopa.api.asset.getUploadFromUrlStatus` | `read` | Check the status of an asset upload from URL |
-| `asset.uploadFromUrl` | `cincopa.api.asset.uploadFromUrl` | `write` | Start uploading an asset from a remote URL |
-| `gallery.list` | `cincopa.api.gallery.list` | `read` | List galleries |
+| `asset.abortUploadFromUrl` | `cincopa.api.asset.abortUploadFromUrl` | `write` | Abort an ongoing asset upload-in-progress |
+| `asset.getUploadFromUrlStatus` | `cincopa.api.asset.getUploadFromUrlStatus` | `read` | Check the status of an asset upload initiated via URL |
+| `asset.uploadFromUrl` | `cincopa.api.asset.uploadFromUrl` | `write` | Upload a new asset directly from a provided external URL |
 | `general.getUploadIframe` | `cincopa.api.general.getUploadIframe` | `read` | Get an embeddable upload iframe URL for a gallery |
-| `general.ping` | `cincopa.api.general.ping` | `read` | Validate the Cincopa API connection |
+| `general.ping` | `cincopa.api.general.ping` | `read` | Validate API connection |
 
 ## Auth
 

@@ -22,9 +22,9 @@ function lastCall(): [OpenAPIConfig, ApiRequestOptions] {
 
 function apiError(status: number, retryAfter?: number): ApiError {
 	return new ApiError(
-		{ method: 'GET', url: 'gallery.list.json' },
+		{ method: 'GET', url: 'ping.json' },
 		{
-			url: `${CINCOPA_API_BASE}gallery.list.json`,
+			url: `${CINCOPA_API_BASE}ping.json`,
 			ok: false,
 			status,
 			statusText: status === 429 ? 'Too Many Requests' : 'Unauthorized',
@@ -43,8 +43,8 @@ describe('makeCincopaRequest', () => {
 	it('sends the API key as api_token query parameter and never as a bearer token', async () => {
 		mockRequest.mockResolvedValue({ success: true });
 
-		await makeCincopaRequest('gallery.list.json', 'test-token', {
-			query: { search: 'test' },
+		await makeCincopaRequest('ping.json', 'test-token', {
+			query: { check: 'test' },
 		});
 
 		const [config, options] = lastCall();
@@ -54,18 +54,18 @@ describe('makeCincopaRequest', () => {
 			'Content-Type': 'application/json',
 		});
 		expect(options.query).toEqual({
-			search: 'test',
+			check: 'test',
 			api_token: 'test-token',
 		});
 	});
 
 	it('rejects an empty API key before issuing a request', async () => {
-		await expect(makeCincopaRequest('gallery.list.json', '')).rejects.toThrow(
+		await expect(makeCincopaRequest('ping.json', '')).rejects.toThrow(
 			CincopaAPIError,
 		);
-		await expect(
-			makeCincopaRequest('gallery.list.json', '   '),
-		).rejects.toThrow('Cincopa API key is required');
+		await expect(makeCincopaRequest('ping.json', '   ')).rejects.toThrow(
+			'Cincopa API key is required',
+		);
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
@@ -74,7 +74,7 @@ describe('makeCincopaRequest', () => {
 		mockRequest.mockRejectedValue(rateLimitError);
 
 		try {
-			await makeCincopaRequest('gallery.list.json', 'token');
+			await makeCincopaRequest('ping.json', 'token');
 			throw new Error('should have thrown');
 		} catch (error) {
 			expect(error).toBe(rateLimitError);
@@ -89,7 +89,7 @@ describe('makeCincopaRequest', () => {
 		mockRequest.mockRejectedValue(authError);
 
 		try {
-			await makeCincopaRequest('gallery.list.json', 'invalid-token');
+			await makeCincopaRequest('ping.json', 'invalid-token');
 			throw new Error('should have thrown');
 		} catch (error) {
 			expect(error).toBe(authError);
@@ -101,20 +101,20 @@ describe('makeCincopaRequest', () => {
 	it('wraps generic non-ApiError in CincopaAPIError', async () => {
 		mockRequest.mockRejectedValue(new Error('Network disconnected'));
 
-		await expect(
-			makeCincopaRequest('gallery.list.json', 'token'),
-		).rejects.toThrow(CincopaAPIError);
+		await expect(makeCincopaRequest('ping.json', 'token')).rejects.toThrow(
+			CincopaAPIError,
+		);
 
-		await expect(
-			makeCincopaRequest('gallery.list.json', 'token'),
-		).rejects.toThrow('Network disconnected');
+		await expect(makeCincopaRequest('ping.json', 'token')).rejects.toThrow(
+			'Network disconnected',
+		);
 	});
 
 	it('wraps unknown non-Error throws in CincopaAPIError', async () => {
 		mockRequest.mockRejectedValue('something unexpected');
 
-		await expect(
-			makeCincopaRequest('gallery.list.json', 'token'),
-		).rejects.toThrow(new CincopaAPIError('Unknown error'));
+		await expect(makeCincopaRequest('ping.json', 'token')).rejects.toThrow(
+			new CincopaAPIError('Unknown error'),
+		);
 	});
 });

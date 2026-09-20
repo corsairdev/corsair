@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Assets, Gallery, General } from './endpoints';
+import { Assets, General } from './endpoints';
 import type {
 	CincopaEndpointInputs,
 	CincopaEndpointOutputs,
@@ -51,7 +51,6 @@ type CincopaEndpoint<K extends keyof CincopaEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type CincopaEndpoints = {
-	galleryList: CincopaEndpoint<'galleryList'>;
 	ping: CincopaEndpoint<'ping'>;
 	uploadFromUrl: CincopaEndpoint<'uploadFromUrl'>;
 	getUploadFromUrlStatus: CincopaEndpoint<'getUploadFromUrlStatus'>;
@@ -60,9 +59,6 @@ export type CincopaEndpoints = {
 };
 
 const cincopaEndpointsNested = {
-	gallery: {
-		list: Gallery.list,
-	},
 	general: {
 		ping: General.ping,
 		getUploadIframe: General.getUploadIframe,
@@ -75,10 +71,6 @@ const cincopaEndpointsNested = {
 } as const;
 
 export const cincopaEndpointSchemas = {
-	'gallery.list': {
-		input: CincopaEndpointInputSchemas.galleryList,
-		output: CincopaEndpointOutputSchemas.galleryList,
-	},
 	'general.ping': {
 		input: CincopaEndpointInputSchemas.ping,
 		output: CincopaEndpointOutputSchemas.ping,
@@ -106,13 +98,9 @@ export const cincopaEndpointSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const cincopaEndpointMeta = {
-	'gallery.list': {
-		riskLevel: 'read',
-		description: 'List galleries',
-	},
 	'general.ping': {
 		riskLevel: 'read',
-		description: 'Validate the Cincopa API connection',
+		description: 'Validate API connection',
 	},
 	'general.getUploadIframe': {
 		riskLevel: 'read',
@@ -120,15 +108,15 @@ const cincopaEndpointMeta = {
 	},
 	'asset.uploadFromUrl': {
 		riskLevel: 'write',
-		description: 'Start uploading an asset from a remote URL',
+		description: 'Upload a new asset directly from a provided external URL',
 	},
 	'asset.getUploadFromUrlStatus': {
 		riskLevel: 'read',
-		description: 'Check the status of an asset upload from URL',
+		description: 'Check the status of an asset upload initiated via URL',
 	},
 	'asset.abortUploadFromUrl': {
 		riskLevel: 'write',
-		description: 'Abort an in-progress asset upload from URL',
+		description: 'Abort an ongoing asset upload-in-progress',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof cincopaEndpointsNested>;
 
@@ -196,6 +184,4 @@ export function cincopa<const T extends CincopaPluginOptions>(
 export type {
 	CincopaEndpointInputs,
 	CincopaEndpointOutputs,
-	GalleryListInput,
-	GalleryListResponse,
 } from './endpoints/types';

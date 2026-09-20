@@ -1,6 +1,16 @@
 import { ApiError } from 'corsair/http';
 import { getUploadIframe } from './general';
 
+type Ctx = Parameters<typeof getUploadIframe>[0];
+
+function ctx(): Ctx {
+	return {
+		key: 'test-api-token',
+		$getAccountId: () => 'test-account-id',
+		// unknown: fixture omits unrelated runtime context fields.
+	} as unknown as Ctx;
+}
+
 describe('Cincopa general.getUploadIframe', () => {
 	it('fetches HTML and returns a credential-free iframe URL', async () => {
 		const html =
@@ -9,7 +19,7 @@ describe('Cincopa general.getUploadIframe', () => {
 			.spyOn(globalThis, 'fetch')
 			.mockResolvedValue(new Response(html, { status: 200 }));
 
-		const result = await getUploadIframe({ key: 'test-api-token' } as never, {
+		const result = await getUploadIframe(ctx(), {
 			fid: 'fid-1',
 		});
 
@@ -31,7 +41,7 @@ describe('Cincopa general.getUploadIframe', () => {
 			.spyOn(globalThis, 'fetch')
 			.mockResolvedValue(new Response(html, { status: 200 }));
 
-		const result = await getUploadIframe({ key: 'test-api-token' } as never, {});
+		const result = await getUploadIframe(ctx(), {});
 
 		expect(result.html).not.toContain('test-api-token');
 		expect(result.html).toContain('[REDACTED]');
@@ -48,7 +58,7 @@ describe('Cincopa general.getUploadIframe', () => {
 		);
 
 		try {
-			await getUploadIframe({ key: 'test-api-token' } as never, {});
+			await getUploadIframe(ctx(), {});
 			throw new Error('expected ApiError');
 		} catch (error) {
 			expect(error).toBeInstanceOf(ApiError);
@@ -68,7 +78,7 @@ describe('Cincopa general.getUploadIframe', () => {
 		);
 
 		try {
-			await getUploadIframe({ key: 'test-api-token' } as never, {});
+			await getUploadIframe(ctx(), {});
 			throw new Error('expected ApiError');
 		} catch (error) {
 			expect(error).toBeInstanceOf(ApiError);

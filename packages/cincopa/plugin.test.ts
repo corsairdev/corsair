@@ -21,17 +21,40 @@ describe('Cincopa plugin', () => {
 		expect(plugin.options?.authType).toBe('api_key');
 	});
 
-	it('registers endpoint schemas for gallery.list', () => {
-		expect(cincopaEndpointSchemas['gallery.list']).toBeDefined();
-		expect(cincopaEndpointSchemas['gallery.list'].input).toBeDefined();
-		expect(cincopaEndpointSchemas['gallery.list'].output).toBeDefined();
+	it('registers endpoint schemas for all 5 Cincopa endpoints', () => {
 		expect(cincopaEndpointSchemas['general.ping']).toBeDefined();
+		expect(cincopaEndpointSchemas['general.ping'].input).toBeDefined();
+		expect(cincopaEndpointSchemas['general.ping'].output).toBeDefined();
+
+		expect(cincopaEndpointSchemas['general.getUploadIframe']).toBeDefined();
+		expect(
+			cincopaEndpointSchemas['general.getUploadIframe'].input,
+		).toBeDefined();
+		expect(
+			cincopaEndpointSchemas['general.getUploadIframe'].output,
+		).toBeDefined();
+
 		expect(cincopaEndpointSchemas['asset.uploadFromUrl']).toBeDefined();
+		expect(cincopaEndpointSchemas['asset.uploadFromUrl'].input).toBeDefined();
+		expect(cincopaEndpointSchemas['asset.uploadFromUrl'].output).toBeDefined();
+
 		expect(
 			cincopaEndpointSchemas['asset.getUploadFromUrlStatus'],
 		).toBeDefined();
+		expect(
+			cincopaEndpointSchemas['asset.getUploadFromUrlStatus'].input,
+		).toBeDefined();
+		expect(
+			cincopaEndpointSchemas['asset.getUploadFromUrlStatus'].output,
+		).toBeDefined();
+
 		expect(cincopaEndpointSchemas['asset.abortUploadFromUrl']).toBeDefined();
-		expect(cincopaEndpointSchemas['general.getUploadIframe']).toBeDefined();
+		expect(
+			cincopaEndpointSchemas['asset.abortUploadFromUrl'].input,
+		).toBeDefined();
+		expect(
+			cincopaEndpointSchemas['asset.abortUploadFromUrl'].output,
+		).toBeDefined();
 	});
 
 	describe('keyBuilder', () => {
@@ -78,9 +101,9 @@ describe('Cincopa plugin', () => {
 	describe('errorHandlers', () => {
 		function makeApiError(status: number, retryAfter?: number): ApiError {
 			return new ApiError(
-				{ method: 'GET', url: 'https://api.cincopa.com/v2/gallery.list.json' },
+				{ method: 'GET', url: 'https://api.cincopa.com/v2/ping.json' },
 				{
-					url: 'https://api.cincopa.com/v2/gallery.list.json',
+					url: 'https://api.cincopa.com/v2/ping.json',
 					ok: false,
 					status,
 					statusText: status === 429 ? 'Too Many Requests' : 'Unauthorized',
