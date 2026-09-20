@@ -101,7 +101,7 @@ export const sendForStream = async (
 		body: {
 			content: parsed.content,
 			conversation_id: parsed.conversation_id,
-			redirect: parsed.redirect ?? false,
+			redirect: false,
 		},
 	});
 

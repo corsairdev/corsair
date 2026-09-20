@@ -293,12 +293,6 @@ const MessagesSendForStreamInputSchema = z.object({
 		.min(1)
 		.max(2000)
 		.describe('Text content of the message (up to 2000 characters)'),
-	redirect: z
-		.boolean()
-		.default(false)
-		.describe(
-			'Set to false to receive JSON stream_url object instead of redirect',
-		),
 });
 
 const MessagesSendForStreamResponseSchema = z.object({

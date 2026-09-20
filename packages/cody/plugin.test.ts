@@ -46,12 +46,15 @@ describe('Cody plugin', () => {
 			'uploads.getSignedUrl',
 		];
 
+		expect(Object.keys(codyEndpointSchemas).sort()).toEqual(
+			expectedEndpoints.slice().sort(),
+		);
+
 		for (const key of expectedEndpoints) {
 			const schema =
 				codyEndpointSchemas[key as keyof typeof codyEndpointSchemas];
-			expect(schema).toBeDefined();
-			expect(schema.input).toBeDefined();
-			expect(schema.output).toBeDefined();
+			expect(typeof schema.input.parse).toBe('function');
+			expect(typeof schema.output.parse).toBe('function');
 		}
 	});
 
