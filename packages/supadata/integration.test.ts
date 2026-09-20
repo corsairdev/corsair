@@ -352,6 +352,7 @@ describeLive('Supadata live API', () => {
 	it('13. rejects an invalid API key without leaking it', async () => {
 		const secret = 'sd_invalid_key_for_testing';
 		const error = await makeSupadataRequest('me', secret).catch(
+			// unknown: catch/error boundary accepts any thrown value
 			(caught: unknown) => caught,
 		);
 		expect(error).toBeInstanceOf(ApiError);

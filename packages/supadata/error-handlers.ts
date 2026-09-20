@@ -8,8 +8,10 @@ import { ApiError } from 'corsair/http';
  */
 function supadataErrorCode(error: Error): string | undefined {
 	if (!(error instanceof ApiError)) return undefined;
+	// unknown: provider error/response JSON has no single stable schema
 	const body: unknown = error.body;
 	if (!body || typeof body !== 'object') return undefined;
+	// unknown: request body keys differ per operation; Zod validates upstream
 	const code = (body as Record<string, unknown>).error;
 	return typeof code === 'string' ? code : undefined;
 }

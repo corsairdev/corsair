@@ -357,6 +357,7 @@ export const SupadataMetadataMedia = z
 		duration: z.number().optional(),
 		thumbnailUrl: z.string().optional(),
 		url: z.string().optional(),
+		// unknown: provider field shape is open; no closed schema is published
 		items: z.array(z.unknown()).optional(),
 	})
 	.loose();
@@ -376,6 +377,7 @@ export const SupadataMetadata = z
 		media: SupadataMetadataMedia.optional(),
 		tags: z.array(z.string()).optional(),
 		createdAt: z.string().optional(),
+		// unknown: provider field shape is open; no closed schema is published
 		additionalData: z.record(z.string(), z.unknown()).optional(),
 	})
 	.loose();

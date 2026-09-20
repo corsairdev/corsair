@@ -77,8 +77,10 @@ function redactKey<T>(value: T, apiKey: string): T {
  * payload (`{ error, message, details, documentationUrl }`), falling back to
  * the status line when the body is empty or not JSON.
  */
+// unknown: provider error/response JSON has no single stable schema
 function errorMessage(body: unknown, res: Response): string {
 	if (body && typeof body === 'object') {
+		// unknown: provider error JSON fields vary; narrowed after typeof object check
 		const record = body as Record<string, unknown>;
 		const parts = [record.message, record.details].filter(
 			(part): part is string => typeof part === 'string' && part.length > 0,
@@ -97,6 +99,7 @@ function errorMessage(body: unknown, res: Response): string {
 	return `Supadata API error: ${res.status} ${res.statusText}`;
 }
 
+// unknown: response body is untyped JSON/text until the caller parses it
 async function parseBody(res: Response): Promise<unknown> {
 	if (res.status === 204) return undefined;
 	const text = await res.text();
@@ -104,6 +107,7 @@ async function parseBody(res: Response): Promise<unknown> {
 	const contentType = res.headers.get('content-type') ?? '';
 	if (!contentType.includes('application/json')) return text;
 	try {
+		// unknown: JSON.parse returns any-shaped value; treat as unknown until validated
 		return JSON.parse(text) as unknown;
 	} catch {
 		return text;
@@ -115,9 +119,11 @@ export async function makeSupadataRequest(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// unknown: request body keys differ per operation; Zod validates upstream
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | string[] | undefined>;
 	} = {},
+// unknown: response body is untyped JSON/text until the caller parses it
 ): Promise<unknown> {
 	const { method = 'GET', body, query } = options;
 
