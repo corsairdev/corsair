@@ -24,6 +24,7 @@ export type FinerWorksCredentials = {
 export class FinerWorksAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// unknown: provider error bodies vary; callers only read message/status.
 	public readonly body?: unknown;
 
 	constructor(message: string, options?: { cause?: Error }) {
