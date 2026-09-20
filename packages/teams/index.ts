@@ -393,10 +393,20 @@ const teamsWebhookSchemas = {
 
 export const teamsAuthConfig = {
 	oauth_2: {
-		account: ['subscription_id', 'client_state'] as const,
+		account: [
+			'subscription_id',
+			'client_state',
+			'channel_team_id',
+			'channel_id',
+		] as const,
 	},
 	managed: {
-		account: ['subscription_id', 'client_state'] as const,
+		account: [
+			'subscription_id',
+			'client_state',
+			'channel_team_id',
+			'channel_id',
+		] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
