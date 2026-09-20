@@ -5642,9 +5642,7 @@ describe('Postman relations and webhooks', () => {
 			unclassified: ['col-1'],
 		});
 		expect(captured?.method).toBe('POST');
-		expect(captured?.url).toBe(
-			'/apis/{apiId}/versions/{versionId}/relations',
-		);
+		expect(captured?.url).toBe('/apis/{apiId}/versions/{versionId}/relations');
 		expect(captured?.body).toMatchObject({ unclassified: ['col-1'] });
 		expect(result).toEqual(canned);
 	});

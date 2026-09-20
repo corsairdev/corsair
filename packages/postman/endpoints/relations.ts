@@ -69,7 +69,10 @@ export const listLinked: PostmanEndpoints['apisGetLinkedRelations'] = (
 		'postman.apis.getLinkedRelations',
 	);
 
-export const listTest: PostmanEndpoints['apisGetTestRelations'] = (ctx, input) =>
+export const listTest: PostmanEndpoints['apisGetTestRelations'] = (
+	ctx,
+	input,
+) =>
 	getVersioned(
 		ctx,
 		input,
