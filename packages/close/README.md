@@ -12,7 +12,10 @@ pnpm add @corsair-dev/close
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
+| `activities.createCall` | `close.api.activities.createCall` | `write` | Log an external call activity |
 | `activities.createNote` | `close.api.activities.createNote` | `write` | Create a note activity |
+| `activities.createSms` | `close.api.activities.createSms` | `write` | Create an SMS activity |
+| `activities.deleteCall` | `close.api.activities.deleteCall` | `destructive` | Delete a call activity |
 | `activities.listCalls` | `close.api.activities.listCalls` | `read` | List call activities |
 | `activities.listEmails` | `close.api.activities.listEmails` | `read` | List email activities |
 | `activities.listNotes` | `close.api.activities.listNotes` | `read` | List note activities |

@@ -163,6 +163,26 @@ export const CloseActivityEmail = z
 export type CloseActivityEmail = z.infer<typeof CloseActivityEmail>;
 
 /**
+ * Close CRM Activity SMS
+ * Official: https://developer.close.com/resources/activities/sms/
+ */
+export const CloseActivitySms = z
+	.object({
+		id: z.string(),
+		lead_id: z.string().optional(),
+		local_phone: z.string().optional(),
+		remote_phone: z.string().optional(),
+		text: z.string().optional(),
+		direction: z.string().optional(),
+		status: z.string().optional(),
+		user_id: z.string().nullable().optional(),
+		organization_id: z.string().optional(),
+		date_created: z.string().optional(),
+	})
+	.loose();
+export type CloseActivitySms = z.infer<typeof CloseActivitySms>;
+
+/**
  * Close CRM User
  * Official: https://developer.close.com/resources/users/
  */

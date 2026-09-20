@@ -2,7 +2,10 @@ import { createHmac } from 'node:crypto';
 import { AuthMissingError } from 'corsair/core';
 import { CloseAPIError, CloseRateLimitError, makeCloseRequest } from './client';
 import {
+	activitiesCreateCall,
 	activitiesCreateNote,
+	activitiesCreateSms,
+	activitiesDeleteCall,
 	activitiesListCalls,
 	activitiesListEmails,
 	activitiesListNotes,
@@ -395,6 +398,30 @@ describe('Close API endpoints behavioral coverage', () => {
 			activitiesListCalls,
 			{},
 			{ data: [{ id: 'call_1' }] },
+		],
+		[
+			'activities.createCall',
+			'POST',
+			'activity/call/',
+			activitiesCreateCall,
+			{ lead_id: 'lead_1', direction: 'outbound' },
+			{ id: 'call_1', lead_id: 'lead_1' },
+		],
+		[
+			'activities.deleteCall',
+			'DELETE',
+			'activity/call/call_1/',
+			activitiesDeleteCall,
+			{ id: 'call_1' },
+			{ success: true, id: 'call_1' },
+		],
+		[
+			'activities.createSms',
+			'POST',
+			'activity/sms/',
+			activitiesCreateSms,
+			{ lead_id: 'lead_1', local_phone: '+15551234567', text: 'Hello' },
+			{ id: 'sms_1', lead_id: 'lead_1' },
 		],
 		[
 			'activities.listEmails',

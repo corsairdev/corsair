@@ -1,8 +1,14 @@
-import { makeCloseRequestForCtx } from '../client';
+import { closeResourcePath, makeCloseRequestForCtx } from '../client';
 import type { CloseContext } from '../index';
 import type {
+	ActivitiesCreateCallInput,
+	ActivitiesCreateCallResponse,
 	ActivitiesCreateNoteInput,
 	ActivitiesCreateNoteResponse,
+	ActivitiesCreateSmsInput,
+	ActivitiesCreateSmsResponse,
+	ActivitiesDeleteCallInput,
+	ActivitiesDeleteCallResponse,
 	ActivitiesListCallsInput,
 	ActivitiesListCallsResponse,
 	ActivitiesListEmailsInput,
@@ -11,8 +17,14 @@ import type {
 	ActivitiesListNotesResponse,
 } from './types';
 import {
+	ActivitiesCreateCallInputSchema,
+	ActivitiesCreateCallResponseSchema,
 	ActivitiesCreateNoteInputSchema,
 	ActivitiesCreateNoteResponseSchema,
+	ActivitiesCreateSmsInputSchema,
+	ActivitiesCreateSmsResponseSchema,
+	ActivitiesDeleteCallInputSchema,
+	ActivitiesDeleteCallResponseSchema,
 	ActivitiesListCallsInputSchema,
 	ActivitiesListCallsResponseSchema,
 	ActivitiesListEmailsInputSchema,
@@ -61,6 +73,48 @@ export const activitiesListCalls = async (
 		query: parsedInput,
 	});
 	return ActivitiesListCallsResponseSchema.parse(res);
+};
+
+export const activitiesCreateCall = async (
+	ctx: CloseContext,
+	input: ActivitiesCreateCallInput,
+): Promise<ActivitiesCreateCallResponse> => {
+	const parsedInput = ActivitiesCreateCallInputSchema.parse(input);
+	const res = await makeCloseRequestForCtx<unknown>(ctx, 'activity/call/', {
+		method: 'POST',
+		body: parsedInput as Record<string, unknown>,
+	});
+	return ActivitiesCreateCallResponseSchema.parse(res);
+};
+
+export const activitiesDeleteCall = async (
+	ctx: CloseContext,
+	input: ActivitiesDeleteCallInput,
+): Promise<ActivitiesDeleteCallResponse> => {
+	const parsedInput = ActivitiesDeleteCallInputSchema.parse(input);
+	await makeCloseRequestForCtx<unknown>(
+		ctx,
+		closeResourcePath('activity/call', parsedInput.id),
+		{
+			method: 'DELETE',
+		},
+	);
+	return ActivitiesDeleteCallResponseSchema.parse({
+		success: true,
+		id: parsedInput.id,
+	});
+};
+
+export const activitiesCreateSms = async (
+	ctx: CloseContext,
+	input: ActivitiesCreateSmsInput,
+): Promise<ActivitiesCreateSmsResponse> => {
+	const parsedInput = ActivitiesCreateSmsInputSchema.parse(input);
+	const res = await makeCloseRequestForCtx<unknown>(ctx, 'activity/sms/', {
+		method: 'POST',
+		body: parsedInput as Record<string, unknown>,
+	});
+	return ActivitiesCreateSmsResponseSchema.parse(res);
 };
 
 export const activitiesListEmails = async (
