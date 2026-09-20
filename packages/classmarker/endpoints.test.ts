@@ -71,7 +71,7 @@ const mockHttpRequest = jest.mocked(request);
 const {
 	makeClassmarkerRequest: makeClassmarkerRequestActual,
 	packClassmarkerCredentials: packClassmarkerCredentialsActual,
-} = jest.requireActual('./client') as typeof import('./client');
+} = jest.requireActual<typeof import('./client')>('./client');
 
 const okEnvelope = {
 	status: 'ok',

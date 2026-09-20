@@ -15,13 +15,16 @@ export async function runClassmarkerEndpoint<TInput, TOutput>(
 	params: {
 		operation: string;
 		path: string;
+		// unknown justified: generic endpoint plumbing validated by Zod schemas.
 		input: unknown;
 		inputSchema: Parseable<TInput>;
 		outputSchema: Parseable<TOutput>;
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
 		query?: Record<string, string | number | boolean | undefined>;
+		// unknown justified: request body is arbitrary caller-supplied JSON.
 		body?: unknown;
 		logPayload?: Record<string, unknown>;
+		// unknown justified: untyped provider JSON, narrowed by callers/output schema.
 		responseTransformer?: (response: unknown) => unknown;
 	},
 ): Promise<TOutput> {

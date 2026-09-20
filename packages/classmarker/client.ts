@@ -29,6 +29,7 @@ export class ClassmarkerAPIError extends Error {
 			status?: number;
 			retryAfter?: number;
 			nextRequestAfter?: number;
+			// unknown justified: cause is an opaque rethrown error value.
 			cause?: unknown;
 		},
 	) {
@@ -103,24 +104,31 @@ async function authQuery(
 	};
 }
 
+function isClassmarkerErrorResponse(
+	response: object,
+): response is ClassmarkerErrorResponse {
+	return 'status' in response && response.status === 'error';
+}
+
+// unknown justified: provider returns untyped JSON; narrowed with `in` below.
 function maybeThrowClassmarkerError(response: unknown): void {
 	if (!response || typeof response !== 'object') {
 		return;
 	}
 
-	const parsed = response as ClassmarkerErrorResponse;
-	if (parsed.status !== 'error') {
+	if (!isClassmarkerErrorResponse(response)) {
 		return;
 	}
 
-	const code = parsed.error?.error_code;
+	const code = response.error?.error_code;
 	const message =
-		parsed.error?.error_message ?? 'ClassMarker API returned an error response';
+		response.error?.error_message ??
+		'ClassMarker API returned an error response';
 
 	throw new ClassmarkerAPIError(message, code, {
-		nextRequestAfter: parsed.error?.next_request_after,
-		retryAfter: parsed.error?.next_request_after
-			? Math.max(0, parsed.error.next_request_after * 1000 - Date.now())
+		nextRequestAfter: response.error?.next_request_after,
+		retryAfter: response.error?.next_request_after
+			? Math.max(0, response.error.next_request_after * 1000 - Date.now())
 			: undefined,
 	});
 }
@@ -130,6 +138,7 @@ export async function makeClassmarkerRequest<T>(
 	packedCredentials: string,
 	options: {
 		method?: RequestMethod;
+		// unknown justified: request body is arbitrary caller-supplied JSON.
 		body?: unknown;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
