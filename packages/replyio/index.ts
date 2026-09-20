@@ -134,6 +134,7 @@ const replyioEndpointsNested = {
 	contactLists: {
 		list: ContactLists.list,
 	},
+	// GENERATE_ULID is a Composio helper, not a Reply.io API. Do not invent it.
 } as const;
 
 // Reply.io exposes no webhook subscriptions for this integration surface, so
