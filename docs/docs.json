@@ -1433,14 +1433,6 @@
                 ]
               },
               {
-                "group": "Flutterwave",
-                "pages": [
-                  "plugins/flutterwave/overview",
-                  "plugins/flutterwave/api",
-                  "plugins/flutterwave/database"
-                ]
-              },
-              {
                 "group": "Formbricks",
                 "pages": [
                   "plugins/formbricks/overview",
