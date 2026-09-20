@@ -1,0 +1,1033 @@
+{
+  "id": "zohomail",
+  "displayName": "Zoho Mail",
+  "description": "Business email service for sending, reading, organizing messages, and mailbox management.",
+  "npmPackageName": "@corsair-dev/zohomail",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 12,
+    "webhooks": 2,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "zuid"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "zohomail.api.folders.create",
+      "shortPath": "folders.create",
+      "description": "Create a new folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically."
+          },
+          {
+            "key": "folderName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parentFolderId",
+            "optional": true,
+            "type": "string",
+            "description": "Parent folder ID for creating a sub-folder."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folderName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentFolderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previousFolderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folderType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isArchived",
+            "optional": true,
+            "type": "string | boolean"
+          },
+          {
+            "key": "imapAccess",
+            "optional": true,
+            "type": "string | boolean"
+          },
+          {
+            "key": "unreadCount",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "messageCount",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "URI",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohomail.api.folders.delete",
+      "shortPath": "folders.delete",
+      "description": "Delete a folder along with its emails and sub-folders [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically."
+          },
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "zohomail.api.folders.get",
+      "shortPath": "folders.get",
+      "description": "Get a specific folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically."
+          },
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folderName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentFolderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previousFolderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folderType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isArchived",
+            "optional": true,
+            "type": "string | boolean"
+          },
+          {
+            "key": "imapAccess",
+            "optional": true,
+            "type": "string | boolean"
+          },
+          {
+            "key": "unreadCount",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "messageCount",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "URI",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohomail.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "List all mail folders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folders",
+            "optional": false,
+            "type": "{ folderId?: string, folderName?: string, path?: string, parentFolderId?: string, previousFolderId?: string, folderType?: string, isArchived?: string | boolean, imapAccess?: string | boolean, unreadCount?: string | number, messageCount?: string | number, URI?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohomail.api.folders.update",
+      "shortPath": "folders.update",
+      "description": "Rename, mark all emails read, or empty a folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically."
+          },
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": false,
+            "type": "rename | markAsRead | emptyFolder"
+          },
+          {
+            "key": "folderName",
+            "optional": true,
+            "type": "string",
+            "description": "New folder name. Required when mode = rename."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "zohomail.api.messages.delete",
+      "shortPath": "messages.delete",
+      "description": "Permanently delete an email [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically."
+          },
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "zohomail.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Get a specific email with its content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically."
+          },
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "threadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ccAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentDateInGMT",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receivedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasAttachment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasInline",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "flagid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calendarType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "threadCount",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mailFormat",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "returnPath",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bccAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohomail.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List emails in a folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically."
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string",
+            "description": "Folder to list emails from. Defaults to the Inbox when omitted."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Starting sequence number (default 1)."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Number of emails to retrieve, 1-200 (default 10)."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "read | unread | all"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "date | messageId | size"
+          },
+          {
+            "key": "sortorder",
+            "optional": true,
+            "type": "boolean",
+            "description": "true = ascending, false = descending (default)."
+          },
+          {
+            "key": "includeto",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ messageId?: string, threadId?: string, folderId?: string, subject?: string, summary?: string, fromAddress?: string, toAddress?: string, ccAddress?: string, sender?: string, sentDateInGMT?: string, receivedTime?: string, size?: string, hasAttachment?: string, hasInline?: string, status?: string, status2?: string, flagid?: string, priority?: string, calendarType?: string, threadCount?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohomail.api.messages.markRead",
+      "shortPath": "messages.markRead",
+      "description": "Mark emails as read",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically."
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "zohomail.api.messages.markUnread",
+      "shortPath": "messages.markUnread",
+      "description": "Mark emails as unread",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically."
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "zohomail.api.messages.move",
+      "shortPath": "messages.move",
+      "description": "Move emails to another folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically."
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string[]",
+            "description": "Message IDs to move."
+          },
+          {
+            "key": "destfolderId",
+            "optional": false,
+            "type": "string",
+            "description": "Destination folder ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "zohomail.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send an email to one or more recipients",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string",
+            "description": "Zoho Mail accountId. When omitted, the first account on the authenticated user is resolved automatically."
+          },
+          {
+            "key": "fromAddress",
+            "optional": false,
+            "type": "string",
+            "description": "Sender address; must belong to the authenticated account."
+          },
+          {
+            "key": "toAddress",
+            "optional": false,
+            "type": "string",
+            "description": "Recipient address(es), comma-separated."
+          },
+          {
+            "key": "ccAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bccAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mailFormat",
+            "optional": true,
+            "type": "html | plaintext"
+          },
+          {
+            "key": "askReceipt",
+            "optional": true,
+            "type": "yes | no"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "threadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ccAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentDateInGMT",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receivedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasAttachment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasInline",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "flagid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calendarType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "threadCount",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "zohomail.webhooks.challenge.handshake",
+      "shortPath": "challenge.handshake",
+      "description": "Zoho Mail initial webhook handshake via x-hook-secret header",
+      "payload": {
+        "kind": "object",
+        "fields": []
+      },
+      "responseType": "{ hookSecret: string }",
+      "usageExample": "zohomail({\n    webhookHooks: {\n        challenge: {\n            handshake: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "zohomail.webhooks.messages.received",
+      "shortPath": "messages.received",
+      "description": "A new email was received in the mailbox",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ccAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentDateInGMT",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receivedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "responseType": "{ messageId?: string, folderId?: string, subject?: string, summary?: string, html?: string, fromAddress?: string, toAddress?: string, ccAddress?: string, sender?: string, sentDateInGMT?: string, receivedTime?: string, size?: string | number }",
+      "usageExample": "zohomail({\n    webhookHooks: {\n        messages: {\n            received: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "zohomail.db.folders.search",
+      "entityName": "folders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "folderId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "folderName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parentFolderId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "folderType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "zohomail.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "messageId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "threadId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "folderId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "summary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fromAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "toAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ccAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sender",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sentDateInGMT",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "receivedTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hasAttachment",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "flagid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

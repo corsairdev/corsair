@@ -1,0 +1,261 @@
+{
+  "id": "tinyurl",
+  "displayName": "TinyURL",
+  "description": "URL shortening service for creating compact links and tracking click analytics.",
+  "npmPackageName": "@corsair-dev/tinyurl",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "tinyurl.api.urls.create",
+      "shortPath": "urls.create",
+      "description": "Shorten a URL using TinyURL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The long URL to be shortened"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string",
+            "description": "Domain to use for the shortened URL (e.g. tinyurl.com)"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string",
+            "description": "Optional custom alias for the shortened URL"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Optional tags; official body uses a comma-separated string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string",
+            "description": "Optional expiration in YYYY-MM-DD HH:MM:SS"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Optional description for the link"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "analytics",
+            "optional": true,
+            "type": "{ enabled?: boolean, public?: boolean }"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tiny_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tinyurl.api.urls.list",
+      "shortPath": "urls.list",
+      "description": "List available or archived TinyURLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "available | archived",
+            "description": "URL list type for GET /urls/{type}"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number for pagination"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (1-100)"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Start of time period filter"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "End of time period filter"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by alias"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by tag"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ domain: string, alias: string, deleted?: boolean, archived?: boolean, analytics?: { enabled?: boolean, public?: boolean }, tags?: string[], created_at?: string, expires_at?: string | null, tiny_url: string, url?: string, description?: string }[]"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "tinyurl.db.links.search",
+      "entityName": "links",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alias",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expires_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tiny_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

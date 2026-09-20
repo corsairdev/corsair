@@ -1,4 +1,4 @@
-export type HubEnvironmentSlug = 'development' | 'production';
+export type HubEnvironmentSlug = 'development' | 'production' | 'cloud';
 
 export type HubOAuthMode = 'byo' | 'managed';
 
@@ -6,8 +6,14 @@ export const DEFAULT_HUB_API_URL = 'https://auth.corsair.dev';
 
 export type HubConfigInput = {
 	projectApiKey: string;
-	signingSecret: string;
+	/** Required for dev/prod keys — validated by `resolveHubConfigInput`. Not used in cloud mode (`ck_cloud_`). */
+	signingSecret?: string;
 	apiUrl?: string;
+	/**
+	 * Corsair Cloud VM base URL (`ck_cloud_` keys only) — distinct from `apiUrl`,
+	 * which is the Hub API host. Falls back to `CORSAIR_CLOUD_URL` when omitted.
+	 */
+	baseUrl?: string;
 	oauthCallbackUrl?: string;
 	/** URL the connect/approve pages send the user back to when they're done. */
 	redirectURL?: string;
@@ -17,6 +23,22 @@ export type HubConfigInput = {
 	 * enabling in production — see workflows/execute.ts.
 	 */
 	allowWorkflowExecution?: boolean;
+	/**
+	 * A `ck_dev_` key tunnels automatically so the Hub can reach your local
+	 * server — no config needed (the share host and per-key slug are internal).
+	 * Set `false` to opt out (or `CORSAIR_TUNNEL=0`). A {@link TunnelConfig}
+	 * object is an advanced escape hatch to override the tunnel URL zone.
+	 */
+	tunnel?: boolean | TunnelConfig;
+};
+
+/**
+ * Overrides for Corsair's self-hosted frp auto-tunnel. The frpc binary ships
+ * with the SDK (override with `CORSAIR_FRP_BIN`); this only tunes the URL zone.
+ */
+export type TunnelConfig = {
+	/** DNS zone of the tunnel URL, e.g. `'corsair.run'` (the default). */
+	shareHost?: string;
 };
 
 export type HubConfig = {
@@ -26,6 +48,7 @@ export type HubConfig = {
 	oauthCallbackUrl?: string;
 	redirectURL?: string;
 	allowWorkflowExecution?: boolean;
+	tunnel?: boolean | TunnelConfig;
 };
 
 export type HubConnectSessionInput = {

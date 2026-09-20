@@ -37,7 +37,6 @@ type IntegrationCardProps = {
 	session: boolean;
 	index?: number;
 	activeSlug?: string;
-	wipIntegrationName?: string | null;
 	claimBlockReason?: ClaimBlockReason | null;
 };
 
@@ -74,7 +73,6 @@ export function IntegrationCard({
 	session,
 	index,
 	activeSlug,
-	wipIntegrationName,
 	claimBlockReason,
 }: IntegrationCardProps) {
 	const isActive = activeSlug === integration.slug;
@@ -155,7 +153,9 @@ export function IntegrationCard({
 						integration.isClaimed ? 'text-[#1c1c1c33]' : 'text-[#1c1c1c66]'
 					}
 				/>
-				{session && integration.claimedByCurrentUser ? (
+				{session &&
+				integration.claimedByCurrentUser &&
+				!integration.urls.prUrl ? (
 					<UnclaimIntegrationButton integrationId={integration.id} />
 				) : null}
 				{session && !integration.isClaimed ? (
@@ -163,7 +163,6 @@ export function IntegrationCard({
 						integrationId={integration.id}
 						integrationSlug={integration.slug}
 						disabled={integration.userCanClaim === false}
-						wipIntegrationName={wipIntegrationName}
 						claimBlockReason={claimBlockReason}
 					/>
 				) : null}

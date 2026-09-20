@@ -59,8 +59,12 @@ module.exports = {
 		'^corsair/db$': '<rootDir>/db.ts',
 		'^corsair/orm$': '<rootDir>/orm.ts',
 		'^corsair/http$': '<rootDir>/http.ts',
+		'^corsair/connect$': '<rootDir>/connect.ts',
 		'^corsair/setup$': '<rootDir>/setup.ts',
 		'^corsair/tests$': '<rootDir>/tests.ts',
+		// hub.ts re-exports frpc-binary, whose ESM createRequire lands in dist/hub.js
+		// as import.meta — unparseable by ts-jest's CJS. Map to source like the others.
+		'^corsair/hub$': '<rootDir>/hub.ts',
 		'^corsair$': '<rootDir>/index.ts',
 		'^@corsair-dev/linear$': '<rootDir>/../linear/index.ts',
 		'^@corsair-dev/linear/error-handlers$':

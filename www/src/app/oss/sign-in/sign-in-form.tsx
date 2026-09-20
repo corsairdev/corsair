@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import posthog from 'posthog-js';
 import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -24,7 +25,10 @@ export function SignInForm() {
 				callbackURL: '/oss',
 			},
 			{
-				onSuccess: () => setSent(true),
+				onSuccess: () => {
+					posthog.capture('magic_link_requested');
+					setSent(true);
+				},
 				onError: (ctx) => {
 					setError(ctx.error.message ?? 'Failed to send magic link');
 				},

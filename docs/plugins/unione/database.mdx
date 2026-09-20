@@ -1,0 +1,204 @@
+---
+title: Database
+description: "UniOne local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The UniOne plugin syncs data locally. Use `corsair.unione.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Account
+
+Path: `unione.db.account.search`
+
+```ts
+const rows = await corsair.unione.db.account.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `emails_included` | `number` | equals, gt, gte, lt, lte, in |
+| `emails_sent` | `number` | equals, gt, gte, lt, lte, in |
+| `validations_included` | `number` | equals, gt, gte, lt, lte, in |
+| `validations_used` | `number` | equals, gt, gte, lt, lte, in |
+| `period_start` | `string` | equals, contains, startsWith, endsWith, in |
+| `period_end` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Domains
+
+Path: `unione.db.domains.search`
+
+```ts
+const rows = await corsair.unione.db.domains.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `verification_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `verification_value` | `string` | equals, contains, startsWith, endsWith, in |
+| `dkim_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `dkim_key` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Event Dumps
+
+Path: `unione.db.eventDumps.search`
+
+```ts
+const rows = await corsair.unione.db.eventDumps.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `dump_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `dump_status` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Suppressions
+
+Path: `unione.db.suppressions.search`
+
+```ts
+const rows = await corsair.unione.db.suppressions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `cause` | `string` | equals, contains, startsWith, endsWith, in |
+| `source` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_deletable` | `boolean` | equals |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tags
+
+Path: `unione.db.tags.search`
+
+```ts
+const rows = await corsair.unione.db.tags.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `tag_id` | `number` | equals, gt, gte, lt, lte, in |
+| `tag` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Templates
+
+Path: `unione.db.templates.search`
+
+```ts
+const rows = await corsair.unione.db.templates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `from_email` | `string` | equals, contains, startsWith, endsWith, in |
+| `from_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `editor_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `template_engine` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Webhooks
+
+Path: `unione.db.webhooks.search`
+
+```ts
+const rows = await corsair.unione.db.webhooks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `event_format` | `string` | equals, contains, startsWith, endsWith, in |
+| `delivery_info` | `number` | equals, gt, gte, lt, lte, in |
+| `single_event` | `number` | equals, gt, gte, lt, lte, in |
+| `max_parallel` | `number` | equals, gt, gte, lt, lte, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

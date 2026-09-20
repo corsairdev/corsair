@@ -1,0 +1,4587 @@
+---
+title: API
+description: "API reference for API-Sports: every `apisports.api.*` operation with input and output types."
+---
+
+Every `apisports.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Afl
+
+### getAflGamePlayerStatistics
+
+`afl.getAflGamePlayerStatistics`
+
+Get AFL Game Player Statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.afl.getAflGamePlayerStatistics({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAflGames
+
+`afl.getAflGames`
+
+Get AFL Games
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.afl.getAflGames({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAflGamesQuarters
+
+`afl.getAflGamesQuarters`
+
+Get AFL Games Quarters
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.afl.getAflGamesQuarters({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAflSeasons
+
+`afl.getAflSeasons`
+
+Get AFL Seasons
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.afl.getAflSeasons({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAflStandings
+
+`afl.getAflStandings`
+
+Get AFL Standings
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.afl.getAflStandings({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Baseball
+
+### getBaseballGamesHeadToHead
+
+`baseball.getBaseballGamesHeadToHead`
+
+Get Baseball Games Head-to-Head
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.baseball.getBaseballGamesHeadToHead({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Basketball
+
+### getBasketballBets
+
+`basketball.getBasketballBets`
+
+Get Basketball Bets
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.basketball.getBasketballBets({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBasketballBookmakers
+
+`basketball.getBasketballBookmakers`
+
+Get Basketball Bookmakers
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.basketball.getBasketballBookmakers({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBasketballStatistics
+
+`basketball.getBasketballStatistics`
+
+Get Basketball Statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.basketball.getBasketballStatistics({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getGamesEvents
+
+`basketball.getGamesEvents`
+
+Get Games Events
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.basketball.getGamesEvents({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getGameStatisticsByTeams
+
+`basketball.getGameStatisticsByTeams`
+
+Get Game Statistics by Teams
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.basketball.getGameStatisticsByTeams({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getNbaGameStatistics
+
+`basketball.getNbaGameStatistics`
+
+Get NBA Game Statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.basketball.getNbaGameStatistics({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPlayerStatistics
+
+`basketball.getPlayerStatistics`
+
+Get Player Statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.basketball.getPlayerStatistics({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Core
+
+### getCoaches
+
+`core.getCoaches`
+
+Get Coaches
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.core.getCoaches({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCountries
+
+`core.getCountries`
+
+Get Countries
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.core.getCountries({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInjuries
+
+`core.getInjuries`
+
+Get Injuries
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.core.getInjuries({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLeagues
+
+`core.getLeagues`
+
+Get Leagues
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.core.getLeagues({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLeagueSeasons
+
+`core.getLeagueSeasons`
+
+Get League Seasons
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.core.getLeagueSeasons({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPredictions
+
+`core.getPredictions`
+
+Get Predictions
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.core.getPredictions({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSidelined
+
+`core.getSidelined`
+
+Get Sidelined
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.core.getSidelined({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTeams
+
+`core.getTeams`
+
+Get Teams
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.core.getTeams({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTeamSeasons
+
+`core.getTeamSeasons`
+
+Get Team Seasons
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.core.getTeamSeasons({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTeamStatistics
+
+`core.getTeamStatistics`
+
+Get Team Statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.core.getTeamStatistics({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTimezone
+
+`core.getTimezone`
+
+Get Timezone
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.core.getTimezone({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTransfers
+
+`core.getTransfers`
+
+Get Transfers
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.core.getTransfers({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTrophies
+
+`core.getTrophies`
+
+Get Trophies
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.core.getTrophies({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVenues
+
+`core.getVenues`
+
+Get Venues
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.core.getVenues({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fixtures
+
+### getFixtureLineups
+
+`fixtures.getFixtureLineups`
+
+Get Fixture Lineups
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.fixtures.getFixtureLineups({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFixtures
+
+`fixtures.getFixtures`
+
+Get Fixtures
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.fixtures.getFixtures({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFixturesEvents
+
+`fixtures.getFixturesEvents`
+
+Get Fixtures Events
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.fixtures.getFixturesEvents({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFixturesPlayers
+
+`fixtures.getFixturesPlayers`
+
+Get Fixtures Players
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.fixtures.getFixturesPlayers({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFixturesRounds
+
+`fixtures.getFixturesRounds`
+
+Get Fixtures Rounds
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.fixtures.getFixturesRounds({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFixtureStatistics
+
+`fixtures.getFixtureStatistics`
+
+Get Fixture Statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.fixtures.getFixtureStatistics({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getHeadToHeadFixtures
+
+`fixtures.getHeadToHeadFixtures`
+
+Get Head-to-Head Fixtures
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.fixtures.getHeadToHeadFixtures({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Formula1
+
+### getFastestLapsRankings
+
+`formula1.getFastestLapsRankings`
+
+Get Fastest Laps Rankings
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.formula1.getFastestLapsRankings({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFormula1Circuits
+
+`formula1.getFormula1Circuits`
+
+Get Formula 1 Circuits
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.formula1.getFormula1Circuits({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFormula1Competitions
+
+`formula1.getFormula1Competitions`
+
+Get Formula 1 Competitions
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.formula1.getFormula1Competitions({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFormula1DriverRankings
+
+`formula1.getFormula1DriverRankings`
+
+Get Formula 1 Driver Rankings
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.formula1.getFormula1DriverRankings({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFormula1Races
+
+`formula1.getFormula1Races`
+
+Get Formula 1 Races
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.formula1.getFormula1Races({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFormula1StartingGrid
+
+`formula1.getFormula1StartingGrid`
+
+Get Formula 1 Starting Grid
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.formula1.getFormula1StartingGrid({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFormula1TeamRankings
+
+`formula1.getFormula1TeamRankings`
+
+Get Formula 1 Team Rankings
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.formula1.getFormula1TeamRankings({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRaceRankings
+
+`formula1.getRaceRankings`
+
+Get Race Rankings
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.formula1.getRaceRankings({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Mma
+
+### getFightersRecords
+
+`mma.getFightersRecords`
+
+Get Fighters Records
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.mma.getFightersRecords({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMmaCategories
+
+`mma.getMmaCategories`
+
+Get MMA Categories
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.mma.getMmaCategories({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMmaFighters
+
+`mma.getMmaFighters`
+
+Get MMA Fighters
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.mma.getMmaFighters({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMmaFighterStatistics
+
+`mma.getMmaFighterStatistics`
+
+Get MMA Fighter Statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.mma.getMmaFighterStatistics({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMmaFightResults
+
+`mma.getMmaFightResults`
+
+Get MMA Fight Results
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.mma.getMmaFightResults({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMmaFights
+
+`mma.getMmaFights`
+
+Get MMA Fights
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.mma.getMmaFights({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Odds
+
+### getInPlayOdds
+
+`odds.getInPlayOdds`
+
+Get In-Play Odds
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.odds.getInPlayOdds({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLiveOddsBets
+
+`odds.getLiveOddsBets`
+
+Get Live Odds Bets
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.odds.getLiveOddsBets({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOdds
+
+`odds.getOdds`
+
+Get Odds
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.odds.getOdds({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOddsBets
+
+`odds.getOddsBets`
+
+Get Odds Bets
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.odds.getOddsBets({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOddsBookmakers
+
+`odds.getOddsBookmakers`
+
+Get Odds Bookmakers
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.odds.getOddsBookmakers({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOddsMapping
+
+`odds.getOddsMapping`
+
+Get Odds Mapping
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.odds.getOddsMapping({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Players
+
+### getPlayers
+
+`players.getPlayers`
+
+Get Players
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.players.getPlayers({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPlayersProfiles
+
+`players.getPlayersProfiles`
+
+Get Players Profiles
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.players.getPlayersProfiles({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPlayersSeasons
+
+`players.getPlayersSeasons`
+
+Get Players Seasons
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.players.getPlayersSeasons({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPlayersSquads
+
+`players.getPlayersSquads`
+
+Get Players Squads
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.players.getPlayersSquads({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPlayersTeams
+
+`players.getPlayersTeams`
+
+Get Players Teams
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.players.getPlayersTeams({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPlayersTopAssists
+
+`players.getPlayersTopAssists`
+
+Get Players Top Assists
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.players.getPlayersTopAssists({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPlayersTopRedCards
+
+`players.getPlayersTopRedCards`
+
+Get Players Top Red Cards
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.players.getPlayersTopRedCards({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPlayersTopScorers
+
+`players.getPlayersTopScorers`
+
+Get Players Top Scorers
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.players.getPlayersTopScorers({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPlayersTopYellowCards
+
+`players.getPlayersTopYellowCards`
+
+Get Players Top Yellow Cards
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.players.getPlayersTopYellowCards({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Standings
+
+### getNflStandingsConferences
+
+`standings.getNflStandingsConferences`
+
+Get NFL Standings Conferences
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.standings.getNflStandingsConferences({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStandingsDivisions
+
+`standings.getStandingsDivisions`
+
+Get Standings Divisions
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.standings.getStandingsDivisions({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStandingsGroups
+
+`standings.getStandingsGroups`
+
+Get Standings Groups
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.standings.getStandingsGroups({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStandingsStages
+
+`standings.getStandingsStages`
+
+Get Standings Stages
+
+**Risk:** `read`
+
+```ts
+await corsair.apisports.api.standings.getStandingsStages({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `get` | `string` | No | — |
+| `parameters` | `object[]` | No | — |
+| `errors` | `object` | No | — |
+| `results` | `number` | No | — |
+| `paging` | `object` | No | — |
+| `response` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+any[] | {
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
