@@ -365,13 +365,7 @@ export type SupadataMetadataMedia = z.infer<typeof SupadataMetadataMedia>;
 
 export const SupadataMetadata = z
 	.object({
-		platform: z.enum([
-			'youtube',
-			'tiktok',
-			'instagram',
-			'twitter',
-			'facebook',
-		]),
+		platform: z.enum(['youtube', 'tiktok', 'instagram', 'twitter', 'facebook']),
 		type: z.enum(['video', 'image', 'carousel', 'post']),
 		id: z.string(),
 		url: z.string().optional(),

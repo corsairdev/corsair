@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import {
 	SupadataAccount,
+	SupadataMetadata,
 	SupadataTranscript,
 	SupadataTranscriptJob,
 	SupadataTranscriptJobRef,
@@ -11,7 +12,6 @@ import {
 	SupadataYoutubePlaylist,
 	SupadataYoutubeSearchResult,
 	SupadataYoutubeVideo,
-	SupadataMetadata,
 } from '../schema/database';
 
 /**
