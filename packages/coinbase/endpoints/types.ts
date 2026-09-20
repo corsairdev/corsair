@@ -210,6 +210,7 @@ export type ProductBookOutput = z.infer<typeof ProductBookOutputSchema>;
 
 export const MarketTradesOutputSchema = z
 	.object({
+		// unknown: trade objects vary by Coinbase market type (spot, brokerage); no closed schema.
 		trades: z.array(z.record(z.string(), z.unknown())).optional(),
 		best_bid: z.string().optional(),
 		best_ask: z.string().optional(),
