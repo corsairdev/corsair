@@ -1,0 +1,44 @@
+name: Publish corsair-cloud to PyPI
+
+on:
+  push:
+    tags:
+      - 'corsair-cloud-py-v*'
+
+# Trusted Publishing (OIDC) — no PyPI token stored. The `pypi` environment must
+# be configured on the repo and named in the PyPI publisher for id-token to be
+# accepted.
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: pypi
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify tag matches package version
+        working-directory: clients/python
+        run: |
+          tag_version="${GITHUB_REF_NAME#corsair-cloud-py-v}"
+          pkg_version="$(grep -m1 -E '^version' pyproject.toml | sed -E 's/.*"([^"]+)".*/\1/')"
+          if [ "$tag_version" != "$pkg_version" ]; then
+            echo "Tag version ($tag_version) does not match pyproject version ($pkg_version)" >&2
+            exit 1
+          fi
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build
+        run: pipx run build
+        working-directory: clients/python
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: clients/python/dist
