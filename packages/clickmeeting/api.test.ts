@@ -217,6 +217,23 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 			expect(result).toEqual(mockFiles);
 		});
 
+		it('getConferenceSkins', async () => {
+			const mockSkins = [{ id: 1, name: 'Default Skin' }];
+			mockMakeRequest.mockResolvedValueOnce(mockSkins);
+			const result = await plugin.endpoints!.conferences.getConferenceSkins(
+				mockContext,
+				{},
+			);
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'/conferences/skins',
+				'test_api_key',
+				{
+					method: 'GET',
+				},
+			);
+			expect(result).toEqual(mockSkins);
+		});
+
 		it('sendInvitation', async () => {
 			mockMakeRequest.mockResolvedValueOnce({ status: 'sent', queued: 1 });
 			const result = await plugin.endpoints!.conferences.sendInvitation(

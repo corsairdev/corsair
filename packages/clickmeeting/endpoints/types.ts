@@ -259,6 +259,9 @@ export const GetConferenceFilesInputSchema = z.object({
 });
 export const GetConferenceFilesOutputSchema = z.array(ConferenceFileItemSchema);
 
+export const GetConferenceSkinsInputSchema = z.object({});
+export const GetConferenceSkinsOutputSchema = z.array(ConferenceSkinItemSchema);
+
 export const SendInvitationInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	lang: z
@@ -580,6 +583,7 @@ export type ClickmeetingEndpointInputs = {
 	updateConference: z.infer<typeof UpdateConferenceInputSchema>;
 	deleteConference: z.infer<typeof DeleteConferenceInputSchema>;
 	getConferenceFiles: z.infer<typeof GetConferenceFilesInputSchema>;
+	getConferenceSkins: z.infer<typeof GetConferenceSkinsInputSchema>;
 	sendInvitation: z.infer<typeof SendInvitationInputSchema>;
 	generateAutologinUrl: z.infer<typeof GenerateAutologinUrlInputSchema>;
 	// tokens
@@ -627,6 +631,7 @@ export type ClickmeetingEndpointOutputs = {
 	updateConference: z.infer<typeof UpdateConferenceOutputSchema>;
 	deleteConference: z.infer<typeof DeleteConferenceOutputSchema>;
 	getConferenceFiles: z.infer<typeof GetConferenceFilesOutputSchema>;
+	getConferenceSkins: z.infer<typeof GetConferenceSkinsOutputSchema>;
 	sendInvitation: z.infer<typeof SendInvitationOutputSchema>;
 	generateAutologinUrl: z.infer<typeof GenerateAutologinUrlOutputSchema>;
 	// tokens
@@ -674,6 +679,7 @@ export const ClickmeetingEndpointInputSchemas = {
 	updateConference: UpdateConferenceInputSchema,
 	deleteConference: DeleteConferenceInputSchema,
 	getConferenceFiles: GetConferenceFilesInputSchema,
+	getConferenceSkins: GetConferenceSkinsInputSchema,
 	sendInvitation: SendInvitationInputSchema,
 	generateAutologinUrl: GenerateAutologinUrlInputSchema,
 	createAccessTokens: CreateAccessTokensInputSchema,
@@ -711,6 +717,7 @@ export const ClickmeetingEndpointOutputSchemas = {
 	updateConference: UpdateConferenceOutputSchema,
 	deleteConference: DeleteConferenceOutputSchema,
 	getConferenceFiles: GetConferenceFilesOutputSchema,
+	getConferenceSkins: GetConferenceSkinsOutputSchema,
 	sendInvitation: SendInvitationOutputSchema,
 	generateAutologinUrl: GenerateAutologinUrlOutputSchema,
 	createAccessTokens: CreateAccessTokensOutputSchema,

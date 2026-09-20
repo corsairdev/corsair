@@ -74,6 +74,7 @@ export type ClickmeetingEndpoints = {
 	updateConference: ClickmeetingEndpoint<'updateConference'>;
 	deleteConference: ClickmeetingEndpoint<'deleteConference'>;
 	getConferenceFiles: ClickmeetingEndpoint<'getConferenceFiles'>;
+	getConferenceSkins: ClickmeetingEndpoint<'getConferenceSkins'>;
 	sendInvitation: ClickmeetingEndpoint<'sendInvitation'>;
 	generateAutologinUrl: ClickmeetingEndpoint<'generateAutologinUrl'>;
 	// tokens
@@ -120,6 +121,7 @@ const clickmeetingEndpointsNested = {
 		updateConference: ConferencesEndpoints.updateConference,
 		deleteConference: ConferencesEndpoints.deleteConference,
 		getConferenceFiles: ConferencesEndpoints.getConferenceFiles,
+		getConferenceSkins: ConferencesEndpoints.getConferenceSkins,
 		sendInvitation: ConferencesEndpoints.sendInvitation,
 		generateAutologinUrl: ConferencesEndpoints.generateAutologinUrl,
 	},
@@ -201,6 +203,10 @@ export const clickmeetingEndpointSchemas = {
 	'conferences.getConferenceFiles': {
 		input: ClickmeetingEndpointInputSchemas.getConferenceFiles,
 		output: ClickmeetingEndpointOutputSchemas.getConferenceFiles,
+	},
+	'conferences.getConferenceSkins': {
+		input: ClickmeetingEndpointInputSchemas.getConferenceSkins,
+		output: ClickmeetingEndpointOutputSchemas.getConferenceSkins,
 	},
 	'conferences.sendInvitation': {
 		input: ClickmeetingEndpointInputSchemas.sendInvitation,
@@ -347,6 +353,10 @@ const clickmeetingEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Retrieve list of files uploaded to a specific conference room',
+	},
+	'conferences.getConferenceSkins': {
+		riskLevel: 'read',
+		description: 'Retrieve list of available conference room skins',
 	},
 	'conferences.sendInvitation': {
 		riskLevel: 'write',
