@@ -7,7 +7,6 @@ import {
 	getTime,
 	listCurrencies,
 } from './data';
-import { listPaymentMethods } from './payment-methods';
 import {
 	getExchangeCurrency,
 	getMarketProductBook,
@@ -25,6 +24,7 @@ import {
 	listProductsTrades,
 	listWallets,
 } from './markets';
+import { listPaymentMethods } from './payment-methods';
 import { getTransaction, listTransactions } from './transactions';
 import { getUser } from './user';
 

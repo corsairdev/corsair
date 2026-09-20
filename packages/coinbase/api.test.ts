@@ -478,7 +478,9 @@ describe('Coinbase Advanced Trade market endpoints', () => {
 			jsonResponse({ iso: '2015-06-23T18:02:51Z', epochSeconds: '1435082571' }),
 		);
 		const result = await getServerTime(ctx, {});
-		expect(lastRequest().url).toBe(`${COINBASE_API_BASE}/api/v3/brokerage/time`);
+		expect(lastRequest().url).toBe(
+			`${COINBASE_API_BASE}/api/v3/brokerage/time`,
+		);
 		expect(result).toMatchObject({ iso: '2015-06-23T18:02:51Z' });
 	});
 });
