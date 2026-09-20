@@ -29,9 +29,8 @@ export const opportunitiesList = async (
 	ctx: CloseContext,
 	input?: OpportunitiesListInput,
 ): Promise<OpportunitiesListResponse> => {
-	const parsedInput = input
-		? OpportunitiesListInputSchema.parse(input)
-		: undefined;
+	const parsedInput =
+		input === undefined ? undefined : OpportunitiesListInputSchema.parse(input);
 	const res = await makeCloseRequest<unknown>('opportunity/', ctx.key, {
 		method: 'GET',
 		query: parsedInput,

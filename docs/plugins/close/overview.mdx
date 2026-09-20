@@ -24,7 +24,7 @@ npm install corsair @corsair-dev/close
 yarn add corsair @corsair-dev/close
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/close
+pnpm add corsair @corsair-dev/close
 ```
 ```bash bun
 bun add corsair @corsair-dev/close
@@ -115,7 +115,7 @@ await tenant.close.api.activities.listCalls({});
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.close.api.activities.createNote({});
+await tenant.close.api.activities.createNote({ lead_id: 'lead_123', note: 'Example note' });
 ```
 
 

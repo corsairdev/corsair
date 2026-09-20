@@ -1,9 +1,6 @@
 import {
-	CloseActivityCall,
-	CloseActivityEmail,
 	CloseActivityNote,
 	CloseContact,
-	CloseCustomField,
 	CloseLead,
 	CloseOpportunity,
 	CloseSchema,

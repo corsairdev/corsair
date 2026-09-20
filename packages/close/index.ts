@@ -501,7 +501,7 @@ export function close<const T extends ClosePluginOptions>(
 		webhookSchemas: closeWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			return 'x-close-signature' in headers || 'close-signature' in headers;
+			return Object.hasOwn(headers, 'x-close-signature');
 		},
 		pluginTenantWebhookMatcher: matchCloseTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveCloseOAuthWebhookTenantLink,
@@ -516,7 +516,12 @@ export function close<const T extends ClosePluginOptions>(
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:close:webhook_signature]: Close webhook signature is missing',
+					);
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && options.key) {

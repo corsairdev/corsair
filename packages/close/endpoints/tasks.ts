@@ -29,7 +29,8 @@ export const tasksList = async (
 	ctx: CloseContext,
 	input?: TasksListInput,
 ): Promise<TasksListResponse> => {
-	const parsedInput = input ? TasksListInputSchema.parse(input) : undefined;
+	const parsedInput =
+		input === undefined ? undefined : TasksListInputSchema.parse(input);
 	const res = await makeCloseRequest<unknown>('task/', ctx.key, {
 		method: 'GET',
 		query: parsedInput,

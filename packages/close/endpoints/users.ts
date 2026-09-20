@@ -17,7 +17,8 @@ export const usersGetMe = async (
 	ctx: CloseContext,
 	input?: UsersGetMeInput,
 ): Promise<UsersGetMeResponse> => {
-	const parsedInput = input ? UsersGetMeInputSchema.parse(input) : undefined;
+	const parsedInput =
+		input === undefined ? undefined : UsersGetMeInputSchema.parse(input);
 	const res = await makeCloseRequest<unknown>('me/', ctx.key, {
 		method: 'GET',
 		query: parsedInput,
@@ -29,7 +30,8 @@ export const usersList = async (
 	ctx: CloseContext,
 	input?: UsersListInput,
 ): Promise<UsersListResponse> => {
-	const parsedInput = input ? UsersListInputSchema.parse(input) : undefined;
+	const parsedInput =
+		input === undefined ? undefined : UsersListInputSchema.parse(input);
 	const res = await makeCloseRequest<unknown>('user/', ctx.key, {
 		method: 'GET',
 		query: parsedInput,
