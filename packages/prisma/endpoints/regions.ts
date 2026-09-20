@@ -39,7 +39,28 @@ export const listPostgresRegions: PrismaEndpoint = async (ctx, input = {}) => {
 	return result;
 };
 
+const listAccelerateRegionsDefinition = findOperation(
+	regionsOperations,
+	'listAccelerate',
+);
+export const listAccelerateRegions: PrismaEndpoint = async (ctx, input = {}) => {
+	const result = await requestPrismaOperation(
+		ctx,
+		input,
+		listAccelerateRegionsDefinition,
+	);
+	await syncPrismaOperationResult(
+		ctx,
+		listAccelerateRegionsDefinition,
+		input,
+		result,
+	);
+	await logPrismaOperation(ctx, input, listAccelerateRegionsDefinition);
+	return result;
+};
+
 export const RegionsEndpoints = {
 	list: listRegions,
 	listPostgres: listPostgresRegions,
+	listAccelerate: listAccelerateRegions,
 } as const;

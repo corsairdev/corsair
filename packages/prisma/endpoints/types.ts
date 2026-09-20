@@ -255,6 +255,7 @@ const PRISMA_REST_OUTPUT_SCHEMAS: Record<string, z.ZodTypeAny> = {
 	restoreBackup: EmptyResponseSchema,
 	listRegions: ListRegionsOutputSchema,
 	listPostgresRegions: ListPostgresRegionsOutputSchema,
+	listAccelerateRegions: ListRegionsOutputSchema,
 	listWorkspaceIntegrations: ListWorkspaceIntegrationsOutputSchema,
 };
 

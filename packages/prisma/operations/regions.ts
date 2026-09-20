@@ -20,4 +20,13 @@ export const regionsOperations = [
 		riskLevel: 'read',
 		description: 'List all available Prisma Postgres regions with availability',
 	},
+	{
+		key: 'listAccelerateRegions',
+		group: 'regions',
+		name: 'listAccelerate',
+		method: 'GET',
+		path: '/regions/accelerate',
+		riskLevel: 'read',
+		description: 'List all available Prisma Accelerate regions',
+	},
 ] as const satisfies readonly PrismaOperation[];

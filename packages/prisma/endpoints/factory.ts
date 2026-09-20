@@ -111,6 +111,11 @@ const CACHE_RULES: Record<string, CacheRule> = {
 		idKeys: ['id', 'region'],
 		listKeys: ['data', 'items'],
 	},
+	listAccelerateRegions: {
+		entity: 'regions',
+		idKeys: ['id', 'region'],
+		listKeys: ['data', 'items'],
+	},
 	listWorkspaceIntegrations: {
 		entity: 'integrations',
 		idKeys: ['id'],

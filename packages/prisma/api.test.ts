@@ -81,9 +81,9 @@ describe('Prisma plugin shape', () => {
 		const endpoints = plugin.endpoints as Record<string, unknown>;
 		const paths = endpointPaths(endpoints).sort();
 
-		expect(countLeaves(endpoints)).toBe(22);
-		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(22);
-		expect(Object.keys(prismaEndpointSchemas)).toHaveLength(22);
+		expect(countLeaves(endpoints)).toBe(23);
+		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(23);
+		expect(Object.keys(prismaEndpointSchemas)).toHaveLength(23);
 		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(paths);
 		expect(Object.keys(prismaEndpointSchemas).sort()).toEqual(paths);
 		expect(Object.keys(plugin.schema?.entities ?? {})).toEqual([
