@@ -1,0 +1,148 @@
+---
+title: API
+description: "API reference for Contentful: every `contentfulgraphql.api.*` operation with input and output types."
+---
+
+Every `contentfulgraphql.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Get Cma Token
+
+### getCmaToken
+
+`getCmaToken`
+
+Get the stored Contentful access token, space ID, and environment ID
+
+**Risk:** `read`
+
+```ts
+await corsair.contentfulgraphql.api.getCmaToken({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | Yes | — |
+| `environment_id` | `string` | No | — |
+
+
+
+---
+
+## Graph Ql Content Api Persisted Query
+
+### graphQlContentApiPersistedQuery
+
+`graphQlContentApiPersistedQuery`
+
+Run an automatic persisted query (APQ) against the Contentful GraphQL Content API using a SHA-256 hash
+
+**Risk:** `read`
+
+```ts
+await corsair.contentfulgraphql.api.graphQlContentApiPersistedQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `sha256Hash` | `string` | No | — |
+| `variables` | `object` | No | — |
+| `operationName` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Graph Ql Content Api Query
+
+### graphQlContentApiQuery
+
+`graphQlContentApiQuery`
+
+Run a GraphQL query against the Contentful GraphQL Content API for the configured space and environment
+
+**Risk:** `read`
+
+```ts
+await corsair.contentfulgraphql.api.graphQlContentApiQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `variables` | `object` | No | — |
+| `operationName` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
