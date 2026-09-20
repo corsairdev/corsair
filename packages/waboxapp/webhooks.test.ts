@@ -1,4 +1,5 @@
 import type { RawWebhookRequest } from 'corsair/core';
+import { z } from 'zod';
 import { waboxapp } from './index';
 import { matchWaboxappTenantWebhook } from './webhooks/tenant-matcher';
 import {
@@ -22,6 +23,17 @@ const formRequest = (body: string): RawWebhookRequest => ({
 	body,
 });
 
+// Test-only narrowing for untyped webhook fields — `unknown` at the webhook
+// boundary, validated with a Zod schema (discriminated-union result) instead
+// of casting.
+const WebhookRecordSchema = z.record(z.string(), z.unknown());
+function expectRecord(value: unknown): Record<string, unknown> {
+	const parsed = WebhookRecordSchema.safeParse(value);
+	expect(parsed.success).toBe(true);
+	if (!parsed.success) throw new Error('expected a record object');
+	return parsed.data;
+}
+
 describe('parseWaboxappWebhookBody', () => {
 	it('parses a form-encoded message and nests bracket keys', () => {
 		const parsed = parseWaboxappWebhookBody(MESSAGE_BODY);
@@ -29,15 +41,13 @@ describe('parseWaboxappWebhookBody', () => {
 		expect(parsed?.event).toBe('message');
 		expect(parsed?.token).toBe('abcd1234');
 		expect(parsed?.uid).toBe('34666123456');
-		const contact = parsed?.contact as Record<string, unknown>;
+		const contact = expectRecord(parsed?.contact);
 		expect(contact.uid).toBe('34666789123');
 		expect(contact.name).toBe('Peter');
-		const message = parsed?.message as Record<string, unknown>;
+		const message = expectRecord(parsed?.message);
 		expect(message.uid).toBe('62397B58E3E0B');
 		expect(message.type).toBe('chat');
-		expect((message.body as Record<string, unknown>).text).toBe(
-			'Hey! How are you doing?',
-		);
+		expect(expectRecord(message.body).text).toBe('Hey! How are you doing?');
 	});
 
 	it('accepts an already nested object', () => {
@@ -56,7 +66,7 @@ describe('parseWaboxappWebhookBody', () => {
 			uid: '1',
 			'contact[uid]': '2',
 		});
-		expect((parsed?.contact as Record<string, unknown>).uid).toBe('2');
+		expect(expectRecord(parsed?.contact).uid).toBe('2');
 	});
 
 	it('returns null for empty or non-object bodies', () => {
@@ -77,7 +87,8 @@ describe('createWaboxappMatch', () => {
 });
 
 describe('pluginWebhookMatcher', () => {
-	const matcher = waboxapp().pluginWebhookMatcher!;
+	const matcher = waboxapp().pluginWebhookMatcher;
+	if (!matcher) throw new Error('expected pluginWebhookMatcher');
 
 	it('accepts waboxapp message and ack payloads', () => {
 		expect(matcher(formRequest(MESSAGE_BODY))).toBe(true);

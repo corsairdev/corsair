@@ -20,10 +20,8 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(null),
 }));
 
-const mockRequest = request as jest.MockedFunction<typeof request>;
-const mockLogEvent = logEventFromContext as jest.MockedFunction<
-	typeof logEventFromContext
->;
+const mockRequest = jest.mocked(request);
+const mockLogEvent = jest.mocked(logEventFromContext);
 
 const ctx = {
 	key: 'tok12345',
@@ -53,9 +51,10 @@ describe('messages.sendChat', () => {
 				mediaType: 'application/x-www-form-urlencoded',
 			}),
 		);
-		const body = mockRequest.mock.calls[0]?.[1]?.body as string;
-		expect(typeof body).toBe('string');
-		const params = new URLSearchParams(body);
+		const rawBody: unknown = mockRequest.mock.calls[0]?.[1]?.body;
+		expect(typeof rawBody).toBe('string');
+		if (typeof rawBody !== 'string') throw new Error('expected string body');
+		const params = new URLSearchParams(rawBody);
 		expect(params.get('token')).toBe('tok12345');
 		expect(params.get('uid')).toBe('34666123456');
 		expect(params.get('to')).toBe('34666789123');

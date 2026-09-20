@@ -28,11 +28,12 @@ describe('Waboxapp plugin', () => {
 
 		const parsedBody = parseWaboxappWebhookBody(MESSAGE_BODY);
 		expect(parsedBody).not.toBeNull();
+		if (parsedBody === null) throw new Error('expected parsed webhook body');
 
 		const result = await processWebhook(
 			corsair,
 			{ 'content-type': 'application/x-www-form-urlencoded' },
-			parsedBody as Record<string, unknown>,
+			parsedBody,
 		);
 
 		expect(result.plugin).toBe('waboxapp');

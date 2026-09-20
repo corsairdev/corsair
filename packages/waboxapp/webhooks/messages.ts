@@ -10,6 +10,8 @@ import {
 
 async function handleWebhook<T>(
 	ctx: WaboxappContext,
+	// unknown: webhook boundary — validated with parseWaboxappWebhookBody and
+	// the Zod schema below instead of casting.
 	payload: unknown,
 	schema: {
 		safeParse: (

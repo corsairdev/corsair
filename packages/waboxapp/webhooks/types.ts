@@ -6,6 +6,12 @@ function isUnsafeBracketKey(key: string): boolean {
 	return key === '__proto__' || key === 'constructor' || key === 'prototype';
 }
 
+// Webhook bodies arrive untyped, so `unknown` is used at this boundary and
+// narrowed with this guard instead of casting.
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 function assignBracketPath(
 	target: Record<string, unknown>,
 	rawKey: string,
@@ -33,11 +39,14 @@ function assignBracketPath(
 	let cursor: Record<string, unknown> = target;
 	for (const key of segments.slice(0, -1)) {
 		if (isUnsafeBracketKey(key)) return;
-		const existing = cursor[key];
-		if (existing === null || typeof existing !== 'object') {
-			cursor[key] = {};
+		const existing: unknown = cursor[key];
+		if (isRecord(existing)) {
+			cursor = existing;
+		} else {
+			const next: Record<string, unknown> = {};
+			cursor[key] = next;
+			cursor = next;
 		}
-		cursor = cursor[key] as Record<string, unknown>;
 	}
 
 	const lastKey = segments[segments.length - 1];
@@ -62,10 +71,12 @@ function nestBracketKeys(
 }
 
 export function parseWaboxappWebhookBody(
+	// unknown: webhook boundary — accepts raw strings, parsed objects, or
+	// anything else; narrowed with isRecord/typeof below instead of casting.
 	body: unknown,
 ): Record<string, unknown> | null {
-	if (body !== null && typeof body === 'object' && !Array.isArray(body)) {
-		return nestBracketKeys(body as Record<string, unknown>);
+	if (isRecord(body)) {
+		return nestBracketKeys(body);
 	}
 	if (typeof body !== 'string') {
 		return null;
@@ -76,12 +87,8 @@ export function parseWaboxappWebhookBody(
 
 	if (trimmed.startsWith('{')) {
 		try {
-			const parsed = JSON.parse(trimmed) as unknown;
-			return parsed !== null &&
-				typeof parsed === 'object' &&
-				!Array.isArray(parsed)
-				? nestBracketKeys(parsed as Record<string, unknown>)
-				: null;
+			const parsed: unknown = JSON.parse(trimmed);
+			return isRecord(parsed) ? nestBracketKeys(parsed) : null;
 		} catch {
 			return null;
 		}
