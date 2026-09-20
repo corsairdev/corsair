@@ -498,6 +498,7 @@ function jsonResponse(payload: unknown) {
 		text: async () => JSON.stringify(payload),
 		json: async () => payload,
 		arrayBuffer: async () => Buffer.from(JSON.stringify(payload)),
+		// biome-ignore lint/suspicious/noExplicitAny: test mock requires broad assertion to satisfy Response interface - payload is validated via Zod before use
 	} as unknown as Response;
 }
 
