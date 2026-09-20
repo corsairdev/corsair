@@ -81,7 +81,7 @@ Auth: API key. Corsair prompts your tenant for credentials on first use.
 
 ## Webhooks
 
-Handles 1 webhook event. See the reference for payloads and `webhookHooks`.
+No webhooks.
 
 ## Reference
 

@@ -5,7 +5,6 @@ import type {
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -97,13 +96,10 @@ import { EndpointInputSchemas, EndpointOutputSchemas } from './endpoints/types';
 
 import { errorHandlers } from './error-handlers';
 import { SpokiSchema } from './schema';
-import { matchSpokiPluginWebhook, matchSpokiTenantWebhook } from './webhooks';
-import { spokiEvent } from './webhooks/event';
 
 export type SpokiPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalSpokiPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof spokiEndpointsNested>;
@@ -223,13 +219,10 @@ const spokiEndpointsNested = {
 	},
 } as const;
 
-export type SpokiWebhooks = {
-	event: CorsairWebhook<SpokiContext, unknown, unknown>;
-};
-
-const spokiWebhooksNested = {
-	event: spokiEvent,
-} as const;
+// Spoki exposes no webhook subscriptions for this integration surface, so
+// the plugin ships no webhooks. An empty nested map is the established
+// convention for webhook-less plugins.
+const spokiWebhooksNested = {} as const;
 
 function io<K extends keyof typeof EndpointInputSchemas>(key: K) {
 	return {
@@ -433,12 +426,6 @@ export function spoki<const T extends SpokiPluginOptions>(
 
 		endpointSchemas: spokiEndpointSchemas,
 
-		pluginWebhookMatcher: (request) =>
-			matchSpokiPluginWebhook(request, options.webhookSecret),
-
-		pluginTenantWebhookMatcher: (request) =>
-			matchSpokiTenantWebhook(request, options.webhookSecret),
-
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -448,10 +435,6 @@ export function spoki<const T extends SpokiPluginOptions>(
 			ctx: SpokiKeyBuilderContext,
 			source: 'endpoint' | 'webhook',
 		) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
