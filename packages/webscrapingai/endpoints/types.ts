@@ -51,6 +51,7 @@ export const GetTextInputSchema = z.object({
 export const GetAccountInfoInputSchema = z.object({}).strict();
 
 export const QuestionResponseSchema = z.string();
+// unknown: extracted field values are caller-defined JSON of any shape.
 export const ExtractFieldsResponseSchema = z.record(z.string(), z.unknown());
 export const HtmlResponseSchema = z.string();
 export const SelectedHtmlResponseSchema = z.string();

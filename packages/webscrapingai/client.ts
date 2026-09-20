@@ -2,6 +2,7 @@ import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 const WEBSCRAPING_AI_API_BASE = 'https://api.webscraping.ai';
+// unknown: query keys differ per scrape/AI route; Zod validates before the call.
 export type WebScrapingAIQuery = Record<string, unknown>;
 
 export async function makeWebScrapingAIRequest<T>(
