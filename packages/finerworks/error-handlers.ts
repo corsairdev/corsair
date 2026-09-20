@@ -39,6 +39,7 @@ function retryAfterOf(error: Error): number | undefined {
 		return error.retryAfter;
 	}
 
+	// unknown: Node Error.cause is untyped; we only use it when it is an ApiError.
 	const cause = (error as { cause?: unknown }).cause;
 	if (cause instanceof ApiError && cause.retryAfter !== undefined) {
 		return cause.retryAfter;

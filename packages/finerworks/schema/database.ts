@@ -258,12 +258,11 @@ export const FinerWorksVirtualInventoryProduct = z
 		geo_price: z.number().nullable().optional(),
 		third_party_integrations:
 			FinerWorksThirdPartyIntegrations.nullable().optional(),
-		// `price_details`, `framing_options` and `product_size` are null in every
-		// documented response for this endpoint and FinerWorks does not publish a
-		// shape for them, so there is no better type to narrow to yet. Kept as
-		// `unknown` rather than `any` so callers must narrow before use.
+		// unknown: price details bag is unpublished by provider; callers narrow after parse
 		price_details: z.unknown().nullable().optional(),
+		// unknown: framing options bag is unpublished by provider; callers narrow after parse
 		framing_options: z.unknown().nullable().optional(),
+		// unknown: product size bag is unpublished by provider; callers narrow after parse
 		product_size: z.unknown().nullable().optional(),
 		updated: z.string().nullable().optional(),
 		valid: z.boolean().nullable().optional(),
@@ -292,8 +291,7 @@ export const FinerWorksShipment = z
 		tracking_url: z.string().nullable().optional(),
 		carrier: z.string().nullable().optional(),
 		service: z.string().nullable().optional(),
-		// Documented as null on every shipment in the reference; no published
-		// shape to narrow to. `unknown` keeps it opaque but type-safe.
+		// unknown: shipment history payload has no published schema in API reference
 		history: z.unknown().nullable().optional(),
 	})
 	.loose();

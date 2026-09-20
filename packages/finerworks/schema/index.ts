@@ -15,9 +15,7 @@ import {
 	FinerWorksProductType,
 	FinerWorksShipment,
 	FinerWorksShippingOption,
-	FinerWorksShippingQuote,
 	FinerWorksStyleType,
-	FinerWorksSubmittedOrder,
 	FinerWorksUserAccount,
 	FinerWorksVirtualInventoryProduct,
 } from './database';

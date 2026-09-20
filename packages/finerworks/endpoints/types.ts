@@ -14,7 +14,6 @@ import {
 	FinerWorksOrderStatusDefinition,
 	FinerWorksPrice,
 	FinerWorksProductType,
-	FinerWorksShippingOption,
 	FinerWorksShippingQuote,
 	FinerWorksStyleType,
 	FinerWorksSubmittedOrder,
@@ -95,16 +94,16 @@ export const FinerWorksOrderItemInputSchema = z
 		product_order_po: z.string().nullable().optional(),
 		product_qty: z.number().int().positive(),
 		product_sku: z.string(),
-		// Pass-through blobs. These are null in every documented example and the
-		// reference does not publish their shape for this endpoint, so they are
-		// forwarded verbatim rather than narrowed to a guessed structure.
+		// unknown: pass-through image blob has no documented schema in API reference
 		product_image: z.unknown().nullable().optional(),
 		product_title: z.string().nullable().optional(),
+		// unknown: template payload has no documented schema in API reference
 		template: z.unknown().nullable().optional(),
 		product_guid: z.string().nullable().optional(),
 		custom_data_1: z.string().nullable().optional(),
 		custom_data_2: z.string().nullable().optional(),
 		custom_data_3: z.string().nullable().optional(),
+		// unknown: certificate of authenticity payload has no documented schema
 		coa: z.unknown().nullable().optional(),
 	})
 	.loose();
@@ -121,7 +120,7 @@ export const FinerWorksOrderInputSchema = z
 		order_items: z.array(FinerWorksOrderItemInputSchema).min(1),
 		shipping_code: z.string().nullable().optional(),
 		ship_by_date: z.string().nullable().optional(),
-		// Null in every documented example; no published shape to narrow to.
+		// unknown: customs tax info payload has no published structure in API reference
 		customs_tax_info: z.unknown().nullable().optional(),
 		gift_message: z.string().nullable().optional(),
 		test_mode: z.boolean().optional(),
@@ -554,10 +553,7 @@ export const FramingListCollectionsOutputSchema = z
 	.object({
 		status: FinerWorksStatusSchema.optional(),
 		collections: z.array(FinerWorksFrameCollection).nullable().optional(),
-		frame_collections: z
-			.array(FinerWorksFrameCollection)
-			.nullable()
-			.optional(),
+		frame_collections: z.array(FinerWorksFrameCollection).nullable().optional(),
 	})
 	.loose();
 
@@ -597,17 +593,6 @@ export const ShippingGetOptionIdsOutputSchema = z
 	.object({
 		status: FinerWorksStatusSchema.optional(),
 		shipping_options_ids: z.array(z.number().int()).nullable().optional(),
-	})
-	.loose();
-
-/** https://v2.api.finerworks.com/Help/Api/POST-v3-list_shipping_options */
-export const ShippingListOptionsInputSchema = z.object({
-	order: FinerWorksOrderInputSchema,
-});
-export const ShippingListOptionsOutputSchema = z
-	.object({
-		status: FinerWorksStatusSchema.optional(),
-		shipping_options: z.array(FinerWorksShippingOption).nullable().optional(),
 	})
 	.loose();
 
