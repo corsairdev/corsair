@@ -9,6 +9,7 @@ export const getInfo: WebScrapingAIEndpoints['accountGetInfo'] = async (
 ) => {
 	GetAccountInfoInputSchema.parse(rawInput);
 	const response = AccountInfoResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeWebScrapingAIRequest<unknown>('/account', ctx.key),
 	);
 	await logEventFromContext(

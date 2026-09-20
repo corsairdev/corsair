@@ -18,6 +18,7 @@ export const getHtml: WebScrapingAIEndpoints['scrapingGetHtml'] = async (
 ) => {
 	const input = GetHtmlInputSchema.parse(rawInput);
 	const response = HtmlResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeWebScrapingAIRequest<unknown>('/html', ctx.key, input),
 	);
 	await logEventFromContext(
@@ -33,6 +34,7 @@ export const getSelectedHtml: WebScrapingAIEndpoints['scrapingGetSelectedHtml'] 
 	async (ctx, rawInput) => {
 		const input = GetSelectedHtmlInputSchema.parse(rawInput);
 		const response = SelectedHtmlResponseSchema.parse(
+			// unknown: JSON is untyped until the endpoint Zod schema parses it
 			await makeWebScrapingAIRequest<unknown>('/selected', ctx.key, input),
 		);
 		await logEventFromContext(
@@ -49,6 +51,7 @@ export const getSelectedMultiple: WebScrapingAIEndpoints['scrapingGetSelectedMul
 		const input = GetSelectedMultipleInputSchema.parse(rawInput);
 		const { selectors, ...query } = input;
 		const response = SelectedMultipleResponseSchema.parse(
+			// unknown: JSON is untyped until the endpoint Zod schema parses it
 			await makeWebScrapingAIRequest<unknown>('/selected-multiple', ctx.key, {
 				...query,
 				'selectors[]': selectors,
@@ -69,6 +72,7 @@ export const getText: WebScrapingAIEndpoints['scrapingGetText'] = async (
 ) => {
 	const input = GetTextInputSchema.parse(rawInput);
 	const response = TextResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeWebScrapingAIRequest<unknown>('/text', ctx.key, input),
 	);
 	await logEventFromContext(

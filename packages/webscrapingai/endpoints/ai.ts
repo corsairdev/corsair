@@ -14,6 +14,7 @@ export const askQuestion: WebScrapingAIEndpoints['aiAskQuestion'] = async (
 ) => {
 	const input = AskQuestionInputSchema.parse(rawInput);
 	const response = QuestionResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeWebScrapingAIRequest<unknown>('/ai/question', ctx.key, input),
 	);
 	await logEventFromContext(
@@ -31,6 +32,7 @@ export const extractFields: WebScrapingAIEndpoints['aiExtractFields'] = async (
 ) => {
 	const input = ExtractFieldsInputSchema.parse(rawInput);
 	const response = ExtractFieldsResponseSchema.parse(
+		// unknown: JSON is untyped until the endpoint Zod schema parses it
 		await makeWebScrapingAIRequest<unknown>('/ai/fields', ctx.key, input),
 	);
 	await logEventFromContext(
