@@ -513,4 +513,48 @@ describe('all Amara endpoint handlers', () => {
 			body: { subject: 'Hi', content: 'Hello', user: 'alice' },
 		});
 	});
+	it('project writes preserve explicitly cleared text fields', async () => {
+		mockRequest.mockResolvedValueOnce({ slug: 'proj1', name: 'Project 1' });
+		await Teams.updateProject(ctx(), {
+			team_slug: 'ability',
+			project_slug: 'proj1',
+			description: '',
+			guidelines: '',
+		});
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			'teams/ability/projects/proj1/',
+			'k',
+			{ method: 'PUT', body: { description: '', guidelines: '' } },
+		);
+
+		mockRequest.mockResolvedValueOnce({ slug: 'proj2', name: 'Project 2' });
+		await Teams.createProject(ctx(), {
+			team_slug: 'ability',
+			slug: 'proj2',
+			name: 'Project 2',
+			description: '',
+		});
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			'teams/ability/projects/',
+			'k',
+			{
+				method: 'POST',
+				body: { slug: 'proj2', name: 'Project 2', description: '' },
+			},
+		);
+	});
+
+	it('project writes omit fields the caller never supplied', async () => {
+		mockRequest.mockResolvedValueOnce({ slug: 'proj1', name: 'Renamed' });
+		await Teams.updateProject(ctx(), {
+			team_slug: 'ability',
+			project_slug: 'proj1',
+			name: 'Renamed',
+		});
+		expect(mockRequest).toHaveBeenLastCalledWith(
+			'teams/ability/projects/proj1/',
+			'k',
+			{ method: 'PUT', body: { name: 'Renamed' } },
+		);
+	});
 });

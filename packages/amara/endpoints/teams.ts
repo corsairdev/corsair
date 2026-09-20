@@ -125,8 +125,12 @@ export const createProject: AmaraEndpoints['teamsCreateProject'] = async (
 			body: {
 				name: input.name,
 				slug: input.slug,
-				...(input.description ? { description: input.description } : {}),
-				...(input.guidelines ? { guidelines: input.guidelines } : {}),
+				...(input.description !== undefined
+					? { description: input.description }
+					: {}),
+				...(input.guidelines !== undefined
+					? { guidelines: input.guidelines }
+					: {}),
 			},
 		},
 	);
@@ -150,9 +154,13 @@ export const updateProject: AmaraEndpoints['teamsUpdateProject'] = async (
 		{
 			method: 'PUT',
 			body: {
-				...(input.name ? { name: input.name } : {}),
-				...(input.description ? { description: input.description } : {}),
-				...(input.guidelines ? { guidelines: input.guidelines } : {}),
+				...(input.name !== undefined ? { name: input.name } : {}),
+				...(input.description !== undefined
+					? { description: input.description }
+					: {}),
+				...(input.guidelines !== undefined
+					? { guidelines: input.guidelines }
+					: {}),
 			},
 		},
 	);
@@ -244,7 +252,7 @@ export const addMember: AmaraEndpoints['teamsAddMember'] = async (
 			method: 'POST',
 			body: {
 				user: input.user,
-				...(input.role ? { role: input.role } : {}),
+				...(input.role !== undefined ? { role: input.role } : {}),
 			},
 		},
 	);
