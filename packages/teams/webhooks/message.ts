@@ -40,11 +40,11 @@ export const channelMessage: TeamsWebhooks['channelMessage'] = {
 
 		const accessToken = await ctx.keys.get_access_token();
 
-		try {
-			for (const { resourceData, resource, changeType } of notifications) {
-				const messageId = resourceData?.id;
-				if (!messageId) continue;
+		for (const { resourceData, resource, changeType } of notifications) {
+			const messageId = resourceData?.id;
+			if (!messageId) continue;
 
+			try {
 				// resource format: teams('teamId')/channels('channelId')/messages('messageId')
 				// or, for a thread reply, .../messages('rootId')/replies('replyId')
 				const parts = (resource ?? '').split('/');
@@ -82,14 +82,13 @@ export const channelMessage: TeamsWebhooks['channelMessage'] = {
 						messageId,
 						toMessageRecord(fullMsg, { teamId, channelId }),
 					);
-					corsairEntityId = entity?.id || '';
+					if (data.resourceData?.id === messageId) {
+						corsairEntityId = entity?.id || '';
+					}
 				}
+			} catch (error) {
+				console.warn('Failed to process channel message notification:', error);
 			}
-		} catch (error) {
-			console.warn(
-				'Failed to process channel message webhook in database:',
-				error,
-			);
 		}
 
 		await logEventFromContext(
