@@ -13,7 +13,14 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { ClientConfig, Completions, Graphql, Models, Search, Viewer } from './endpoints';
+import {
+	ClientConfig,
+	Completions,
+	Graphql,
+	Models,
+	Search,
+	Viewer,
+} from './endpoints';
 import type {
 	CodyEndpointInputs,
 	CodyEndpointOutputs,

@@ -1,4 +1,9 @@
-import { code as completionsCode, stream as completionsStream, getClientConfig, listModels } from './completions';
+import {
+	code as completionsCode,
+	stream as completionsStream,
+	getClientConfig,
+	listModels,
+} from './completions';
 import { post as graphqlPost } from './graphql';
 import { get as searchGet } from './search';
 import { get as viewerGet } from './viewer';
