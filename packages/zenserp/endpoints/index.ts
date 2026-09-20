@@ -5,5 +5,5 @@ import * as Search from './search';
 import * as Shopping from './shopping';
 import * as Trends from './trends';
 
-export { Account, Batches, Metadata, Search, Shopping, Trends };
 export * from './types';
+export { Account, Batches, Metadata, Search, Shopping, Trends };

@@ -68,8 +68,8 @@ export async function makeZenserpRequest<T>(
 	if (!response.ok) {
 		const providerMessage =
 			typeof body === 'object' && body !== null && 'error' in body
-				// unknown: catch/error boundary accepts any thrown value
-				? String((body as { error: unknown }).error)
+				? // unknown: catch/error boundary accepts any thrown value
+					String((body as { error: unknown }).error)
 				: response.statusText || `Zenserp request failed (${response.status})`;
 		throw new ApiError(
 			requestOptions,
