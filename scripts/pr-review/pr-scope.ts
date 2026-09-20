@@ -100,7 +100,7 @@ export function classifyPrScope(changedFiles: string[]): PrScope {
 		changedFiles.every(
 			(file) =>
 				pluginOf(file) === plugin ||
-				isAllowedExtraFile(file) ||
+				isAllowedExtraFile(file, plugin) ||
 				file === DOCS_NAV_FILE ||
 				isSamePluginDocs(file, plugin),
 		)

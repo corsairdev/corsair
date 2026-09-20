@@ -11,6 +11,14 @@ export const ALLOWED_EXTRA = [
 	'pnpm-lock.yaml',
 ];
 
+/** Plugins that use Microsoft Graph subscribe plumbing. */
+const MS_GRAPH_PLUGINS = new Set([
+	'teams',
+	'outlook',
+	'onedrive',
+	'sharepoint',
+]);
+
 /** Core SDK files a Microsoft Graph plugin PR may touch for subscribe plumbing. */
 const MS_GRAPH_COMPANION_FILES = new Set([
 	'packages/corsair/core/plugins/index.ts',
@@ -31,11 +39,17 @@ const GATE_RULE_FILES = new Set([
 	'greptile.json',
 ]);
 
-export function isAllowedExtraFile(file: string): boolean {
+export function isAllowedExtraFile(
+	file: string,
+	plugin?: string | null,
+): boolean {
+	if (ALLOWED_EXTRA.includes(file) || GATE_RULE_FILES.has(file)) {
+		return true;
+	}
 	return (
-		ALLOWED_EXTRA.includes(file) ||
-		MS_GRAPH_COMPANION_FILES.has(file) ||
-		GATE_RULE_FILES.has(file)
+		plugin != null &&
+		MS_GRAPH_PLUGINS.has(plugin) &&
+		MS_GRAPH_COMPANION_FILES.has(file)
 	);
 }
 
@@ -159,7 +173,7 @@ export function runGate(input: GateInput): GateResult {
 	const outOfScope = input.changedFiles.filter(
 		(f) =>
 			pluginOf(f) === null &&
-			!isAllowedExtraFile(f) &&
+			!isAllowedExtraFile(f, plugin) &&
 			f !== DOCS_NAV_FILE &&
 			!(plugin && isSamePluginDocs(f, plugin)),
 	);

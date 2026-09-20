@@ -84,6 +84,18 @@ test('R1: out-of-scope file fails', () => {
 	assert.ok(r.failures.some((f) => f.rule === 'R1'));
 });
 
+test('R1: MS Graph companion core files fail for a non-Graph plugin', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/slack/index.ts',
+			'packages/corsair/oauth/renewal.ts',
+			'pnpm-lock.yaml',
+		],
+	});
+	assert.ok(r.failures.some((f) => f.rule === 'R1'));
+});
+
 test('R1: MS Graph companion core files pass alongside a Graph plugin', () => {
 	const r = runGate({
 		...goodInput,
