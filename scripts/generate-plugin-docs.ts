@@ -746,14 +746,8 @@ function pickExampleEndpoints(
 	return {
 		read,
 		write,
-		readArgs:
-			read && readOverride?.args
-				? readOverride.args
-				: defaultExampleArgsFromInput(read?.input),
-		writeArgs:
-			write && writeOverride?.args
-				? writeOverride.args
-				: defaultExampleArgsFromInput(write?.input),
+		readArgs: read && readOverride?.args ? readOverride.args : undefined,
+		writeArgs: write && writeOverride?.args ? writeOverride.args : undefined,
 		readTitle: readOverride?.title,
 		writeTitle: writeOverride?.title,
 	};
@@ -822,48 +816,6 @@ function formatExampleArgs(args: Record<string, unknown> | undefined): string {
 	};
 
 	return formatObject(args, 0);
-}
-
-function defaultExampleValueForField(key: string, type: string): unknown {
-	const normalizedType = type.toLowerCase();
-	const normalizedKey = key.toLowerCase();
-
-	if (normalizedType.includes('boolean')) return true;
-	if (normalizedType.includes('number')) return 1;
-	if (normalizedType.includes('date')) return '2024-01-01';
-	if (normalizedType.includes('[]')) return [];
-	if (normalizedType.includes('{')) return {};
-
-	if (normalizedKey === 'id') return 'id_123';
-	if (normalizedKey.endsWith('_id')) {
-		return `${normalizedKey.replace(/_id$/, '')}_123`;
-	}
-	if (normalizedKey.includes('email')) return 'user@example.com';
-	if (normalizedKey.includes('url')) return 'https://example.com';
-	if (normalizedKey.includes('name')) return 'Example';
-	if (normalizedKey.includes('note')) return 'Example note';
-
-	return 'example';
-}
-
-function defaultExampleArgsFromInput(
-	input: DocSchemaShape | undefined,
-): Record<string, unknown> | undefined {
-	if (!input || input.kind !== 'object') {
-		return undefined;
-	}
-
-	const required = input.fields.filter((field) => !field.optional);
-	if (required.length === 0) {
-		return undefined;
-	}
-
-	const args: Record<string, unknown> = {};
-	for (const field of required) {
-		args[field.key] = defaultExampleValueForField(field.key, field.type);
-	}
-
-	return args;
 }
 
 function formatTenantApiCall(
@@ -1218,7 +1170,7 @@ npm install corsair ${npmPackageName}
 yarn add corsair ${npmPackageName}
 \`\`\`
 \`\`\`bash pnpm
-pnpm add corsair ${npmPackageName}
+pnpm install corsair ${npmPackageName}
 \`\`\`
 \`\`\`bash bun
 bun add corsair ${npmPackageName}
@@ -1501,9 +1453,8 @@ function buildApiMdx(
 			sections.push('');
 			const [, ...pathParts] = ep.path.split('.');
 			const callExpr = `corsair.${pluginId}.${pathParts.join('.')}`;
-			const callArgs = formatExampleArgs(defaultExampleArgsFromInput(ep.input));
 			sections.push('```ts');
-			sections.push(`await ${callExpr}(${callArgs});`);
+			sections.push(`await ${callExpr}({});`);
 			sections.push('```');
 			sections.push('');
 			sections.push(formatSchemaShape(ep.input, 'Input'));
