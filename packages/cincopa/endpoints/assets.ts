@@ -8,10 +8,12 @@ import {
 
 export const uploadFromUrl = async (
 	ctx: CincopaContext & { key: string },
+	// unknown: endpoint inputs are validated by Zod before the provider call.
 	input: unknown,
 ) => {
 	const parsed = CincopaEndpointInputSchemas.uploadFromUrl.parse(input);
 
+	// unknown: provider JSON is validated by the output Zod schema below.
 	const raw = await makeCincopaRequest<unknown>(
 		'asset.upload_from_url.json',
 		ctx.key,
@@ -39,11 +41,13 @@ export const uploadFromUrl = async (
 
 export const getUploadFromUrlStatus = async (
 	ctx: CincopaContext & { key: string },
+	// unknown: endpoint inputs are validated by Zod before the provider call.
 	input: unknown,
 ) => {
 	const parsed =
 		CincopaEndpointInputSchemas.getUploadFromUrlStatus.parse(input);
 
+	// unknown: provider JSON is validated by the output Zod schema below.
 	const raw = await makeCincopaRequest<unknown>(
 		'asset.upload_from_url_get_status.json',
 		ctx.key,
@@ -67,10 +71,12 @@ export const getUploadFromUrlStatus = async (
 
 export const abortUploadFromUrl = async (
 	ctx: CincopaContext & { key: string },
+	// unknown: endpoint inputs are validated by Zod before the provider call.
 	input: unknown,
 ) => {
 	const parsed = CincopaEndpointInputSchemas.abortUploadFromUrl.parse(input);
 
+	// unknown: provider JSON is validated by the output Zod schema below.
 	const raw = await makeCincopaRequest<unknown>(
 		'asset.upload_from_url_abort.json',
 		ctx.key,

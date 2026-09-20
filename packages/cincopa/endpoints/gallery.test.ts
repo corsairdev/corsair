@@ -28,6 +28,7 @@ function ctx(): Ctx {
 	return {
 		key: 'test-api-token',
 		$getAccountId: () => 'test-account-id',
+		// unknown: fixture omits unrelated runtime context fields.
 	} as unknown as Ctx;
 }
 
