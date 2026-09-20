@@ -448,7 +448,7 @@ describe('Cody error handlers', () => {
 		);
 
 		expect(errorHandlers.PERMISSION_ERROR.match(error)).toBe(true);
-		const strategy = await errorHandlers.PERMISSION_ERROR.handler(error);
+		const strategy = await errorHandlers.PERMISSION_ERROR.handler();
 		expect(strategy).toEqual({ maxRetries: 0 });
 	});
 
