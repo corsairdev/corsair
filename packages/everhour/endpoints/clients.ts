@@ -3,7 +3,7 @@ import type { EverhourClient } from '../schema/database';
 
 export const listClients = async (
 	ctx: any,
-	options: { query?: Record<string, any> } = {},
+	options: { query?: Record<string, string | number | boolean> } = {},
 ) => {
 	return makeEverhourRequest<EverhourClient[]>('/clients', ctx.key, {
 		method: 'GET',

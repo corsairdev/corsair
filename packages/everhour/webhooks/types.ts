@@ -1,4 +1,5 @@
 import type {
+	CorsairWebhook,
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
@@ -6,10 +7,13 @@ import type {
 export type { WebhookRequest };
 
 import { z } from 'zod';
+import type { EverhourContext } from '../index';
 
 export const EverhourWebhookPayloadSchema = z.object({
 	type: z.string(),
 	created_at: z.string(),
+	// Everhour webhook data fields are provider-defined per event; unknown
+	// values must be narrowed by consumers before use.
 	data: z.record(z.string(), z.unknown()),
 });
 
@@ -30,60 +34,64 @@ export const TimeUpdatedEventSchema = EverhourWebhookPayloadSchema.extend({
 
 export type TimeUpdatedEvent = z.infer<typeof TimeUpdatedEventSchema>;
 
+// All registered handlers persist the raw webhook payload, so every event
+// maps to the base payload. Per-event detail lives in TimeUpdatedEventSchema
+// (used by the webhook schema registry and the standalone time handler).
 export type EverhourWebhookOutputs = {
-	'api:time:updated': TimeUpdatedEvent;
-	'api:timer:started': any;
-	'api:timer:stopped': any;
-	'api:project:created': any;
-	'api:project:updated': any;
-	'api:project:removed': any;
-	'api:task:created': any;
-	'api:task:updated': any;
-	'api:task:removed': any;
-	'api:task:recovered': any;
-	'api:estimate:updated': any;
-	'api:section:created': any;
-	'api:section:updated': any;
-	'api:section:removed': any;
-	'api:section:recovered': any;
-	'api:client:created': any;
-	'api:client:updated': any;
-	'api:invoice:created': any;
-	'api:invoice:updated': any;
-	'api:invoice:deleted': any;
+	'api:time:updated': EverhourWebhookPayload;
+	'api:timer:started': EverhourWebhookPayload;
+	'api:timer:stopped': EverhourWebhookPayload;
+	'api:project:created': EverhourWebhookPayload;
+	'api:project:updated': EverhourWebhookPayload;
+	'api:project:removed': EverhourWebhookPayload;
+	'api:task:created': EverhourWebhookPayload;
+	'api:task:updated': EverhourWebhookPayload;
+	'api:task:removed': EverhourWebhookPayload;
+	'api:task:recovered': EverhourWebhookPayload;
+	'api:estimate:updated': EverhourWebhookPayload;
+	'api:section:created': EverhourWebhookPayload;
+	'api:section:updated': EverhourWebhookPayload;
+	'api:section:removed': EverhourWebhookPayload;
+	'api:section:recovered': EverhourWebhookPayload;
+	'api:client:created': EverhourWebhookPayload;
+	'api:client:updated': EverhourWebhookPayload;
+	'api:invoice:created': EverhourWebhookPayload;
+	'api:invoice:updated': EverhourWebhookPayload;
+	'api:invoice:deleted': EverhourWebhookPayload;
 };
 
 export type EverhourWebhooks = {
-	[K in keyof EverhourWebhookOutputs]: {
-		match: CorsairWebhookMatcher;
-		handler: (
-			ctx: any,
-			request: WebhookRequest<EverhourWebhookPayload>,
-		) => Promise<{
-			success: boolean;
-			statusCode?: number;
-			error?: string;
-			data?: EverhourWebhookOutputs[K];
-		}>;
-	};
+	[K in keyof EverhourWebhookOutputs]: CorsairWebhook<
+		EverhourContext,
+		EverhourWebhookPayload,
+		EverhourWebhookOutputs[K]
+	>;
 };
+
+function toStringRecord(candidate: unknown): Record<string, unknown> | null {
+	if (
+		candidate === null ||
+		typeof candidate !== 'object' ||
+		Array.isArray(candidate)
+	) {
+		return null;
+	}
+	const record: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(candidate)) {
+		record[key] = value;
+	}
+	return record;
+}
 
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
-			const parsed = JSON.parse(body);
-			return parsed !== null &&
-				typeof parsed === 'object' &&
-				!Array.isArray(parsed)
-				? (parsed as Record<string, unknown>)
-				: null;
+			return toStringRecord(JSON.parse(body));
 		} catch {
 			return null;
 		}
 	}
-	return body !== null && typeof body === 'object' && !Array.isArray(body)
-		? (body as Record<string, unknown>)
-		: null;
+	return toStringRecord(body);
 }
 
 export function createEverhourMatch(eventType: string): CorsairWebhookMatcher {

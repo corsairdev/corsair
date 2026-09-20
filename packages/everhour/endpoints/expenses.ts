@@ -6,7 +6,7 @@ import type {
 
 export const listExpenses = async (
 	ctx: any,
-	options: { query?: Record<string, any> } = {},
+	options: { query?: Record<string, string | number | boolean> } = {},
 ) => {
 	return makeEverhourRequest<EverhourExpense[]>('/expenses', ctx.key, {
 		method: 'GET',

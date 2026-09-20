@@ -5,6 +5,7 @@ export class EverhourAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly status?: number,
+		// The provider error body has no fixed shape; narrow before use.
 		public readonly body?: unknown,
 	) {
 		super(message);
@@ -61,6 +62,7 @@ export async function makeEverhourRequest<T>(
 
 	try {
 		return await request<T>(config, requestOptions);
+		// `unknown` is required for catch clauses; narrowed with instanceof below.
 	} catch (error: unknown) {
 		if (error instanceof ApiError) {
 			throw error;

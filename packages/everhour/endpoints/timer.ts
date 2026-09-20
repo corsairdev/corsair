@@ -7,7 +7,8 @@ export interface TimerResponse {
 	status?: 'active' | 'stopped';
 	duration?: number;
 	startedAt?: string;
-	task?: any;
+	// The timer task payload varies by provider integration; narrow before use.
+	task?: unknown;
 }
 
 export const getCurrentTimer = async (ctx: any) => {

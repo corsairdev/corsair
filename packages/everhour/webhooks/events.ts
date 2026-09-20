@@ -1,9 +1,17 @@
+import type { WebhookRequest } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
+import type { EverhourContext } from '../index';
+import type { EverhourWebhookPayload, EverhourWebhooks } from './types';
 import { createEverhourMatch, verifyEverhourWebhookSignature } from './types';
 
-const createEventHandler = (eventName: string): any => ({
+type EverhourEventHandler = EverhourWebhooks[keyof EverhourWebhooks];
+
+const createEventHandler = (eventName: string): EverhourEventHandler => ({
 	match: createEverhourMatch(eventName),
-	handler: async (ctx: any, request: any) => {
+	handler: async (
+		ctx: EverhourContext,
+		request: WebhookRequest<EverhourWebhookPayload>,
+	) => {
 		const verification = verifyEverhourWebhookSignature(request, ctx.key);
 		if (!verification.valid) {
 			return {

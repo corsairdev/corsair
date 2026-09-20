@@ -22,13 +22,22 @@ const EmptyResponseSchema = z.null().optional();
 
 export type EverhourEndpointInputs = {
 	getUser: {};
-	listTeamUsers: { query?: Record<string, any>; limit?: number };
+	listTeamUsers: {
+		query?: Record<string, string | number | boolean>;
+		limit?: number;
+	};
 	listTeams: {};
 	getCurrentTimer: {};
 	startTimer: { task: string; userDate?: string; comment?: string };
 	stopTimer: {};
-	listUserTime: { userId: string; query?: Record<string, any> };
-	listUserTimesheets: { userId: string; query?: Record<string, any> };
+	listUserTime: {
+		userId: string;
+		query?: Record<string, string | number | boolean>;
+	};
+	listUserTimesheets: {
+		userId: string;
+		query?: Record<string, string | number | boolean>;
+	};
 	logTime: {
 		time: number;
 		date?: string;
@@ -83,7 +92,7 @@ export type EverhourEndpointInputs = {
 		description?: string;
 	};
 	listProjects: {
-		query?: Record<string, any>;
+		query?: Record<string, string | number | boolean>;
 		page?: number;
 		limit?: number;
 		platform?: string;
@@ -115,7 +124,7 @@ export type EverhourEndpointInputs = {
 		collapsed?: boolean;
 	};
 	deleteSection: { sectionId: string };
-	listClients: { query?: Record<string, any> };
+	listClients: { query?: Record<string, string | number | boolean> };
 	getClient: { clientId: string };
 	createClient: {
 		name: string;
@@ -147,9 +156,9 @@ export type EverhourEndpointInputs = {
 		breakTime?: number;
 	};
 	deleteTimecard: { userId: string; date: string };
-	listExpenses: { query?: Record<string, any> };
+	listExpenses: { query?: Record<string, string | number | boolean> };
 	listExpenseCategories: {};
-	listInvoices: { query?: Record<string, any> };
+	listInvoices: { query?: Record<string, string | number | boolean> };
 	listWebhooks: {};
 	getWebhook: { hookId: string };
 	createWebhook: {
@@ -162,6 +171,8 @@ export type EverhourEndpointInputs = {
 	listTags: {};
 };
 
+// `unknown` below marks provider-controlled payloads Everhour does not
+// document with a fixed shape; consumers must narrow before use.
 export type EverhourEndpointOutputs = {
 	getUser: EverhourUser;
 	listTeamUsers: EverhourUser[];
@@ -220,6 +231,7 @@ const TimerResponseSchema = z.object({
 	status: z.enum(['active', 'stopped']).optional(),
 	duration: z.number().optional(),
 	startedAt: z.string().optional(),
+	// The timer task payload varies by provider integration; validated as unknown.
 	task: z.unknown().optional(),
 });
 

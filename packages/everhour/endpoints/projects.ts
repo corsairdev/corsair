@@ -4,7 +4,7 @@ import type { EverhourProject } from '../schema/database';
 export const listProjects = async (
 	ctx: any,
 	options: {
-		query?: Record<string, any>;
+		query?: Record<string, string | number | boolean>;
 		page?: number;
 		limit?: number;
 		platform?: string;

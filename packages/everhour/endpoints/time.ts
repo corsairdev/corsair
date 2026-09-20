@@ -6,7 +6,10 @@ import type {
 
 export const listUserTime = async (
 	ctx: any,
-	options: { userId: string; query?: Record<string, any> },
+	options: {
+		userId: string;
+		query?: Record<string, string | number | boolean>;
+	},
 ) => {
 	return makeEverhourRequest<EverhourTimeEntry[]>(
 		`/users/${options.userId}/time`,
@@ -20,9 +23,12 @@ export const listUserTime = async (
 
 export const listUserTimesheets = async (
 	ctx: any,
-	options: { userId: string; query?: Record<string, any> },
+	options: {
+		userId: string;
+		query?: Record<string, string | number | boolean>;
+	},
 ) => {
-	return makeEverhourRequest<any[]>(
+	return makeEverhourRequest<Record<string, unknown>[]>(
 		`/users/${options.userId}/timesheets`,
 		ctx.key,
 		{

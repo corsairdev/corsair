@@ -1,6 +1,8 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
+	BindWebhooks,
+	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
@@ -10,8 +12,11 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { z } from 'zod';
 import * as endpoints from './endpoints';
+import type {
+	EverhourEndpointInputs,
+	EverhourEndpointOutputs,
+} from './endpoints/types';
 import {
 	EverhourEndpointInputSchemas,
 	EverhourEndpointOutputSchemas,
@@ -19,6 +24,10 @@ import {
 import { errorHandlers } from './error-handlers';
 import { EverhourSchema } from './schema';
 import { EverhourWebhooks } from './webhooks';
+import {
+	EverhourWebhookPayloadSchema,
+	TimeUpdatedEventSchema,
+} from './webhooks/types';
 
 export type EverhourPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
@@ -42,9 +51,20 @@ export type EverhourBoundEndpoints = BindEndpoints<
 	typeof everhourEndpointsNested
 >;
 
-export type EverhourEndpoints = any;
+type EverhourEndpoint<K extends keyof EverhourEndpointOutputs> =
+	CorsairEndpoint<
+		EverhourContext,
+		EverhourEndpointInputs[K],
+		EverhourEndpointOutputs[K]
+	>;
 
-export type EverhourBoundWebhooks = any;
+// Covers every key of EverhourEndpointOutputs (48 operations); the input and
+// output maps share an identical key set so no operation is left untyped.
+export type EverhourEndpoints = {
+	[K in keyof EverhourEndpointOutputs]: EverhourEndpoint<K>;
+};
+
+export type EverhourBoundWebhooks = BindWebhooks<typeof everhourWebhooksNested>;
 
 const everhourEndpointsNested = {
 	user: {
@@ -360,103 +380,103 @@ export const everhourEndpointSchemas = {
 const everhourWebhookSchemas = {
 	'time.updated': {
 		description: 'A time record is created or modified',
-		payload: z.any(),
-		response: z.any(),
+		payload: TimeUpdatedEventSchema,
+		response: TimeUpdatedEventSchema,
 	},
 	'timer.started': {
 		description: 'A timer was started',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'timer.stopped': {
 		description: 'A timer was stopped',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'project.created': {
 		description: 'A project was created',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'project.updated': {
 		description: 'A project was updated',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'project.removed': {
 		description: 'A project was removed',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'task.created': {
 		description: 'A task was created',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'task.updated': {
 		description: 'A task was updated',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'task.removed': {
 		description: 'A task was removed',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'task.recovered': {
 		description: 'A task was recovered',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'estimate.updated': {
 		description: 'A task estimate was updated',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'section.created': {
 		description: 'A section was created',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'section.updated': {
 		description: 'A section was updated',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'section.removed': {
 		description: 'A section was removed',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'section.recovered': {
 		description: 'A section was recovered',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'client.created': {
 		description: 'A client was created',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'client.updated': {
 		description: 'A client was updated',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'invoice.created': {
 		description: 'An invoice was created',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'invoice.updated': {
 		description: 'An invoice was updated',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 	'invoice.deleted': {
 		description: 'An invoice was deleted',
-		payload: z.any(),
-		response: z.any(),
+		payload: EverhourWebhookPayloadSchema,
+		response: EverhourWebhookPayloadSchema,
 	},
 } as const;
 

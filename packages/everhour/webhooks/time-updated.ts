@@ -3,10 +3,13 @@ import type { EverhourContext } from '../index';
 import type {
 	EverhourWebhookPayload,
 	EverhourWebhooks,
-	TimeUpdatedEvent,
 	WebhookRequest,
 } from './types';
-import { createEverhourMatch, verifyEverhourWebhookSignature } from './types';
+import {
+	createEverhourMatch,
+	TimeUpdatedEventSchema,
+	verifyEverhourWebhookSignature,
+} from './types';
 
 export const timeUpdated: EverhourWebhooks['api:time:updated'] = {
 	match: createEverhourMatch('api:time:updated'),
@@ -24,7 +27,15 @@ export const timeUpdated: EverhourWebhooks['api:time:updated'] = {
 			};
 		}
 
-		const event = request.payload as TimeUpdatedEvent;
+		const parsed = TimeUpdatedEventSchema.safeParse(request.payload);
+		if (!parsed.success) {
+			return {
+				success: false,
+				statusCode: 400,
+				error: 'Invalid time-updated webhook payload',
+			};
+		}
+		const event = parsed.data;
 		await logEventFromContext(
 			ctx,
 			'everhour.webhook.time_updated',

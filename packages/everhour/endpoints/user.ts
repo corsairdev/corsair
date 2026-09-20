@@ -7,7 +7,10 @@ export const getUser = async (ctx: any) => {
 
 export const listTeamUsers = async (
 	ctx: any,
-	options: { query?: Record<string, any>; limit?: number } = {},
+	options: {
+		query?: Record<string, string | number | boolean>;
+		limit?: number;
+	} = {},
 ) => {
 	return makeEverhourRequest<EverhourUser[]>('/team/users', ctx.key, {
 		method: 'GET',
