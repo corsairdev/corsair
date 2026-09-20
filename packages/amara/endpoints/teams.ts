@@ -157,6 +157,10 @@ export const updateProject: AmaraEndpoints['teamsUpdateProject'] = async (
 				...(input.name !== undefined ? { name: input.name } : {}),
 				...(input.description !== undefined
 					? { description: input.description }
+			body: {
+				...(input.name !== undefined ? { name: input.name } : {}),
+				...(input.description !== undefined
+					? { description: input.description }
 					: {}),
 				...(input.guidelines !== undefined
 					? { guidelines: input.guidelines }
