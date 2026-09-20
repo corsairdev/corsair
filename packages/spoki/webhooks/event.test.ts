@@ -6,6 +6,7 @@ const SECRET = 'whsec_test_secret';
 const RAW_BODY = JSON.stringify({
 	version: 1,
 	event: 'message.inbound',
+	account_id: 13128334,
 	data: { text: 'Thanks' },
 });
 
@@ -74,14 +75,13 @@ describe('spokiEvent handler', () => {
 		expect(res.success).toBe(true);
 	});
 
-	it('rejects with 401 when the original bytes cannot be reconstructed', async () => {
+	it('accepts a tab-indented original via the payload fallback', async () => {
 		const tabbed = JSON.stringify(JSON.parse(RAW_BODY), null, '\t');
 		const header = sign(tabbed, Math.floor(Date.now() / 1000));
 		const res = await spokiEvent.handler({ key: SECRET } as never, {
 			payload: JSON.parse(RAW_BODY),
 			headers: { 'x-spoki-signature': header },
 		});
-		expect(res.success).toBe(false);
-		expect(res.statusCode).toBe(401);
+		expect(res.success).toBe(true);
 	});
 });

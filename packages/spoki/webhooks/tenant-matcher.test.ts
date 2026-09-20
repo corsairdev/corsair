@@ -20,6 +20,7 @@ function sign(rawBody: string, timestamp: number, secret = SECRET): string {
 const RAW_BODY = JSON.stringify({
 	version: 1,
 	event: 'message.inbound',
+	account_id: 13128334,
 	data: { text: 'Thanks' },
 });
 
@@ -93,7 +94,7 @@ describe('matchSpokiPluginWebhook', () => {
 		).toBe(true);
 	});
 
-	it('routes parsed bodies on header presence; the handler verifies', () => {
+	it('verifies parsed bodies via serialization fallbacks', () => {
 		expect(
 			matchSpokiPluginWebhook(
 				{
@@ -108,7 +109,7 @@ describe('matchSpokiPluginWebhook', () => {
 		).toBe(true);
 	});
 
-	it('routes on header presence even with a bad signature; the handler 401s', () => {
+	it('rejects a bad signature instead of routing on header presence', () => {
 		expect(
 			matchSpokiPluginWebhook(
 				{
@@ -120,7 +121,7 @@ describe('matchSpokiPluginWebhook', () => {
 				},
 				SECRET,
 			),
-		).toBe(true);
+		).toBe(false);
 	});
 
 	it('does not match the deprecated V1 hash header alone', () => {
@@ -167,40 +168,10 @@ describe('matchSpokiTenantWebhook', () => {
 		).toBeNull();
 	});
 
-	it('returns null when the account header and body have no account id', () => {
-		expect(
-			matchSpokiTenantWebhook(
-				{
-					headers: {
-						'x-spoki-signature': sign(RAW_BODY, Math.floor(Date.now() / 1000)),
-					},
-					body: RAW_BODY,
-				},
-				SECRET,
-			),
-		).toBeNull();
-	});
-
-	it('matches a valid signed delivery using x-spoki-account', () => {
-		expect(
-			matchSpokiTenantWebhook(
-				{
-					headers: {
-						'x-spoki-account': '13128334',
-						'x-spoki-signature': sign(RAW_BODY, Math.floor(Date.now() / 1000)),
-					},
-					body: RAW_BODY,
-				},
-				SECRET,
-			),
-		).toEqual({ linkType: 'account_id', externalId: '13128334' });
-	});
-
-	it('prefers the signed body account id over the header', () => {
+	it('returns null when the signed body has no account id', () => {
 		const body = JSON.stringify({
 			version: 1,
 			event: 'message.inbound',
-			account_id: 13128334,
 			data: { text: 'Thanks' },
 		});
 		expect(
@@ -214,7 +185,37 @@ describe('matchSpokiTenantWebhook', () => {
 				},
 				SECRET,
 			),
+		).toBeNull();
+	});
+
+	it('matches a valid signed delivery using the body account id', () => {
+		expect(
+			matchSpokiTenantWebhook(
+				{
+					headers: {
+						'x-spoki-account': '13128334',
+						'x-spoki-signature': sign(RAW_BODY, Math.floor(Date.now() / 1000)),
+					},
+					body: RAW_BODY,
+				},
+				SECRET,
+			),
 		).toEqual({ linkType: 'account_id', externalId: '13128334' });
+	});
+
+	it('does not let a substituted x-spoki-account header select the tenant', () => {
+		expect(
+			matchSpokiTenantWebhook(
+				{
+					headers: {
+						'x-spoki-account': '999',
+						'x-spoki-signature': sign(RAW_BODY, Math.floor(Date.now() / 1000)),
+					},
+					body: RAW_BODY,
+				},
+				SECRET,
+			),
+		).toBeNull();
 	});
 
 	it('rejects a valid signature when body and header account ids differ', () => {
@@ -260,7 +261,7 @@ describe('matchSpokiTenantWebhook', () => {
 						'x-spoki-account': '999',
 						'x-spoki-signature': 't=9999999999,v2=fake',
 					},
-					body: { version: 1 },
+					body: { version: 1, account_id: 999 },
 				},
 				SECRET,
 			),
@@ -367,7 +368,7 @@ describe('verifySpokiWebhookRequest', () => {
 		).toEqual({ valid: true });
 	});
 
-	it('still rejects exotic formats that no candidate reconstructs', () => {
+	it('verifies a tab-indented original via the payload fallback', () => {
 		const tabbed = JSON.stringify(JSON.parse(RAW_BODY), null, '\t');
 		const header = sign(tabbed, Math.floor(Date.now() / 1000));
 		expect(
@@ -377,8 +378,27 @@ describe('verifySpokiWebhookRequest', () => {
 					headers: { 'x-spoki-signature': header },
 				},
 				SECRET,
-			).valid,
-		).toBe(false);
+			),
+		).toEqual({ valid: true });
+	});
+
+	it('uses Content-Length to prefer the original wire form', () => {
+		const pretty = JSON.stringify(JSON.parse(RAW_BODY), null, 2);
+		const header = sign(pretty, Math.floor(Date.now() / 1000));
+		expect(
+			verifySpokiWebhookRequest(
+				{
+					payload: JSON.parse(RAW_BODY),
+					headers: {
+						'x-spoki-signature': header,
+						'content-length': String(pretty.length),
+					},
+					// processWebhook-style compact reconstruction
+					rawBody: RAW_BODY,
+				},
+				SECRET,
+			),
+		).toEqual({ valid: true });
 	});
 
 	it('accepts hubVerified deliveries without re-verifying', () => {

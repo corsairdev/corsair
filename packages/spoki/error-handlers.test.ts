@@ -67,6 +67,27 @@ describe('Spoki error handlers', () => {
 		expect(strategy.maxRetries).toBe(0);
 	});
 
+	it('does not retry accounts.createOnboardingLink writes', async () => {
+		const onboardingContext: any = {
+			pluginId: 'spoki',
+			operation: 'accounts.createOnboardingLink',
+		};
+		const rateLimited = new SpokiApiError(429, 'rate limited');
+		const serverError = new SpokiApiError(502, 'status 502');
+		expect(
+			(
+				await errorHandlers.RATE_LIMIT_ERROR.handler(
+					rateLimited,
+					onboardingContext,
+				)
+			).maxRetries,
+		).toBe(0);
+		expect(
+			(await errorHandlers.SERVER_ERROR.handler(serverError, onboardingContext))
+				.maxRetries,
+		).toBe(0);
+	});
+
 	it('RATE_LIMIT_ERROR does not match plain server errors', async () => {
 		const err = new SpokiApiError(500, 'status 500');
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(err, readContext)).toBe(false);

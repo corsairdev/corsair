@@ -6,14 +6,19 @@ function getStatus(error: Error): number | undefined {
 }
 
 /*
- * Spoki requests carry no idempotency key, so replaying messaging.* or
- * automation.* POSTs can send duplicate WhatsApp messages or run an
- * automation twice. The handler context exposes the endpoint path as
- * `operation`, so retries are restricted to the read-only accounts.*
- * endpoints.
+ * Spoki requests carry no idempotency key, so replaying POSTs can duplicate
+ * WhatsApp messages, automations, or onboarding links. Retries are restricted
+ * to known read-only accounts.* endpoints — not accounts.createOnboardingLink.
  */
+const REPLAYABLE_OPERATIONS = new Set([
+	'accounts.listAccounts',
+	'accounts.getAccount',
+	'accounts.getAccountByPhone',
+	'accounts.getCurrentReport',
+]);
+
 function isReplayable(context: ErrorContext): boolean {
-	return context.operation.startsWith('accounts.');
+	return REPLAYABLE_OPERATIONS.has(context.operation);
 }
 
 export const errorHandlers = {
