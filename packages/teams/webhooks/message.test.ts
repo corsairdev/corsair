@@ -78,4 +78,25 @@ describe('channelMessage webhook', () => {
 			}),
 		);
 	});
+
+	it('deletes stored messages even when access token is missing', async () => {
+		const deleteByEntityId = jest.fn().mockResolvedValue(undefined);
+
+		await channelMessage.handler(
+			{
+				key: CLIENT_STATE,
+				keys: { get_access_token: async () => null },
+				db: { messages: { deleteByEntityId } },
+			} as never,
+			{
+				payload: {
+					value: [notification({ changeType: 'deleted' })],
+				},
+				headers: {},
+			},
+		);
+
+		expect(deleteByEntityId).toHaveBeenCalledWith('message-1');
+		expect(makeTeamsRequest).not.toHaveBeenCalled();
+	});
 });

@@ -27,7 +27,6 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { TeamsSchema } from './schema';
-import type { TeamsChannelSubscription } from './subscribe';
 import { teamsSubscribe } from './subscribe';
 import { ChannelWebhooks, ChatWebhooks, MemberWebhooks } from './webhooks';
 import { matchTeamsTenantWebhook } from './webhooks/tenant-matcher';
@@ -53,7 +52,6 @@ export type TeamsPluginOptions = {
 	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	clientState?: string;
-	channelSubscription?: TeamsChannelSubscription;
 	hooks?: InternalTeamsPlugin['hooks'];
 	webhookHooks?: InternalTeamsPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -460,11 +458,7 @@ export function teams<const T extends TeamsPluginOptions>(
 			return hasTeamsHeader && isJsonPost;
 		},
 		pluginTenantWebhookMatcher: matchTeamsTenantWebhook,
-		subscribe: (ctx, input) =>
-			teamsSubscribe(ctx, {
-				...input,
-				channelSubscription: options.channelSubscription,
-			}),
+		subscribe: teamsSubscribe,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

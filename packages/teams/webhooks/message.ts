@@ -40,7 +40,7 @@ export const channelMessage: TeamsWebhooks['channelMessage'] = {
 
 		const accessToken = await ctx.keys.get_access_token();
 
-		if (accessToken) {
+		if (ctx.db.messages) {
 			try {
 				for (const { resourceData, resource, changeType } of notifications) {
 					const messageId = resourceData?.id;
@@ -53,29 +53,34 @@ export const channelMessage: TeamsWebhooks['channelMessage'] = {
 					const channelId = extractODataId(parts[1] ?? '');
 
 					if (changeType === 'deleted') {
-						await ctx.db.messages?.deleteByEntityId(messageId);
-					} else {
-						// Convert the OData notification resource to a REST path so replies
-						// hydrate from .../messages/{root}/replies/{id}, not messages/{id}.
-						const restPath = (resource ?? '')
-							.split('/')
-							.map((seg) => {
-								const m = seg.match(/^([^(]+)\('([^']+)'\)$/);
-								return m ? `${m[1]}/${m[2]}` : seg;
-							})
-							.join('/');
-						const fullMsg = await makeTeamsRequest<
-							TeamsEndpointOutputs['messagesGet']
-						>(restPath, accessToken);
-						if (data.resourceData?.id === messageId) {
-							data = { ...data, teamId, channelId, message: fullMsg };
-						}
-						const entity = await ctx.db.messages?.upsertByEntityId(
-							messageId,
-							toMessageRecord(fullMsg, { teamId, channelId }),
-						);
-						corsairEntityId = entity?.id || '';
+						await ctx.db.messages.deleteByEntityId(messageId);
+						continue;
 					}
+
+					if (!accessToken) {
+						continue;
+					}
+
+					// Convert the OData notification resource to a REST path so replies
+					// hydrate from .../messages/{root}/replies/{id}, not messages/{id}.
+					const restPath = (resource ?? '')
+						.split('/')
+						.map((seg) => {
+							const m = seg.match(/^([^(]+)\('([^']+)'\)$/);
+							return m ? `${m[1]}/${m[2]}` : seg;
+						})
+						.join('/');
+					const fullMsg = await makeTeamsRequest<
+						TeamsEndpointOutputs['messagesGet']
+					>(restPath, accessToken);
+					if (data.resourceData?.id === messageId) {
+						data = { ...data, teamId, channelId, message: fullMsg };
+					}
+					const entity = await ctx.db.messages.upsertByEntityId(
+						messageId,
+						toMessageRecord(fullMsg, { teamId, channelId }),
+					);
+					corsairEntityId = entity?.id || '';
 				}
 			} catch (error) {
 				console.warn(
