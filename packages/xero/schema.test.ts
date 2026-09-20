@@ -79,6 +79,7 @@ function createMockContext(
 			creditNotes: { upsertByEntityId },
 			quotes: { upsertByEntityId },
 		},
+		// unknown: test mock context simulates CorsairPluginContext with mock DB helpers
 	} as unknown as XeroContext;
 }
 
@@ -1392,6 +1393,7 @@ describe('Xero Endpoint Behavioral Execution Tests (All 39 Endpoints)', () => {
 			},
 			'completed',
 		);
+		// unknown: event logging payload is an untyped record before property verification
 		const loggedPayload = mockLogEvent.mock.calls[0]?.[2] as
 			| Record<string, unknown>
 			| undefined;
