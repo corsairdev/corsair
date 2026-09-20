@@ -11,8 +11,6 @@ import {
 	XeroQuote,
 } from '../schema/database';
 
-// unknown: nested Xero report/line payloads vary by report type; kept as records until narrowed.
-
 // ── Shared Types ─────────────────────────────────────────────────────────────
 
 const PaginationInputSchema = z.object({

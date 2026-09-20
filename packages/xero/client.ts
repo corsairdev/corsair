@@ -12,7 +12,6 @@ export class XeroAPIError extends Error {
 		options?: {
 			status?: number;
 			retryAfter?: number;
-			// unknown: Error.cause is untyped at the language level.
 			cause?: unknown;
 		},
 	) {
@@ -27,16 +26,12 @@ export class XeroAPIError extends Error {
 export const XERO_API_BASE = 'https://api.xero.com/api.xro/2.0';
 export const XERO_CONNECTIONS_BASE = 'https://api.xero.com';
 
-// unknown: Xero write bodies vary by resource; endpoints Zod-parse responses.
 export type XeroRequestBody =
 	| Record<string, unknown>
 	| Array<unknown>
 	| string
 	| Blob;
 
-/**
- * Callers pass `unknown`-shaped bodies; each endpoint validates outputs with Zod.
- */
 export async function makeXeroRequest<T>(
 	endpoint: string,
 	apiKey: string,

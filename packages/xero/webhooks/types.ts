@@ -53,7 +53,6 @@ export type XeroWebhookOutputs = {
 // ── Helpers & Signature Verification ──────────────────────────────────────────
 
 function parseBody(body: unknown): Record<string, unknown> | null {
-	// unknown: webhook body may be a raw JSON string or an already-parsed object.
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
@@ -91,15 +90,12 @@ export function createXeroEventMatch(
 		if (!category) {
 			return true;
 		}
-		// unknown: Xero event items are loosely typed; we only read category/type strings.
-		return body.events.some((event: unknown) => {
-			if (!event || typeof event !== 'object') return false;
-			const rec = event as Record<string, unknown>;
+		return body.events.some((event: any) => {
 			const categoryMatches =
-				String(rec.eventCategory).toUpperCase() === category;
+				String(event.eventCategory).toUpperCase() === category;
 			if (!eventType) return categoryMatches;
 			return (
-				categoryMatches && String(rec.eventType).toUpperCase() === eventType
+				categoryMatches && String(event.eventType).toUpperCase() === eventType
 			);
 		});
 	};
