@@ -1,6 +1,6 @@
 import { IntegrationFaqAccordion } from '@/components/integrations/detail/integration-faq-accordion';
-import type { ComboData } from '@/lib/combined-integrations';
 import { getComboCanonical } from '@/lib/combined-integrations';
+import type { ComboData } from '@/lib/combo-types';
 import { ComboHero } from './combo-hero';
 import { AppDetails } from './combo-sections';
 import { ComboWorkflows } from './combo-workflows';

@@ -1,5 +1,5 @@
 import { TextWithInlineCode } from '@/components/integrations/detail/text-with-inline-code';
-import type { ComboData } from '@/lib/combined-integrations';
+import type { ComboData } from '@/lib/combo-types';
 
 export function HowToConnect({ combo }: { combo: ComboData }) {
 	return (

@@ -1,5 +1,5 @@
 import { IntegrationLogo } from '@/components/integrations/integration-logo';
-import type { ComboAction, ComboTrigger } from '@/lib/combined-integrations';
+import type { ComboAction, ComboTrigger } from '@/lib/combo-types';
 import { cn } from '@/lib/utils';
 
 const ACCENT: Record<string, string> = {

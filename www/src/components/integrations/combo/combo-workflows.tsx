@@ -1,4 +1,4 @@
-import type { ComboData } from '@/lib/combined-integrations';
+import type { ComboData } from '@/lib/combo-types';
 import { cn } from '@/lib/utils';
 import { WorkflowNodePair } from './workflow-nodes';
 

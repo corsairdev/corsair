@@ -36,7 +36,7 @@ export async function generateMetadata({
 
 	const canonical = getComboCanonical(slug, other);
 	const title = combo.title;
-	const description = `File Linear issues from Slack threads and sync status back. Typed API, webhooks, agents, and MCP on one ${combo.displayA} + ${combo.displayB} connection.`;
+	const description = combo.description;
 
 	return {
 		title,

@@ -2,7 +2,7 @@ import { LightningIcon, PlugsIcon } from '@phosphor-icons/react/dist/ssr';
 import Link from 'next/link';
 
 import { IntegrationLogo } from '@/components/integrations/integration-logo';
-import type { ComboData } from '@/lib/combined-integrations';
+import { comboCountsFor, type ComboData } from '@/lib/combo-types';
 
 function AppCounts({
 	name,
@@ -29,14 +29,8 @@ function AppCounts({
 }
 
 export function ComboHero({ combo }: { combo: ComboData }) {
-	const countsA =
-		combo.slugA === 'slack'
-			? { api: combo.counts.slackOps, webhooks: combo.counts.slackTriggers }
-			: { api: combo.counts.linearOps, webhooks: combo.counts.linearTriggers };
-	const countsB =
-		combo.slugB === 'slack'
-			? { api: combo.counts.slackOps, webhooks: combo.counts.slackTriggers }
-			: { api: combo.counts.linearOps, webhooks: combo.counts.linearTriggers };
+	const countsA = comboCountsFor({ combo, appId: combo.slugA });
+	const countsB = comboCountsFor({ combo, appId: combo.slugB });
 
 	return (
 		<section className="pb-8 pt-8 md:pb-10 md:pt-10">

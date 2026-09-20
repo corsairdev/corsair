@@ -1,6 +1,9 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+	outputFileTracingIncludes: {
+		'/*': ['./src/data/combos/**/*.json'],
+	},
 	images: {
 		remotePatterns: [
 			{

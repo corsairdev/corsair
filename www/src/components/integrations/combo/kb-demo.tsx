@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import { IntegrationLogo } from '@/components/integrations/integration-logo';
-import type { ComboData, ComboKbTool } from '@/lib/combined-integrations';
+import type { ComboData, ComboKbTool } from '@/lib/combo-types';
 import { cn } from '@/lib/utils';
 
 const CHUNK = 2;
@@ -18,18 +18,10 @@ const ANSWER_PAUSE_MS = 280;
 type Phase = 'idle' | 'tools' | 'answer' | 'done';
 type ToolStatus = 'running' | 'done';
 
-function prefersReducedMotion() {
-	return (
-		typeof window !== 'undefined' &&
-		typeof window.matchMedia === 'function' &&
-		window.matchMedia('(prefers-reduced-motion: reduce)').matches
-	);
-}
-
 function Spinner() {
 	return (
 		<span
-			className="size-3.5 shrink-0 animate-spin rounded-full border-[1.5px] border-[#4a38f522] border-t-[#4a38f5] motion-reduce:animate-none"
+			className="size-3.5 shrink-0 animate-spin rounded-full border-[1.5px] border-[#4a38f522] border-t-[#4a38f5]"
 			aria-hidden
 		/>
 	);
@@ -126,6 +118,7 @@ export function KbDemo({ combo }: { combo: ComboData }) {
 	const [chars, setChars] = useState(0);
 	const tick = useRef<ReturnType<typeof setInterval> | null>(null);
 	const waits = useRef<ReturnType<typeof setTimeout>[]>([]);
+	const busyRef = useRef(false);
 
 	function clearTimers() {
 		if (tick.current) {
@@ -162,23 +155,17 @@ export function KbDemo({ combo }: { combo: ComboData }) {
 					clearInterval(tick.current);
 					tick.current = null;
 				}
+				busyRef.current = false;
 				setPhase('done');
 			}
 		}, TICK_MS);
 	}
 
 	function run() {
-		if (phase === 'tools' || phase === 'answer') return;
+		if (busyRef.current) return;
+		busyRef.current = true;
 		clearTimers();
 		const tools = combo.kb.tools;
-
-		if (prefersReducedMotion()) {
-			setShownTools(tools.length);
-			setDoneTools(tools.length);
-			setChars(combo.kb.answer.length);
-			setPhase('done');
-			return;
-		}
 
 		setChars(0);
 		setShownTools(0);
@@ -228,7 +215,9 @@ export function KbDemo({ combo }: { combo: ComboData }) {
 						<div className="flex min-w-0 items-center gap-2">
 							<span className="combo-agent-live size-1.5 shrink-0 rounded-full bg-[#1a7f4b]" />
 							<span className="truncate text-[11px] font-medium tracking-[0.01em] text-[#1c1c1c80]">
-								Corsair connected
+								{busy && currentTool
+									? `${currentTool.label}…`
+									: 'Corsair connected'}
 							</span>
 							<span className="hidden text-[11px] text-[#1c1c1c30] sm:inline">
 								·
@@ -404,13 +393,6 @@ export function KbDemo({ combo }: { combo: ComboData }) {
 								</button>
 							</span>
 						</div>
-						<p className="mt-2 px-0.5 font-[family-name:var(--landing-font-mono)] text-[10px] tracking-[0.02em] text-[#1c1c1c55]">
-							{busy && currentTool
-								? `${currentTool.label}…`
-								: phase === 'done'
-									? 'Run it again to watch the tool calls.'
-									: `Sample from ${combo.kb.asker}`}
-						</p>
 					</div>
 					<noscript>
 						<p className="px-4 py-4 text-[15px] leading-[1.65] text-[#1c1c1c] sm:px-5">

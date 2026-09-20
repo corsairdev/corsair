@@ -7,7 +7,7 @@ import type {
 	ComboAction,
 	ComboData,
 	ComboTrigger,
-} from '@/lib/combined-integrations';
+} from '@/lib/combo-types';
 import { WorkflowNodePair } from './workflow-nodes';
 
 function keyOf(app: string, id: string) {

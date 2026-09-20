@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { IntegrationLogo } from '@/components/integrations/integration-logo';
-import type { ComboData } from '@/lib/combined-integrations';
+import type { ComboData } from '@/lib/combo-types';
 
 export function AppDetails({ combo }: { combo: ComboData }) {
 	return (

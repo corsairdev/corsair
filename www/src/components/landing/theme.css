@@ -463,21 +463,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.combo-agent-row,
-	.combo-agent-result,
-	.combo-agent-caret,
-	.combo-agent-live,
-	.combo-agent-check,
-	.combo-agent-check-path,
-	.combo-agent-running::after,
 	.combo-agent-idle-mark,
-	.combo-agent-idle-mark-delay,
-	.combo-agent-composer-busy {
+	.combo-agent-idle-mark-delay {
 		animation: none;
-	}
-
-	.combo-agent-check-path {
-		stroke-dashoffset: 0;
 	}
 }
 
