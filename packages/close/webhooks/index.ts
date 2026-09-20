@@ -8,6 +8,7 @@ import type {
 	CloseOpportunityCreatedEvent,
 	CloseTaskCreatedEvent,
 } from './types';
+import { verifyCloseWebhookSignature } from './types';
 
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
@@ -23,17 +24,32 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 	return null;
 }
 
+async function handleVerifiedWebhook<T>(
+	ctx: { key?: string },
+	request: WebhookRequest<T>,
+) {
+	const verification = verifyCloseWebhookSignature(request, ctx.key);
+	if (!verification.valid) {
+		return {
+			success: false,
+			statusCode: 401,
+			error: verification.error || 'Signature verification failed',
+		};
+	}
+
+	return {
+		success: true,
+		data: request.payload,
+	};
+}
+
 export const leadCreated: CloseWebhooksType['leadCreated'] = {
 	match: (req: RawWebhookRequest) => {
 		const body = parseBody(req.body);
 		return body?.event_type === 'lead.created';
 	},
-	handler: async (_ctx, request: WebhookRequest<CloseLeadCreatedEvent>) => {
-		return {
-			success: true,
-			data: request.payload,
-		};
-	},
+	handler: async (ctx, request: WebhookRequest<CloseLeadCreatedEvent>) =>
+		handleVerifiedWebhook(ctx, request),
 };
 
 export const leadUpdated: CloseWebhooksType['leadUpdated'] = {
@@ -41,12 +57,8 @@ export const leadUpdated: CloseWebhooksType['leadUpdated'] = {
 		const body = parseBody(req.body);
 		return body?.event_type === 'lead.updated';
 	},
-	handler: async (_ctx, request: WebhookRequest<CloseLeadUpdatedEvent>) => {
-		return {
-			success: true,
-			data: request.payload,
-		};
-	},
+	handler: async (ctx, request: WebhookRequest<CloseLeadUpdatedEvent>) =>
+		handleVerifiedWebhook(ctx, request),
 };
 
 export const contactCreated: CloseWebhooksType['contactCreated'] = {
@@ -54,12 +66,8 @@ export const contactCreated: CloseWebhooksType['contactCreated'] = {
 		const body = parseBody(req.body);
 		return body?.event_type === 'contact.created';
 	},
-	handler: async (_ctx, request: WebhookRequest<CloseContactCreatedEvent>) => {
-		return {
-			success: true,
-			data: request.payload,
-		};
-	},
+	handler: async (ctx, request: WebhookRequest<CloseContactCreatedEvent>) =>
+		handleVerifiedWebhook(ctx, request),
 };
 
 export const opportunityCreated: CloseWebhooksType['opportunityCreated'] = {
@@ -67,15 +75,8 @@ export const opportunityCreated: CloseWebhooksType['opportunityCreated'] = {
 		const body = parseBody(req.body);
 		return body?.event_type === 'opportunity.created';
 	},
-	handler: async (
-		_ctx,
-		request: WebhookRequest<CloseOpportunityCreatedEvent>,
-	) => {
-		return {
-			success: true,
-			data: request.payload,
-		};
-	},
+	handler: async (ctx, request: WebhookRequest<CloseOpportunityCreatedEvent>) =>
+		handleVerifiedWebhook(ctx, request),
 };
 
 export const taskCreated: CloseWebhooksType['taskCreated'] = {
@@ -83,12 +84,8 @@ export const taskCreated: CloseWebhooksType['taskCreated'] = {
 		const body = parseBody(req.body);
 		return body?.event_type === 'task.created';
 	},
-	handler: async (_ctx, request: WebhookRequest<CloseTaskCreatedEvent>) => {
-		return {
-			success: true,
-			data: request.payload,
-		};
-	},
+	handler: async (ctx, request: WebhookRequest<CloseTaskCreatedEvent>) =>
+		handleVerifiedWebhook(ctx, request),
 };
 
 export const activityNoteCreated: CloseWebhooksType['activityNoteCreated'] = {
@@ -97,14 +94,9 @@ export const activityNoteCreated: CloseWebhooksType['activityNoteCreated'] = {
 		return body?.event_type === 'activity.note.created';
 	},
 	handler: async (
-		_ctx,
+		ctx,
 		request: WebhookRequest<CloseActivityNoteCreatedEvent>,
-	) => {
-		return {
-			success: true,
-			data: request.payload,
-		};
-	},
+	) => handleVerifiedWebhook(ctx, request),
 };
 
 export const CloseWebhooks = {

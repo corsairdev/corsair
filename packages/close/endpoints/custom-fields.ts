@@ -1,4 +1,4 @@
-import { makeCloseRequest } from '../client';
+import { makeCloseRequestForCtx } from '../client';
 import type { CloseContext } from '../index';
 import type {
 	CustomFieldsListContactInput,
@@ -21,7 +21,7 @@ export const customFieldsListLead = async (
 		input === undefined
 			? undefined
 			: CustomFieldsListLeadInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>('custom_field/lead/', ctx.key, {
+	const res = await makeCloseRequestForCtx<unknown>(ctx, 'custom_field/lead/', {
 		method: 'GET',
 		query: parsedInput,
 	});
@@ -36,9 +36,9 @@ export const customFieldsListContact = async (
 		input === undefined
 			? undefined
 			: CustomFieldsListContactInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>(
+	const res = await makeCloseRequestForCtx<unknown>(
+		ctx,
 		'custom_field/contact/',
-		ctx.key,
 		{ method: 'GET', query: parsedInput },
 	);
 	return CustomFieldsListContactResponseSchema.parse(res);

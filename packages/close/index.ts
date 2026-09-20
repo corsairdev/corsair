@@ -501,7 +501,10 @@ export function close<const T extends ClosePluginOptions>(
 		webhookSchemas: closeWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			return Object.hasOwn(headers, 'x-close-signature');
+			return (
+				Object.hasOwn(headers, 'close-sig-hash') ||
+				Object.hasOwn(headers, 'close-sig-timestamp')
+			);
 		},
 		pluginTenantWebhookMatcher: matchCloseTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveCloseOAuthWebhookTenantLink,

@@ -1,4 +1,4 @@
-import { makeCloseRequest } from '../client';
+import { makeCloseRequestForCtx } from '../client';
 import type { CloseContext } from '../index';
 import type {
 	ActivitiesCreateNoteInput,
@@ -29,7 +29,7 @@ export const activitiesListNotes = async (
 		input === undefined
 			? undefined
 			: ActivitiesListNotesInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>('activity/note/', ctx.key, {
+	const res = await makeCloseRequestForCtx<unknown>(ctx, 'activity/note/', {
 		method: 'GET',
 		query: parsedInput,
 	});
@@ -41,7 +41,7 @@ export const activitiesCreateNote = async (
 	input: ActivitiesCreateNoteInput,
 ): Promise<ActivitiesCreateNoteResponse> => {
 	const parsedInput = ActivitiesCreateNoteInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>('activity/note/', ctx.key, {
+	const res = await makeCloseRequestForCtx<unknown>(ctx, 'activity/note/', {
 		method: 'POST',
 		body: parsedInput as Record<string, unknown>,
 	});
@@ -56,7 +56,7 @@ export const activitiesListCalls = async (
 		input === undefined
 			? undefined
 			: ActivitiesListCallsInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>('activity/call/', ctx.key, {
+	const res = await makeCloseRequestForCtx<unknown>(ctx, 'activity/call/', {
 		method: 'GET',
 		query: parsedInput,
 	});
@@ -71,7 +71,7 @@ export const activitiesListEmails = async (
 		input === undefined
 			? undefined
 			: ActivitiesListEmailsInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>('activity/email/', ctx.key, {
+	const res = await makeCloseRequestForCtx<unknown>(ctx, 'activity/email/', {
 		method: 'GET',
 		query: parsedInput,
 	});

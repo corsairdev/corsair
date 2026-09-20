@@ -1,4 +1,4 @@
-import { makeCloseRequest } from '../client';
+import { closeResourcePath, makeCloseRequestForCtx } from '../client';
 import type { CloseContext } from '../index';
 import type {
 	TasksCreateInput,
@@ -31,7 +31,7 @@ export const tasksList = async (
 ): Promise<TasksListResponse> => {
 	const parsedInput =
 		input === undefined ? undefined : TasksListInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>('task/', ctx.key, {
+	const res = await makeCloseRequestForCtx<unknown>(ctx, 'task/', {
 		method: 'GET',
 		query: parsedInput,
 	});
@@ -43,9 +43,9 @@ export const tasksGet = async (
 	input: TasksGetInput,
 ): Promise<TasksGetResponse> => {
 	const parsedInput = TasksGetInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>(
-		`task/${parsedInput.id}/`,
-		ctx.key,
+	const res = await makeCloseRequestForCtx<unknown>(
+		ctx,
+		closeResourcePath('task', parsedInput.id),
 		{ method: 'GET' },
 	);
 	return TasksGetResponseSchema.parse(res);
@@ -56,7 +56,7 @@ export const tasksCreate = async (
 	input: TasksCreateInput,
 ): Promise<TasksCreateResponse> => {
 	const parsedInput = TasksCreateInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>('task/', ctx.key, {
+	const res = await makeCloseRequestForCtx<unknown>(ctx, 'task/', {
 		method: 'POST',
 		body: parsedInput as Record<string, unknown>,
 	});
@@ -69,10 +69,14 @@ export const tasksUpdate = async (
 ): Promise<TasksUpdateResponse> => {
 	const parsedInput = TasksUpdateInputSchema.parse(input);
 	const { id, ...body } = parsedInput;
-	const res = await makeCloseRequest<unknown>(`task/${id}/`, ctx.key, {
-		method: 'PUT',
-		body: body as Record<string, unknown>,
-	});
+	const res = await makeCloseRequestForCtx<unknown>(
+		ctx,
+		closeResourcePath('task', id),
+		{
+			method: 'PUT',
+			body: body as Record<string, unknown>,
+		},
+	);
 	return TasksUpdateResponseSchema.parse(res);
 };
 
@@ -81,8 +85,12 @@ export const tasksDelete = async (
 	input: TasksDeleteInput,
 ): Promise<TasksDeleteResponse> => {
 	const parsedInput = TasksDeleteInputSchema.parse(input);
-	await makeCloseRequest<unknown>(`task/${parsedInput.id}/`, ctx.key, {
-		method: 'DELETE',
-	});
+	await makeCloseRequestForCtx<unknown>(
+		ctx,
+		closeResourcePath('task', parsedInput.id),
+		{
+			method: 'DELETE',
+		},
+	);
 	return TasksDeleteResponseSchema.parse({ success: true, id: parsedInput.id });
 };

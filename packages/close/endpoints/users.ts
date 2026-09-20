@@ -1,4 +1,4 @@
-import { makeCloseRequest } from '../client';
+import { makeCloseRequestForCtx } from '../client';
 import type { CloseContext } from '../index';
 import type {
 	UsersGetMeInput,
@@ -19,7 +19,7 @@ export const usersGetMe = async (
 ): Promise<UsersGetMeResponse> => {
 	const parsedInput =
 		input === undefined ? undefined : UsersGetMeInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>('me/', ctx.key, {
+	const res = await makeCloseRequestForCtx<unknown>(ctx, 'me/', {
 		method: 'GET',
 		query: parsedInput,
 	});
@@ -32,7 +32,7 @@ export const usersList = async (
 ): Promise<UsersListResponse> => {
 	const parsedInput =
 		input === undefined ? undefined : UsersListInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>('user/', ctx.key, {
+	const res = await makeCloseRequestForCtx<unknown>(ctx, 'user/', {
 		method: 'GET',
 		query: parsedInput,
 	});
