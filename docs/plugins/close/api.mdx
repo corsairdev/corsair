@@ -100,6 +100,126 @@ await corsair.close.api.activities.listCalls({});
 
 ---
 
+### createCall
+
+`activities.createCall`
+
+Create a call activity
+
+**Risk:** `write`
+
+```ts
+await corsair.close.api.activities.createCall({ lead_id: 'lead_123', direction: 'outbound' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_id` | `string` | Yes | — |
+| `direction` | `'inbound' \| 'outbound'` | No | — |
+| `contact_id` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `note` | `string` | No | — |
+| `recording_url` | `string` | No | — |
+| `user_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `lead_id` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `direction` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `status` | `string` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `organization_id` | `string` | No | — |
+| `date_created` | `string` | No | — |
+
+
+
+---
+
+### deleteCall
+
+`activities.deleteCall`
+
+Delete a call activity
+
+**Risk:** `destructive`
+
+```ts
+await corsair.close.api.activities.deleteCall({ id: 'call_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createSms
+
+`activities.createSms`
+
+Create an SMS activity
+
+**Risk:** `write`
+
+```ts
+await corsair.close.api.activities.createSms({ lead_id: 'lead_123', local_phone: '+15551234567', text: 'Hello' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lead_id` | `string` | Yes | — |
+| `local_phone` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `direction` | `'inbound' \| 'outbound'` | No | — |
+| `status` | `'inbox' \| 'draft' \| 'scheduled' \| 'outbox' \| 'sent' \| 'error'` | No | — |
+| `contact_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `lead_id` | `string` | No | — |
+| `local_phone` | `string` | No | — |
+| `remote_phone` | `string` | No | — |
+| `text` | `string` | No | — |
+| `direction` | `string` | No | — |
+| `status` | `string` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `organization_id` | `string` | No | — |
+| `date_created` | `string` | No | — |
+
+
+
+---
+
 ### listEmails
 
 `activities.listEmails`
