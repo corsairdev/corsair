@@ -109,7 +109,7 @@ describe('imagior keyBuilder', () => {
 		const ctx = {
 			authType: 'api_key',
 			keys: { get_api_key: async () => 'stored_key' },
-		// unknown: test/fixture cast; production types are Zod-validated
+			// unknown: test/fixture cast; production types are Zod-validated
 		} as unknown as ImagiorKeyBuilderContext;
 		await expect(
 			// unknown: plugin surface is structural in tests; production typing comes from Corsair core
@@ -125,7 +125,7 @@ describe('imagior keyBuilder', () => {
 		const ctx = {
 			authType: 'api_key',
 			keys: { get_api_key: async (): Promise<string | null> => null },
-		// unknown: test/fixture cast; production types are Zod-validated
+			// unknown: test/fixture cast; production types are Zod-validated
 		} as unknown as ImagiorKeyBuilderContext;
 		await expect(
 			// unknown: plugin surface is structural in tests; production typing comes from Corsair core
