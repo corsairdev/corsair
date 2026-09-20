@@ -41,6 +41,7 @@ export const XeroInvoice = z
 			})
 			.loose()
 			.optional(),
+		// unknown: invoice line items are open bags per Xero resource version.
 		LineItems: z.array(z.record(z.string(), z.unknown())).optional(),
 		UpdatedDateUTC: z.string().optional(),
 	})
@@ -96,6 +97,7 @@ export const XeroItem = z
 		Name: z.string().optional(),
 		Description: z.string().optional(),
 		PurchaseDescription: z.string().optional(),
+		// unknown: purchase/sales detail bags differ by tracked-inventory item.
 		PurchaseDetails: z.record(z.string(), z.unknown()).optional(),
 		SalesDetails: z.record(z.string(), z.unknown()).optional(),
 		IsSold: z.boolean().optional(),
