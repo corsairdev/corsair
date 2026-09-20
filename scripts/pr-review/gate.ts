@@ -26,6 +26,7 @@ const WEBHOOK_ROUTING_FILES = new Set([
 	'packages/corsair/tests/tenant-links.test.ts',
 	'scripts/pr-review/gate.ts',
 	'scripts/pr-review/gate.test.ts',
+	'scripts/pr-review/pr-scope.ts',
 ]);
 
 export function isAllowedExtraFile(file: string): boolean {
