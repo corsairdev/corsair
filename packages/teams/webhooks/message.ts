@@ -40,54 +40,56 @@ export const channelMessage: TeamsWebhooks['channelMessage'] = {
 
 		const accessToken = await ctx.keys.get_access_token();
 
-		if (ctx.db.messages) {
-			try {
-				for (const { resourceData, resource, changeType } of notifications) {
-					const messageId = resourceData?.id;
-					if (!messageId) continue;
+		try {
+			for (const { resourceData, resource, changeType } of notifications) {
+				const messageId = resourceData?.id;
+				if (!messageId) continue;
 
-					// resource format: teams('teamId')/channels('channelId')/messages('messageId')
-					// or, for a thread reply, .../messages('rootId')/replies('replyId')
-					const parts = (resource ?? '').split('/');
-					const teamId = extractODataId(parts[0] ?? '');
-					const channelId = extractODataId(parts[1] ?? '');
+				// resource format: teams('teamId')/channels('channelId')/messages('messageId')
+				// or, for a thread reply, .../messages('rootId')/replies('replyId')
+				const parts = (resource ?? '').split('/');
+				const teamId = extractODataId(parts[0] ?? '');
+				const channelId = extractODataId(parts[1] ?? '');
 
-					if (changeType === 'deleted') {
+				if (changeType === 'deleted') {
+					if (ctx.db?.messages) {
 						await ctx.db.messages.deleteByEntityId(messageId);
-						continue;
 					}
+					continue;
+				}
 
-					if (!accessToken) {
-						continue;
-					}
+				if (!accessToken) {
+					continue;
+				}
 
-					// Convert the OData notification resource to a REST path so replies
-					// hydrate from .../messages/{root}/replies/{id}, not messages/{id}.
-					const restPath = (resource ?? '')
-						.split('/')
-						.map((seg) => {
-							const m = seg.match(/^([^(]+)\('([^']+)'\)$/);
-							return m ? `${m[1]}/${m[2]}` : seg;
-						})
-						.join('/');
-					const fullMsg = await makeTeamsRequest<
-						TeamsEndpointOutputs['messagesGet']
-					>(restPath, accessToken);
-					if (data.resourceData?.id === messageId) {
-						data = { ...data, teamId, channelId, message: fullMsg };
-					}
+				// Convert the OData notification resource to a REST path so replies
+				// hydrate from .../messages/{root}/replies/{id}, not messages/{id}.
+				const restPath = (resource ?? '')
+					.split('/')
+					.map((seg) => {
+						const m = seg.match(/^([^(]+)\('([^']+)'\)$/);
+						return m ? `${m[1]}/${m[2]}` : seg;
+					})
+					.join('/');
+				const fullMsg = await makeTeamsRequest<
+					TeamsEndpointOutputs['messagesGet']
+				>(restPath, accessToken);
+				if (data.resourceData?.id === messageId) {
+					data = { ...data, teamId, channelId, message: fullMsg };
+				}
+				if (ctx.db?.messages) {
 					const entity = await ctx.db.messages.upsertByEntityId(
 						messageId,
 						toMessageRecord(fullMsg, { teamId, channelId }),
 					);
 					corsairEntityId = entity?.id || '';
 				}
-			} catch (error) {
-				console.warn(
-					'Failed to process channel message webhook in database:',
-					error,
-				);
 			}
+		} catch (error) {
+			console.warn(
+				'Failed to process channel message webhook in database:',
+				error,
+			);
 		}
 
 		await logEventFromContext(

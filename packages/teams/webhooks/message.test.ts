@@ -79,6 +79,36 @@ describe('channelMessage webhook', () => {
 		);
 	});
 
+	it('hydrates the response even when message persistence is disabled', async () => {
+		const fullMessage = {
+			id: 'message-1',
+			replyToId: null,
+			from: { user: { id: 'user-1', displayName: 'Bob' } },
+			body: { content: '<p>hello</p>', contentType: 'html' },
+		};
+		jest.mocked(makeTeamsRequest).mockResolvedValue(fullMessage as never);
+
+		const response = await channelMessage.handler(
+			{
+				key: CLIENT_STATE,
+				keys: { get_access_token: async () => 'tok' },
+			} as never,
+			{ payload: { value: [notification()] }, headers: {} },
+		);
+
+		expect(makeTeamsRequest).toHaveBeenCalledWith(
+			'teams/team-1/channels/channel-1/messages/message-1',
+			'tok',
+		);
+		expect(response.data).toEqual(
+			expect.objectContaining({
+				teamId: 'team-1',
+				channelId: 'channel-1',
+				message: fullMessage,
+			}),
+		);
+	});
+
 	it('deletes stored messages even when access token is missing', async () => {
 		const deleteByEntityId = jest.fn().mockResolvedValue(undefined);
 
