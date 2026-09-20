@@ -19,9 +19,11 @@ const CREDENTIAL_FAILURE =
 function statusOf(error: Error): number | undefined {
 	if (error instanceof ApiError) return error.status;
 
+	// unknown: FinerWorksAPIError copies status, but tests may pass a plain Error.
 	const direct = (error as { status?: unknown }).status;
 	if (typeof direct === 'number') return direct;
 
+	// unknown: Node Error.cause is untyped; we only use it when it is an ApiError.
 	const cause = (error as { cause?: unknown }).cause;
 	if (cause instanceof ApiError) return cause.status;
 

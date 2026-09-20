@@ -41,6 +41,7 @@ export type FinerWorksMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 export type FinerWorksRequestOptions = {
 	method?: FinerWorksMethod;
+	// unknown: request JSON varies by route; each endpoint Zod-parses the result.
 	body?: unknown;
 	query?: Record<string, unknown>;
 };
@@ -55,6 +56,7 @@ function extractErrorMessage(error: ApiError): string {
 	const body = error.body;
 	if (!body || typeof body !== 'object') return error.message;
 
+	// unknown: ASP.NET ModelState and plain message envelopes share no closed type.
 	const record = body as Record<string, unknown>;
 	const parts: string[] = [];
 
