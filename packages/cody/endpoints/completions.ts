@@ -33,39 +33,6 @@ export const code: CodyEndpoints['completionsCode'] = async (ctx, input) => {
 	return validated;
 };
 
-export const stream: CodyEndpoints['completionsStream'] = async (
-	ctx,
-	input,
-) => {
-	const parsed = CodyEndpointInputSchemas.completionsStream.parse(input);
-	const response = await makeCodyRequest('/.api/completions/stream', ctx.key, {
-		method: 'POST',
-		authScheme: ctx.options.authType === 'oauth_2' ? 'Bearer' : 'token',
-		query: {
-			'api-version': parsed.apiVersion,
-			'client-name': parsed.clientName,
-			'client-version': parsed.clientVersion,
-		},
-		body: {
-			messages: parsed.messages,
-			model: parsed.model,
-			maxTokensToSample: parsed.maxTokensToSample,
-			temperature: parsed.temperature,
-			stopSequences: parsed.stopSequences,
-			timeoutMs: parsed.timeoutMs,
-			stream: parsed.stream ?? true,
-		},
-	});
-	const validated = CodyEndpointOutputSchemas.completionsStream.parse(response);
-	await logEventFromContext(
-		ctx,
-		'cody.completions.stream',
-		{ model: parsed.model },
-		'completed',
-	);
-	return validated;
-};
-
 export const listModels: CodyEndpoints['listModels'] = async (ctx, input) => {
 	CodyEndpointInputSchemas.listModels.parse(input ?? {});
 	const response = await makeCodyRequest(

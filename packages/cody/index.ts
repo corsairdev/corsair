@@ -44,7 +44,6 @@ const codyEndpointsNested = {
 	},
 	completions: {
 		code: Completions.code,
-		stream: Completions.stream,
 	},
 	models: {
 		list: Models.list,
@@ -82,7 +81,6 @@ export type CodyEndpoints = {
 	search: CodyEndpoint<'search'>;
 	graphql: CodyEndpoint<'graphql'>;
 	completionsCode: CodyEndpoint<'completionsCode'>;
-	completionsStream: CodyEndpoint<'completionsStream'>;
 	listModels: CodyEndpoint<'listModels'>;
 	getClientConfig: CodyEndpoint<'getClientConfig'>;
 };
@@ -105,10 +103,6 @@ export const codyEndpointSchemas = {
 	'completions.code': {
 		input: CodyEndpointInputSchemas.completionsCode,
 		output: CodyEndpointOutputSchemas.completionsCode,
-	},
-	'completions.stream': {
-		input: CodyEndpointInputSchemas.completionsStream,
-		output: CodyEndpointOutputSchemas.completionsStream,
 	},
 	'models.list': {
 		input: CodyEndpointInputSchemas.listModels,
@@ -138,10 +132,6 @@ const codyEndpointMeta = {
 	'completions.code': {
 		riskLevel: 'write',
 		description: 'Non-streaming Cody LLM completion',
-	},
-	'completions.stream': {
-		riskLevel: 'write',
-		description: 'Streaming Cody chat completion',
 	},
 	'models.list': {
 		riskLevel: 'read',

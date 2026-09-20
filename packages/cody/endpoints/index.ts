@@ -1,6 +1,5 @@
 import {
 	code as completionsCode,
-	stream as completionsStream,
 	getClientConfig,
 	listModels,
 } from './completions';
@@ -22,7 +21,6 @@ export const Graphql = {
 
 export const Completions = {
 	code: completionsCode,
-	stream: completionsStream,
 };
 
 export const Models = {

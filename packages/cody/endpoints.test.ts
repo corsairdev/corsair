@@ -209,20 +209,6 @@ describe('Cody endpoints', () => {
 		expect(result.completion).toBe('hello');
 	});
 
-	it('completions.stream posts to the Sourcegraph stream API', async () => {
-		const { stream } = await import('./endpoints/completions');
-		mockRequest.mockResolvedValue({ completion: 'hi', stopReason: 'STOP' });
-		const result = await stream(apiKeyCtx, {
-			messages: [{ speaker: 'human', text: 'Hi' }],
-		});
-		expect(mockRequest).toHaveBeenCalledWith(
-			'/.api/completions/stream',
-			'test-cody-key',
-			expect.objectContaining({ method: 'POST' }),
-		);
-		expect(result.completion).toBe('hi');
-	});
-
 	it('models.list fetches supported-models.json', async () => {
 		mockRequest.mockResolvedValue({ models: [] });
 		const result = await listModels(apiKeyCtx, {});

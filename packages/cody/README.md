@@ -14,7 +14,6 @@ pnpm add @corsair-dev/cody
 |-----------|--------------|------|-------------|
 | `clientConfig.get` | `cody.api.clientConfig.get` | `read` | Get Cody client configuration |
 | `completions.code` | `cody.api.completions.code` | `write` | Non-streaming Cody LLM completion |
-| `completions.stream` | `cody.api.completions.stream` | `write` | Streaming Cody chat completion |
 | `graphql.post` | `cody.api.graphql.post` | `write` | Run a raw Sourcegraph GraphQL operation |
 | `models.list` | `cody.api.models.list` | `read` | List Cody supported models |
 | `search.get` | `cody.api.search.get` | `read` | Search Sourcegraph code and count matches |

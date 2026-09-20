@@ -94,7 +94,6 @@ export type CodyEndpointInputs = {
 	search: SearchInput;
 	graphql: GraphqlInput;
 	completionsCode: CompletionsInput;
-	completionsStream: CompletionsInput;
 	listModels: z.infer<typeof EmptyInputSchema>;
 	getClientConfig: z.infer<typeof EmptyInputSchema>;
 };
@@ -104,7 +103,6 @@ export type CodyEndpointOutputs = {
 	search: SearchResponse;
 	graphql: GraphqlResponse;
 	completionsCode: CompletionsResponse;
-	completionsStream: CompletionsResponse;
 	listModels: unknown;
 	getClientConfig: unknown;
 };
@@ -114,7 +112,6 @@ export const CodyEndpointInputSchemas = {
 	search: SearchInputSchema,
 	graphql: GraphqlInputSchema,
 	completionsCode: CompletionsInputSchema,
-	completionsStream: CompletionsInputSchema,
 	listModels: EmptyInputSchema,
 	getClientConfig: EmptyInputSchema,
 } as const;
@@ -124,7 +121,6 @@ export const CodyEndpointOutputSchemas = {
 	search: SearchResponseSchema,
 	graphql: GraphqlResponseSchema,
 	completionsCode: CompletionsResponseSchema,
-	completionsStream: CompletionsResponseSchema,
 	listModels: ModelsResponseSchema,
 	getClientConfig: ClientConfigResponseSchema,
 } as const;
