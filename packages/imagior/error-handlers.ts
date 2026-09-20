@@ -17,8 +17,8 @@ export const errorHandlers = {
 			return message.includes('rate limit') || message.includes('rate_limited');
 		},
 		handler: async (error: Error) => ({
-			maxRetries: 5,
-			retryStrategy: 'exponential_backoff' as const,
+			// Transport already retries 429; extra endpoint retries compound load.
+			maxRetries: 0,
 			headersRetryAfterMs:
 				error instanceof ApiError ? error.retryAfter : undefined,
 		}),

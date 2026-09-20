@@ -46,6 +46,7 @@ const mockCtx = {
 	options: {},
 	logEvent: jest.fn(),
 	db: {},
+	// unknown: tests only stub the fields the handlers read.
 } as unknown as ImagiorContext;
 
 function pluginEndpoints() {

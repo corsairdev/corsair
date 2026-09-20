@@ -15,6 +15,7 @@ export async function makeImagiorRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// unknown: JSON body shape differs by endpoint; Zod parses at the caller.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
