@@ -4,12 +4,21 @@ import { SNAPCHAT_TOOLKIT_VERSION } from './operations';
 
 const DEFAULT_COMPOSIO_BASE_URL = 'https://backend.composio.dev/api/v3';
 
+/**
+ * Structure of tool response returned by Composio Snapchat tool execution.
+ */
 export type SnapchatToolResponse = {
+	/** Indicates whether the Composio operation execution was successful */
 	successful?: boolean;
+	/** Response payload returned by Snapchat Marketing API */
 	data?: unknown;
+	/** Error details if operation execution failed */
 	error?: unknown;
+	/** Composio internal execution log identifier */
 	log_id?: string;
+	/** Operation execution status */
 	status?: string;
+	/** Execution request identifier */
 	request_id?: string;
 } & Record<string, unknown>;
 

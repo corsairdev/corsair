@@ -166,26 +166,47 @@ export const SNAPCHAT_REQUIRED_OUTPUT_FIELDS = SNAPCHAT_OPERATIONS.reduce(
 	{} as RequiredFieldsByOperation,
 );
 
-function createEndpointSchema(requiredFields: readonly string[]) {
+function createEndpointSchema(
+	requiredFields: readonly string[],
+	isOutput = false,
+) {
 	const shape: Record<string, z.ZodTypeAny> = {};
 
 	for (const field of requiredFields) {
-		shape[field] = z.unknown().refine((value) => value !== undefined, {
-			message: `${field} is required`,
-		});
+		shape[field] = z
+			.unknown()
+			.describe(`Required ${field} parameter`)
+			.refine((value) => value !== undefined, {
+				message: `${field} is required`,
+			});
 	}
 
-	return z.object(shape).catchall(z.unknown());
+	return z
+		.object(shape)
+		.catchall(
+			z
+				.unknown()
+				.describe(
+					isOutput
+						? 'Response envelope or payload property'
+						: 'Additional operation argument',
+				),
+		)
+		.describe(
+			isOutput
+				? 'Snapchat API response envelope and payload'
+				: 'Snapchat API operation arguments',
+		);
 }
 
 const inputEntries = SNAPCHAT_OPERATIONS.map((operation) => [
 	operation.name,
-	createEndpointSchema(SNAPCHAT_REQUIRED_INPUT_FIELDS[operation.name]),
+	createEndpointSchema(SNAPCHAT_REQUIRED_INPUT_FIELDS[operation.name], false),
 ]);
 
 const outputEntries = SNAPCHAT_OPERATIONS.map((operation) => [
 	operation.name,
-	createEndpointSchema(SNAPCHAT_REQUIRED_OUTPUT_FIELDS[operation.name]),
+	createEndpointSchema(SNAPCHAT_REQUIRED_OUTPUT_FIELDS[operation.name], true),
 ]);
 
 export const SnapchatEndpointInputSchemas = Object.fromEntries(

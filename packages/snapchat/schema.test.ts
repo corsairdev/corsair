@@ -18,24 +18,10 @@ describe('Snapchat schema', () => {
 		expect(SnapchatSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map with all official entities', () => {
+	it('declares an entities map for plugins without local sync', () => {
 		expect(typeof SnapchatSchema.entities).toBe('object');
 		expect(SnapchatSchema.entities).not.toBeNull();
-		expect(Object.keys(SnapchatSchema.entities)).toEqual([
-			'actions',
-			'organizations',
-			'adAccounts',
-			'campaigns',
-			'adSquads',
-			'ads',
-			'creatives',
-			'media',
-			'segments',
-			'billingCenters',
-		]);
-		for (const entity of Object.values(SnapchatSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+		expect(Object.keys(SnapchatSchema.entities)).toEqual([]);
 	});
 
 	it('parses valid Organization entity', () => {
