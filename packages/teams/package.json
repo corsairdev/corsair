@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/teams",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "description": "Microsoft Teams plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -19,7 +19,7 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "corsair": ">=0.1.0",
+    "corsair": ">=0.1.120",
     "zod": "^4.1.13"
   },
   "devDependencies": {
@@ -37,9 +37,15 @@
     "microsoft",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/teams"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/teams"
 }

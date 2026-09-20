@@ -12,9 +12,8 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
-import { getValidAccessToken } from './client';
 import {
 	Albums,
 	Artists,
@@ -562,52 +561,11 @@ export function spotify<const T extends SpotifyPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const accessToken = await ctx.keys.get_access_token();
-				const refreshToken = await ctx.keys.get_refresh_token();
-
-				if (!refreshToken) {
-					throw new AuthMissingError('spotify', 'oauth_2');
-				}
-
-				const res = await ctx.keys.get_integration_credentials();
-
-				if (!res.client_id || !res.client_secret) {
-					throw new Error('[corsair:spotify] No client id or client secret');
-				}
-
-				try {
-					const key = await getValidAccessToken({
-						accessToken,
-						refreshToken,
-						clientId: res.client_id,
-						clientSecret: res.client_secret,
-					});
-
-					if (!key) {
-						throw new Error(
-							'[corsair:spotify] Access token cannot be created.',
-						);
-					}
-
-					(ctx as Record<string, unknown>)._refreshAuth = async () => {
-						const freshToken = await getValidAccessToken({
-							accessToken: null,
-							refreshToken,
-							clientId: res.client_id!,
-							clientSecret: res.client_secret!,
-						});
-						if (freshToken) {
-							await ctx.keys.set_access_token(freshToken);
-						}
-						return freshToken || '';
-					};
-
-					return key;
-				} catch (error) {
-					throw new Error(
-						`[corsair:spotify] Failed to get access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
+				return getOAuthAccessToken(ctx, {
+					plugin: 'spotify',
+					tokenUrl: 'https://accounts.spotify.com/api/token',
+					tokenAuthMethod: 'basic',
+				});
 			}
 
 			if (ctx.authType === 'managed') {

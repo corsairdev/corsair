@@ -35,6 +35,10 @@ export type ProcessManagedOAuthDeliveryOptions = {
 	refreshToken?: string;
 	expiresIn?: number;
 	scope?: string;
+	authType?: 'managed' | 'oauth_2';
+	// Provider token-body identity (Slack team, Notion workspace_id, …) the Hub
+	// forwards so the tenant-link resolver can read it. Absent = API-call class.
+	providerData?: Record<string, unknown>;
 };
 
 export type ProcessManagedOAuthDeliveryResult = {
@@ -54,6 +58,8 @@ export async function processManagedOAuthDelivery(
 		refreshToken,
 		expiresIn,
 		scope,
+		authType = 'managed',
+		providerData,
 	} = options;
 
 	if (!accessToken.trim()) {
@@ -88,7 +94,7 @@ export async function processManagedOAuthDelivery(
 	await ensureCorsairProvisionedForTenant(corsair, tenantId);
 
 	const accountKm = createAccountKeyManager({
-		authType: 'managed',
+		authType,
 		integrationName: pluginId,
 		tenantId,
 		kek: internal.kek,
@@ -124,9 +130,10 @@ export async function processManagedOAuthDelivery(
 				access_token: accessToken,
 				refresh_token: refreshToken,
 				scope,
+				...providerData,
 			},
 		);
-		const extraAccountFields = plugin.authConfig?.managed?.account ?? [];
+		const extraAccountFields = plugin.authConfig?.[authType]?.account ?? [];
 		for (const link of tenantLinks) {
 			try {
 				await setWebhookTenantLink({
@@ -135,7 +142,7 @@ export async function processManagedOAuthDelivery(
 					pluginId,
 					tenantId,
 					link,
-					authType: 'managed',
+					authType,
 					extraAccountFields,
 				});
 			} catch (error) {
@@ -152,7 +159,7 @@ export async function processManagedOAuthDelivery(
 					plugin: pluginId,
 					tenantId,
 					link,
-					authType: 'managed',
+					authType,
 				});
 			}
 		}

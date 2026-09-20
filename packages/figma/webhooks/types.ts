@@ -93,6 +93,10 @@ export function verifyFigmaWebhookPasscode(
 	request: WebhookRequest<unknown>,
 	passcode: string,
 ): { valid: boolean; error?: string } {
+	if (!passcode) {
+		return { valid: false, error: 'Missing webhook passcode' };
+	}
+
 	// type assertion: parsed payload shape is unknown at runtime; narrowed to Record to access passcode field
 	const parsedBody = parseBody(request.payload) as Record<string, unknown>;
 	const payloadPasscode = parsedBody.passcode;
