@@ -1,36 +1,25 @@
-interface RateLimitConfig {
-	enabled: boolean;
-	maxRetries: number;
-	initialRetryDelay: number;
-	backoffMultiplier: number;
-	headerNames: {
-		retryAfter?: string;
-		resetTime?: string;
-		remaining?: string;
-		limit?: string;
-	};
-}
+import type { ApiRequestOptions, ApiResult } from 'corsair/http';
+import { ApiError } from 'corsair/http';
 
 /**
- * Rate-limit config for the Supadata API.
- * Supadata uses standard Retry-After headers on HTTP 429 responses.
+ * Supadata returns HTTP 429 with a standard `Retry-After` header once the
+ * plan's per-second rate limit is exceeded.
+ * https://docs.supadata.ai/api-reference/introduction
  */
-const SUPADATA_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 3,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: {
-		retryAfter: 'Retry-After',
-		resetTime: 'x-ratelimit-reset',
-		remaining: 'x-ratelimit-remaining',
-		limit: 'x-ratelimit-limit',
-	},
-};
+const MAX_RETRIES = 3;
+const INITIAL_RETRY_DELAY_MS = 1000;
+const BACKOFF_MULTIPLIER = 2;
+const MAX_RETRY_DELAY_MS = 60_000;
 
+const SUPADATA_API_BASE = 'https://api.supadata.ai/v1';
+const REQUEST_TIMEOUT_MS = 20_000;
+
+/**
+ * Reads `Retry-After`, which may be either a delay in seconds or an HTTP date.
+ * The result is capped so a long server-supplied delay cannot stall a run.
+ */
 export function extractRetryAfterMs(res: Response): number | undefined {
-	const retryAfter =
-		res.headers.get('Retry-After') ?? res.headers.get('retry-after');
+	const retryAfter = res.headers.get('retry-after');
 	if (!retryAfter) {
 		return undefined;
 	}
@@ -47,28 +36,94 @@ export function extractRetryAfterMs(res: Response): number | undefined {
 		}
 	}
 
-	if (delayMs !== undefined) {
-		return Math.min(delayMs, 60_000);
-	}
+	return delayMs === undefined
+		? undefined
+		: Math.min(delayMs, MAX_RETRY_DELAY_MS);
+}
 
-	return undefined;
+function numericHeader(res: Response, name: string): number | undefined {
+	const raw = res.headers.get(name);
+	if (!raw) return undefined;
+	const value = Number(raw);
+	return Number.isFinite(value) ? value : undefined;
 }
 
 function calculateRetryDelay(attempt: number, retryAfterMs?: number): number {
 	if (retryAfterMs !== undefined) {
 		return retryAfterMs;
 	}
-	const delay =
-		SUPADATA_RATE_LIMIT_CONFIG.initialRetryDelay *
-		Math.pow(SUPADATA_RATE_LIMIT_CONFIG.backoffMultiplier, attempt - 1);
-	return Math.min(delay, 60000);
+	const delay = INITIAL_RETRY_DELAY_MS * BACKOFF_MULTIPLIER ** (attempt - 1);
+	return Math.min(delay, MAX_RETRY_DELAY_MS);
 }
 
 function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
-const SUPADATA_API_BASE = 'https://api.supadata.ai/v1';
-const REQUEST_TIMEOUT_MS = 20_000;
+
+/**
+ * Strips the API key out of a value before it is attached to an error.
+ *
+ * Supadata echoes the supplied key back in the `details` of a 401 — literally
+ * `Invalid API Key: sd_…`. ApiError keeps the response body verbatim, so
+ * without this the key would travel into every log line, error report and
+ * retry record produced from that failure.
+ */
+function redactKey<T>(value: T, apiKey: string): T {
+	if (!apiKey) return value;
+	if (typeof value === 'string') {
+		return value.split(apiKey).join('[REDACTED]') as T;
+	}
+	if (Array.isArray(value)) {
+		return value.map((item) => redactKey(item, apiKey)) as T;
+	}
+	if (value && typeof value === 'object') {
+		return Object.fromEntries(
+			Object.entries(value).map(([key, item]) => [
+				key,
+				redactKey(item, apiKey),
+			]),
+		) as T;
+	}
+	return value;
+}
+
+/**
+ * Builds the message for a failed request from Supadata's standard error
+ * payload (`{ error, message, details, documentationUrl }`), falling back to
+ * the status line when the body is empty or not JSON.
+ */
+function errorMessage(body: unknown, res: Response): string {
+	if (body && typeof body === 'object') {
+		const record = body as Record<string, unknown>;
+		const parts = [record.message, record.details].filter(
+			(part): part is string => typeof part === 'string' && part.length > 0,
+		);
+		if (parts.length > 0) {
+			// De-duplicate when `message` and `details` carry the same text.
+			return [...new Set(parts)].join(': ');
+		}
+		if (typeof record.error === 'string' && record.error.length > 0) {
+			return record.error;
+		}
+	}
+	if (typeof body === 'string' && body.length > 0) {
+		return body;
+	}
+	return `Supadata API error: ${res.status} ${res.statusText}`;
+}
+
+async function parseBody(res: Response): Promise<unknown> {
+	if (res.status === 204) return undefined;
+	const text = await res.text();
+	if (!text) return undefined;
+	const contentType = res.headers.get('content-type') ?? '';
+	if (!contentType.includes('application/json')) return text;
+	try {
+		return JSON.parse(text) as unknown;
+	} catch {
+		return text;
+	}
+}
 
 export async function makeSupadataRequest(
 	endpoint: string,
@@ -83,7 +138,7 @@ export async function makeSupadataRequest(
 
 	const url = new URL(`${SUPADATA_API_BASE}/${endpoint.replace(/^\//, '')}`);
 
-	if (method === 'GET' && query) {
+	if (query) {
 		for (const [key, value] of Object.entries(query)) {
 			if (value === undefined) continue;
 			if (Array.isArray(value)) {
@@ -107,19 +162,24 @@ export async function makeSupadataRequest(
 		headers['Content-Type'] = 'application/json';
 	}
 
-	const rateLimitConfig = SUPADATA_RATE_LIMIT_CONFIG;
-	const maxAttempts = rateLimitConfig.maxRetries + 1;
-	let attempt = 0;
+	// Headers are deliberately left off the ApiError request record: ApiError
+	// redacts the URL and query string but stores headers verbatim, which would
+	// put the API key into every thrown error.
+	const errorRequest: ApiRequestOptions = {
+		method,
+		url: url.toString(),
+		...(requestBody !== undefined ? { body } : {}),
+	};
 
-	while (attempt < maxAttempts) {
-		attempt++;
+	const maxAttempts = MAX_RETRIES + 1;
 
+	for (let attempt = 1; attempt <= maxAttempts; attempt++) {
 		let res: Response;
 		try {
-			// redirect: 'error' prevents the x-api-key credential from being
-			// forwarded silently to a redirect target. The corsair/http request()
-			// wrapper does not expose a redirect option, so we use fetch() directly
-			// here — following the same pattern used by vestaboard and castingwords.
+			// redirect: 'error' keeps the x-api-key header from being forwarded to
+			// a redirect target. corsair/http's request() wrapper does not expose a
+			// redirect option, so fetch() is used directly here — the same approach
+			// taken by the vestaboard and castingwords plugins.
 			res = await fetch(url, {
 				method,
 				redirect: 'error',
@@ -128,58 +188,37 @@ export async function makeSupadataRequest(
 				signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
 			});
 		} catch (error) {
-			// Network errors (including redirect errors and timeouts) are non-retryable.
+			// Network failures, refused redirects and timeouts are not retryable.
 			throw error instanceof Error ? error : new Error('Network error');
 		}
 
-		// Handle rate limiting (429 status code)
-		if (res.status === 429) {
-			const retryAfterMs = extractRetryAfterMs(res);
-			if (attempt < maxAttempts) {
-				const delay = calculateRetryDelay(attempt, retryAfterMs);
-				await sleep(delay);
-				continue;
-			}
+		if (res.status === 429 && attempt < maxAttempts) {
+			await sleep(calculateRetryDelay(attempt, extractRetryAfterMs(res)));
+			continue;
 		}
+
+		const parsed = await parseBody(res);
 
 		if (!res.ok) {
-			let errorBody: unknown;
-			try {
-				const ct = res.headers.get('content-type') ?? '';
-				errorBody = ct.includes('application/json')
-					? await res.json()
-					: await res.text();
-			} catch {
-				errorBody = undefined;
-			}
-			const message =
-				(errorBody &&
-				typeof errorBody === 'object' &&
-				'message' in errorBody &&
-				typeof (errorBody as Record<string, unknown>).message === 'string'
-					? (errorBody as Record<string, unknown>).message
-					: null) ??
-				(errorBody &&
-				typeof errorBody === 'object' &&
-				'error' in errorBody &&
-				typeof (errorBody as Record<string, unknown>).error === 'string'
-					? (errorBody as Record<string, unknown>).error
-					: null) ??
-				`Supadata API error: ${res.status} ${res.statusText}`;
-			const err = new Error(message as string);
-			(err as Error & { status: number }).status = res.status;
-			throw err;
+			const safeBody = redactKey(parsed, apiKey);
+			const result: ApiResult = {
+				url: url.toString(),
+				ok: res.ok,
+				status: res.status,
+				statusText: res.statusText,
+				body: safeBody,
+			};
+			throw new ApiError(errorRequest, result, errorMessage(safeBody, res), {
+				retryAfter: extractRetryAfterMs(res),
+				rateLimitReset: numericHeader(res, 'x-ratelimit-reset'),
+				rateLimitRemaining: numericHeader(res, 'x-ratelimit-remaining'),
+				rateLimitLimit: numericHeader(res, 'x-ratelimit-limit'),
+			});
 		}
 
-		const ct = res.headers.get('content-type') ?? '';
-		if (res.status === 204 || !ct) {
-			return undefined;
-		}
-		if (ct.includes('application/json')) {
-			return await res.json();
-		}
-		return await res.text();
+		return parsed;
 	}
 
+	// Unreachable: the final attempt either returns or throws above.
 	throw new Error('Supadata: exceeded maximum retry attempts');
 }

@@ -1,49 +1,78 @@
 import { z } from 'zod';
+import {
+	SupadataAccount,
+	SupadataTranscript,
+	SupadataTranscriptJob,
+	SupadataTranscriptJobRef,
+	SupadataVideoIds,
+	SupadataWebMap,
+	SupadataWebPage,
+	SupadataYoutubeChannel,
+	SupadataYoutubePlaylist,
+	SupadataYoutubeSearchResult,
+	SupadataYoutubeVideo,
+} from '../schema/database';
+
+/**
+ * Input and output schemas for every Supadata endpoint.
+ *
+ * Inputs mirror the documented query parameters one-for-one — a parameter the
+ * API does not accept is not accepted here either, so a caller cannot pass a
+ * filter that would be silently ignored. Outputs reuse the entity schemas in
+ * `schema/database.ts`.
+ */
 
 // ==========================================
-// 1. Transcript (GET /transcript)
+// 1. Account (GET /me)
+// ==========================================
+
+/** GET /v1/me takes no parameters. */
+export const AccountMeInputSchema = z.object({}).strict();
+
+export type AccountMeInput = z.infer<typeof AccountMeInputSchema>;
+
+export const AccountMeOutputSchema = SupadataAccount;
+
+export type AccountMeOutput = z.infer<typeof AccountMeOutputSchema>;
+
+// ==========================================
+// 2. Transcript (GET /transcript)
 // ==========================================
 
 export const TranscriptInputSchema = z.object({
-	url: z.string().url('A valid URL is required'),
+	/** Video URL on a supported platform, or a direct media file URL. */
+	url: z.url('A valid URL is required'),
+	/** Preferred transcript language (ISO 639-1). Falls back to the first available. */
 	lang: z.string().optional(),
+	/** Return one plain-text transcript instead of timed chunks. Defaults to false. */
 	text: z.boolean().optional(),
+	/** Maximum characters per chunk. Only honoured when `text` is false. */
 	chunkSize: z.number().min(50).max(10000).optional(),
-	mode: z.enum(['auto', 'native', 'generate']).optional(),
+	/**
+	 * `native` uses existing captions only, `generate` always transcribes with
+	 * AI, `auto` tries native and falls back to generate. Defaults to `auto`;
+	 * a file URL is always treated as `generate`.
+	 */
+	mode: z.enum(['native', 'auto', 'generate']).optional(),
 });
 
 export type TranscriptInput = z.infer<typeof TranscriptInputSchema>;
 
-export const TranscriptChunkSchema = z.object({
-	text: z.string(),
-	offset: z.number().optional(),
-	duration: z.number().optional(),
-	lang: z.string().optional(),
-});
-
-export type TranscriptChunk = z.infer<typeof TranscriptChunkSchema>;
-
-export const TranscriptDirectResponseSchema = z.object({
-	lang: z.string().optional(),
-	availableLangs: z.array(z.string()).optional(),
-	content: z.union([z.string(), z.array(TranscriptChunkSchema)]),
-});
-
-export const TranscriptJobResponseSchema = z.object({
-	jobId: z.string(),
-	status: z.enum(['queued', 'processing', 'completed', 'failed']).optional(),
-	message: z.string().optional(),
-});
-
+/**
+ * A transcript, or a job handle when the video is too large to transcribe
+ * inline. Callers should check for `jobId` and poll `transcript.getJob`.
+ *
+ * Official: `TranscriptOrJobId`.
+ */
 export const TranscriptOutputSchema = z.union([
-	TranscriptDirectResponseSchema,
-	TranscriptJobResponseSchema,
+	SupadataTranscript,
+	SupadataTranscriptJobRef,
 ]);
 
 export type TranscriptOutput = z.infer<typeof TranscriptOutputSchema>;
 
 // ==========================================
-// 2. Transcript Job (GET /transcript/{jobId})
+// 3. Transcript job result (GET /transcript/{jobId})
 // ==========================================
 
 export const TranscriptJobInputSchema = z.object({
@@ -52,151 +81,120 @@ export const TranscriptJobInputSchema = z.object({
 
 export type TranscriptJobInput = z.infer<typeof TranscriptJobInputSchema>;
 
-export const TranscriptJobStatusOutputSchema = z.object({
-	jobId: z.string(),
-	// 'active' is the in-progress status used by the Supadata API
-	status: z.enum(['queued', 'active', 'processing', 'completed', 'failed']),
-	error: z.string().optional(),
-	result: TranscriptDirectResponseSchema.optional(),
+export const TranscriptJobOutputSchema = SupadataTranscriptJob;
+
+export type TranscriptJobOutput = z.infer<typeof TranscriptJobOutputSchema>;
+
+// ==========================================
+// 4. YouTube video metadata (GET /youtube/video)
+// ==========================================
+
+/**
+ * `id` accepts a video id or any supported YouTube URL.
+ * https://docs.supadata.ai/youtube/supported-url-formats
+ */
+export const YoutubeVideoInputSchema = z.object({
+	id: z.string().min(1, 'A YouTube video ID or URL is required'),
 });
 
-export type TranscriptJobStatusOutput = z.infer<
-	typeof TranscriptJobStatusOutputSchema
+export type YoutubeVideoInput = z.infer<typeof YoutubeVideoInputSchema>;
+
+export const YoutubeVideoOutputSchema = SupadataYoutubeVideo;
+
+export type YoutubeVideoOutput = z.infer<typeof YoutubeVideoOutputSchema>;
+
+// ==========================================
+// 5. YouTube channel metadata (GET /youtube/channel)
+// ==========================================
+
+/** `id` accepts a channel id, an `@handle`, or any supported channel URL. */
+export const YoutubeChannelInputSchema = z.object({
+	id: z.string().min(1, 'A YouTube channel ID, handle or URL is required'),
+});
+
+export type YoutubeChannelInput = z.infer<typeof YoutubeChannelInputSchema>;
+
+export const YoutubeChannelOutputSchema = SupadataYoutubeChannel;
+
+export type YoutubeChannelOutput = z.infer<typeof YoutubeChannelOutputSchema>;
+
+// ==========================================
+// 6. YouTube channel videos (GET /youtube/channel/videos)
+// ==========================================
+
+export const YoutubeChannelVideosInputSchema = z.object({
+	id: z.string().min(1, 'A YouTube channel ID, handle or URL is required'),
+	/** Maximum ids to return, 1–5000. Defaults to 30. */
+	limit: z.number().int().min(1).max(5000).optional(),
+	/**
+	 * Which kinds of upload to return. Defaults to `all`, which fills regular
+	 * videos first, then Shorts, then live streams.
+	 */
+	type: z.enum(['all', 'video', 'short', 'live']).optional(),
+});
+
+export type YoutubeChannelVideosInput = z.infer<
+	typeof YoutubeChannelVideosInputSchema
+>;
+
+export const YoutubeChannelVideosOutputSchema = SupadataVideoIds;
+
+export type YoutubeChannelVideosOutput = z.infer<
+	typeof YoutubeChannelVideosOutputSchema
 >;
 
 // ==========================================
-// 3. Metadata (GET /metadata)
+// 7. YouTube playlist metadata (GET /youtube/playlist)
 // ==========================================
 
-export const MetadataInputSchema = z.object({
-	url: z.string().url('A valid URL is required'),
+/** `id` accepts a playlist id or any supported playlist URL. */
+export const YoutubePlaylistInputSchema = z.object({
+	id: z.string().min(1, 'A YouTube playlist ID or URL is required'),
 });
 
-export type MetadataInput = z.infer<typeof MetadataInputSchema>;
+export type YoutubePlaylistInput = z.infer<typeof YoutubePlaylistInputSchema>;
 
-export const MetadataAuthorSchema = z.object({
-	id: z.string().optional(),
-	name: z.string().optional(),
-	username: z.string().optional(),
-	url: z.string().optional(),
-	avatar: z.string().optional(),
-	verified: z.boolean().optional(),
-});
+export const YoutubePlaylistOutputSchema = SupadataYoutubePlaylist;
 
-export type MetadataAuthor = z.infer<typeof MetadataAuthorSchema>;
-
-export const MetadataStatsSchema = z.object({
-	views: z.number().nullable().optional(),
-	likes: z.number().nullable().optional(),
-	comments: z.number().nullable().optional(),
-	shares: z.number().nullable().optional(),
-});
-
-export type MetadataStats = z.infer<typeof MetadataStatsSchema>;
-
-export const MetadataMediaSchema = z.object({
-	thumbnail: z.string().optional(),
-	images: z.array(z.string()).optional(),
-	videos: z.array(z.string()).optional(),
-});
-
-export type MetadataMedia = z.infer<typeof MetadataMediaSchema>;
-
-export const MetadataOutputSchema = z.object({
-	id: z.string().optional(),
-	type: z.string().optional(),
-	title: z.string().optional(),
-	description: z.string().optional(),
-	author: z.union([z.string(), MetadataAuthorSchema]).optional(),
-	authorId: z.string().optional(),
-	authorUrl: z.string().optional(),
-	publishedAt: z.string().optional(),
-	createdAt: z.string().optional(),
-	duration: z.number().nullable().optional(),
-	viewsCount: z.number().nullable().optional(),
-	likesCount: z.number().nullable().optional(),
-	commentsCount: z.number().nullable().optional(),
-	sharesCount: z.number().nullable().optional(),
-	stats: MetadataStatsSchema.optional(),
-	thumbnail: z.string().optional(),
-	media: MetadataMediaSchema.optional(),
-	tags: z.array(z.string()).optional(),
-	platform: z.string().optional(),
-	additionalData: z.record(z.string(), z.unknown()).optional(),
-	raw: z.record(z.string(), z.unknown()).optional(),
-});
-
-export type MetadataOutput = z.infer<typeof MetadataOutputSchema>;
+export type YoutubePlaylistOutput = z.infer<typeof YoutubePlaylistOutputSchema>;
 
 // ==========================================
-// 4. Web Scrape (GET /web/scrape)
+// 8. YouTube playlist videos (GET /youtube/playlist/videos)
 // ==========================================
 
-export const WebScrapeInputSchema = z.object({
-	url: z.string().url('A valid URL is required'),
-	noLinks: z.boolean().optional(),
-	/** Preferred content language (ISO 639-1, e.g. 'en'). Defaults to 'en'. */
-	lang: z.string().optional(),
+export const YoutubePlaylistVideosInputSchema = z.object({
+	id: z.string().min(1, 'A YouTube playlist ID or URL is required'),
+	/** Maximum ids to return, 1–5000. Defaults to 100. */
+	limit: z.number().int().min(1).max(5000).optional(),
 });
 
-export type WebScrapeInput = z.infer<typeof WebScrapeInputSchema>;
+export type YoutubePlaylistVideosInput = z.infer<
+	typeof YoutubePlaylistVideosInputSchema
+>;
 
-export const WebScrapeOutputSchema = z.object({
-	url: z.string().optional(),
-	/** Page title (also returned as `name` in some response shapes). */
-	name: z.string().optional(),
-	/** Alias of `name` — some responses use `title`. */
-	title: z.string().optional(),
-	description: z.string().optional(),
-	/** Open Graph canonical URL. */
-	ogUrl: z.string().optional(),
-	content: z.string(),
-	markdown: z.string().optional(),
-	html: z.string().optional(),
-	/** Total character count of the extracted content. */
-	countCharacters: z.number().optional(),
-	/** URLs found on the page. */
-	urls: z.array(z.string()).optional(),
-});
+export const YoutubePlaylistVideosOutputSchema = SupadataVideoIds;
 
-export type WebScrapeOutput = z.infer<typeof WebScrapeOutputSchema>;
+export type YoutubePlaylistVideosOutput = z.infer<
+	typeof YoutubePlaylistVideosOutputSchema
+>;
 
 // ==========================================
-// 5. Website URL Map (GET /web/map)
-// ==========================================
-
-export const WebMapInputSchema = z.object({
-	url: z.string().url('A valid URL is required'),
-	limit: z.number().optional(),
-});
-
-export type WebMapInput = z.infer<typeof WebMapInputSchema>;
-
-export const WebMapOutputSchema = z.object({
-	url: z.string().optional(),
-	links: z.array(z.string()).optional(),
-	urls: z.array(z.string()).optional(),
-});
-
-export type WebMapOutput = z.infer<typeof WebMapOutputSchema>;
-
-// ==========================================
-// 6. YouTube Search (GET /youtube/search)
+// 9. YouTube search (GET /youtube/search)
 // ==========================================
 
 export const YoutubeSearchInputSchema = z.object({
 	query: z.string().min(1, 'Query is required'),
-	/** Content type filter. Defaults to 'all'. */
+	/** Content type filter. Defaults to `all`. */
 	type: z.enum(['all', 'video', 'channel', 'playlist', 'movie']).optional(),
-	/** Maximum results to return (1–5000). */
-	limit: z.number().optional(),
-	/** Age filter. Defaults to 'all'. */
+	/** Maximum results to return, 1–5000. */
+	limit: z.number().int().min(1).max(5000).optional(),
+	/** Age filter. Defaults to `all`. Applies to videos and movies only. */
 	uploadDate: z
 		.enum(['all', 'hour', 'today', 'week', 'month', 'year'])
 		.optional(),
-	/** Sort order. Defaults to 'relevance'. */
+	/** Sort order. Defaults to `relevance`. */
 	sortBy: z.enum(['relevance', 'rating', 'date', 'views']).optional(),
-	/** Length filter. Defaults to 'all'. */
+	/** Length filter. Defaults to `all`. Applies to videos and movies only. */
 	duration: z.enum(['all', 'short', 'medium', 'long']).optional(),
 	/**
 	 * Special feature filters.
@@ -218,84 +216,116 @@ export const YoutubeSearchInputSchema = z.object({
 			]),
 		)
 		.optional(),
-	/** Pagination token from a previous response. When provided, other filters are ignored. */
+	/**
+	 * Page token from a previous response. When supplied, every other filter is
+	 * ignored. Supadata only returns a token when `limit` is omitted.
+	 */
 	nextPageToken: z.string().optional(),
 });
 
 export type YoutubeSearchInput = z.infer<typeof YoutubeSearchInputSchema>;
 
-export const YoutubeChannelSchema = z.object({
-	id: z.string().optional(),
-	name: z.string().optional(),
-	url: z.string().optional(),
-	thumbnail: z.string().optional(),
-});
-
-export const YoutubeSearchResultItemSchema = z.object({
-	type: z.string().optional(),
-	id: z.string().optional(),
-	title: z.string().optional(),
-	description: z.string().optional(),
-	thumbnail: z.string().optional(),
-	channelTitle: z.string().optional(),
-	channelId: z.string().optional(),
-	channel: YoutubeChannelSchema.optional(),
-	publishedAt: z.string().optional(),
-	uploadDate: z.string().optional(),
-	duration: z.number().optional(),
-	viewsCount: z.number().optional(),
-	viewCount: z.number().optional(),
-});
-
-export type YoutubeSearchResultItem = z.infer<
-	typeof YoutubeSearchResultItemSchema
->;
-
-export const YoutubeSearchOutputSchema = z.object({
-	query: z.string().optional(),
-	nextPageToken: z.string().optional(),
-	totalResults: z.number().optional(),
-	results: z.array(YoutubeSearchResultItemSchema),
-});
+export const YoutubeSearchOutputSchema = z
+	.object({
+		query: z.string(),
+		results: z.array(SupadataYoutubeSearchResult),
+		totalResults: z.number().optional(),
+		/** Only returned when `limit` was omitted from the request. */
+		nextPageToken: z.string().optional(),
+	})
+	.loose();
 
 export type YoutubeSearchOutput = z.infer<typeof YoutubeSearchOutputSchema>;
 
 // ==========================================
-// Schema Collections
+// 10. Web scrape (GET /web/scrape)
+// ==========================================
+
+export const WebScrapeInputSchema = z.object({
+	url: z.url('A valid URL is required'),
+	/** Strip Markdown links from the extracted content. Defaults to false. */
+	noLinks: z.boolean().optional(),
+	/** Preferred content language (ISO 639-1). Defaults to `en`. */
+	lang: z.string().optional(),
+});
+
+export type WebScrapeInput = z.infer<typeof WebScrapeInputSchema>;
+
+export const WebScrapeOutputSchema = SupadataWebPage;
+
+export type WebScrapeOutput = z.infer<typeof WebScrapeOutputSchema>;
+
+// ==========================================
+// 11. Website URL map (GET /web/map)
+// ==========================================
+
+/** GET /v1/web/map takes no parameters other than `url`. */
+export const WebMapInputSchema = z.object({
+	url: z.url('A valid URL is required'),
+});
+
+export type WebMapInput = z.infer<typeof WebMapInputSchema>;
+
+export const WebMapOutputSchema = SupadataWebMap;
+
+export type WebMapOutput = z.infer<typeof WebMapOutputSchema>;
+
+// ==========================================
+// Schema collections
 // ==========================================
 
 export type SupadataEndpointInputs = {
+	accountMe: AccountMeInput;
 	transcriptGet: TranscriptInput;
 	transcriptGetJob: TranscriptJobInput;
-	metadataGet: MetadataInput;
+	youtubeVideo: YoutubeVideoInput;
+	youtubeChannel: YoutubeChannelInput;
+	youtubeChannelVideos: YoutubeChannelVideosInput;
+	youtubePlaylist: YoutubePlaylistInput;
+	youtubePlaylistVideos: YoutubePlaylistVideosInput;
+	youtubeSearch: YoutubeSearchInput;
 	webScrape: WebScrapeInput;
 	webMap: WebMapInput;
-	youtubeSearch: YoutubeSearchInput;
 };
 
 export type SupadataEndpointOutputs = {
+	accountMe: AccountMeOutput;
 	transcriptGet: TranscriptOutput;
-	transcriptGetJob: TranscriptJobStatusOutput;
-	metadataGet: MetadataOutput;
+	transcriptGetJob: TranscriptJobOutput;
+	youtubeVideo: YoutubeVideoOutput;
+	youtubeChannel: YoutubeChannelOutput;
+	youtubeChannelVideos: YoutubeChannelVideosOutput;
+	youtubePlaylist: YoutubePlaylistOutput;
+	youtubePlaylistVideos: YoutubePlaylistVideosOutput;
+	youtubeSearch: YoutubeSearchOutput;
 	webScrape: WebScrapeOutput;
 	webMap: WebMapOutput;
-	youtubeSearch: YoutubeSearchOutput;
 };
 
 export const SupadataEndpointInputSchemas = {
+	accountMe: AccountMeInputSchema,
 	transcriptGet: TranscriptInputSchema,
 	transcriptGetJob: TranscriptJobInputSchema,
-	metadataGet: MetadataInputSchema,
+	youtubeVideo: YoutubeVideoInputSchema,
+	youtubeChannel: YoutubeChannelInputSchema,
+	youtubeChannelVideos: YoutubeChannelVideosInputSchema,
+	youtubePlaylist: YoutubePlaylistInputSchema,
+	youtubePlaylistVideos: YoutubePlaylistVideosInputSchema,
+	youtubeSearch: YoutubeSearchInputSchema,
 	webScrape: WebScrapeInputSchema,
 	webMap: WebMapInputSchema,
-	youtubeSearch: YoutubeSearchInputSchema,
 } as const;
 
 export const SupadataEndpointOutputSchemas = {
+	accountMe: AccountMeOutputSchema,
 	transcriptGet: TranscriptOutputSchema,
-	transcriptGetJob: TranscriptJobStatusOutputSchema,
-	metadataGet: MetadataOutputSchema,
+	transcriptGetJob: TranscriptJobOutputSchema,
+	youtubeVideo: YoutubeVideoOutputSchema,
+	youtubeChannel: YoutubeChannelOutputSchema,
+	youtubeChannelVideos: YoutubeChannelVideosOutputSchema,
+	youtubePlaylist: YoutubePlaylistOutputSchema,
+	youtubePlaylistVideos: YoutubePlaylistVideosOutputSchema,
+	youtubeSearch: YoutubeSearchOutputSchema,
 	webScrape: WebScrapeOutputSchema,
 	webMap: WebMapOutputSchema,
-	youtubeSearch: YoutubeSearchOutputSchema,
 } as const;

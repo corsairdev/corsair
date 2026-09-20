@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Metadata, Transcript, Web, Youtube } from './endpoints';
+import { Account, Transcript, Web, Youtube } from './endpoints';
 import type {
 	SupadataEndpointInputs,
 	SupadataEndpointOutputs,
@@ -53,35 +53,49 @@ type SupadataEndpoint<K extends keyof SupadataEndpointOutputs> =
 	>;
 
 export type SupadataEndpoints = {
+	accountMe: SupadataEndpoint<'accountMe'>;
 	transcriptGet: SupadataEndpoint<'transcriptGet'>;
 	transcriptGetJob: SupadataEndpoint<'transcriptGetJob'>;
-	metadataGet: SupadataEndpoint<'metadataGet'>;
+	youtubeVideo: SupadataEndpoint<'youtubeVideo'>;
+	youtubeChannel: SupadataEndpoint<'youtubeChannel'>;
+	youtubeChannelVideos: SupadataEndpoint<'youtubeChannelVideos'>;
+	youtubePlaylist: SupadataEndpoint<'youtubePlaylist'>;
+	youtubePlaylistVideos: SupadataEndpoint<'youtubePlaylistVideos'>;
+	youtubeSearch: SupadataEndpoint<'youtubeSearch'>;
 	webScrape: SupadataEndpoint<'webScrape'>;
 	webMap: SupadataEndpoint<'webMap'>;
-	youtubeSearch: SupadataEndpoint<'youtubeSearch'>;
 };
 
 const supadataEndpointsNested = {
+	account: {
+		me: Account.me,
+	},
 	transcript: {
 		get: Transcript.get,
 		getJob: Transcript.getJob,
 	},
-	metadata: {
-		get: Metadata.get,
+	youtube: {
+		video: Youtube.video,
+		channel: Youtube.channel,
+		channelVideos: Youtube.channelVideos,
+		playlist: Youtube.playlist,
+		playlistVideos: Youtube.playlistVideos,
+		search: Youtube.search,
 	},
 	web: {
 		scrape: Web.scrape,
 		map: Web.map,
 	},
-	youtube: {
-		search: Youtube.search,
-	},
 } as const;
 
-/** No webhook capability of any kind - Supadata API is synchronous/job-based without webhook callbacks. */
+/** Supadata has no webhook capability: results are polled, never pushed. */
 const supadataWebhooksNested = {} as const;
 
 export const supadataEndpointSchemas = {
+	'account.me': {
+		input: SupadataEndpointInputSchemas.accountMe,
+		output: SupadataEndpointOutputSchemas.accountMe,
+	},
 	'transcript.get': {
 		input: SupadataEndpointInputSchemas.transcriptGet,
 		output: SupadataEndpointOutputSchemas.transcriptGet,
@@ -90,9 +104,29 @@ export const supadataEndpointSchemas = {
 		input: SupadataEndpointInputSchemas.transcriptGetJob,
 		output: SupadataEndpointOutputSchemas.transcriptGetJob,
 	},
-	'metadata.get': {
-		input: SupadataEndpointInputSchemas.metadataGet,
-		output: SupadataEndpointOutputSchemas.metadataGet,
+	'youtube.video': {
+		input: SupadataEndpointInputSchemas.youtubeVideo,
+		output: SupadataEndpointOutputSchemas.youtubeVideo,
+	},
+	'youtube.channel': {
+		input: SupadataEndpointInputSchemas.youtubeChannel,
+		output: SupadataEndpointOutputSchemas.youtubeChannel,
+	},
+	'youtube.channelVideos': {
+		input: SupadataEndpointInputSchemas.youtubeChannelVideos,
+		output: SupadataEndpointOutputSchemas.youtubeChannelVideos,
+	},
+	'youtube.playlist': {
+		input: SupadataEndpointInputSchemas.youtubePlaylist,
+		output: SupadataEndpointOutputSchemas.youtubePlaylist,
+	},
+	'youtube.playlistVideos': {
+		input: SupadataEndpointInputSchemas.youtubePlaylistVideos,
+		output: SupadataEndpointOutputSchemas.youtubePlaylistVideos,
+	},
+	'youtube.search': {
+		input: SupadataEndpointInputSchemas.youtubeSearch,
+		output: SupadataEndpointOutputSchemas.youtubeSearch,
 	},
 	'web.scrape': {
 		input: SupadataEndpointInputSchemas.webScrape,
@@ -102,10 +136,6 @@ export const supadataEndpointSchemas = {
 		input: SupadataEndpointInputSchemas.webMap,
 		output: SupadataEndpointOutputSchemas.webMap,
 	},
-	'youtube.search': {
-		input: SupadataEndpointInputSchemas.youtubeSearch,
-		output: SupadataEndpointOutputSchemas.youtubeSearch,
-	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof supadataEndpointsNested
 >;
@@ -113,30 +143,52 @@ export const supadataEndpointSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const supadataEndpointMeta = {
+	'account.me': {
+		riskLevel: 'read',
+		description:
+			'Retrieve organization details, plan information and credit usage',
+	},
 	'transcript.get': {
 		riskLevel: 'read',
-		description: 'Retrieve transcripts for a video or file URL',
+		description: 'Retrieve a transcript for a video or file URL',
 	},
 	'transcript.getJob': {
 		riskLevel: 'read',
 		description:
 			'Retrieve the status or result of an asynchronous transcript job',
 	},
-	'metadata.get': {
+	'youtube.video': {
 		riskLevel: 'read',
-		description: 'Retrieve metadata for media from social platforms',
+		description: 'Retrieve metadata for a YouTube video',
 	},
-	'web.scrape': {
+	'youtube.channel': {
 		riskLevel: 'read',
-		description: 'Scrape and extract web page content in markdown format',
+		description: 'Retrieve metadata for a YouTube channel',
 	},
-	'web.map': {
+	'youtube.channelVideos': {
 		riskLevel: 'read',
-		description: 'Discover and map URLs on a target website domain',
+		description: 'List video, Shorts and live stream IDs for a YouTube channel',
+	},
+	'youtube.playlist': {
+		riskLevel: 'read',
+		description: 'Retrieve metadata for a YouTube playlist',
+	},
+	'youtube.playlistVideos': {
+		riskLevel: 'read',
+		description:
+			'List video, Shorts and live stream IDs for a YouTube playlist',
 	},
 	'youtube.search': {
 		riskLevel: 'read',
-		description: 'Search YouTube for videos, channels, or playlists',
+		description: 'Search YouTube for videos, channels or playlists',
+	},
+	'web.scrape': {
+		riskLevel: 'read',
+		description: 'Extract web page content as Markdown',
+	},
+	'web.map': {
+		riskLevel: 'read',
+		description: 'Discover every URL on a website',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof supadataEndpointsNested>;
 
@@ -199,25 +251,49 @@ export function supadata<const T extends SupadataPluginOptions>(
 }
 
 export type {
-	MetadataAuthor,
-	MetadataInput,
-	MetadataOutput,
+	AccountMeInput,
+	AccountMeOutput,
 	SupadataEndpointInputs,
 	SupadataEndpointOutputs,
-	TranscriptChunk,
 	TranscriptInput,
 	TranscriptJobInput,
-	TranscriptJobStatusOutput,
+	TranscriptJobOutput,
 	TranscriptOutput,
 	WebMapInput,
 	WebMapOutput,
 	WebScrapeInput,
 	WebScrapeOutput,
+	YoutubeChannelInput,
+	YoutubeChannelOutput,
+	YoutubeChannelVideosInput,
+	YoutubeChannelVideosOutput,
+	YoutubePlaylistInput,
+	YoutubePlaylistOutput,
+	YoutubePlaylistVideosInput,
+	YoutubePlaylistVideosOutput,
 	YoutubeSearchInput,
 	YoutubeSearchOutput,
-	YoutubeSearchResultItem,
+	YoutubeVideoInput,
+	YoutubeVideoOutput,
 } from './endpoints/types';
 export {
 	SupadataEndpointInputSchemas,
 	SupadataEndpointOutputSchemas,
 } from './endpoints/types';
+export type {
+	SupadataAccount,
+	SupadataErrorPayload,
+	SupadataTranscript,
+	SupadataTranscriptChunk,
+	SupadataTranscriptContent,
+	SupadataTranscriptJob,
+	SupadataTranscriptJobRef,
+	SupadataVideoIds,
+	SupadataWebMap,
+	SupadataWebPage,
+	SupadataYoutubeChannel,
+	SupadataYoutubeChannelRef,
+	SupadataYoutubePlaylist,
+	SupadataYoutubeSearchResult,
+	SupadataYoutubeVideo,
+} from './schema/database';

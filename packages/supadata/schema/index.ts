@@ -1,4 +1,25 @@
+import { databaseEntities } from './database';
+
 export const SupadataSchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: databaseEntities,
 } as const;
+
+export {
+	databaseEntities,
+	SupadataAccount,
+	SupadataErrorPayload,
+	SupadataTranscript,
+	SupadataTranscriptChunk,
+	SupadataTranscriptContent,
+	SupadataTranscriptJob,
+	SupadataTranscriptJobRef,
+	SupadataVideoIds,
+	SupadataWebMap,
+	SupadataWebPage,
+	SupadataYoutubeChannel,
+	SupadataYoutubeChannelRef,
+	SupadataYoutubePlaylist,
+	SupadataYoutubeSearchResult,
+	SupadataYoutubeVideo,
+} from './database';
