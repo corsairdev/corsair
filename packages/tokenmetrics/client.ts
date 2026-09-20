@@ -69,6 +69,7 @@ export async function makeTokenMetricsRequest<T>(
 		});
 		const body = await responseBody(response);
 
+		// Cast is safe: callers immediately Zod-parse `T` (or treat as opaque).
 		if (response.ok) return body as T;
 
 		const providerMessage =
