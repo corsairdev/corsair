@@ -132,6 +132,38 @@ export type PaymentMethodsListOutput = z.infer<
 	typeof PaymentMethodsListOutputSchema
 >;
 
+export const ProductIdInputSchema = z.object({
+	product_id: CurrencyPairSchema,
+	limit: z.number().int().min(1).max(1000).optional(),
+});
+export type ProductIdInput = z.infer<typeof ProductIdInputSchema>;
+
+export const MarketListInputSchema = z.object({
+	limit: z.number().int().min(1).max(1000).optional(),
+	offset: z.number().int().min(0).optional(),
+	product_type: z.string().optional(),
+	product_ids: z.string().optional(),
+});
+export type MarketListInput = z.infer<typeof MarketListInputSchema>;
+
+export const CandlesInputSchema = z.object({
+	product_id: CurrencyPairSchema,
+	start: z.string().optional(),
+	end: z.string().optional(),
+	granularity: z.string().optional(),
+});
+export type CandlesInput = z.infer<typeof CandlesInputSchema>;
+
+export const GetExchangeCurrencyInputSchema = z.object({
+	currency_id: z.string().min(1),
+});
+export type GetExchangeCurrencyInput = z.infer<
+	typeof GetExchangeCurrencyInputSchema
+>;
+
+export const BrokerageOutputSchema = z.unknown();
+export type BrokerageOutput = unknown;
+
 export type CoinbaseEndpointInputs = {
 	pricesGetSpot: PricesGetSpotInput;
 	pricesGetBuy: PricesGetBuyInput;
@@ -145,6 +177,21 @@ export type CoinbaseEndpointInputs = {
 	transactionsList: TransactionsListInput;
 	transactionsGet: TransactionsGetInput;
 	paymentMethodsList: PaymentMethodsListInput;
+	listMarketProducts: MarketListInput;
+	listExchangeProducts: MarketListInput;
+	getProduct: ProductIdInput;
+	getMarketProductBook: ProductIdInput;
+	getProductBook: ProductIdInput;
+	getProductsTicker: ProductIdInput;
+	getPublicMarketTrades: ProductIdInput;
+	listProductsTrades: ProductIdInput;
+	listProductCandles: CandlesInput;
+	listProductsCandles: CandlesInput;
+	getProductsVolumeSummary: MarketListInput;
+	listProductsStats: ProductIdInput;
+	getServerTime: DataGetTimeInput;
+	getExchangeCurrency: GetExchangeCurrencyInput;
+	listWallets: AccountsListInput;
 };
 
 export type CoinbaseEndpointOutputs = {
@@ -160,6 +207,21 @@ export type CoinbaseEndpointOutputs = {
 	transactionsList: TransactionsListOutput;
 	transactionsGet: TransactionsGetOutput;
 	paymentMethodsList: PaymentMethodsListOutput;
+	listMarketProducts: BrokerageOutput;
+	listExchangeProducts: BrokerageOutput;
+	getProduct: BrokerageOutput;
+	getMarketProductBook: BrokerageOutput;
+	getProductBook: BrokerageOutput;
+	getProductsTicker: BrokerageOutput;
+	getPublicMarketTrades: BrokerageOutput;
+	listProductsTrades: BrokerageOutput;
+	listProductCandles: BrokerageOutput;
+	listProductsCandles: BrokerageOutput;
+	getProductsVolumeSummary: BrokerageOutput;
+	listProductsStats: BrokerageOutput;
+	getServerTime: BrokerageOutput;
+	getExchangeCurrency: BrokerageOutput;
+	listWallets: AccountsListOutput;
 };
 
 export const CoinbaseEndpointInputSchemas = {
@@ -175,6 +237,21 @@ export const CoinbaseEndpointInputSchemas = {
 	transactionsList: TransactionsListInputSchema,
 	transactionsGet: TransactionsGetInputSchema,
 	paymentMethodsList: PaymentMethodsListInputSchema,
+	listMarketProducts: MarketListInputSchema,
+	listExchangeProducts: MarketListInputSchema,
+	getProduct: ProductIdInputSchema,
+	getMarketProductBook: ProductIdInputSchema,
+	getProductBook: ProductIdInputSchema,
+	getProductsTicker: ProductIdInputSchema,
+	getPublicMarketTrades: ProductIdInputSchema,
+	listProductsTrades: ProductIdInputSchema,
+	listProductCandles: CandlesInputSchema,
+	listProductsCandles: CandlesInputSchema,
+	getProductsVolumeSummary: MarketListInputSchema,
+	listProductsStats: ProductIdInputSchema,
+	getServerTime: DataGetTimeInputSchema,
+	getExchangeCurrency: GetExchangeCurrencyInputSchema,
+	listWallets: AccountsListInputSchema,
 } as const;
 
 export const CoinbaseEndpointOutputSchemas = {
@@ -190,4 +267,19 @@ export const CoinbaseEndpointOutputSchemas = {
 	transactionsList: TransactionsListOutputSchema,
 	transactionsGet: TransactionsGetOutputSchema,
 	paymentMethodsList: PaymentMethodsListOutputSchema,
+	listMarketProducts: BrokerageOutputSchema,
+	listExchangeProducts: BrokerageOutputSchema,
+	getProduct: BrokerageOutputSchema,
+	getMarketProductBook: BrokerageOutputSchema,
+	getProductBook: BrokerageOutputSchema,
+	getProductsTicker: BrokerageOutputSchema,
+	getPublicMarketTrades: BrokerageOutputSchema,
+	listProductsTrades: BrokerageOutputSchema,
+	listProductCandles: BrokerageOutputSchema,
+	listProductsCandles: BrokerageOutputSchema,
+	getProductsVolumeSummary: BrokerageOutputSchema,
+	listProductsStats: BrokerageOutputSchema,
+	getServerTime: BrokerageOutputSchema,
+	getExchangeCurrency: BrokerageOutputSchema,
+	listWallets: AccountsListOutputSchema,
 } as const;

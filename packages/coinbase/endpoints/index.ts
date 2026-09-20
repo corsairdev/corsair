@@ -8,6 +8,23 @@ import {
 	listCurrencies,
 } from './data';
 import { listPaymentMethods } from './payment-methods';
+import {
+	getExchangeCurrency,
+	getMarketProductBook,
+	getProduct,
+	getProductBook,
+	getProductsTicker,
+	getProductsVolumeSummary,
+	getPublicMarketTrades,
+	getServerTime,
+	listExchangeProducts,
+	listMarketProducts,
+	listProductCandles,
+	listProductsCandles,
+	listProductsStats,
+	listProductsTrades,
+	listWallets,
+} from './markets';
 import { getTransaction, listTransactions } from './transactions';
 import { getUser } from './user';
 
@@ -39,6 +56,24 @@ export const Transactions = {
 
 export const PaymentMethods = {
 	list: listPaymentMethods,
+};
+
+export const Markets = {
+	listMarketProducts,
+	listExchangeProducts,
+	getProduct,
+	getMarketProductBook,
+	getProductBook,
+	getProductsTicker,
+	getPublicMarketTrades,
+	listProductsTrades,
+	listProductCandles,
+	listProductsCandles,
+	getProductsVolumeSummary,
+	listProductsStats,
+	getServerTime,
+	getExchangeCurrency,
+	listWallets,
 };
 
 export * from './types';

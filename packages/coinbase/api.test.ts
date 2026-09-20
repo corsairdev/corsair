@@ -16,6 +16,7 @@ import {
 	getTime,
 	listCurrencies,
 } from './endpoints/data';
+import { getServerTime, listMarketProducts } from './endpoints/markets';
 import { listPaymentMethods } from './endpoints/payment-methods';
 import { getTransaction, listTransactions } from './endpoints/transactions';
 import {
@@ -100,12 +101,12 @@ function lastRequest(): {
 }
 
 describe('Coinbase plugin', () => {
-	it('creates plugin instance with 12 endpoints and api_key plus oauth_2', () => {
+	it('creates plugin instance with 27 endpoints and api_key plus oauth_2', () => {
 		const plugin = coinbase({ key: 'fixture-auth-value' });
 		expect(plugin.id).toBe('coinbase');
 		expect(plugin.authConfig?.api_key?.account).toEqual(['account', 'user_id']);
 		expect(plugin.authConfig?.oauth_2?.account).toEqual(['user_id']);
-		expect(Object.keys(plugin.endpointSchemas ?? {})).toHaveLength(12);
+		expect(Object.keys(plugin.endpointSchemas ?? {})).toHaveLength(27);
 		expect(Object.keys(plugin.webhookSchemas ?? {})).toEqual([
 			'notifications.ping',
 			'notifications.newPayment',
@@ -455,5 +456,29 @@ describe('Coinbase webhooks', () => {
 		expect(coinbaseSignatureHeader({ 'x-cc-webhook-signature': 'def' })).toBe(
 			'def',
 		);
+	});
+});
+
+describe('Coinbase Advanced Trade market endpoints', () => {
+	it('lists public market products', async () => {
+		mockFetch.mockResolvedValue(
+			jsonResponse({ products: [{ product_id: 'BTC-USD', price: '1' }] }),
+		);
+		const result = await listMarketProducts(ctx, { limit: 10 });
+		expect(lastRequest().url).toContain(
+			'/api/v3/brokerage/market/products?limit=10',
+		);
+		expect(result).toMatchObject({
+			products: [{ product_id: 'BTC-USD' }],
+		});
+	});
+
+	it('gets Advanced Trade server time', async () => {
+		mockFetch.mockResolvedValue(
+			jsonResponse({ iso: '2015-06-23T18:02:51Z', epochSeconds: '1435082571' }),
+		);
+		const result = await getServerTime(ctx, {});
+		expect(lastRequest().url).toBe(`${COINBASE_API_BASE}/api/v3/brokerage/time`);
+		expect(result).toMatchObject({ iso: '2015-06-23T18:02:51Z' });
 	});
 });

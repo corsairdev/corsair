@@ -19,6 +19,7 @@ import { AuthMissingError } from 'corsair/core';
 import {
 	Accounts,
 	Data,
+	Markets,
 	PaymentMethods,
 	Prices,
 	Transactions,
@@ -90,6 +91,21 @@ export type CoinbaseEndpoints = {
 	transactionsList: CoinbaseEndpoint<'transactionsList'>;
 	transactionsGet: CoinbaseEndpoint<'transactionsGet'>;
 	paymentMethodsList: CoinbaseEndpoint<'paymentMethodsList'>;
+	listMarketProducts: CoinbaseEndpoint<'listMarketProducts'>;
+	listExchangeProducts: CoinbaseEndpoint<'listExchangeProducts'>;
+	getProduct: CoinbaseEndpoint<'getProduct'>;
+	getMarketProductBook: CoinbaseEndpoint<'getMarketProductBook'>;
+	getProductBook: CoinbaseEndpoint<'getProductBook'>;
+	getProductsTicker: CoinbaseEndpoint<'getProductsTicker'>;
+	getPublicMarketTrades: CoinbaseEndpoint<'getPublicMarketTrades'>;
+	listProductsTrades: CoinbaseEndpoint<'listProductsTrades'>;
+	listProductCandles: CoinbaseEndpoint<'listProductCandles'>;
+	listProductsCandles: CoinbaseEndpoint<'listProductsCandles'>;
+	getProductsVolumeSummary: CoinbaseEndpoint<'getProductsVolumeSummary'>;
+	listProductsStats: CoinbaseEndpoint<'listProductsStats'>;
+	getServerTime: CoinbaseEndpoint<'getServerTime'>;
+	getExchangeCurrency: CoinbaseEndpoint<'getExchangeCurrency'>;
+	listWallets: CoinbaseEndpoint<'listWallets'>;
 };
 
 type CoinbaseWebhook<
@@ -128,6 +144,23 @@ const coinbaseEndpointsNested = {
 	},
 	paymentMethods: {
 		list: PaymentMethods.list,
+	},
+	markets: {
+		listProducts: Markets.listMarketProducts,
+		listExchangeProducts: Markets.listExchangeProducts,
+		getProduct: Markets.getProduct,
+		getMarketProductBook: Markets.getMarketProductBook,
+		getProductBook: Markets.getProductBook,
+		getTicker: Markets.getProductsTicker,
+		getPublicTrades: Markets.getPublicMarketTrades,
+		listTrades: Markets.listProductsTrades,
+		listProductCandles: Markets.listProductCandles,
+		listProductsCandles: Markets.listProductsCandles,
+		getVolumeSummary: Markets.getProductsVolumeSummary,
+		listStats: Markets.listProductsStats,
+		getServerTime: Markets.getServerTime,
+		getCurrency: Markets.getExchangeCurrency,
+		listWallets: Markets.listWallets,
 	},
 } as const;
 
@@ -186,6 +219,66 @@ export const coinbaseEndpointSchemas = {
 	'paymentMethods.list': {
 		input: CoinbaseEndpointInputSchemas.paymentMethodsList,
 		output: CoinbaseEndpointOutputSchemas.paymentMethodsList,
+	},
+	'markets.listProducts': {
+		input: CoinbaseEndpointInputSchemas.listMarketProducts,
+		output: CoinbaseEndpointOutputSchemas.listMarketProducts,
+	},
+	'markets.listExchangeProducts': {
+		input: CoinbaseEndpointInputSchemas.listExchangeProducts,
+		output: CoinbaseEndpointOutputSchemas.listExchangeProducts,
+	},
+	'markets.getProduct': {
+		input: CoinbaseEndpointInputSchemas.getProduct,
+		output: CoinbaseEndpointOutputSchemas.getProduct,
+	},
+	'markets.getMarketProductBook': {
+		input: CoinbaseEndpointInputSchemas.getMarketProductBook,
+		output: CoinbaseEndpointOutputSchemas.getMarketProductBook,
+	},
+	'markets.getProductBook': {
+		input: CoinbaseEndpointInputSchemas.getProductBook,
+		output: CoinbaseEndpointOutputSchemas.getProductBook,
+	},
+	'markets.getTicker': {
+		input: CoinbaseEndpointInputSchemas.getProductsTicker,
+		output: CoinbaseEndpointOutputSchemas.getProductsTicker,
+	},
+	'markets.getPublicTrades': {
+		input: CoinbaseEndpointInputSchemas.getPublicMarketTrades,
+		output: CoinbaseEndpointOutputSchemas.getPublicMarketTrades,
+	},
+	'markets.listTrades': {
+		input: CoinbaseEndpointInputSchemas.listProductsTrades,
+		output: CoinbaseEndpointOutputSchemas.listProductsTrades,
+	},
+	'markets.listProductCandles': {
+		input: CoinbaseEndpointInputSchemas.listProductCandles,
+		output: CoinbaseEndpointOutputSchemas.listProductCandles,
+	},
+	'markets.listProductsCandles': {
+		input: CoinbaseEndpointInputSchemas.listProductsCandles,
+		output: CoinbaseEndpointOutputSchemas.listProductsCandles,
+	},
+	'markets.getVolumeSummary': {
+		input: CoinbaseEndpointInputSchemas.getProductsVolumeSummary,
+		output: CoinbaseEndpointOutputSchemas.getProductsVolumeSummary,
+	},
+	'markets.listStats': {
+		input: CoinbaseEndpointInputSchemas.listProductsStats,
+		output: CoinbaseEndpointOutputSchemas.listProductsStats,
+	},
+	'markets.getServerTime': {
+		input: CoinbaseEndpointInputSchemas.getServerTime,
+		output: CoinbaseEndpointOutputSchemas.getServerTime,
+	},
+	'markets.getCurrency': {
+		input: CoinbaseEndpointInputSchemas.getExchangeCurrency,
+		output: CoinbaseEndpointOutputSchemas.getExchangeCurrency,
+	},
+	'markets.listWallets': {
+		input: CoinbaseEndpointInputSchemas.listWallets,
+		output: CoinbaseEndpointOutputSchemas.listWallets,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof coinbaseEndpointsNested
@@ -256,6 +349,66 @@ const coinbaseEndpointMeta = {
 	'paymentMethods.list': {
 		riskLevel: 'read',
 		description: 'List payment methods on the authenticated Coinbase account',
+	},
+	'markets.listProducts': {
+		riskLevel: 'read',
+		description: 'List Advanced Trade market products',
+	},
+	'markets.listExchangeProducts': {
+		riskLevel: 'read',
+		description: 'List Advanced Trade trading products',
+	},
+	'markets.getProduct': {
+		riskLevel: 'read',
+		description: 'Get an Advanced Trade product by id',
+	},
+	'markets.getMarketProductBook': {
+		riskLevel: 'read',
+		description: 'Get the Advanced Trade public product book',
+	},
+	'markets.getProductBook': {
+		riskLevel: 'read',
+		description: 'Get the Advanced Trade product order book',
+	},
+	'markets.getTicker': {
+		riskLevel: 'read',
+		description: 'Get the Advanced Trade public product ticker and trades',
+	},
+	'markets.getPublicTrades': {
+		riskLevel: 'read',
+		description: 'Get public Advanced Trade market trades',
+	},
+	'markets.listTrades': {
+		riskLevel: 'read',
+		description: 'List recent Advanced Trade market trades',
+	},
+	'markets.listProductCandles': {
+		riskLevel: 'read',
+		description: 'List Advanced Trade product candles',
+	},
+	'markets.listProductsCandles': {
+		riskLevel: 'read',
+		description: 'List Advanced Trade candlestick history',
+	},
+	'markets.getVolumeSummary': {
+		riskLevel: 'read',
+		description: 'List Advanced Trade products including 24h volume',
+	},
+	'markets.listStats': {
+		riskLevel: 'read',
+		description: 'Get Advanced Trade product details and 24h stats',
+	},
+	'markets.getServerTime': {
+		riskLevel: 'read',
+		description: 'Get Coinbase Advanced Trade server time',
+	},
+	'markets.getCurrency': {
+		riskLevel: 'read',
+		description: 'Get a Coinbase App currency by id',
+	},
+	'markets.listWallets': {
+		riskLevel: 'read',
+		description: 'List Coinbase App wallets (accounts)',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof coinbaseEndpointsNested>;
 
