@@ -11,9 +11,10 @@ type KeyBuilder = (
 
 describe('Cody plugin', () => {
 	const plugin = cody();
-	// unknown: test helper receives a partial plugin candidate from local fixtures.
-	const keyBuilderOf = (candidate: { keyBuilder?: unknown }): KeyBuilder =>
-		candidate.keyBuilder as KeyBuilder;
+	const keyBuilderOf = (candidate: ReturnType<typeof cody>): KeyBuilder => {
+		if (!candidate.keyBuilder) throw new Error('keyBuilder missing');
+		return candidate.keyBuilder as KeyBuilder;
+	};
 
 	it('instantiates with plugin id cody and api_key auth config', () => {
 		expect(plugin.id).toBe('cody');
@@ -59,12 +60,19 @@ describe('Cody plugin', () => {
 	});
 
 	describe('keyBuilder', () => {
-		const keyContext = (key?: string) =>
-			({
-				authType: 'api_key',
-				keys: { get_api_key: async () => key },
-				// unknown: fixture omits unrelated runtime context fields.
-			}) as unknown as CodyKeyBuilderContext;
+		const keyContext = (key?: string): CodyKeyBuilderContext => ({
+			authType: 'api_key',
+			options: { authType: 'api_key' },
+			keys: {
+				get_api_key: async () => key ?? null,
+				set_api_key: async () => {},
+				get_webhook_signature: async () => null,
+				set_webhook_signature: async () => {},
+				get_dek: async () => '',
+				issue_new_dek: async () => '',
+			},
+			tenantId: 'default',
+		});
 
 		it('returns options.key when explicitly provided', async () => {
 			const configured = cody({ key: 'inline-key' });

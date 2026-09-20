@@ -49,9 +49,10 @@ type Ctx = Parameters<typeof botsList>[0];
 function ctx(): Ctx {
 	return {
 		key: 'test-cody-token',
-		$getAccountId: () => 'test-account-id',
-		// unknown: fixture omits unrelated runtime context fields.
-	} as unknown as Ctx;
+		$getAccountId: async () => 'test-account-id',
+		tenantId: 'default',
+		options: { authType: 'api_key' },
+	} as Ctx;
 }
 
 beforeEach(() => {

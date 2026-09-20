@@ -9,11 +9,10 @@ jest.mock('corsair/http', () => {
 
 const mockRequest = request as jest.MockedFunction<typeof request>;
 
-function lastCall(): [OpenAPIConfig, ApiRequestOptions] {
+function lastCall(): { config: OpenAPIConfig; options: ApiRequestOptions } {
 	const call = mockRequest.mock.calls.at(-1);
 	if (!call) throw new Error('request() was never called');
-	// unknown: jest stores mocked call tuples without preserving the generic function signature.
-	return call as unknown as [OpenAPIConfig, ApiRequestOptions];
+	return { config: call[0], options: call[1] };
 }
 
 function apiError(status: number, retryAfter?: number): ApiError {
@@ -43,7 +42,7 @@ describe('makeCodyRequest', () => {
 			query: { search: 'test' },
 		});
 
-		const [config, options] = lastCall();
+		const { config, options } = lastCall();
 		expect(config.BASE).toBe(CODY_API_BASE);
 		expect(config.TOKEN).toBe('test-cody-token');
 		expect(config.HEADERS).toEqual({
