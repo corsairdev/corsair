@@ -26,6 +26,10 @@ export const InboundSmsEventSchema = z.object({
 		.union([z.number(), z.string()])
 		.optional()
 		.describe('Unix epoch seconds or ISO timestamp'),
+	timestamp_send: z
+		.union([z.number(), z.string()])
+		.optional()
+		.describe('ClickSend inbound send timestamp (Unix epoch seconds)'),
 	original_message_id: z
 		.string()
 		.optional()
