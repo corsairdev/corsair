@@ -107,7 +107,7 @@ describe('events.get', () => {
 		const result = await Events.get(ctx, { eventId: event._id });
 
 		expect(mockRequest).toHaveBeenCalledWith(
-			`/events/${event._id}`,
+			`/events/${encodeURIComponent(event._id)}`,
 			'humanitix-key',
 			{ method: 'GET' },
 		);

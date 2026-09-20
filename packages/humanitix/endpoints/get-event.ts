@@ -11,7 +11,7 @@ export const getEvent: HumanitixEndpoints['getEvent'] = async (ctx, input) => {
 	// Raw transport payload typed unknown, then validated against the zod
 	// output schema below — no narrower static type exists for it.
 	const raw = await makeHumanitixRequest<unknown>(
-		`/events/${parsed.eventId}`,
+		`/events/${encodeURIComponent(parsed.eventId)}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
