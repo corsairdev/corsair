@@ -272,7 +272,48 @@ const TransferProjectOutputSchema = singleResource(PrismaProjectSchema);
 const CreateDatabaseOutputSchema = singleResource(PrismaDatabaseSchema);
 const GetDatabaseOutputSchema = singleResource(PrismaDatabaseSchema);
 const ListDatabasesOutputSchema = resourceOrList(PrismaDatabaseSchema);
-const GetDatabaseUsageOutputSchema = z.record(z.string(), z.unknown());
+const PrismaUsageMetricPointSchema = z
+	.object({
+		timestamp: z.string().optional(),
+		value: z.number().optional(),
+	})
+	.passthrough();
+
+const PrismaUsageBreakdownSchema = z
+	.object({
+		reads: z.number().optional(),
+		writes: z.number().optional(),
+		total: z.number().optional(),
+		bytes: z.number().optional(),
+		history: z.array(PrismaUsageMetricPointSchema).optional(),
+	})
+	.passthrough();
+
+const PrismaDatabaseUsageSchema = z
+	.object({
+		databaseId: z.string().optional(),
+		id: z.string().optional(),
+		startDate: z.string().optional(),
+		endDate: z.string().optional(),
+		storage: z.union([z.number(), PrismaUsageBreakdownSchema]).optional(),
+		operations: z.union([z.number(), PrismaUsageBreakdownSchema]).optional(),
+		reads: z.union([z.number(), PrismaUsageBreakdownSchema]).optional(),
+		writes: z.union([z.number(), PrismaUsageBreakdownSchema]).optional(),
+		totalOperations: z.number().optional(),
+		metrics: z
+			.union([
+				z.array(PrismaUsageMetricPointSchema),
+				z.record(z.string(), z.union([z.number(), PrismaUsageBreakdownSchema])),
+			])
+			.optional(),
+	})
+	.passthrough();
+
+const GetDatabaseUsageOutputSchema = z.union([
+	PrismaDatabaseUsageSchema,
+	z.object({ data: PrismaDatabaseUsageSchema }).passthrough(),
+	z.object({ usage: PrismaDatabaseUsageSchema }).passthrough(),
+]);
 const CreateConnectionOutputSchema = singleResource(PrismaConnectionSchema);
 const ListConnectionsOutputSchema = resourceOrList(PrismaConnectionSchema);
 const ListBackupsOutputSchema = resourceOrList(PrismaBackupSchema);

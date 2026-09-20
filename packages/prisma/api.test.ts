@@ -148,6 +148,32 @@ describe('Prisma plugin shape', () => {
 				status: 'restored',
 			}).success,
 		).toBe(false);
+		// databases.getUsage validates structured usage data and rejects malformed values
+		expect(
+			PrismaEndpointOutputSchemas.getDatabaseUsage!.safeParse({
+				databaseId: 'db1',
+				storage: 1024,
+				operations: { reads: 10, writes: 5, total: 15 },
+			}).success,
+		).toBe(true);
+		expect(
+			PrismaEndpointOutputSchemas.getDatabaseUsage!.safeParse({
+				data: {
+					databaseId: 'db1',
+					storage: { bytes: 2048 },
+					metrics: [{ timestamp: '2026-09-20T00:00:00Z', value: 42 }],
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			PrismaEndpointOutputSchemas.getDatabaseUsage!.safeParse('invalid-payload')
+				.success,
+		).toBe(false);
+		expect(
+			PrismaEndpointOutputSchemas.getDatabaseUsage!.safeParse({
+				storage: 'should-not-be-a-string',
+			}).success,
+		).toBe(false);
 	});
 
 	it('marks destructive operations as irreversible', () => {

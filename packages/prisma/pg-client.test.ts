@@ -244,7 +244,7 @@ describe('isReadOnlySql token-aware validation', () => {
 		expect(isReadOnlySql("SELECT setval('s', 1)")).toBe(false);
 	});
 
-	it('rejects side-effecting and unknown function calls (allowlist)', () => {
+	it('rejects side-effecting function calls while permitting safe and user-defined functions', () => {
 		expect(isReadOnlySql("SELECT pg_advisory_lock('k')")).toBe(false);
 		expect(isReadOnlySql("SELECT pg_advisory_xact_lock('k')")).toBe(false);
 		expect(isReadOnlySql("SELECT pg_try_advisory_lock('k')")).toBe(false);
@@ -258,15 +258,17 @@ describe('isReadOnlySql token-aware validation', () => {
 		expect(isReadOnlySql("SELECT set_config('x.a', '1', false)")).toBe(false);
 		expect(isReadOnlySql('SELECT pg_terminate_backend(42)')).toBe(false);
 		expect(isReadOnlySql('SELECT pg_cancel_backend(42)')).toBe(false);
-		// PostgreSQL functions intentionally rejected because the read-only check uses an allowlist
 		expect(isReadOnlySql('SELECT pg_sleep(30)')).toBe(false);
 		expect(isReadOnlySql('SELECT pg_stat_reset()')).toBe(false);
 		expect(isReadOnlySql('SELECT pg_stat_clear_snapshot()')).toBe(false);
-		// any unknown or user-defined function is rejected by default
-		expect(isReadOnlySql('SELECT my_custom_function(1)')).toBe(false);
-		expect(isReadOnlySql('SELECT public.my_custom_function(1)')).toBe(false);
-		// quoted invocations of unlisted functions are rejected too
 		expect(isReadOnlySql("SELECT \"dblink\"('c', 'INSERT')")).toBe(false);
+		expect(isReadOnlySql('SELECT "pg_sleep"(30)')).toBe(false);
+		expect(isReadOnlySql('SELECT pg_catalog.pg_sleep(30)')).toBe(false);
+		// safe built-in and user-defined functions are permitted
+		expect(isReadOnlySql('SELECT random()')).toBe(true);
+		expect(isReadOnlySql('SELECT my_custom_function(1)')).toBe(true);
+		expect(isReadOnlySql('SELECT public.my_custom_function(1)')).toBe(true);
+		expect(isReadOnlySql('SELECT "my_custom_function"(1)')).toBe(true);
 		// ...but a quoted identifier that is not invoked stays allowed
 		expect(isReadOnlySql('SELECT "pg_advisory_lock" FROM functions')).toBe(
 			true,
@@ -298,7 +300,7 @@ describe('isReadOnlySql token-aware validation', () => {
 		expect(isReadOnlySql("SELECT \"dblink\" -- comment\n('c', 'x')")).toBe(
 			false,
 		);
-		// allowlisted names still pass when a comment intervenes
+		// safe function calls still pass when a comment intervenes
 		expect(isReadOnlySql('SELECT count /* tally */ (*) FROM users')).toBe(true);
 		expect(
 			isReadOnlySql('SELECT * FROM generate_series -- series\n(1, 3)'),
@@ -344,7 +346,7 @@ describe('isReadOnlySql token-aware validation', () => {
 		expect(isReadOnlySql('SELECT "pg_stat_reset"()')).toBe(false);
 	});
 
-	it('accepts allowlisted built-in calls and keyword constructs', () => {
+	it('accepts safe built-in calls and keyword constructs', () => {
 		expect(isReadOnlySql('SELECT random()')).toBe(true);
 		expect(isReadOnlySql('SELECT count(*) FROM users')).toBe(true);
 		expect(isReadOnlySql('SELECT max(id), sum(amount) FROM users')).toBe(true);
