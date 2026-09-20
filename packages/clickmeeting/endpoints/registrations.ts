@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeClickmeetingRequest } from '../client';
 import type { ClickmeetingEndpoints } from '../index';
+import { ClickmeetingEndpointOutputSchemas } from './types';
 
 export const registerParticipant: ClickmeetingEndpoints['registerParticipant'] =
 	async (ctx, input) => {
@@ -12,7 +13,7 @@ export const registerParticipant: ClickmeetingEndpoints['registerParticipant'] =
 				}
 			}
 		}
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/registration`,
 			ctx.key,
 			{
@@ -27,13 +28,13 @@ export const registerParticipant: ClickmeetingEndpoints['registerParticipant'] =
 			{ roomId: input.roomId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.registerParticipant.parse(res);
 	};
 
 export const getRegistrations: ClickmeetingEndpoints['getRegistrations'] =
 	async (ctx, input) => {
 		const status = input.status ?? 'all';
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/registrations/${status}`,
 			ctx.key,
 			{
@@ -46,13 +47,13 @@ export const getRegistrations: ClickmeetingEndpoints['getRegistrations'] =
 			{ roomId: input.roomId, status },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getRegistrations.parse(res);
 	};
 
 export const listRegistrationsByStatus: ClickmeetingEndpoints['listRegistrationsByStatus'] =
 	async (ctx, input) => {
 		const status = input.status ?? 'all';
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/registrations/${status}`,
 			ctx.key,
 			{
@@ -65,14 +66,16 @@ export const listRegistrationsByStatus: ClickmeetingEndpoints['listRegistrations
 			{ roomId: input.roomId, status },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.listRegistrationsByStatus.parse(
+			res,
+		);
 	};
 
 export const createContact: ClickmeetingEndpoints['createContact'] = async (
 	ctx,
 	input,
 ) => {
-	const res = await makeClickmeetingRequest<any>('/contacts', ctx.key, {
+	const res = await makeClickmeetingRequest<unknown>('/contacts', ctx.key, {
 		method: 'POST',
 		body: input,
 	});
@@ -82,5 +85,5 @@ export const createContact: ClickmeetingEndpoints['createContact'] = async (
 		{},
 		'completed',
 	);
-	return res;
+	return ClickmeetingEndpointOutputSchemas.createContact.parse(res);
 };

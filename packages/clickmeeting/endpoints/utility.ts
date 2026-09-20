@@ -1,9 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeClickmeetingRequest } from '../client';
 import type { ClickmeetingEndpoints } from '../index';
+import { ClickmeetingEndpointOutputSchemas } from './types';
 
 export const getPing: ClickmeetingEndpoints['getPing'] = async (ctx) => {
-	const res = await makeClickmeetingRequest<any>('/ping', ctx.key, {
+	const res = await makeClickmeetingRequest<unknown>('/ping', ctx.key, {
 		method: 'GET',
 	});
 	await logEventFromContext(
@@ -12,27 +13,31 @@ export const getPing: ClickmeetingEndpoints['getPing'] = async (ctx) => {
 		{},
 		'completed',
 	);
-	return res;
+	return ClickmeetingEndpointOutputSchemas.getPing.parse(res);
 };
 
 export const getTimeZoneList: ClickmeetingEndpoints['getTimeZoneList'] = async (
 	ctx,
 ) => {
-	const res = await makeClickmeetingRequest<any>('/time_zone_list', ctx.key, {
-		method: 'GET',
-	});
+	const res = await makeClickmeetingRequest<unknown>(
+		'/time_zone_list',
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 	await logEventFromContext(
 		ctx,
 		'clickmeeting.utility.getTimeZoneList',
 		{},
 		'completed',
 	);
-	return res;
+	return ClickmeetingEndpointOutputSchemas.getTimeZoneList.parse(res);
 };
 
 export const getTimeZoneListByCountry: ClickmeetingEndpoints['getTimeZoneListByCountry'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/time_zone_list/${encodeURIComponent(input.country)}`,
 			ctx.key,
 			{
@@ -45,19 +50,25 @@ export const getTimeZoneListByCountry: ClickmeetingEndpoints['getTimeZoneListByC
 			{ country: input.country },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getTimeZoneListByCountry.parse(
+			res,
+		);
 	};
 
 export const getPhoneGateways: ClickmeetingEndpoints['getPhoneGateways'] =
 	async (ctx) => {
-		const res = await makeClickmeetingRequest<any>('/phone_gateways', ctx.key, {
-			method: 'GET',
-		});
+		const res = await makeClickmeetingRequest<unknown>(
+			'/phone_gateways',
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'clickmeeting.utility.getPhoneGateways',
 			{},
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getPhoneGateways.parse(res);
 	};

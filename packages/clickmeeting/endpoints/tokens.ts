@@ -1,10 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeClickmeetingRequest } from '../client';
 import type { ClickmeetingEndpoints } from '../index';
+import { ClickmeetingEndpointOutputSchemas } from './types';
 
 export const createAccessTokens: ClickmeetingEndpoints['createAccessTokens'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/tokens`,
 			ctx.key,
 			{
@@ -18,12 +19,12 @@ export const createAccessTokens: ClickmeetingEndpoints['createAccessTokens'] =
 			{ roomId: input.roomId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.createAccessTokens.parse(res);
 	};
 
 export const listAccessTokens: ClickmeetingEndpoints['listAccessTokens'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/tokens`,
 			ctx.key,
 			{
@@ -36,14 +37,14 @@ export const listAccessTokens: ClickmeetingEndpoints['listAccessTokens'] =
 			{ roomId: input.roomId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.listAccessTokens.parse(res);
 	};
 
 export const getTokenByEmail: ClickmeetingEndpoints['getTokenByEmail'] = async (
 	ctx,
 	input,
 ) => {
-	const res = await makeClickmeetingRequest<any>(
+	const res = await makeClickmeetingRequest<unknown>(
 		`/conferences/${encodeURIComponent(String(input.roomId))}/token`,
 		ctx.key,
 		{
@@ -57,5 +58,5 @@ export const getTokenByEmail: ClickmeetingEndpoints['getTokenByEmail'] = async (
 		{ roomId: input.roomId },
 		'completed',
 	);
-	return res;
+	return ClickmeetingEndpointOutputSchemas.getTokenByEmail.parse(res);
 };

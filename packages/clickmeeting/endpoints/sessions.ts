@@ -1,10 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeClickmeetingRequest } from '../client';
 import type { ClickmeetingEndpoints } from '../index';
+import { ClickmeetingEndpointOutputSchemas } from './types';
 
 export const getConferenceSessions: ClickmeetingEndpoints['getConferenceSessions'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions`,
 			ctx.key,
 			{
@@ -17,12 +18,12 @@ export const getConferenceSessions: ClickmeetingEndpoints['getConferenceSessions
 			{ roomId: input.roomId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getConferenceSessions.parse(res);
 	};
 
 export const getSessionDetails: ClickmeetingEndpoints['getSessionDetails'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}`,
 			ctx.key,
 			{
@@ -35,12 +36,12 @@ export const getSessionDetails: ClickmeetingEndpoints['getSessionDetails'] =
 			{ roomId: input.roomId, sessionId: input.sessionId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getSessionDetails.parse(res);
 	};
 
 export const getSessionAttendees: ClickmeetingEndpoints['getSessionAttendees'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}/attendees`,
 			ctx.key,
 			{
@@ -53,12 +54,12 @@ export const getSessionAttendees: ClickmeetingEndpoints['getSessionAttendees'] =
 			{ roomId: input.roomId, sessionId: input.sessionId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getSessionAttendees.parse(res);
 	};
 
 export const getSessionAttendeeDetails: ClickmeetingEndpoints['getSessionAttendeeDetails'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}/attendees/${encodeURIComponent(String(input.attendeeId))}`,
 			ctx.key,
 			{
@@ -75,13 +76,15 @@ export const getSessionAttendeeDetails: ClickmeetingEndpoints['getSessionAttende
 			},
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getSessionAttendeeDetails.parse(
+			res,
+		);
 	};
 
 export const generateSessionPdfReport: ClickmeetingEndpoints['generateSessionPdfReport'] =
 	async (ctx, input) => {
 		const lang = encodeURIComponent(String(input.lang ?? 'en'));
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}/generate-pdf/${lang}`,
 			ctx.key,
 			{
@@ -94,12 +97,14 @@ export const generateSessionPdfReport: ClickmeetingEndpoints['generateSessionPdf
 			{ roomId: input.roomId, sessionId: input.sessionId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.generateSessionPdfReport.parse(
+			res,
+		);
 	};
 
 export const getSessionRegistrations: ClickmeetingEndpoints['getSessionRegistrations'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}/registrations`,
 			ctx.key,
 			{
@@ -112,14 +117,14 @@ export const getSessionRegistrations: ClickmeetingEndpoints['getSessionRegistrat
 			{ roomId: input.roomId, sessionId: input.sessionId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getSessionRegistrations.parse(res);
 	};
 
 export const getSessionPolls: ClickmeetingEndpoints['getSessionPolls'] = async (
 	ctx,
 	input,
 ) => {
-	const res = await makeClickmeetingRequest<any>(
+	const res = await makeClickmeetingRequest<unknown>(
 		`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}/polls`,
 		ctx.key,
 		{
@@ -132,12 +137,12 @@ export const getSessionPolls: ClickmeetingEndpoints['getSessionPolls'] = async (
 		{ roomId: input.roomId, sessionId: input.sessionId },
 		'completed',
 	);
-	return res;
+	return ClickmeetingEndpointOutputSchemas.getSessionPolls.parse(res);
 };
 
 export const getSessionPollDetails: ClickmeetingEndpoints['getSessionPollDetails'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}/polls/${encodeURIComponent(String(input.pollId))}`,
 			ctx.key,
 			{
@@ -154,12 +159,12 @@ export const getSessionPollDetails: ClickmeetingEndpoints['getSessionPollDetails
 			},
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getSessionPollDetails.parse(res);
 	};
 
 export const getSessionSurveys: ClickmeetingEndpoints['getSessionSurveys'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}/surveys`,
 			ctx.key,
 			{
@@ -172,12 +177,12 @@ export const getSessionSurveys: ClickmeetingEndpoints['getSessionSurveys'] =
 			{ roomId: input.roomId, sessionId: input.sessionId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getSessionSurveys.parse(res);
 	};
 
 export const getSessionSurveyDetails: ClickmeetingEndpoints['getSessionSurveyDetails'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}/surveys/${encodeURIComponent(String(input.surveyId))}`,
 			ctx.key,
 			{
@@ -194,12 +199,12 @@ export const getSessionSurveyDetails: ClickmeetingEndpoints['getSessionSurveyDet
 			},
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getSessionSurveyDetails.parse(res);
 	};
 
 export const getSessionQaHistory: ClickmeetingEndpoints['getSessionQaHistory'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/sessions/${encodeURIComponent(String(input.sessionId))}/qa`,
 			ctx.key,
 			{
@@ -212,5 +217,5 @@ export const getSessionQaHistory: ClickmeetingEndpoints['getSessionQaHistory'] =
 			{ roomId: input.roomId, sessionId: input.sessionId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getSessionQaHistory.parse(res);
 	};

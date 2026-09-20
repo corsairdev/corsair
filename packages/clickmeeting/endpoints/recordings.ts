@@ -1,10 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeClickmeetingRequest } from '../client';
 import type { ClickmeetingEndpoints } from '../index';
+import { ClickmeetingEndpointOutputSchemas } from './types';
 
 export const getSessionRecordings: ClickmeetingEndpoints['getSessionRecordings'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/recordings`,
 			ctx.key,
 			{
@@ -17,12 +18,12 @@ export const getSessionRecordings: ClickmeetingEndpoints['getSessionRecordings']
 			{ roomId: input.roomId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getSessionRecordings.parse(res);
 	};
 
 export const getSessionRecordingDetails: ClickmeetingEndpoints['getSessionRecordingDetails'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/recordings/${encodeURIComponent(String(input.recordingId))}`,
 			ctx.key,
 			{
@@ -35,14 +36,16 @@ export const getSessionRecordingDetails: ClickmeetingEndpoints['getSessionRecord
 			{ roomId: input.roomId, recordingId: input.recordingId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getSessionRecordingDetails.parse(
+			res,
+		);
 	};
 
 export const deleteRecording: ClickmeetingEndpoints['deleteRecording'] = async (
 	ctx,
 	input,
 ) => {
-	const res = await makeClickmeetingRequest<any>(
+	const res = await makeClickmeetingRequest<unknown>(
 		`/conferences/${encodeURIComponent(String(input.roomId))}/recordings/${encodeURIComponent(String(input.recordingId))}`,
 		ctx.key,
 		{
@@ -55,12 +58,12 @@ export const deleteRecording: ClickmeetingEndpoints['deleteRecording'] = async (
 		{ roomId: input.roomId, recordingId: input.recordingId },
 		'completed',
 	);
-	return res;
+	return ClickmeetingEndpointOutputSchemas.deleteRecording.parse(res);
 };
 
 export const deleteRecordings: ClickmeetingEndpoints['deleteRecordings'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}/recordings`,
 			ctx.key,
 			{
@@ -73,5 +76,5 @@ export const deleteRecordings: ClickmeetingEndpoints['deleteRecordings'] =
 			{ roomId: input.roomId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.deleteRecordings.parse(res);
 	};

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeClickmeetingRequest } from '../client';
 import type { ClickmeetingEndpoints } from '../index';
+import { ClickmeetingEndpointOutputSchemas } from './types';
 
 export const getConferences: ClickmeetingEndpoints['getConferences'] = async (
 	ctx,
@@ -8,7 +9,7 @@ export const getConferences: ClickmeetingEndpoints['getConferences'] = async (
 ) => {
 	const status = input.status ?? 'active';
 	const query = input.page ? { page: input.page } : undefined;
-	const res = await makeClickmeetingRequest<any>(
+	const res = await makeClickmeetingRequest<unknown>(
 		`/conferences/${status}`,
 		ctx.key,
 		{
@@ -22,12 +23,12 @@ export const getConferences: ClickmeetingEndpoints['getConferences'] = async (
 		{ status },
 		'completed',
 	);
-	return res;
+	return ClickmeetingEndpointOutputSchemas.getConferences.parse(res);
 };
 
 export const getConferenceDetails: ClickmeetingEndpoints['getConferenceDetails'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}`,
 			ctx.key,
 			{
@@ -40,28 +41,32 @@ export const getConferenceDetails: ClickmeetingEndpoints['getConferenceDetails']
 			{ roomId: input.roomId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getConferenceDetails.parse(res);
 	};
 
 export const createConference: ClickmeetingEndpoints['createConference'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>('/conferences', ctx.key, {
-			method: 'POST',
-			body: input,
-		});
+		const res = await makeClickmeetingRequest<unknown>(
+			'/conferences',
+			ctx.key,
+			{
+				method: 'POST',
+				body: input,
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'clickmeeting.conferences.createConference',
 			{ name: input.name },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.createConference.parse(res);
 	};
 
 export const updateConference: ClickmeetingEndpoints['updateConference'] =
 	async (ctx, input) => {
 		const { roomId, ...body } = input;
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(roomId))}`,
 			ctx.key,
 			{
@@ -75,12 +80,12 @@ export const updateConference: ClickmeetingEndpoints['updateConference'] =
 			{ roomId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.updateConference.parse(res);
 	};
 
 export const deleteConference: ClickmeetingEndpoints['deleteConference'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(input.roomId))}`,
 			ctx.key,
 			{
@@ -93,12 +98,12 @@ export const deleteConference: ClickmeetingEndpoints['deleteConference'] =
 			{ roomId: input.roomId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.deleteConference.parse(res);
 	};
 
 export const getConferenceFiles: ClickmeetingEndpoints['getConferenceFiles'] =
 	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/file-library/conferences/${encodeURIComponent(String(input.roomId))}`,
 			ctx.key,
 			{
@@ -111,12 +116,12 @@ export const getConferenceFiles: ClickmeetingEndpoints['getConferenceFiles'] =
 			{ roomId: input.roomId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getConferenceFiles.parse(res);
 	};
 
 export const getConferenceSkins: ClickmeetingEndpoints['getConferenceSkins'] =
 	async (ctx) => {
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			'/conferences/skins',
 			ctx.key,
 			{
@@ -129,7 +134,7 @@ export const getConferenceSkins: ClickmeetingEndpoints['getConferenceSkins'] =
 			{},
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.getConferenceSkins.parse(res);
 	};
 
 export const sendInvitation: ClickmeetingEndpoints['sendInvitation'] = async (
@@ -137,7 +142,7 @@ export const sendInvitation: ClickmeetingEndpoints['sendInvitation'] = async (
 	input,
 ) => {
 	const { roomId, lang, ...body } = input;
-	const res = await makeClickmeetingRequest<any>(
+	const res = await makeClickmeetingRequest<unknown>(
 		`/conferences/${encodeURIComponent(String(roomId))}/invitation/email/${encodeURIComponent(lang)}`,
 		ctx.key,
 		{
@@ -151,13 +156,13 @@ export const sendInvitation: ClickmeetingEndpoints['sendInvitation'] = async (
 		{ roomId },
 		'completed',
 	);
-	return res;
+	return ClickmeetingEndpointOutputSchemas.sendInvitation.parse(res);
 };
 
 export const generateAutologinUrl: ClickmeetingEndpoints['generateAutologinUrl'] =
 	async (ctx, input) => {
 		const { roomId, ...body } = input;
-		const res = await makeClickmeetingRequest<any>(
+		const res = await makeClickmeetingRequest<unknown>(
 			`/conferences/${encodeURIComponent(String(roomId))}/room/autologin_hash`,
 			ctx.key,
 			{
@@ -171,5 +176,5 @@ export const generateAutologinUrl: ClickmeetingEndpoints['generateAutologinUrl']
 			{ roomId },
 			'completed',
 		);
-		return res;
+		return ClickmeetingEndpointOutputSchemas.generateAutologinUrl.parse(res);
 	};
