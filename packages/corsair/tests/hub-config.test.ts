@@ -86,6 +86,24 @@ describe('createCorsair — hub validation', () => {
 			}),
 		);
 	});
+
+	it('accepts a ck_cloud_ key without a signingSecret (hosted runtime)', () => {
+		const corsair = createCorsair({
+			plugins: [],
+			kek: 'test-kek',
+			hub: {
+				projectApiKey: 'ck_cloud_test',
+			},
+		});
+
+		// The runtime does Hub ops (connect, connection reporting, announce) with a
+		// ck_cloud_ key and no signingSecret — getHubConfig must not reject it, or
+		// those ops throw HubNotConfiguredError at runtime.
+		expect(() => getHubConfig(corsair)).not.toThrow();
+		expect(getHubConfig(corsair)).toEqual(
+			expect.objectContaining({ projectApiKey: 'ck_cloud_test' }),
+		);
+	});
 });
 
 describe('normalizeHubConfig', () => {
