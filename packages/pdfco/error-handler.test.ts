@@ -19,7 +19,8 @@ function apiError(status: number, message = 'request failed'): ApiError {
 }
 
 function classify(error: Error): string {
-	for (const [name, handler] of Object.entries(errorHandlers)) {
+	for (const name of Object.keys(errorHandlers)) {
+		const handler = errorHandlers[name as keyof typeof errorHandlers];
 		if (handler.match(error)) return name;
 	}
 	return 'UNMATCHED';

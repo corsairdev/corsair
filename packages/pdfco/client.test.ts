@@ -4,7 +4,12 @@
  */
 
 import { z } from 'zod';
-import { makePdfcoRequest, PDFCO_API_BASE, PdfcoAPIError } from './client';
+import {
+	makePdfcoRequest,
+	PDFCO_API_BASE,
+	PDFCO_RATE_LIMIT_CONFIG,
+	PdfcoAPIError,
+} from './client';
 
 let captured:
 	| {
@@ -86,5 +91,9 @@ describe('makePdfcoRequest', () => {
 		});
 		expect(captured?.method).toBe('GET');
 		expect(out.remainingCredits).toBe(10);
+	});
+
+	it('passes a non-zero transport retry config for 429 handling', async () => {
+		expect(PDFCO_RATE_LIMIT_CONFIG.maxRetries).toBeGreaterThan(0);
 	});
 });
