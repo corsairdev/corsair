@@ -96,6 +96,29 @@ export const getTranscriptJob: SupadataEndpoints['transcriptGetJob'] = async (
 	return result;
 };
 
+export const getMetadata: SupadataEndpoints['metadataGet'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = SupadataEndpointInputSchemas.metadataGet.parse(input);
+
+	const response = await makeSupadataRequest('metadata', ctx.key, {
+		method: 'GET',
+		query: { url: parsed.url },
+	});
+
+	const result = SupadataEndpointOutputSchemas.metadataGet.parse(response);
+
+	await logEventFromContext(
+		ctx,
+		'supadata.metadata.get',
+		{ platform: result.platform, type: result.type },
+		'completed',
+	);
+
+	return result;
+};
+
 export const getYoutubeVideo: SupadataEndpoints['youtubeVideo'] = async (
 	ctx,
 	input,

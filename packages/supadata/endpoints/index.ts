@@ -1,5 +1,6 @@
 import {
 	getMe,
+	getMetadata,
 	getTranscript,
 	getTranscriptJob,
 	getYoutubeChannel,
@@ -19,6 +20,10 @@ export const Account = {
 export const Transcript = {
 	get: getTranscript,
 	getJob: getTranscriptJob,
+};
+
+export const Metadata = {
+	get: getMetadata,
 };
 
 export const Youtube = {

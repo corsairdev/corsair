@@ -6,9 +6,6 @@ import { ApiError } from 'corsair/http';
  * plan's per-second rate limit is exceeded.
  * https://docs.supadata.ai/api-reference/introduction
  */
-const MAX_RETRIES = 3;
-const INITIAL_RETRY_DELAY_MS = 1000;
-const BACKOFF_MULTIPLIER = 2;
 const MAX_RETRY_DELAY_MS = 60_000;
 
 const SUPADATA_API_BASE = 'https://api.supadata.ai/v1';
@@ -46,18 +43,6 @@ function numericHeader(res: Response, name: string): number | undefined {
 	if (!raw) return undefined;
 	const value = Number(raw);
 	return Number.isFinite(value) ? value : undefined;
-}
-
-function calculateRetryDelay(attempt: number, retryAfterMs?: number): number {
-	if (retryAfterMs !== undefined) {
-		return retryAfterMs;
-	}
-	const delay = INITIAL_RETRY_DELAY_MS * BACKOFF_MULTIPLIER ** (attempt - 1);
-	return Math.min(delay, MAX_RETRY_DELAY_MS);
-}
-
-function sleep(ms: number): Promise<void> {
-	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -171,54 +156,43 @@ export async function makeSupadataRequest(
 		...(requestBody !== undefined ? { body } : {}),
 	};
 
-	const maxAttempts = MAX_RETRIES + 1;
-
-	for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-		let res: Response;
-		try {
-			// redirect: 'error' keeps the x-api-key header from being forwarded to
-			// a redirect target. corsair/http's request() wrapper does not expose a
-			// redirect option, so fetch() is used directly here — the same approach
-			// taken by the vestaboard and castingwords plugins.
-			res = await fetch(url, {
-				method,
-				redirect: 'error',
-				headers,
-				body: requestBody,
-				signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-			});
-		} catch (error) {
-			// Network failures, refused redirects and timeouts are not retryable.
-			throw error instanceof Error ? error : new Error('Network error');
-		}
-
-		if (res.status === 429 && attempt < maxAttempts) {
-			await sleep(calculateRetryDelay(attempt, extractRetryAfterMs(res)));
-			continue;
-		}
-
-		const parsed = await parseBody(res);
-
-		if (!res.ok) {
-			const safeBody = redactKey(parsed, apiKey);
-			const result: ApiResult = {
-				url: url.toString(),
-				ok: res.ok,
-				status: res.status,
-				statusText: res.statusText,
-				body: safeBody,
-			};
-			throw new ApiError(errorRequest, result, errorMessage(safeBody, res), {
-				retryAfter: extractRetryAfterMs(res),
-				rateLimitReset: numericHeader(res, 'x-ratelimit-reset'),
-				rateLimitRemaining: numericHeader(res, 'x-ratelimit-remaining'),
-				rateLimitLimit: numericHeader(res, 'x-ratelimit-limit'),
-			});
-		}
-
-		return parsed;
+	let res: Response;
+	try {
+		// redirect: 'error' keeps the x-api-key header from being forwarded to
+		// a redirect target. corsair/http's request() wrapper does not expose a
+		// redirect option, so fetch() is used directly here — the same approach
+		// taken by the vestaboard and castingwords plugins.
+		res = await fetch(url, {
+			method,
+			redirect: 'error',
+			headers,
+			body: requestBody,
+			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+		});
+	} catch (error) {
+		// Network failures, refused redirects and timeouts are not retryable.
+		throw error instanceof Error ? error : new Error('Network error');
 	}
 
-	// Unreachable: the final attempt either returns or throws above.
-	throw new Error('Supadata: exceeded maximum retry attempts');
+	const parsed = await parseBody(res);
+
+	if (!res.ok) {
+		const safeBody = redactKey(parsed, apiKey);
+		const result: ApiResult = {
+			url: url.toString(),
+			ok: res.ok,
+			status: res.status,
+			statusText: res.statusText,
+			body: safeBody,
+		};
+		// 429s are thrown once so Corsair's RATE_LIMIT_ERROR handler owns retries.
+		throw new ApiError(errorRequest, result, errorMessage(safeBody, res), {
+			retryAfter: extractRetryAfterMs(res),
+			rateLimitReset: numericHeader(res, 'x-ratelimit-reset'),
+			rateLimitRemaining: numericHeader(res, 'x-ratelimit-remaining'),
+			rateLimitLimit: numericHeader(res, 'x-ratelimit-limit'),
+		});
+	}
+
+	return parsed;
 }

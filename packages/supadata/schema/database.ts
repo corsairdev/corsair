@@ -320,6 +320,74 @@ export const SupadataWebMap = z
 
 export type SupadataWebMap = z.infer<typeof SupadataWebMap>;
 
+/**
+ * Unified media metadata from YouTube, TikTok, Instagram, X or Facebook.
+ *
+ * Official: `Metadata` — GET /v1/metadata
+ * https://docs.supadata.ai/api-reference/endpoint/metadata/metadata
+ *
+ * `platform`, `type` and `id` are required. Stats likes/comments/shares are
+ * documented as required but nullable when a platform does not expose them.
+ */
+export const SupadataMetadataAuthor = z
+	.object({
+		displayName: z.string(),
+		username: z.string().optional(),
+		avatarUrl: z.string().optional(),
+		verified: z.boolean().optional(),
+	})
+	.loose();
+
+export type SupadataMetadataAuthor = z.infer<typeof SupadataMetadataAuthor>;
+
+export const SupadataMetadataStats = z
+	.object({
+		likes: z.number().nullable(),
+		comments: z.number().nullable(),
+		shares: z.number().nullable(),
+		views: z.number().nullable().optional(),
+	})
+	.loose();
+
+export type SupadataMetadataStats = z.infer<typeof SupadataMetadataStats>;
+
+export const SupadataMetadataMedia = z
+	.object({
+		type: z.enum(['video', 'image', 'carousel', 'post']),
+		duration: z.number().optional(),
+		thumbnailUrl: z.string().optional(),
+		url: z.string().optional(),
+		items: z.array(z.unknown()).optional(),
+	})
+	.loose();
+
+export type SupadataMetadataMedia = z.infer<typeof SupadataMetadataMedia>;
+
+export const SupadataMetadata = z
+	.object({
+		platform: z.enum([
+			'youtube',
+			'tiktok',
+			'instagram',
+			'twitter',
+			'facebook',
+		]),
+		type: z.enum(['video', 'image', 'carousel', 'post']),
+		id: z.string(),
+		url: z.string().optional(),
+		title: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		author: SupadataMetadataAuthor.optional(),
+		stats: SupadataMetadataStats.optional(),
+		media: SupadataMetadataMedia.optional(),
+		tags: z.array(z.string()).optional(),
+		createdAt: z.string().optional(),
+		additionalData: z.record(z.string(), z.unknown()).optional(),
+	})
+	.loose();
+
+export type SupadataMetadata = z.infer<typeof SupadataMetadata>;
+
 export const databaseEntities = {
 	accounts: SupadataAccount,
 	transcripts: SupadataTranscript,
@@ -330,4 +398,5 @@ export const databaseEntities = {
 	youtubeSearchResults: SupadataYoutubeSearchResult,
 	webPages: SupadataWebPage,
 	webMaps: SupadataWebMap,
+	mediaMetadata: SupadataMetadata,
 } as const;

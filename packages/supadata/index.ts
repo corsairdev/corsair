@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Account, Transcript, Web, Youtube } from './endpoints';
+import { Account, Metadata, Transcript, Web, Youtube } from './endpoints';
 import type {
 	SupadataEndpointInputs,
 	SupadataEndpointOutputs,
@@ -56,6 +56,7 @@ export type SupadataEndpoints = {
 	accountMe: SupadataEndpoint<'accountMe'>;
 	transcriptGet: SupadataEndpoint<'transcriptGet'>;
 	transcriptGetJob: SupadataEndpoint<'transcriptGetJob'>;
+	metadataGet: SupadataEndpoint<'metadataGet'>;
 	youtubeVideo: SupadataEndpoint<'youtubeVideo'>;
 	youtubeChannel: SupadataEndpoint<'youtubeChannel'>;
 	youtubeChannelVideos: SupadataEndpoint<'youtubeChannelVideos'>;
@@ -73,6 +74,9 @@ const supadataEndpointsNested = {
 	transcript: {
 		get: Transcript.get,
 		getJob: Transcript.getJob,
+	},
+	metadata: {
+		get: Metadata.get,
 	},
 	youtube: {
 		video: Youtube.video,
@@ -103,6 +107,10 @@ export const supadataEndpointSchemas = {
 	'transcript.getJob': {
 		input: SupadataEndpointInputSchemas.transcriptGetJob,
 		output: SupadataEndpointOutputSchemas.transcriptGetJob,
+	},
+	'metadata.get': {
+		input: SupadataEndpointInputSchemas.metadataGet,
+		output: SupadataEndpointOutputSchemas.metadataGet,
 	},
 	'youtube.video': {
 		input: SupadataEndpointInputSchemas.youtubeVideo,
@@ -156,6 +164,10 @@ const supadataEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Retrieve the status or result of an asynchronous transcript job',
+	},
+	'metadata.get': {
+		riskLevel: 'read',
+		description: 'Retrieve unified metadata for media from social platforms',
 	},
 	'youtube.video': {
 		riskLevel: 'read',
@@ -259,6 +271,8 @@ export type {
 	TranscriptJobInput,
 	TranscriptJobOutput,
 	TranscriptOutput,
+	MetadataInput,
+	MetadataOutput,
 	WebMapInput,
 	WebMapOutput,
 	WebScrapeInput,
@@ -296,4 +310,8 @@ export type {
 	SupadataYoutubePlaylist,
 	SupadataYoutubeSearchResult,
 	SupadataYoutubeVideo,
+	SupadataMetadata,
+	SupadataMetadataAuthor,
+	SupadataMetadataMedia,
+	SupadataMetadataStats,
 } from './schema/database';

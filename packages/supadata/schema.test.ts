@@ -155,6 +155,17 @@ describe('Supadata input schemas', () => {
 		// where it would be silently ignored.
 		expect(parsed).toEqual({ url: 'https://supadata.ai' });
 	});
+
+	it('metadata.get requires a valid URL', () => {
+		expect(
+			SupadataEndpointInputSchemas.metadataGet.parse({
+				url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+			}).url,
+		).toContain('youtube');
+		expect(() =>
+			SupadataEndpointInputSchemas.metadataGet.parse({ url: 'not-a-url' }),
+		).toThrow();
+	});
 });
 
 describe('Supadata output schemas', () => {
@@ -407,6 +418,24 @@ describe('Supadata output schemas', () => {
 		expect(() => SupadataEndpointOutputSchemas.webMap.parse({})).toThrow();
 	});
 
+	it('metadata.get parses a documented payload with nullable stats', () => {
+		const parsed = SupadataEndpointOutputSchemas.metadataGet.parse({
+			platform: 'youtube',
+			type: 'video',
+			id: 'dQw4w9WgXcQ',
+			url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+			title: 'Never Gonna Give You Up',
+			description: 'Official video',
+			author: { displayName: 'Rick Astley', username: 'RickAstley' },
+			stats: { views: 1_000_000, likes: 50_000, comments: 200, shares: null },
+			media: { type: 'video', duration: 213 },
+			tags: ['music'],
+			createdAt: '2009-10-24T00:00:00.000Z',
+		});
+		expect(parsed.platform).toBe('youtube');
+		expect(parsed.stats?.shares).toBeNull();
+	});
+
 	it('output schemas pass through fields Supadata adds later', () => {
 		const parsed = SupadataEndpointOutputSchemas.webMap.parse({
 			urls: [],
@@ -421,6 +450,7 @@ describe('SupadataSchema entities', () => {
 		expect(SupadataSchema.version).toBe('1.0.0');
 		expect(Object.keys(SupadataSchema.entities).sort()).toEqual([
 			'accounts',
+			'mediaMetadata',
 			'transcriptJobs',
 			'transcripts',
 			'webMaps',

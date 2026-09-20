@@ -22,4 +22,8 @@ export {
 	SupadataYoutubePlaylist,
 	SupadataYoutubeSearchResult,
 	SupadataYoutubeVideo,
+	SupadataMetadata,
+	SupadataMetadataAuthor,
+	SupadataMetadataMedia,
+	SupadataMetadataStats,
 } from './database';

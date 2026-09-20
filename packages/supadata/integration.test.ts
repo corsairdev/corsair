@@ -5,8 +5,8 @@ import { errorHandlers } from './error-handlers';
 import { SupadataEndpointOutputSchemas, supadata } from './index';
 
 /**
- * The live suite exercises all eleven operations against the real Supadata
- * API. It is skipped unless a key is supplied:
+ * The live suite exercises the eleven OSS operations plus extra metadata.get
+ * against the real Supadata API. It is skipped unless a key is supplied:
  *
  *     SUPADATA_API_KEY=sd_… pnpm --filter @corsair-dev/supadata test
  *
@@ -21,13 +21,14 @@ const CHANNEL_ID = 'UCuAXFkgsw1L7xaCfnd5JJOw';
 const PLAYLIST_ID = 'PLlaN88a7y2_plecYoJxvRFTLHVbIVAOoc';
 
 describe('Supadata plugin wiring', () => {
-	it('exposes all eleven documented operations', () => {
+	it('exposes the eleven OSS operations plus extra metadata.get', () => {
 		const plugin = supadata();
 		const paths = Object.entries(plugin.endpoints!).flatMap(([group, ops]) =>
 			Object.keys(ops).map((op) => `${group}.${op}`),
 		);
 		expect(paths.sort()).toEqual([
 			'account.me',
+			'metadata.get',
 			'transcript.get',
 			'transcript.getJob',
 			'web.map',
@@ -209,6 +210,15 @@ describeLive('Supadata live API', () => {
 		expect(result.organizationId).toBeTruthy();
 		expect(result.maxCredits).toBeGreaterThan(0);
 		expect(result.usedCredits).toBeLessThanOrEqual(result.maxCredits);
+	});
+
+	it('1b. metadata.get returns unified media metadata', async () => {
+		const result = await plugin.endpoints!.metadata.get(ctx(), {
+			url: `https://www.youtube.com/watch?v=${VIDEO_ID}`,
+		});
+		SupadataEndpointOutputSchemas.metadataGet.parse(result);
+		expect(result.id).toBe(VIDEO_ID);
+		expect(result.platform).toBe('youtube');
 	});
 
 	it('2. transcript.get returns a transcript or a job handle', async () => {

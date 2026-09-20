@@ -11,6 +11,7 @@ import {
 	SupadataYoutubePlaylist,
 	SupadataYoutubeSearchResult,
 	SupadataYoutubeVideo,
+	SupadataMetadata,
 } from '../schema/database';
 
 /**
@@ -84,6 +85,20 @@ export type TranscriptJobInput = z.infer<typeof TranscriptJobInputSchema>;
 export const TranscriptJobOutputSchema = SupadataTranscriptJob;
 
 export type TranscriptJobOutput = z.infer<typeof TranscriptJobOutputSchema>;
+
+// ==========================================
+// 3b. Media metadata (GET /metadata) — extra vs OSS catalog
+// ==========================================
+
+export const MetadataInputSchema = z.object({
+	url: z.url('A valid URL is required'),
+});
+
+export type MetadataInput = z.infer<typeof MetadataInputSchema>;
+
+export const MetadataOutputSchema = SupadataMetadata;
+
+export type MetadataOutput = z.infer<typeof MetadataOutputSchema>;
 
 // ==========================================
 // 4. YouTube video metadata (GET /youtube/video)
@@ -278,6 +293,7 @@ export type SupadataEndpointInputs = {
 	accountMe: AccountMeInput;
 	transcriptGet: TranscriptInput;
 	transcriptGetJob: TranscriptJobInput;
+	metadataGet: MetadataInput;
 	youtubeVideo: YoutubeVideoInput;
 	youtubeChannel: YoutubeChannelInput;
 	youtubeChannelVideos: YoutubeChannelVideosInput;
@@ -292,6 +308,7 @@ export type SupadataEndpointOutputs = {
 	accountMe: AccountMeOutput;
 	transcriptGet: TranscriptOutput;
 	transcriptGetJob: TranscriptJobOutput;
+	metadataGet: MetadataOutput;
 	youtubeVideo: YoutubeVideoOutput;
 	youtubeChannel: YoutubeChannelOutput;
 	youtubeChannelVideos: YoutubeChannelVideosOutput;
@@ -306,6 +323,7 @@ export const SupadataEndpointInputSchemas = {
 	accountMe: AccountMeInputSchema,
 	transcriptGet: TranscriptInputSchema,
 	transcriptGetJob: TranscriptJobInputSchema,
+	metadataGet: MetadataInputSchema,
 	youtubeVideo: YoutubeVideoInputSchema,
 	youtubeChannel: YoutubeChannelInputSchema,
 	youtubeChannelVideos: YoutubeChannelVideosInputSchema,
@@ -320,6 +338,7 @@ export const SupadataEndpointOutputSchemas = {
 	accountMe: AccountMeOutputSchema,
 	transcriptGet: TranscriptOutputSchema,
 	transcriptGetJob: TranscriptJobOutputSchema,
+	metadataGet: MetadataOutputSchema,
 	youtubeVideo: YoutubeVideoOutputSchema,
 	youtubeChannel: YoutubeChannelOutputSchema,
 	youtubeChannelVideos: YoutubeChannelVideosOutputSchema,
