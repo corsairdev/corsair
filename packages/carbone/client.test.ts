@@ -14,6 +14,7 @@ jest.mock('corsair/http', () => {
 			public readonly message: string,
 			public readonly status?: number,
 			public readonly statusText?: string,
+			// unknown: provider error/response JSON has no single stable schema
 			public readonly body?: unknown,
 			public readonly retryAfter?: number,
 		) {
@@ -23,6 +24,7 @@ jest.mock('corsair/http', () => {
 	}
 
 	return {
+		// unknown: mock captures arbitrary call args without inventing a closed tuple
 		request: (...args: unknown[]) => mockRequest(...args),
 		ApiError,
 	};
@@ -131,6 +133,7 @@ describe('Carbone client', () => {
 				get: (name: string) =>
 					name.toLowerCase() === 'retry-after' ? '2' : null,
 			},
+		// unknown: test/fixture cast; production types are Zod-validated
 		} as unknown as Response);
 
 		await expect(

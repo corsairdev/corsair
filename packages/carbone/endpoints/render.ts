@@ -15,6 +15,7 @@ export const generateReport: CarboneEndpoints['generateReport'] = async (
 			apiKey: ctx.key,
 			version: ctx.options?.version,
 			method: 'POST',
+			// unknown: request body keys differ per operation; Zod validates upstream
 			body: renderOptions as Record<string, unknown>,
 		}),
 	);
@@ -42,6 +43,7 @@ export const renderDirect: CarboneEndpoints['renderDirect'] = async (
 			apiKey: ctx.key,
 			version: ctx.options?.version,
 			method: 'POST',
+			// unknown: test/fixture cast; production types are Zod-validated
 			body: input as unknown as Record<string, unknown>,
 		}),
 	);

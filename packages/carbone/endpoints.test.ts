@@ -8,6 +8,7 @@ jest.mock('corsair/http', () => {
 			public readonly message: string,
 			public readonly status?: number,
 			public readonly statusText?: string,
+			// unknown: provider error/response JSON has no single stable schema
 			public readonly body?: unknown,
 			public readonly retryAfter?: number,
 		) {
@@ -17,6 +18,7 @@ jest.mock('corsair/http', () => {
 	}
 
 	return {
+		// unknown: mock captures arbitrary call args without inventing a closed tuple
 		request: (...args: unknown[]) => mockRequest(...args),
 		ApiError,
 	};
@@ -63,6 +65,7 @@ function createMockContext(key = 'test-carbone-key'): CarboneContext {
 				deleteByEntityId: jest.fn().mockResolvedValue(undefined as never),
 			},
 		},
+	// unknown: test/fixture cast; production types are Zod-validated
 	} as unknown as CarboneContext;
 }
 
@@ -193,6 +196,7 @@ describe('Carbone endpoints execution', () => {
 			const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
 				ok: true,
 				arrayBuffer: async () => expectedBuffer,
+			// unknown: test/fixture cast; production types are Zod-validated
 			} as unknown as Response);
 
 			const ctx = createMockContext();

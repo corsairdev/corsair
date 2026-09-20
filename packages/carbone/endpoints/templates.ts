@@ -151,6 +151,7 @@ export const updateTemplate: CarboneEndpoints['updateTemplate'] = async (
 			apiKey: ctx.key,
 			version: ctx.options?.version,
 			method: 'PATCH',
+			// unknown: request body keys differ per operation; Zod validates upstream
 			body: patchBody as Record<string, unknown>,
 		}),
 	);

@@ -15,6 +15,7 @@ export class CarboneAPIError extends Error {
 			cause?: Error;
 			status?: number;
 			statusText?: string;
+			// unknown: provider error/response JSON has no single stable schema
 			body?: unknown;
 			retryAfter?: number;
 		},
@@ -183,6 +184,7 @@ export function assertCarboneSuccess<T>(response: T): T {
 	) {
 		const res = response as {
 			success?: boolean;
+			// unknown: catch/error boundary accepts any thrown value
 			error?: unknown;
 			message?: string;
 		};

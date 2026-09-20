@@ -26,17 +26,21 @@ const EXPECTED_OPERATIONS = [
 	'version.set',
 ];
 
+// unknown: plugin surface is structural in tests; production typing comes from Corsair core
 function keyBuilderOf(plugin: { keyBuilder?: unknown }) {
 	const keyBuilder = plugin.keyBuilder;
 	if (typeof keyBuilder !== 'function') {
 		throw new Error('keyBuilder is not registered');
 	}
+	// unknown: plugin surface is structural in tests; production typing comes from Corsair core
 	return keyBuilder as (ctx: unknown, source: string) => Promise<string>;
 }
 
 function flattenEndpoints(plugin: ReturnType<typeof carbone>): string[] {
+	// unknown: test/fixture cast; production types are Zod-validated
 	const groups = plugin.endpoints as unknown as Record<
 		string,
+		// unknown: open JSON object; narrowed after Zod or field checks
 		Record<string, unknown>
 	>;
 	return Object.entries(groups)
@@ -52,8 +56,10 @@ describe('carbone plugin registration', () => {
 	});
 
 	it('registers every endpoint as a callable function', () => {
+		// unknown: test/fixture cast; production types are Zod-validated
 		const groups = plugin.endpoints as unknown as Record<
 			string,
+			// unknown: open JSON object; narrowed after Zod or field checks
 			Record<string, unknown>
 		>;
 		for (const ops of Object.values(groups)) {
@@ -79,6 +85,7 @@ describe('carbone plugin registration', () => {
 	});
 
 	it('has metadata with risk level and description for every endpoint', () => {
+		// unknown: test/fixture cast; production types are Zod-validated
 		const meta = plugin.endpointMeta as unknown as Record<
 			string,
 			{ riskLevel: string; description: string }
@@ -92,6 +99,7 @@ describe('carbone plugin registration', () => {
 	});
 
 	it('marks read operations appropriately', () => {
+		// unknown: test/fixture cast; production types are Zod-validated
 		const meta = plugin.endpointMeta as unknown as Record<
 			string,
 			{ riskLevel: string }
@@ -111,6 +119,7 @@ describe('carbone plugin registration', () => {
 	});
 
 	it('marks destructive operations appropriately', () => {
+		// unknown: test/fixture cast; production types are Zod-validated
 		const meta = plugin.endpointMeta as unknown as Record<
 			string,
 			{ riskLevel: string; irreversible?: boolean }
