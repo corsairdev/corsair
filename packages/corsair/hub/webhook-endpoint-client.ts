@@ -17,8 +17,15 @@ export async function getWebhookEndpointUrl(
 			// clientState is present for Microsoft Graph plugins: the endpoint's
 			// single shared secret every subscription must use (see Hub verifyMsGraph).
 			parseResponse: (payload) => {
-				const p = payload as { url?: string; clientState?: string };
-				return p?.url ? { url: p.url, clientState: p.clientState } : null;
+				const p = payload as { url?: unknown; clientState?: unknown };
+				if (typeof p?.url !== 'string' || !p.url) return null;
+				if (
+					p.clientState !== undefined &&
+					(typeof p.clientState !== 'string' || !p.clientState)
+				) {
+					return null;
+				}
+				return { url: p.url, clientState: p.clientState };
 			},
 		});
 	} catch {
