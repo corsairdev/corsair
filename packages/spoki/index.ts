@@ -13,8 +13,13 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+// ponytail: TS2742 — name CorsairPluginSchema via corsair/orm (not corsair/db/orm)
+import type { CorsairPluginSchema } from 'corsair/orm';
 
 import { AuthMissingError } from 'corsair/core';
+
+/** @internal Keeps CorsairPluginSchema nameable for declaration emit (TS2742). */
+export type SpokiOrmSchemaRef = CorsairPluginSchema<Record<string, never>>;
 
 import {
 	addContactOperator,
@@ -217,7 +222,7 @@ const spokiEndpointsNested = {
 	automation: {
 		triggerAutomation,
 	},
-};
+} as const;
 
 export type SpokiWebhooks = {
 	event: CorsairWebhook<SpokiContext, unknown, unknown>;
