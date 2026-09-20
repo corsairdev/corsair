@@ -217,23 +217,6 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 			expect(result).toEqual(mockFiles);
 		});
 
-		it('getConferenceSkins', async () => {
-			const mockSkins = [{ id: 1, name: 'Default Skin' }];
-			mockMakeRequest.mockResolvedValueOnce(mockSkins);
-			const result = await plugin.endpoints!.conferences.getConferenceSkins(
-				mockContext,
-				{},
-			);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'/conferences/skins',
-				'test_api_key',
-				{
-					method: 'GET',
-				},
-			);
-			expect(result).toEqual(mockSkins);
-		});
-
 		it('sendInvitation', async () => {
 			mockMakeRequest.mockResolvedValueOnce({ status: 'sent', queued: 1 });
 			const result = await plugin.endpoints!.conferences.sendInvitation(
@@ -512,27 +495,6 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 			expect(result).toEqual(mockAttendees);
 		});
 
-		it('getSessionAttendeeDetails', async () => {
-			const mockAttendee = { id: 301, nickname: 'John', duration: 1800 };
-			mockMakeRequest.mockResolvedValueOnce(mockAttendee);
-			const result = await plugin.endpoints!.sessions.getSessionAttendeeDetails(
-				mockContext,
-				{
-					roomId: 101,
-					sessionId: 201,
-					attendeeId: 301,
-				},
-			);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'/conferences/101/sessions/201/attendees/301',
-				'test_api_key',
-				{
-					method: 'GET',
-				},
-			);
-			expect(result).toEqual(mockAttendee);
-		});
-
 		it('generateSessionPdfReport', async () => {
 			mockMakeRequest.mockResolvedValueOnce({
 				status: 'queued',
@@ -578,112 +540,6 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 			);
 			expect(result).toEqual(mockRegs);
 		});
-
-		it('getSessionPolls', async () => {
-			const mockPolls = [{ id: 401, name: 'Satisfaction Poll' }];
-			mockMakeRequest.mockResolvedValueOnce(mockPolls);
-			const result = await plugin.endpoints!.sessions.getSessionPolls(
-				mockContext,
-				{
-					roomId: 101,
-					sessionId: 201,
-				},
-			);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'/conferences/101/sessions/201/polls',
-				'test_api_key',
-				{
-					method: 'GET',
-				},
-			);
-			expect(result).toEqual(mockPolls);
-		});
-
-		it('getSessionPollDetails', async () => {
-			const mockPollDetail = {
-				id: 401,
-				name: 'Satisfaction Poll',
-				questions: [],
-			};
-			mockMakeRequest.mockResolvedValueOnce(mockPollDetail);
-			const result = await plugin.endpoints!.sessions.getSessionPollDetails(
-				mockContext,
-				{
-					roomId: 101,
-					sessionId: 201,
-					pollId: 401,
-				},
-			);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'/conferences/101/sessions/201/polls/401',
-				'test_api_key',
-				{
-					method: 'GET',
-				},
-			);
-			expect(result).toEqual(mockPollDetail);
-		});
-
-		it('getSessionSurveys', async () => {
-			const mockSurveys = [{ id: 501, name: 'Exit Survey' }];
-			mockMakeRequest.mockResolvedValueOnce(mockSurveys);
-			const result = await plugin.endpoints!.sessions.getSessionSurveys(
-				mockContext,
-				{
-					roomId: 101,
-					sessionId: 201,
-				},
-			);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'/conferences/101/sessions/201/surveys',
-				'test_api_key',
-				{
-					method: 'GET',
-				},
-			);
-			expect(result).toEqual(mockSurveys);
-		});
-
-		it('getSessionSurveyDetails', async () => {
-			const mockSurveyDetail = { id: 501, name: 'Exit Survey', answers: [] };
-			mockMakeRequest.mockResolvedValueOnce(mockSurveyDetail);
-			const result = await plugin.endpoints!.sessions.getSessionSurveyDetails(
-				mockContext,
-				{
-					roomId: 101,
-					sessionId: 201,
-					surveyId: 501,
-				},
-			);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'/conferences/101/sessions/201/surveys/501',
-				'test_api_key',
-				{
-					method: 'GET',
-				},
-			);
-			expect(result).toEqual(mockSurveyDetail);
-		});
-
-		it('getSessionQaHistory', async () => {
-			const mockQa = [{ id: 1, question: 'Is this recorded?', answer: 'Yes' }];
-			mockMakeRequest.mockResolvedValueOnce(mockQa);
-			const result = await plugin.endpoints!.sessions.getSessionQaHistory(
-				mockContext,
-				{
-					roomId: 101,
-					sessionId: 201,
-				},
-			);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'/conferences/101/sessions/201/qa',
-				'test_api_key',
-				{
-					method: 'GET',
-				},
-			);
-			expect(result).toEqual(mockQa);
-		});
 	});
 
 	// ─────────────────────────────────────────────────────────────────────────
@@ -709,31 +565,6 @@ describe('ClickMeeting Plugin Endpoints - Complete 42 Endpoints Suite', () => {
 				},
 			);
 			expect(result).toEqual(mockRecordings);
-		});
-
-		it('getSessionRecordingDetails', async () => {
-			const mockDetail = {
-				id: 601,
-				duration: 3600,
-				recording_url: 'https://download',
-			};
-			mockMakeRequest.mockResolvedValueOnce(mockDetail);
-			const result =
-				await plugin.endpoints!.recordings.getSessionRecordingDetails(
-					mockContext,
-					{
-						roomId: 101,
-						recordingId: 601,
-					},
-				);
-			expect(mockMakeRequest).toHaveBeenCalledWith(
-				'/conferences/101/recordings/601',
-				'test_api_key',
-				{
-					method: 'GET',
-				},
-			);
-			expect(result).toEqual(mockDetail);
 		});
 
 		it('deleteRecording', async () => {

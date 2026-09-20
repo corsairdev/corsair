@@ -119,24 +119,6 @@ export const getConferenceFiles: ClickmeetingEndpoints['getConferenceFiles'] =
 		return ClickmeetingEndpointOutputSchemas.getConferenceFiles.parse(res);
 	};
 
-export const getConferenceSkins: ClickmeetingEndpoints['getConferenceSkins'] =
-	async (ctx) => {
-		const res = await makeClickmeetingRequest<unknown>(
-			'/conferences/skins',
-			ctx.key,
-			{
-				method: 'GET',
-			},
-		);
-		await logEventFromContext(
-			ctx,
-			'clickmeeting.conferences.getConferenceSkins',
-			{},
-			'completed',
-		);
-		return ClickmeetingEndpointOutputSchemas.getConferenceSkins.parse(res);
-	};
-
 export const sendInvitation: ClickmeetingEndpoints['sendInvitation'] = async (
 	ctx,
 	input,

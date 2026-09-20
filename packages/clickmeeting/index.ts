@@ -74,7 +74,6 @@ export type ClickmeetingEndpoints = {
 	updateConference: ClickmeetingEndpoint<'updateConference'>;
 	deleteConference: ClickmeetingEndpoint<'deleteConference'>;
 	getConferenceFiles: ClickmeetingEndpoint<'getConferenceFiles'>;
-	getConferenceSkins: ClickmeetingEndpoint<'getConferenceSkins'>;
 	sendInvitation: ClickmeetingEndpoint<'sendInvitation'>;
 	generateAutologinUrl: ClickmeetingEndpoint<'generateAutologinUrl'>;
 	// tokens
@@ -90,17 +89,10 @@ export type ClickmeetingEndpoints = {
 	getConferenceSessions: ClickmeetingEndpoint<'getConferenceSessions'>;
 	getSessionDetails: ClickmeetingEndpoint<'getSessionDetails'>;
 	getSessionAttendees: ClickmeetingEndpoint<'getSessionAttendees'>;
-	getSessionAttendeeDetails: ClickmeetingEndpoint<'getSessionAttendeeDetails'>;
 	generateSessionPdfReport: ClickmeetingEndpoint<'generateSessionPdfReport'>;
 	getSessionRegistrations: ClickmeetingEndpoint<'getSessionRegistrations'>;
-	getSessionPolls: ClickmeetingEndpoint<'getSessionPolls'>;
-	getSessionPollDetails: ClickmeetingEndpoint<'getSessionPollDetails'>;
-	getSessionSurveys: ClickmeetingEndpoint<'getSessionSurveys'>;
-	getSessionSurveyDetails: ClickmeetingEndpoint<'getSessionSurveyDetails'>;
-	getSessionQaHistory: ClickmeetingEndpoint<'getSessionQaHistory'>;
 	// recordings
 	getSessionRecordings: ClickmeetingEndpoint<'getSessionRecordings'>;
-	getSessionRecordingDetails: ClickmeetingEndpoint<'getSessionRecordingDetails'>;
 	deleteRecording: ClickmeetingEndpoint<'deleteRecording'>;
 	deleteRecordings: ClickmeetingEndpoint<'deleteRecordings'>;
 	// chats
@@ -128,7 +120,6 @@ const clickmeetingEndpointsNested = {
 		updateConference: ConferencesEndpoints.updateConference,
 		deleteConference: ConferencesEndpoints.deleteConference,
 		getConferenceFiles: ConferencesEndpoints.getConferenceFiles,
-		getConferenceSkins: ConferencesEndpoints.getConferenceSkins,
 		sendInvitation: ConferencesEndpoints.sendInvitation,
 		generateAutologinUrl: ConferencesEndpoints.generateAutologinUrl,
 	},
@@ -147,18 +138,11 @@ const clickmeetingEndpointsNested = {
 		getConferenceSessions: SessionsEndpoints.getConferenceSessions,
 		getSessionDetails: SessionsEndpoints.getSessionDetails,
 		getSessionAttendees: SessionsEndpoints.getSessionAttendees,
-		getSessionAttendeeDetails: SessionsEndpoints.getSessionAttendeeDetails,
 		generateSessionPdfReport: SessionsEndpoints.generateSessionPdfReport,
 		getSessionRegistrations: SessionsEndpoints.getSessionRegistrations,
-		getSessionPolls: SessionsEndpoints.getSessionPolls,
-		getSessionPollDetails: SessionsEndpoints.getSessionPollDetails,
-		getSessionSurveys: SessionsEndpoints.getSessionSurveys,
-		getSessionSurveyDetails: SessionsEndpoints.getSessionSurveyDetails,
-		getSessionQaHistory: SessionsEndpoints.getSessionQaHistory,
 	},
 	recordings: {
 		getSessionRecordings: RecordingsEndpoints.getSessionRecordings,
-		getSessionRecordingDetails: RecordingsEndpoints.getSessionRecordingDetails,
 		deleteRecording: RecordingsEndpoints.deleteRecording,
 		deleteRecordings: RecordingsEndpoints.deleteRecordings,
 	},
@@ -218,10 +202,6 @@ export const clickmeetingEndpointSchemas = {
 		input: ClickmeetingEndpointInputSchemas.getConferenceFiles,
 		output: ClickmeetingEndpointOutputSchemas.getConferenceFiles,
 	},
-	'conferences.getConferenceSkins': {
-		input: ClickmeetingEndpointInputSchemas.getConferenceSkins,
-		output: ClickmeetingEndpointOutputSchemas.getConferenceSkins,
-	},
 	'conferences.sendInvitation': {
 		input: ClickmeetingEndpointInputSchemas.sendInvitation,
 		output: ClickmeetingEndpointOutputSchemas.sendInvitation,
@@ -270,10 +250,6 @@ export const clickmeetingEndpointSchemas = {
 		input: ClickmeetingEndpointInputSchemas.getSessionAttendees,
 		output: ClickmeetingEndpointOutputSchemas.getSessionAttendees,
 	},
-	'sessions.getSessionAttendeeDetails': {
-		input: ClickmeetingEndpointInputSchemas.getSessionAttendeeDetails,
-		output: ClickmeetingEndpointOutputSchemas.getSessionAttendeeDetails,
-	},
 	'sessions.generateSessionPdfReport': {
 		input: ClickmeetingEndpointInputSchemas.generateSessionPdfReport,
 		output: ClickmeetingEndpointOutputSchemas.generateSessionPdfReport,
@@ -282,33 +258,9 @@ export const clickmeetingEndpointSchemas = {
 		input: ClickmeetingEndpointInputSchemas.getSessionRegistrations,
 		output: ClickmeetingEndpointOutputSchemas.getSessionRegistrations,
 	},
-	'sessions.getSessionPolls': {
-		input: ClickmeetingEndpointInputSchemas.getSessionPolls,
-		output: ClickmeetingEndpointOutputSchemas.getSessionPolls,
-	},
-	'sessions.getSessionPollDetails': {
-		input: ClickmeetingEndpointInputSchemas.getSessionPollDetails,
-		output: ClickmeetingEndpointOutputSchemas.getSessionPollDetails,
-	},
-	'sessions.getSessionSurveys': {
-		input: ClickmeetingEndpointInputSchemas.getSessionSurveys,
-		output: ClickmeetingEndpointOutputSchemas.getSessionSurveys,
-	},
-	'sessions.getSessionSurveyDetails': {
-		input: ClickmeetingEndpointInputSchemas.getSessionSurveyDetails,
-		output: ClickmeetingEndpointOutputSchemas.getSessionSurveyDetails,
-	},
-	'sessions.getSessionQaHistory': {
-		input: ClickmeetingEndpointInputSchemas.getSessionQaHistory,
-		output: ClickmeetingEndpointOutputSchemas.getSessionQaHistory,
-	},
 	'recordings.getSessionRecordings': {
 		input: ClickmeetingEndpointInputSchemas.getSessionRecordings,
 		output: ClickmeetingEndpointOutputSchemas.getSessionRecordings,
-	},
-	'recordings.getSessionRecordingDetails': {
-		input: ClickmeetingEndpointInputSchemas.getSessionRecordingDetails,
-		output: ClickmeetingEndpointOutputSchemas.getSessionRecordingDetails,
 	},
 	'recordings.deleteRecording': {
 		input: ClickmeetingEndpointInputSchemas.deleteRecording,
@@ -396,10 +348,6 @@ const clickmeetingEndpointMeta = {
 		description:
 			'Retrieve list of files uploaded to a specific conference room',
 	},
-	'conferences.getConferenceSkins': {
-		riskLevel: 'read',
-		description: 'Retrieve list of available conference room skins',
-	},
 	'conferences.sendInvitation': {
 		riskLevel: 'write',
 		description: 'Send invitation emails to participants for a conference',
@@ -449,11 +397,6 @@ const clickmeetingEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Retrieve list of attendees who participated in a session',
 	},
-	'sessions.getSessionAttendeeDetails': {
-		riskLevel: 'read',
-		description:
-			'Retrieve details for a specific attendee in a conference session',
-	},
 	'sessions.generateSessionPdfReport': {
 		riskLevel: 'write',
 		description: 'Generate a PDF report containing analytics for a session',
@@ -462,36 +405,9 @@ const clickmeetingEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Retrieve registrations for a specific session',
 	},
-	'sessions.getSessionPolls': {
-		riskLevel: 'read',
-		description: 'Retrieve poll data from a specific session',
-	},
-	'sessions.getSessionPollDetails': {
-		riskLevel: 'read',
-		description:
-			'Retrieve details of a specific poll conducted during a session',
-	},
-	'sessions.getSessionSurveys': {
-		riskLevel: 'read',
-		description: 'Retrieve list of surveys conducted during a session',
-	},
-	'sessions.getSessionSurveyDetails': {
-		riskLevel: 'read',
-		description:
-			'Retrieve details of a specific survey conducted during a session',
-	},
-	'sessions.getSessionQaHistory': {
-		riskLevel: 'read',
-		description: 'Retrieve Q&A history for a specific session',
-	},
 	'recordings.getSessionRecordings': {
 		riskLevel: 'read',
 		description: 'Retrieve all recordings for a conference room',
-	},
-	'recordings.getSessionRecordingDetails': {
-		riskLevel: 'read',
-		description:
-			'Retrieve details of a specific recording for a conference room',
 	},
 	'recordings.deleteRecording': {
 		riskLevel: 'write',

@@ -259,9 +259,6 @@ export const GetConferenceFilesInputSchema = z.object({
 });
 export const GetConferenceFilesOutputSchema = z.array(ConferenceFileItemSchema);
 
-export const GetConferenceSkinsInputSchema = z.object({});
-export const GetConferenceSkinsOutputSchema = z.array(ConferenceSkinItemSchema);
-
 export const SendInvitationInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	lang: z
@@ -411,13 +408,6 @@ export const GetSessionAttendeesInputSchema = z.object({
 });
 export const GetSessionAttendeesOutputSchema = z.array(AttendeeItemSchema);
 
-export const GetSessionAttendeeDetailsInputSchema = z.object({
-	roomId: z.union([z.string(), z.number()]),
-	sessionId: z.union([z.string(), z.number()]),
-	attendeeId: z.union([z.string(), z.number()]),
-});
-export const GetSessionAttendeeDetailsOutputSchema = AttendeeItemSchema;
-
 export const GenerateSessionPdfReportInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 	sessionId: z.union([z.string(), z.number()]),
@@ -439,50 +429,6 @@ export const GetSessionRegistrationsOutputSchema = z.array(
 	RegistrationItemSchema,
 );
 
-export const GetSessionPollsInputSchema = z.object({
-	roomId: z.union([z.string(), z.number()]),
-	sessionId: z.union([z.string(), z.number()]),
-});
-export const GetSessionPollsOutputSchema = z.array(PollItemSchema);
-
-export const GetSessionPollDetailsInputSchema = z.object({
-	roomId: z.union([z.string(), z.number()]),
-	sessionId: z.union([z.string(), z.number()]),
-	pollId: z.union([z.string(), z.number()]),
-});
-export const GetSessionPollDetailsOutputSchema = z
-	.object({
-		id: z.union([z.string(), z.number()]).optional(),
-		name: z.string().optional(),
-		questions: z.array(z.record(z.string(), z.unknown())).optional(),
-	})
-	.passthrough();
-
-export const GetSessionSurveysInputSchema = z.object({
-	roomId: z.union([z.string(), z.number()]),
-	sessionId: z.union([z.string(), z.number()]),
-});
-export const GetSessionSurveysOutputSchema = z.array(SurveyItemSchema);
-
-export const GetSessionSurveyDetailsInputSchema = z.object({
-	roomId: z.union([z.string(), z.number()]),
-	sessionId: z.union([z.string(), z.number()]),
-	surveyId: z.union([z.string(), z.number()]),
-});
-export const GetSessionSurveyDetailsOutputSchema = z
-	.object({
-		id: z.union([z.string(), z.number()]).optional(),
-		name: z.string().optional(),
-		answers: z.array(z.record(z.string(), z.unknown())).optional(),
-	})
-	.passthrough();
-
-export const GetSessionQaHistoryInputSchema = z.object({
-	roomId: z.union([z.string(), z.number()]),
-	sessionId: z.union([z.string(), z.number()]),
-});
-export const GetSessionQaHistoryOutputSchema = z.array(QaHistoryItemSchema);
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Recordings Schemas
 // ─────────────────────────────────────────────────────────────────────────────
@@ -491,12 +437,6 @@ export const GetSessionRecordingsInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
 });
 export const GetSessionRecordingsOutputSchema = z.array(RecordingItemSchema);
-
-export const GetSessionRecordingDetailsInputSchema = z.object({
-	roomId: z.union([z.string(), z.number()]),
-	recordingId: z.union([z.string(), z.number()]),
-});
-export const GetSessionRecordingDetailsOutputSchema = RecordingItemSchema;
 
 export const DeleteRecordingInputSchema = z.object({
 	roomId: z.union([z.string(), z.number()]),
@@ -640,7 +580,6 @@ export type ClickmeetingEndpointInputs = {
 	updateConference: z.infer<typeof UpdateConferenceInputSchema>;
 	deleteConference: z.infer<typeof DeleteConferenceInputSchema>;
 	getConferenceFiles: z.infer<typeof GetConferenceFilesInputSchema>;
-	getConferenceSkins: z.infer<typeof GetConferenceSkinsInputSchema>;
 	sendInvitation: z.infer<typeof SendInvitationInputSchema>;
 	generateAutologinUrl: z.infer<typeof GenerateAutologinUrlInputSchema>;
 	// tokens
@@ -658,21 +597,10 @@ export type ClickmeetingEndpointInputs = {
 	getConferenceSessions: z.infer<typeof GetConferenceSessionsInputSchema>;
 	getSessionDetails: z.infer<typeof GetSessionDetailsInputSchema>;
 	getSessionAttendees: z.infer<typeof GetSessionAttendeesInputSchema>;
-	getSessionAttendeeDetails: z.infer<
-		typeof GetSessionAttendeeDetailsInputSchema
-	>;
 	generateSessionPdfReport: z.infer<typeof GenerateSessionPdfReportInputSchema>;
 	getSessionRegistrations: z.infer<typeof GetSessionRegistrationsInputSchema>;
-	getSessionPolls: z.infer<typeof GetSessionPollsInputSchema>;
-	getSessionPollDetails: z.infer<typeof GetSessionPollDetailsInputSchema>;
-	getSessionSurveys: z.infer<typeof GetSessionSurveysInputSchema>;
-	getSessionSurveyDetails: z.infer<typeof GetSessionSurveyDetailsInputSchema>;
-	getSessionQaHistory: z.infer<typeof GetSessionQaHistoryInputSchema>;
 	// recordings
 	getSessionRecordings: z.infer<typeof GetSessionRecordingsInputSchema>;
-	getSessionRecordingDetails: z.infer<
-		typeof GetSessionRecordingDetailsInputSchema
-	>;
 	deleteRecording: z.infer<typeof DeleteRecordingInputSchema>;
 	deleteRecordings: z.infer<typeof DeleteRecordingsInputSchema>;
 	// chats
@@ -699,7 +627,6 @@ export type ClickmeetingEndpointOutputs = {
 	updateConference: z.infer<typeof UpdateConferenceOutputSchema>;
 	deleteConference: z.infer<typeof DeleteConferenceOutputSchema>;
 	getConferenceFiles: z.infer<typeof GetConferenceFilesOutputSchema>;
-	getConferenceSkins: z.infer<typeof GetConferenceSkinsOutputSchema>;
 	sendInvitation: z.infer<typeof SendInvitationOutputSchema>;
 	generateAutologinUrl: z.infer<typeof GenerateAutologinUrlOutputSchema>;
 	// tokens
@@ -717,23 +644,12 @@ export type ClickmeetingEndpointOutputs = {
 	getConferenceSessions: z.infer<typeof GetConferenceSessionsOutputSchema>;
 	getSessionDetails: z.infer<typeof GetSessionDetailsOutputSchema>;
 	getSessionAttendees: z.infer<typeof GetSessionAttendeesOutputSchema>;
-	getSessionAttendeeDetails: z.infer<
-		typeof GetSessionAttendeeDetailsOutputSchema
-	>;
 	generateSessionPdfReport: z.infer<
 		typeof GenerateSessionPdfReportOutputSchema
 	>;
 	getSessionRegistrations: z.infer<typeof GetSessionRegistrationsOutputSchema>;
-	getSessionPolls: z.infer<typeof GetSessionPollsOutputSchema>;
-	getSessionPollDetails: z.infer<typeof GetSessionPollDetailsOutputSchema>;
-	getSessionSurveys: z.infer<typeof GetSessionSurveysOutputSchema>;
-	getSessionSurveyDetails: z.infer<typeof GetSessionSurveyDetailsOutputSchema>;
-	getSessionQaHistory: z.infer<typeof GetSessionQaHistoryOutputSchema>;
 	// recordings
 	getSessionRecordings: z.infer<typeof GetSessionRecordingsOutputSchema>;
-	getSessionRecordingDetails: z.infer<
-		typeof GetSessionRecordingDetailsOutputSchema
-	>;
 	deleteRecording: z.infer<typeof DeleteRecordingOutputSchema>;
 	deleteRecordings: z.infer<typeof DeleteRecordingsOutputSchema>;
 	// chats
@@ -758,7 +674,6 @@ export const ClickmeetingEndpointInputSchemas = {
 	updateConference: UpdateConferenceInputSchema,
 	deleteConference: DeleteConferenceInputSchema,
 	getConferenceFiles: GetConferenceFilesInputSchema,
-	getConferenceSkins: GetConferenceSkinsInputSchema,
 	sendInvitation: SendInvitationInputSchema,
 	generateAutologinUrl: GenerateAutologinUrlInputSchema,
 	createAccessTokens: CreateAccessTokensInputSchema,
@@ -771,16 +686,9 @@ export const ClickmeetingEndpointInputSchemas = {
 	getConferenceSessions: GetConferenceSessionsInputSchema,
 	getSessionDetails: GetSessionDetailsInputSchema,
 	getSessionAttendees: GetSessionAttendeesInputSchema,
-	getSessionAttendeeDetails: GetSessionAttendeeDetailsInputSchema,
 	generateSessionPdfReport: GenerateSessionPdfReportInputSchema,
 	getSessionRegistrations: GetSessionRegistrationsInputSchema,
-	getSessionPolls: GetSessionPollsInputSchema,
-	getSessionPollDetails: GetSessionPollDetailsInputSchema,
-	getSessionSurveys: GetSessionSurveysInputSchema,
-	getSessionSurveyDetails: GetSessionSurveyDetailsInputSchema,
-	getSessionQaHistory: GetSessionQaHistoryInputSchema,
 	getSessionRecordings: GetSessionRecordingsInputSchema,
-	getSessionRecordingDetails: GetSessionRecordingDetailsInputSchema,
 	deleteRecording: DeleteRecordingInputSchema,
 	deleteRecordings: DeleteRecordingsInputSchema,
 	getChats: GetChatsInputSchema,
@@ -803,7 +711,6 @@ export const ClickmeetingEndpointOutputSchemas = {
 	updateConference: UpdateConferenceOutputSchema,
 	deleteConference: DeleteConferenceOutputSchema,
 	getConferenceFiles: GetConferenceFilesOutputSchema,
-	getConferenceSkins: GetConferenceSkinsOutputSchema,
 	sendInvitation: SendInvitationOutputSchema,
 	generateAutologinUrl: GenerateAutologinUrlOutputSchema,
 	createAccessTokens: CreateAccessTokensOutputSchema,
@@ -816,16 +723,9 @@ export const ClickmeetingEndpointOutputSchemas = {
 	getConferenceSessions: GetConferenceSessionsOutputSchema,
 	getSessionDetails: GetSessionDetailsOutputSchema,
 	getSessionAttendees: GetSessionAttendeesOutputSchema,
-	getSessionAttendeeDetails: GetSessionAttendeeDetailsOutputSchema,
 	generateSessionPdfReport: GenerateSessionPdfReportOutputSchema,
 	getSessionRegistrations: GetSessionRegistrationsOutputSchema,
-	getSessionPolls: GetSessionPollsOutputSchema,
-	getSessionPollDetails: GetSessionPollDetailsOutputSchema,
-	getSessionSurveys: GetSessionSurveysOutputSchema,
-	getSessionSurveyDetails: GetSessionSurveyDetailsOutputSchema,
-	getSessionQaHistory: GetSessionQaHistoryOutputSchema,
 	getSessionRecordings: GetSessionRecordingsOutputSchema,
-	getSessionRecordingDetails: GetSessionRecordingDetailsOutputSchema,
 	deleteRecording: DeleteRecordingOutputSchema,
 	deleteRecordings: DeleteRecordingsOutputSchema,
 	getChats: GetChatsOutputSchema,

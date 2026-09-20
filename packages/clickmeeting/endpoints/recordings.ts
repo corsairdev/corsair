@@ -21,26 +21,6 @@ export const getSessionRecordings: ClickmeetingEndpoints['getSessionRecordings']
 		return ClickmeetingEndpointOutputSchemas.getSessionRecordings.parse(res);
 	};
 
-export const getSessionRecordingDetails: ClickmeetingEndpoints['getSessionRecordingDetails'] =
-	async (ctx, input) => {
-		const res = await makeClickmeetingRequest<unknown>(
-			`/conferences/${encodeURIComponent(String(input.roomId))}/recordings/${encodeURIComponent(String(input.recordingId))}`,
-			ctx.key,
-			{
-				method: 'GET',
-			},
-		);
-		await logEventFromContext(
-			ctx,
-			'clickmeeting.recordings.getSessionRecordingDetails',
-			{ roomId: input.roomId, recordingId: input.recordingId },
-			'completed',
-		);
-		return ClickmeetingEndpointOutputSchemas.getSessionRecordingDetails.parse(
-			res,
-		);
-	};
-
 export const deleteRecording: ClickmeetingEndpoints['deleteRecording'] = async (
 	ctx,
 	input,
