@@ -85,13 +85,17 @@ export async function makeXeroRequest<T>(
 		url: endpoint,
 		body: isWrite ? body : undefined,
 		mediaType: isWrite ? mediaType : undefined,
-		query: !isWrite ? query : undefined,
+		query,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		if (error && typeof error === 'object' && 'body' in error) {
+		if (
+			error &&
+			typeof error === 'object' &&
+			('body' in error || 'status' in error)
+		) {
 			const apiErr = error as {
 				body?: {
 					Message?: string;

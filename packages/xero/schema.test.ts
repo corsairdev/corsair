@@ -31,10 +31,6 @@ import {
 import { errorHandlers } from './error-handlers';
 import { xero } from './index';
 import { XeroSchema } from './schema';
-import {
-	createXeroEventMatch,
-	verifyXeroWebhookSignature,
-} from './webhooks/types';
 
 jest.mock('./client', () => {
 	const original = jest.requireActual('./client');
@@ -668,47 +664,51 @@ describe('Xero All 39 Endpoints Schema & Execution Tests', () => {
 	});
 });
 
-describe('Xero Webhooks & Matchers', () => {
-	it('correctly matches Xero webhook events by category and eventType', () => {
-		const invoiceMatcher = createXeroEventMatch('INVOICE', 'CREATE');
-		const matchingRequest: any = {
-			headers: { 'x-xero-signature': 'sig123' },
-			body: JSON.stringify({
-				events: [
-					{
-						resourceId: 'inv-1',
-						eventCategory: 'INVOICE',
-						eventType: 'CREATE',
-						tenantId: 'tenant-1',
-					},
-				],
-			}),
-		};
-		expect(invoiceMatcher(matchingRequest)).toBe(true);
+describe('Xero 0-Trigger / Zero Webhook Plugin Configuration', () => {
+	const plugin = xero({ key: 'test_token', tenantId: 'tenant-123' });
 
-		const nonMatchingRequest: any = {
-			headers: { 'x-xero-signature': 'sig123' },
-			body: JSON.stringify({
-				events: [
-					{
-						resourceId: 'cont-1',
-						eventCategory: 'CONTACT',
-						eventType: 'UPDATE',
-						tenantId: 'tenant-1',
-					},
-				],
-			}),
-		};
-		expect(invoiceMatcher(nonMatchingRequest)).toBe(false);
+	it('configures empty webhooks and default matchers for 0-trigger plugin', () => {
+		expect(plugin.webhooks).toEqual({});
+		expect(plugin.pluginWebhookMatcher?.({ headers: {} } as any)).toBe(false);
+		expect(
+			plugin.pluginTenantWebhookMatcher?.({ headers: {} } as any),
+		).toBeNull();
+		expect(plugin.oauthWebhookTenantLinkResolver?.({} as any)).toBeNull();
 	});
 
-	it('rejects signature verification when secret or signature is missing', () => {
-		const req: any = {
-			headers: {},
-			rawBody: '{"events":[]}',
-		};
-		expect(verifyXeroWebhookSignature(req, 'my-secret').valid).toBe(false);
-		expect(verifyXeroWebhookSignature(req, '').valid).toBe(false);
+	it('validates all supported BankTransaction types in schema', () => {
+		const types = [
+			'SPEND',
+			'RECEIVE',
+			'RECEIVE-TRANSFER',
+			'SPEND-TRANSFER',
+			'RECEIVE-OVERPAYMENT',
+			'RECEIVE-PREPAYMENT',
+			'SPEND-OVERPAYMENT',
+			'SPEND-PREPAYMENT',
+		] as const;
+
+		for (const txType of types) {
+			const input = {
+				Type: txType,
+				Contact: { Name: 'Test Contact' },
+				BankAccount: { AccountID: 'acc-1' },
+				LineItems: [{ Description: 'Test Line', UnitAmount: 10 }],
+			};
+			expect(
+				XeroEndpointInputSchemas.bankTransactionsCreate.safeParse(input)
+					.success,
+			).toBe(true);
+
+			const entity = {
+				BankTransactionID: `bt-${txType}`,
+				Type: txType,
+				BankAccount: { AccountID: 'acc-1' },
+			};
+			expect(
+				XeroSchema.entities.bankTransactions.safeParse(entity).success,
+			).toBe(true);
+		}
 	});
 });
 

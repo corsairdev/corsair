@@ -50,7 +50,16 @@ export const XeroInvoice = z
 export const XeroBankTransaction = z
 	.object({
 		BankTransactionID: z.string(),
-		Type: z.enum(['SPEND', 'RECEIVE', 'RECEIVE-TRANSFER', 'SPEND-TRANSFER']),
+		Type: z.enum([
+			'SPEND',
+			'RECEIVE',
+			'RECEIVE-TRANSFER',
+			'SPEND-TRANSFER',
+			'RECEIVE-OVERPAYMENT',
+			'RECEIVE-PREPAYMENT',
+			'SPEND-OVERPAYMENT',
+			'SPEND-PREPAYMENT',
+		]),
 		Contact: z
 			.object({
 				ContactID: z.string().optional(),

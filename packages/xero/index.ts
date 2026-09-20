@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import {
 	Accounts,
@@ -48,28 +45,12 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { XeroSchema } from './schema';
-import { ContactWebhooks, eventWebhook, InvoiceWebhooks } from './webhooks';
-import { resolveXeroOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchXeroTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	XeroContactEvent,
-	XeroGenericEvent,
-	XeroInvoiceEvent,
-	XeroWebhookOutputs,
-} from './webhooks/types';
-import {
-	XeroContactEventSchema,
-	XeroGenericEventSchema,
-	XeroInvoiceEventSchema,
-} from './webhooks/types';
 
 export type XeroPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
 	tenantId?: string;
-	webhookSecret?: string;
 	hooks?: InternalXeroPlugin['hooks'];
-	webhookHooks?: InternalXeroPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof xeroEndpointsNested>;
 };
@@ -130,22 +111,6 @@ export type XeroEndpoints = {
 	taxRatesList: XeroEndpoint<'taxRatesList'>;
 	trackingCategoriesList: XeroEndpoint<'trackingCategoriesList'>;
 };
-
-type XeroWebhook<K extends keyof XeroWebhookOutputs, TEvent> = CorsairWebhook<
-	XeroContext,
-	TEvent,
-	XeroWebhookOutputs[K]
->;
-
-export type XeroWebhooks = {
-	invoiceCreated: XeroWebhook<'invoiceCreated', XeroInvoiceEvent>;
-	invoiceUpdated: XeroWebhook<'invoiceUpdated', XeroInvoiceEvent>;
-	contactCreated: XeroWebhook<'contactCreated', XeroContactEvent>;
-	contactUpdated: XeroWebhook<'contactUpdated', XeroContactEvent>;
-	event: XeroWebhook<'event', XeroGenericEvent>;
-};
-
-export type XeroBoundWebhooks = BindWebhooks<XeroWebhooks>;
 
 const xeroEndpointsNested = {
 	bankTransactions: {
@@ -228,20 +193,6 @@ const xeroEndpointsNested = {
 	},
 	trackingCategories: {
 		list: TrackingCategories.list,
-	},
-} as const;
-
-const xeroWebhooksNested = {
-	invoices: {
-		created: InvoiceWebhooks.created,
-		updated: InvoiceWebhooks.updated,
-	},
-	contacts: {
-		created: ContactWebhooks.created,
-		updated: ContactWebhooks.updated,
-	},
-	event: {
-		event: eventWebhook,
 	},
 } as const;
 
@@ -403,34 +354,6 @@ export const xeroEndpointSchemas = {
 		output: XeroEndpointOutputSchemas.trackingCategoriesList,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof xeroEndpointsNested>;
-
-const xeroWebhookSchemas = {
-	'invoices.created': {
-		description: 'Xero invoice created event',
-		payload: XeroInvoiceEventSchema,
-		response: XeroInvoiceEventSchema,
-	},
-	'invoices.updated': {
-		description: 'Xero invoice updated event',
-		payload: XeroInvoiceEventSchema,
-		response: XeroInvoiceEventSchema,
-	},
-	'contacts.created': {
-		description: 'Xero contact created event',
-		payload: XeroContactEventSchema,
-		response: XeroContactEventSchema,
-	},
-	'contacts.updated': {
-		description: 'Xero contact updated event',
-		payload: XeroContactEventSchema,
-		response: XeroContactEventSchema,
-	},
-	'event.event': {
-		description: 'Xero webhook general event',
-		payload: XeroGenericEventSchema,
-		response: XeroGenericEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof xeroWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'oauth_2' as const;
 
@@ -606,7 +529,7 @@ export type BaseXeroPlugin<T extends XeroPluginOptions> = CorsairPlugin<
 	'xero',
 	typeof XeroSchema,
 	typeof xeroEndpointsNested,
-	typeof xeroWebhooksNested,
+	{},
 	T,
 	typeof defaultAuthType
 >;
@@ -650,31 +573,18 @@ export function xero<const T extends XeroPluginOptions>(
 			requiresRegisteredRedirect: true,
 		},
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: xeroEndpointsNested,
-		webhooks: xeroWebhooksNested,
+		webhooks: {},
 		endpointMeta: xeroEndpointMeta,
 		endpointSchemas: xeroEndpointSchemas,
-		webhookSchemas: xeroWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			return 'x-xero-signature' in request.headers;
-		},
-		pluginTenantWebhookMatcher: matchXeroTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveXeroOAuthWebhookTenantLink,
+		pluginWebhookMatcher: () => false,
+		pluginTenantWebhookMatcher: () => null,
+		oauthWebhookTenantLinkResolver: () => null,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: XeroKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -776,13 +686,3 @@ export type {
 	XeroEndpointInputs,
 	XeroEndpointOutputs,
 } from './endpoints/types';
-export type {
-	XeroContactEvent,
-	XeroGenericEvent,
-	XeroInvoiceEvent,
-	XeroWebhookOutputs,
-} from './webhooks/types';
-export {
-	createXeroEventMatch,
-	verifyXeroWebhookSignature,
-} from './webhooks/types';
