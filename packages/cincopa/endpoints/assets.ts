@@ -41,7 +41,8 @@ export const getUploadFromUrlStatus = async (
 	ctx: CincopaContext & { key: string },
 	input: unknown,
 ) => {
-	const parsed = CincopaEndpointInputSchemas.getUploadFromUrlStatus.parse(input);
+	const parsed =
+		CincopaEndpointInputSchemas.getUploadFromUrlStatus.parse(input);
 
 	const raw = await makeCincopaRequest<unknown>(
 		'asset.upload_from_url_get_status.json',
@@ -52,7 +53,8 @@ export const getUploadFromUrlStatus = async (
 		},
 	);
 
-	const response = CincopaEndpointOutputSchemas.getUploadFromUrlStatus.parse(raw);
+	const response =
+		CincopaEndpointOutputSchemas.getUploadFromUrlStatus.parse(raw);
 
 	await logEventFromContext(
 		ctx,

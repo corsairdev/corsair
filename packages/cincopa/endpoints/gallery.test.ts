@@ -1,5 +1,9 @@
 import { makeCincopaRequest } from '../client';
-import { abortUploadFromUrl, getUploadFromUrlStatus, uploadFromUrl } from './assets';
+import {
+	abortUploadFromUrl,
+	getUploadFromUrlStatus,
+	uploadFromUrl,
+} from './assets';
 import { get } from './gallery';
 import { ping } from './general';
 
@@ -136,7 +140,9 @@ describe('Cincopa asset upload-from-url', () => {
 			progress: 1,
 		});
 
-		const result = await getUploadFromUrlStatus(ctx(), { statusId: 'status-1' });
+		const result = await getUploadFromUrlStatus(ctx(), {
+			statusId: 'status-1',
+		});
 		expect(mockedMakeCincopaRequest).toHaveBeenCalledWith(
 			'asset.upload_from_url_get_status.json',
 			'test-api-token',

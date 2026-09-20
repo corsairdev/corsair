@@ -1,12 +1,19 @@
 import { logEventFromContext } from 'corsair/core';
-import { CINCOPA_API_BASE, CincopaAPIError, makeCincopaRequest } from '../client';
+import {
+	CINCOPA_API_BASE,
+	CincopaAPIError,
+	makeCincopaRequest,
+} from '../client';
 import type { CincopaContext } from '../index';
 import {
 	CincopaEndpointInputSchemas,
 	CincopaEndpointOutputSchemas,
 } from './types';
 
-export const ping = async (ctx: CincopaContext & { key: string }, input: unknown) => {
+export const ping = async (
+	ctx: CincopaContext & { key: string },
+	input: unknown,
+) => {
 	CincopaEndpointInputSchemas.ping.parse(input ?? {});
 
 	const raw = await makeCincopaRequest<unknown>('ping.json', ctx.key, {

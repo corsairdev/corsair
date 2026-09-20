@@ -6,8 +6,13 @@ import {
 	CincopaEndpointOutputSchemas,
 } from './types';
 
-export const get = async (ctx: CincopaContext & { key: string }, input: unknown) => {
-	const parsedInput = CincopaEndpointInputSchemas.galleryList.parse(input ?? {});
+export const get = async (
+	ctx: CincopaContext & { key: string },
+	input: unknown,
+) => {
+	const parsedInput = CincopaEndpointInputSchemas.galleryList.parse(
+		input ?? {},
+	);
 
 	const raw = await makeCincopaRequest<unknown>('gallery.list.json', ctx.key, {
 		method: 'GET',
