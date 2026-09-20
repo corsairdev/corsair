@@ -13,6 +13,7 @@ afterEach(() => {
 	jest.restoreAllMocks();
 });
 
+// unknown: test fixture payload is caller-defined JSON
 function mockFetch(payload: unknown, status = 200) {
 	captured = undefined;
 	jest.spyOn(global, 'fetch').mockImplementation((input, init) => {

@@ -25,6 +25,7 @@ function withFlaglessOpenAccess<T extends { openAccessPdf?: boolean }>(
 }
 
 function queryFrom(
+	// unknown: shared raw input bag before per-endpoint Zod parse
 	input: Record<string, unknown>,
 	omit: readonly string[] = [],
 ) {
@@ -50,6 +51,7 @@ async function semanticScholarCall<T>(
 	options: {
 		method?: 'GET' | 'POST';
 		query?: Query;
+		// unknown: request body keys differ per operation; Zod validates upstream
 		body?: Record<string, unknown>;
 	} = {},
 ): Promise<T> {
@@ -60,6 +62,7 @@ async function semanticScholarCall<T>(
 async function logOperation(
 	ctx: Parameters<SemanticScholarEndpoints['getPaper']>[0],
 	operation: string,
+	// unknown: shared raw input bag before per-endpoint Zod parse
 	input: Record<string, unknown>,
 ) {
 	await logEventFromContext(

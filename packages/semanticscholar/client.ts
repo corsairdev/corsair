@@ -10,6 +10,7 @@ export type SemanticScholarQuery = Record<
 
 export type SemanticScholarRequestOptions = {
 	method?: 'GET' | 'POST';
+	// unknown: request body keys differ per operation; Zod validates upstream
 	body?: Record<string, unknown>;
 	query?: SemanticScholarQuery;
 };
@@ -33,6 +34,7 @@ function asErrorBody(
 	body: ApiError['body'],
 ): SemanticScholarErrorBody | undefined {
 	if (!body || typeof body !== 'object') return undefined;
+	// unknown: request body keys differ per operation; Zod validates upstream
 	const record = body as Record<string, unknown>;
 	return {
 		message: typeof record.message === 'string' ? record.message : undefined,

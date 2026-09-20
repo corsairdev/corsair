@@ -5,6 +5,7 @@ const N = z.number().nullable().optional();
 const B = z.boolean().nullable().optional();
 const SN = z.union([z.string(), z.number()]).nullable().optional();
 
+// unknown: provider field shape is open; no closed schema is published
 const ExternalIds = z.record(z.string(), z.unknown()).nullable().optional();
 
 const OpenAccessPdf = z
