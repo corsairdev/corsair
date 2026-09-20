@@ -40,6 +40,15 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
+	PERMISSION_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 403) return true;
+			if (error instanceof XeroAPIError && error.status === 403) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('forbidden') || msg.includes('permission');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
 	DEFAULT: {
 		match: () => true,
 		handler: async () => ({ maxRetries: 0 }),
