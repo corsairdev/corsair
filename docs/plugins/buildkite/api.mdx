@@ -1,0 +1,242 @@
+---
+title: API
+description: "API reference for Buildkite: every `buildkite.api.*` operation with input and output types."
+---
+
+Every `buildkite.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Get Current Access Token
+
+### getCurrentAccessToken
+
+`getCurrentAccessToken`
+
+Retrieve the authenticated API access token details. Use when you need to confirm the validity and scopes of the current API token.
+
+**Risk:** `read`
+
+```ts
+await corsair.buildkite.api.getCurrentAccessToken({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `scopes` | `string[]` | Yes | — |
+| `description` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `expires_at` | `string` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  email?: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Get Meta
+
+### getMeta
+
+`getMeta`
+
+Retrieve metadata about the Buildkite API. Use when you need to fetch webhook IP addresses for firewall or security configurations.
+
+**Risk:** `read`
+
+```ts
+await corsair.buildkite.api.getMeta({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_ips` | `string[]` | Yes | — |
+
+
+
+---
+
+## Get User
+
+### getUser
+
+`getUser`
+
+Retrieve details about the current authenticated user. Use when you need to get information about the user account that owns the API token.
+
+**Risk:** `read`
+
+```ts
+await corsair.buildkite.api.getUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `graphql_id` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `avatar_url` | `string` | No | — |
+| `created_at` | `string` | No | — |
+
+
+
+---
+
+## List Organizations
+
+### listOrganizations
+
+`listOrganizations`
+
+List all organizations the current user is a member of. Use when you need to discover available organizations or get organization slugs for other operations.
+
+**Risk:** `read`
+
+```ts
+await corsair.buildkite.api.listOrganizations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  graphql_id?: string,
+  url?: string,
+  web_url?: string,
+  name: string,
+  slug: string,
+  pipelines_url?: string,
+  agents_url?: string,
+  emojis_url?: string,
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## List Pipeline Agents
+
+### listPipelineAgents
+
+`listPipelineAgents`
+
+List connected agents for an organization. Use after confirming the organization slug. Supports optional filtering and pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.buildkite.api.listPipelineAgents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgSlug` | `string` | Yes | Official path param {org.slug} on GET /v2/organizations/{org.slug}/agents |
+| `name` | `string` | No | Official query: ?name= |
+| `hostname` | `string` | No | Official query: ?hostname= |
+| `version` | `string` | No | Official query: ?version= |
+| `cluster_queue_id` | `string` | No | Official query: ?cluster_queue_id= |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  graphql_id?: string,
+  url?: string,
+  web_url?: string,
+  name: string,
+  connection_state: never_connected | connected | disconnected | stopping | stopped | lost,
+  hostname?: string,
+  ip_address?: string,
+  user_agent?: string,
+  version?: string,
+  os_id?: string,
+  arch?: string,
+  queue?: string,
+  creator?: {
+    id?: string,
+    graphql_id?: string,
+    name?: string,
+    email?: string,
+    avatar_url?: string,
+    created_at?: string
+  } | null,
+  created_at?: string,
+  connected_at?: string | null,
+  disconnected_at?: string | null,
+  lost_at?: string | null,
+  stopped_at?: string | null,
+  job?: {
+    id?: string,
+    graphql_id?: string,
+    type?: string,
+    name?: string,
+    state?: string,
+    command?: string
+  } | null,
+  last_job_finished_at?: string | null,
+  priority?: number | null,
+  meta_data?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

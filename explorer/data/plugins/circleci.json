@@ -1,0 +1,2639 @@
+{
+  "id": "circleci",
+  "displayName": "CircleCI",
+  "description": "Continuous integration and delivery platform for automated testing and deployment pipelines.",
+  "npmPackageName": "@corsair-dev/circleci",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 65,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "circleci.api.contexts.create",
+      "shortPath": "contexts.create",
+      "description": "Create a context (REST)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ownerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ownerType",
+            "optional": true,
+            "type": "organization | account"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.contexts.createRestriction",
+      "shortPath": "contexts.createRestriction",
+      "description": "Add a restriction to a context",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contextId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "restrictionType",
+            "optional": false,
+            "type": "project | expression | group"
+          },
+          {
+            "key": "restrictionValue",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "context_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "restriction_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "restriction_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.contexts.deleteRestriction",
+      "shortPath": "contexts.deleteRestriction",
+      "description": "Remove a restriction from a context",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contextId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "restrictionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.contexts.get",
+      "shortPath": "contexts.get",
+      "description": "Retrieve a context by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contextId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.contexts.listEnvVars",
+      "shortPath": "contexts.listEnvVars",
+      "description": "List a context's environment variables",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contextId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ variable?: string | null, truncated_value?: string | null, context_id?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.contexts.upsertEnvVar",
+      "shortPath": "contexts.upsertEnvVar",
+      "description": "Add or update a context environment variable (REST)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contextId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variable",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variable",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "truncated_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "context_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.contextsGraphQL.create",
+      "shortPath": "contextsGraphQL.create",
+      "description": "Create a context (GraphQL)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contextName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ownerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ownerType",
+            "optional": false,
+            "type": "organization | account"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.contextsGraphQL.delete",
+      "shortPath": "contextsGraphQL.delete",
+      "description": "Permanently delete a context and its environment variables (GraphQL)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contextId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.contextsGraphQL.query",
+      "shortPath": "contextsGraphQL.query",
+      "description": "Retrieve a context by id (GraphQL)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contextId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.contextsGraphQL.removeEnvVar",
+      "shortPath": "contextsGraphQL.removeEnvVar",
+      "description": "Remove a context environment variable (GraphQL)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contextId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variable",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.contextsGraphQL.storeEnvVar",
+      "shortPath": "contextsGraphQL.storeEnvVar",
+      "description": "Add or update a context environment variable (GraphQL)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contextId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variable",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create an organization group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.groups.delete",
+      "shortPath": "groups.delete",
+      "description": "Permanently delete an organization group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Retrieve an organization group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List an organization's groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, description?: string | null }[]"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.insights.branches",
+      "shortPath": "insights.branches",
+      "description": "List branches with workflow runs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workflowName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.insights.flakyTests",
+      "shortPath": "insights.flakyTests",
+      "description": "Get flaky tests for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.insights.orgSummary",
+      "shortPath": "insights.orgSummary",
+      "description": "Get org-wide summary metrics with trends",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reportingWindow",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectNames",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.insights.pagesSummary",
+      "shortPath": "insights.pagesSummary",
+      "description": "Get summary metrics and trends for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reportingWindow",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "branches",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "workflowNames",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.insights.planMetrics",
+      "shortPath": "insights.planMetrics",
+      "description": "Get plan/credit-usage metrics by project and org for a date range (same route as insights.orgSummary)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reportingWindow",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectNames",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.insights.projectWorkflows",
+      "shortPath": "insights.projectWorkflows",
+      "description": "Get summary metrics for all of a project's workflows",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reportingWindow",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allBranches",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.jobs.getArtifacts",
+      "shortPath": "jobs.getArtifacts",
+      "description": "List a job's stored artifacts by number",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vcsType",
+            "optional": false,
+            "type": "gh | bb"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "buildNumber",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ path?: string | null, pretty_path?: string | null, node_index?: number | null, url?: string | null }[]"
+      }
+    },
+    {
+      "path": "circleci.api.jobs.getDetails",
+      "shortPath": "jobs.getDetails",
+      "description": "Fetch a job's status, timing and executor by number",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vcsType",
+            "optional": false,
+            "type": "gh | bb"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "buildNumber",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "build_num",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lifecycle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outcome",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stop_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "build_time_millis",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workflows",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.jobs.getTestMetadata",
+      "shortPath": "jobs.getTestMetadata",
+      "description": "Fetch a job's stored test results by number",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vcsType",
+            "optional": false,
+            "type": "gh | bb"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "buildNumber",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ message?: string | null, source?: string | null, run_time?: number | null, file?: string | null, result?: string | null, name?: string | null, classname?: string | null }[]"
+      }
+    },
+    {
+      "path": "circleci.api.namespace.delete",
+      "shortPath": "namespace.delete",
+      "description": "Permanently delete a namespace and all its orbs",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.namespace.deleteAlias",
+      "shortPath": "namespace.deleteAlias",
+      "description": "Remove a namespace alias (GraphQL)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.namespace.queryExists",
+      "shortPath": "namespace.queryExists",
+      "description": "Check whether a namespace name exists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exists",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.namespace.rename",
+      "shortPath": "namespace.rename",
+      "description": "Rename a namespace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "newName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.orbAllowlist.create",
+      "shortPath": "orbAllowlist.create",
+      "description": "Add a URL orb allow-list entry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgSlugOrId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "prefix",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "auth",
+            "optional": false,
+            "type": "github-oauth | bitbucket-oauth | github-app | none"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.orbAllowlist.delete",
+      "shortPath": "orbAllowlist.delete",
+      "description": "Remove a URL orb allow-list entry",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgSlugOrId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entryId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.orbs.getDetails",
+      "shortPath": "orbs.getDetails",
+      "description": "Fetch an orb's metadata and versions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPrivate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "versions",
+            "optional": true,
+            "type": "{ id?: string | null, version?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.orbs.getVersion",
+      "shortPath": "orbs.getVersion",
+      "description": "Fetch one orb version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orbVersionRef",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.orbs.listCategories",
+      "shortPath": "orbs.listCategories",
+      "description": "List orb categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ hasNextPage: boolean, endCursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.orbs.listNamespaceOrbs",
+      "shortPath": "orbs.listNamespaceOrbs",
+      "description": "List orbs in a namespace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "namespaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "certified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pageCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, is_private?: boolean | null, is_listed?: boolean | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ next?: string | null, prev?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.orbs.listOrbs",
+      "shortPath": "orbs.listOrbs",
+      "description": "List orbs across the registry",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, isPrivate?: boolean | null, versions?: { id?: string | null, version?: string | null }[] | null }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": true,
+            "type": "{ hasNextPage: boolean, endCursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.orbs.queryCategoryId",
+      "shortPath": "orbs.queryCategoryId",
+      "description": "Fetch a category's id by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.orbs.queryExists",
+      "shortPath": "orbs.queryExists",
+      "description": "Check whether an orb exists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exists",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "isPrivate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.orbs.queryId",
+      "shortPath": "orbs.queryId",
+      "description": "Fetch an orb's id by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPrivate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "versions",
+            "optional": true,
+            "type": "{ id?: string | null, version?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.orbs.queryLatestVersion",
+      "shortPath": "orbs.queryLatestVersion",
+      "description": "Fetch an orb's latest published version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.orbs.querySource",
+      "shortPath": "orbs.querySource",
+      "description": "Fetch an orb version's source YAML",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orbVersionRef",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.orbs.validateConfig",
+      "shortPath": "orbs.validateConfig",
+      "description": "Validate orb YAML",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orbYaml",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ message?: string | null }[]"
+          },
+          {
+            "key": "sourceYaml",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.organization.get",
+      "shortPath": "organization.get",
+      "description": "Retrieve an organization by id (GraphQL)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.pipelineDefinitions.get",
+      "shortPath": "pipelineDefinitions.get",
+      "description": "Retrieve a pipeline definition",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pipelineDefinitionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "config_source",
+            "optional": true,
+            "type": "{ provider?: string | null, repo?: { full_name?: string | null, external_id?: string | null } | null, file_path?: string | null }"
+          },
+          {
+            "key": "checkout_source",
+            "optional": true,
+            "type": "{ provider?: string | null, repo?: { full_name?: string | null, external_id?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.pipelineDefinitions.list",
+      "shortPath": "pipelineDefinitions.list",
+      "description": "List a project's pipeline definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, description?: string | null, created_at?: string | null, config_source?: { provider?: string | null, repo?: { full_name?: string | null, external_id?: string | null } | null, file_path?: string | null } | null, checkout_source?: { provider?: string | null, repo?: { full_name?: string | null, external_id?: string | null } | null } | null }[]"
+      }
+    },
+    {
+      "path": "circleci.api.pipelines.getConfig",
+      "shortPath": "pipelines.getConfig",
+      "description": "Fetch a pipeline's config",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pipelineId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.pipelines.list",
+      "shortPath": "pipelines.list",
+      "description": "List pipelines for an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mine",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: string | null, project_slug?: string | null, number?: number | null, state?: string | null, created_at?: string | null, updated_at?: string | null, trigger?: {} | null, vcs?: {} | null, errors?: {}[] | null }[]"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.pipelines.listForProject",
+      "shortPath": "pipelines.listForProject",
+      "description": "List a project's pipelines",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: string | null, project_slug?: string | null, number?: number | null, state?: string | null, created_at?: string | null, updated_at?: string | null, trigger?: {} | null, vcs?: {} | null, errors?: {}[] | null }[]"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.pipelines.trigger",
+      "shortPath": "pipelines.trigger",
+      "description": "Start a new pipeline run on a branch or tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trigger",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "vcs",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.projectEnvVars.create",
+      "shortPath": "projectEnvVars.create",
+      "description": "Create a project environment variable",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created-at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.projectEnvVars.delete",
+      "shortPath": "projectEnvVars.delete",
+      "description": "Delete a project environment variable",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.projectEnvVars.list",
+      "shortPath": "projectEnvVars.list",
+      "description": "List a project's environment variables",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ name: string, value?: string | null, created-at?: string | null, created_at?: string | null }[]"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Follow a repository as a new project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgSlugOrId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vcs_info",
+            "optional": true,
+            "type": "{ vcs_url?: string | null, provider?: string | null, default_branch?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Permanently remove a project and its settings",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Retrieve a project by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization_slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vcs_info",
+            "optional": true,
+            "type": "{ vcs_url?: string | null, provider?: string | null, default_branch?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.runners.list",
+      "shortPath": "runners.list",
+      "description": "List self-hosted runners",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "namespace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resourceClass",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: string | null, hostname?: string | null, name?: string | null, first_connected?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.schedules.list",
+      "shortPath": "schedules.list",
+      "description": "List a project's scheduled pipeline triggers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, description?: string | null, project-slug?: string | null, created-at?: string | null, updated-at?: string | null, actor?: { id?: string | null, avatar_url?: string | null, login?: string | null, name?: string | null } | null, parameters?: {} | null, timetable?: { per-hour?: number | null, hours-of-day?: number[] | null, days-of-week?: string[] | null, days-of-month?: number[] | null, months?: string[] | null } | null }[]"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.usageExport.create",
+      "shortPath": "usageExport.create",
+      "description": "Create a usage export job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sharedOrgIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.usageExport.get",
+      "shortPath": "usageExport.get",
+      "description": "Retrieve a usage export job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "usageExportJobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.user.getCurrent",
+      "shortPath": "user.getCurrent",
+      "description": "Read the authenticated user's own profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "login",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.user.getInfo",
+      "shortPath": "user.getInfo",
+      "description": "Read another user's profile by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "login",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.user.listCollaborations",
+      "shortPath": "user.listCollaborations",
+      "description": "List organizations the caller can collaborate on",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, vcs_type?: string | null, name?: string | null, slug?: string | null, avatar_url?: string | null }[]"
+      }
+    },
+    {
+      "path": "circleci.api.workflows.getSummary",
+      "shortPath": "workflows.getSummary",
+      "description": "Get metrics and trends for a workflow",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workflowName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allBranches",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.workflows.listByPipelineId",
+      "shortPath": "workflows.listByPipelineId",
+      "description": "List a pipeline's workflows",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pipelineId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, status?: string | null, pipeline_id?: string | null, pipeline_number?: number | null, project_slug?: string | null, created_at?: string | null, stopped_at?: string | null, started_by?: string | null }[]"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "circleci.api.workflows.listJobs",
+      "shortPath": "workflows.listJobs",
+      "description": "Get summary metrics for a workflow's jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workflowName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reportingWindow",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allBranches",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "jobName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "circleci.api.workflows.listTestMetrics",
+      "shortPath": "workflows.listTestMetrics",
+      "description": "Get test metrics for a workflow",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workflowName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allBranches",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "circleci.db.contexts.search",
+      "entityName": "contexts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "circleci.db.groups.search",
+      "entityName": "groups",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "circleci.db.orbAllowlistEntries.search",
+      "entityName": "orbAllowlistEntries",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "prefix",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "auth",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "circleci.db.pipelineDefinitions.search",
+      "entityName": "pipelineDefinitions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "circleci.db.projectEnvVars.search",
+      "entityName": "projectEnvVars",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "value",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created-at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "circleci.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "circleci.db.schedules.search",
+      "entityName": "schedules",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project-slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created-at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated-at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

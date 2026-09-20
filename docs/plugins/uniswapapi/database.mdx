@@ -1,0 +1,154 @@
+---
+title: Database
+description: "Uniswap local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Uniswap plugin syncs data locally. Use `corsair.uniswapapi.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Approval
+
+Path: `uniswapapi.db.approval.search`
+
+```ts
+const rows = await corsair.uniswapapi.db.approval.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `walletAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `token` | `string` | equals, contains, startsWith, endsWith, in |
+| `amount` | `string` | equals, contains, startsWith, endsWith, in |
+| `chainId` | `number` | equals, gt, gte, lt, lte, in |
+| `approvalNeeded` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Gasless Order
+
+Path: `uniswapapi.db.gaslessOrder.search`
+
+```ts
+const rows = await corsair.uniswapapi.db.gaslessOrder.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `orderId` | `string` | equals, contains, startsWith, endsWith, in |
+| `orderHash` | `string` | equals, contains, startsWith, endsWith, in |
+| `orderStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `chainId` | `number` | equals, gt, gte, lt, lte, in |
+| `swapper` | `string` | equals, contains, startsWith, endsWith, in |
+| `txHash` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Quote
+
+Path: `uniswapapi.db.quote.search`
+
+```ts
+const rows = await corsair.uniswapapi.db.quote.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `requestId` | `string` | equals, contains, startsWith, endsWith, in |
+| `quoteId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tokenIn` | `string` | equals, contains, startsWith, endsWith, in |
+| `tokenOut` | `string` | equals, contains, startsWith, endsWith, in |
+| `tokenInChainId` | `number` | equals, gt, gte, lt, lte, in |
+| `tokenOutChainId` | `number` | equals, gt, gte, lt, lte, in |
+| `amountIn` | `string` | equals, contains, startsWith, endsWith, in |
+| `amountOut` | `string` | equals, contains, startsWith, endsWith, in |
+| `swapper` | `string` | equals, contains, startsWith, endsWith, in |
+| `gasEstimate` | `string` | equals, contains, startsWith, endsWith, in |
+| `gasFeeUSD` | `string` | equals, contains, startsWith, endsWith, in |
+| `gasFeeQuote` | `string` | equals, contains, startsWith, endsWith, in |
+| `routeString` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Swap Status
+
+Path: `uniswapapi.db.swapStatus.search`
+
+```ts
+const rows = await corsair.uniswapapi.db.swapStatus.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `txHash` | `string` | equals, contains, startsWith, endsWith, in |
+| `chainId` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Token
+
+Path: `uniswapapi.db.token.search`
+
+```ts
+const rows = await corsair.uniswapapi.db.token.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `chainId` | `number` | equals, gt, gte, lt, lte, in |
+| `address` | `string` | equals, contains, startsWith, endsWith, in |
+| `decimals` | `number` | equals, gt, gte, lt, lte, in |
+| `symbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `buyFeeBps` | `string` | equals, contains, startsWith, endsWith, in |
+| `sellFeeBps` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
