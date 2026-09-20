@@ -23,29 +23,28 @@ describe('FinerWorks schema', () => {
 	});
 
 	it('declares an entity for every documented resource', () => {
-		const entities = Object.keys(FinerWorksSchema.entities);
-		expect(entities).toEqual(
-			expect.arrayContaining([
-				'images',
-				'virtualInventoryProducts',
-				'orders',
-				'shipments',
-				'orderStatusDefinitions',
-				'prices',
-				'galleries',
-				'galleryThemes',
-				'frames',
-				'frameCollections',
-				'glazing',
-				'mats',
-				'mediaTypes',
-				'productTypes',
-				'styleTypes',
-				'shippingOptions',
-				'userAccounts',
-				'companyInfo',
-			]),
-		);
+		const entities = Object.keys(FinerWorksSchema.entities).sort();
+		expect(entities).toEqual([
+			'addresses',
+			'companyInfo',
+			'frameCollections',
+			'frames',
+			'galleries',
+			'galleryThemes',
+			'glazing',
+			'images',
+			'mats',
+			'mediaTypes',
+			'orderStatusDefinitions',
+			'orders',
+			'prices',
+			'productTypes',
+			'shipments',
+			'shippingOptions',
+			'styleTypes',
+			'userAccounts',
+			'virtualInventoryProducts',
+		]);
 	});
 });
 
@@ -129,6 +128,7 @@ describe('entity shapes match the documented responses', () => {
 	});
 
 	it('keeps undocumented fields instead of stripping them', () => {
+		// unknown: verifying pass-through on open bag record without typed extra field
 		const parsed = FinerWorksAddress.parse({
 			city: 'Mountain Scene',
 			country_code: 'us',

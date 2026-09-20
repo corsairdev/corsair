@@ -51,7 +51,7 @@ export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (statusOf(error) === 429) return true;
-			return /\b429\b|too many requests|rate limit/i.test(error.message);
+			return /too many requests|rate[ _-]?limit/i.test(error.message);
 		},
 		handler: async (error: Error) => ({
 			maxRetries: 5,

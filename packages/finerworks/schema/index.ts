@@ -44,8 +44,6 @@ export const FinerWorksSchema = {
 		shippingOptions: FinerWorksShippingOption,
 		userAccounts: FinerWorksUserAccount,
 		companyInfo: FinerWorksCompanyInfo,
-		submittedOrders: FinerWorksSubmittedOrder,
-		shippingQuotes: FinerWorksShippingQuote,
 	},
 } as const;
 

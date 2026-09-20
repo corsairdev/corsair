@@ -17,6 +17,7 @@ const { request } = require('corsair/http') as { request: jest.Mock };
 const credentials = { webApiKey: 'web-key', appKey: 'app-key' };
 
 /** Build an ApiError the way `corsair/http` does for a failed response. */
+// unknown: test helper constructs ApiError with arbitrary response body
 function apiError(status: number, body: unknown): ApiError {
 	return new ApiError(
 		{ method: 'POST', url: 'v3/list_images' },
@@ -138,6 +139,7 @@ describe('errorHandlers', () => {
 	 * the status and Retry-After. These go through makeFinerWorksRequest rather
 	 * than hand-building an error, so the wrapping itself is under test.
 	 */
+	// unknown: test helper simulates provider error responses with varied body structures
 	async function wrappedError(
 		status: number,
 		body: unknown,

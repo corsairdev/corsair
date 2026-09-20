@@ -407,6 +407,8 @@ export const OrdersSubmitOutputSchema = z
 /** https://v2.api.finerworks.com/Help/Api/POST-v3-save_pending_orders */
 export const OrdersSavePendingInputSchema = z.object({
 	orders: z.array(FinerWorksOrderInputSchema).min(1),
+	source: z.string().max(50).optional(),
+	account_key: accountKey,
 });
 export const OrdersSavePendingOutputSchema = z
 	.object({
@@ -479,7 +481,8 @@ export const ProductsGetPricesInputSchema = z.object({
 				})
 				.loose(),
 		)
-		.min(1),
+		.min(1)
+		.max(50),
 	account_key: accountKey,
 });
 export const ProductsGetPricesOutputSchema = z
@@ -504,6 +507,7 @@ export const ProductsListMediaTypesOutputSchema = z
 /** https://v2.api.finerworks.com/Help/Api/POST-v3-list_product_types */
 export const ProductsListProductTypesInputSchema = z.object({
 	ids: z.array(z.number().int()).nullable().optional(),
+	site_id: z.number().int().nullable().optional(),
 });
 export const ProductsListProductTypesOutputSchema = z
 	.object({
@@ -515,6 +519,7 @@ export const ProductsListProductTypesOutputSchema = z
 /** https://v2.api.finerworks.com/Help/Api/POST-v3-list_style_types */
 export const ProductsListStyleTypesInputSchema = z.object({
 	ids: z.array(z.number().int()).nullable().optional(),
+	site_id: z.number().int().nullable().optional(),
 });
 export const ProductsListStyleTypesOutputSchema = z
 	.object({
@@ -530,29 +535,36 @@ export const ProductsListStyleTypesOutputSchema = z
 /** https://v2.api.finerworks.com/Help/Api/POST-v3-frame_details */
 export const FramingGetFrameDetailsInputSchema = z.object({
 	id: z.number().int(),
+	product_code: z.string().optional(),
 });
 export const FramingGetFrameDetailsOutputSchema = z
 	.object({
 		status: FinerWorksStatusSchema.optional(),
 		frame: FinerWorksFrame.nullable().optional(),
+		frame_details: FinerWorksFrame.nullable().optional(),
 	})
 	.loose();
 
 /** https://v2.api.finerworks.com/Help/Api/POST-v3-list_collections */
 export const FramingListCollectionsInputSchema = z.object({
-	id: z.number().int().nullable().optional(),
-	product_code: z.string().nullable().optional(),
+	id: z.number().int().optional(),
+	product_code: z.string().optional(),
 });
 export const FramingListCollectionsOutputSchema = z
 	.object({
 		status: FinerWorksStatusSchema.optional(),
 		collections: z.array(FinerWorksFrameCollection).nullable().optional(),
+		frame_collections: z
+			.array(FinerWorksFrameCollection)
+			.nullable()
+			.optional(),
 	})
 	.loose();
 
 /** https://v2.api.finerworks.com/Help/Api/POST-v3-list_glazing */
 export const FramingListGlazingInputSchema = z.object({
-	id: z.number().int().nullable().optional(),
+	id: z.number().int().optional(),
+	product_code: z.string().optional(),
 });
 export const FramingListGlazingOutputSchema = z
 	.object({
@@ -563,7 +575,8 @@ export const FramingListGlazingOutputSchema = z
 
 /** https://v2.api.finerworks.com/Help/Api/POST-v3-list_mats */
 export const FramingListMatsInputSchema = z.object({
-	id: z.number().int().nullable().optional(),
+	id: z.number().int().optional(),
+	product_code: z.string().optional(),
 });
 export const FramingListMatsOutputSchema = z
 	.object({
@@ -576,16 +589,22 @@ export const FramingListMatsOutputSchema = z
 // Shipping
 // ---------------------------------------------------------------------------
 
-/**
- * `type` is the numeric shipping-type id. The reference only shows it as
- * `?type={type}`, but the API rejects a non-numeric value with
- * "The value '...' is not valid for Int32", so it is typed as an integer here.
- * https://v2.api.finerworks.com/Help/Api/GET-v3-get_shipping_options_ids_type
- */
+/** https://v2.api.finerworks.com/Help/Api/GET-v3-get_shipping_options_ids */
 export const ShippingGetOptionIdsInputSchema = z.object({
 	type: z.number().int().optional(),
 });
 export const ShippingGetOptionIdsOutputSchema = z
+	.object({
+		status: FinerWorksStatusSchema.optional(),
+		shipping_options_ids: z.array(z.number().int()).nullable().optional(),
+	})
+	.loose();
+
+/** https://v2.api.finerworks.com/Help/Api/POST-v3-list_shipping_options */
+export const ShippingListOptionsInputSchema = z.object({
+	order: FinerWorksOrderInputSchema,
+});
+export const ShippingListOptionsOutputSchema = z
 	.object({
 		status: FinerWorksStatusSchema.optional(),
 		shipping_options: z.array(FinerWorksShippingOption).nullable().optional(),
@@ -595,6 +614,7 @@ export const ShippingGetOptionIdsOutputSchema = z
 /** https://v2.api.finerworks.com/Help/Api/POST-v3-list_shipping_options_multiple */
 export const ShippingListOptionsMultipleInputSchema = z.object({
 	orders: z.array(FinerWorksOrderInputSchema).min(1),
+	account_key: accountKey,
 });
 export const ShippingListOptionsMultipleOutputSchema = z
 	.object({

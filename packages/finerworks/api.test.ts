@@ -25,9 +25,11 @@ const okStatus = {
 	domain: null,
 };
 
+// unknown: generic test harness invokes endpoints dynamically with mock context
 type AnyEndpoint = (ctx: unknown, input?: unknown) => Promise<unknown>;
 
 /** Minimal context: a resolved web API key plus an app key from options. */
+// unknown: test mock context supports arbitrary property overrides
 function makeCtx(overrides: Record<string, unknown> = {}) {
 	return {
 		key: 'web-key',
@@ -38,6 +40,7 @@ function makeCtx(overrides: Record<string, unknown> = {}) {
 }
 
 function endpoint(group: string, name: string): AnyEndpoint {
+	// unknown: dynamically indexing nested endpoint registry for test harness
 	const groups = finerworksEndpointsNested as unknown as Record<
 		string,
 		Record<string, AnyEndpoint>
@@ -48,11 +51,13 @@ function endpoint(group: string, name: string): AnyEndpoint {
 }
 
 /** The (path, options) pair the endpoint passed to the client. */
+// unknown: inspecting untyped mock call arguments in test harness
 function lastCall(): [
 	string,
 	unknown,
 	{ method?: string; body?: unknown; query?: unknown },
 ] {
+	// unknown: inspecting mock calls tuple for test assertions
 	return makeFinerWorksRequest.mock.calls.at(-1) as [
 		string,
 		unknown,
@@ -715,6 +720,7 @@ describe('virtual inventory endpoints', () => {
 });
 
 describe('endpoint registry', () => {
+	// unknown: dynamically indexing nested endpoint registry to introspect all operations
 	const paths = Object.entries(
 		finerworksEndpointsNested as unknown as Record<
 			string,
@@ -728,11 +734,13 @@ describe('endpoint registry', () => {
 
 	it('gives every operation an implementation, meta entry and output schema', () => {
 		for (const path of paths) {
+			// unknown: dynamic key lookup across endpoint metadata map
 			expect(
 				typeof (finerworksEndpointMeta as unknown as Record<string, unknown>)[
 					path
 				],
 			).toBe('object');
+			// unknown: dynamic key lookup across output schema registry
 			expect(
 				(FinerWorksEndpointOutputSchemas as unknown as Record<string, unknown>)[
 					path
@@ -742,6 +750,7 @@ describe('endpoint registry', () => {
 	});
 
 	it('marks the destructive operations as irreversible', () => {
+		// unknown: dynamic indexing of endpoint meta registry for risk properties
 		const meta = finerworksEndpointMeta as unknown as Record<
 			string,
 			{ riskLevel: string; irreversible?: boolean }
