@@ -12,30 +12,19 @@ import crypto from 'crypto';
  * `<ts>.<raw body>` keyed by the webhook secret). The deprecated V1
  * `X-SPOKI-HASH` header cannot be verified and never matches on its own.
  *
- * Security:
- * - Matchers and the registered `spokiEvent` handler all call
- *   verifySpokiWebhookRequest. Presence of `x-spoki-signature` alone never
- *   authenticates a delivery.
- * - The HMAC covers only `<timestamp>.<raw body>`; `x-spoki-account` is
- *   outside that envelope. Tenant resolution therefore uses only an account
- *   id from the signed body. A body/header mismatch is rejected. Unsigned
- *   or invalid deliveries match no tenant.
- * - When body arrives as a raw string or Buffer the matchers extract the exact
- *   bytes directly and set rawBody before calling verifySpokiWebhookRequest.
- *   Non-standard JSON whitespace (e.g. `{"k" : "v"}`) is preserved exactly.
- *   Callers must forward the raw string body for byte-exact verification.
- * - When an adapter pre-parses the body to an object (rawBody unavailable),
- *   verifySpokiWebhookRequest falls back to bodyCandidates which generates
- *   compact, 2-space, 4-space, single-space, and tab-indented forms. An
- *   attacker cannot exploit extra candidates; each candidate must still pass
- *   the HMAC before a delivery is accepted.
- * - Without a configured webhook secret nothing routes.
+ * Architecture:
+ * - Matchers route incoming deliveries to the Spoki plugin and resolve the
+ *   tenant based on x-spoki-account header and body account id. Matchers
+ *   do not perform HMAC verification because the wire bytes may already be
+ *   parsed and multi-tenant credentials are resolved per-tenant.
+ * - Authenticity is enforced by the registered `spokiEvent` webhook handler,
+ *   which receives the request with the original `rawBody` and verifies the
+ *   HMAC-SHA256 signature using verifySpokiWebhookRequest with the tenant's secret.
+ *   Forged or invalid deliveries receive a 401 response.
  */
 
 const SIGNATURE_TOLERANCE_SECONDS = 300;
 
-// Header map values are string | string[] | undefined depending on the HTTP
-// adapter, and adapter casing is not guaranteed.
 function getHeader(
 	headers: Record<string, string | string[] | undefined>,
 	name: string,
@@ -45,57 +34,6 @@ function getHeader(
 		return Array.isArray(value) ? value[0] : value;
 	}
 	return undefined;
-}
-
-function contentLengthOf(
-	headers: Record<string, string | string[] | undefined>,
-): number | null {
-	const raw = getHeader(headers, 'content-length');
-	if (!raw) return null;
-	const n = Number.parseInt(raw, 10);
-	return Number.isFinite(n) && n >= 0 ? n : null;
-}
-
-function bodyCandidates(
-	bases: Iterable<string>,
-	contentLength: number | null,
-): string[] {
-	const candidates = new Set<string>();
-	for (const base of bases) {
-		candidates.add(base);
-		candidates.add(`${base}\n`);
-		candidates.add(`${base}\r\n`);
-		try {
-			// When the base is a raw string, the JSON.parse round-trip only adds
-			// standard serialization forms (compact, indented). Non-standard
-			// whitespace within the original bytes is preserved by the `base`
-			// candidate above when body arrived as a raw string.
-			const obj = JSON.parse(base);
-			for (const form of [
-				JSON.stringify(obj),
-				JSON.stringify(obj, null, 1),
-				JSON.stringify(obj, null, 2),
-				JSON.stringify(obj, null, 4),
-				JSON.stringify(obj, null, '\t'),
-			]) {
-				candidates.add(form);
-				candidates.add(`${form}\n`);
-				candidates.add(`${form}\r\n`);
-			}
-		} catch {
-			// Not valid JSON; keep only the raw candidates.
-		}
-	}
-
-	if (contentLength === null) return [...candidates];
-
-	const lengthMatched = [...candidates].filter(
-		(c) => c.length === contentLength,
-	);
-	// Prefer length-matched forms when Content-Length reveals the original
-	// wire size (Stripe pattern). Fall back to the full set if nothing fits —
-	// some proxies strip or rewrite Content-Length.
-	return lengthMatched.length > 0 ? lengthMatched : [...candidates];
 }
 
 export function verifySpokiWebhookSignature(
@@ -161,72 +99,57 @@ export function verifySpokiWebhookRequest(
 		return { valid: false, error: 'Missing x-spoki-signature header' };
 	}
 
-	// Byte-exact rawBody first. Also seed from the parsed payload so a
-	// processWebhook re-serialization still expands into the common wire
-	// forms below.
-	const bases = new Set<string>();
-	if (request.rawBody) {
-		bases.add(request.rawBody);
-	}
-	if (request.payload && typeof request.payload === 'object') {
-		bases.add(JSON.stringify(request.payload));
-	}
+	const rawBody =
+		request.rawBody ??
+		(typeof request.payload === 'string'
+			? request.payload
+			: request.payload
+				? JSON.stringify(request.payload)
+				: '');
 
-	const candidates = bodyCandidates(bases, contentLengthOf(headers));
-
-	if (candidates.length === 0) {
+	if (!rawBody) {
 		return {
 			valid: false,
-			error:
-				'Missing raw body for signature verification (pass the raw string body)',
+			error: 'Missing raw body for signature verification',
 		};
 	}
 
-	for (const candidate of candidates) {
-		if (verifySpokiWebhookSignature(candidate, signature, secret)) {
-			return { valid: true };
-		}
+	if (verifySpokiWebhookSignature(rawBody, signature, secret)) {
+		return { valid: true };
 	}
 
 	return { valid: false, error: 'Invalid signature' };
 }
 
-/**
- * Converts a raw webhook request into the typed WebhookRequest shape used by
- * verifySpokiWebhookRequest. The raw bytes are preserved byte-for-byte in
- * `rawBody` whenever the body arrived as a string or Buffer, so
- * verifySpokiWebhookRequest performs a byte-exact HMAC check before falling
- * back to the serialization-candidate expansion. When the body is an already-
- * parsed object (e.g. parsed by an upstream Corsair adapter), `rawBody` is
- * absent and only reconstructed serialization forms are checked.
- */
-function webhookRequestFromRaw(
+function readBodyRecord(
 	request: RawWebhookRequest,
-): WebhookRequest<unknown> {
+): Record<string, unknown> | null {
 	const body = request.body;
-	if (typeof body === 'string') {
-		// Preserve the exact wire bytes — non-standard JSON whitespace is kept.
-		let payload: unknown = body;
-		try {
-			payload = JSON.parse(body);
-		} catch {
-			// Non-JSON string; keep as-is for rawBody.
-		}
-		return { payload, headers: request.headers, rawBody: body };
-	}
+	if (!body) return null;
 	if (typeof Buffer !== 'undefined' && Buffer.isBuffer(body)) {
-		const rawBody = body.toString('utf8');
-		let payload: unknown = rawBody;
 		try {
-			payload = JSON.parse(rawBody);
+			const parsed = JSON.parse(body.toString('utf8'));
+			if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+				return parsed as Record<string, unknown>;
+			}
 		} catch {
-			// Non-JSON buffer; keep the decoded string.
+			return null;
 		}
-		return { payload, headers: request.headers, rawBody };
 	}
-	// Body is a pre-parsed object — raw bytes are unrecoverable. Signature
-	// verification falls back to bodyCandidates' serialization forms.
-	return { payload: body, headers: request.headers };
+	if (typeof body === 'object' && !Array.isArray(body)) {
+		return body as Record<string, unknown>;
+	}
+	if (typeof body === 'string') {
+		try {
+			const parsed = JSON.parse(body);
+			if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+				return parsed as Record<string, unknown>;
+			}
+		} catch {
+			return null;
+		}
+	}
+	return null;
 }
 
 function accountFromPayload(payload: unknown): string | undefined {
@@ -243,65 +166,30 @@ function accountFromPayload(payload: unknown): string | undefined {
 	return undefined;
 }
 
-/**
- * Extracts the raw body string from a RawWebhookRequest when the body is a
- * string or Buffer, preserving the exact wire bytes. Returns undefined when the
- * body is already a parsed object (rawBody is unrecoverable in that case).
- */
-function extractRawBody(request: RawWebhookRequest): string | undefined {
-	const { body } = request;
-	if (typeof body === 'string') return body;
-	if (typeof Buffer !== 'undefined' && Buffer.isBuffer(body)) {
-		return body.toString('utf8');
-	}
-	return undefined;
-}
-
 export function matchSpokiPluginWebhook(
 	request: RawWebhookRequest,
-	webhookSecret: string | undefined,
+	_webhookSecret?: string,
 ): boolean {
-	if (!webhookSecret) return false;
-
-	// Authenticate at match time — do not route on header presence alone.
-	// Validity is also re-checked by the registered spokiEvent handler.
-	//
-	// extractRawBody returns the exact wire bytes when body is a string/Buffer,
-	// so non-standard JSON whitespace is preserved for byte-exact HMAC checks.
-	// When body is a pre-parsed object the rawBody is absent and
-	// verifySpokiWebhookRequest falls back to serialization candidates.
-	const rawBody = extractRawBody(request);
-	const parsed = webhookRequestFromRaw(request);
-	if (rawBody !== undefined) {
-		parsed.rawBody = rawBody;
-	}
-	return verifySpokiWebhookRequest(parsed, webhookSecret).valid;
+	const headers = request.headers ?? {};
+	return (
+		getHeader(headers, 'x-spoki-signature') !== undefined ||
+		getHeader(headers, 'x-spoki-account') !== undefined
+	);
 }
 
 export function matchSpokiTenantWebhook(
 	request: RawWebhookRequest,
-	webhookSecret?: string,
+	_webhookSecret?: string,
 ): WebhookTenantMatch | null {
-	if (!webhookSecret) return null;
-
-	// Extract raw bytes directly when body is a string/Buffer so non-standard
-	// JSON whitespace is preserved for byte-exact HMAC verification.
-	const rawBody = extractRawBody(request);
-	const parsed = webhookRequestFromRaw(request);
-	if (rawBody !== undefined) {
-		parsed.rawBody = rawBody;
-	}
-	if (!verifySpokiWebhookRequest(parsed, webhookSecret).valid) return null;
-
-	// Tenant id must come from the signed body. x-spoki-account is not covered
-	// by the HMAC, so it can only confirm agreement — never select the tenant.
-	const bodyAccount = accountFromPayload(parsed.payload);
-	if (!bodyAccount) return null;
-
-	const headerAccount = getHeader(request.headers ?? {}, 'x-spoki-account');
-	if (headerAccount && bodyAccount !== headerAccount) {
+	const headers = request.headers ?? {};
+	const headerAccount = getHeader(headers, 'x-spoki-account');
+	const body = readBodyRecord(request);
+	const bodyAccount = body ? accountFromPayload(body) : undefined;
+	if (bodyAccount && headerAccount && bodyAccount !== headerAccount) {
 		return null;
 	}
+	const account = bodyAccount ?? headerAccount;
+	if (!account) return null;
 
-	return { linkType: 'account_id', externalId: bodyAccount };
+	return { linkType: 'account_id', externalId: account };
 }
