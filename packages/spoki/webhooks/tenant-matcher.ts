@@ -20,12 +20,15 @@ import crypto from 'crypto';
  *   outside that envelope. Tenant resolution therefore uses only an account
  *   id from the signed body. A body/header mismatch is rejected. Unsigned
  *   or invalid deliveries match no tenant.
- * - When adapters parse JSON before us, processWebhook may re-serialize the
- *   body. Verification expands common wire forms (compact / pretty / tabs /
- *   trailing newlines) and, when Content-Length is present, prefers
- *   candidates whose length matches the original — same approach as Stripe.
- *   Extra candidates cannot help an attacker: a match still requires the
- *   secret. Prefer passing the raw string body through for byte-exact checks.
+ * - When the body arrives as a raw string it is forwarded byte-for-byte as
+ *   `rawBody` and verified first, before any serialization fallbacks run.
+ *   Non-standard JSON whitespace (e.g. `{"k" : "v"}`) is preserved exactly.
+ * - When an adapter has already parsed the body to an object, `rawBody` is
+ *   unavailable and bodyCandidates generates compact, 2-space, 4-space,
+ *   single-space, and tab-indented forms plus their newline variants. An
+ *   attacker cannot exploit extra candidates because every candidate must
+ *   still pass the HMAC check. Prefer forwarding the raw string body for
+ *   byte-exact verification.
  * - Without a configured webhook secret nothing routes.
  */
 
@@ -63,17 +66,19 @@ function bodyCandidates(
 		candidates.add(`${base}\n`);
 		candidates.add(`${base}\r\n`);
 		try {
+			// When the base is a raw string, the JSON.parse round-trip only adds
+			// standard serialization forms (compact, indented). Non-standard
+			// whitespace within the original bytes is preserved by the `base`
+			// candidate above when body arrived as a raw string.
 			const obj = JSON.parse(base);
-			candidates.add(JSON.stringify(obj));
-			candidates.add(JSON.stringify(obj, null, 2));
-			candidates.add(JSON.stringify(obj, null, 4));
-			candidates.add(JSON.stringify(obj, null, '\t'));
 			for (const form of [
 				JSON.stringify(obj),
+				JSON.stringify(obj, null, 1),
 				JSON.stringify(obj, null, 2),
 				JSON.stringify(obj, null, 4),
 				JSON.stringify(obj, null, '\t'),
 			]) {
+				candidates.add(form);
 				candidates.add(`${form}\n`);
 				candidates.add(`${form}\r\n`);
 			}
@@ -186,16 +191,26 @@ export function verifySpokiWebhookRequest(
 	return { valid: false, error: 'Invalid signature' };
 }
 
+/**
+ * Converts a raw webhook request into the typed WebhookRequest shape used by
+ * verifySpokiWebhookRequest. The raw bytes are preserved byte-for-byte in
+ * `rawBody` whenever the body arrived as a string or Buffer, so
+ * verifySpokiWebhookRequest performs a byte-exact HMAC check before falling
+ * back to the serialization-candidate expansion. When the body is an already-
+ * parsed object (e.g. parsed by an upstream Corsair adapter), `rawBody` is
+ * absent and only reconstructed serialization forms are checked.
+ */
 function webhookRequestFromRaw(
 	request: RawWebhookRequest,
 ): WebhookRequest<unknown> {
 	const body = request.body;
 	if (typeof body === 'string') {
+		// Preserve the exact wire bytes — non-standard JSON whitespace is kept.
 		let payload: unknown = body;
 		try {
 			payload = JSON.parse(body);
 		} catch {
-			// keep the raw string
+			// Non-JSON string; keep as-is for rawBody.
 		}
 		return { payload, headers: request.headers, rawBody: body };
 	}
@@ -205,10 +220,12 @@ function webhookRequestFromRaw(
 		try {
 			payload = JSON.parse(rawBody);
 		} catch {
-			// keep the raw string
+			// Non-JSON buffer; keep the decoded string.
 		}
 		return { payload, headers: request.headers, rawBody };
 	}
+	// Body is a pre-parsed object — raw bytes are unrecoverable. Signature
+	// verification falls back to bodyCandidates' serialization forms.
 	return { payload: body, headers: request.headers };
 }
 
