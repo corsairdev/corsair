@@ -1,12 +1,4 @@
-import { ApiError, request } from 'corsair/http';
 import { DocusignApiError, DocusignClient } from './client';
-
-jest.mock('corsair/http', () => {
-	const actual = jest.requireActual('corsair/http');
-	return { ...actual, request: jest.fn() };
-});
-
-const mockRequest = request as jest.MockedFunction<typeof request>;
 
 function makeClient(baseUri?: string) {
 	return new DocusignClient({
@@ -16,82 +8,110 @@ function makeClient(baseUri?: string) {
 	});
 }
 
-function lastCall() {
-	const calls = mockRequest.mock.calls;
-	const last = calls[calls.length - 1];
-	if (!last) {
-		throw new Error('expected corsair/http request to be called');
-	}
-	return { config: last[0], options: last[1] };
+function jsonResponse(
+	body: unknown,
+	init: {
+		status?: number;
+		statusText?: string;
+		headers?: Record<string, string>;
+	} = {},
+): Response {
+	return new Response(body === undefined ? null : JSON.stringify(body), {
+		status: init.status ?? 200,
+		statusText: init.statusText ?? 'OK',
+		headers: {
+			'Content-Type': 'application/json',
+			...(init.headers ?? {}),
+		},
+	});
 }
 
-function frameworkError(status: number, body: unknown, message: string) {
-	return new ApiError(
-		{ method: 'GET', url: '/templates' },
-		{
-			url: 'https://demo.docusign.net/restapi/v2.1/accounts/12345/templates',
-			ok: false,
-			status,
-			statusText: 'Error',
-			body,
-		},
-		message,
-	);
+function lastFetchCall() {
+	const calls = (globalThis.fetch as jest.Mock).mock.calls;
+	const last = calls[calls.length - 1];
+	if (!last) {
+		throw new Error('expected fetch to be called');
+	}
+	return { url: String(last[0]), init: last[1] as RequestInit };
+}
+
+function authHeader(init: RequestInit): string | null {
+	return new Headers(init.headers ?? {}).get('Authorization');
 }
 
 describe('DocusignClient', () => {
 	beforeEach(() => {
-		mockRequest.mockReset();
-		mockRequest.mockResolvedValue({ ok: true });
+		globalThis.fetch = jest
+			.fn()
+			.mockImplementation(() => Promise.resolve(jsonResponse({ ok: true })));
 	});
 
 	afterEach(() => {
 		jest.restoreAllMocks();
 	});
 
-	it('sends requests through corsair/http with bearer auth', async () => {
+	it('sends requests through fetch with bearer auth', async () => {
 		const client = makeClient();
 		await client.request('/templates');
-		const { config, options } = lastCall();
-		expect(config.BASE).toBe(
-			'https://demo.docusign.net/restapi/v2.1/accounts/12345',
+		const { url, init } = lastFetchCall();
+		expect(url).toBe(
+			'https://demo.docusign.net/restapi/v2.1/accounts/12345/templates',
 		);
-		expect(config.HEADERS).toEqual(
-			expect.objectContaining({ Authorization: 'Bearer mock_token' }),
-		);
-		expect(options).toEqual(
-			expect.objectContaining({ method: 'GET', url: '/templates' }),
-		);
+		expect(authHeader(init)).toBe('Bearer mock_token');
+		expect(init.method ?? 'GET').toBe('GET');
 	});
 
 	it('retries safe GETs at the transport layer only', async () => {
+		const fetchMock = globalThis.fetch as jest.Mock;
+		fetchMock
+			.mockImplementationOnce(() =>
+				Promise.resolve(
+					jsonResponse(
+						{ errorCode: 'RATE_LIMIT_EXCEEDED' },
+						{
+							status: 429,
+							statusText: 'Too Many Requests',
+							headers: { 'retry-after': '0' },
+						},
+					),
+				),
+			)
+			.mockImplementationOnce(() =>
+				Promise.resolve(jsonResponse({ ok: true })),
+			);
 		const client = makeClient();
 		await client.request('/templates');
-		const extra = mockRequest.mock.calls[0]?.[2] as {
-			rateLimitConfig: { enabled: boolean; maxRetries: number };
-		};
-		expect(extra.rateLimitConfig.enabled).toBe(true);
-		expect(extra.rateLimitConfig.maxRetries).toBe(3);
+		expect(fetchMock).toHaveBeenCalledTimes(2);
 	});
 
 	it('does not retry non-idempotent writes at the transport layer', async () => {
+		const fetchMock = globalThis.fetch as jest.Mock;
+		fetchMock.mockImplementationOnce(() =>
+			Promise.resolve(
+				jsonResponse(
+					{ errorCode: 'RATE_LIMIT_EXCEEDED' },
+					{
+						status: 429,
+						statusText: 'Too Many Requests',
+					},
+				),
+			),
+		);
 		const client = makeClient();
-		await client.request('/envelopes', {
-			method: 'POST',
-			body: JSON.stringify({ status: 'sent' }),
-		});
-		const extra = mockRequest.mock.calls[0]?.[2] as {
-			rateLimitConfig: { enabled: boolean; maxRetries: number };
-		};
-		expect(extra.rateLimitConfig.enabled).toBe(false);
-		expect(extra.rateLimitConfig.maxRetries).toBe(0);
+		await expect(
+			client.request('/envelopes', {
+				method: 'POST',
+				body: JSON.stringify({ status: 'sent' }),
+			}),
+		).rejects.toBeInstanceOf(DocusignApiError);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
 	it('normalizes a bare production host', async () => {
 		const client = makeClient('na4.docusign.net');
 		await client.request('/templates');
-		expect(lastCall().config.BASE).toBe(
-			'https://na4.docusign.net/restapi/v2.1/accounts/12345',
+		expect(lastFetchCall().url).toBe(
+			'https://na4.docusign.net/restapi/v2.1/accounts/12345/templates',
 		);
 	});
 
@@ -113,22 +133,25 @@ describe('DocusignClient', () => {
 			method: 'POST',
 			body: JSON.stringify({ status: 'sent' }),
 		});
-		const { options } = lastCall();
-		expect(options.method).toBe('POST');
-		expect(options.body).toEqual({ status: 'sent' });
-		expect(options.mediaType).toBe('application/json');
+		const { init } = lastFetchCall();
+		expect(init.method).toBe('POST');
+		expect(init.body).toBe(JSON.stringify({ status: 'sent' }));
 	});
 
 	it('wraps framework errors with the DocuSign error code', async () => {
-		mockRequest.mockRejectedValueOnce(
-			frameworkError(
-				429,
-				{ errorCode: 'RATE_LIMIT_EXCEEDED', message: 'Slow down' },
-				'Too Many Requests',
+		(globalThis.fetch as jest.Mock).mockImplementationOnce(() =>
+			Promise.resolve(
+				jsonResponse(
+					{ errorCode: 'RATE_LIMIT_EXCEEDED', message: 'Slow down' },
+					{ status: 429, statusText: 'Too Many Requests' },
+				),
 			),
 		);
 		const client = makeClient();
-		const failure = client.request('/templates');
+		const failure = client.request('/envelopes', {
+			method: 'POST',
+			body: JSON.stringify({ status: 'sent' }),
+		});
 		await expect(failure).rejects.toBeInstanceOf(DocusignApiError);
 		await expect(failure).rejects.toMatchObject({
 			name: 'DocusignApiError',
@@ -140,26 +163,26 @@ describe('DocusignClient', () => {
 	it('calls the demo userinfo endpoint for demo accounts', async () => {
 		const client = makeClient();
 		await client.userInfo();
-		const { config, options } = lastCall();
-		expect(config.BASE).toBe('https://account-d.docusign.com');
-		expect(options).toEqual(
-			expect.objectContaining({ method: 'GET', url: '/oauth/userinfo' }),
-		);
-		expect(config.HEADERS).toEqual(
-			expect.objectContaining({ Authorization: 'Bearer mock_token' }),
-		);
+		const { url, init } = lastFetchCall();
+		expect(url).toBe('https://account-d.docusign.com/oauth/userinfo');
+		expect(init.method ?? 'GET').toBe('GET');
+		expect(authHeader(init)).toBe('Bearer mock_token');
 	});
 
 	it('calls the production userinfo endpoint for production accounts', async () => {
 		const client = makeClient('https://eu.docusign.com/restapi/v2.1');
 		await client.userInfo();
-		expect(lastCall().config.BASE).toBe('https://account.docusign.com');
+		expect(lastFetchCall().url).toBe(
+			'https://account.docusign.com/oauth/userinfo',
+		);
 	});
 
 	it('calls the production userinfo endpoint for .net production hosts', async () => {
 		const client = makeClient('https://na4.docusign.net/restapi/v2.1');
 		await client.userInfo();
-		expect(lastCall().config.BASE).toBe('https://account.docusign.com');
+		expect(lastFetchCall().url).toBe(
+			'https://account.docusign.com/oauth/userinfo',
+		);
 	});
 
 	it('rejects untrusted auth server hosts', async () => {
@@ -167,22 +190,20 @@ describe('DocusignClient', () => {
 		await expect(client.userInfo('https://evil.example.com')).rejects.toThrow(
 			'Untrusted DocuSign auth server host',
 		);
-		expect(mockRequest).not.toHaveBeenCalled();
+		expect(globalThis.fetch).not.toHaveBeenCalled();
 	});
 
 	it('routes version-root global endpoints without the account suffix', async () => {
 		const client = makeClient();
 		await client.request('/v2.1/accounts/provisioning');
-		expect(lastCall().config.BASE).toBe(
-			'https://demo.docusign.net/restapi/v2.1',
+		expect(lastFetchCall().url).toBe(
+			'https://demo.docusign.net/restapi/v2.1/accounts/provisioning',
 		);
-		expect(lastCall().options.url).toBe('/accounts/provisioning');
 
 		await client.request('/v2.1/billing_plans');
-		expect(lastCall().config.BASE).toBe(
-			'https://demo.docusign.net/restapi/v2.1',
+		expect(lastFetchCall().url).toBe(
+			'https://demo.docusign.net/restapi/v2.1/billing_plans',
 		);
-		expect(lastCall().options.url).toBe('/billing_plans');
 	});
 
 	it('rejects path traversal segments without calling the api', async () => {
@@ -193,7 +214,7 @@ describe('DocusignClient', () => {
 		await expect(client.request('/templates/%2e%2e/accounts')).rejects.toThrow(
 			'path traversal segments are not allowed',
 		);
-		expect(mockRequest).not.toHaveBeenCalled();
+		expect(globalThis.fetch).not.toHaveBeenCalled();
 	});
 
 	it('rejects braces that would hit the OpenAPI ReDoS regex', async () => {
@@ -201,6 +222,14 @@ describe('DocusignClient', () => {
 		await expect(
 			client.request('/templates/{aaaaaaaaaaaaaaaa}'),
 		).rejects.toThrow('brace characters are not allowed');
-		expect(mockRequest).not.toHaveBeenCalled();
+		expect(globalThis.fetch).not.toHaveBeenCalled();
+	});
+
+	it('rejects oversized paths before transport', async () => {
+		const client = makeClient();
+		await expect(client.request(`/${'a'.repeat(600)}`)).rejects.toThrow(
+			'exceeds 512 characters',
+		);
+		expect(globalThis.fetch).not.toHaveBeenCalled();
 	});
 });

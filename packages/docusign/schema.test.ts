@@ -1,4 +1,3 @@
-import { request } from 'corsair/http';
 import { DocusignClient } from './client';
 import {
 	CreateRecipientViewUrlInputSchema,
@@ -17,13 +16,7 @@ import {
 	sendEnvelope,
 } from './endpoints';
 import { DocusignSchema } from './schema';
-
-jest.mock('corsair/http', () => {
-	const actual = jest.requireActual('corsair/http');
-	return { ...actual, request: jest.fn() };
-});
-
-const mockRequest = request as jest.MockedFunction<typeof request>;
+import { lastFetchCall, mockFetchJson } from './test-fetch';
 
 describe('DocuSign Plugin Conformance & Tests', () => {
 	const mockClient = new DocusignClient({
@@ -33,8 +26,7 @@ describe('DocuSign Plugin Conformance & Tests', () => {
 	});
 
 	beforeEach(() => {
-		mockRequest.mockReset();
-		mockRequest.mockResolvedValue({
+		mockFetchJson({
 			envelopeId: 'env_1',
 			status: 'sent',
 			url: 'https://example.com/callback',
@@ -116,9 +108,7 @@ describe('DocuSign Plugin Conformance & Tests', () => {
 
 		it('should serialize zero pagination values', async () => {
 			await listTemplates({ client: mockClient }, { count: 0 });
-			const call = mockRequest.mock.calls[0];
-			if (!call) throw new Error('expected corsair/http request to be called');
-			expect(call[1].url).toContain('count=0');
+			expect(lastFetchCall().url).toContain('count=0');
 		});
 
 		it('should invoke getTemplate', async () => {

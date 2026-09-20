@@ -4,7 +4,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import { ApiError } from 'corsair/http';
 
 const DOCUSIGN_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -18,6 +18,9 @@ const DOCUSIGN_RATE_LIMIT_CONFIG: RateLimitConfig = {
 
 const SAFE_TRANSPORT_RETRY_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
+/** DocuSign paths are short literals plus a few encoded IDs. */
+const MAX_ENDPOINT_LENGTH = 512;
+
 function transportRateLimitConfig(
 	method: ApiRequestOptions['method'],
 ): RateLimitConfig {
@@ -25,6 +28,145 @@ function transportRateLimitConfig(
 		return DOCUSIGN_RATE_LIMIT_CONFIG;
 	}
 	return { ...DOCUSIGN_RATE_LIMIT_CONFIG, enabled: false, maxRetries: 0 };
+}
+
+const REQUEST_TIMEOUT_MS = 20_000;
+
+function joinUrl(base: string, path: string): string {
+	const baseUrl = base.endsWith('/') ? base.slice(0, -1) : base;
+	return `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
+function parseRetryAfterMs(header: string | null): number | undefined {
+	if (!header) return undefined;
+	const seconds = Number.parseInt(header, 10);
+	return Number.isNaN(seconds) ? undefined : seconds * 1000;
+}
+
+function retryDelayMs(
+	attempt: number,
+	rateLimitConfig: RateLimitConfig,
+	retryAfterMs?: number,
+): number {
+	if (retryAfterMs !== undefined && retryAfterMs > 0) return retryAfterMs;
+	return (
+		rateLimitConfig.initialRetryDelay *
+		rateLimitConfig.backoffMultiplier ** (attempt - 1)
+	);
+}
+
+function serializeBody(
+	options: ApiRequestOptions,
+): string | Blob | FormData | undefined {
+	if (options.body === undefined) return undefined;
+	if (options.mediaType?.includes('/json')) {
+		return JSON.stringify(options.body);
+	}
+	if (
+		typeof options.body === 'string' ||
+		options.body instanceof Blob ||
+		options.body instanceof FormData
+	) {
+		return options.body;
+	}
+	return JSON.stringify(options.body);
+}
+
+async function parseResponseBody(response: Response): Promise<unknown> {
+	if (response.status === 204) return undefined;
+	const contentType = response.headers.get('Content-Type');
+	if (contentType?.toLowerCase().includes('application/json')) {
+		return response.json();
+	}
+	return response.text();
+}
+
+/**
+ * DocuSign-local HTTP transport. Avoids corsair/http `request()` so user-built
+ * paths are not analyzed against the shared OpenAPI placeholder regex
+ * (CodeQL js/polynomial-redos).
+ */
+async function docusignHttpRequest<T>(
+	config: OpenAPIConfig,
+	options: ApiRequestOptions,
+	rateLimitConfig: RateLimitConfig,
+): Promise<T> {
+	const url = joinUrl(config.BASE, options.url);
+	const maxAttempts = rateLimitConfig.maxRetries + 1;
+	const headers = new Headers({
+		...(config.HEADERS ?? {}),
+		...(options.headers ?? {}),
+	});
+	const body = serializeBody(options);
+	const method = options.method ?? 'GET';
+
+	for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+		const response = await fetch(url, {
+			method,
+			headers,
+			body:
+				method === 'GET' || method === 'HEAD' || method === 'OPTIONS'
+					? undefined
+					: body,
+			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+		});
+
+		const responseBody = await parseResponseBody(response);
+		const result: ApiResult = {
+			url,
+			ok: response.ok,
+			status: response.status,
+			statusText: response.statusText,
+			body: responseBody,
+		};
+
+		if (
+			response.status === 429 &&
+			rateLimitConfig.enabled &&
+			attempt < maxAttempts
+		) {
+			await new Promise((resolve) =>
+				setTimeout(
+					resolve,
+					retryDelayMs(
+						attempt,
+						rateLimitConfig,
+						parseRetryAfterMs(response.headers.get('retry-after')),
+					),
+				),
+			);
+			continue;
+		}
+
+		if (!response.ok) {
+			throw new ApiError(
+				options,
+				result,
+				response.statusText || 'Request failed',
+				response.status === 429
+					? {
+							retryAfter: parseRetryAfterMs(
+								response.headers.get('retry-after'),
+							),
+						}
+					: undefined,
+			);
+		}
+
+		return responseBody as T;
+	}
+
+	throw new ApiError(
+		options,
+		{
+			url,
+			ok: false,
+			status: 429,
+			statusText: 'Too Many Requests',
+			body: undefined,
+		},
+		'Too Many Requests',
+	);
 }
 
 export interface DocusignAuthOptions {
@@ -93,10 +235,13 @@ function toRequestBody(body: string | Uint8Array | undefined): {
 }
 
 function assertSafePath(endpoint: string): void {
+	if (endpoint.length > MAX_ENDPOINT_LENGTH) {
+		throw new Error(
+			`Invalid DocuSign request path: exceeds ${MAX_ENDPOINT_LENGTH} characters.`,
+		);
+	}
 	const pathPart = endpoint.split('?')[0] ?? '';
-	// corsair/http runs /{(.*?)}/g on options.url (CodeQL js/polynomial-redos).
-	// DocuSign paths are fully interpolated before request(); reject braces so
-	// user-controlled ids never reach that regex.
+	// Paths are fully interpolated before request(); reject stray brace tokens.
 	if (pathPart.includes('{') || pathPart.includes('}')) {
 		throw new Error(
 			'Invalid DocuSign request path: brace characters are not allowed.',
@@ -208,13 +353,13 @@ export class DocusignClient {
 	async userInfo(authServer?: string): Promise<unknown> {
 		const origin = this.resolveAuthServer(authServer);
 		try {
-			const data: unknown = await request<unknown>(
+			const data: unknown = await docusignHttpRequest<unknown>(
 				this.openApiConfig(origin),
 				{
 					method: 'GET',
 					url: '/oauth/userinfo',
 				},
-				{ rateLimitConfig: transportRateLimitConfig('GET') },
+				transportRateLimitConfig('GET'),
 			);
 			return data;
 		} catch (error) {
@@ -293,12 +438,10 @@ export class DocusignClient {
 			...(options.headers === undefined ? {} : { headers: options.headers }),
 		};
 		try {
-			const data: unknown = await request<unknown>(
+			const data: unknown = await docusignHttpRequest<unknown>(
 				this.openApiConfig(base),
 				requestOptions,
-				{
-					rateLimitConfig: transportRateLimitConfig(requestOptions.method),
-				},
+				transportRateLimitConfig(requestOptions.method),
 			);
 			return data;
 		} catch (error) {

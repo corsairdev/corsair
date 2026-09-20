@@ -1,4 +1,3 @@
-import { request } from 'corsair/http';
 import { DocusignClient } from './client';
 import type { EndpointContractCase } from './endpoint-contract-cases';
 import { endpointContractCases } from './endpoint-contract-cases';
@@ -10,13 +9,12 @@ import {
 	docusignEndpointsNested,
 	docusignPlugin,
 } from './index';
-
-jest.mock('corsair/http', () => {
-	const actual = jest.requireActual('corsair/http');
-	return { ...actual, request: jest.fn() };
-});
-
-const mockRequest = request as jest.MockedFunction<typeof request>;
+import {
+	joinUrl,
+	lastFetchCall,
+	mockFetchJson,
+	mockFetchText,
+} from './test-fetch';
 
 function sampleValue(type: string): unknown {
 	if (type === 'integer' || type === 'number') return 7;
@@ -52,6 +50,11 @@ const specialBodies: Record<string, unknown> = {
 	},
 };
 
+function authHeader(init: RequestInit): string | null {
+	const headers = new Headers(init.headers ?? {});
+	return headers.get('Authorization');
+}
+
 function expectedBase(path: string): string {
 	if (path === '/service_information') {
 		return 'https://demo.docusign.net/restapi';
@@ -70,9 +73,10 @@ describe('DocuSign generated endpoints', () => {
 			baseUri: 'https://demo.docusign.net/restapi/v2.1',
 		});
 
+	let fetchMock: jest.Mock;
+
 	beforeEach(() => {
-		mockRequest.mockReset();
-		mockRequest.mockResolvedValue({});
+		fetchMock = mockFetchJson({});
 	});
 
 	it.each(endpointContractCases)(
@@ -97,7 +101,12 @@ describe('DocuSign generated endpoints', () => {
 				params.body = specialBodies[name] ?? { hello: 'world' };
 			}
 			if (name === 'getRequestLoggingLogFile') {
-				mockRequest.mockResolvedValueOnce('request log content');
+				fetchMock.mockResolvedValueOnce(
+					new Response('request log content', {
+						status: 200,
+						headers: { 'Content-Type': 'text/plain' },
+					}),
+				);
 			}
 			const fn = (
 				endpoints as unknown as Record<
@@ -108,15 +117,11 @@ describe('DocuSign generated endpoints', () => {
 			if (typeof fn !== 'function')
 				throw new Error(`missing endpoint: ${name}`);
 			await fn({ client }, params);
-			expect(mockRequest).toHaveBeenCalledTimes(1);
-			const call = mockRequest.mock.calls[0];
-			if (!call) throw new Error('expected corsair/http request to be called');
-			const [config, options] = call;
-			expect(config.BASE).toBe(expectedBase(path));
-			expect(config.HEADERS).toEqual(
-				expect.objectContaining({ Authorization: 'Bearer mock_token' }),
-			);
-			expect(options.method).toBe(method);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+			const { url, init } = lastFetchCall();
+			expect(url.startsWith(expectedBase(path))).toBe(true);
+			expect(authHeader(init)).toBe('Bearer mock_token');
+			expect(init.method ?? 'GET').toBe(method);
 			let expected = path;
 			if (expected === '/v2.1' || expected.startsWith('/v2.1/')) {
 				expected = expected.slice('/v2.1'.length);
@@ -125,23 +130,25 @@ describe('DocuSign generated endpoints', () => {
 				expected = expected
 					.split(`{${p}}`)
 					.join(p === 'bulkAction' ? 'void' : 'test-id');
-			const urlParts = options.url.split('?');
+			const expectedUrl = joinUrl(expectedBase(path), expected);
+			const urlParts = url.split('?');
 			const receivedPath = urlParts[0] ?? '';
 			const receivedQuery = new URLSearchParams(urlParts[1] ?? '');
 			const norm = (s: string) => s.replace(/\/+$/, '');
-			expect(norm(receivedPath)).toBe(norm(expected));
+			expect(norm(receivedPath)).toBe(norm(expectedUrl.split('?')[0] ?? ''));
 			for (const q of queryParams) {
 				expect(receivedQuery.get(q.name)).toBe(
 					expectedQueryString(sampleValue(q.type)),
 				);
 			}
 			if (IMAGE_ENDPOINTS.has(name)) {
-				expect(options.body).toBeInstanceOf(Blob);
-				expect(options.mediaType).toBe('image/png');
+				expect(init.body).toBeInstanceOf(Blob);
 			} else if (hasBody) {
-				expect(options.body).toEqual(specialBodies[name] ?? { hello: 'world' });
+				expect(init.body).toBe(
+					JSON.stringify(specialBodies[name] ?? { hello: 'world' }),
+				);
 			} else {
-				expect(options.body).toBeUndefined();
+				expect(init.body).toBeUndefined();
 			}
 		},
 	);
@@ -149,35 +156,32 @@ describe('DocuSign generated endpoints', () => {
 	it('routes service_information to the api root', async () => {
 		const client = makeClient();
 		await client.request('/service_information');
-		const call = mockRequest.mock.calls[0];
-		if (!call) throw new Error('expected corsair/http request to be called');
-		expect(call[0].BASE).toBe('https://demo.docusign.net/restapi');
+		expect(lastFetchCall().url).toBe(
+			'https://demo.docusign.net/restapi/service_information',
+		);
 	});
 
 	it('routes versioned paths to the version root', async () => {
 		const client = makeClient();
 		await client.request('/v2.1/diagnostics/settings');
-		const call = mockRequest.mock.calls[0];
-		if (!call) throw new Error('expected corsair/http request to be called');
-		expect(call[0].BASE).toBe('https://demo.docusign.net/restapi/v2.1');
+		expect(lastFetchCall().url).toBe(
+			'https://demo.docusign.net/restapi/v2.1/diagnostics/settings',
+		);
 	});
 
 	it('listOAuthUserInfo calls the OAuth userinfo endpoint', async () => {
 		const client = makeClient();
-		mockRequest.mockResolvedValue({ sub: 'user-1' });
+		mockFetchJson({ sub: 'user-1' });
 		const res = await endpoints.listOAuthUserInfo({ client }, {});
-		const call = mockRequest.mock.calls[0];
-		if (!call) throw new Error('expected corsair/http request to be called');
-		expect(call[0].BASE).toBe('https://account-d.docusign.com');
-		expect(call[1]).toEqual(
-			expect.objectContaining({ method: 'GET', url: '/oauth/userinfo' }),
+		expect(lastFetchCall().url).toBe(
+			'https://account-d.docusign.com/oauth/userinfo',
 		);
 		expect(res).toEqual({ sub: 'user-1' });
 	});
 
 	it('fetchRecipientNamesForEmail filters recipients by email', async () => {
 		const client = makeClient();
-		mockRequest.mockResolvedValue({
+		mockFetchJson({
 			recipients: {
 				signers: [
 					{ email: 'jane@example.com', name: 'Jane Doe' },
@@ -195,7 +199,7 @@ describe('DocuSign generated endpoints', () => {
 
 	it('fetchRecipientNamesForEmail finds non-signer recipient types', async () => {
 		const client = makeClient();
-		mockRequest.mockResolvedValue({
+		mockFetchJson({
 			recipients: {
 				signers: [],
 				agents: [{ email: 'agent@example.com', name: 'Agent Alice' }],
@@ -212,7 +216,7 @@ describe('DocuSign generated endpoints', () => {
 
 	it('getWorkspaceFile preserves binary response data', async () => {
 		const client = makeClient();
-		mockRequest.mockResolvedValue('binary-file-bytes');
+		mockFetchText('binary-file-bytes');
 		const res = await endpoints.getWorkspaceFile(
 			{ client },
 			{ workspaceId: 'w1', folderId: 'f1', fileId: 'file1' },
@@ -221,7 +225,7 @@ describe('DocuSign generated endpoints', () => {
 	});
 
 	it('resolves the client from the Corsair runtime context shape', async () => {
-		mockRequest.mockResolvedValue({ envelopeId: 'env_9', status: 'sent' });
+		mockFetchJson({ envelopeId: 'env_9', status: 'sent' });
 		const runtimeCtx = {
 			db: {},
 			tenantId: 'default',
@@ -238,14 +242,10 @@ describe('DocuSign generated endpoints', () => {
 		expect(res).toEqual(
 			expect.objectContaining({ envelopeId: 'env_9', status: 'sent' }),
 		);
-		const call = mockRequest.mock.calls[0];
-		if (!call) throw new Error('expected corsair/http request to be called');
-		expect(call[0].BASE).toBe(
-			'https://demo.docusign.net/restapi/v2.1/accounts/12345',
+		expect(lastFetchCall().url).toContain(
+			'https://demo.docusign.net/restapi/v2.1/accounts/12345/envelopes/env_9',
 		);
-		expect(call[0].HEADERS).toEqual(
-			expect.objectContaining({ Authorization: 'Bearer mock_token' }),
-		);
+		expect(authHeader(lastFetchCall().init)).toBe('Bearer mock_token');
 	});
 
 	it('rejects a runtime context without credentials', () => {
@@ -255,7 +255,7 @@ describe('DocuSign generated endpoints', () => {
 	});
 
 	it('prefers the tenant key bundle over factory options', async () => {
-		mockRequest.mockResolvedValue({ envelopeId: 'env_9', status: 'sent' });
+		mockFetchJson({ envelopeId: 'env_9', status: 'sent' });
 		const tenantCtx = {
 			db: {},
 			tenantId: 'acme',
@@ -271,18 +271,14 @@ describe('DocuSign generated endpoints', () => {
 			}),
 		};
 		await endpoints.getEnvelope(tenantCtx, { envelopeId: 'env_9' });
-		const call = mockRequest.mock.calls[0];
-		if (!call) throw new Error('expected corsair/http request to be called');
-		expect(call[0].BASE).toBe(
-			'https://demo.docusign.net/restapi/v2.1/accounts/12345',
+		expect(lastFetchCall().url).toContain(
+			'https://demo.docusign.net/restapi/v2.1/accounts/12345/envelopes/env_9',
 		);
-		expect(call[0].HEADERS).toEqual(
-			expect.objectContaining({ Authorization: 'Bearer tenant_token' }),
-		);
+		expect(authHeader(lastFetchCall().init)).toBe('Bearer tenant_token');
 	});
 
 	it('combines a raw key token with options routing', async () => {
-		mockRequest.mockResolvedValue({ envelopeId: 'env_9', status: 'sent' });
+		mockFetchJson({ envelopeId: 'env_9', status: 'sent' });
 		const tenantCtx = {
 			db: {},
 			tenantId: 'acme',
@@ -293,14 +289,10 @@ describe('DocuSign generated endpoints', () => {
 			key: 'raw_tenant_token',
 		};
 		await endpoints.getEnvelope(tenantCtx, { envelopeId: 'env_9' });
-		const call = mockRequest.mock.calls[0];
-		if (!call) throw new Error('expected corsair/http request to be called');
-		expect(call[0].BASE).toBe(
-			'https://demo.docusign.net/restapi/v2.1/accounts/12345',
+		expect(lastFetchCall().url).toContain(
+			'https://demo.docusign.net/restapi/v2.1/accounts/12345/envelopes/env_9',
 		);
-		expect(call[0].HEADERS).toEqual(
-			expect.objectContaining({ Authorization: 'Bearer raw_tenant_token' }),
-		);
+		expect(authHeader(lastFetchCall().init)).toBe('Bearer raw_tenant_token');
 	});
 });
 
