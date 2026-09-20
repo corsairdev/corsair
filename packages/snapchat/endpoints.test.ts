@@ -81,4 +81,19 @@ describe('Snapchat actions endpoints', () => {
 	it('rejects invalid input when required fields are missing', async () => {
 		await expect(Actions.addSegmentUsers(ctx, {})).rejects.toThrow();
 	});
+
+	it('rejects invalid input when required field is explicitly undefined', async () => {
+		await expect(
+			Actions.addSegmentUsers(ctx, {
+				users: undefined,
+				segment_id: 'seg_1',
+			} as unknown as Record<string, unknown>),
+		).rejects.toThrow();
+	});
+
+	it('accepts response when envelope fields are absent', async () => {
+		executeMock.mockResolvedValueOnce({ status: 'ok', custom: 123 });
+		const result = await Actions.getAdAccount(ctx, { ad_account_id: 'acc_1' });
+		expect(result).toEqual({ status: 'ok', custom: 123 });
+	});
 });

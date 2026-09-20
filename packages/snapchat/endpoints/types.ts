@@ -160,7 +160,7 @@ export const SNAPCHAT_REQUIRED_INPUT_FIELDS = {
 
 export const SNAPCHAT_REQUIRED_OUTPUT_FIELDS = SNAPCHAT_OPERATIONS.reduce(
 	(acc, operation) => {
-		acc[operation.name] = ['data', 'successful'];
+		acc[operation.name] = [];
 		return acc;
 	},
 	{} as RequiredFieldsByOperation,
@@ -170,7 +170,9 @@ function createEndpointSchema(requiredFields: readonly string[]) {
 	const shape: Record<string, z.ZodTypeAny> = {};
 
 	for (const field of requiredFields) {
-		shape[field] = z.unknown();
+		shape[field] = z.unknown().refine((value) => value !== undefined, {
+			message: `${field} is required`,
+		});
 	}
 
 	return z.object(shape).catchall(z.unknown());
