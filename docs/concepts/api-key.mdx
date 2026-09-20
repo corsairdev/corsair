@@ -89,15 +89,3 @@ const issues = await tenant.linear.api.issues.list({ teamId: "team-id" });
 ```
 
 Each tenant's key is independently encrypted. Compromising one does not expose others.
-
-## Bring Your Own Key
-
-If you manage your own decryption (e.g., AWS KMS or Google Cloud KMS), pass the decrypted key directly instead of using database storage:
-
-```ts corsair.ts
-linear({
-    key: await kms.decrypt(encryptedKey),
-})
-```
-
-See [Authentication](/concepts/auth#bring-your-own-kms) for details.
