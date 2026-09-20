@@ -53,7 +53,9 @@ export const inbound: ClickSendWebhooks['inboundSms'] = {
 					body: payload.body,
 					status: 'received',
 					direction: 'in',
-					date_sent: toTimestampISOString(payload.timestamp),
+					date_sent: toTimestampISOString(
+						payload.timestamp ?? payload.timestamp_send,
+					),
 				});
 			} catch (error) {
 				console.warn('Failed to save inbound webhook SMS to database:', error);

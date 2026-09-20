@@ -443,6 +443,28 @@ describe('ClickSend plugin integration', () => {
 		expect(webhookSavedMsg).not.toBeNull();
 		expect(webhookSavedMsg?.data.body).toBe('Replying to your SMS!');
 
+		const timestampSendWebhookResult =
+			await corsair.clicksend.webhooks.sms.inbound.handler({
+				headers: {
+					'x-clicksend-token': webhookSecret,
+				},
+				payload: {
+					message_id: 'INBOUND-WEBHOOK-003',
+					to: '+1098765432',
+					from: '+1234567890',
+					body: 'ClickSend timestamp_send only',
+					timestamp_send: 1693527050,
+				},
+			} as any);
+		expect(timestampSendWebhookResult.success).toBe(true);
+
+		const timestampSendMsg = await corsair.clicksend.db.messages.findByEntityId(
+			'INBOUND-WEBHOOK-003',
+		);
+		expect(timestampSendMsg?.data.date_sent).toBe(
+			new Date(1693527050 * 1000).toISOString(),
+		);
+
 		// 14. Authorized Webhook: Delivery Receipt
 		const receiptWebhookResult =
 			await corsair.clicksend.webhooks.sms.deliveryReceipt.handler({
