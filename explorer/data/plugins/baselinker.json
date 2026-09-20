@@ -1,0 +1,5623 @@
+{
+  "id": "baselinker",
+  "displayName": "BaseLinker",
+  "description": "E-commerce integration hub for orders, inventory, and multichannel marketplace management.",
+  "npmPackageName": "@corsair-dev/baselinker",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 106,
+    "webhooks": 0,
+    "db": 16
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "baselinker.api.connect.getConnectIntegrationContractors",
+      "shortPath": "connect.getConnectIntegrationContractors",
+      "description": "Tool to retrieve a list of contractors connected to a selected Base Connect integration. Use when you need to discover available contractors for a specific integration before performing contractor-specific operations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connect_integration_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "contractors",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.connect.getConnectIntegrations",
+      "shortPath": "connect.getConnectIntegrations",
+      "description": "Tool to retrieve a list of all Base Connect integrations on this account. Returns both integrations created on the account and integrations to which the account has connected.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "integrations",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.couriers.createPackageManual",
+      "shortPath": "couriers.createPackageManual",
+      "description": "Tool to register shipping details for orders when shipments are created outside BaseLinker. Use when you need to add tracking numbers and courier information for manually created shipments. Supports marking packages as return shipments.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "courier_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "package_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pickup_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "return_shipment",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "package_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "package_number",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.couriers.getCourierAccounts",
+      "shortPath": "couriers.getCourierAccounts",
+      "description": "Tool to retrieve the list of accounts connected to a given courier. Use when you need to identify available courier accounts before performing shipping operations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "courier_code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "accounts",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.couriers.getCourierFields",
+      "shortPath": "couriers.getCourierFields",
+      "description": "Tool to retrieve the form fields required for creating shipments with a specific courier. Use when you need to discover which fields are required or optional for shipment creation.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "courier_code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "multi_packages",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "package_fields",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.couriers.getCourierPackagesStatusHistory",
+      "shortPath": "couriers.getCourierPackagesStatusHistory",
+      "description": "Tool to retrieve the history of status changes for courier packages. Use when you need to track the delivery progress of shipments through their complete status timeline. Returns chronological status updates for up to 100 packages per request.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "package_ids",
+            "optional": false,
+            "type": "any[] | {}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "packages_history",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.couriers.getCouriersList",
+      "shortPath": "couriers.getCouriersList",
+      "description": "Tool to retrieve a list of available couriers from BaseLinker. Use when you need to discover which shipping carriers are configured before creating packages or querying courier-specific fields.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "couriers",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.couriers.getOrderPackages",
+      "shortPath": "couriers.getOrderPackages",
+      "description": "Tool to download shipments previously created for a selected order. Use when you need to retrieve tracking numbers, courier information, and delivery status for order packages.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "packages",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.couriers.getPackageDetails",
+      "shortPath": "couriers.getPackageDetails",
+      "description": "Tool to get detailed information about a package. If the package contains multiple subpackages, information about all of them is included in the response. Use when you need comprehensive package dimensions, weight, COD, insurance, and shipping cost details.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "package_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "package_details",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.couriers.getProtocol",
+      "shortPath": "couriers.getProtocol",
+      "description": "Tool to download a parcel protocol for selected shipments. Use when you need to retrieve shipping protocol documents (PDF or HTML) for packages sent via a courier. The protocol is available only if supported by the chosen courier.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "courier_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "package_ids",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "package_numbers",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "extension",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "protocol",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.couriers.getRequestParcelPickupFields",
+      "shortPath": "couriers.getRequestParcelPickupFields",
+      "description": "Tool to retrieve additional fields for a parcel pickup request from a specific courier. Use when preparing to request a parcel pickup and need to know which additional information the courier requires (e.g., pickup time, contact details, special instructions).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "courier_code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.couriers.runRequestParcelPickup",
+      "shortPath": "couriers.runRequestParcelPickup",
+      "description": "Tool to request a parcel pickup for previously created shipments. Use when you need to schedule a courier pickup for packages that have been created. The method sends a pickup request to the courier API if the courier supports it. Use getRequestParcelPickupFields first to check if the courier requires additional fields.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "courier_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "package_ids",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "package_numbers",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "any[] | {}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "pickup_number",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.documents.addInvoice",
+      "shortPath": "documents.addInvoice",
+      "description": "Tool to issue an order invoice in BaseLinker. Use when you need to generate an invoice for an existing order using a specific numbering series.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "series_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vat_rate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "invoice_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.documents.addInvoiceCorrection",
+      "shortPath": "documents.addInvoiceCorrection",
+      "description": "Tool to issue an order invoice correction. Use when correcting pricing errors, handling returns, or updating invoice data. Either original_invoice_id or return_order_id must be provided.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "original_invoice_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "return_order_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "series_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_sell",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "correcting_reason",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "correcting_items",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "correcting_data",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "invoice_fullname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_nip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "fv_payment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fv_person",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "invoice_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.documents.getInvoiceFile",
+      "shortPath": "documents.getInvoiceFile",
+      "description": "Tool to retrieve an invoice file from BaseLinker in base64-encoded format. Use when you need to download an invoice document generated by BaseLinker or from an external accounting system.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "get_external",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "invoice",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_number",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.documents.getInvoices",
+      "shortPath": "documents.getInvoices",
+      "description": "Download invoices from BaseLinker order manager with optional filtering. Use this tool to: - Fetch all invoices from a specific date onwards - Retrieve a single invoice by ID or order ID - Filter invoices by numbering series - Paginate through invoices using id_from parameter Returns up to 100 invoices per request. Use getSeries to get available series IDs for filtering.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "series_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "get_external_invoices",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "get_government_data",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "invoices",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.documents.getNewReceipts",
+      "shortPath": "documents.getNewReceipts",
+      "description": "Tool to retrieve receipts waiting to be issued. Use after confirming fiscal printer availability; fetch pending receipts and mark them with setOrderReceipt.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "series_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id_from",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "orders",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "receipt_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "series_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "receipt_full_nr",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_add",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payment_method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.documents.getReceipts",
+      "shortPath": "documents.getReceipts",
+      "description": "Tool to retrieve issued receipts from BaseLinker. Use when you need to fetch historical receipt data. Max 100 receipts returned per request.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "series_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "receipts",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.documents.getSeries",
+      "shortPath": "documents.getSeries",
+      "description": "Tool to download invoice/receipt numbering series. Use when you need to retrieve all series configurations before issuing documents.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "series",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.documents.setOrderReceipt",
+      "shortPath": "documents.setOrderReceipt",
+      "description": "Tool to mark orders with a receipt already issued. Use after printing receipts retrieved from getNewReceipts to confirm receipt issuance.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receipt_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "receipt_nr",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "printer_error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "printer_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.externalStorages.addCategory",
+      "shortPath": "externalStorages.addCategory",
+      "description": "Tool to add a new category to BaseLinker storage (shops, warehouses, or BaseLinker inventory). Use when you need to create a new category in a connected storage's category structure. Requires a storage_id which can be obtained from GetExternalStoragesList or use 'bl_1' for BaseLinker inventory.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storage_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "storage_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.externalStorages.getExternalStorageProductsQuantity",
+      "shortPath": "externalStorages.getExternalStorageProductsQuantity",
+      "description": "Retrieve stock quantities from an external storage (shop/wholesaler) connected to BaseLinker. Use this tool to check current inventory levels for products in external integrations. Returns product IDs with their quantities, including variant-level stock if applicable.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storage_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "storage_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.externalStorages.getExternalStoragesList",
+      "shortPath": "externalStorages.getExternalStoragesList",
+      "description": "Retrieve a list of external storages (shops, warehouses, wholesalers) connected to BaseLinker that can be referenced via API. Returns storage IDs (e.g., 'shop_2444', 'warehouse_1334'), names, and supported API methods for each storage. Use this to discover available integrations before calling storage-specific methods like getExternalStorageProductsList.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "storages",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.externalStorages.getStoragesList",
+      "shortPath": "externalStorages.getStoragesList",
+      "description": "Tool to download a list of available storages accessible via API. Use when you need to discover storage endpoints and capabilities before performing storage-specific operations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "storages",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.addInventory",
+      "shortPath": "inventory.addInventory",
+      "description": "Tool to add or update a BaseLinker catalog (inventory). Use when you need to create a new catalog or update an existing one with the same identifier.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventory_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "default_language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price_groups",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "default_price_group",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "warehouses",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "default_warehouse",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reservations",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "inventory_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.addInventoryCategory",
+      "shortPath": "inventory.addInventoryCategory",
+      "description": "Tool to add or update a category in the BaseLinker catalog. Use when you need to create a new category or update an existing one. Adding a category with the same identifier again updates the previously saved category.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventory_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.addInventoryManufacturer",
+      "shortPath": "inventory.addInventoryManufacturer",
+      "description": "Tool to add or update a manufacturer in the BaseLinker catalog. Use when you need to create a new manufacturer or update an existing one. Adding a manufacturer with the same identifier again updates the previously saved manufacturer.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "manufacturer_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manufacturer_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manufacturer_photo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manufacturer_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manufacturer_street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manufacturer_postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manufacturer_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manufacturer_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manufacturer_country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manufacturer_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manufacturer_phone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "manufacturer_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.addInventoryPayer",
+      "shortPath": "inventory.addInventoryPayer",
+      "description": "Tool to add a new payer or update an existing one in BaseLinker storage. Use when you need to create a new payer with contact details or update an existing payer's information.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payer_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax_no",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "payer_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.addInventoryPriceGroup",
+      "shortPath": "inventory.addInventoryPriceGroup",
+      "description": "Tool to create or update a price group in BaseLinker storage. Use when you need to define pricing tiers (e.g., wholesale, retail, VIP) that can be later assigned to inventory items via addInventory method.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "price_group_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price_group_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_price_group_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "price_multiplier",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "price_addition",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_bundle_price_calculated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bundle_price_multiplier",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bundle_price_addition",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "price_group_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.addInventoryProduct",
+      "shortPath": "inventory.addInventoryProduct",
+      "description": "Add a new product to BaseLinker catalog or update an existing product. Use when creating inventory items or modifying product details like SKU, price, stock, dimensions, and text fields. Provide product_id to update existing products, omit it to create new ones.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventory_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "product_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_bundle",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ean",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ean_additional",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "asin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "tax_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "length",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "average_cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "star",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "manufacturer_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prices",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "stock",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "text_fields",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "videos",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "media_options",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "bundle_products",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "suppliers",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "product_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.addInventorySupplier",
+      "shortPath": "inventory.addInventorySupplier",
+      "description": "Tool to add a new supplier or update an existing one in BaseLinker storage. Use when you need to manage supplier information for inventory management. If supplier_id is provided, the existing supplier will be updated; otherwise, a new supplier will be created.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "supplier_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "take_product_cost_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "take_product_code_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_copy_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax_no",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "supplier_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.addInventoryWarehouse",
+      "shortPath": "inventory.addInventoryWarehouse",
+      "description": "Tool to add a new warehouse or update an existing warehouse in BaseLinker inventories. Use when you need to create new warehouse locations for inventory management or update warehouse details. Adding a warehouse with the same identifier again will update the previously saved warehouse. The method does not allow editing warehouses created automatically for external stocks.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "warehouse_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stock_edition",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "warehouse_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.deleteInventory",
+      "shortPath": "inventory.deleteInventory",
+      "description": "Tool to delete a catalog from BaseLinker storage. Use when you need to permanently remove an inventory/catalog.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventory_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.deleteInventoryCategory",
+      "shortPath": "inventory.deleteInventoryCategory",
+      "description": "Tool to remove categories from BaseLinker warehouse. Along with the category, the products contained therein are removed (however, this does not apply to products in subcategories). The subcategories will be changed to the highest level categories.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.deleteInventoryManufacturer",
+      "shortPath": "inventory.deleteInventoryManufacturer",
+      "description": "Tool to remove a manufacturer from the BaseLinker catalog. Use when you need to delete a manufacturer that is no longer needed or was added by mistake.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "manufacturer_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.deleteInventoryPayer",
+      "shortPath": "inventory.deleteInventoryPayer",
+      "description": "Tool to remove a payer from BaseLinker storage. Use when you need to delete an existing payer entry by its ID.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payer_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.deleteInventoryPriceGroup",
+      "shortPath": "inventory.deleteInventoryPriceGroup",
+      "description": "Tool to remove a price group from BaseLinker storage. Use when you need to delete an existing price group by its identifier.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "price_group_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.deleteInventoryProduct",
+      "shortPath": "inventory.deleteInventoryProduct",
+      "description": "Tool to remove a product from the BaseLinker catalog. Use when you need to permanently delete an inventory product by its ID.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.deleteInventoryWarehouse",
+      "shortPath": "inventory.deleteInventoryWarehouse",
+      "description": "Tool to remove a warehouse from BaseLinker inventories. Use when you need to delete a warehouse that is no longer needed. Note: This method does not allow removal of warehouses created automatically for external stock management (shops, wholesalers, etc.).",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "warehouse_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventories",
+      "shortPath": "inventory.getInventories",
+      "description": "Tool to retrieve a list of catalogs (inventories) available in the BaseLinker storage. Use when you need to discover available catalogs and their configurations before performing inventory-specific operations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "inventories",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventoryAvailableTextFieldKeys",
+      "shortPath": "inventory.getInventoryAvailableTextFieldKeys",
+      "description": "Tool to retrieve a list of product text fields that can be overwritten for a specific integration. Use when you need to discover which text fields are available for modification within a given inventory catalog.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventory_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "text_field_keys",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventoryCategories",
+      "shortPath": "inventory.getInventoryCategories",
+      "description": "Tool to retrieve a list of categories for a BaseLinker catalog. Use when you need to fetch category hierarchies for inventory management or product organization.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventory_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventoryExtraFields",
+      "shortPath": "inventory.getInventoryExtraFields",
+      "description": "Tool to retrieve extra fields defined for BaseLinker catalog inventory items. Use before fetching or updating inventory products to list available custom fields.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "extra_fields",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventoryIntegrations",
+      "shortPath": "inventory.getInventoryIntegrations",
+      "description": "Tool to retrieve a list of integrations where text values in the catalog can be overwritten. Use when you need to discover which sales channels support text customization and what languages are available for each integration.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventory_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "integrations",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventoryManufacturers",
+      "shortPath": "inventory.getInventoryManufacturers",
+      "description": "Tool to retrieve a list of manufacturers from the BaseLinker catalog. Use when you need to view all manufacturers available in the system before adding or modifying manufacturer information.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "manufacturers",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventoryPayers",
+      "shortPath": "inventory.getInventoryPayers",
+      "description": "Tool to retrieve a list of payers available in BaseLinker storage. Use when you need to list payers, optionally filtered by ID or name.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "payers",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventoryPriceGroups",
+      "shortPath": "inventory.getInventoryPriceGroups",
+      "description": "Tool to retrieve price groups existing in BaseLinker storage. Use when you need to discover available pricing tiers before assigning them to inventory items or performing price-related operations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "price_groups",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventoryPrintoutTemplates",
+      "shortPath": "inventory.getInventoryPrintoutTemplates",
+      "description": "Tool to retrieve a list of all configured printout templates available for inventory (products). Use when you need to discover available printout templates before generating product documents.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "printouts",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventoryProductLogs",
+      "shortPath": "inventory.getInventoryProductLogs",
+      "description": "Tool to retrieve a list of events related to product changes in the BaseLinker catalog. Use when tracking product modification history, auditing changes, or monitoring inventory updates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "log_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventoryProductsData",
+      "shortPath": "inventory.getInventoryProductsData",
+      "description": "Tool to retrieve detailed data for selected products from the BaseLinker inventory. Use when you need comprehensive product information including SKU, prices, stock, dimensions, descriptions, images, variants, and bundle details.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventory_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "include_erp_units",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_wms_units",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_additional_eans",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_suppliers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_relations",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_marketplace_categories",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_channels_media",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventoryProductsList",
+      "shortPath": "inventory.getInventoryProductsList",
+      "description": "Tool to retrieve basic data of chosen products from BaseLinker catalogs. Use when you need to list products with optional filtering by ID, category, EAN, SKU, name, price range, or stock levels. Supports pagination for large catalogs (1000 products per page).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventory_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "filter_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_category_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_ean",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_sku",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_price_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_price_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_stock_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_stock_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_locations",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_variants",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventoryProductsPrices",
+      "shortPath": "inventory.getInventoryProductsPrices",
+      "description": "Retrieve gross prices of products from BaseLinker inventories. Use when you need to get pricing information for products and their variants across different price groups. Supports pagination for large product catalogs.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventory_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventoryProductsStock",
+      "shortPath": "inventory.getInventoryProductsStock",
+      "description": "Tool to retrieve stock data of products from BaseLinker catalogs. Use when you need to check current inventory levels, reservations, or variant stock across warehouses. Results are paginated at 1000 products per page.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventory_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "filter_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_category_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_ean",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_sku",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_asin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_stock_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_stock_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_locations",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventorySuppliers",
+      "shortPath": "inventory.getInventorySuppliers",
+      "description": "Tool to retrieve a list of suppliers available in BaseLinker storage. Use when you need to list suppliers, optionally filtered by ID or name.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "suppliers",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventoryTags",
+      "shortPath": "inventory.getInventoryTags",
+      "description": "Tool to retrieve a list of tags for a BaseLinker catalog. Use when you need to view all tags available in the system before categorizing or filtering inventory items.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.getInventoryWarehouses",
+      "shortPath": "inventory.getInventoryWarehouses",
+      "description": "Tool to retrieve a list of warehouses available in BaseLinker inventories. Use when you need to discover available warehouse locations before performing inventory or stock operations. Returns warehouses created manually as well as those created automatically for external stocks (shops, wholesalers).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "warehouses",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.runProductMacroTrigger",
+      "shortPath": "inventory.runProductMacroTrigger",
+      "description": "Tool to execute a personal trigger for products automatic actions. Use when you need to manually run a custom event trigger for a specific product in BaseLinker inventory.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "trigger_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventory.updateInventoryProductsStock",
+      "shortPath": "inventory.updateInventoryProductsStock",
+      "description": "Tool to update stocks of products and their variants in BaseLinker catalog. Use when you need to modify inventory levels for products across warehouses. Maximum 1000 products per request.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventory_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "products",
+            "optional": false,
+            "type": "any[] | {}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "counter",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventoryDocuments.addInventoryDocument",
+      "shortPath": "inventoryDocuments.addInventoryDocument",
+      "description": "Tool to create a new inventory document in BaseLinker storage. Use when you need to create goods receipts, issues, or transfers. Documents are created as drafts and require confirmation via user action or setInventoryDocumentStatusConfirmed API method.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "warehouse_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "document_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "target_warehouse_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_add",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_execute",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "contractor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_no",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "document_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "document_number",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventoryDocuments.getInventoryDocumentItems",
+      "shortPath": "inventoryDocuments.getInventoryDocumentItems",
+      "description": "Tool to retrieve items from inventory documents in BaseLinker. Use when you need to fetch product details from a specific document with support for pagination (100 items per page).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventoryDocuments.getInventoryDocuments",
+      "shortPath": "inventoryDocuments.getInventoryDocuments",
+      "description": "Tool to retrieve a list of inventory documents. Use when you need to fetch inventory records with optional filters for ID, type, status, date range, warehouse, or pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter_source_object_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_source_object_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_document_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_document_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_document_status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_date_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_date_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_warehouse_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "documents",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.inventoryDocuments.getInventoryDocumentSeries",
+      "shortPath": "inventoryDocuments.getInventoryDocumentSeries",
+      "description": "Tool to retrieve available inventory document series. Use when you need to assign a numbering series to a new inventory document.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "warehouse_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "document_series",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.addOrder",
+      "shortPath": "orders.addOrder",
+      "description": "Tool to add a new order to the BaseLinker order manager. Use when you need to create a new order with customer details, products, and delivery information.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_status_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "custom_source_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_add",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_method_cod",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "paid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "user_comments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "admin_comments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_login",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delivery_fullname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_point_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_point_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_point_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_point_postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_point_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_fullname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_nip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "want_invoice",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "extra_field_1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extra_field_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_extra_fields",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.addOrderBySplit",
+      "shortPath": "orders.addOrderBySplit",
+      "description": "Tool to create a new order by splitting selected products from an existing order. Use when you need to split an order into multiple shipments or separate deliveries. The new order inherits all customer details, addresses, and settings from the original order, with only the specified products and optional delivery costs moved to it.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "items_to_split",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "delivery_cost_to_split",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "new_order_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.addOrderDuplicate",
+      "shortPath": "orders.addOrderDuplicate",
+      "description": "Tool to add a new order by duplicating an existing order in BaseLinker. The new order will have the same data as the original order but with a different ID.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.deleteOrderProduct",
+      "shortPath": "orders.deleteOrderProduct",
+      "description": "Tool to remove a specific product from an order in BaseLinker. Use when you need to delete an order item without canceling the entire order.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "order_product_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.deleteOrders",
+      "shortPath": "orders.deleteOrders",
+      "description": "Tool to delete multiple orders from BaseLinker order manager. Use when you need to permanently remove orders from the system.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_ids",
+            "optional": false,
+            "type": "any[] | {}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "deleted_order_ids",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.getJournalList",
+      "shortPath": "orders.getJournalList",
+      "description": "Tool to download order event logs from the last 3 days. Use when you need to track order activities, changes, or events. IMPORTANT: This method must be activated by BaseLinker support on your account. If not activated, it returns an empty response. Events include order creation, status changes, payments, invoices, receipts, product modifications, and package operations. Use last_log_id to paginate through results incrementally.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "last_log_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "logs_types",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.getOrderExtraFields",
+      "shortPath": "orders.getOrderExtraFields",
+      "description": "Tool to retrieve extra fields defined for orders. Use before fetching orders with include_custom_extra_fields to list available custom order fields.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "extra_fields",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.getOrderPaymentsHistory",
+      "shortPath": "orders.getOrderPaymentsHistory",
+      "description": "Tool to retrieve payment history for a selected order, including external payment identifiers from payment gateways. Use when you need to track payment events for an order. One order can have multiple payment history entries due to surcharges, order value changes, or manual payment editing.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "show_full_history",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "payments",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.getOrderPickPackHistory",
+      "shortPath": "orders.getOrderPickPackHistory",
+      "description": "Tool to retrieve pick and pack history for a selected order. Use when you need to track the fulfillment timeline and events for an order (reservations, picking, packing, photography). Returns chronological list of pick/pack events with timestamps and responsible profiles.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "action_type",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "history",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.getOrderPrintoutTemplates",
+      "shortPath": "orders.getOrderPrintoutTemplates",
+      "description": "Tool to retrieve a list of all configured printout templates available for orders. Use when you need to discover available printout templates before generating order documents.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "printouts",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.getOrders",
+      "shortPath": "orders.getOrders",
+      "description": "Download orders from BaseLinker order manager with optional filtering. Use this tool to: - Fetch all orders from a specific date onwards - Retrieve a single order by ID - Filter orders by status, email, or marketplace source - Paginate through orders using id_from parameter Returns up to 100 orders per request. For confirmed orders only, omit get_unconfirmed_orders. Tip: Use getOrderStatusList to get status IDs for filtering.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_confirmed_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "get_unconfirmed_orders",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_order_source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_order_source_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_shop_order_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_external_order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_custom_extra_fields",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_commissions",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_connect_data",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_discounts_data",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "orders",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.getOrdersByPhone",
+      "shortPath": "orders.getOrdersByPhone",
+      "description": "Search for orders associated with a specific phone number in BaseLinker. Use when identifying callers in phone recognition systems or finding order history by phone. Returns basic order information including status, recipient names, and timestamps.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phone",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "orders",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.getOrderSources",
+      "shortPath": "orders.getOrderSources",
+      "description": "Tool to retrieve types of order sources along with their IDs from BaseLinker. Use when you need to understand available order sources for filtering orders or mapping order_source field values from getOrders method.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.getOrderStatusList",
+      "shortPath": "orders.getOrderStatusList",
+      "description": "Tool to retrieve a list of order statuses created in the BaseLinker order manager. Use when you need to map status IDs to human-readable names.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "statuses",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.getOrderTransactionData",
+      "shortPath": "orders.getOrderTransactionData",
+      "description": "Tool to retrieve transaction details for a selected order. Use when you need marketplace transaction IDs, fulfillment data, or detailed tax breakdowns for an order.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "include_complex_taxes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_amazon_data",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fulfillment_shipments",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "fulfillment_center_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ship_date_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ship_date_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delivery_date_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delivery_date_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "marketplace_transaction_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "transaction_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_items",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.getPickPackCarts",
+      "shortPath": "orders.getPickPackCarts",
+      "description": "Tool to retrieve a list of all PickPack carts belonging to the authenticated user. Use when you need to discover available carts and their details (ID, name, color) before performing cart-specific operations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "carts",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.runOrderMacroTrigger",
+      "shortPath": "orders.runOrderMacroTrigger",
+      "description": "Tool to run personal trigger for orders automatic actions. Use when you need to execute a specific automation trigger on an order.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "trigger_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.setOrderFields",
+      "shortPath": "orders.setOrderFields",
+      "description": "Tool to edit selected fields of a specific order in BaseLinker. Use when you need to update order details such as address data, notes, payment method, delivery information, or invoice details. Only provide the fields you want to change; other fields can be omitted.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "admin_comments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_comments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_method_cod",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_login",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delivery_fullname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_point_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_point_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_point_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_point_postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_point_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_fullname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_nip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "want_invoice",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "extra_field_1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extra_field_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_extra_fields",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "pick_state",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pack_state",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "star",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.setOrderPayment",
+      "shortPath": "orders.setOrderPayment",
+      "description": "Tool to add a payment to an order in BaseLinker. Use when recording a payment for an order. The payment amount replaces (not adds to) the current payment value; if it matches the order total, the order is marked as paid.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "payment_done",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "payment_date",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "payment_comment",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "external_payment_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.setOrderProductFields",
+      "shortPath": "orders.setOrderProductFields",
+      "description": "Tool to edit data of selected items in a specific BaseLinker order. Use when you need to update product fields like prices, quantities, SKU, or other item details. Only provide the fields you want to edit; other fields can be omitted.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "order_product_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "storage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "storage_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variant_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "auction_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ean",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warehouse_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price_brutto",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weight",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.setOrdersMerge",
+      "shortPath": "orders.setOrdersMerge",
+      "description": "Tool to merge multiple orders into one, based on the selected merge mode. Use when you need to combine orders together with either technical merge or into main order mode.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "main_order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "order_ids_to_merge",
+            "optional": false,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "merge_mode",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sum_delivery_costs",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "merged_order_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.setOrderStatus",
+      "shortPath": "orders.setOrderStatus",
+      "description": "Tool to change the status of an existing order in BaseLinker. Use when you need to update an order's status to a different value.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.orders.setOrderStatuses",
+      "shortPath": "orders.setOrderStatuses",
+      "description": "Tool to batch update order statuses in BaseLinker. Use when you need to set the same status for multiple orders at once.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_ids",
+            "optional": false,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "status_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.purchaseOrders.addInventoryPurchaseOrder",
+      "shortPath": "purchaseOrders.addInventoryPurchaseOrder",
+      "description": "Tool to create a new purchase order in BaseLinker storage. Orders are created as drafts by default. Use when you need to create a new purchase order for inventory management.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "warehouse_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "supplier_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payer_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_no",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_delivery_expected",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "additional_costs",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "packages",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "document_number",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.purchaseOrders.addInventoryPurchaseOrderItems",
+      "shortPath": "purchaseOrders.addInventoryPurchaseOrderItems",
+      "description": "Tool to add items to an existing purchase order in BaseLinker. Use when you need to add products to a purchase order that has already been created.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.purchaseOrders.getInventoryPurchaseOrderItems",
+      "shortPath": "purchaseOrders.getInventoryPurchaseOrderItems",
+      "description": "Tool to retrieve items from a specific purchase order in BaseLinker. Use when you need to fetch product details from a purchase order with support for pagination (100 items per page).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.purchaseOrders.getInventoryPurchaseOrders",
+      "shortPath": "purchaseOrders.getInventoryPurchaseOrders",
+      "description": "Tool to retrieve a list of purchase orders from BaseLinker storage. Use when you need to fetch purchase orders with optional filters like date range, supplier or pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "warehouse_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "supplier_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "series_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_document_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_product_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "purchase_orders",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.purchaseOrders.getInventoryPurchaseOrderSeries",
+      "shortPath": "purchaseOrders.getInventoryPurchaseOrderSeries",
+      "description": "Tool to retrieve a list of purchase order document series. Use when you need to select a numbering series for a new purchase order.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "warehouse_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "series",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.purchaseOrders.setInventoryPurchaseOrderStatus",
+      "shortPath": "purchaseOrders.setInventoryPurchaseOrderStatus",
+      "description": "Tool to change the status of a purchase order in BaseLinker inventory. Use when you need to update a purchase order's status (e.g., mark as sent, received, completed, or canceled).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "completed_items",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.returns.addOrderReturn",
+      "shortPath": "returns.addOrderReturn",
+      "description": "Tool to add a new order return to BaseLinker. Use when creating a return for an order. Requires status_id (get from getOrderReturnStatusList), date_add (Unix timestamp), currency (3-letter code), and refunded status.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "custom_source_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reference_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_add",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refunded",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "admin_comments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_login",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delivery_fullname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extra_field_1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extra_field_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_extra_fields",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "refund_account_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refund_iban",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refund_swift",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "return_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.returns.addOrderReturnProduct",
+      "shortPath": "returns.addOrderReturnProduct",
+      "description": "Tool to add a new product to an existing order return in BaseLinker. Use when a customer is returning items and you need to register the returned products.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "return_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_product_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "storage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "storage_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variant_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "auction_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ean",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warehouse_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price_brutto",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "return_reason_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "order_return_product_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.returns.deleteOrderReturnProduct",
+      "shortPath": "returns.deleteOrderReturnProduct",
+      "description": "Tool to remove a specific product from an order return in BaseLinker. Use when you need to delete a product item from an existing return request.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "return_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "order_return_product_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.returns.getOrderReturnExtraFields",
+      "shortPath": "returns.getOrderReturnExtraFields",
+      "description": "Tool to retrieve extra fields defined for order returns. Use before calling getOrderReturns with include_custom_extra_fields to list available custom fields. Field values can be set via setOrderReturnFields.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "extra_fields",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.returns.getOrderReturnJournalList",
+      "shortPath": "returns.getOrderReturnJournalList",
+      "description": "Tool to download return event logs from the last 3 days in BaseLinker. Use when tracking return order history, monitoring return status changes, or auditing return-related activities. Returns events like return creation, status changes, product modifications, and refund creation.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "last_log_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "logs_types",
+            "optional": true,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "return_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.returns.getOrderReturnPaymentsHistory",
+      "shortPath": "returns.getOrderReturnPaymentsHistory",
+      "description": "Tool to retrieve payment history for a selected order return, including external payment identifiers from the payment gateway. Use when you need to track payment events, surcharges, order value changes, or manual payment edits for a return.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "return_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "show_full_history",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "payments",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.returns.getOrderReturnProductStatuses",
+      "shortPath": "returns.getOrderReturnProductStatuses",
+      "description": "Tool to retrieve a list of order return product statuses from BaseLinker. Use when you need to identify valid status IDs for return items, or to map status IDs to human-readable names.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "order_return_product_statuses",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.returns.getOrderReturnReasonsList",
+      "shortPath": "returns.getOrderReturnReasonsList",
+      "description": "Tool to retrieve a list of order return reasons. Use when you need to discover available return reasons before setting return fields with setOrderReturnFields.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "return_reasons",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.returns.getOrderReturns",
+      "shortPath": "returns.getOrderReturns",
+      "description": "Download order returns from BaseLinker return manager with optional filtering. Use this tool to: - Fetch returns from a specific date onwards using date_from parameter - Retrieve a single return by return_id - Filter returns by source order, status, or marketplace source - Paginate through returns using id_from parameter Returns up to 100 order returns per request. For complete return data including custom fields, set include_custom_extra_fields=true. Use include_connect_data=true for Base Connect integration info.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "return_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter_order_return_source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_order_return_source_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_custom_extra_fields",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_connect_data",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "returns",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.returns.getOrderReturnStatusList",
+      "shortPath": "returns.getOrderReturnStatusList",
+      "description": "Tool to retrieve order return statuses created in the BaseLinker order manager. Use when you need to map return status IDs to human-readable names.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          },
+          {
+            "key": "statuses",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.returns.setOrderReturnFields",
+      "shortPath": "returns.setOrderReturnFields",
+      "description": "Tool to edit selected fields of a specific order return. Use when updating return information such as buyer contact details, delivery address, or custom fields. Only the fields that need to be changed should be provided; other fields can be omitted.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "return_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "admin_comments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_login",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delivery_fullname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_postcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delivery_country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extra_field_1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extra_field_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_extra_fields",
+            "optional": true,
+            "type": "any[] | {}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.returns.setOrderReturnProductFields",
+      "shortPath": "returns.setOrderReturnProductFields",
+      "description": "Tool to edit data of selected items (e.g., prices, quantities, attributes) of a specific order return product. Use when you need to update fields of a returned product in an order return.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "return_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "order_return_product_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "storage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "storage_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variant_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "auction_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ean",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warehouse_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price_brutto",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "return_reason_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.returns.setOrderReturnRefund",
+      "shortPath": "returns.setOrderReturnRefund",
+      "description": "Tool to mark an order return as refunded in BaseLinker. Use when recording that a refund has been issued for a return. Note: This method doesn't issue an actual money refund - it only updates the refund status in BaseLinker.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "return_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "order_refund_done",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "refund_date",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "refund_comment",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "external_refund_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.returns.setOrderReturnStatus",
+      "shortPath": "returns.setOrderReturnStatus",
+      "description": "Tool to change order return status in BaseLinker. Use when you need to update the status of a single order return.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "return_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "path": "baselinker.api.returns.setOrderReturnStatuses",
+      "shortPath": "returns.setOrderReturnStatuses",
+      "description": "Tool to batch set order return statuses in BaseLinker. Use when you need to update the status of multiple order returns at once.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "return_ids",
+            "optional": false,
+            "type": "any[] | {}"
+          },
+          {
+            "key": "status_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "SUCCESS"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "baselinker.db.categories.search",
+      "entityName": "categories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "baselinker.db.connectIntegrations.search",
+      "entityName": "connectIntegrations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "baselinker.db.couriers.search",
+      "entityName": "couriers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "baselinker.db.externalStorages.search",
+      "entityName": "externalStorages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "baselinker.db.inventories.search",
+      "entityName": "inventories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "baselinker.db.inventoryExtraFields.search",
+      "entityName": "inventoryExtraFields",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "baselinker.db.manufacturers.search",
+      "entityName": "manufacturers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "baselinker.db.orderStatuses.search",
+      "entityName": "orderStatuses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "baselinker.db.payers.search",
+      "entityName": "payers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "baselinker.db.priceGroups.search",
+      "entityName": "priceGroups",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "baselinker.db.returnProductStatuses.search",
+      "entityName": "returnProductStatuses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "baselinker.db.returnReasons.search",
+      "entityName": "returnReasons",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "baselinker.db.returnStatuses.search",
+      "entityName": "returnStatuses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "baselinker.db.suppliers.search",
+      "entityName": "suppliers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "baselinker.db.tags.search",
+      "entityName": "tags",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "baselinker.db.warehouses.search",
+      "entityName": "warehouses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

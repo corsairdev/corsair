@@ -15,7 +15,6 @@ const AgentyLooseRecordOptionalSchema = z
 	.record(z.string(), z.unknown())
 	.optional();
 // Live API: key_id/job_id/project_id are numbers; list_id is numeric in OpenAPI
-// but some Composio samples use strings — accept both at the trust boundary.
 const AgentyKeyIdSchema = z.number().int();
 const AgentyJobIdSchema = z.number().int();
 const AgentyProjectIdSchema = z.number().int();

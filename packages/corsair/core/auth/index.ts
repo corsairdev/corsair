@@ -10,7 +10,12 @@ export {
 	reEncryptConfig,
 } from './encryption';
 // Auth error utilities
-export { AuthMissingError, createMissingConfigProxy } from './errors';
+export {
+	AuthMissingError,
+	CorsairKekMissingError,
+	createMissingConfigProxy,
+	ReconnectRequiredError,
+} from './errors';
 export type { TokenResponse } from './exchange';
 // Token exchange utility
 export { exchangeCodeForTokens } from './exchange';

@@ -1,0 +1,1897 @@
+{
+  "id": "asindataapi",
+  "displayName": "AsinData API",
+  "description": "Amazon product data API for ASIN lookups, pricing, and marketplace intelligence.",
+  "npmPackageName": "@corsair-dev/asindataapi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 22,
+    "webhooks": 1,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "asindataapi.api.categories.get",
+      "shortPath": "categories.get",
+      "description": "Retrieve Amazon category data and products within a category",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amazon_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refinements",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "most_recent | price_low_to_high | price_high_to_low | featured | average_review"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          },
+          {
+            "key": "request_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "request_metadata",
+            "optional": true,
+            "type": "{ id?: string, created_at?: string, processed_at?: string, total_time_taken?: number, amazon_url?: string }"
+          },
+          {
+            "key": "category_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, asin?: string, link?: string, image?: string, is_prime?: boolean, rating?: number, ratings_total?: number, sponsored?: boolean, price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, prices?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }[] }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "refinements",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.collections.create",
+      "shortPath": "collections.create",
+      "description": "Create a new Collection for batch data collection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "schedule_type",
+            "optional": true,
+            "type": "monthly | weekly | daily | minutes | manual"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "highest | high | normal | low | lowest"
+          },
+          {
+            "key": "schedule_days_of_month",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "schedule_days_of_week",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "schedule_hours",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "schedule_minutes",
+            "optional": true,
+            "type": "every_minute | every_5_minutes | every_10_minutes | every_15_minutes | every_20_minutes | every_25_minutes | every_30_minutes | every_hour"
+          },
+          {
+            "key": "destination_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "notification_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_webhook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_as_json",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_as_jsonlines",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_as_csv",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_csv_fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requests_type",
+            "optional": true,
+            "type": "mixed | product | offers | search | category"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          },
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ id: string, created_at?: string | null, last_run?: string | null, name?: string | null, schedule_type?: monthly | weekly | daily | minutes | manual | null, priority?: highest | high | normal | low | lowest | null, destination_ids?: string[] | null, enabled?: boolean | null, status?: idle | queued | running | null, request_total_count?: number | null, request_page_count?: number | null, requests_total_count?: number | null, requests_page_count?: number | null, credits_required?: number | null, next_result_set_id?: number | null, results_count?: number | null, schedule_hours?: number[] | null, schedule_days_of_week?: number[] | null, schedule_days_of_month?: number[] | null, schedule_minutes?: string | null, notification_email?: string | null, notification_webhook?: string | null, notification_as_json?: boolean | null, notification_as_jsonlines?: boolean | null, notification_as_csv?: boolean | null, notification_csv_fields?: string | null, request_type?: string | null, request_type_locked?: boolean | null, requests_type?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.collections.delete",
+      "shortPath": "collections.delete",
+      "description": "Delete a Collection",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.collections.get",
+      "shortPath": "collections.get",
+      "description": "Get details of a specific Collection including status and request counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          },
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ id: string, created_at?: string | null, last_run?: string | null, name?: string | null, schedule_type?: monthly | weekly | daily | minutes | manual | null, priority?: highest | high | normal | low | lowest | null, destination_ids?: string[] | null, enabled?: boolean | null, status?: idle | queued | running | null, request_total_count?: number | null, request_page_count?: number | null, requests_total_count?: number | null, requests_page_count?: number | null, credits_required?: number | null, next_result_set_id?: number | null, results_count?: number | null, schedule_hours?: number[] | null, schedule_days_of_week?: number[] | null, schedule_days_of_month?: number[] | null, schedule_minutes?: string | null, notification_email?: string | null, notification_webhook?: string | null, notification_as_json?: boolean | null, notification_as_jsonlines?: boolean | null, notification_as_csv?: boolean | null, notification_csv_fields?: string | null, request_type?: string | null, request_type_locked?: boolean | null, requests_type?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.collections.list",
+      "shortPath": "collections.list",
+      "description": "List all Collections on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "only_with_results",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "only_without_results",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "search_term",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search_type",
+            "optional": true,
+            "type": "contains | starts_with | ends_with | exact"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "all | idle | queued | running"
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_run_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_run_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destination_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "created_at | last_run | name | priority | status"
+          },
+          {
+            "key": "sort_direction",
+            "optional": true,
+            "type": "ascending | descending"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count_this_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "collections",
+            "optional": true,
+            "type": "{ id: string, created_at?: string | null, last_run?: string | null, name?: string | null, schedule_type?: monthly | weekly | daily | minutes | manual | null, priority?: highest | high | normal | low | lowest | null, destination_ids?: string[] | null, enabled?: boolean | null, status?: idle | queued | running | null, request_total_count?: number | null, request_page_count?: number | null, requests_total_count?: number | null, requests_page_count?: number | null, credits_required?: number | null, next_result_set_id?: number | null, results_count?: number | null, schedule_hours?: number[] | null, schedule_days_of_week?: number[] | null, schedule_days_of_month?: number[] | null, schedule_minutes?: string | null, notification_email?: string | null, notification_webhook?: string | null, notification_as_json?: boolean | null, notification_as_jsonlines?: boolean | null, notification_as_csv?: boolean | null, notification_csv_fields?: string | null, request_type?: string | null, request_type_locked?: boolean | null, requests_type?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.collections.start",
+      "shortPath": "collections.start",
+      "description": "Start a Collection to run all its requests immediately",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.collections.update",
+      "shortPath": "collections.update",
+      "description": "Update an existing Collection's configuration (only when not running)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "schedule_type",
+            "optional": true,
+            "type": "monthly | weekly | daily | minutes | manual"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "highest | high | normal | low | lowest"
+          },
+          {
+            "key": "schedule_days_of_month",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "schedule_days_of_week",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "schedule_hours",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "schedule_minutes",
+            "optional": true,
+            "type": "every_minute | every_5_minutes | every_10_minutes | every_15_minutes | every_20_minutes | every_25_minutes | every_30_minutes | every_hour"
+          },
+          {
+            "key": "destination_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "notification_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_webhook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notification_as_json",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_as_jsonlines",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_as_csv",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "notification_csv_fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requests_type",
+            "optional": true,
+            "type": "mixed | product | offers | search | category"
+          },
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          },
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ id: string, created_at?: string | null, last_run?: string | null, name?: string | null, schedule_type?: monthly | weekly | daily | minutes | manual | null, priority?: highest | high | normal | low | lowest | null, destination_ids?: string[] | null, enabled?: boolean | null, status?: idle | queued | running | null, request_total_count?: number | null, request_page_count?: number | null, requests_total_count?: number | null, requests_page_count?: number | null, credits_required?: number | null, next_result_set_id?: number | null, results_count?: number | null, schedule_hours?: number[] | null, schedule_days_of_week?: number[] | null, schedule_days_of_month?: number[] | null, schedule_minutes?: string | null, notification_email?: string | null, notification_webhook?: string | null, notification_as_json?: boolean | null, notification_as_jsonlines?: boolean | null, notification_as_csv?: boolean | null, notification_csv_fields?: string | null, request_type?: string | null, request_type_locked?: boolean | null, requests_type?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.destinations.create",
+      "shortPath": "destinations.create",
+      "description": "Create a new Destination for exporting Collection Result Sets",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "s3 | gcs | azure | oss | s3compatible"
+          },
+          {
+            "key": "enabled",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "s3_access_key_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "s3_secret_access_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "s3_bucket_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "s3_path_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "s3_endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "s3_region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gcs_access_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gcs_secret_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gcs_bucket_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gcs_path_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "azure_account_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "azure_account_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "azure_container_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "azure_path_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oss_access_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oss_secret_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oss_bucket_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oss_region_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oss_path_prefix",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ used?: number, limit?: number, available?: number }"
+          },
+          {
+            "key": "destination",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, type?: s3 | gcs | azure | oss | s3compatible | null, enabled?: boolean | null, used_by?: number | null, s3_bucket_name?: string | null, s3_path_prefix?: string | null, s3_endpoint?: string | null, s3_region?: string | null, gcs_bucket_name?: string | null, gcs_path_prefix?: string | null, azure_account_name?: string | null, azure_container_name?: string | null, azure_path_prefix?: string | null, oss_bucket_name?: string | null, oss_region_id?: string | null, oss_path_prefix?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.destinations.delete",
+      "shortPath": "destinations.delete",
+      "description": "Delete a Destination",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "destination_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.destinations.list",
+      "shortPath": "destinations.list",
+      "description": "List all configured Destinations (S3, GCS, Azure Blob, S3-compatible)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_term",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "type | name"
+          },
+          {
+            "key": "sort_direction",
+            "optional": true,
+            "type": "ascending | descending"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ used?: number, limit?: number, available?: number }"
+          },
+          {
+            "key": "destinations",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, type?: s3 | gcs | azure | oss | s3compatible | null, enabled?: boolean | null, used_by?: number | null, s3_bucket_name?: string | null, s3_path_prefix?: string | null, s3_endpoint?: string | null, s3_region?: string | null, gcs_bucket_name?: string | null, gcs_path_prefix?: string | null, azure_account_name?: string | null, azure_container_name?: string | null, azure_path_prefix?: string | null, oss_bucket_name?: string | null, oss_region_id?: string | null, oss_path_prefix?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.destinations.update",
+      "shortPath": "destinations.update",
+      "description": "Update an existing Destination's configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "destination_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "s3_access_key_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "s3_secret_access_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "s3_bucket_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "s3_path_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "s3_endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "s3_region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gcs_access_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gcs_secret_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gcs_bucket_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gcs_path_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "azure_account_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "azure_account_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "azure_container_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "azure_path_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oss_access_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oss_secret_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oss_bucket_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oss_region_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oss_path_prefix",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          },
+          {
+            "key": "destination",
+            "optional": true,
+            "type": "{ id: string, name?: string | null, type?: s3 | gcs | azure | oss | s3compatible | null, enabled?: boolean | null, used_by?: number | null, s3_bucket_name?: string | null, s3_path_prefix?: string | null, s3_endpoint?: string | null, s3_region?: string | null, gcs_bucket_name?: string | null, gcs_path_prefix?: string | null, azure_account_name?: string | null, azure_container_name?: string | null, azure_path_prefix?: string | null, oss_bucket_name?: string | null, oss_region_id?: string | null, oss_path_prefix?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.identifiers.resolve",
+      "shortPath": "identifiers.resolve",
+      "description": "Resolve GTIN, ISBN, UPC, or EAN identifiers to ASINs automatically",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gtin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amazon_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skip_gtin_cache",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ request_info: { success: true, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }, request_parameters?: {}, request_metadata?: { id?: string, created_at?: string, processed_at?: string, total_time_taken?: number, amazon_url?: string }, product: { title?: string, asin: string, link?: string, brand?: string, description?: string, rating?: number, ratings_total?: number, reviews_total?: number, main_image?: { link?: string }, images?: {}[], feature_bullets?: string[], attributes?: { name: string, value: string }[], categories?: { name?: string, link?: string, category_id?: string }[], price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, buybox_winner?: {} } } | { request_info: { success: false, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }, request_parameters?: {}, request_metadata?: { id?: string, created_at?: string, processed_at?: string, total_time_taken?: number, amazon_url?: string }, product?: { title?: string, asin?: string, link?: string, brand?: string, description?: string, rating?: number, ratings_total?: number, reviews_total?: number, main_image?: { link?: string }, images?: {}[], feature_bullets?: string[], attributes?: { name: string, value: string }[], categories?: { name?: string, link?: string, category_id?: string }[], price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, buybox_winner?: {} } }"
+      }
+    },
+    {
+      "path": "asindataapi.api.offers.get",
+      "shortPath": "offers.get",
+      "description": "Retrieve product offers, pricing, availability, and seller information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amazon_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offers_prime",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "offers_free_shipping",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "offers_condition_new",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "show_different_asins",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          },
+          {
+            "key": "request_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "request_metadata",
+            "optional": true,
+            "type": "{ id?: string, created_at?: string, processed_at?: string, total_time_taken?: number, amazon_url?: string }"
+          },
+          {
+            "key": "product",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "offers",
+            "optional": true,
+            "type": "{ position?: number, is_prime?: boolean, buybox_winner?: boolean, offer_id?: string, offer_asin?: string, price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, condition?: {}, seller?: {}, delivery?: {} }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "available_filters",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.products.get",
+      "shortPath": "products.get",
+      "description": "Retrieve Amazon product details by ASIN, URL, or GTIN/ISBN/UPC/EAN",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amazon_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gtin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skip_gtin_cache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_summarization_attributes",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ request_info: { success: true, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }, request_parameters?: {}, request_metadata?: { id?: string, created_at?: string, processed_at?: string, total_time_taken?: number, amazon_url?: string }, product: { title?: string, asin: string, link?: string, brand?: string, description?: string, rating?: number, ratings_total?: number, reviews_total?: number, main_image?: { link?: string }, images?: {}[], feature_bullets?: string[], attributes?: { name: string, value: string }[], categories?: { name?: string, link?: string, category_id?: string }[], price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, buybox_winner?: {} } } | { request_info: { success: false, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }, request_parameters?: {}, request_metadata?: { id?: string, created_at?: string, processed_at?: string, total_time_taken?: number, amazon_url?: string }, product?: { title?: string, asin?: string, link?: string, brand?: string, description?: string, rating?: number, ratings_total?: number, reviews_total?: number, main_image?: { link?: string }, images?: {}[], feature_bullets?: string[], attributes?: { name: string, value: string }[], categories?: { name?: string, link?: string, category_id?: string }[], price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, buybox_winner?: {} } }"
+      }
+    },
+    {
+      "path": "asindataapi.api.requests.add",
+      "shortPath": "requests.add",
+      "description": "Add Requests to a Collection (up to 1000 per call)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ type?: product | offers | category | search | reviews | seller_profile | autocomplete, amazon_domain?: string, asin?: string, url?: string, gtin?: string, search_term?: string, category_id?: string, refinements?: string, sort_by?: most_recent | price_low_to_high | price_high_to_low | featured | average_review, exclude_sponsored?: boolean, direct_search?: boolean, page?: number, max_page?: number, include_html?: boolean, skip_gtin_cache?: boolean, show_different_asins?: boolean, custom_id?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          },
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "{ id: string, created_at?: string | null, last_run?: string | null, name?: string | null, schedule_type?: monthly | weekly | daily | minutes | manual | null, priority?: highest | high | normal | low | lowest | null, destination_ids?: string[] | null, enabled?: boolean | null, status?: idle | queued | running | null, request_total_count?: number | null, request_page_count?: number | null, requests_total_count?: number | null, requests_page_count?: number | null, credits_required?: number | null, next_result_set_id?: number | null, results_count?: number | null, schedule_hours?: number[] | null, schedule_days_of_week?: number[] | null, schedule_days_of_month?: number[] | null, schedule_minutes?: string | null, notification_email?: string | null, notification_webhook?: string | null, notification_as_json?: boolean | null, notification_as_jsonlines?: boolean | null, notification_as_csv?: boolean | null, notification_csv_fields?: string | null, request_type?: string | null, request_type_locked?: boolean | null, requests_type?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.requests.clear",
+      "shortPath": "requests.clear",
+      "description": "Bulk-delete multiple Requests from a Collection by their IDs",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "request_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.requests.delete",
+      "shortPath": "requests.delete",
+      "description": "Delete a single Request from a Collection",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.requests.list",
+      "shortPath": "requests.list",
+      "description": "List all Requests in a Collection (paginated, 1000 per page)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requests_page_current",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "requests_page_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "requests_total_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "requests",
+            "optional": true,
+            "type": "{ id: string, custom_id?: string | null, type?: product | offers | category | search | reviews | seller_profile | autocomplete | null, amazon_domain?: string | null, asin?: string | null, url?: string | null, gtin?: string | null, search_term?: string | null, category_id?: string | null, refinements?: string | null, sort_by?: string | null, exclude_sponsored?: boolean | null, direct_search?: boolean | null, page?: number | null, max_page?: number | null, include_html?: boolean | null, skip_gtin_cache?: boolean | null, show_different_asins?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.requests.update",
+      "shortPath": "requests.update",
+      "description": "Update a single Request within a Collection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "product | offers | category | search | reviews | seller_profile | autocomplete"
+          },
+          {
+            "key": "amazon_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "asin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gtin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search_term",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refinements",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "most_recent | price_low_to_high | price_high_to_low | featured | average_review"
+          },
+          {
+            "key": "exclude_sponsored",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "direct_search",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include_html",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "skip_gtin_cache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "show_different_asins",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ type?: product | offers | category | search | reviews | seller_profile | autocomplete, amazon_domain?: string, asin?: string, url?: string, gtin?: string, search_term?: string, category_id?: string, refinements?: string, sort_by?: most_recent | price_low_to_high | price_high_to_low | featured | average_review, exclude_sponsored?: boolean, direct_search?: boolean, page?: number, max_page?: number, include_html?: boolean, skip_gtin_cache?: boolean, show_different_asins?: boolean, custom_id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.resultSets.get",
+      "shortPath": "resultSets.get",
+      "description": "Get a specific Result Set with download links",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result_set_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ id: number, collection_id?: string | null, started_at?: string | null, ended_at?: string | null, expires_at?: string | null, results_page_count?: number | null, requests_completed?: number | null, requests_failed?: number | null, requests_total?: number | null, download_links?: { json?: { pages?: string[] | null, all_pages?: string | null } | null, jsonlines?: { pages?: string[] | null, all_pages?: string | null } | null, csv?: { pages?: string[] | null, all_pages?: string | null } | null } | null, webhook_status?: {} | null, destination_status?: {} | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.resultSets.list",
+      "shortPath": "resultSets.list",
+      "description": "List all Result Sets for a Collection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "{ id: string, created_at?: string | null, last_run?: string | null, name?: string | null, schedule_type?: monthly | weekly | daily | minutes | manual | null, priority?: highest | high | normal | low | lowest | null, destination_ids?: string[] | null, enabled?: boolean | null, status?: idle | queued | running | null, request_total_count?: number | null, request_page_count?: number | null, requests_total_count?: number | null, requests_page_count?: number | null, credits_required?: number | null, next_result_set_id?: number | null, results_count?: number | null, schedule_hours?: number[] | null, schedule_days_of_week?: number[] | null, schedule_days_of_month?: number[] | null, schedule_minutes?: string | null, notification_email?: string | null, notification_webhook?: string | null, notification_as_json?: boolean | null, notification_as_jsonlines?: boolean | null, notification_as_csv?: boolean | null, notification_csv_fields?: string | null, request_type?: string | null, request_type_locked?: boolean | null, requests_type?: string | null }"
+          },
+          {
+            "key": "results_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id: number, collection_id?: string | null, started_at?: string | null, ended_at?: string | null, expires_at?: string | null, results_page_count?: number | null, requests_completed?: number | null, requests_failed?: number | null, requests_total?: number | null, download_links?: { json?: { pages?: string[] | null, all_pages?: string | null } | null, jsonlines?: { pages?: string[] | null, all_pages?: string | null } | null, csv?: { pages?: string[] | null, all_pages?: string | null } | null } | null, webhook_status?: {} | null, destination_status?: {} | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asindataapi.api.search.get",
+      "shortPath": "search.get",
+      "description": "Search Amazon products by keywords across supported Amazon domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amazon_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search_term",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refinements",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "most_recent | price_low_to_high | price_high_to_low | featured | average_review"
+          },
+          {
+            "key": "exclude_sponsored",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "direct_search",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success: boolean, credits_used?: number, credits_remaining?: number, credits_reset_at?: string, message?: string, type?: string }"
+          },
+          {
+            "key": "request_parameters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "request_metadata",
+            "optional": true,
+            "type": "{ id?: string, created_at?: string, processed_at?: string, total_time_taken?: number, amazon_url?: string }"
+          },
+          {
+            "key": "search_results",
+            "optional": true,
+            "type": "{ position?: number, title?: string, asin?: string, link?: string, image?: string, is_prime?: boolean, rating?: number, ratings_total?: number, sponsored?: boolean, price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, prices?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }[] }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "refinements",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "asindataapi.webhooks.collections.collectionCompleted",
+      "shortPath": "collections.collectionCompleted",
+      "description": "Fires when a Collection completes and a new Result Set is available",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_info",
+            "optional": false,
+            "type": "{ success?: boolean, type?: collection_resultset_completed }"
+          },
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "{ id: string, name?: string }"
+          },
+          {
+            "key": "result_set",
+            "optional": false,
+            "type": "{ id: number | string, started_at?: string, ended_at?: string, requests_completed?: number, requests_failed?: number, download_links?: { json?: { pages?: string[], all_pages?: string }, jsonlines?: { pages?: string[], all_pages?: string }, csv?: { pages?: string[], all_pages?: string } } }"
+          }
+        ]
+      },
+      "responseType": "{ request_info: { success?: boolean, type?: collection_resultset_completed }, collection: { id: string, name?: string }, result_set: { id: number | string, started_at?: string, ended_at?: string, requests_completed?: number, requests_failed?: number, download_links?: { json?: { pages?: string[], all_pages?: string }, jsonlines?: { pages?: string[], all_pages?: string }, csv?: { pages?: string[], all_pages?: string } } } }",
+      "usageExample": "asindataapi({\n    webhookHooks: {\n        collections: {\n            collectionCompleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "asindataapi.db.collections.search",
+      "entityName": "collections",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_run",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "request_total_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "request_page_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "requests_total_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "requests_page_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "credits_required",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "next_result_set_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "results_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "schedule_minutes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notification_email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notification_webhook",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notification_as_json",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "notification_as_jsonlines",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "notification_as_csv",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "notification_csv_fields",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "request_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "request_type_locked",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "requests_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "asindataapi.db.destinations.search",
+      "entityName": "destinations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "used_by",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "s3_bucket_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "s3_path_prefix",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "s3_endpoint",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "s3_region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gcs_bucket_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gcs_path_prefix",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "azure_account_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "azure_container_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "azure_path_prefix",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "oss_bucket_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "oss_region_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "oss_path_prefix",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "asindataapi.db.requests.search",
+      "entityName": "requests",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "custom_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amazon_domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "asin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gtin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "search_term",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "refinements",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sort_by",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "exclude_sponsored",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "direct_search",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "page",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_page",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "include_html",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "skip_gtin_cache",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "show_different_asins",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "asindataapi.db.resultSets.search",
+      "entityName": "resultSets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "collection_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "started_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ended_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expires_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "results_page_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "requests_completed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "requests_failed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "requests_total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}
