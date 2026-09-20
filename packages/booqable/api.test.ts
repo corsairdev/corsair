@@ -132,7 +132,7 @@ describe('Booqable endpoints', () => {
 		mockRequest.mockResolvedValue({ data: [] });
 	});
 
-	it('routes every operation to its declared path and method', async () => {
+	it('routes every operation to its independently-contracted path and method', async () => {
 		const plugin = booqable({
 			companySlug: 'demo-company',
 			key: 'test-api-key',
@@ -148,23 +148,304 @@ describe('Booqable endpoints', () => {
 			>
 		>;
 
-		const allRoutes = booqableRoutes as readonly {
+		// Independent contract, hardcoded from the Booqable API surface.
+		// Intentionally NOT derived from booqableRoutes, so a wrong route fails.
+		type ExpectedBooqableRoute = {
 			group: string;
 			name: string;
-			method: string;
+			method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 			path: string;
-			pathParams?: readonly string[];
-		}[];
+		};
+		const EXPECTED_BOOQABLE_CONTRACT: readonly ExpectedBooqableRoute[] = [
+			{
+				group: 'customers',
+				name: 'createCustomer',
+				method: 'POST',
+				path: '/customers',
+			},
+			{
+				group: 'customers',
+				name: 'deleteCustomer',
+				method: 'DELETE',
+				path: '/customers/{id}',
+			},
+			{
+				group: 'customers',
+				name: 'getCustomer',
+				method: 'GET',
+				path: '/customers/{id}',
+			},
+			{
+				group: 'customers',
+				name: 'getCustomers',
+				method: 'GET',
+				path: '/customers',
+			},
+			{
+				group: 'customers',
+				name: 'searchCustomers',
+				method: 'POST',
+				path: '/customers/search',
+			},
+			{ group: 'orders', name: 'createOrder', method: 'POST', path: '/orders' },
+			{
+				group: 'orders',
+				name: 'deleteOrder',
+				method: 'DELETE',
+				path: '/orders/{id}',
+			},
+			{
+				group: 'orders',
+				name: 'getNewOrder',
+				method: 'GET',
+				path: '/orders/new',
+			},
+			{
+				group: 'orders',
+				name: 'getOrder',
+				method: 'GET',
+				path: '/orders/{id}',
+			},
+			{ group: 'orders', name: 'listOrders', method: 'GET', path: '/orders' },
+			{
+				group: 'orders',
+				name: 'searchOrders',
+				method: 'POST',
+				path: '/orders/search',
+			},
+			{
+				group: 'productGroups',
+				name: 'createProductGroup',
+				method: 'POST',
+				path: '/product_groups',
+			},
+			{
+				group: 'productGroups',
+				name: 'deleteProductGroup',
+				method: 'DELETE',
+				path: '/product_groups/{id}',
+			},
+			{
+				group: 'productGroups',
+				name: 'getProductGroup',
+				method: 'GET',
+				path: '/product_groups/{id}',
+			},
+			{
+				group: 'productGroups',
+				name: 'listProductGroups',
+				method: 'GET',
+				path: '/product_groups',
+			},
+			{
+				group: 'products',
+				name: 'getProduct',
+				method: 'GET',
+				path: '/products/{id}',
+			},
+			{
+				group: 'products',
+				name: 'listProducts',
+				method: 'GET',
+				path: '/products',
+			},
+			{
+				group: 'companies',
+				name: 'updateCompany',
+				method: 'PUT',
+				path: '/companies/current',
+			},
+			{
+				group: 'inventoryLevels',
+				name: 'getInventoryLevels',
+				method: 'GET',
+				path: '/inventory_levels',
+			},
+			{
+				group: 'barcodes',
+				name: 'listBarcodes',
+				method: 'GET',
+				path: '/barcodes',
+			},
+			{
+				group: 'bundleItems',
+				name: 'listBundleItems',
+				method: 'GET',
+				path: '/bundle_items',
+			},
+			{
+				group: 'bundles',
+				name: 'searchBundles',
+				method: 'POST',
+				path: '/bundles/search',
+			},
+			{
+				group: 'clusters',
+				name: 'listClusters',
+				method: 'GET',
+				path: '/clusters',
+			},
+			{
+				group: 'coupons',
+				name: 'listCoupons',
+				method: 'GET',
+				path: '/coupons',
+			},
+			{
+				group: 'defaultProperties',
+				name: 'listDefaultProperties',
+				method: 'GET',
+				path: '/default_properties',
+			},
+			{
+				group: 'documents',
+				name: 'listDocuments',
+				method: 'GET',
+				path: '/documents',
+			},
+			{
+				group: 'documents',
+				name: 'searchDocuments',
+				method: 'POST',
+				path: '/documents/search',
+			},
+			{
+				group: 'emailTemplates',
+				name: 'listEmailTemplates',
+				method: 'GET',
+				path: '/email_templates',
+			},
+			{
+				group: 'employees',
+				name: 'listEmployees',
+				method: 'GET',
+				path: '/employees',
+			},
+			{
+				group: 'inventoryBreakdowns',
+				name: 'listInventoryBreakdowns',
+				method: 'GET',
+				path: '/inventory_breakdowns',
+			},
+			{ group: 'items', name: 'listItems', method: 'GET', path: '/items' },
+			{
+				group: 'items',
+				name: 'searchItems',
+				method: 'POST',
+				path: '/items/search',
+			},
+			{ group: 'lines', name: 'listLines', method: 'GET', path: '/lines' },
+			{
+				group: 'locations',
+				name: 'listLocations',
+				method: 'GET',
+				path: '/locations',
+			},
+			{ group: 'notes', name: 'listNotes', method: 'GET', path: '/notes' },
+			{
+				group: 'paymentMethods',
+				name: 'listPaymentMethods',
+				method: 'GET',
+				path: '/payment_methods',
+			},
+			{
+				group: 'payments',
+				name: 'listPayments',
+				method: 'GET',
+				path: '/payments',
+			},
+			{ group: 'photos', name: 'listPhotos', method: 'GET', path: '/photos' },
+			{
+				group: 'plannings',
+				name: 'listPlannings',
+				method: 'GET',
+				path: '/plannings',
+			},
+			{
+				group: 'plannings',
+				name: 'searchPlannings',
+				method: 'POST',
+				path: '/plannings/search',
+			},
+			{
+				group: 'priceRulesets',
+				name: 'listPriceRulesets',
+				method: 'GET',
+				path: '/price_rulesets',
+			},
+			{
+				group: 'priceStructures',
+				name: 'listPriceStructures',
+				method: 'GET',
+				path: '/price_structures',
+			},
+			{
+				group: 'properties',
+				name: 'listProperties',
+				method: 'GET',
+				path: '/properties',
+			},
+			{
+				group: 'provinces',
+				name: 'listProvinces',
+				method: 'GET',
+				path: '/provinces',
+			},
+			{
+				group: 'stockItemPlannings',
+				name: 'listStockItemPlannings',
+				method: 'GET',
+				path: '/stock_item_plannings',
+			},
+			{
+				group: 'stockItems',
+				name: 'listStockItems',
+				method: 'GET',
+				path: '/stock_items',
+			},
+			{
+				group: 'taxRates',
+				name: 'listTaxRates',
+				method: 'GET',
+				path: '/tax_rates',
+			},
+			{
+				group: 'taxValues',
+				name: 'listTaxValues',
+				method: 'GET',
+				path: '/tax_values',
+			},
+			{ group: 'users', name: 'listUsers', method: 'GET', path: '/users' },
+		];
 
-		for (const route of allRoutes) {
-			const handler = endpoints[route.group]?.[route.name];
+		expect(EXPECTED_BOOQABLE_CONTRACT).toHaveLength(49);
+		expect(booqableRoutes).toHaveLength(EXPECTED_BOOQABLE_CONTRACT.length);
+
+		for (const expected of EXPECTED_BOOQABLE_CONTRACT) {
+			const actual = booqableRoutes.find(
+				(candidate) =>
+					candidate.group === expected.group &&
+					candidate.name === expected.name,
+			);
+			expect(actual).toBeDefined();
+			expect(actual?.method).toBe(expected.method);
+			expect(actual?.path).toBe(expected.path);
+		}
+
+		for (const expected of EXPECTED_BOOQABLE_CONTRACT) {
+			const handler = endpoints[expected.group]?.[expected.name];
 			if (!handler) {
-				throw new Error(`[test] missing endpoint ${route.group}.${route.name}`);
+				throw new Error(
+					`[test] missing endpoint ${expected.group}.${expected.name}`,
+				);
 			}
 
+			const placeholders = [...expected.path.matchAll(/\{([^}]+)\}/g)]
+				.map((match) => match[1])
+				.filter((name): name is string => typeof name === 'string');
 			const input: Record<string, unknown> = {};
-			let expectedUrl: string = route.path;
-			for (const param of route.pathParams ?? []) {
+			let expectedUrl: string = expected.path;
+			for (const param of placeholders) {
 				const value = `test-${param}`;
 				input[param] = value;
 				expectedUrl = expectedUrl.replace(`{${param}}`, value);
@@ -174,12 +455,23 @@ describe('Booqable endpoints', () => {
 			mockRequest.mockResolvedValue({ data: [] });
 			await handler(mockCtx, input);
 
-			const call = mockRequest.mock.calls[0]?.[1];
-			expect(call).toMatchObject({
-				method: route.method,
+			const rawCall: unknown = mockRequest.mock.calls[0]?.[1];
+			if (typeof rawCall !== 'object' || rawCall === null) {
+				throw new Error(
+					`[test] missing request for ${expected.group}.${expected.name}`,
+				);
+			}
+			expect(rawCall).toMatchObject({
+				method: expected.method,
 				url: expectedUrl,
 			});
-			expect(call.url).not.toContain('{');
+			if ('url' in rawCall && typeof rawCall.url === 'string') {
+				expect(rawCall.url).not.toContain('{');
+			} else {
+				throw new Error(
+					`[test] missing url for ${expected.group}.${expected.name}`,
+				);
+			}
 		}
 	});
 

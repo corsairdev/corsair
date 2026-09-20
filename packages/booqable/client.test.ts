@@ -53,7 +53,11 @@ describe('makeBooqableRequest', () => {
 			fail('expected throw');
 		} catch (error) {
 			expect(error).toBeInstanceOf(BooqableAPIError);
-			expect((error as BooqableAPIError).status).toBe(401);
+			if (error instanceof BooqableAPIError) {
+				expect(error.status).toBe(401);
+			} else {
+				throw new Error('[test] expected BooqableAPIError');
+			}
 		}
 	});
 });

@@ -75,13 +75,15 @@ export function resolvePath(
 	});
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+	// unknown is intentional here: endpoint inputs are runtime data, narrowed via this guard.
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 function buildQuery(route: BooqableRoute, input: BooqableEndpointInput) {
-	const query: Record<string, unknown> =
-		input.query &&
-		typeof input.query === 'object' &&
-		!Array.isArray(input.query)
-			? { ...(input.query as Record<string, unknown>) }
-			: {};
+	const query: Record<string, unknown> = isRecord(input.query)
+		? { ...input.query }
+		: {};
 	for (const key of route.queryParams ?? []) {
 		const snake = camelToSnake(key);
 		const value = input[snake] ?? input[key] ?? resolvePathParam(input, key);
@@ -122,8 +124,12 @@ async function resolveCompanySlug(
 	ctx: BooqableContext,
 	input: BooqableEndpointInput,
 ): Promise<string> {
-	const explicit = (input as { companySlug?: string }).companySlug;
-	if (explicit) return assertBooqableCompanySlug(explicit);
+	if ('companySlug' in input) {
+		const explicitRaw = input.companySlug;
+		if (typeof explicitRaw === 'string' && explicitRaw) {
+			return assertBooqableCompanySlug(explicitRaw);
+		}
+	}
 
 	const fromOptions = ctx.options.companySlug;
 	if (fromOptions) return assertBooqableCompanySlug(fromOptions);
@@ -162,7 +168,7 @@ export async function requestBooqableOperation(
 			method: route.method,
 			body: requestBody(route, input),
 			query: buildQuery(route, input),
-			headers: input.headers as Record<string, string> | undefined,
+			headers: input.headers,
 		},
 	);
 }
