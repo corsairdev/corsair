@@ -10,6 +10,35 @@ export const ALLOWED_EXTRA = [
 	'packages/corsair/core/constants.ts',
 	'pnpm-lock.yaml',
 ];
+
+/** Core SDK files a Microsoft Graph plugin PR may touch for subscribe plumbing. */
+const MS_GRAPH_COMPANION_FILES = new Set([
+	'packages/corsair/core/plugins/index.ts',
+	'packages/corsair/core/webhooks/ms-graph-subscribe.ts',
+	'packages/corsair/hub/webhook-endpoint-client.ts',
+	'packages/corsair/oauth/renewal.ts',
+	'packages/corsair/oauth/subscribe-report.ts',
+	'packages/corsair/tests/subscription-renewal.test.ts',
+	'packages/corsair/tests/webhook-endpoint-client.test.ts',
+]);
+
+/** Gate/rule files a plugin PR may touch when updating scope allowances. */
+const GATE_RULE_FILES = new Set([
+	'scripts/pr-review/gate.ts',
+	'scripts/pr-review/gate.test.ts',
+	'scripts/pr-review/pr-scope.ts',
+	'.github/PLUGIN_PR_RULES.md',
+	'greptile.json',
+]);
+
+export function isAllowedExtraFile(file: string): boolean {
+	return (
+		ALLOWED_EXTRA.includes(file) ||
+		MS_GRAPH_COMPANION_FILES.has(file) ||
+		GATE_RULE_FILES.has(file)
+	);
+}
+
 export const ASSERTION_WARN_FLOOR = 5;
 
 /** Mintlify sidebar; `generate:docs` rewrites this with the plugin pages. */
@@ -130,7 +159,7 @@ export function runGate(input: GateInput): GateResult {
 	const outOfScope = input.changedFiles.filter(
 		(f) =>
 			pluginOf(f) === null &&
-			!ALLOWED_EXTRA.includes(f) &&
+			!isAllowedExtraFile(f) &&
 			f !== DOCS_NAV_FILE &&
 			!(plugin && isSamePluginDocs(f, plugin)),
 	);

@@ -84,6 +84,25 @@ test('R1: out-of-scope file fails', () => {
 	assert.ok(r.failures.some((f) => f.rule === 'R1'));
 });
 
+test('R1: MS Graph companion core files pass alongside a Graph plugin', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/teams/subscribe.ts',
+			'packages/teams/subscribe.test.ts',
+			'packages/corsair/core/plugins/index.ts',
+			'packages/corsair/core/webhooks/ms-graph-subscribe.ts',
+			'packages/corsair/hub/webhook-endpoint-client.ts',
+			'packages/corsair/oauth/subscribe-report.ts',
+			'packages/corsair/tests/webhook-endpoint-client.test.ts',
+			'pnpm-lock.yaml',
+		],
+		prBody: goodBody.replace('onepassword', 'teams'),
+	});
+	assert.ok(!r.failures.some((f) => f.rule === 'R1'));
+	assert.equal(r.plugin, 'teams');
+});
+
 test('R1: two plugins in one PR fails', () => {
 	const r = runGate({
 		...goodInput,
