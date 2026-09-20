@@ -432,6 +432,20 @@ export class CorsairToolProvider extends BaseToolProvider {
 			toolkit: opts.toolkit,
 			requestContext: opts.requestContext,
 		});
+		// Discovery only ever exposes `type: 'api'` operations, but resolution
+		// would otherwise invoke whatever dotted path the caller supplies. Refuse
+		// any slug outside the discovered API set so a management/non-API path
+		// (e.g. `manage.disconnect`) cannot be run by passing it as a tool slug.
+		const allowed = new Set(
+			parseOperationPaths(listOperations(this.asInstance(), { type: 'api' })),
+		);
+		for (const slug of opts.toolSlugs) {
+			if (!allowed.has(slug)) {
+				throw new Error(
+					`CorsairToolProvider: '${slug}' is not an exposed API operation.`,
+				);
+			}
+		}
 		const scoped = this.scopedInstance(tenantId);
 		const { createTool } = await import(
 			/* webpackIgnore: true */ /* turbopackIgnore: true */ '@mastra/core/tools'
