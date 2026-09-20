@@ -1,6 +1,6 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { Detect } from './endpoints';
+import { Detect, Text } from './endpoints';
 import {
 	toDetectEventPayload,
 	WinstonaiEndpointInputSchemas,
@@ -33,7 +33,7 @@ describe('Winstonai schema', () => {
 });
 
 describe('Winstonai plugin contract', () => {
-	it('exports a Corsair plugin with api_key auth and the three detect endpoints', () => {
+	it('exports a Corsair plugin with api_key auth and the detect plus compare endpoints', () => {
 		const plugin = winstonai({ key: 'test-api-key' });
 		expect(plugin.id).toBe('winstonai');
 		expect(plugin.schema).toBe(WinstonaiSchema);
@@ -42,10 +42,14 @@ describe('Winstonai plugin contract', () => {
 			'aiText',
 			'plagiarism',
 		]);
+		expect(Object.keys(plugin.endpoints?.text ?? {}).sort()).toEqual([
+			'compare',
+		]);
 		expect(Object.keys(plugin.endpointSchemas ?? {}).sort()).toEqual([
 			'detect.aiImage',
 			'detect.aiText',
 			'detect.plagiarism',
+			'text.compare',
 		]);
 	});
 
@@ -71,6 +75,7 @@ describe('Winstonai input schemas', () => {
 			detectAiText: { text: AI_TEXT },
 			detectPlagiarism: { text: PLAGIARISM_TEXT },
 			detectAiImage: { url: 'https://example.com/image.png' },
+			textCompare: { first_text: 'alpha', second_text: 'beta' },
 		};
 		expect(Object.keys(inputFixtures).sort()).toEqual(
 			Object.keys(WinstonaiEndpointInputSchemas).sort(),
@@ -126,6 +131,14 @@ describe('Winstonai input schemas', () => {
 		expect(
 			WinstonaiEndpointInputSchemas.detectAiImage.safeParse({
 				url: 'not-a-url',
+			}).success,
+		).toBe(false);
+	});
+
+	it('rejects text compare without both texts', () => {
+		expect(
+			WinstonaiEndpointInputSchemas.textCompare.safeParse({
+				first_text: 'only one side',
 			}).success,
 		).toBe(false);
 	});
@@ -213,6 +226,33 @@ describe('Winstonai endpoints', () => {
 		});
 		expect(result.result?.score).toBe(12);
 		expect(result.sources?.[0]?.url).toBe('https://example.com');
+	});
+
+	it('posts text compare to /v2/text-compare without logging the texts', async () => {
+		harness.queue({
+			body: {
+				status: 200,
+				similarity_score: 42,
+				credits_used: 2,
+			},
+		});
+
+		const result = await Text.compare(createContext(), {
+			first_text: 'alpha',
+			second_text: 'beta',
+		});
+		const req = harness.requestAt(0);
+
+		expect(req.method).toBe('POST');
+		expect(req.url).toBe('https://api.gowinston.ai/v2/text-compare');
+		expect(req.body).toEqual({ first_text: 'alpha', second_text: 'beta' });
+		expect(result.similarity_score).toBe(42);
+		expect(logEventFromContext).toHaveBeenCalledWith(
+			expect.anything(),
+			'winstonai.text.compare',
+			{ firstTextLength: 5, secondTextLength: 4 },
+			'completed',
+		);
 	});
 
 	it('posts image detection to /v2/image-detection with url, not image_url', async () => {

@@ -153,28 +153,70 @@ const DetectAiImageResponseSchema = z
 
 export type DetectAiImageResponse = z.infer<typeof DetectAiImageResponseSchema>;
 
+const TextCompareInputSchema = z.object({
+	first_text: z.string().min(1).max(120000),
+	second_text: z.string().min(1).max(120000),
+});
+
+export type TextCompareInput = z.infer<typeof TextCompareInputSchema>;
+
+const TextCompareSegmentSchema = z
+	.object({
+		type: z.string().optional(),
+		word_count: z.number().optional(),
+		index_start: z.number().optional(),
+		length: z.number().optional(),
+	})
+	.loose();
+
+const TextCompareSideSchema = z
+	.object({
+		total_word_count: z.number().optional(),
+		matching_word_count: z.number().optional(),
+		similarity_percentage: z.number().optional(),
+		items: z.array(TextCompareSegmentSchema).optional(),
+	})
+	.loose();
+
+const TextCompareResponseSchema = z
+	.object({
+		status: z.number().optional(),
+		similarity_score: z.number(),
+		first_text: TextCompareSideSchema.optional(),
+		second_text: TextCompareSideSchema.optional(),
+		credits_used: z.number().optional(),
+		credits_remaining: z.number().optional(),
+	})
+	.loose();
+
+export type TextCompareResponse = z.infer<typeof TextCompareResponseSchema>;
+
 export type WinstonaiEndpointInputs = {
 	detectAiText: DetectAiTextInput;
 	detectPlagiarism: DetectPlagiarismInput;
 	detectAiImage: DetectAiImageInput;
+	textCompare: TextCompareInput;
 };
 
 export type WinstonaiEndpointOutputs = {
 	detectAiText: DetectAiTextResponse;
 	detectPlagiarism: DetectPlagiarismResponse;
 	detectAiImage: DetectAiImageResponse;
+	textCompare: TextCompareResponse;
 };
 
 export const WinstonaiEndpointInputSchemas = {
 	detectAiText: DetectAiTextInputSchema,
 	detectPlagiarism: DetectPlagiarismInputSchema,
 	detectAiImage: DetectAiImageInputSchema,
+	textCompare: TextCompareInputSchema,
 } as const;
 
 export const WinstonaiEndpointOutputSchemas = {
 	detectAiText: DetectAiTextResponseSchema,
 	detectPlagiarism: DetectPlagiarismResponseSchema,
 	detectAiImage: DetectAiImageResponseSchema,
+	textCompare: TextCompareResponseSchema,
 } as const;
 
 export function toDetectEventPayload(input: {
