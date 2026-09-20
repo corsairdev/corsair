@@ -42,7 +42,7 @@ function buildInvokeProxy(
 
 // `plugins` typed the client and guarded unknown ids. In cloud mode both are
 // optional: pass them (createCorsair auto-detect) to keep the typed client, or
-// omit them (createCorsairCloud) for a dynamic client whose plugin set lives on
+// omit them (corsairCloud) for a dynamic client whose plugin set lives on
 // the VM — the runtime returns 404 unknown_plugin for a bad id.
 export function buildCloudClient<Plugins extends readonly CorsairPlugin[]>(
 	plugins: Plugins | undefined,

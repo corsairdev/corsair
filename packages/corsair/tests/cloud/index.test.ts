@@ -1,5 +1,5 @@
 import { slack } from '@corsair-dev/slack';
-import { createCorsair, createCorsairCloud } from 'corsair';
+import { corsairCloud, createCorsair } from 'corsair';
 
 describe('createCorsair with a ck_cloud_ key', () => {
 	const originalCloudUrl = process.env.CORSAIR_CLOUD_URL;
@@ -64,13 +64,18 @@ describe('createCorsair with a ck_cloud_ key', () => {
 		expect(out).toEqual({ ts: '1' });
 	});
 
-	it('throws a clear error when no base URL resolves', () => {
+	it('builds a normal (non-cloud) client for a ck_cloud_ key with no resolvable base URL', () => {
+		// This is the hosted runtime's own shape: it IS the cloud VM, so it holds
+		// a ck_cloud_ key but never sets hub.baseUrl/CORSAIR_CLOUD_URL.
 		expect(() =>
 			createCorsair({
 				plugins: [slack()],
-				hub: { projectApiKey: 'ck_cloud_x' },
+				hub: {
+					projectApiKey: 'ck_cloud_x',
+					apiUrl: 'https://auth.corsair.dev',
+				},
 			}),
-		).toThrow(/baseUrl|CORSAIR_CLOUD_URL/);
+		).not.toThrow();
 	});
 
 	it('resolves base URL from CORSAIR_CLOUD_URL when hub.baseUrl is absent', async () => {
@@ -216,7 +221,7 @@ describe('createCorsair with a ck_cloud_ key', () => {
 	});
 });
 
-describe('createCorsairCloud', () => {
+describe('corsairCloud', () => {
 	afterEach(() => jest.restoreAllMocks());
 
 	it('routes a call over HTTP with no plugin list, multi-tenant by default', async () => {
@@ -226,7 +231,7 @@ describe('createCorsairCloud', () => {
 				new Response(JSON.stringify({ data: { ok: true } }), { status: 200 }),
 			);
 
-		const corsair = createCorsairCloud({
+		const corsair = corsairCloud({
 			apiKey: 'ck_cloud_x',
 			url: 'https://vm/p/api/corsair',
 		});
@@ -251,7 +256,7 @@ describe('createCorsairCloud', () => {
 			.mockResolvedValue(
 				new Response(JSON.stringify({ data: {} }), { status: 200 }),
 			);
-		const corsair = createCorsairCloud({
+		const corsair = corsairCloud({
 			apiKey: 'ck_cloud_x',
 			url: 'https://vm/p/api/corsair',
 		});
@@ -261,15 +266,34 @@ describe('createCorsairCloud', () => {
 		).resolves.toBeDefined();
 	});
 
-	it('requires apiKey and url, and rejects a non-loopback http url', () => {
-		expect(() =>
-			createCorsairCloud({ apiKey: '', url: 'https://vm/p' }),
-		).toThrow(/apiKey/);
-		expect(() => createCorsairCloud({ apiKey: 'ck_cloud_x', url: '' })).toThrow(
-			/url/,
+	it('resolves the api.corsair.cloud URL from a ck_cloud_<slug>.<secret> key', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(
+				new Response(JSON.stringify({ data: { ok: true } }), { status: 200 }),
+			);
+		const corsair = corsairCloud({ apiKey: 'ck_cloud_envh.secret123' });
+		await corsair.withTenant('acme').notion.api.pages.searchPage({});
+		const [url] = (globalThis.fetch as jest.Mock).mock.calls[0];
+		expect(url).toBe(
+			'https://api.corsair.cloud/envh/api/corsair/acme/notion/call/pages.searchPage',
 		);
+	});
+
+	it('requires apiKey, a resolvable key or explicit url, and rejects non-loopback http', () => {
+		expect(() => corsairCloud({ apiKey: '' })).toThrow(/apiKey/);
+		// A key with no slug+secret and no url can't resolve a base URL.
+		expect(() => corsairCloud({ apiKey: 'ck_cloud_x' })).toThrow(
+			/resolve|url/i,
+		);
+		// An older slug-less key (base64url secret, no '.') can't resolve either —
+		// it falls through to the same error rather than a wrong URL.
+		expect(() => corsairCloud({ apiKey: 'ck_cloud_abc_def123' })).toThrow(
+			/resolve|url/i,
+		);
+		// An explicit http override is still rejected (bearer token in cleartext).
 		expect(() =>
-			createCorsairCloud({ apiKey: 'ck_cloud_x', url: 'http://evil.example' }),
+			corsairCloud({ apiKey: 'ck_cloud_x', url: 'http://evil.example' }),
 		).toThrow(/https/);
 	});
 
@@ -279,7 +303,7 @@ describe('createCorsairCloud', () => {
 			.mockResolvedValue(
 				new Response(JSON.stringify({ data: {} }), { status: 200 }),
 			);
-		const corsair = createCorsairCloud({
+		const corsair = corsairCloud({
 			apiKey: 'ck_cloud_x',
 			url: 'https://vm/p/api/corsair',
 		});
