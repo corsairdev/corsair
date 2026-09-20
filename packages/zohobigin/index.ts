@@ -143,7 +143,9 @@ type ZohoBiginEndpoint<K extends keyof ZohoBiginEndpointOutputs> =
 	>;
 
 type FlatSchemaEntry = { input?: ZodTypeAny; output?: ZodTypeAny };
+// unknown: endpoint trees mix nested groups and handlers; narrowed by typeof checks.
 type EndpointTree = Record<string, unknown>;
+// unknown: wrappers receive core context/input before Zod parse; output is re-parsed.
 type EndpointHandler = (ctx: unknown, input: unknown) => Promise<unknown>;
 
 function withSchemaValidation<T extends EndpointTree>(
@@ -162,6 +164,7 @@ function withSchemaValidation<T extends EndpointTree>(
 					schema?.input instanceof z.ZodVoid &&
 					input !== null &&
 					typeof input === 'object' &&
+					// unknown: empty object from callers for void inputs; keys checked only.
 					Object.keys(input as Record<string, unknown>).length === 0
 						? undefined
 						: input;

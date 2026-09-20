@@ -16,7 +16,9 @@ const ZOHOBIGIN_API_BASE = 'https://www.zohoapis.com/bigin/v1';
 
 export type ZohoBiginRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	// unknown: request JSON varies by Bigin module/operation; Zod parses at callers.
 	body?: unknown;
+	// unknown: multipart field values are file-or-string and endpoint-specific.
 	formData?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 	headers?: Record<string, string>;
@@ -24,6 +26,10 @@ export type ZohoBiginRequestOptions = {
 	baseUrl?: string;
 };
 
+/**
+ * Callers pass `unknown` for T: Bigin JSON varies by module and is narrowed by
+ * each endpoint's Zod schema before return.
+ */
 export async function makeZohoBiginRequest<T>(
 	endpoint: string,
 	apiKey: string,

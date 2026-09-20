@@ -476,6 +476,7 @@ function endpoint(
 	plugin: ReturnType<typeof zohobigin>,
 	key: string,
 ): (ctx: unknown, input: unknown) => Promise<unknown> {
+	// unknown: plugin.endpoints is a nested tree; we only call functions after typeof.
 	const [group, name] = key.split('.');
 	const node = (plugin.endpoints as Record<string, Record<string, unknown>>)[
 		group ?? ''
@@ -486,6 +487,7 @@ function endpoint(
 }
 
 function jsonResponse(payload: unknown) {
+	// unknown: fixture payloads vary per case; cast is only for fetch Response shape.
 	return {
 		ok: true,
 		status: 200,
