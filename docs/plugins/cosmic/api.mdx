@@ -1,0 +1,1182 @@
+---
+title: API
+description: "API reference for Cosmic: every `cosmic.api.*` operation with input and output types."
+---
+
+Every `cosmic.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Media
+
+### delete
+
+`media.delete`
+
+Delete Media by id
+
+**Risk:** `write`
+
+```ts
+await corsair.cosmic.api.media.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `trigger_webhook` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### find
+
+`media.find`
+
+List Media in a Bucket
+
+**Risk:** `read`
+
+```ts
+await corsair.cosmic.api.media.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `query` | `object` | No | — |
+| `props` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+| `limit` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="media full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  original_name?: string,
+  url?: string,
+  imgix_url?: string,
+  folder?: string,
+  alt_text?: string,
+  width?: number,
+  height?: number,
+  size?: number | string,
+  type?: string,
+  bucket?: string,
+  created_at?: string,
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### findOne
+
+`media.findOne`
+
+Get a single Media item by name
+
+**Risk:** `read`
+
+```ts
+await corsair.cosmic.api.media.findOne({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `props` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="media full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  original_name?: string,
+  url?: string,
+  imgix_url?: string,
+  folder?: string,
+  alt_text?: string,
+  width?: number,
+  height?: number,
+  size?: number | string,
+  type?: string,
+  bucket?: string,
+  created_at?: string,
+  metadata?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insert
+
+`media.insert`
+
+Upload Media to a Bucket
+
+**Risk:** `write`
+
+```ts
+await corsair.cosmic.api.media.insert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `filename` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `data` | `string` | Yes | — |
+| `folder` | `string` | No | — |
+| `alt_text` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `trigger_webhook` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="media full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  original_name?: string,
+  url?: string,
+  imgix_url?: string,
+  folder?: string,
+  alt_text?: string,
+  width?: number,
+  height?: number,
+  size?: number | string,
+  type?: string,
+  bucket?: string,
+  created_at?: string,
+  metadata?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`media.update`
+
+Update Media metadata by id
+
+**Risk:** `write`
+
+```ts
+await corsair.cosmic.api.media.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `folder` | `string` | No | — |
+| `alt_text` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `trigger_webhook` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+## Objects
+
+### batch
+
+`objects.batch`
+
+Run up to 25 Object operations in one request
+
+**Risk:** `write`
+
+```ts
+await corsair.cosmic.api.objects.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `operations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="operations full type">
+
+```ts
+{
+  method: add | edit | delete,
+  object_id?: string,
+  object?: {
+  },
+  trigger_webhook?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="operations full type">
+
+```ts
+{
+  method: string,
+  status: string,
+  object?: {
+  },
+  message?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`objects.delete`
+
+Delete an Object by id
+
+**Risk:** `write`
+
+```ts
+await corsair.cosmic.api.objects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `trigger_webhook` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### find
+
+`objects.find`
+
+List Objects in a Bucket with filtering and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.cosmic.api.objects.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `type` | `string` | No | — |
+| `query` | `object` | No | — |
+| `props` | `string` | No | — |
+| `status` | `published \| draft \| any` | No | — |
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `after` | `string` | No | — |
+| `depth` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objects` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+| `limit` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="objects full type">
+
+```ts
+{
+  id: string,
+  slug?: string,
+  title?: string,
+  type?: string,
+  status?: string,
+  metadata?: {
+  },
+  created_at?: string,
+  modified_at?: string,
+  published_at?: string,
+  bucket?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### findOne
+
+`objects.findOne`
+
+Get a single Object by type and slug
+
+**Risk:** `read`
+
+```ts
+await corsair.cosmic.api.objects.findOne({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `type` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `props` | `string` | No | — |
+| `status` | `published \| draft \| any` | No | — |
+| `depth` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="object full type">
+
+```ts
+{
+  id: string,
+  slug?: string,
+  title?: string,
+  type?: string,
+  status?: string,
+  metadata?: {
+  },
+  created_at?: string,
+  modified_at?: string,
+  published_at?: string,
+  bucket?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getById
+
+`objects.getById`
+
+Get a single Object by id
+
+**Risk:** `read`
+
+```ts
+await corsair.cosmic.api.objects.getById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `props` | `string` | No | — |
+| `status` | `published \| draft \| any` | No | — |
+| `depth` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="object full type">
+
+```ts
+{
+  id: string,
+  slug?: string,
+  title?: string,
+  type?: string,
+  status?: string,
+  metadata?: {
+  },
+  created_at?: string,
+  modified_at?: string,
+  published_at?: string,
+  bucket?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insert
+
+`objects.insert`
+
+Create an Object in a Bucket
+
+**Risk:** `write`
+
+```ts
+await corsair.cosmic.api.objects.insert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `title` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `status` | `published \| draft` | No | — |
+| `metadata` | `object` | No | — |
+| `trigger_webhook` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="object full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  title: string,
+  type: string,
+  status?: string,
+  metadata?: {
+  },
+  created_at?: string,
+  modified_at?: string,
+  published_at?: string,
+  bucket?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`objects.update`
+
+Update an Object by id
+
+**Risk:** `write`
+
+```ts
+await corsair.cosmic.api.objects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `status` | `published \| draft` | No | — |
+| `metadata` | `object` | No | — |
+| `trigger_webhook` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="object full type">
+
+```ts
+{
+  id: string,
+  slug: string,
+  title: string,
+  type: string,
+  status?: string,
+  metadata?: {
+  },
+  created_at?: string,
+  modified_at?: string,
+  published_at?: string,
+  bucket?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Object Types
+
+### delete
+
+`objectTypes.delete`
+
+Delete an Object type by slug
+
+**Risk:** `write`
+
+```ts
+await corsair.cosmic.api.objectTypes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `slug` | `string` | Yes | — |
+| `trigger_webhook` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### find
+
+`objectTypes.find`
+
+List Object types in a Bucket
+
+**Risk:** `read`
+
+```ts
+await corsair.cosmic.api.objectTypes.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_types` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="object_types full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  slug: string,
+  singular?: string,
+  singleton?: boolean,
+  emoji?: string,
+  metafields?: {
+    id?: string,
+    title: string,
+    key: string,
+    type: string,
+    required?: boolean
+  }[],
+  created_at?: string,
+  modified_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### findOne
+
+`objectTypes.findOne`
+
+Get a single Object type by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.cosmic.api.objectTypes.findOne({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_type` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="object_type full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  slug: string,
+  singular?: string,
+  singleton?: boolean,
+  emoji?: string,
+  metafields?: {
+    id?: string,
+    title: string,
+    key: string,
+    type: string,
+    required?: boolean
+  }[],
+  created_at?: string,
+  modified_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insert
+
+`objectTypes.insert`
+
+Create an Object type
+
+**Risk:** `write`
+
+```ts
+await corsair.cosmic.api.objectTypes.insert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `title` | `string` | Yes | — |
+| `slug` | `string` | No | — |
+| `singular` | `string` | No | — |
+| `singleton` | `boolean` | No | — |
+| `emoji` | `string` | No | — |
+| `metafields` | `object[]` | No | — |
+| `localization` | `boolean` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metafields full type">
+
+```ts
+{
+  id?: string,
+  title: string,
+  key: string,
+  type: string,
+  required?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  slug_field?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_type` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="object_type full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  slug: string,
+  singular?: string,
+  singleton?: boolean,
+  emoji?: string,
+  metafields?: {
+    id?: string,
+    title: string,
+    key: string,
+    type: string,
+    required?: boolean
+  }[],
+  created_at?: string,
+  modified_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`objectTypes.update`
+
+Update an Object type by slug
+
+**Risk:** `write`
+
+```ts
+await corsair.cosmic.api.objectTypes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `slug` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `singular` | `string` | No | — |
+| `singleton` | `boolean` | No | — |
+| `emoji` | `string` | No | — |
+| `metafields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="metafields full type">
+
+```ts
+{
+  id?: string,
+  title: string,
+  key: string,
+  type: string,
+  required?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object_type` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="object_type full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  slug: string,
+  singular?: string,
+  singleton?: boolean,
+  emoji?: string,
+  metafields?: {
+    id?: string,
+    title: string,
+    key: string,
+    type: string,
+    required?: boolean
+  }[],
+  created_at?: string,
+  modified_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Revisions
+
+### find
+
+`revisions.find`
+
+List Revisions for an Object
+
+**Risk:** `read`
+
+```ts
+await corsair.cosmic.api.revisions.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `objectId` | `string` | Yes | — |
+| `props` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `sort` | `created_at \| -created_at` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `revisions` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+| `limit` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="revisions full type">
+
+```ts
+{
+  id: string,
+  object_id: string,
+  title: string,
+  slug: string,
+  status?: string,
+  metadata?: {
+  },
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### findOne
+
+`revisions.findOne`
+
+Get a single Revision by id
+
+**Risk:** `read`
+
+```ts
+await corsair.cosmic.api.revisions.findOne({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `objectId` | `string` | Yes | — |
+| `revisionId` | `string` | Yes | — |
+| `props` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `revision` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="revision full type">
+
+```ts
+{
+  id: string,
+  object_id: string,
+  title: string,
+  slug: string,
+  status?: string,
+  metadata?: {
+  },
+  created_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insert
+
+`revisions.insert`
+
+Add a draft Revision to an Object
+
+**Risk:** `write`
+
+```ts
+await corsair.cosmic.api.revisions.insert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bucketSlug` | `string` | No | — |
+| `objectId` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `trigger_webhook` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `revision` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="revision full type">
+
+```ts
+{
+  id: string,
+  object_id: string,
+  title: string,
+  slug: string,
+  status?: string,
+  metadata?: {
+  },
+  created_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

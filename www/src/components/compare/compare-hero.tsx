@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 import { PlusCorner } from '@/components/landing/icons';
 
 export function CompareHero({

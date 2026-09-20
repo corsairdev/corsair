@@ -12,7 +12,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type { GithubEndpointInputs, GithubEndpointOutputs } from './endpoints';
 import {
@@ -333,6 +333,7 @@ export type GithubEndpoints = {
 	discussionsList: GithubEndpoint<'discussionsList'>;
 	discussionsGet: GithubEndpoint<'discussionsGet'>;
 	forksList: GithubEndpoint<'forksList'>;
+	forksCreate: GithubEndpoint<'forksCreate'>;
 	commentsList: GithubEndpoint<'commentsList'>;
 	commentsListForIssue: GithubEndpoint<'commentsListForIssue'>;
 	commentsGet: GithubEndpoint<'commentsGet'>;
@@ -660,6 +661,7 @@ const githubEndpointsNested = {
 	},
 	forks: {
 		list: ForksEndpoints.list,
+		create: ForksEndpoints.create,
 	},
 	comments: {
 		list: CommentsEndpoints.list,
@@ -846,6 +848,10 @@ export const githubEndpointSchemas = {
 	'forks.list': {
 		input: GithubEndpointInputSchemas.forksList,
 		output: GithubEndpointOutputSchemas.forksList,
+	},
+	'forks.create': {
+		input: GithubEndpointInputSchemas.forksCreate,
+		output: GithubEndpointOutputSchemas.forksCreate,
 	},
 	'comments.list': {
 		input: GithubEndpointInputSchemas.commentsList,
@@ -1751,6 +1757,10 @@ const githubEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List forks of a repository',
 	},
+	'forks.create': {
+		riskLevel: 'write',
+		description: 'Create a fork of a repository',
+	},
 	'comments.list': {
 		riskLevel: 'read',
 		description: 'List all comments in a repository',
@@ -1928,13 +1938,10 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 
 					return res;
 				} else if (ctx.authType === 'oauth_2') {
-					const res = await ctx.keys.get_access_token();
-
-					if (!res) {
-						throw new AuthMissingError('github', 'oauth_2');
-					}
-
-					return res;
+					return getOAuthAccessToken(ctx, {
+						plugin: 'github',
+						tokenUrl: 'https://github.com/login/oauth/access_token',
+					});
 				} else if (ctx.authType === 'managed') {
 					if (!ctx.hub) {
 						throw new Error(

@@ -7,9 +7,11 @@
     "test:claude-sdk": "tsx scripts/test-claude-sdk.ts",
     "test:claude-api": "tsx scripts/test-claude-api.ts",
     "test:openai-agents": "tsx scripts/test-openai-agents.ts",
+    "test:mastra": "tsx scripts/test-mastra.ts",
     "server": "tsx server.ts"
   },
   "dependencies": {
+    "@ai-sdk/openai-compatible": "^3.0.43",
     "@anthropic-ai/claude-agent-sdk": "^0.2.52",
     "@anthropic-ai/sdk": "^0.78.0",
     "@corsair-dev/github": "workspace:^",
@@ -18,6 +20,7 @@
     "@corsair-dev/linear": "workspace:^",
     "@corsair-dev/mcp": "workspace:*",
     "@corsair-dev/slack": "workspace:^",
+    "@mastra/core": "^1.64.0",
     "@openai/agents": "^0.6.0",
     "better-sqlite3": "^11.0.0",
     "corsair": "workspace:*",
