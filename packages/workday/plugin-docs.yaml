@@ -1,14 +1,9 @@
-# Overrides for scripts/generate-plugin-docs.ts
 displayName: Workday
-description: "Workday plugin for Corsair"
+description: Enterprise HR and finance cloud suite for workers, payroll, and organizational data.
 recommendedAuth: oauth_2
-
 factory:
-  note: >
-    Pass Workday’s **API hostname** and **tenant name** too — they go in Workday
-    URLs (`https://{host}/ccx/oauth2/{tenant}/…`). That’s not the same as
-    `corsair.withTenant()` ([Multi-tenancy](/concepts/multi-tenancy)). See Workday’s
-    docs: [token endpoint shape](https://doc.workday.com/adaptive-planning/en-us/workday-adaptive-planning-documentation/integration/managing-data-integration/api-documentation/understanding-the-adaptive-planning-rest-api/bit1623710301264.html).
+  note: |
+    Pass Workday’s **API hostname** and **tenant name** too — they go in Workday URLs (`https://{host}/ccx/oauth2/{tenant}/…`). That’s not the same as `corsair.withTenant()` ([Multi-tenancy](/concepts/multi-tenancy)). See Workday’s docs: [token endpoint shape](https://doc.workday.com/adaptive-planning/en-us/workday-adaptive-planning-documentation/integration/managing-data-integration/api-documentation/understanding-the-adaptive-planning-rest-api/bit1623710301264.html).
   options:
     host: wd2-impl-services1.workday.com
     tenant: acme
