@@ -9,6 +9,9 @@ import { z } from 'zod';
 export const HookdeckWebhookPayloadSchema = z.object({
 	type: z.string(),
 	created_at: z.string(),
+	// `z.unknown()` because webhook `data` carries provider-defined arbitrary
+	// JSON; the envelope (type/created_at) is validated and consumers narrow
+	// `data` per event type instead of assuming a shape here.
 	data: z.record(z.string(), z.unknown()),
 });
 
@@ -31,10 +34,20 @@ export type HookdeckWebhookOutputs = {
 	example: ExampleEvent;
 };
 
+// `body: unknown` because raw webhook bodies arrive as untyped transport
+// data (string or parsed JSON); callers must pass through this runtime
+// narrowing before reading any property. The `Record<string, unknown>`
+// return values are justified the same way: arbitrary provider JSON that is
+// only read after the non-null, non-array object guards below.
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
-			const parsed = JSON.parse(body);
+			// Justification: JSON.parse returns `any` by definition; typing
+			// it as `unknown` forces the runtime narrowing below.
+			const parsed: unknown = JSON.parse(body);
+			// Narrow assertion: safe because the guard above confirms a
+			// non-null, non-array object; no better type is practical for
+			// arbitrary provider JSON.
 			return parsed !== null &&
 				typeof parsed === 'object' &&
 				!Array.isArray(parsed)
@@ -44,6 +57,8 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 			return null;
 		}
 	}
+	// Narrow assertion: safe because the guard confirms a non-null, non-array
+	// object; no better type is practical for arbitrary provider JSON.
 	return body !== null && typeof body === 'object' && !Array.isArray(body)
 		? (body as Record<string, unknown>)
 		: null;

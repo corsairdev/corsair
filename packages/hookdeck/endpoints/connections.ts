@@ -11,6 +11,9 @@ export const connectionsList: HookdeckEndpoints['connectionsList'] = async (
 	input,
 ) => {
 	const parsedInput = HookdeckEndpointInputSchemas.connectionsList.parse(input);
+	// `unknown` because the raw HTTP response is unvalidated JSON; it is
+	// immediately narrowed by the zod output schema below, so no unvalidated
+	// data escapes this handler.
 	const raw = await makeHookdeckRequest<unknown>('connections', ctx.key, {
 		method: 'GET',
 		query: { ...parsedInput },
@@ -32,6 +35,9 @@ export const connectionsCreate: HookdeckEndpoints['connectionsCreate'] = async (
 ) => {
 	const parsedInput =
 		HookdeckEndpointInputSchemas.connectionsCreate.parse(input);
+	// `unknown` because the raw HTTP response is unvalidated JSON; it is
+	// immediately narrowed by the zod output schema below, so no unvalidated
+	// data escapes this handler.
 	const raw = await makeHookdeckRequest<unknown>('connections', ctx.key, {
 		method: 'POST',
 		body: { ...parsedInput },
@@ -52,6 +58,9 @@ export const connectionsGet: HookdeckEndpoints['connectionsGet'] = async (
 	input,
 ) => {
 	const parsedInput = HookdeckEndpointInputSchemas.connectionsGet.parse(input);
+	// `unknown` because the raw HTTP response is unvalidated JSON; it is
+	// immediately narrowed by the zod output schema below, so no unvalidated
+	// data escapes this handler.
 	const raw = await makeHookdeckRequest<unknown>(
 		`connections/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,
@@ -75,6 +84,9 @@ export const connectionsUpdate: HookdeckEndpoints['connectionsUpdate'] = async (
 	const parsedInput =
 		HookdeckEndpointInputSchemas.connectionsUpdate.parse(input);
 	const { id, ...body } = parsedInput;
+	// `unknown` because the raw HTTP response is unvalidated JSON; it is
+	// immediately narrowed by the zod output schema below, so no unvalidated
+	// data escapes this handler.
 	const raw = await makeHookdeckRequest<unknown>(
 		`connections/${encodeURIComponent(id)}`,
 		ctx.key,
@@ -100,6 +112,9 @@ export const connectionsDelete: HookdeckEndpoints['connectionsDelete'] = async (
 ) => {
 	const parsedInput =
 		HookdeckEndpointInputSchemas.connectionsDelete.parse(input);
+	// `unknown` because the raw HTTP response is unvalidated JSON; it is
+	// immediately narrowed by the zod output schema below, so no unvalidated
+	// data escapes this handler.
 	const raw = await makeHookdeckRequest<unknown>(
 		`connections/${encodeURIComponent(parsedInput.id)}`,
 		ctx.key,

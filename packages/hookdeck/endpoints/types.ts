@@ -22,7 +22,8 @@ const ConnectionSchema = z.object({
 });
 
 const ConnectionsListInputSchema = z.object({
-	limit: z.number().int().min(0).max(255).optional(),
+	// max 250 per Hookdeck paging docs (https://hookdeck.com/docs/api#aging).
+	limit: z.number().int().min(0).max(250).optional(),
 	next: z.string().optional(),
 	prev: z.string().optional(),
 	order_by: z.string().optional(),

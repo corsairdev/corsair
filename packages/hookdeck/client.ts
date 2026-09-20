@@ -8,6 +8,10 @@ export async function makeHookdeckRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// `unknown` values because Hookdeck request bodies are arbitrary JSON
+		// objects (connection create/update payloads differ per call); the
+		// caller passes a zod-validated input, so values are JSON-compatible
+		// by the time they reach the HTTP layer.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
