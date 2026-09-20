@@ -1,4 +1,8 @@
-import type { ConnectLink } from '../management/types';
+import type {
+	ConnectLink,
+	PermissionLookupInput,
+	PermissionRecord,
+} from '../management/types';
 import type { CloudTransport } from './http';
 import { cloudRequest } from './http';
 import { CLOUD_ROUTES } from './routes';
@@ -51,5 +55,25 @@ export function buildCloudManagement(transport: CloudTransport) {
 		},
 		disconnect: (input: { tenantId: string; plugin: string }) =>
 			cloudRequest(transport, 'POST', CLOUD_ROUTES.disconnect, input),
+		permissions: {
+			// By id is the admin lookup (GET /permissions/:id); by token is the
+			// public approval-page lookup (POST, so the token never lands in a URL).
+			get: (input: PermissionLookupInput) =>
+				'id' in input
+					? cloudRequest<PermissionRecord>(
+							transport,
+							'GET',
+							CLOUD_ROUTES.permission.replace(
+								':id',
+								encodeURIComponent(input.id),
+							),
+						)
+					: cloudRequest<PermissionRecord>(
+							transport,
+							'POST',
+							CLOUD_ROUTES.permissionLookup,
+							{ token: input.token },
+						),
+		},
 	};
 }
