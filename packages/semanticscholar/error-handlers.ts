@@ -29,13 +29,21 @@ export const errorHandlers = {
 
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (statusOf(error) === 401 || statusOf(error) === 403) return true;
+			if (statusOf(error) === 401) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('unauthorized') ||
 				msg.includes('forbidden') ||
 				msg.includes('api key')
 			);
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+
+	PERMISSION_ERROR: {
+		match: (error: Error) => {
+			if (statusOf(error) === 403) return true;
+			return error.message.toLowerCase().includes('forbidden');
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
