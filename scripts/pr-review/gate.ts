@@ -24,6 +24,7 @@ const WEBHOOK_ROUTING_FILES = new Set([
 	'packages/corsair/tests/oauth-callback-params.test.ts',
 	'packages/corsair/tests/slack-tenant-matcher.test.ts',
 	'packages/corsair/tests/tenant-links.test.ts',
+	'packages/corsair/tests/byo-oauth-token-delivery.test.ts',
 	'scripts/pr-review/gate.ts',
 	'scripts/pr-review/gate.test.ts',
 	'scripts/pr-review/pr-scope.ts',
