@@ -70,6 +70,35 @@ describe('teamsSubscribe (BYO)', () => {
 		expect(calls.some((c) => c.url.endsWith('/me'))).toBe(false);
 	});
 
+	it('returns null when only one channel identifier is configured', async () => {
+		const calls: Array<{ url: string; init: any }> = [];
+		global.fetch = (async (url: unknown, init: any) => {
+			calls.push({ url: String(url), init });
+			if ((init?.method ?? 'GET') === 'GET') {
+				if (String(url).endsWith('/me')) {
+					return { ok: true, json: async () => ({ id: 'user-1' }) };
+				}
+				return { ok: true, json: async () => ({ value: [] }) };
+			}
+			return { ok: true, json: async () => ({ id: 'sub-teams' }) };
+		}) as unknown as typeof fetch;
+
+		const ctx = {
+			keys: {
+				get_access_token: async () => 'tok',
+				get_channel_team_id: async () => 'team-1',
+				get_channel_id: async () => null,
+				set_webhook_signature: async () => {},
+			},
+		};
+		expect(
+			await teamsSubscribe(ctx, {
+				webhookUrl: 'https://hub.example/webhooks/uuid',
+			}),
+		).toBeNull();
+		expect(calls.some((c) => c.init?.method === 'POST')).toBe(false);
+	});
+
 	it('returns null when the user id cannot be resolved', async () => {
 		global.fetch = (async () => ({
 			ok: false,

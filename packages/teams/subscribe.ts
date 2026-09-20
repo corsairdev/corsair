@@ -25,6 +25,12 @@ export async function teamsSubscribe(
 	const channelKeys = ctx.keys as ChannelSubscriptionKeys;
 	const teamId = await channelKeys.get_channel_team_id?.();
 	const channelId = await channelKeys.get_channel_id?.();
+	const hasTeamId = Boolean(teamId);
+	const hasChannelId = Boolean(channelId);
+	if (hasTeamId !== hasChannelId) {
+		// Partial channel config must not fall back to chat messages.
+		return null;
+	}
 	if (teamId && channelId) {
 		return msGraphSubscribe(ctx, {
 			webhookUrl: input.webhookUrl,
