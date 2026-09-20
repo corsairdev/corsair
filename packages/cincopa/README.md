@@ -15,6 +15,7 @@ pnpm add @corsair-dev/cincopa
 | `asset.abortUploadFromUrl` | `cincopa.api.asset.abortUploadFromUrl` | `write` | Abort an ongoing asset upload-in-progress |
 | `asset.getUploadFromUrlStatus` | `cincopa.api.asset.getUploadFromUrlStatus` | `read` | Check the status of an asset upload initiated via URL |
 | `asset.uploadFromUrl` | `cincopa.api.asset.uploadFromUrl` | `write` | Upload a new asset directly from a provided external URL |
+| `gallery.list` | `cincopa.api.gallery.list` | `read` | List galleries with pagination, search, and tag filtering |
 | `general.getUploadIframe` | `cincopa.api.general.getUploadIframe` | `read` | Get an embeddable upload iframe URL for a gallery |
 | `general.ping` | `cincopa.api.general.ping` | `read` | Validate API connection |
 

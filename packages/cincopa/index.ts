@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Assets, General } from './endpoints';
+import { Assets, Gallery, General } from './endpoints';
 import type {
 	CincopaEndpointInputs,
 	CincopaEndpointOutputs,
@@ -51,6 +51,7 @@ type CincopaEndpoint<K extends keyof CincopaEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type CincopaEndpoints = {
+	galleryList: CincopaEndpoint<'galleryList'>;
 	ping: CincopaEndpoint<'ping'>;
 	uploadFromUrl: CincopaEndpoint<'uploadFromUrl'>;
 	getUploadFromUrlStatus: CincopaEndpoint<'getUploadFromUrlStatus'>;
@@ -59,6 +60,9 @@ export type CincopaEndpoints = {
 };
 
 const cincopaEndpointsNested = {
+	gallery: {
+		list: Gallery.list,
+	},
 	general: {
 		ping: General.ping,
 		getUploadIframe: General.getUploadIframe,
@@ -71,6 +75,10 @@ const cincopaEndpointsNested = {
 } as const;
 
 export const cincopaEndpointSchemas = {
+	'gallery.list': {
+		input: CincopaEndpointInputSchemas.galleryList,
+		output: CincopaEndpointOutputSchemas.galleryList,
+	},
 	'general.ping': {
 		input: CincopaEndpointInputSchemas.ping,
 		output: CincopaEndpointOutputSchemas.ping,
@@ -98,6 +106,10 @@ export const cincopaEndpointSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const cincopaEndpointMeta = {
+	'gallery.list': {
+		riskLevel: 'read',
+		description: 'List galleries with pagination, search, and tag filtering',
+	},
 	'general.ping': {
 		riskLevel: 'read',
 		description: 'Validate API connection',
@@ -184,4 +196,6 @@ export function cincopa<const T extends CincopaPluginOptions>(
 export type {
 	CincopaEndpointInputs,
 	CincopaEndpointOutputs,
+	GalleryListInput,
+	GalleryListResponse,
 } from './endpoints/types';

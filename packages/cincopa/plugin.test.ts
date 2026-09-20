@@ -21,7 +21,11 @@ describe('Cincopa plugin', () => {
 		expect(plugin.options?.authType).toBe('api_key');
 	});
 
-	it('registers endpoint schemas for all 5 Cincopa endpoints', () => {
+	it('registers endpoint schemas for all Cincopa endpoints', () => {
+		expect(cincopaEndpointSchemas['gallery.list']).toBeDefined();
+		expect(cincopaEndpointSchemas['gallery.list'].input).toBeDefined();
+		expect(cincopaEndpointSchemas['gallery.list'].output).toBeDefined();
+
 		expect(cincopaEndpointSchemas['general.ping']).toBeDefined();
 		expect(cincopaEndpointSchemas['general.ping'].input).toBeDefined();
 		expect(cincopaEndpointSchemas['general.ping'].output).toBeDefined();
