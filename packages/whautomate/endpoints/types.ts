@@ -25,8 +25,7 @@ const AddContactInputSchema = z.object({
 	stage: z.string().optional(),
 	notes: z.string().optional(),
 	tags: z.array(z.string()).optional(),
-	// Using z.unknown() because custom field values are account-defined json;
-	// a stricter union is infeasible without coupling to each tenant schema
+	// unknown: custom field values are account-defined JSON
 	customFields: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -149,8 +148,7 @@ const ContactSchema = z
 		stage: z.string().nullable().optional(),
 		notes: z.string().nullable().optional(),
 		tags: z.array(z.string()).optional(),
-		// Using z.unknown() because custom field values are account-defined json;
-		// a stricter union is infeasible without coupling to each tenant schema
+		// unknown: custom field values are account-defined JSON
 		customFields: z.record(z.string(), z.unknown()).nullable().optional(),
 		createdAt: z.string().optional(),
 		updatedAt: z.string().optional(),
@@ -222,8 +220,7 @@ const MessageSchema = z
 	.object({
 		id: z.string(),
 		contactId: z.string().optional(),
-		// Using z.unknown() because nested contact objects vary by channel;
-		// a stricter type is infeasible without coupling to each channel payload
+		// unknown: nested contact objects vary by channel
 		contact: z.unknown().optional(),
 		channel: z.string().optional(),
 		isIncoming: z.boolean().optional(),

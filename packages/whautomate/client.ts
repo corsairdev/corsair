@@ -28,8 +28,7 @@ export class WhautomateAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
-		// error bodies vary per endpoint and arrive as parsed json from
-		// corsair/http; a union of those shapes is not maintainable
+		// unknown: error bodies vary per endpoint and arrive as parsed json from corsair/http
 		public readonly body?: unknown,
 		public readonly status?: number,
 		public readonly retryAfter?: number,
@@ -133,7 +132,7 @@ export function resolveWhautomateBase(apiHost: string): string {
 	return `${origin}${path}/v1`;
 }
 
-// provider error payloads are untyped json; a dedicated union is not practical
+// unknown: provider error payloads are untyped json; a dedicated union is not practical
 function apiErrorMessage(body: unknown, fallback: string): string {
 	if (typeof body === 'string' && body) {
 		return body;
@@ -141,14 +140,14 @@ function apiErrorMessage(body: unknown, fallback: string): string {
 	if (!body || typeof body !== 'object') {
 		return fallback;
 	}
-	// object check above already excluded null; error payloads are
-	// untyped json so a dedicated union is not practical
+	// unknown: error payloads are untyped json so a dedicated union is not practical
 	const record = body as Record<string, unknown>;
 	const nested = record.error;
 	if (typeof nested === 'string' && nested) {
 		return nested;
 	}
 	if (nested && typeof nested === 'object') {
+		// unknown: nested error payloads are untyped json
 		const nestedRecord = nested as Record<string, unknown>;
 		if (typeof nestedRecord.message === 'string' && nestedRecord.message) {
 			return nestedRecord.message;
@@ -181,8 +180,7 @@ export async function makeWhautomateRequest<T>(
 	outputSchema: import('zod').ZodType<T>,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		// bodies are operation-specific json; the whautomate api validates
-		// their shape, so they stay a json bag here
+		// unknown: bodies are operation-specific json; the whautomate api validates upstream
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},

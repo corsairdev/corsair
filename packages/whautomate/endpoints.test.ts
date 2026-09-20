@@ -58,9 +58,7 @@ function lastCall() {
 	};
 }
 
-// unused mock-call fields stay unknown: tests assert a few keys only, and
-// each request body has a different operation-specific shape, so a
-// stricter shared union is not practical
+// unknown: unused mock-call fields stay unknown in test fixtures
 type Unused = unknown;
 
 function expectRequest(expected: {

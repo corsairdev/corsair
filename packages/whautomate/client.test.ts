@@ -15,8 +15,7 @@ const mockRequest = request as jest.Mock;
 
 const schema = z.object({ ok: z.boolean() });
 
-// unused mock-call slots and unasserted json stay unknown: jest records
-// the full request() tuple, and a complete OpenAPIConfig union is not practical
+// unknown: unused mock-call slots and unasserted json stay unknown in test fixtures
 type Unused = unknown;
 
 type RequestConfig = {
