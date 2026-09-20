@@ -55,7 +55,12 @@ const mockLogEvent = logEventFromContext as jest.MockedFunction<
 	typeof logEventFromContext
 >;
 
-function createMockContext(apiKey = 'test-token', tenantId = 'tenant-123') {
+import type { XeroContext } from './index';
+
+function createMockContext(
+	apiKey = 'test-token',
+	tenantId = 'tenant-123',
+): XeroContext {
 	const upsertByEntityId = jest.fn().mockResolvedValue({ id: 'db-entity-1' });
 	return {
 		key: apiKey,
@@ -74,7 +79,7 @@ function createMockContext(apiKey = 'test-token', tenantId = 'tenant-123') {
 			creditNotes: { upsertByEntityId },
 			quotes: { upsertByEntityId },
 		},
-	} as any;
+	} as unknown as XeroContext;
 }
 
 describe('Xero Schema Tests', () => {
@@ -94,9 +99,9 @@ describe('Xero Schema Tests', () => {
 			'purchaseOrders',
 			'creditNotes',
 			'quotes',
-		];
+		] as const;
 		for (const key of expectedEntities) {
-			expect((XeroSchema.entities as any)[key]).toBeDefined();
+			expect(XeroSchema.entities[key]).toBeDefined();
 		}
 	});
 
@@ -669,11 +674,23 @@ describe('Xero 0-Trigger / Zero Webhook Plugin Configuration', () => {
 
 	it('configures empty webhooks and default matchers for 0-trigger plugin', () => {
 		expect(plugin.webhooks).toEqual({});
-		expect(plugin.pluginWebhookMatcher?.({ headers: {} } as any)).toBe(false);
 		expect(
-			plugin.pluginTenantWebhookMatcher?.({ headers: {} } as any),
+			plugin.pluginWebhookMatcher?.({
+				headers: {},
+				body: null,
+			}),
+		).toBe(false);
+		expect(
+			plugin.pluginTenantWebhookMatcher?.({
+				headers: {},
+				body: null,
+			}),
 		).toBeNull();
-		expect(plugin.oauthWebhookTenantLinkResolver?.({} as any)).toBeNull();
+		expect(
+			plugin.oauthWebhookTenantLinkResolver?.({
+				token: { access_token: 'test' },
+			}),
+		).toBeNull();
 	});
 
 	it('validates all supported BankTransaction types in schema', () => {
@@ -713,7 +730,7 @@ describe('Xero 0-Trigger / Zero Webhook Plugin Configuration', () => {
 });
 
 describe('Xero Endpoint Behavioral Execution Tests (All 39 Endpoints)', () => {
-	let ctx: any;
+	let ctx: XeroContext;
 
 	beforeEach(() => {
 		jest.clearAllMocks();
@@ -1375,8 +1392,10 @@ describe('Xero Endpoint Behavioral Execution Tests (All 39 Endpoints)', () => {
 			},
 			'completed',
 		);
-		const loggedPayload = mockLogEvent.mock.calls[0]?.[2] as any;
-		expect(loggedPayload.fileContent).toBeUndefined();
+		const loggedPayload = mockLogEvent.mock.calls[0]?.[2] as
+			| Record<string, unknown>
+			| undefined;
+		expect(loggedPayload?.fileContent).toBeUndefined();
 	});
 
 	// 34. CreditNotes.list
