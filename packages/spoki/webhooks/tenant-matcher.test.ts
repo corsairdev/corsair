@@ -152,9 +152,6 @@ describe('matchSpokiPluginWebhook', () => {
 });
 
 describe('matchSpokiTenantWebhook', () => {
-	// The account header travels outside Spoki's signature envelope, so no
-	// tenant read from a delivery can be authenticated. The matcher claims
-	// nothing; authenticity is enforced by the webhook handler instead.
 	it('returns null when no webhook secret is configured', () => {
 		expect(
 			matchSpokiTenantWebhook(
@@ -170,13 +167,21 @@ describe('matchSpokiTenantWebhook', () => {
 		).toBeNull();
 	});
 
-	it('returns null when the account header is missing', () => {
+	it('returns null when the account header and body have no account id', () => {
 		expect(
-			matchSpokiTenantWebhook({ headers: {}, body: RAW_BODY }, SECRET),
+			matchSpokiTenantWebhook(
+				{
+					headers: {
+						'x-spoki-signature': sign(RAW_BODY, Math.floor(Date.now() / 1000)),
+					},
+					body: RAW_BODY,
+				},
+				SECRET,
+			),
 		).toBeNull();
 	});
 
-	it('claims no tenant even for a fully valid signed delivery', () => {
+	it('matches a valid signed delivery using x-spoki-account', () => {
 		expect(
 			matchSpokiTenantWebhook(
 				{
@@ -188,25 +193,51 @@ describe('matchSpokiTenantWebhook', () => {
 				},
 				SECRET,
 			),
-		).toBeNull();
+		).toEqual({ linkType: 'account_id', externalId: '13128334' });
 	});
 
-	it('ignores a replayed delivery with a swapped account header', () => {
+	it('prefers the signed body account id over the header', () => {
+		const body = JSON.stringify({
+			version: 1,
+			event: 'message.inbound',
+			account_id: 13128334,
+			data: { text: 'Thanks' },
+		});
+		expect(
+			matchSpokiTenantWebhook(
+				{
+					headers: {
+						'x-spoki-account': '13128334',
+						'x-spoki-signature': sign(body, Math.floor(Date.now() / 1000)),
+					},
+					body,
+				},
+				SECRET,
+			),
+		).toEqual({ linkType: 'account_id', externalId: '13128334' });
+	});
+
+	it('rejects a valid signature when body and header account ids differ', () => {
+		const body = JSON.stringify({
+			version: 1,
+			event: 'message.inbound',
+			account_id: 13128334,
+		});
 		expect(
 			matchSpokiTenantWebhook(
 				{
 					headers: {
 						'x-spoki-account': '999',
-						'x-spoki-signature': sign(RAW_BODY, Math.floor(Date.now() / 1000)),
+						'x-spoki-signature': sign(body, Math.floor(Date.now() / 1000)),
 					},
-					body: RAW_BODY,
+					body,
 				},
 				SECRET,
 			),
 		).toBeNull();
 	});
 
-	it('claims no tenant for parsed bodies either', () => {
+	it('matches parsed JSON bodies after signature fallback', () => {
 		expect(
 			matchSpokiTenantWebhook(
 				{
@@ -218,7 +249,7 @@ describe('matchSpokiTenantWebhook', () => {
 				},
 				SECRET,
 			),
-		).toBeNull();
+		).toEqual({ linkType: 'account_id', externalId: '13128334' });
 	});
 
 	it('rejects forged parsed-body deliveries with a fake signature', () => {
@@ -236,7 +267,7 @@ describe('matchSpokiTenantWebhook', () => {
 		).toBeNull();
 	});
 
-	it('claims no tenant over a Buffer body either', () => {
+	it('matches a Buffer body with a valid signature', () => {
 		expect(
 			matchSpokiTenantWebhook(
 				{
@@ -248,7 +279,7 @@ describe('matchSpokiTenantWebhook', () => {
 				},
 				SECRET,
 			),
-		).toBeNull();
+		).toEqual({ linkType: 'account_id', externalId: '13128334' });
 	});
 });
 

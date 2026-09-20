@@ -13,22 +13,18 @@ import crypto from 'crypto';
  * `X-SPOKI-HASH` header cannot be verified and never matches on its own.
  *
  * Security split (matchers route, the handler enforces):
- * - The HMAC covers only `<timestamp>.<raw body>`; the `x-spoki-account`
- *   header travels outside the signed envelope, so no tenant identity read
- *   from it can be authenticated — replaying a valid delivery with a swapped
- *   account header would otherwise select an arbitrary tenant. The tenant
- *   matcher therefore claims nothing and always returns null (same as the
- *   fireflies/amplitude plugins); tenant attribution comes from the
- *   connection that configured the webhook, not from delivery headers.
+ * - The HMAC covers only `<timestamp>.<raw body>`; `x-spoki-account` is
+ *   outside that envelope. The tenant matcher therefore verifies the
+ *   signature first (byte-exact rawBody, then compact / trailing LF/CRLF /
+ *   2-space pretty fallbacks), prefers an account id from the signed body,
+ *   and only then falls back to `x-spoki-account`. A body/header mismatch
+ *   is rejected. Unsigned or invalid deliveries match no tenant.
  * - The plugin matcher only routes ("looks like Spoki, and a secret is
  *   configured to verify it with"). It makes no authenticity claim, so it
  *   works with the parsed bodies the standard webhook flow hands to
  *   matchers. Authenticity and freshness are enforced in the registered
- *   `spokiEvent` handler via verifySpokiWebhookRequest: byte-exact
- *   request.rawBody first, then the common re-serializations (compact,
- *   trailing LF/CRLF, 2-space pretty) for runtimes that parsed the JSON
- *   first; anything else gets a 401. Without a configured webhook secret
- *   nothing routes.
+ *   `spokiEvent` handler via verifySpokiWebhookRequest. Without a configured
+ *   webhook secret nothing routes.
  */
 
 const SIGNATURE_TOLERANCE_SECONDS = 300;
@@ -167,12 +163,62 @@ export function matchSpokiPluginWebhook(
 	return getHeader(request.headers ?? {}, 'x-spoki-signature') !== undefined;
 }
 
+function webhookRequestFromRaw(
+	request: RawWebhookRequest,
+): WebhookRequest<unknown> {
+	const body = request.body;
+	if (typeof body === 'string') {
+		let payload: unknown = body;
+		try {
+			payload = JSON.parse(body);
+		} catch {
+			// keep the raw string
+		}
+		return { payload, headers: request.headers, rawBody: body };
+	}
+	if (typeof Buffer !== 'undefined' && Buffer.isBuffer(body)) {
+		const rawBody = body.toString('utf8');
+		let payload: unknown = rawBody;
+		try {
+			payload = JSON.parse(rawBody);
+		} catch {
+			// keep the raw string
+		}
+		return { payload, headers: request.headers, rawBody };
+	}
+	return { payload: body, headers: request.headers };
+}
+
+function accountFromPayload(payload: unknown): string | undefined {
+	if (!payload || typeof payload !== 'object') return undefined;
+	const rec = payload as Record<string, unknown>;
+	const data =
+		rec.data && typeof rec.data === 'object'
+			? (rec.data as Record<string, unknown>)
+			: undefined;
+	const value =
+		rec.account_id ?? rec.account ?? data?.account_id ?? data?.account;
+	if (typeof value === 'string' && value.length > 0) return value;
+	if (typeof value === 'number') return String(value);
+	return undefined;
+}
+
 export function matchSpokiTenantWebhook(
-	_request: RawWebhookRequest,
-	_webhookSecret?: string,
+	request: RawWebhookRequest,
+	webhookSecret?: string,
 ): WebhookTenantMatch | null {
-	// The account header is outside Spoki's signature envelope, so no tenant
-	// read from a delivery can be authenticated. Claim nothing here; the
-	// handler verifies authenticity and the connection provides the tenant.
-	return null;
+	if (!webhookSecret) return null;
+
+	const parsed = webhookRequestFromRaw(request);
+	if (!verifySpokiWebhookRequest(parsed, webhookSecret).valid) return null;
+
+	const headerAccount = getHeader(request.headers ?? {}, 'x-spoki-account');
+	const bodyAccount = accountFromPayload(parsed.payload);
+	if (bodyAccount && headerAccount && bodyAccount !== headerAccount) {
+		return null;
+	}
+	const account = bodyAccount ?? headerAccount;
+	if (!account) return null;
+
+	return { linkType: 'account_id', externalId: account };
 }

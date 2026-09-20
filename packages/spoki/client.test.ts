@@ -170,6 +170,27 @@ describe('SpokiClient', () => {
 		expect(options?.body).toBe(JSON.stringify({ name: 'updated' }));
 	});
 
+	it('supports PATCH requests', async () => {
+		const mockFetch = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(JSON.stringify({ success: true }), {
+				status: 200,
+			}),
+		);
+
+		const client = new SpokiClient({
+			apiKey: 'test-key',
+		});
+
+		await client.patch('/test', {
+			name: 'patched',
+		});
+
+		const [, options] = mockFetch.mock.calls[0]!;
+
+		expect(options?.method).toBe('PATCH');
+		expect(options?.body).toBe(JSON.stringify({ name: 'patched' }));
+	});
+
 	it('supports DELETE requests', async () => {
 		const mockFetch = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
 			new Response(null, {
