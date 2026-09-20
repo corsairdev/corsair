@@ -4,6 +4,7 @@ import { ApiError, request } from 'corsair/http';
 export class CarboneAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// unknown: Carbone error JSON is not a stable schema across versions.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 
@@ -43,6 +44,7 @@ export type CarboneRequestOptions = {
 	apiKey?: string;
 	version?: string;
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	// unknown: template/render payloads differ by operation; validated upstream.
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
 	headers?: Record<string, string>;
@@ -84,6 +86,7 @@ function buildConfig(
 	};
 }
 
+// unknown: request() throws ApiError or a generic Error; both are rewrapped.
 async function handleRequestError(error: unknown): Promise<never> {
 	if (error instanceof ApiError) {
 		throw new CarboneAPIError(error.message, error.status, {
