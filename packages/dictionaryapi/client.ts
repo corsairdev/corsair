@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { GetEntryOutput } from './endpoints/types';
 
 export class DictionaryApiAPIError extends Error {
 	constructor(
@@ -25,7 +26,11 @@ function buildConfig(): OpenAPIConfig {
 	};
 }
 
-export async function getEntry(word: string, apiKey: string): Promise<unknown> {
+/** Raw collegiate lookup before endpoint-level Zod validation. */
+export async function getEntry(
+	word: string,
+	apiKey: string,
+): Promise<GetEntryOutput> {
 	if (!apiKey) {
 		throw new DictionaryApiAPIError('Merriam-Webster API key is required');
 	}
@@ -39,9 +44,13 @@ export async function getEntry(word: string, apiKey: string): Promise<unknown> {
 		},
 	};
 
-	let body: unknown;
+	// Merriam-Webster returns a JSON array at HTTP 200, or a plain-text error string for invalid keys.
+	let body: GetEntryOutput | string;
 	try {
-		body = await request<unknown>(buildConfig(), requestOptions);
+		body = await request<GetEntryOutput | string>(
+			buildConfig(),
+			requestOptions,
+		);
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw error;

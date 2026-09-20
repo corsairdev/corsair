@@ -55,8 +55,12 @@ export const DictionaryEntrySchema = z
 		fl: z.string().optional(),
 		shortdef: z.array(z.string()).optional(),
 		date: z.string().optional(),
-		def: z.array(z.unknown()).optional(),
-		et: z.array(z.unknown()).optional(),
+		// def: official Merriam-Webster definition blocks use nested sseq sense trees; a closed def union is infeasible across homographs and subsenses
+		def: z.array(z.looseObject({})).optional(),
+		// et: official format mixes ["text", "..."] tuples with vis/class tokens; a closed et union is infeasible because token shapes vary by entry
+		et: z
+			.array(z.union([z.tuple([z.string(), z.string()]), z.looseObject({})]))
+			.optional(),
 	})
 	.passthrough();
 
