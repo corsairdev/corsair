@@ -26,18 +26,30 @@ export class CloseRateLimitError extends CloseAPIError {
 
 export const CLOSE_API_BASE = 'https://api.close.com/api/v1';
 
+export type CloseAuthType = 'api_key' | 'oauth_2';
+
 export type CloseRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
+	authType?: CloseAuthType;
 };
 
-function formatAuthHeader(key: string): string {
+export type CloseRequestContext = {
+	key: string;
+	authType?: CloseAuthType;
+};
+
+export function closeResourcePath(resource: string, id: string): string {
+	return `${resource}/${encodeURIComponent(id)}/`;
+}
+
+function formatAuthHeader(key: string, authType: CloseAuthType): string {
 	if (!key) return '';
 	if (key.startsWith('Bearer ') || key.startsWith('Basic ')) {
 		return key;
 	}
-	if (key.startsWith('api_')) {
+	if (authType === 'api_key') {
 		const encoded = Buffer.from(`${key}:`).toString('base64');
 		return `Basic ${encoded}`;
 	}
@@ -49,8 +61,8 @@ export async function makeCloseRequest<T>(
 	apiKey: string,
 	options: CloseRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
-	const authHeader = formatAuthHeader(apiKey);
+	const { method = 'GET', body, query, authType = 'api_key' } = options;
+	const authHeader = formatAuthHeader(apiKey, authType);
 
 	const config: OpenAPIConfig = {
 		BASE: CLOSE_API_BASE,
@@ -152,4 +164,15 @@ export async function makeCloseRequest<T>(
 		}
 		throw new CloseAPIError('Unknown Close API error');
 	}
+}
+
+export async function makeCloseRequestForCtx<T>(
+	ctx: CloseRequestContext,
+	endpoint: string,
+	options: Omit<CloseRequestOptions, 'authType'> = {},
+): Promise<T> {
+	return makeCloseRequest<T>(endpoint, ctx.key, {
+		...options,
+		authType: ctx.authType ?? 'api_key',
+	});
 }

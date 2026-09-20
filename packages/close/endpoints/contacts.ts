@@ -1,4 +1,4 @@
-import { makeCloseRequest } from '../client';
+import { closeResourcePath, makeCloseRequestForCtx } from '../client';
 import type { CloseContext } from '../index';
 import type {
 	ContactsCreateInput,
@@ -31,7 +31,7 @@ export const contactsList = async (
 ): Promise<ContactsListResponse> => {
 	const parsedInput =
 		input === undefined ? undefined : ContactsListInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>('contact/', ctx.key, {
+	const res = await makeCloseRequestForCtx<unknown>(ctx, 'contact/', {
 		method: 'GET',
 		query: parsedInput,
 	});
@@ -43,9 +43,9 @@ export const contactsGet = async (
 	input: ContactsGetInput,
 ): Promise<ContactsGetResponse> => {
 	const parsedInput = ContactsGetInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>(
-		`contact/${parsedInput.id}/`,
-		ctx.key,
+	const res = await makeCloseRequestForCtx<unknown>(
+		ctx,
+		closeResourcePath('contact', parsedInput.id),
 		{ method: 'GET' },
 	);
 	return ContactsGetResponseSchema.parse(res);
@@ -56,7 +56,7 @@ export const contactsCreate = async (
 	input: ContactsCreateInput,
 ): Promise<ContactsCreateResponse> => {
 	const parsedInput = ContactsCreateInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>('contact/', ctx.key, {
+	const res = await makeCloseRequestForCtx<unknown>(ctx, 'contact/', {
 		method: 'POST',
 		body: parsedInput as Record<string, unknown>,
 	});
@@ -69,10 +69,14 @@ export const contactsUpdate = async (
 ): Promise<ContactsUpdateResponse> => {
 	const parsedInput = ContactsUpdateInputSchema.parse(input);
 	const { id, ...body } = parsedInput;
-	const res = await makeCloseRequest<unknown>(`contact/${id}/`, ctx.key, {
-		method: 'PUT',
-		body: body as Record<string, unknown>,
-	});
+	const res = await makeCloseRequestForCtx<unknown>(
+		ctx,
+		closeResourcePath('contact', id),
+		{
+			method: 'PUT',
+			body: body as Record<string, unknown>,
+		},
+	);
 	return ContactsUpdateResponseSchema.parse(res);
 };
 
@@ -81,9 +85,13 @@ export const contactsDelete = async (
 	input: ContactsDeleteInput,
 ): Promise<ContactsDeleteResponse> => {
 	const parsedInput = ContactsDeleteInputSchema.parse(input);
-	await makeCloseRequest<unknown>(`contact/${parsedInput.id}/`, ctx.key, {
-		method: 'DELETE',
-	});
+	await makeCloseRequestForCtx<unknown>(
+		ctx,
+		closeResourcePath('contact', parsedInput.id),
+		{
+			method: 'DELETE',
+		},
+	);
 	return ContactsDeleteResponseSchema.parse({
 		success: true,
 		id: parsedInput.id,

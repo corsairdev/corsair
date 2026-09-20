@@ -1,3 +1,5 @@
+import { createHmac, timingSafeEqual } from 'node:crypto';
+import type { WebhookRequest } from 'corsair/core';
 import { z } from 'zod';
 import {
 	CloseActivityNote,
@@ -6,6 +8,65 @@ import {
 	CloseOpportunity,
 	CloseTask,
 } from '../schema/database';
+
+function headerValue(
+	headers: Record<string, string | string[] | undefined>,
+	name: string,
+): string | undefined {
+	const value = headers[name] ?? headers[name.toLowerCase()];
+	if (Array.isArray(value)) {
+		return value[0];
+	}
+	return value;
+}
+
+export function verifyCloseWebhookSignature(
+	request: WebhookRequest<unknown>,
+	signatureKey?: string,
+): { valid: boolean; error?: string } {
+	if (request.hubVerified === true) {
+		return { valid: true };
+	}
+
+	if (!signatureKey) {
+		return { valid: false, error: 'Missing webhook signature key' };
+	}
+
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
+	const hash = headerValue(request.headers, 'close-sig-hash');
+	const timestamp = headerValue(request.headers, 'close-sig-timestamp');
+	if (!hash || !timestamp) {
+		return {
+			valid: false,
+			error: 'Missing close-sig-hash or close-sig-timestamp header',
+		};
+	}
+
+	try {
+		const key = Buffer.from(signatureKey, 'hex');
+		const expected = createHmac('sha256', key)
+			.update(timestamp + rawBody)
+			.digest('hex');
+		const actual = Buffer.from(hash);
+		const expectedBuf = Buffer.from(expected);
+		if (
+			actual.length !== expectedBuf.length ||
+			!timingSafeEqual(actual, expectedBuf)
+		) {
+			return { valid: false, error: 'Invalid signature' };
+		}
+		return { valid: true };
+	} catch {
+		return { valid: false, error: 'Invalid signature' };
+	}
+}
 
 export const CloseWebhookBaseEventSchema = z
 	.object({

@@ -1,4 +1,4 @@
-import { makeCloseRequest } from '../client';
+import { closeResourcePath, makeCloseRequestForCtx } from '../client';
 import type { CloseContext } from '../index';
 import type {
 	OpportunitiesCreateInput,
@@ -31,7 +31,7 @@ export const opportunitiesList = async (
 ): Promise<OpportunitiesListResponse> => {
 	const parsedInput =
 		input === undefined ? undefined : OpportunitiesListInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>('opportunity/', ctx.key, {
+	const res = await makeCloseRequestForCtx<unknown>(ctx, 'opportunity/', {
 		method: 'GET',
 		query: parsedInput,
 	});
@@ -43,9 +43,9 @@ export const opportunitiesGet = async (
 	input: OpportunitiesGetInput,
 ): Promise<OpportunitiesGetResponse> => {
 	const parsedInput = OpportunitiesGetInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>(
-		`opportunity/${parsedInput.id}/`,
-		ctx.key,
+	const res = await makeCloseRequestForCtx<unknown>(
+		ctx,
+		closeResourcePath('opportunity', parsedInput.id),
 		{ method: 'GET' },
 	);
 	return OpportunitiesGetResponseSchema.parse(res);
@@ -56,7 +56,7 @@ export const opportunitiesCreate = async (
 	input: OpportunitiesCreateInput,
 ): Promise<OpportunitiesCreateResponse> => {
 	const parsedInput = OpportunitiesCreateInputSchema.parse(input);
-	const res = await makeCloseRequest<unknown>('opportunity/', ctx.key, {
+	const res = await makeCloseRequestForCtx<unknown>(ctx, 'opportunity/', {
 		method: 'POST',
 		body: parsedInput as Record<string, unknown>,
 	});
@@ -69,10 +69,14 @@ export const opportunitiesUpdate = async (
 ): Promise<OpportunitiesUpdateResponse> => {
 	const parsedInput = OpportunitiesUpdateInputSchema.parse(input);
 	const { id, ...body } = parsedInput;
-	const res = await makeCloseRequest<unknown>(`opportunity/${id}/`, ctx.key, {
-		method: 'PUT',
-		body: body as Record<string, unknown>,
-	});
+	const res = await makeCloseRequestForCtx<unknown>(
+		ctx,
+		closeResourcePath('opportunity', id),
+		{
+			method: 'PUT',
+			body: body as Record<string, unknown>,
+		},
+	);
 	return OpportunitiesUpdateResponseSchema.parse(res);
 };
 
@@ -81,9 +85,13 @@ export const opportunitiesDelete = async (
 	input: OpportunitiesDeleteInput,
 ): Promise<OpportunitiesDeleteResponse> => {
 	const parsedInput = OpportunitiesDeleteInputSchema.parse(input);
-	await makeCloseRequest<unknown>(`opportunity/${parsedInput.id}/`, ctx.key, {
-		method: 'DELETE',
-	});
+	await makeCloseRequestForCtx<unknown>(
+		ctx,
+		closeResourcePath('opportunity', parsedInput.id),
+		{
+			method: 'DELETE',
+		},
+	);
 	return OpportunitiesDeleteResponseSchema.parse({
 		success: true,
 		id: parsedInput.id,

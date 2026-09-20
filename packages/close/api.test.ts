@@ -1,3 +1,4 @@
+import { createHmac } from 'node:crypto';
 import { AuthMissingError } from 'corsair/core';
 import { CloseAPIError, CloseRateLimitError, makeCloseRequest } from './client';
 import {
@@ -33,6 +34,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { close } from './index';
 import { CloseSchema } from './schema';
+import { verifyCloseWebhookSignature } from './webhooks/types';
 
 const originalFetch = globalThis.fetch;
 
@@ -93,20 +95,62 @@ afterEach(() => {
 const ctx = { key: 'test_api_key' } as never;
 
 describe('Close plugin initialization & metadata', () => {
-	it('matches plugin webhook header only on x-close-signature', () => {
+	it('matches plugin webhook headers on close-sig-hash or close-sig-timestamp', () => {
 		const plugin = close({ key: 'test_api_key' });
 		expect(
 			plugin.pluginWebhookMatcher?.({
-				headers: { 'x-close-signature': 'sig' },
+				headers: { 'close-sig-hash': 'sig' },
 				body: '{}',
 			}),
 		).toBe(true);
 		expect(
 			plugin.pluginWebhookMatcher?.({
-				headers: { 'close-signature': 'sig' },
+				headers: { 'close-sig-timestamp': '1544271440' },
+				body: '{}',
+			}),
+		).toBe(true);
+		expect(
+			plugin.pluginWebhookMatcher?.({
+				headers: { 'x-close-signature': 'sig' },
 				body: '{}',
 			}),
 		).toBe(false);
+	});
+
+	it('verifies Close webhook signatures from close-sig-hash headers', () => {
+		const signatureKey =
+			'058bfb6a3d8cfdc4da7c3be5901b16ae11da982b46a25fb2cd7016e97a140a1c';
+		const rawBody = '{"event_type":"lead.created"}';
+		const timestamp = '1544271440';
+		const hash = createHmac('sha256', Buffer.from(signatureKey, 'hex'))
+			.update(timestamp + rawBody)
+			.digest('hex');
+
+		const valid = verifyCloseWebhookSignature(
+			{
+				payload: JSON.parse(rawBody),
+				headers: {
+					'close-sig-hash': hash,
+					'close-sig-timestamp': timestamp,
+				},
+				rawBody,
+			},
+			signatureKey,
+		);
+		expect(valid).toEqual({ valid: true });
+
+		const invalid = verifyCloseWebhookSignature(
+			{
+				payload: JSON.parse(rawBody),
+				headers: {
+					'close-sig-hash': 'deadbeef',
+					'close-sig-timestamp': timestamp,
+				},
+				rawBody,
+			},
+			signatureKey,
+		);
+		expect(invalid.valid).toBe(false);
 	});
 
 	it('throws when webhook signature secret is missing', async () => {
@@ -421,15 +465,17 @@ describe('Close API endpoints behavioral coverage', () => {
 });
 
 describe('Error handling & rate limits', () => {
-	it('uses Bearer auth for OAuth tokens that include underscores', async () => {
+	it('uses Bearer auth when authType is oauth_2', async () => {
 		globalThis.fetch = jest.fn(async () => jsonResponse({ id: 'lead_1' }));
-		await makeCloseRequest('lead/', 'oauth_access_token');
+		await makeCloseRequest('lead/', 'oauth_access_token', {
+			authType: 'oauth_2',
+		});
 		expect(getFetchAuthorizationHeader()).toBe('Bearer oauth_access_token');
 	});
 
-	it('uses Basic auth for api_ keys', async () => {
+	it('uses Basic auth when authType is api_key', async () => {
 		globalThis.fetch = jest.fn(async () => jsonResponse({ id: 'lead_1' }));
-		await makeCloseRequest('lead/', 'api_test_key');
+		await makeCloseRequest('lead/', 'api_test_key', { authType: 'api_key' });
 		expect(getFetchAuthorizationHeader()).toBe(
 			`Basic ${Buffer.from('api_test_key:').toString('base64')}`,
 		);
