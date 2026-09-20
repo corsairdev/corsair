@@ -9,16 +9,16 @@ export type {
 } from './client';
 export { CorsairClientError, createCorsairClient } from './client';
 export type {
+	CorsairCloudConfig,
 	CorsairCloudInstance,
 	CorsairCloudRegistry,
-	CreateCorsairCloudConfig,
 	ResolveConnectLinkResult,
 } from './core';
 export {
 	AuthMissingError,
 	CorsairKekMissingError,
+	corsairCloud,
 	createCorsair,
-	createCorsairCloud,
 	PermissionRequiredError,
 	ReadonlyForbiddenError,
 	ReconnectRequiredError,
