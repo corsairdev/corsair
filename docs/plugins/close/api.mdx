@@ -300,7 +300,7 @@ Delete a contact
 **Risk:** `destructive`
 
 ```ts
-await corsair.close.api.contacts.delete({ id: 'id_123' });
+await corsair.close.api.contacts.delete({ id: 'cont_123' });
 ```
 
 **Input**
@@ -331,7 +331,7 @@ Retrieve a contact by ID
 **Risk:** `read`
 
 ```ts
-await corsair.close.api.contacts.get({ id: 'id_123' });
+await corsair.close.api.contacts.get({ id: 'cont_123' });
 ```
 
 **Input**
@@ -451,7 +451,7 @@ Update a contact
 **Risk:** `write`
 
 ```ts
-await corsair.close.api.contacts.update({ id: 'id_123' });
+await corsair.close.api.contacts.update({ id: 'cont_123' });
 ```
 
 **Input**
@@ -640,8 +640,7 @@ await corsair.close.api.leads.create({});
 <Accordion title="custom full type">
 
 ```ts
-{
-}
+Record<string, unknown>
 ```
 </Accordion>
 
@@ -678,16 +677,14 @@ await corsair.close.api.leads.create({});
 <Accordion title="contacts full type">
 
 ```ts
-{
-}[]
+Record<string, unknown>[]
 ```
 </Accordion>
 
 <Accordion title="custom full type">
 
 ```ts
-{
-}
+Record<string, unknown>
 ```
 </Accordion>
 </AccordionGroup>
@@ -705,7 +702,7 @@ Delete a lead by ID
 **Risk:** `destructive`
 
 ```ts
-await corsair.close.api.leads.delete({ id: 'id_123' });
+await corsair.close.api.leads.delete({ id: 'lead_123' });
 ```
 
 **Input**
@@ -736,7 +733,7 @@ Retrieve a lead by ID
 **Risk:** `read`
 
 ```ts
-await corsair.close.api.leads.get({ id: 'id_123' });
+await corsair.close.api.leads.get({ id: 'lead_123' });
 ```
 
 **Input**
@@ -769,16 +766,14 @@ await corsair.close.api.leads.get({ id: 'id_123' });
 <Accordion title="contacts full type">
 
 ```ts
-{
-}[]
+Record<string, unknown>[]
 ```
 </Accordion>
 
 <Accordion title="custom full type">
 
 ```ts
-{
-}
+Record<string, unknown>
 ```
 </Accordion>
 </AccordionGroup>
@@ -856,7 +851,7 @@ Update an existing lead
 **Risk:** `write`
 
 ```ts
-await corsair.close.api.leads.update({ id: 'id_123' });
+await corsair.close.api.leads.update({ id: 'lead_123' });
 ```
 
 **Input**
@@ -874,8 +869,7 @@ await corsair.close.api.leads.update({ id: 'id_123' });
 <Accordion title="custom full type">
 
 ```ts
-{
-}
+Record<string, unknown>
 ```
 </Accordion>
 </AccordionGroup>
@@ -904,16 +898,14 @@ await corsair.close.api.leads.update({ id: 'id_123' });
 <Accordion title="contacts full type">
 
 ```ts
-{
-}[]
+Record<string, unknown>[]
 ```
 </Accordion>
 
 <Accordion title="custom full type">
 
 ```ts
-{
-}
+Record<string, unknown>
 ```
 </Accordion>
 </AccordionGroup>
@@ -983,7 +975,7 @@ Delete an opportunity
 **Risk:** `destructive`
 
 ```ts
-await corsair.close.api.opportunities.delete({ id: 'id_123' });
+await corsair.close.api.opportunities.delete({ id: 'opp_123' });
 ```
 
 **Input**
@@ -1014,7 +1006,7 @@ Retrieve an opportunity by ID
 **Risk:** `read`
 
 ```ts
-await corsair.close.api.opportunities.get({ id: 'id_123' });
+await corsair.close.api.opportunities.get({ id: 'opp_123' });
 ```
 
 **Input**
@@ -1118,7 +1110,7 @@ Update an opportunity
 **Risk:** `write`
 
 ```ts
-await corsair.close.api.opportunities.update({ id: 'id_123' });
+await corsair.close.api.opportunities.update({ id: 'opp_123' });
 ```
 
 **Input**
@@ -1213,7 +1205,7 @@ Delete a task
 **Risk:** `destructive`
 
 ```ts
-await corsair.close.api.tasks.delete({ id: 'id_123' });
+await corsair.close.api.tasks.delete({ id: 'task_123' });
 ```
 
 **Input**
@@ -1244,7 +1236,7 @@ Retrieve a task by ID
 **Risk:** `read`
 
 ```ts
-await corsair.close.api.tasks.get({ id: 'id_123' });
+await corsair.close.api.tasks.get({ id: 'task_123' });
 ```
 
 **Input**
@@ -1340,7 +1332,7 @@ Update a task
 **Risk:** `write`
 
 ```ts
-await corsair.close.api.tasks.update({ id: 'id_123' });
+await corsair.close.api.tasks.update({ id: 'task_123' });
 ```
 
 **Input**
@@ -1452,4 +1444,3 @@ await corsair.close.api.users.list({});
 
 
 ---
-
