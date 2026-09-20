@@ -8,8 +8,7 @@ import {
 
 export const getTags: HumanitixEndpoints['getTags'] = async (ctx, input) => {
 	const parsed = HumanitixEndpointInputSchemas.getTags.parse(input);
-	// Raw transport payload typed unknown, then validated against the zod
-	// output schema below — no narrower static type exists for it.
+	// unknown: raw transport payload is untyped before Zod parsing
 	const raw = await makeHumanitixRequest<unknown>('/tags', ctx.key, {
 		method: 'GET',
 		query: {

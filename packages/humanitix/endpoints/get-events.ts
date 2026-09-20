@@ -11,8 +11,7 @@ export const getEvents: HumanitixEndpoints['getEvents'] = async (
 	input,
 ) => {
 	const parsed = HumanitixEndpointInputSchemas.getEvents.parse(input);
-	// Raw transport payload typed unknown, then validated against the zod
-	// output schema below — no narrower static type exists for it.
+	// unknown: raw transport payload is untyped before Zod parsing
 	const raw = await makeHumanitixRequest<unknown>('/events', ctx.key, {
 		method: 'GET',
 		query: {
