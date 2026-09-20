@@ -21,6 +21,8 @@
     "generate:labeler-config": "node scripts/generate-labeler-config.mjs",
     "generate:docs": "tsx --conditions=dev-source scripts/generate-plugin-docs.ts",
     "generate:docs:all": "tsx --conditions=dev-source scripts/generate-plugin-docs.ts --all",
+    "generate:readmes": "tsx --conditions=dev-source scripts/generate-plugin-readmes.ts",
+    "generate:readmes:all": "tsx --conditions=dev-source scripts/generate-plugin-readmes.ts --all",
     "build:explorer-catalog": "tsx --conditions=dev-source scripts/build-explorer-catalog.ts",
     "fetch:plugin-icons": "tsx scripts/fetch-plugin-icons.ts",
     "validate:plugins": "tsx scripts/validate-plugins.ts",
@@ -39,6 +41,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.5",
+    "@openapitools/openapi-generator-cli": "2.41.0",
     "@total-typescript/ts-reset": "^0.5.1",
     "@types/bun": "^1.3.1",
     "@types/node": "^24.9.2",
