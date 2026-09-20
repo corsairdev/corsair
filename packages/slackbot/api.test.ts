@@ -410,21 +410,18 @@ const NAMED_CASES = ALL_CASES.map(([group, op, slackMethod, verb, input]) => ({
 }));
 
 describe('endpoints target the correct Slack Web API method', () => {
-	it.each(NAMED_CASES)('$op -> $slackMethod', async ({
-		group,
-		op,
-		slackMethod,
-		verb,
-		input,
-	}) => {
-		const fn = group[op] as (c: unknown, i: unknown) => Promise<unknown>;
-		await fn(makeCtx(), input);
+	it.each(NAMED_CASES)(
+		'$op -> $slackMethod',
+		async ({ group, op, slackMethod, verb, input }) => {
+			const fn = group[op] as (c: unknown, i: unknown) => Promise<unknown>;
+			await fn(makeCtx(), input);
 
-		expect(requestMock).toHaveBeenCalled();
-		const call = lastCall();
-		expect(call.url).toBe(slackMethod);
-		expect(call.method).toBe(verb);
-	});
+			expect(requestMock).toHaveBeenCalled();
+			const call = lastCall();
+			expect(call.url).toBe(slackMethod);
+			expect(call.method).toBe(verb);
+		},
+	);
 
 	it('covers every non-behavioural operation the plugin exposes', () => {
 		const covered = new Set(
