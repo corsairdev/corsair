@@ -231,7 +231,16 @@ describe('Prisma request client', () => {
 describe('Prisma REST endpoints', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
-		mockRequest.mockResolvedValue({ data: [] });
+		mockRequest.mockImplementation((_, options) => {
+			if (options?.method === 'DELETE' || options?.url?.includes('/restore')) {
+				return Promise.resolve(undefined);
+			}
+			return Promise.resolve({
+				id: 'clx-res',
+				data: { id: 'clx-res', name: 'demo' },
+				items: [],
+			});
+		});
 	});
 
 	it('resolves project path params and issues correct methods', async () => {
@@ -352,6 +361,44 @@ describe('Prisma REST endpoints', () => {
 				connectionString: 'postgres://secret',
 			},
 		});
+	});
+
+	it('validates runtime inputs with Zod schemas and rejects bodies on DELETE ops', async () => {
+		const plugin = prisma();
+		const e = plugin.endpoints as NonNullable<typeof plugin.endpoints>;
+
+		// Reject bodies on DELETE operations
+		await expect(
+			e.projects.delete(mockCtx, {
+				projectId: 'p1',
+				body: { unexpected: true },
+			} as never),
+		).rejects.toThrow();
+
+		// Reject malformed bodies on create operations
+		await expect(
+			e.projects.create(mockCtx, {
+				body: { name: 123 },
+			} as never),
+		).rejects.toThrow();
+
+		// Reject empty path params
+		await expect(
+			e.projects.get(mockCtx, { projectId: '' } as never),
+		).rejects.toThrow();
+	});
+
+	it('validates runtime outputs with Zod schemas and rejects incompatible payloads', async () => {
+		const plugin = prisma();
+		const e = plugin.endpoints as NonNullable<typeof plugin.endpoints>;
+
+		mockRequest.mockResolvedValueOnce({
+			invalid: 'no-id-or-resource',
+		});
+
+		await expect(
+			e.projects.get(mockCtx, { projectId: 'p1' }),
+		).rejects.toThrow();
 	});
 });
 

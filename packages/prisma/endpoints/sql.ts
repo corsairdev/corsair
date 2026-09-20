@@ -4,6 +4,13 @@ import { executePostgresQuery, inspectPostgresSchema } from '../pg-client';
 import type { PrismaEndpoint } from './factory';
 import { safeLogPostgresInput } from './sql-helpers';
 import type { PrismaEndpointInput } from './types';
+import {
+	ExecuteDatabaseCommandInputSchema,
+	InspectDatabaseSchemaInputSchema,
+	InspectDatabaseSchemaOutputSchema,
+	PostgresQueryResultSchema,
+	QueryDatabaseInputSchema,
+} from './types';
 
 type PostgresInput = {
 	host: string;
@@ -39,67 +46,73 @@ function sqlParams(input: PrismaEndpointInput): unknown[] {
 }
 
 export const queryDatabase: PrismaEndpoint = async (ctx, input = {}) => {
+	const parsed = QueryDatabaseInputSchema.parse(input);
 	const result = await executePostgresQuery(
-		postgresInput(input),
-		sqlCommand(input),
-		sqlParams(input),
+		postgresInput(parsed),
+		sqlCommand(parsed),
+		sqlParams(parsed),
 		'read',
 	);
+	const validatedResult = PostgresQueryResultSchema.parse(result);
 
 	try {
 		await logEventFromContext(
 			ctx as PrismaContext,
 			'prisma.sql.query',
-			safeLogPostgresInput(input),
+			safeLogPostgresInput(parsed),
 			'completed',
 		);
 	} catch (error) {
 		console.warn('[prisma] failed to log sql.query:', error);
 	}
-	return result;
+	return validatedResult;
 };
 
 export const executeDatabaseCommand: PrismaEndpoint = async (
 	ctx,
 	input = {},
 ) => {
+	const parsed = ExecuteDatabaseCommandInputSchema.parse(input);
 	const result = await executePostgresQuery(
-		postgresInput(input),
-		sqlCommand(input),
-		sqlParams(input),
+		postgresInput(parsed),
+		sqlCommand(parsed),
+		sqlParams(parsed),
 		'write',
 	);
+	const validatedResult = PostgresQueryResultSchema.parse(result);
 
 	try {
 		await logEventFromContext(
 			ctx as PrismaContext,
 			'prisma.sql.execute',
-			safeLogPostgresInput(input),
+			safeLogPostgresInput(parsed),
 			'completed',
 		);
 	} catch (error) {
 		console.warn('[prisma] failed to log sql.execute:', error);
 	}
-	return result;
+	return validatedResult;
 };
 
 export const inspectDatabaseSchema: PrismaEndpoint = async (
 	ctx,
 	input = {},
 ) => {
-	const result = await inspectPostgresSchema(postgresInput(input));
+	const parsed = InspectDatabaseSchemaInputSchema.parse(input);
+	const result = await inspectPostgresSchema(postgresInput(parsed));
+	const validatedResult = InspectDatabaseSchemaOutputSchema.parse(result);
 
 	try {
 		await logEventFromContext(
 			ctx as PrismaContext,
 			'prisma.databases.inspectSchema',
-			safeLogPostgresInput(input),
+			safeLogPostgresInput(parsed),
 			'completed',
 		);
 	} catch (error) {
 		console.warn('[prisma] failed to log databases.inspectSchema:', error);
 	}
-	return result;
+	return validatedResult;
 };
 
 export const SqlEndpoints = {

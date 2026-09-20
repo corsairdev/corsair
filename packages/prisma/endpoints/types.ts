@@ -17,11 +17,9 @@ export const PrismaEndpointInputBaseSchema = z.object({
 	limit: z.number().int().positive().optional(),
 	startDate: z.string().optional(),
 	endDate: z.string().optional(),
-	// request bodies are operation-specific json; the prisma api validates
-	// their shape, so they intentionally stay unknown at this layer
-	body: z.unknown().optional(),
 	query: QuerySchema.optional(),
 	headers: z.record(z.string(), z.string()).optional(),
+	baseUrl: z.string().optional(),
 });
 
 // direct postgres connection fields shared by the sql + schema operations
@@ -50,17 +48,64 @@ export type PrismaEndpointOutputs = Record<string, PrismaEndpointOutput>;
 
 export const PrismaEndpointOutputSchema = z.unknown();
 
+// ---- POST body input schemas ----------------------------------------------
+
+const CreateProjectBodySchema = z
+	.object({
+		name: z.string().min(1),
+		displayName: z.string().optional(),
+		region: z.string().min(1),
+		createDatabase: z.boolean().optional(),
+	})
+	.passthrough();
+
+const TransferProjectBodySchema = z.object({
+	recipientAccessToken: z.string().min(1),
+});
+
+const CreateDatabaseBodySchema = z
+	.object({
+		name: z.string().min(1),
+		region: z.string().min(1),
+		isDefault: z.boolean().optional(),
+	})
+	.passthrough();
+
+const RestoreBackupBodySchema = z.object({
+	backupId: z.string().min(1),
+});
+
+const CreateConnectionBodySchema = z
+	.object({
+		name: z.string().min(1),
+		databaseId: z.string().min(1),
+	})
+	.passthrough();
+
+export const PRISMA_REST_BODY_INPUT_SCHEMAS: Record<string, z.ZodTypeAny> = {
+	createProject: CreateProjectBodySchema,
+	transferProject: TransferProjectBodySchema,
+	createDatabase: CreateDatabaseBodySchema,
+	restoreBackup: RestoreBackupBodySchema,
+	createConnection: CreateConnectionBodySchema,
+};
+
 function inputSchemaForOperation(operation: PrismaOperation) {
 	const requiredParams = Object.fromEntries(
 		(operation.pathParams ?? []).map((param) => [param, z.string().min(1)]),
 	);
 	const bodySchema = PRISMA_REST_BODY_INPUT_SCHEMAS[operation.key];
+	if (!bodySchema) {
+		// Operations without a body schema (e.g. GET, DELETE) reject arbitrary request bodies
+		return PrismaEndpointInputBaseSchema.extend({
+			...requiredParams,
+			body: z.undefined().optional(),
+		}).passthrough();
+	}
 	return PrismaEndpointInputBaseSchema.extend({
 		...requiredParams,
-		// narrowed body schema (if any) so callers passing a known request
-		// body get it validated instead of silently accepted
-		body: bodySchema ?? z.unknown(),
-	});
+		body: bodySchema.optional(),
+	}).passthrough();
 }
 
 export const QueryDatabaseInputSchema = PrismaEndpointInputBaseSchema.extend({
@@ -183,8 +228,10 @@ const PrismaRegionSchema = z
 	.object({
 		id: z.string().min(1),
 		region: z.string().optional(),
+		name: z.string().optional(),
 		displayName: z.string().optional(),
 		available: z.boolean().optional(),
+		status: z.string().optional(),
 		product: z.string().optional(),
 	})
 	.passthrough();
@@ -200,27 +247,38 @@ const PrismaIntegrationSchema = z
 
 // a single resource or a list envelope (the API returns a bare resource for
 // get/create and an array/envelope for lists)
+const singleResource = <T extends z.ZodTypeAny>(schema: T) =>
+	z.union([
+		schema,
+		z.object({ data: schema }).passthrough(),
+		z.object({ project: schema }).passthrough(),
+		z.object({ database: schema }).passthrough(),
+		z.object({ connection: schema }).passthrough(),
+	]);
+
 const resourceOrList = <T extends z.ZodTypeAny>(schema: T) =>
 	z.union([
 		schema,
 		z.array(schema),
 		z.object({ items: z.array(schema) }).passthrough(),
+		z.object({ data: z.union([schema, z.array(schema)]) }).passthrough(),
 	]);
 
 const ListWorkspacesOutputSchema = resourceOrList(PrismaWorkspaceSchema);
-const CreateProjectOutputSchema = PrismaProjectSchema.passthrough();
-const GetProjectOutputSchema = PrismaProjectSchema.passthrough();
+const CreateProjectOutputSchema = singleResource(PrismaProjectSchema);
+const GetProjectOutputSchema = singleResource(PrismaProjectSchema);
 const ListProjectsOutputSchema = resourceOrList(PrismaProjectSchema);
-const TransferProjectOutputSchema = PrismaProjectSchema.passthrough();
-const CreateDatabaseOutputSchema = PrismaDatabaseSchema.passthrough();
-const GetDatabaseOutputSchema = PrismaDatabaseSchema.passthrough();
+const TransferProjectOutputSchema = singleResource(PrismaProjectSchema);
+const CreateDatabaseOutputSchema = singleResource(PrismaDatabaseSchema);
+const GetDatabaseOutputSchema = singleResource(PrismaDatabaseSchema);
 const ListDatabasesOutputSchema = resourceOrList(PrismaDatabaseSchema);
 const GetDatabaseUsageOutputSchema = z.record(z.string(), z.unknown());
-const CreateConnectionOutputSchema = PrismaConnectionSchema.passthrough();
+const CreateConnectionOutputSchema = singleResource(PrismaConnectionSchema);
 const ListConnectionsOutputSchema = resourceOrList(PrismaConnectionSchema);
 const ListBackupsOutputSchema = resourceOrList(PrismaBackupSchema);
 const ListRegionsOutputSchema = resourceOrList(PrismaRegionSchema);
 const ListPostgresRegionsOutputSchema = resourceOrList(PrismaRegionSchema);
+const ListAccelerateRegionsOutputSchema = resourceOrList(PrismaRegionSchema);
 const ListWorkspaceIntegrationsOutputSchema = resourceOrList(
 	PrismaIntegrationSchema,
 );
@@ -255,50 +313,8 @@ const PRISMA_REST_OUTPUT_SCHEMAS: Record<string, z.ZodTypeAny> = {
 	restoreBackup: EmptyResponseSchema,
 	listRegions: ListRegionsOutputSchema,
 	listPostgresRegions: ListPostgresRegionsOutputSchema,
-	listAccelerateRegions: ListRegionsOutputSchema,
+	listAccelerateRegions: ListAccelerateRegionsOutputSchema,
 	listWorkspaceIntegrations: ListWorkspaceIntegrationsOutputSchema,
-};
-
-// ---- POST body input schemas ----------------------------------------------
-
-const CreateProjectBodySchema = z
-	.object({
-		name: z.string().min(1),
-		displayName: z.string().optional(),
-		region: z.string().min(1),
-		createDatabase: z.boolean().optional(),
-	})
-	.passthrough();
-
-const TransferProjectBodySchema = z.object({
-	recipientAccessToken: z.string().min(1),
-});
-
-const CreateDatabaseBodySchema = z
-	.object({
-		name: z.string().min(1),
-		region: z.string().min(1),
-		isDefault: z.boolean().optional(),
-	})
-	.passthrough();
-
-const RestoreBackupBodySchema = z.object({
-	backupId: z.string().min(1),
-});
-
-const CreateConnectionBodySchema = z
-	.object({
-		name: z.string().min(1),
-		databaseId: z.string().min(1),
-	})
-	.passthrough();
-
-const PRISMA_REST_BODY_INPUT_SCHEMAS: Record<string, z.ZodTypeAny> = {
-	createProject: CreateProjectBodySchema,
-	transferProject: TransferProjectBodySchema,
-	createDatabase: CreateDatabaseBodySchema,
-	restoreBackup: RestoreBackupBodySchema,
-	createConnection: CreateConnectionBodySchema,
 };
 
 // Object.fromEntries infers a value type union across all entries; assert to

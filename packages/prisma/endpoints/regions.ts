@@ -43,7 +43,10 @@ const listAccelerateRegionsDefinition = findOperation(
 	regionsOperations,
 	'listAccelerate',
 );
-export const listAccelerateRegions: PrismaEndpoint = async (ctx, input = {}) => {
+export const listAccelerateRegions: PrismaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	const result = await requestPrismaOperation(
 		ctx,
 		input,

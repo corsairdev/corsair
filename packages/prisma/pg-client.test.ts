@@ -87,7 +87,7 @@ describe('executePostgresQuery', () => {
 			(call) => call[0] && typeof call[0] === 'object',
 		);
 		expect(queryCall).toBeDefined();
-		expect(queryCall[0]).toMatchObject({
+		expect(queryCall![0]).toMatchObject({
 			text: 'SELECT $1::int AS n',
 			values: [7],
 			queryMode: 'extended',
@@ -258,7 +258,7 @@ describe('isReadOnlySql token-aware validation', () => {
 		expect(isReadOnlySql("SELECT set_config('x.a', '1', false)")).toBe(false);
 		expect(isReadOnlySql('SELECT pg_terminate_backend(42)')).toBe(false);
 		expect(isReadOnlySql('SELECT pg_cancel_backend(42)')).toBe(false);
-		// functions Greptile specifically called out that a denylist missed
+		// PostgreSQL functions intentionally rejected because the read-only check uses an allowlist
 		expect(isReadOnlySql('SELECT pg_sleep(30)')).toBe(false);
 		expect(isReadOnlySql('SELECT pg_stat_reset()')).toBe(false);
 		expect(isReadOnlySql('SELECT pg_stat_clear_snapshot()')).toBe(false);
@@ -345,6 +345,7 @@ describe('isReadOnlySql token-aware validation', () => {
 	});
 
 	it('accepts allowlisted built-in calls and keyword constructs', () => {
+		expect(isReadOnlySql('SELECT random()')).toBe(true);
 		expect(isReadOnlySql('SELECT count(*) FROM users')).toBe(true);
 		expect(isReadOnlySql('SELECT max(id), sum(amount) FROM users')).toBe(true);
 		expect(

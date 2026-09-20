@@ -296,6 +296,7 @@ const SAFE_FUNCTIONS = new Set(
 		'power',
 		'radians',
 		'round',
+		'random',
 		'scale',
 		'sign',
 		'sin',

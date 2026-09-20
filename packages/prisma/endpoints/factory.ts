@@ -4,6 +4,11 @@ import { makePrismaRequest } from '../client';
 import type { PrismaContext } from '../index';
 import type { PrismaOperation } from './operations';
 import type { PrismaEndpointInput } from './types';
+import {
+	PRISMA_REST_BODY_INPUT_SCHEMAS,
+	PrismaEndpointInputSchemas,
+	PrismaEndpointOutputSchemas,
+} from './types';
 
 const PATH_PARAM_KEYS = [
 	'workspaceId',
@@ -125,6 +130,9 @@ const CACHE_RULES: Record<string, CacheRule> = {
 
 function encodePathPart(value: unknown, key: string): string {
 	if (typeof value === 'number') {
+		if (!Number.isFinite(value)) {
+			throw new Error(`[prisma] invalid path parameter: ${key} must be finite`);
+		}
 		return encodeURIComponent(String(value));
 	}
 	if (typeof value !== 'string' || value.length === 0) {
@@ -175,7 +183,10 @@ function requestBody(
 	operation: PrismaOperation,
 	input: PrismaEndpointInput,
 ): unknown {
-	if ('body' in input) return input.body;
+	if (operation.method === 'GET' || operation.method === 'DELETE') {
+		return undefined;
+	}
+	if ('body' in input && input.body !== undefined) return input.body;
 
 	const body = Object.fromEntries(extraInputEntries(operation, input));
 	return Object.keys(body).length > 0 ? body : undefined;
@@ -352,10 +363,28 @@ export async function requestPrismaOperation(
 	input: PrismaEndpointInput,
 	operation: PrismaOperation,
 ) {
-	return makePrismaRequest(resolvePath(operation.path, input), ctx.key, {
-		method: operation.method,
-		body: requestBody(operation, input),
-		query: requestQuery(operation, input),
-		headers: input.headers,
-	});
+	const inputSchema = PrismaEndpointInputSchemas[operation.key];
+	const validatedInput = inputSchema
+		? (inputSchema.parse(input) as PrismaEndpointInput)
+		: input;
+
+	const body = requestBody(operation, validatedInput);
+	const bodySchema = PRISMA_REST_BODY_INPUT_SCHEMAS[operation.key];
+	if (bodySchema) {
+		bodySchema.parse(body ?? {});
+	}
+
+	const rawResult = await makePrismaRequest(
+		resolvePath(operation.path, validatedInput),
+		ctx.key,
+		{
+			method: operation.method,
+			body,
+			query: requestQuery(operation, validatedInput),
+			headers: validatedInput.headers,
+		},
+	);
+
+	const outputSchema = PrismaEndpointOutputSchemas[operation.key];
+	return outputSchema ? outputSchema.parse(rawResult) : rawResult;
 }
