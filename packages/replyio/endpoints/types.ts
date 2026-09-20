@@ -218,6 +218,7 @@ const ContactStatusResponseSchema = z.object({
 const ContactsSetStatusInputSchema = z.object({
 	contactIds: z.array(PositiveIntSchema).min(1).max(100),
 	statusInSequence: z.enum(['active', 'paused', 'finished', 'outOfOffice']),
+	sequenceId: PositiveIntSchema.optional(),
 });
 
 // Non-atomic result keyed by contact id: absent keys succeeded, present keys

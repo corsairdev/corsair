@@ -240,6 +240,26 @@ describe('contacts endpoints', () => {
 		);
 	});
 
+	it('setStatus uses the sequence-scoped route when sequenceId is set', async () => {
+		const fixture = ReplyioEndpointOutputSchemas.contactsSetStatus.parse({});
+		mockMakeReplyioRequest.mockResolvedValue(fixture);
+
+		await Contacts.setStatus(ctx, {
+			contactIds: [1],
+			statusInSequence: 'active',
+			sequenceId: 9,
+		});
+
+		expect(mockMakeReplyioRequest).toHaveBeenCalledWith(
+			'sequences/9/contacts/set-status-in-sequence',
+			'test-api-key',
+			expect.objectContaining({
+				method: 'POST',
+				body: { contactIds: [1], statusInSequence: 'active' },
+			}),
+		);
+	});
+
 	it('clearStatus fans out to all three clear endpoints by default', async () => {
 		const fixture = ReplyioEndpointOutputSchemas.contactsClearStatus.parse({});
 		mockMakeReplyioRequest.mockResolvedValue(fixture);
