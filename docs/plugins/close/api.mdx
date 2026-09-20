@@ -647,8 +647,7 @@ Record<string, unknown>
 <Accordion title="contacts full type">
 
 ```ts
-{
-}[]
+Record<string, unknown>[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -825,10 +824,8 @@ await corsair.close.api.leads.list({});
   description?: string | null,
   url?: string | null,
   organization_id?: string,
-  contacts?: {
-  }[],
-  custom?: {
-  },
+  contacts?: Record<string, unknown>[],
+  custom?: Record<string, unknown>,
   created_by?: string | null,
   updated_by?: string | null,
   date_created?: string,
