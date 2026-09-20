@@ -27,19 +27,21 @@ await corsair.agiled.api.contacts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | No | Page number for pagination. |
-| `limit` | `number` | No | Maximum number of contacts to return per page. |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | List of contact objects. |
-| `current_page` | `number` | No | The current page number. |
-| `last_page` | `number` | No | The last available page number. |
+| `data` | `object[]` | Yes | — |
+| `current_page` | `number` | No | — |
+| `last_page` | `number` | No | — |
 
 <AccordionGroup>
-<Accordion title="data items full type">
+<Accordion title="data full type">
 
 ```ts
 {
@@ -48,7 +50,12 @@ await corsair.agiled.api.contacts.list({});
   last_name?: string,
   email?: string,
   phone?: string | null
-}
+}[]
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+

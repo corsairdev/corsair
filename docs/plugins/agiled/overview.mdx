@@ -1,13 +1,13 @@
 ---
 title: Overview
-description: "Business management platform for CRM, contacts, invoicing, and project workflows."
+description: "Agiled plugin for Corsair"
 ---
 
 Use **Agiled** through Corsair: one client, typed API calls.
 
 **What you get:**
 
-- 1 typed API operation
+- 1 typed API operations
 
 ## Setup
 
@@ -92,10 +92,14 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.agiled.api.contacts.list({
-	limit: 25,
-});
+await tenant.agiled.api.contacts.list({});
 ```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/agiled/api) reference._
+
 
 See the full list on the [API](/plugins/agiled/api) page.
 
