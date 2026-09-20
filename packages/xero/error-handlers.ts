@@ -11,7 +11,7 @@ export const errorHandlers = {
 			return (
 				msg.includes('rate_limited') ||
 				msg.includes('too many requests') ||
-				/\b429\b/.test(msg)
+				msg.includes('rate limit exceeded')
 			);
 		},
 		handler: async (error: Error) => {

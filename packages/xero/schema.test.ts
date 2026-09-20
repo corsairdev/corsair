@@ -1358,6 +1358,7 @@ describe('Xero Endpoint Behavioral Execution Tests (All 39 Endpoints)', () => {
 				method: 'POST',
 				mediaType: 'application/json',
 				body: expect.any(Blob),
+				tenantId: 'tenant-xyz',
 			}),
 		);
 
@@ -1523,9 +1524,15 @@ describe('Xero Error Handlers & Rate Limiting Metadata Preservation', () => {
 		expect(res.headersRetryAfterMs).toBe(4500);
 	});
 
-	it('RATE_LIMIT_ERROR matches rate limit messages', async () => {
+	it('RATE_LIMIT_ERROR matches rate limit messages and ignores numeric values', async () => {
 		const msgErr = new Error('rate_limited error occurred');
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(msgErr)).toBe(true);
+
+		const msgErr2 = new Error('Rate limit exceeded for organization');
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(msgErr2)).toBe(true);
+
+		const amountErr = new Error('Transaction balance of 429.00 is invalid');
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(amountErr)).toBe(false);
 	});
 
 	it('AUTH_ERROR matches 401 status on ApiError and XeroAPIError', () => {
@@ -1544,5 +1551,23 @@ describe('Xero Error Handlers & Rate Limiting Metadata Preservation', () => {
 
 		const xeroErr = new XeroAPIError('Token expired', 401, { status: 401 });
 		expect(errorHandlers.AUTH_ERROR.match(xeroErr)).toBe(true);
+	});
+
+	it('PERMISSION_ERROR matches 403 status on ApiError and XeroAPIError', () => {
+		const apiErr = new ApiError(
+			{ method: 'GET', url: '/Invoices' },
+			{
+				url: 'https://api.xero.com/api.xro/2.0/Invoices',
+				ok: false,
+				status: 403,
+				statusText: 'Forbidden',
+				body: {},
+			},
+			'Forbidden',
+		);
+		expect(errorHandlers.PERMISSION_ERROR.match(apiErr)).toBe(true);
+
+		const xeroErr = new XeroAPIError('Permission denied', 403, { status: 403 });
+		expect(errorHandlers.PERMISSION_ERROR.match(xeroErr)).toBe(true);
 	});
 });
