@@ -1,22 +1,26 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-
 import { IntegrationListSkeleton } from './integration-list-skeleton';
 import { OssIntegrationsShell } from './oss-integrations-shell';
 import {
 	OssCategoryOnboardingSection,
 	OssHeroSection,
 	OssIntegrationsSection,
+	OssLeaderboardSection,
+	OssPickForMeSection,
 	OssSidebarSection,
 	OssTagFilterSection,
 	OssUserSection,
 } from './oss-sections';
 import {
+	LeaderboardSkeleton,
 	OssHeroSkeleton,
 	OssSidebarSkeleton,
 	TagFilterSkeleton,
 } from './oss-skeletons';
+
 import { parseTagSlugs } from './oss-url';
+import type { OssIntegrationsView } from './view-tabs';
 
 export const metadata: Metadata = {
 	title: 'OSS Integrations',
@@ -33,6 +37,10 @@ type PageProps = {
 	}>;
 };
 
+function parseView(view?: string): OssIntegrationsView {
+	return view === 'leaderboard' ? 'leaderboard' : 'integrations';
+}
+
 function normalizeQueryParam(
 	value: string | string[] | undefined,
 ): string | undefined {
@@ -43,8 +51,8 @@ function normalizeQueryParam(
 
 export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 	const params = await searchParams;
-	const page =
-		params.view === 'leaderboard' ? 1 : Math.max(1, Number(params.page) || 1);
+	const view = parseView(params.view);
+	const page = Math.max(1, Number(params.page) || 1);
 	const q = params.q?.trim() ?? '';
 	const selectedTags = parseTagSlugs(normalizeQueryParam(params.tags));
 
@@ -60,31 +68,53 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 						<OssUserSection />
 					</Suspense>
 
-					<Suspense fallback={null}>
-						<OssCategoryOnboardingSection selectedTags={selectedTags} q={q} />
-					</Suspense>
+					{view === 'integrations' ? (
+						<Suspense fallback={null}>
+							<OssCategoryOnboardingSection selectedTags={selectedTags} q={q} />
+						</Suspense>
+					) : null}
 
 					<OssIntegrationsShell
 						q={q}
+						selectedTags={selectedTags}
+						view={view}
+						pickButton={
+							<Suspense fallback={null}>
+								<OssPickForMeSection />
+							</Suspense>
+						}
 						tagFilter={
 							<Suspense fallback={<TagFilterSkeleton />}>
 								<OssTagFilterSection selectedTags={selectedTags} />
 							</Suspense>
 						}
 						integrationsContent={
-							<Suspense fallback={<IntegrationListSkeleton count={8} />}>
-								<OssIntegrationsSection
-									page={page}
-									q={q}
-									selectedTags={selectedTags}
-								/>
-							</Suspense>
+							view === 'integrations' ? (
+								<Suspense fallback={<IntegrationListSkeleton count={8} />}>
+									<OssIntegrationsSection
+										page={page}
+										q={q}
+										selectedTags={selectedTags}
+									/>
+								</Suspense>
+							) : null
+						}
+						leaderboardContent={
+							view === 'leaderboard' ? (
+								<Suspense fallback={<LeaderboardSkeleton />}>
+									<OssLeaderboardSection
+										page={page}
+										q={q}
+										selectedTags={selectedTags}
+									/>
+								</Suspense>
+							) : null
 						}
 					/>
 				</div>
 
 				<Suspense fallback={<OssSidebarSkeleton />}>
-					<OssSidebarSection />
+					<OssSidebarSection view={view} />
 				</Suspense>
 			</div>
 		</main>

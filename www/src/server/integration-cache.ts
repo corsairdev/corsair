@@ -51,6 +51,7 @@ async function withCurrentUserFields(summary: CachedSummary, userId?: string) {
 			claimedByCurrentUser: false,
 			claimExpiredForCurrentUser: null,
 			canClaimAnother: true,
+			wipIntegrationName: null,
 			claimBlockReason: null,
 		};
 	}
@@ -75,6 +76,7 @@ async function withCurrentUserFields(summary: CachedSummary, userId?: string) {
 		claimedByCurrentUser,
 		claimExpiredForCurrentUser,
 		canClaimAnother: claimEligibility.canClaim,
+		wipIntegrationName: claimEligibility.wipIntegrationName,
 		claimBlockReason: claimEligibility.blockReason,
 	};
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import posthog from 'posthog-js';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -23,9 +22,6 @@ export function UnclaimIntegrationButton({
 
 		try {
 			await unclaimIntegration(integrationId);
-			posthog.capture('integration_unclaimed', {
-				integration_id: integrationId,
-			});
 			router.refresh();
 		} catch (err) {
 			setError(

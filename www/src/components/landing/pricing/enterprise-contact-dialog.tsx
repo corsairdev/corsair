@@ -2,10 +2,8 @@
 
 import { X } from '@phosphor-icons/react';
 import { TRPCClientError } from '@trpc/client';
-import posthog from 'posthog-js';
 import type { FormEvent } from 'react';
 import { useEffect, useId, useState } from 'react';
-
 import { FramedPanel } from '@/app/oss/framed-panel';
 import { ENTERPRISE_CAL_URL } from '@/lib/site-links';
 import { trpcBrowser } from '@/lib/trpc-browser';
@@ -85,7 +83,6 @@ export function EnterpriseContactDialog() {
 				company: form.company || undefined,
 				notes: form.notes || undefined,
 			});
-			posthog.capture('enterprise_contact_submitted');
 			setSubmitted(true);
 		} catch (submitError) {
 			setError(

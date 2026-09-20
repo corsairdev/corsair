@@ -2,7 +2,6 @@
 
 import { GithubLogo } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
-import posthog from 'posthog-js';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -22,7 +21,6 @@ export function GithubUsernameCallout() {
 
 		try {
 			await setGithubUsername(username);
-			posthog.capture('github_username_saved');
 			router.refresh();
 		} catch (err) {
 			setError(
@@ -49,15 +47,12 @@ export function GithubUsernameCallout() {
 				className="flex flex-wrap items-center gap-2"
 			>
 				<input
-					id="oss-github-username"
 					type="text"
 					name="username"
 					required
 					value={username}
 					onChange={(event) => setUsername(event.target.value)}
 					placeholder="octocat"
-					aria-label="GitHub username"
-					autoComplete="username"
 					className="min-w-[200px] flex-1 rounded-lg border border-border/70 bg-background px-3 py-2 text-sm shadow-sm transition-all focus:border-border focus:ring-2 focus:ring-foreground/5 focus:outline-none"
 				/>
 				<Button
