@@ -1,5 +1,6 @@
 import { AbyssaleSchema } from './schema';
 import {
+	AbyssaleBanner,
 	AbyssaleDesign,
 	AbyssaleFont,
 	AbyssaleProject,
@@ -10,8 +11,9 @@ describe('Abyssale database schema', () => {
 		expect(AbyssaleSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('registers the three cacheable resources', () => {
+	it('registers the cacheable resources', () => {
 		expect(Object.keys(AbyssaleSchema.entities).sort()).toEqual([
+			'banners',
 			'designs',
 			'fonts',
 			'projects',
@@ -69,5 +71,27 @@ describe('Abyssale database schema', () => {
 			brand_new_field: 1,
 		});
 		expect(parsed.brand_new_field).toBe(1);
+	});
+
+	it('parses a generated banner, including HTML5 output without a cdn_url', () => {
+		const parsed = AbyssaleBanner.parse({
+			id: '64238d01-d402-474b-8c2d-fbc957e9d290',
+			version: 3,
+			sharing_id: '5fcec999-2bfb-4dd7-ba38-2d9e16c49149',
+			file: {
+				type: 'zip',
+				url: 'https://cdn.abyssale.com/banner.zip',
+				fallback_image_url: 'https://cdn.abyssale.com/banner.jpeg',
+			},
+			format: { width: 1200, height: 628 },
+			template: {
+				id: '46d22c62-d134-44d3-a040-138e4ea9ea08',
+				name: 'Summer campaign',
+			},
+		});
+		expect(parsed.file?.fallback_image_url).toBe(
+			'https://cdn.abyssale.com/banner.jpeg',
+		);
+		expect(parsed.format?.id).toBeUndefined();
 	});
 });

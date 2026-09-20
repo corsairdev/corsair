@@ -416,3 +416,35 @@ export function parseHubApiErrorBody(payload: unknown): string | null {
 	const body = payload as HubApiErrorBody;
 	return body.error ?? body.message ?? null;
 }
+
+export type HubReconnectBody = {
+	message: string | null;
+	connectUrl: string | null;
+	plugin: string | null;
+	tenantId: string | null;
+	reason: string | null;
+};
+
+// Recognizes Hub's `reconnect_required` error body and pulls out the scoped
+// connect link + identity. Returns null for any other error shape, so callers
+// fall back to their generic handling.
+export function parseHubReconnectBody(
+	payload: unknown,
+): HubReconnectBody | null {
+	if (!payload || typeof payload !== 'object') {
+		return null;
+	}
+	const body = payload as Record<string, unknown>;
+	if (body.errorType !== 'reconnect_required') {
+		return null;
+	}
+	const str = (v: unknown) =>
+		typeof v === 'string' && v.length > 0 ? v : null;
+	return {
+		message: str(body.error),
+		connectUrl: str(body.connectUrl),
+		plugin: str(body.plugin),
+		tenantId: str(body.tenantId),
+		reason: str(body.reason),
+	};
+}
