@@ -104,6 +104,52 @@ export const comboDataSchema = z
 			return ids.has(combo.slugA) && ids.has(combo.slugB);
 		},
 		{ message: 'counts must include slugA and slugB' },
+	)
+	.refine(
+		(combo) =>
+			combo.appDetails.every(
+				(app) => app.id === combo.slugA || app.id === combo.slugB,
+			),
+		{ message: 'appDetails ids must be slugA or slugB' },
+	)
+	.refine(
+		(combo) => {
+			const slugs = new Set([combo.slugA, combo.slugB]);
+			return (
+				combo.triggers.every((row) => slugs.has(row.app)) &&
+				combo.actions.every((row) => slugs.has(row.app)) &&
+				combo.kb.tools.every((tool) =>
+					tool.apps.every((app) => slugs.has(app.appId)),
+				) &&
+				combo.kb.sources.every((source) => slugs.has(source.appId))
+			);
+		},
+		{ message: 'trigger, action, and kb app ids must be slugA or slugB' },
+	)
+	.refine(
+		(combo) => {
+			const keys = new Set(combo.triggers.map((row) => `${row.app}.${row.id}`));
+			return combo.workflows.every((workflow) =>
+				keys.has(`${workflow.trigger.app}.${workflow.trigger.id}`),
+			);
+		},
+		{ message: 'workflow triggers must exist in triggers' },
+	)
+	.refine(
+		(combo) => {
+			const keys = new Set(combo.actions.map((row) => `${row.app}.${row.id}`));
+			return combo.workflows.every((workflow) =>
+				keys.has(`${workflow.action.app}.${workflow.action.id}`),
+			);
+		},
+		{ message: 'workflow actions must exist in actions' },
+	)
+	.refine(
+		(combo) => {
+			const ids = new Set(combo.faqs.map((faq) => faq.id));
+			return ids.has('app-a-api') && ids.has('app-b-api');
+		},
+		{ message: 'faqs must include app-a-api and app-b-api' },
 	);
 
 export type ComboTrigger = z.infer<typeof comboTriggerSchema>;

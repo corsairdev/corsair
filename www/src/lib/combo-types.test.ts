@@ -1,18 +1,15 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
+import { readComboFile } from './combo-paths';
 import { comboCountsFor, comboDataSchema, worksWithFor } from './combo-types';
 
-const slackLinear: unknown = JSON.parse(
-	readFileSync(
-		join(
-			dirname(fileURLToPath(import.meta.url)),
-			'../data/combos/slack-linear.json',
-		),
-		'utf8',
+const slackLinear = readComboFile(
+	join(
+		dirname(fileURLToPath(import.meta.url)),
+		'../data/combos/slack-linear.json',
 	),
 );
 
@@ -37,6 +34,26 @@ describe('comboDataSchema', () => {
 			comboDataSchema.parse({
 				...combo,
 				counts: [{ id: 'slack', ops: 1, triggers: 1 }],
+			}),
+		);
+	});
+
+	it('rejects a workflow whose trigger is not in triggers', () => {
+		const combo = comboDataSchema.parse(slackLinear);
+		const [workflow] = combo.workflows;
+		assert.ok(workflow);
+		assert.throws(() =>
+			comboDataSchema.parse({
+				...combo,
+				workflows: [
+					{
+						...workflow,
+						trigger: {
+							...workflow.trigger,
+							id: 'not.a.real.trigger',
+						},
+					},
+				],
 			}),
 		);
 	});

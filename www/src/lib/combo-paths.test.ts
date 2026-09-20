@@ -4,7 +4,8 @@ import { dirname, join } from 'node:path';
 import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { resolveCombosDir } from './combo-paths';
+import { readComboFile, resolveCombosDir } from './combo-paths';
+import { comboDataSchema } from './combo-types';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const wwwRoot = join(here, '../..');
@@ -28,5 +29,12 @@ describe('resolveCombosDir', () => {
 			() => resolveCombosDir(join(here, 'missing-combo-root')),
 			/combo JSON directory not found/,
 		);
+	});
+
+	it('reads slack-linear.json as untrusted JSON that the schema accepts', () => {
+		const raw = readComboFile(
+			join(wwwRoot, 'src/data/combos/slack-linear.json'),
+		);
+		assert.equal(comboDataSchema.parse(raw).slugA, 'slack');
 	});
 });

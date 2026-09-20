@@ -1,8 +1,8 @@
 import 'server-only';
 
-import { readdirSync, readFileSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { resolveCombosDir } from '@/lib/combo-paths';
+import { readComboFile, resolveCombosDir } from '@/lib/combo-paths';
 import type { ComboData, ComboWorksWithItem } from '@/lib/combo-types';
 import { comboDataSchema, worksWithFor } from '@/lib/combo-types';
 
@@ -30,12 +30,9 @@ function loadCombos(): ComboData[] {
 	const keys = new Set<string>();
 
 	for (const name of names) {
-		const raw: unknown = JSON.parse(
-			readFileSync(join(COMBOS_DIR, name), 'utf8'),
-		);
 		let combo: ComboData;
 		try {
-			combo = comboDataSchema.parse(raw);
+			combo = comboDataSchema.parse(readComboFile(join(COMBOS_DIR, name)));
 		} catch (err) {
 			const detail = err instanceof Error ? err.message : String(err);
 			throw new Error(`invalid combo file ${name}: ${detail}`);
