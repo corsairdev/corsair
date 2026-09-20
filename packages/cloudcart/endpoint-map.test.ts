@@ -407,6 +407,18 @@ const cases: Case[] = [
 	['webhooks', 'listWebhooks', {}, 'GET', 'webhooks'],
 	['webhooks', 'updateWebhook', ID_DATA, 'PATCH', 'webhooks/1'],
 	['webhooks', 'deleteWebhook', ID, 'DELETE', 'webhooks/1'],
+
+	['carts', 'addToCart', { product_id: 2, quantity: 1 }, 'POST', 'carts'],
+	['carts', 'getCart', {}, 'GET', 'carts'],
+	[
+		'carts',
+		'updateCartItem',
+		{ product_id: 2, quantity: 3 },
+		'PATCH',
+		'carts/2',
+	],
+	['carts', 'removeFromCart', { product_id: 2 }, 'DELETE', 'carts/2'],
+	['carts', 'clearCart', {}, 'DELETE', 'carts'],
 ];
 
 describe('cloudcart endpoint map', () => {

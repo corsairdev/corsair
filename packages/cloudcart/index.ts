@@ -19,6 +19,7 @@ import { AuthMissingError } from 'corsair/core';
 import { buildCloudcartStoreUrl, packCloudcartKey } from './client';
 import {
 	Blogs,
+	Carts,
 	Categories,
 	Customers,
 	Discounts,
@@ -279,6 +280,13 @@ const cloudcartEndpointsNested = {
 		listWebhooks: Webhooks.listWebhooks,
 		updateWebhook: Webhooks.updateWebhook,
 		deleteWebhook: Webhooks.deleteWebhook,
+	},
+	carts: {
+		addToCart: Carts.addToCart,
+		getCart: Carts.getCart,
+		updateCartItem: Carts.updateCartItem,
+		removeFromCart: Carts.removeFromCart,
+		clearCart: Carts.clearCart,
 	},
 } as const;
 
@@ -885,6 +893,26 @@ export const cloudcartEndpointSchemas = {
 		input: CloudcartEndpointInputSchemas.deleteWebhook,
 		output: CloudcartEndpointOutputSchemas.deleteWebhook,
 	},
+	'carts.addToCart': {
+		input: CloudcartEndpointInputSchemas.addToCart,
+		output: CloudcartEndpointOutputSchemas.addToCart,
+	},
+	'carts.getCart': {
+		input: CloudcartEndpointInputSchemas.getCart,
+		output: CloudcartEndpointOutputSchemas.getCart,
+	},
+	'carts.updateCartItem': {
+		input: CloudcartEndpointInputSchemas.updateCartItem,
+		output: CloudcartEndpointOutputSchemas.updateCartItem,
+	},
+	'carts.removeFromCart': {
+		input: CloudcartEndpointInputSchemas.removeFromCart,
+		output: CloudcartEndpointOutputSchemas.removeFromCart,
+	},
+	'carts.clearCart': {
+		input: CloudcartEndpointInputSchemas.clearCart,
+		output: CloudcartEndpointOutputSchemas.clearCart,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof cloudcartEndpointsNested
 >;
@@ -1419,6 +1447,17 @@ const cloudcartEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Delete webhook',
 	},
+	'carts.addToCart': { riskLevel: 'write', description: 'Add to cart' },
+	'carts.getCart': { riskLevel: 'read', description: 'Get cart' },
+	'carts.updateCartItem': {
+		riskLevel: 'write',
+		description: 'Update cart item',
+	},
+	'carts.removeFromCart': {
+		riskLevel: 'destructive',
+		description: 'Remove from cart',
+	},
+	'carts.clearCart': { riskLevel: 'destructive', description: 'Clear cart' },
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof cloudcartEndpointsNested
 >;

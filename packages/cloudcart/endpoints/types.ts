@@ -165,6 +165,22 @@ export const ListOrderPaymentsInputSchema = BaseEntityInputSchema;
 export const ListOrderShippingInputSchema = BaseEntityInputSchema;
 export const ListOrderStatusInputSchema = BaseEntityInputSchema;
 
+export const AddToCartInputSchema = BaseEntityInputSchema.extend({
+	product_id: RequiredIdSchema,
+	quantity: z.coerce.number().int().positive(),
+});
+export const GetCartInputSchema = BaseEntityInputSchema.extend({
+	cart_id: z.string().min(1).optional(),
+});
+export const UpdateCartItemInputSchema = BaseEntityInputSchema.extend({
+	product_id: RequiredIdSchema,
+	quantity: z.coerce.number().int().positive(),
+});
+export const RemoveFromCartInputSchema = BaseEntityInputSchema.extend({
+	product_id: RequiredIdSchema,
+});
+export const ClearCartInputSchema = BaseEntityInputSchema;
+
 export const CreateDiscountInputSchema = BaseEntityInputSchema;
 export const DeleteDiscountInputSchema = IdRequiredInputSchema;
 export const CreateDiscountCodeInputSchema = BaseEntityInputSchema;
@@ -417,6 +433,11 @@ export type CloudcartEndpointInputs = {
 	listWebhooks: z.infer<typeof ListWebhooksInputSchema>;
 	updateWebhook: z.infer<typeof UpdateWebhookInputSchema>;
 	deleteWebhook: z.infer<typeof DeleteWebhookInputSchema>;
+	addToCart: z.infer<typeof AddToCartInputSchema>;
+	getCart: z.infer<typeof GetCartInputSchema>;
+	updateCartItem: z.infer<typeof UpdateCartItemInputSchema>;
+	removeFromCart: z.infer<typeof RemoveFromCartInputSchema>;
+	clearCart: z.infer<typeof ClearCartInputSchema>;
 };
 
 export type CloudcartEndpointOutputs = {
@@ -581,6 +602,11 @@ export const CloudcartEndpointInputSchemas = {
 	listWebhooks: ListWebhooksInputSchema,
 	updateWebhook: UpdateWebhookInputSchema,
 	deleteWebhook: DeleteWebhookInputSchema,
+	addToCart: AddToCartInputSchema,
+	getCart: GetCartInputSchema,
+	updateCartItem: UpdateCartItemInputSchema,
+	removeFromCart: RemoveFromCartInputSchema,
+	clearCart: ClearCartInputSchema,
 } as const;
 
 export const CloudcartEndpointOutputSchemas = {
@@ -739,4 +765,9 @@ export const CloudcartEndpointOutputSchemas = {
 	listWebhooks: JsonApiDocumentSchema,
 	updateWebhook: JsonApiDocumentSchema,
 	deleteWebhook: JsonApiMutationResponseSchema,
+	addToCart: JsonApiDocumentSchema,
+	getCart: JsonApiDocumentSchema,
+	updateCartItem: JsonApiDocumentSchema,
+	removeFromCart: JsonApiMutationResponseSchema,
+	clearCart: JsonApiMutationResponseSchema,
 } as const;

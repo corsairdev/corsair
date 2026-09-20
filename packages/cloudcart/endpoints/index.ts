@@ -1,4 +1,5 @@
 import * as BlogsExports from './blogs';
+import * as CartsExports from './carts';
 import * as CategoriesExports from './categories';
 import * as CustomersExports from './customers';
 import * as DiscountsExports from './discounts';
@@ -19,6 +20,7 @@ export const Orders = OrdersExports;
 export const Discounts = DiscountsExports;
 export const Subscribers = SubscribersExports;
 export const Blogs = BlogsExports;
+export const Carts = CartsExports;
 export const Misc = MiscExports;
 export const Webhooks = WebhooksExports;
 
