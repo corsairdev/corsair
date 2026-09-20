@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "Cloud OCR service for converting PDFs and images into searchable text content."
+---
+
+Use **OCR Web Service** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 4 typed API operations
+- 2 synced entities (`accounts`, `documents`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/ocrwebservice
+```
+```bash yarn
+yarn add corsair @corsair-dev/ocrwebservice
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/ocrwebservice
+```
+```bash bun
+bun add corsair @corsair-dev/ocrwebservice
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { ocrwebservice } from '@corsair-dev/ocrwebservice';
+
+export const corsair = createCorsair({
+	plugins: [
+		ocrwebservice(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+ocrwebservice()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'ocrwebservice',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`account.getCredentials`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ocrwebservice.api.account.getCredentials({});
+```
+
+
+**`ocr.recognize`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ocrwebservice.api.ocr.recognize({});
+```
+
+
+See the full list on the [API](/plugins/ocrwebservice/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.ocrwebservice.db.<entity>.search()` and `.list()`: `accounts`, `documents`.
+
+See [Database](/plugins/ocrwebservice/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/ocrwebservice/api">
+    Every `ocrwebservice.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/ocrwebservice/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,3192 @@
+{
+  "id": "razorpay",
+  "displayName": "Razorpay",
+  "description": "Payment gateway for accepting online payments, subscriptions, and payouts in India.",
+  "npmPackageName": "@corsair-dev/razorpay",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 25,
+    "webhooks": 4,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "account_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "razorpay.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Create a Razorpay customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gstin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "fail_existing",
+            "optional": true,
+            "type": "0 | 1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "customer"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gstin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Fetch a Razorpay customer by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "customer"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gstin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List Razorpay customers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": true,
+            "type": "collection"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, entity: customer, name?: string | null, email?: string | null, contact?: string | null, gstin?: string | null, notes?: {} | any[], created_at?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Update a Razorpay customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gstin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "customer"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gstin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.orders.create",
+      "shortPath": "orders.create",
+      "description": "Create a Razorpay order",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "receipt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "order"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "amount_paid",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "amount_due",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "receipt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attempts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.orders.get",
+      "shortPath": "orders.get",
+      "description": "Fetch a Razorpay order by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "order"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "amount_paid",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "amount_due",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "receipt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attempts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.orders.list",
+      "shortPath": "orders.list",
+      "description": "List Razorpay orders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "authorized",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "receipt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": true,
+            "type": "collection"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, entity: order, amount: number, amount_paid?: number | null, amount_due?: number, currency: string, receipt?: string | null, offer_id?: string | null, status: string, attempts?: number, notes?: {} | any[], created_at?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.payments.capture",
+      "shortPath": "payments.capture",
+      "description": "Capture an authorized Razorpay payment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "payment"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "captured",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.payments.get",
+      "shortPath": "payments.get",
+      "description": "Fetch a Razorpay payment by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "payment"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "captured",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.payments.list",
+      "shortPath": "payments.list",
+      "description": "List Razorpay payments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": true,
+            "type": "collection"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.payouts.create",
+      "shortPath": "payouts.create",
+      "description": "Create a Razorpay payout",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_number",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fund_account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "purpose",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "queue_if_low_balance",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "narration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "payout"
+          },
+          {
+            "key": "fund_account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "fees",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "utr",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purpose",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "debit_account_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "narration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_details",
+            "optional": true,
+            "type": "{ description: string, source: string, reason: string }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fee_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.payouts.get",
+      "shortPath": "payouts.get",
+      "description": "Fetch a Razorpay payout by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "payout"
+          },
+          {
+            "key": "fund_account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "fees",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "utr",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purpose",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "debit_account_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "narration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_details",
+            "optional": true,
+            "type": "{ description: string, source: string, reason: string }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fee_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.payouts.list",
+      "shortPath": "payouts.list",
+      "description": "List Razorpay payouts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_number",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fund_account_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": true,
+            "type": "collection"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, entity: payout, fund_account_id: string, amount: number, currency: string, notes?: {} | any[], fees?: number, tax?: number, status: string, utr?: string | null, mode?: string, purpose?: string, reference_id?: string | null, debit_account_number?: string, narration?: string | null, batch_id?: string | null, status_details?: { description: string, source: string, reason: string } | null, created_at?: number, fee_type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.refunds.create",
+      "shortPath": "refunds.create",
+      "description": "Create a refund for a Razorpay payment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paymentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "speed",
+            "optional": true,
+            "type": "normal | optimum"
+          },
+          {
+            "key": "receipt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "refund"
+          },
+          {
+            "key": "payment_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "receipt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "speed_processed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "speed_requested",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.refunds.get",
+      "shortPath": "refunds.get",
+      "description": "Fetch a specific refund for a Razorpay payment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paymentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "refundId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "refund"
+          },
+          {
+            "key": "payment_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "receipt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "speed_processed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "speed_requested",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.refunds.list",
+      "shortPath": "refunds.list",
+      "description": "List refunds for a Razorpay payment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paymentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": true,
+            "type": "collection"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, entity: refund, payment_id: string, amount: number, currency?: string | null, notes?: {} | any[], receipt?: string | null, speed_processed?: string | null, speed_requested?: string | null, status: string, created_at?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.settlements.get",
+      "shortPath": "settlements.get",
+      "description": "Fetch a Razorpay settlement by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "settlement"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "created | processed | failed"
+          },
+          {
+            "key": "fees",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "utr",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.settlements.list",
+      "shortPath": "settlements.list",
+      "description": "List Razorpay settlements",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": true,
+            "type": "collection"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, entity: settlement, amount?: number | null, status: created | processed | failed, fees?: number | null, tax?: number | null, utr?: string | null, created_at?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.subscriptions.cancel",
+      "shortPath": "subscriptions.cancel",
+      "description": "Cancel a Razorpay subscription",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cancel_at_cycle_end",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "subscription"
+          },
+          {
+            "key": "plan_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "current_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ended_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "charge_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "auth_attempts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paid_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remaining_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customer_notify",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expire_by",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "short_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_scheduled_changes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "change_scheduled_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.subscriptions.create",
+      "shortPath": "subscriptions.create",
+      "description": "Create a Razorpay subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "plan_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expire_by",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customer_notify",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "offer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "subscription"
+          },
+          {
+            "key": "plan_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "current_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ended_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "charge_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "auth_attempts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paid_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remaining_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customer_notify",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expire_by",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "short_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_scheduled_changes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "change_scheduled_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.subscriptions.get",
+      "shortPath": "subscriptions.get",
+      "description": "Fetch a Razorpay subscription by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "subscription"
+          },
+          {
+            "key": "plan_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "current_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ended_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "charge_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "auth_attempts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paid_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remaining_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customer_notify",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expire_by",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "short_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_scheduled_changes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "change_scheduled_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.subscriptions.list",
+      "shortPath": "subscriptions.list",
+      "description": "List Razorpay subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "plan_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": true,
+            "type": "collection"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, entity: subscription, plan_id: string, customer_id?: string | null, status: string, current_start?: number | null, current_end?: number | null, ended_at?: number | null, charge_at?: number | null, offer_id?: string | null, start_at?: number | null, end_at?: number | null, auth_attempts?: number, quantity?: number, total_count?: number, paid_count?: number, remaining_count?: number, customer_notify?: boolean, expire_by?: number | null, short_url?: string | null, has_scheduled_changes?: boolean, change_scheduled_at?: number | null, source?: string | null, notes?: {} | any[], created_at?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.subscriptions.pause",
+      "shortPath": "subscriptions.pause",
+      "description": "Pause a Razorpay subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pause_initiated_by",
+            "optional": true,
+            "type": "customer | bank"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "subscription"
+          },
+          {
+            "key": "plan_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "current_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ended_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "charge_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "auth_attempts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paid_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remaining_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customer_notify",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expire_by",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "short_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_scheduled_changes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "change_scheduled_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.subscriptions.resume",
+      "shortPath": "subscriptions.resume",
+      "description": "Resume a paused Razorpay subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resume_at",
+            "optional": true,
+            "type": "now"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "subscription"
+          },
+          {
+            "key": "plan_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "current_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ended_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "charge_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "auth_attempts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paid_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remaining_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customer_notify",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expire_by",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "short_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_scheduled_changes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "change_scheduled_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "razorpay.api.subscriptions.update",
+      "shortPath": "subscriptions.update",
+      "description": "Update a Razorpay subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plan_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remaining_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schedule_change_at",
+            "optional": true,
+            "type": "now | cycle_end"
+          },
+          {
+            "key": "customer_notify",
+            "optional": true,
+            "type": "0 | 1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "subscription"
+          },
+          {
+            "key": "plan_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "current_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current_end",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ended_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "charge_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "auth_attempts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paid_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remaining_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customer_notify",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expire_by",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "short_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_scheduled_changes",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "change_scheduled_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{} | any[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "razorpay.webhooks.orders.paid",
+      "shortPath": "orders.paid",
+      "description": "A Razorpay order was paid",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "order.paid"
+          },
+          {
+            "key": "contains",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ order: { entity: { id: string, entity: order, amount: number, amount_paid?: number | null, amount_due?: number, currency: string, receipt?: string | null, offer_id?: string | null, status: string, attempts?: number, notes?: {} | any[], created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } }"
+          }
+        ]
+      },
+      "responseType": "{ entity: event, account_id: string, event: order.paid, contains: string[], created_at: number, payload: { order: { entity: { id: string, entity: order, amount: number, amount_paid?: number | null, amount_due?: number, currency: string, receipt?: string | null, offer_id?: string | null, status: string, attempts?: number, notes?: {} | any[], created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } } }",
+      "usageExample": "razorpay({\n    webhookHooks: {\n        orders: {\n            paid: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "razorpay.webhooks.payments.captured",
+      "shortPath": "payments.captured",
+      "description": "A Razorpay payment was captured",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "payment.captured"
+          },
+          {
+            "key": "contains",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ payment: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } }"
+          }
+        ]
+      },
+      "responseType": "{ entity: event, account_id: string, event: payment.captured, contains: string[], created_at: number, payload: { payment: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } } }",
+      "usageExample": "razorpay({\n    webhookHooks: {\n        payments: {\n            captured: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "razorpay.webhooks.payments.failed",
+      "shortPath": "payments.failed",
+      "description": "A Razorpay payment failed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "payment.failed"
+          },
+          {
+            "key": "contains",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ payment: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } }"
+          }
+        ]
+      },
+      "responseType": "{ entity: event, account_id: string, event: payment.failed, contains: string[], created_at: number, payload: { payment: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } } }",
+      "usageExample": "razorpay({\n    webhookHooks: {\n        payments: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "razorpay.webhooks.refunds.processed",
+      "shortPath": "refunds.processed",
+      "description": "A Razorpay refund was processed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "refund.processed"
+          },
+          {
+            "key": "contains",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ refund: { entity: { id: string, entity: refund, payment_id: string, amount: number, currency?: string | null, notes?: {} | any[], receipt?: string | null, speed_processed?: string | null, speed_requested?: string | null, status: string, created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } }"
+          }
+        ]
+      },
+      "responseType": "{ entity: event, account_id: string, event: refund.processed, contains: string[], created_at: number, payload: { refund: { entity: { id: string, entity: refund, payment_id: string, amount: number, currency?: string | null, notes?: {} | any[], receipt?: string | null, speed_processed?: string | null, speed_requested?: string | null, status: string, created_at?: number } }, payment?: { entity: { id: string, entity: payment, amount: number, currency: string, status: string, order_id?: string | null, invoice_id?: string | null, method?: string | null, captured?: boolean, description?: string | null, email?: string | null, contact?: string | null, notes?: {} | any[], created_at?: number } } } }",
+      "usageExample": "razorpay({\n    webhookHooks: {\n        refunds: {\n            processed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "razorpay.db.customers.search",
+      "entityName": "customers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contact",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gstin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "razorpay.db.orders.search",
+      "entityName": "orders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "amount_paid",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "amount_due",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "receipt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "offer_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "attempts",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "razorpay.db.payments.search",
+      "entityName": "payments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "order_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "invoice_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "method",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "captured",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contact",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "razorpay.db.payouts.search",
+      "entityName": "payouts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fund_account_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fees",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "utr",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "purpose",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reference_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "debit_account_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "narration",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "batch_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "fee_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "razorpay.db.refunds.search",
+      "entityName": "refunds",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "payment_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "receipt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "speed_processed",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "speed_requested",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "razorpay.db.settlements.search",
+      "entityName": "settlements",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "fees",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "utr",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "razorpay.db.subscriptions.search",
+      "entityName": "subscriptions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "plan_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customer_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "current_start",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "current_end",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "ended_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "charge_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "offer_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "end_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "auth_attempts",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "quantity",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "total_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "paid_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "remaining_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "customer_notify",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "expire_by",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "short_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "has_scheduled_changes",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "change_scheduled_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

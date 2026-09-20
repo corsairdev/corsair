@@ -229,7 +229,7 @@ await corsair.altoviz.api.account.testApiKey({});
 
 `colleagues.delete`
 
-Delete a colleague [DESTRUCTIVE]
+Delete a colleague
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -684,7 +684,7 @@ await corsair.altoviz.api.customerFamilies.create({});
 
 `customerFamilies.delete`
 
-Delete a customer family [DESTRUCTIVE]. Refused with a conflict if it still has members - it does not cascade.
+Delete a customer family. Refused with a conflict if it still has members - it does not cascade.
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -959,7 +959,7 @@ await corsair.altoviz.api.customers.create({});
 
 `customers.delete`
 
-Delete a customer [DESTRUCTIVE]. Evicts the auto-created contact from the mirror if one is cached.
+Delete a customer. Evicts the auto-created contact from the mirror if one is cached.
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -1613,7 +1613,7 @@ await corsair.altoviz.api.productFamilies.create({});
 
 `productFamilies.delete`
 
-Delete a product family [DESTRUCTIVE]. Refused with a conflict if it still has members.
+Delete a product family. Refused with a conflict if it still has members.
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -1817,7 +1817,7 @@ await corsair.altoviz.api.products.create({});
 
 `products.delete`
 
-Delete a product [DESTRUCTIVE]
+Delete a product
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -2240,7 +2240,7 @@ await corsair.altoviz.api.receipts.create({});
 
 `receipts.delete`
 
-Delete a receipt [DESTRUCTIVE]
+Delete a receipt
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -2845,7 +2845,7 @@ await corsair.altoviz.api.saleCredits.create({});
 
 `saleCredits.delete`
 
-Delete a draft sale credit [DESTRUCTIVE]. Drafts only.
+Delete a draft sale credit. Drafts only.
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -4257,7 +4257,7 @@ await corsair.altoviz.api.saleInvoices.create({});
 
 `saleInvoices.delete`
 
-Delete a draft sale invoice [DESTRUCTIVE]. Drafts only.
+Delete a draft sale invoice. Drafts only.
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -5051,7 +5051,7 @@ await corsair.altoviz.api.saleInvoices.list({});
 
 `saleQuotes.delete`
 
-Delete a sale quote [DESTRUCTIVE]. Deleting a quote that does not exist also returns 200.
+Delete a sale quote. Deleting a quote that does not exist also returns 200.
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -5524,7 +5524,7 @@ await corsair.altoviz.api.saleQuotes.list({});
 
 `suppliers.delete`
 
-Delete a supplier [DESTRUCTIVE]. Evicts the auto-created contact from the mirror if one is cached.
+Delete a supplier. Evicts the auto-created contact from the mirror if one is cached.
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -5917,7 +5917,7 @@ await corsair.altoviz.api.webhookSubscriptions.register({});
 
 `webhookSubscriptions.unregister`
 
-Unregister a webhook subscription by id or url [DESTRUCTIVE]. Exactly one of the two is required.
+Unregister a webhook subscription by id or url. Exactly one of the two is required.
 
 **Risk:** `destructive` · **Irreversible**
 

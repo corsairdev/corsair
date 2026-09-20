@@ -1,4 +1,4 @@
 displayName: Webflow
-description: Webflow plugin for Corsair
+description: Visual web design platform for building, hosting, and managing responsive marketing sites.
 overviewNote: |
   Webflow exposes site, CMS collection, asset, page, ecommerce, and webhook workflows for the no-code website platform. Use Corsair permissions for destructive actions such as deleting collections, items, assets, or webhooks, and for refunding orders.

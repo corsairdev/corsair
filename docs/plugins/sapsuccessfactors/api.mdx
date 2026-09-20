@@ -1,0 +1,3879 @@
+---
+title: API
+description: "API reference for SAP SuccessFactors: every `sapsuccessfactors.api.*` operation with input and output types."
+---
+
+Every `sapsuccessfactors.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## A
+
+### createAFeedbackRequest
+
+`a.createAFeedbackRequest`
+
+Create a continuous feedback request
+
+**Risk:** `write`
+
+```ts
+await corsair.sapsuccessfactors.api.a.createAFeedbackRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `questions` | `object[]` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+  question: string,
+  answer?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+} | {
+  d: {
+    id: string | number
+  }
+} | {
+  @odata.context: string
+}& {
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Application
+
+### getApplicationInterview
+
+`application.getApplicationInterview`
+
+Retrieve interview information for job applications
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.application.getApplicationInterview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `applicationId` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      applicationId: string | number
+    }[]
+  }
+} | {
+  value: {
+    applicationId: string | number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Approve
+
+### approveCalibrationSession
+
+`approve.approveCalibrationSession`
+
+Finalize a calibration session that is In Progress or Approving
+
+**Risk:** `write`
+
+```ts
+await corsair.sapsuccessfactors.api.approve.approveCalibrationSession({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+} | {
+  d: {
+    sessionId: string
+  }
+} | {
+  @odata.context: string
+}& {
+  sessionId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Background
+
+### getBackgroundEducation
+
+`background.getBackgroundEducation`
+
+Retrieve Background_Education records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.background.getBackgroundEducation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      userId: string
+    }[]
+  }
+} | {
+  value: {
+    userId: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getBackgroundMobility
+
+`background.getBackgroundMobility`
+
+Retrieve Background_Mobility records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.background.getBackgroundMobility({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      userId: string
+    }[]
+  }
+} | {
+  value: {
+    userId: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Calibration
+
+### getCalibrationSessionById
+
+`calibration.getCalibrationSessionById`
+
+Get a specific calibration session by session ID
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.calibration.getCalibrationSessionById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    sessionId: string
+  }
+} | {
+  @odata.context: string
+}& {
+  sessionId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCalibrationSessions
+
+`calibration.getCalibrationSessions`
+
+Query all calibration sessions the current user can access
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.calibration.getCalibrationSessions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      sessionId: string
+    }[]
+  }
+} | {
+  value: {
+    sessionId: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCalibrationSubjectById
+
+`calibration.getCalibrationSubjectById`
+
+Query a subject's competency ratings within a calibration session
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.calibration.getCalibrationSubjectById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject_id` | `string` | Yes | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    subjectId: string
+  }
+} | {
+  @odata.context: string
+}& {
+  subjectId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCalibrationSubjectRatings
+
+`calibration.getCalibrationSubjectRatings`
+
+Query a subject's ratings by session ID
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.calibration.getCalibrationSubjectRatings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+| `session_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      subjectId: string
+    }[]
+  }
+} | {
+  value: {
+    subjectId: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateCalibrationSubjectRatings
+
+`calibration.updateCalibrationSubjectRatings`
+
+Update a subject's competency ratings in a calibration session
+
+**Risk:** `write`
+
+```ts
+await corsair.sapsuccessfactors.api.calibration.updateCalibrationSubjectRatings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject_id` | `string` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+} | {
+  d: {
+    subjectId: string
+  }
+} | {
+  @odata.context: string
+}& {
+  subjectId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Candidates
+
+### listCandidates
+
+`candidates.listCandidates`
+
+Retrieve candidates
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.candidates.listCandidates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      __metadata?: {
+        uri?: string,
+        type?: string
+      },
+      candidateId: string | number,
+      firstName?: string | null,
+      lastName?: string | null,
+      primaryEmail?: string | null,
+      contactEmail?: string | null,
+      cellPhone?: string | null,
+      city?: string | null,
+      country?: string | null,
+      currentTitle?: string | null,
+      lastModifiedDateTime?: string | null
+    }[]
+  }
+} | {
+  value: {
+    __metadata?: {
+      uri?: string,
+      type?: string
+    },
+    candidateId: string | number,
+    firstName?: string | null,
+    lastName?: string | null,
+    primaryEmail?: string | null,
+    contactEmail?: string | null,
+    cellPhone?: string | null,
+    city?: string | null,
+    country?: string | null,
+    currentTitle?: string | null,
+    lastModifiedDateTime?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Cdp
+
+### getCdpLearningMetadata
+
+`cdp.getCdpLearningMetadata`
+
+Get metadata for Career Development Planning Learning
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.cdp.getCdpLearningMetadata({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string | {
+  d: {
+    results: {
+      message?: string
+    }[]
+  }
+} | {
+  value: {
+    message?: string
+  }[]
+} | {
+  d: {
+    message?: string
+  }
+} | {
+  @odata.context: string
+}& {
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### refreshCdpLearningMetadata
+
+`cdp.refreshCdpLearningMetadata`
+
+Refresh CDP Learning metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.sapsuccessfactors.api.cdp.refreshCdpLearningMetadata({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+} | {
+  d: {
+    message?: string
+  }
+} | {
+  @odata.context: string
+}& {
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Current
+
+### getCurrentUser
+
+`current.getCurrentUser`
+
+Retrieve the currently authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.current.getCurrentUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      __metadata?: {
+        uri?: string,
+        type?: string
+      },
+      userId: string,
+      username?: string | null,
+      defaultFullName?: string | null,
+      firstName?: string | null,
+      mi?: string | null,
+      lastName?: string | null,
+      email?: string | null,
+      status?: string | null,
+      department?: string | null,
+      division?: string | null,
+      location?: string | null,
+      title?: string | null,
+      managerId?: string | null,
+      hrId?: string | null,
+      hireDate?: string | null,
+      lastModifiedDateTime?: string | null,
+      lastModified?: string | null,
+      timeZone?: string | null,
+      country?: string | null,
+      state?: string | null,
+      city?: string | null,
+      zipCode?: string | null,
+      addressLine1?: string | null,
+      businessPhone?: string | null,
+      cellPhone?: string | null,
+      empId?: string | null,
+      totalTeamSize?: number | null,
+      directReports?: {
+        __deferred?: {
+          uri?: string
+        }
+      },
+      manager?: {
+        __deferred?: {
+          uri?: string
+        }
+      },
+      hr?: {
+        __deferred?: {
+          uri?: string
+        }
+      }
+    }[]
+  }
+} | {
+  value: {
+    __metadata?: {
+      uri?: string,
+      type?: string
+    },
+    userId: string,
+    username?: string | null,
+    defaultFullName?: string | null,
+    firstName?: string | null,
+    mi?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    status?: string | null,
+    department?: string | null,
+    division?: string | null,
+    location?: string | null,
+    title?: string | null,
+    managerId?: string | null,
+    hrId?: string | null,
+    hireDate?: string | null,
+    lastModifiedDateTime?: string | null,
+    lastModified?: string | null,
+    timeZone?: string | null,
+    country?: string | null,
+    state?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    addressLine1?: string | null,
+    businessPhone?: string | null,
+    cellPhone?: string | null,
+    empId?: string | null,
+    totalTeamSize?: number | null,
+    directReports?: {
+      __deferred?: {
+        uri?: string
+      }
+    },
+    manager?: {
+      __deferred?: {
+        uri?: string
+      }
+    },
+    hr?: {
+      __deferred?: {
+        uri?: string
+      }
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Custom
+
+### getCustomMdfObject
+
+`custom.getCustomMdfObject`
+
+Retrieve custom MDF objects (cust_* entities)
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.custom.getCustomMdfObject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+| `custom_object` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      externalCode?: string
+    }[]
+  }
+} | {
+  value: {
+    externalCode?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Emp
+
+### getEmpEmploymentTermination
+
+`emp.getEmpEmploymentTermination`
+
+Retrieve EmpEmploymentTermination records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.emp.getEmpEmploymentTermination({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      userId: string
+    }[]
+  }
+} | {
+  value: {
+    userId: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getEmpPayCompNonRecurring
+
+`emp.getEmpPayCompNonRecurring`
+
+Retrieve EmpPayCompNonRecurring records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.emp.getEmpPayCompNonRecurring({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      userId: string
+    }[]
+  }
+} | {
+  value: {
+    userId: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getEmpPayCompRecurring
+
+`emp.getEmpPayCompRecurring`
+
+Retrieve EmpPayCompRecurring records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.emp.getEmpPayCompRecurring({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      userId: string
+    }[]
+  }
+} | {
+  value: {
+    userId: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listEmpEmployment
+
+`emp.listEmpEmployment`
+
+List EmpEmployment records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.emp.listEmpEmployment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      __metadata?: {
+        uri?: string,
+        type?: string
+      },
+      userId: string,
+      personIdExternal?: string | null,
+      startDate?: string | null,
+      endDate?: string | null,
+      originalStartDate?: string | null,
+      seniorityDate?: string | null,
+      assignmentClass?: string | null,
+      employmentType?: string | null,
+      isContingentWorker?: boolean | null,
+      lastModifiedDateTime?: string | null,
+      jobInfoNav?: {
+        __deferred?: {
+          uri?: string
+        }
+      },
+      compInfoNav?: {
+        __deferred?: {
+          uri?: string
+        }
+      }
+    }[]
+  }
+} | {
+  value: {
+    __metadata?: {
+      uri?: string,
+      type?: string
+    },
+    userId: string,
+    personIdExternal?: string | null,
+    startDate?: string | null,
+    endDate?: string | null,
+    originalStartDate?: string | null,
+    seniorityDate?: string | null,
+    assignmentClass?: string | null,
+    employmentType?: string | null,
+    isContingentWorker?: boolean | null,
+    lastModifiedDateTime?: string | null,
+    jobInfoNav?: {
+      __deferred?: {
+        uri?: string
+      }
+    },
+    compInfoNav?: {
+      __deferred?: {
+        uri?: string
+      }
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Employee
+
+### getEmployeeTime
+
+`employee.getEmployeeTime`
+
+Retrieve EmployeeTime records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.employee.getEmployeeTime({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      userId: string
+    }[]
+  }
+} | {
+  value: {
+    userId: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getEmployeeTimesheet
+
+`employee.getEmployeeTimesheet`
+
+Retrieve EmployeeTimeSheet records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.employee.getEmployeeTimesheet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      userId: string
+    }[]
+  }
+} | {
+  value: {
+    userId: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Feedback
+
+### getFeedbackRecordsServiceAvailable
+
+`feedback.getFeedbackRecordsServiceAvailable`
+
+Retrieve continuous feedback records (OData V4)
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.feedback.getFeedbackRecordsServiceAvailable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      id: string | number
+    }[]
+  }
+} | {
+  value: {
+    id: string | number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Fo
+
+### getFoBusinessUnit
+
+`fo.getFoBusinessUnit`
+
+Retrieve FOBusinessUnit records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.fo.getFoBusinessUnit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      externalCode: string
+    }[]
+  }
+} | {
+  value: {
+    externalCode: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getFoCompany
+
+`fo.getFoCompany`
+
+Retrieve FOCompany records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.fo.getFoCompany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      externalCode: string
+    }[]
+  }
+} | {
+  value: {
+    externalCode: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getFoCostCenter
+
+`fo.getFoCostCenter`
+
+Retrieve FOCostCenter records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.fo.getFoCostCenter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      externalCode: string
+    }[]
+  }
+} | {
+  value: {
+    externalCode: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getFoDepartment
+
+`fo.getFoDepartment`
+
+Retrieve FODepartment records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.fo.getFoDepartment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      externalCode: string
+    }[]
+  }
+} | {
+  value: {
+    externalCode: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getFoJobCode
+
+`fo.getFoJobCode`
+
+Retrieve FOJobCode records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.fo.getFoJobCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      externalCode: string
+    }[]
+  }
+} | {
+  value: {
+    externalCode: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getFoJobFunction
+
+`fo.getFoJobFunction`
+
+Retrieve FOJobFunction records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.fo.getFoJobFunction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      externalCode: string
+    }[]
+  }
+} | {
+  value: {
+    externalCode: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getFoLocation
+
+`fo.getFoLocation`
+
+Retrieve FOLocation records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.fo.getFoLocation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      externalCode: string
+    }[]
+  }
+} | {
+  value: {
+    externalCode: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getFoPayGroup
+
+`fo.getFoPayGroup`
+
+Retrieve FOPayGroup records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.fo.getFoPayGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      externalCode: string
+    }[]
+  }
+} | {
+  value: {
+    externalCode: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Form
+
+### getFormContent
+
+`form.getFormContent`
+
+Retrieve performance form content
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.form.getFormContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      formContentId: string | number
+    }[]
+  }
+} | {
+  value: {
+    formContentId: string | number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Give
+
+### giveFeedbackOrRespondToAFeedbackRequest
+
+`give.giveFeedbackOrRespondToAFeedbackRequest`
+
+Give feedback or respond to a feedback request
+
+**Risk:** `write`
+
+```ts
+await corsair.sapsuccessfactors.api.give.giveFeedbackOrRespondToAFeedbackRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `questions` | `object[]` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+  question: string,
+  answer?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+} | {
+  d: {
+    id: string | number
+  }
+} | {
+  @odata.context: string
+}& {
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Goal
+
+### getGoalPlanTemplate
+
+`goal.getGoalPlanTemplate`
+
+Retrieve goal plan template records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.goal.getGoalPlanTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      id: string | number
+    }[]
+  }
+} | {
+  value: {
+    id: string | number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Goals
+
+### getGoalsByPlan
+
+`goals.getGoalsByPlan`
+
+Retrieve goals for a Goal_<planId> entity
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.goals.getGoalsByPlan({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+| `goal_plan_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      id: string | number
+    }[]
+  }
+} | {
+  value: {
+    id: string | number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Internal
+
+### updateInternalUsernameNewHiresAfter
+
+`internal.updateInternalUsernameNewHiresAfter`
+
+Update internal username of new hires after MPH submit
+
+**Risk:** `write`
+
+```ts
+await corsair.sapsuccessfactors.api.internal.updateInternalUsernameNewHiresAfter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `newUsername` | `string` | No | — |
+| `new_username` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+} | {
+  d: {
+    __metadata?: {
+      uri?: string,
+      type?: string
+    },
+    userId: string,
+    username?: string | null,
+    defaultFullName?: string | null,
+    firstName?: string | null,
+    mi?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    status?: string | null,
+    department?: string | null,
+    division?: string | null,
+    location?: string | null,
+    title?: string | null,
+    managerId?: string | null,
+    hrId?: string | null,
+    hireDate?: string | null,
+    lastModifiedDateTime?: string | null,
+    lastModified?: string | null,
+    timeZone?: string | null,
+    country?: string | null,
+    state?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    addressLine1?: string | null,
+    businessPhone?: string | null,
+    cellPhone?: string | null,
+    empId?: string | null,
+    totalTeamSize?: number | null,
+    directReports?: {
+      __deferred?: {
+        uri?: string
+      }
+    },
+    manager?: {
+      __deferred?: {
+        uri?: string
+      }
+    },
+    hr?: {
+      __deferred?: {
+        uri?: string
+      }
+    }
+  }
+} | {
+  @odata.context: string
+}& {
+  __metadata?: {
+    uri?: string,
+    type?: string
+  },
+  userId: string,
+  username?: string | null,
+  defaultFullName?: string | null,
+  firstName?: string | null,
+  mi?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  status?: string | null,
+  department?: string | null,
+  division?: string | null,
+  location?: string | null,
+  title?: string | null,
+  managerId?: string | null,
+  hrId?: string | null,
+  hireDate?: string | null,
+  lastModifiedDateTime?: string | null,
+  lastModified?: string | null,
+  timeZone?: string | null,
+  country?: string | null,
+  state?: string | null,
+  city?: string | null,
+  zipCode?: string | null,
+  addressLine1?: string | null,
+  businessPhone?: string | null,
+  cellPhone?: string | null,
+  empId?: string | null,
+  totalTeamSize?: number | null,
+  directReports?: {
+    __deferred?: {
+      uri?: string
+    }
+  },
+  manager?: {
+    __deferred?: {
+      uri?: string
+    }
+  },
+  hr?: {
+    __deferred?: {
+      uri?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Interview
+
+### getInterviewOverallAssessment
+
+`interview.getInterviewOverallAssessment`
+
+Retrieve overall interview ratings
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.interview.getInterviewOverallAssessment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      applicationId: string | number
+    }[]
+  }
+} | {
+  value: {
+    applicationId: string | number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Job
+
+### getJobApplication
+
+`job.getJobApplication`
+
+Retrieve job application records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.job.getJobApplication({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      __metadata?: {
+        uri?: string,
+        type?: string
+      },
+      applicationId: string | number,
+      jobReqId?: string | number | null,
+      candidateId?: string | number | null,
+      status?: string | null,
+      appStatusSetId?: string | null,
+      applicationDate?: string | null,
+      lastModifiedDateTime?: string | null
+    }[]
+  }
+} | {
+  value: {
+    __metadata?: {
+      uri?: string,
+      type?: string
+    },
+    applicationId: string | number,
+    jobReqId?: string | number | null,
+    candidateId?: string | number | null,
+    status?: string | null,
+    appStatusSetId?: string | null,
+    applicationDate?: string | null,
+    lastModifiedDateTime?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getJobReqScreeningQuestion
+
+`job.getJobReqScreeningQuestion`
+
+Retrieve screening questions for job requisitions
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.job.getJobReqScreeningQuestion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      jobReqId: string | number
+    }[]
+  }
+} | {
+  value: {
+    jobReqId: string | number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getJobRequisition
+
+`job.getJobRequisition`
+
+Retrieve job requisition records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.job.getJobRequisition({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      __metadata?: {
+        uri?: string,
+        type?: string
+      },
+      jobReqId: string | number,
+      internalStatus?: string | null,
+      jobTitle?: string | null,
+      jobCode?: string | null,
+      department?: string | null,
+      division?: string | null,
+      location?: string | null,
+      country?: string | null,
+      statusSetId?: string | null,
+      appStatusSetId?: string | null,
+      lastModifiedDateTime?: string | null
+    }[]
+  }
+} | {
+  value: {
+    __metadata?: {
+      uri?: string,
+      type?: string
+    },
+    jobReqId: string | number,
+    internalStatus?: string | null,
+    jobTitle?: string | null,
+    jobCode?: string | null,
+    department?: string | null,
+    division?: string | null,
+    location?: string | null,
+    country?: string | null,
+    statusSetId?: string | null,
+    appStatusSetId?: string | null,
+    lastModifiedDateTime?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Learning
+
+### createLearningActivitiesBulk
+
+`learning.createLearningActivitiesBulk`
+
+Create learning activities in bulk
+
+**Risk:** `write`
+
+```ts
+await corsair.sapsuccessfactors.api.learning.createLearningActivitiesBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+} | {
+  d: {
+    userId: string
+  }
+} | {
+  @odata.context: string
+}& {
+  userId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Metadata
+
+### refreshMetadataContFeedbackService
+
+`metadata.refreshMetadataContFeedbackService`
+
+Refresh metadata cache for Continuous Feedback
+
+**Risk:** `write`
+
+```ts
+await corsair.sapsuccessfactors.api.metadata.refreshMetadataContFeedbackService({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+} | {
+  d: {
+    message?: string
+  }
+} | {
+  @odata.context: string
+}& {
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Nomination
+
+### deleteNominationPositionTalentPool
+
+`nomination.deleteNominationPositionTalentPool`
+
+Delete a nomination for a position or talent pool
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.sapsuccessfactors.api.nomination.deleteNominationPositionTalentPool({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nominationTargetId` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+| `isPoolNomination` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+} | {
+  d: {
+    nominationTargetId: string
+  }
+} | {
+  @odata.context: string
+}& {
+  nominationTargetId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Odata
+
+### getOdataMetadataCalibSessionService
+
+`odata.getOdataMetadataCalibSessionService`
+
+Get OData metadata for Calibration Session service
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.odata.getOdataMetadataCalibSessionService({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string | {
+  d: {
+    results: {
+      message?: string
+    }[]
+  }
+} | {
+  value: {
+    message?: string
+  }[]
+} | {
+  d: {
+    message?: string
+  }
+} | {
+  @odata.context: string
+}& {
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getOdataMetadataClockInclockOut
+
+`odata.getOdataMetadataClockInclockOut`
+
+Get OData metadata for Clock In/Clock Out Integration
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.odata.getOdataMetadataClockInclockOut({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string | {
+  d: {
+    results: {
+      message?: string
+    }[]
+  }
+} | {
+  value: {
+    message?: string
+  }[]
+} | {
+  d: {
+    message?: string
+  }
+} | {
+  @odata.context: string
+}& {
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getOdataMetadataForNominationService
+
+`odata.getOdataMetadataForNominationService`
+
+Get OData metadata for Nomination service
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.odata.getOdataMetadataForNominationService({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string | {
+  d: {
+    results: {
+      message?: string
+    }[]
+  }
+} | {
+  value: {
+    message?: string
+  }[]
+} | {
+  d: {
+    message?: string
+  }
+} | {
+  @odata.context: string
+}& {
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getOdataMetadataOnboardingAddl
+
+`odata.getOdataMetadataOnboardingAddl`
+
+Get OData metadata for Onboarding Additional Services
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.odata.getOdataMetadataOnboardingAddl({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string | {
+  d: {
+    results: {
+      message?: string
+    }[]
+  }
+} | {
+  value: {
+    message?: string
+  }[]
+} | {
+  d: {
+    message?: string
+  }
+} | {
+  @odata.context: string
+}& {
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getOdataUserMetadata
+
+`odata.getOdataUserMetadata`
+
+Get OData metadata for the User entity
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.odata.getOdataUserMetadata({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string | {
+  d: {
+    results: {
+      message?: string
+    }[]
+  }
+} | {
+  value: {
+    message?: string
+  }[]
+} | {
+  d: {
+    message?: string
+  }
+} | {
+  @odata.context: string
+}& {
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Onb2
+
+### getOnb2Process
+
+`onb2.getOnb2Process`
+
+Retrieve Onboarding 2.0 process records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.onb2.getOnb2Process({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      userId: string
+    }[]
+  }
+} | {
+  value: {
+    userId: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Onboardee
+
+### createOnboardee
+
+`onboardee.createOnboardee`
+
+Create a new onboardee (User) for Onboarding 2.0
+
+**Risk:** `write`
+
+```ts
+await corsair.sapsuccessfactors.api.onboardee.createOnboardee({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `username` | `string` | No | — |
+| `status` | `string` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+} | {
+  d: {
+    __metadata?: {
+      uri?: string,
+      type?: string
+    },
+    userId: string,
+    username?: string | null,
+    defaultFullName?: string | null,
+    firstName?: string | null,
+    mi?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    status?: string | null,
+    department?: string | null,
+    division?: string | null,
+    location?: string | null,
+    title?: string | null,
+    managerId?: string | null,
+    hrId?: string | null,
+    hireDate?: string | null,
+    lastModifiedDateTime?: string | null,
+    lastModified?: string | null,
+    timeZone?: string | null,
+    country?: string | null,
+    state?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    addressLine1?: string | null,
+    businessPhone?: string | null,
+    cellPhone?: string | null,
+    empId?: string | null,
+    totalTeamSize?: number | null,
+    directReports?: {
+      __deferred?: {
+        uri?: string
+      }
+    },
+    manager?: {
+      __deferred?: {
+        uri?: string
+      }
+    },
+    hr?: {
+      __deferred?: {
+        uri?: string
+      }
+    }
+  }
+} | {
+  @odata.context: string
+}& {
+  __metadata?: {
+    uri?: string,
+    type?: string
+  },
+  userId: string,
+  username?: string | null,
+  defaultFullName?: string | null,
+  firstName?: string | null,
+  mi?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  status?: string | null,
+  department?: string | null,
+  division?: string | null,
+  location?: string | null,
+  title?: string | null,
+  managerId?: string | null,
+  hrId?: string | null,
+  hireDate?: string | null,
+  lastModifiedDateTime?: string | null,
+  lastModified?: string | null,
+  timeZone?: string | null,
+  country?: string | null,
+  state?: string | null,
+  city?: string | null,
+  zipCode?: string | null,
+  addressLine1?: string | null,
+  businessPhone?: string | null,
+  cellPhone?: string | null,
+  empId?: string | null,
+  totalTeamSize?: number | null,
+  directReports?: {
+    __deferred?: {
+      uri?: string
+    }
+  },
+  manager?: {
+    __deferred?: {
+      uri?: string
+    }
+  },
+  hr?: {
+    __deferred?: {
+      uri?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Pending
+
+### getPendingFeedbackRequestsFeedback
+
+`pending.getPendingFeedbackRequestsFeedback`
+
+Retrieve pending feedback requests
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.pending.getPendingFeedbackRequestsFeedback({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      id: string | number
+    }[]
+  }
+} | {
+  value: {
+    id: string | number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Per
+
+### getPerPersonal
+
+`per.getPerPersonal`
+
+Retrieve PerPersonal biographical records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.per.getPerPersonal({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      __metadata?: {
+        uri?: string,
+        type?: string
+      },
+      personIdExternal: string,
+      startDate?: string | null,
+      endDate?: string | null,
+      firstName?: string | null,
+      lastName?: string | null,
+      middleName?: string | null,
+      formalName?: string | null,
+      birthName?: string | null,
+      gender?: string | null,
+      maritalStatus?: string | null,
+      nationality?: string | null,
+      preferredName?: string | null,
+      salutation?: string | null,
+      lastModifiedDateTime?: string | null
+    }[]
+  }
+} | {
+  value: {
+    __metadata?: {
+      uri?: string,
+      type?: string
+    },
+    personIdExternal: string,
+    startDate?: string | null,
+    endDate?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    middleName?: string | null,
+    formalName?: string | null,
+    birthName?: string | null,
+    gender?: string | null,
+    maritalStatus?: string | null,
+    nationality?: string | null,
+    preferredName?: string | null,
+    salutation?: string | null,
+    lastModifiedDateTime?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPerPersonById
+
+`per.getPerPersonById`
+
+Retrieve PerPerson by personIdExternal
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.per.getPerPersonById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `person_id_external` | `string` | Yes | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    __metadata?: {
+      uri?: string,
+      type?: string
+    },
+    personIdExternal: string,
+    personId?: string | null,
+    dateOfBirth?: string | null,
+    countryOfBirth?: string | null,
+    regionOfBirth?: string | null,
+    placeOfBirth?: string | null,
+    perPersonUuid?: string | null,
+    lastModifiedDateTime?: string | null,
+    personalInfoNav?: {
+      __deferred?: {
+        uri?: string
+      }
+    },
+    employmentNav?: {
+      __deferred?: {
+        uri?: string
+      }
+    },
+    emailNav?: {
+      __deferred?: {
+        uri?: string
+      }
+    },
+    phoneNav?: {
+      __deferred?: {
+        uri?: string
+      }
+    }
+  }
+} | {
+  @odata.context: string
+}& {
+  __metadata?: {
+    uri?: string,
+    type?: string
+  },
+  personIdExternal: string,
+  personId?: string | null,
+  dateOfBirth?: string | null,
+  countryOfBirth?: string | null,
+  regionOfBirth?: string | null,
+  placeOfBirth?: string | null,
+  perPersonUuid?: string | null,
+  lastModifiedDateTime?: string | null,
+  personalInfoNav?: {
+    __deferred?: {
+      uri?: string
+    }
+  },
+  employmentNav?: {
+    __deferred?: {
+      uri?: string
+    }
+  },
+  emailNav?: {
+    __deferred?: {
+      uri?: string
+    }
+  },
+  phoneNav?: {
+    __deferred?: {
+      uri?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listPerPerson
+
+`per.listPerPerson`
+
+List PerPerson records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.per.listPerPerson({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      __metadata?: {
+        uri?: string,
+        type?: string
+      },
+      personIdExternal: string,
+      personId?: string | null,
+      dateOfBirth?: string | null,
+      countryOfBirth?: string | null,
+      regionOfBirth?: string | null,
+      placeOfBirth?: string | null,
+      perPersonUuid?: string | null,
+      lastModifiedDateTime?: string | null,
+      personalInfoNav?: {
+        __deferred?: {
+          uri?: string
+        }
+      },
+      employmentNav?: {
+        __deferred?: {
+          uri?: string
+        }
+      },
+      emailNav?: {
+        __deferred?: {
+          uri?: string
+        }
+      },
+      phoneNav?: {
+        __deferred?: {
+          uri?: string
+        }
+      }
+    }[]
+  }
+} | {
+  value: {
+    __metadata?: {
+      uri?: string,
+      type?: string
+    },
+    personIdExternal: string,
+    personId?: string | null,
+    dateOfBirth?: string | null,
+    countryOfBirth?: string | null,
+    regionOfBirth?: string | null,
+    placeOfBirth?: string | null,
+    perPersonUuid?: string | null,
+    lastModifiedDateTime?: string | null,
+    personalInfoNav?: {
+      __deferred?: {
+        uri?: string
+      }
+    },
+    employmentNav?: {
+      __deferred?: {
+        uri?: string
+      }
+    },
+    emailNav?: {
+      __deferred?: {
+        uri?: string
+      }
+    },
+    phoneNav?: {
+      __deferred?: {
+        uri?: string
+      }
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Picklist
+
+### getPicklist
+
+`picklist.getPicklist`
+
+Retrieve picklist definitions
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.picklist.getPicklist({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      picklistId: string | number
+    }[]
+  }
+} | {
+  value: {
+    picklistId: string | number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPicklistOption
+
+`picklist.getPicklistOption`
+
+Retrieve picklist option values
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.picklist.getPicklistOption({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      id: string | number
+    }[]
+  }
+} | {
+  value: {
+    id: string | number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Position
+
+### getPosition
+
+`position.getPosition`
+
+Retrieve position management records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.position.getPosition({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      __metadata?: {
+        uri?: string,
+        type?: string
+      },
+      code: string,
+      effectiveStartDate?: string | null,
+      effectiveEndDate?: string | null,
+      effectiveStatus?: string | null,
+      externalName_defaultValue?: string | null,
+      jobCode?: string | null,
+      department?: string | null,
+      division?: string | null,
+      company?: string | null,
+      location?: string | null,
+      payGrade?: string | null,
+      lastModifiedDateTime?: string | null
+    }[]
+  }
+} | {
+  value: {
+    __metadata?: {
+      uri?: string,
+      type?: string
+    },
+    code: string,
+    effectiveStartDate?: string | null,
+    effectiveEndDate?: string | null,
+    effectiveStatus?: string | null,
+    externalName_defaultValue?: string | null,
+    jobCode?: string | null,
+    department?: string | null,
+    division?: string | null,
+    company?: string | null,
+    location?: string | null,
+    payGrade?: string | null,
+    lastModifiedDateTime?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Query
+
+### queryAllAvailableClockClockOut
+
+`query.queryAllAvailableClockClockOut`
+
+Query all clock in/out groups
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.query.queryAllAvailableClockClockOut({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      code: string
+    }[]
+  }
+} | {
+  value: {
+    code: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### queryClockClockOutGroupCodeTime
+
+`query.queryClockClockOutGroupCodeTime`
+
+Query a clock in/out group by code
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.query.queryClockClockOutGroupCodeTime({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `expand` | `string` | No | — |
+| `select` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    code: string
+  }
+} | {
+  @odata.context: string
+}& {
+  code: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Successor
+
+### createUpdateSuccessorNomination
+
+`successor.createUpdateSuccessorNomination`
+
+Create or update a successor nomination
+
+**Risk:** `write`
+
+```ts
+await corsair.sapsuccessfactors.api.successor.createUpdateSuccessorNomination({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `positionCode` | `string` | No | — |
+| `isPoolNomination` | `boolean` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+} | {
+  d: {
+    nominationTargetId: string
+  }
+} | {
+  @odata.context: string
+}& {
+  nominationTargetId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Talent
+
+### getTalentPool
+
+`talent.getTalentPool`
+
+Retrieve talent pool records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.talent.getTalentPool({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      id: string | number
+    }[]
+  }
+} | {
+  value: {
+    id: string | number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Temporary
+
+### getTemporaryTimeInformation
+
+`temporary.getTemporaryTimeInformation`
+
+Retrieve TemporaryTimeInformation records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.temporary.getTemporaryTimeInformation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      userId: string
+    }[]
+  }
+} | {
+  value: {
+    userId: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Time
+
+### getTimeAccountSnapshot
+
+`time.getTimeAccountSnapshot`
+
+Retrieve TimeAccountSnapshot records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.time.getTimeAccountSnapshot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      userId: string
+    }[]
+  }
+} | {
+  value: {
+    userId: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Users
+
+### listUsers
+
+`users.listUsers`
+
+List User entity records
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.users.listUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      __metadata?: {
+        uri?: string,
+        type?: string
+      },
+      userId: string,
+      username?: string | null,
+      defaultFullName?: string | null,
+      firstName?: string | null,
+      mi?: string | null,
+      lastName?: string | null,
+      email?: string | null,
+      status?: string | null,
+      department?: string | null,
+      division?: string | null,
+      location?: string | null,
+      title?: string | null,
+      managerId?: string | null,
+      hrId?: string | null,
+      hireDate?: string | null,
+      lastModifiedDateTime?: string | null,
+      lastModified?: string | null,
+      timeZone?: string | null,
+      country?: string | null,
+      state?: string | null,
+      city?: string | null,
+      zipCode?: string | null,
+      addressLine1?: string | null,
+      businessPhone?: string | null,
+      cellPhone?: string | null,
+      empId?: string | null,
+      totalTeamSize?: number | null,
+      directReports?: {
+        __deferred?: {
+          uri?: string
+        }
+      },
+      manager?: {
+        __deferred?: {
+          uri?: string
+        }
+      },
+      hr?: {
+        __deferred?: {
+          uri?: string
+        }
+      }
+    }[]
+  }
+} | {
+  value: {
+    __metadata?: {
+      uri?: string,
+      type?: string
+    },
+    userId: string,
+    username?: string | null,
+    defaultFullName?: string | null,
+    firstName?: string | null,
+    mi?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    status?: string | null,
+    department?: string | null,
+    division?: string | null,
+    location?: string | null,
+    title?: string | null,
+    managerId?: string | null,
+    hrId?: string | null,
+    hireDate?: string | null,
+    lastModifiedDateTime?: string | null,
+    lastModified?: string | null,
+    timeZone?: string | null,
+    country?: string | null,
+    state?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    addressLine1?: string | null,
+    businessPhone?: string | null,
+    cellPhone?: string | null,
+    empId?: string | null,
+    totalTeamSize?: number | null,
+    directReports?: {
+      __deferred?: {
+        uri?: string
+      }
+    },
+    manager?: {
+      __deferred?: {
+        uri?: string
+      }
+    },
+    hr?: {
+      __deferred?: {
+        uri?: string
+      }
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Work
+
+### getWorkOrder
+
+`work.getWorkOrder`
+
+Retrieve WorkOrder records for contingent workers
+
+**Risk:** `read`
+
+```ts
+await corsair.sapsuccessfactors.api.work.getWorkOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `select` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `orderby` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  d: {
+    results: {
+      userId: string
+    }[]
+  }
+} | {
+  value: {
+    userId: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
