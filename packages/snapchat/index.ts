@@ -34,10 +34,6 @@ export const snapchatAuthConfig = {
 export type SnapchatPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
 	key?: string;
-	composioApiKey?: string;
-	connectedAccountId?: string;
-	userId?: string;
-	composioBaseUrl?: string;
 	timeoutMs?: number;
 	signal?: AbortSignal;
 	hooks?: InternalSnapchatPlugin['hooks'];

@@ -1,133 +1,75 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
-import { SNAPCHAT_TOOLKIT_VERSION } from './operations';
+import { ApiError, request } from 'corsair/http';
 
-const DEFAULT_COMPOSIO_BASE_URL = 'https://backend.composio.dev/api/v3';
+export const SNAPCHAT_ADS_API_BASE = 'https://adsapi.snapchat.com/v1';
+export const SNAPCHAT_CONVERSION_API_BASE = 'https://tr.snapchat.com/v2';
 
-/**
- * Structure of tool response returned by Composio Snapchat tool execution.
- */
-export type SnapchatToolResponse = {
-	/** Indicates whether the Composio operation execution was successful */
-	successful?: boolean;
-	/** Response payload returned by Snapchat Marketing API */
-	data?: unknown;
-	/** Error details if operation execution failed */
-	error?: unknown;
-	/** Composio internal execution log identifier */
-	log_id?: string;
-	/** Operation execution status */
-	status?: string;
-	/** Execution request identifier */
-	request_id?: string;
-} & Record<string, unknown>;
+export class SnapchatAPIError extends Error {
+	constructor(
+		message: string,
+		public readonly code?: number,
+		public readonly retryAfter?: number,
+	) {
+		super(message);
+		this.name = 'SnapchatAPIError';
+	}
+}
 
-export type ExecuteSnapchatToolOptions = {
-	composioApiKey: string;
-	snapchatAccessToken?: string;
-	connectedAccountId?: string;
-	userId?: string;
-	composioBaseUrl?: string;
-	timeoutMs?: number;
-	signal?: AbortSignal;
+export type SnapchatRequestOptions = {
+	base?: string;
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	body?: Record<string, unknown>;
+	query?: Record<string, string | number | boolean | undefined>;
+	multipart?: boolean;
 };
 
-function normalizeBaseUrl(value?: string): string {
-	const trimmed = value?.trim();
-	if (!trimmed) {
-		return DEFAULT_COMPOSIO_BASE_URL;
-	}
-
-	const parsed = new URL(trimmed);
-	if (parsed.protocol !== 'https:') {
-		throw new Error('[snapchat] composioBaseUrl must use https');
-	}
-
-	const normalized = parsed.toString();
-	return normalized.endsWith('/') ? normalized.slice(0, -1) : normalized;
-}
-
-function createCustomAuthParams(
-	snapchatAccessToken?: string,
-): Record<string, string> | undefined {
-	const token = snapchatAccessToken?.trim();
-	if (!token) {
-		return undefined;
-	}
-
-	return {
-		access_token: token,
-		Authorization: `Bearer ${token}`,
-	};
-}
-
-export async function executeSnapchatTool(
-	toolSlug: string,
-	args: object,
-	options: ExecuteSnapchatToolOptions,
-): Promise<SnapchatToolResponse> {
-	const composioApiKey = options.composioApiKey.trim();
-	if (!composioApiKey) {
-		throw new Error('[snapchat] composioApiKey is required');
-	}
-
-	const body: Record<string, unknown> = {
-		arguments: args,
-		version: SNAPCHAT_TOOLKIT_VERSION,
-	};
-
-	if (options.connectedAccountId) {
-		body.connected_account_id = options.connectedAccountId;
-	}
-
-	if (options.userId) {
-		body.user_id = options.userId;
-	}
-
-	const customAuthParams = createCustomAuthParams(options.snapchatAccessToken);
-	if (customAuthParams) {
-		body.custom_auth_params = customAuthParams;
-	}
+export async function makeSnapchatRequest<T>(
+	path: string,
+	accessToken: string,
+	options: SnapchatRequestOptions = {},
+): Promise<T> {
+	const {
+		base = SNAPCHAT_ADS_API_BASE,
+		method = 'GET',
+		body,
+		query,
+		multipart = false,
+	} = options;
 
 	const config: OpenAPIConfig = {
-		BASE: normalizeBaseUrl(options.composioBaseUrl),
+		BASE: base,
 		VERSION: '1.0.0',
-		TIMEOUT: options.timeoutMs,
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		HEADERS: {
-			Accept: 'application/json',
-			'Content-Type': 'application/json; charset=utf-8',
-			'x-api-key': composioApiKey,
-		},
+		TOKEN: accessToken,
+		HEADERS: multipart
+			? { Accept: 'application/json' }
+			: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+				},
 	};
+
+	const hasBody = method === 'POST' || method === 'PUT' || method === 'PATCH';
 
 	const requestOptions: ApiRequestOptions = {
-		method: 'POST',
-		url: `/tools/execute/${encodeURIComponent(toolSlug)}`,
-		body,
-		mediaType: 'application/json; charset=utf-8',
+		method,
+		url: path,
+		body: hasBody ? body : undefined,
+		mediaType: multipart ? 'multipart/form-data' : 'application/json',
+		query,
 	};
 
-	const requestPromise = request<SnapchatToolResponse>(config, requestOptions);
+	return request<T>(config, requestOptions);
+}
 
-	if (!options.signal) {
-		return requestPromise;
+export function requireString(value: unknown, name: string): string {
+	if (typeof value !== 'string' || !value.trim()) {
+		throw new SnapchatAPIError(`[snapchat] ${name} is required`);
 	}
+	return value.trim();
+}
 
-	const onAbort = () => {
-		requestPromise.cancel();
-	};
-
-	if (options.signal.aborted) {
-		onAbort();
-	}
-
-	options.signal.addEventListener('abort', onAbort, { once: true });
-
-	try {
-		return await requestPromise;
-	} finally {
-		options.signal.removeEventListener('abort', onAbort);
-	}
+export function isApiError(error: unknown): error is ApiError {
+	return error instanceof ApiError;
 }

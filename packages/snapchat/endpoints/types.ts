@@ -72,7 +72,7 @@ export const SNAPCHAT_REQUIRED_INPUT_FIELDS = {
 	getAdaccountsStatsReport: ['ad_account_id', 'report_run_id'],
 	getAdsquadsAudienceSizeV2: ['ad_squad_id'],
 	getAdsquadsStatsReport: ['ad_squad_id', 'report_run_id'],
-	getAuthenticatedUser: ['billing_center_id'],
+	getAuthenticatedUser: [],
 	getBillingCenter: ['billing_center_id'],
 	getCampaign: ['campaign_id'],
 	getCampaignChangelog: ['campaign_id'],
@@ -231,62 +231,38 @@ function getFieldSchema(field: string): z.ZodTypeAny {
 		.describe(`Parameter ${field}`);
 }
 
-function createInputEndpointSchema(requiredFields: readonly string[]) {
+function createInputSchema(requiredFields: readonly string[]) {
 	const shape: Record<string, z.ZodTypeAny> = {};
-
 	for (const field of requiredFields) {
 		shape[field] = getFieldSchema(field);
 	}
-
-	return z
-		.object(shape)
-		.catchall(z.unknown().describe('Additional operation argument'))
-		.describe('Snapchat API operation arguments');
+	return z.object(shape).catchall(z.unknown());
 }
-
-export const SnapchatToolOutputSchema = z
-	.object({
-		successful: z
-			.boolean()
-			.optional()
-			.describe('Indicates whether operation was successful'),
-		data: z
-			.unknown()
-			.optional()
-			.describe('Response payload returned from tool execution'),
-		error: z
-			.unknown()
-			.optional()
-			.describe('Error details if tool execution failed'),
-		log_id: z.string().optional().describe('Composio execution log id'),
-		status: z.string().optional().describe('Execution status message'),
-		request_id: z.string().optional().describe('Execution request id'),
-	})
-	.catchall(z.unknown().describe('Additional response property'))
-	.describe('Snapchat API operation execution result');
 
 const inputEntries = SNAPCHAT_OPERATIONS.map((operation) => [
 	operation.name,
-	createInputEndpointSchema(SNAPCHAT_REQUIRED_INPUT_FIELDS[operation.name]),
-]);
-
-const outputEntries = SNAPCHAT_OPERATIONS.map((operation) => [
-	operation.name,
-	SnapchatToolOutputSchema,
+	createInputSchema(SNAPCHAT_REQUIRED_INPUT_FIELDS[operation.name]),
 ]);
 
 export const SnapchatEndpointInputSchemas = Object.fromEntries(
 	inputEntries,
 ) as {
 	[K in (typeof SNAPCHAT_OPERATIONS)[number]['name']]: ReturnType<
-		typeof createInputEndpointSchema
+		typeof createInputSchema
 	>;
 };
 
+export const SnapchatDirectOutputSchema = z
+	.record(z.string(), z.unknown())
+	.describe('Snapchat API response payload');
+
 export const SnapchatEndpointOutputSchemas = Object.fromEntries(
-	outputEntries,
+	SNAPCHAT_OPERATIONS.map((operation) => [
+		operation.name,
+		SnapchatDirectOutputSchema,
+	]),
 ) as {
-	[K in (typeof SNAPCHAT_OPERATIONS)[number]['name']]: typeof SnapchatToolOutputSchema;
+	[K in (typeof SNAPCHAT_OPERATIONS)[number]['name']]: typeof SnapchatDirectOutputSchema;
 };
 
 export type SnapchatEndpointInputs = {

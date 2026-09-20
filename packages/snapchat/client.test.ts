@@ -1,112 +1,99 @@
 import { request } from 'corsair/http';
-import { executeSnapchatTool } from './client';
+import { makeSnapchatRequest, requireString, SnapchatAPIError } from './client';
 
-jest.mock('corsair/http', () => {
-	const actual =
-		jest.requireActual<typeof import('corsair/http')>('corsair/http');
-	return {
-		...actual,
-		request: jest.fn(),
-	};
-});
+jest.mock('corsair/http', () => ({
+	request: jest.fn(),
+}));
 
 const requestMock = request as jest.MockedFunction<typeof request>;
 
-describe('executeSnapchatTool', () => {
+describe('makeSnapchatRequest', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
-		requestMock.mockResolvedValue({ successful: true, data: { ok: true } });
+		requestMock.mockResolvedValue({ ok: true });
 	});
 
-	it('calls composio execute endpoint with auth headers and body', async () => {
-		await executeSnapchatTool(
-			'SNAPCHAT_GET_AUTHENTICATED_USER',
-			{},
-			{
-				composioApiKey: 'ck_test',
-				snapchatAccessToken: 'token_123',
-				connectedAccountId: 'ca_1',
-				userId: 'user_1',
-			},
-		);
+	it('calls the Snapchat Ads API base URL with Bearer auth', async () => {
+		await makeSnapchatRequest('/me', 'snap_token_123');
 
 		expect(requestMock).toHaveBeenCalledTimes(1);
 		const [config, requestOptions] = requestMock.mock.calls[0]!;
-		expect(config.BASE).toBe('https://backend.composio.dev/api/v3');
-		expect(config.HEADERS).toMatchObject({ 'x-api-key': 'ck_test' });
+		expect(config.BASE).toBe('https://adsapi.snapchat.com/v1');
+		expect(config.TOKEN).toBe('snap_token_123');
+		expect(requestOptions.method).toBe('GET');
+		expect(requestOptions.url).toBe('/me');
+	});
+
+	it('sends POST body for write operations', async () => {
+		await makeSnapchatRequest('/adaccounts/123/campaigns', 'token', {
+			method: 'POST',
+			body: { campaigns: [{ name: 'test' }] },
+		});
+
+		const [, requestOptions] = requestMock.mock.calls[0]!;
 		expect(requestOptions.method).toBe('POST');
-		expect(requestOptions.url).toBe(
-			'/tools/execute/SNAPCHAT_GET_AUTHENTICATED_USER',
-		);
-		const body = requestOptions.body as Record<string, unknown>;
-		expect(body.connected_account_id).toBe('ca_1');
-		expect(body.user_id).toBe('user_1');
-		expect(
-			(body.custom_auth_params as Record<string, string>).access_token,
-		).toBe('token_123');
+		expect(requestOptions.body).toEqual({ campaigns: [{ name: 'test' }] });
 	});
 
-	it('requires composio api key', async () => {
-		await expect(
-			executeSnapchatTool(
-				'SNAPCHAT_GET_AUTHENTICATED_USER',
-				{},
-				{
-					composioApiKey: '   ',
-				},
-			),
-		).rejects.toThrow('[snapchat] composioApiKey is required');
+	it('does not send body for GET requests', async () => {
+		await makeSnapchatRequest('/me/organizations', 'token', {
+			method: 'GET',
+			body: { should: 'be ignored' },
+		});
+
+		const [, requestOptions] = requestMock.mock.calls[0]!;
+		expect(requestOptions.body).toBeUndefined();
 	});
 
-	it('rejects non-https composio base urls', async () => {
-		await expect(
-			executeSnapchatTool(
-				'SNAPCHAT_GET_AUTHENTICATED_USER',
-				{},
-				{
-					composioApiKey: 'ck_test',
-					composioBaseUrl: 'http://backend.composio.dev/api/v3',
-				},
-			),
-		).rejects.toThrow('[snapchat] composioBaseUrl must use https');
+	it('forwards query params', async () => {
+		await makeSnapchatRequest('/targeting/carriers', 'token', {
+			query: { country_code: 'US' },
+		});
+
+		const [, requestOptions] = requestMock.mock.calls[0]!;
+		expect(requestOptions.query).toEqual({ country_code: 'US' });
 	});
 
-	it('forwards timeoutMs to request config', async () => {
-		await executeSnapchatTool(
-			'SNAPCHAT_GET_AUTHENTICATED_USER',
-			{},
-			{
-				composioApiKey: 'ck_test',
-				timeoutMs: 12_345,
-			},
-		);
+	it('uses override base URL when provided', async () => {
+		await makeSnapchatRequest('/pixels/px_123/events/validate', 'token', {
+			base: 'https://tr.snapchat.com/v2',
+			method: 'POST',
+			body: { events: [] },
+		});
 
 		const [config] = requestMock.mock.calls[0]!;
-		expect(config.TIMEOUT).toBe(12_345);
+		expect(config.BASE).toBe('https://tr.snapchat.com/v2');
 	});
 
-	it('cancels request when abort signal is triggered', async () => {
-		const cancel = jest.fn();
-		const cancelable = Object.assign(Promise.resolve({ successful: true }), {
-			cancel,
+	it('sets multipart content-type header when multipart=true', async () => {
+		await makeSnapchatRequest('/media/media_123/upload', 'token', {
+			method: 'POST',
+			multipart: true,
+			body: {},
 		});
-		requestMock.mockReturnValueOnce(
-			cancelable as unknown as ReturnType<typeof request>,
+
+		const [config] = requestMock.mock.calls[0]!;
+		expect(
+			(config.HEADERS as Record<string, string>)['Content-Type'],
+		).toBeUndefined();
+	});
+});
+
+describe('requireString', () => {
+	it('returns a trimmed string when valid', () => {
+		expect(requireString('  hello  ', 'name')).toBe('hello');
+	});
+
+	it('throws SnapchatAPIError when empty', () => {
+		expect(() => requireString('   ', 'access_token')).toThrow(
+			SnapchatAPIError,
 		);
-
-		const controller = new AbortController();
-		const resultPromise = executeSnapchatTool(
-			'SNAPCHAT_GET_AUTHENTICATED_USER',
-			{},
-			{
-				composioApiKey: 'ck_test',
-				signal: controller.signal,
-			},
+		expect(() => requireString('   ', 'access_token')).toThrow(
+			'[snapchat] access_token is required',
 		);
+	});
 
-		controller.abort();
-		await resultPromise;
-
-		expect(cancel).toHaveBeenCalledTimes(1);
+	it('throws SnapchatAPIError when not a string', () => {
+		expect(() => requireString(null, 'token')).toThrow(SnapchatAPIError);
 	});
 });

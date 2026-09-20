@@ -6,7 +6,11 @@ import type { SnapchatContext } from './index';
 import { SNAPCHAT_OPERATIONS } from './operations';
 
 jest.mock('./client', () => ({
-	executeSnapchatTool: jest.fn(),
+	makeSnapchatRequest: jest.fn(),
+	requireString: jest.fn().mockReturnValue('snap-token'),
+	SnapchatAPIError: class SnapchatAPIError extends Error {},
+	SNAPCHAT_ADS_API_BASE: 'https://adsapi.snapchat.com/v1',
+	SNAPCHAT_CONVERSION_API_BASE: 'https://tr.snapchat.com/v2',
 }));
 
 jest.mock('corsair/core', () => {
@@ -18,8 +22,8 @@ jest.mock('corsair/core', () => {
 	};
 });
 
-const executeMock = client.executeSnapchatTool as jest.MockedFunction<
-	typeof client.executeSnapchatTool
+const makeRequestMock = client.makeSnapchatRequest as jest.MockedFunction<
+	typeof client.makeSnapchatRequest
 >;
 
 const logEventMock = core.logEventFromContext as jest.MockedFunction<
@@ -30,7 +34,6 @@ function buildValidInput(
 	operationName: keyof typeof SNAPCHAT_REQUIRED_INPUT_FIELDS,
 ) {
 	const requiredFields = SNAPCHAT_REQUIRED_INPUT_FIELDS[operationName];
-
 	return Object.fromEntries(
 		requiredFields.map((field) => [field, `${field}-value`]),
 	);
@@ -38,16 +41,13 @@ function buildValidInput(
 
 const ctx = {
 	key: 'snap-token',
-	options: {
-		composioApiKey: 'composio-key',
-		connectedAccountId: 'acct_123',
-	},
+	options: {},
 } as SnapchatContext;
 
 describe('Snapchat actions endpoints', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
-		executeMock.mockResolvedValue({ successful: true, data: { ok: true } });
+		makeRequestMock.mockResolvedValue({ ok: true, request_status: 'SUCCESS' });
 	});
 
 	it('exposes full operation surface', () => {
@@ -60,19 +60,11 @@ describe('Snapchat actions endpoints', () => {
 			const input = buildValidInput(operation.name);
 			await endpoint(ctx, input);
 
-			expect(executeMock).toHaveBeenCalledWith(
-				operation.id,
-				input,
-				expect.objectContaining({
-					composioApiKey: 'composio-key',
-					snapchatAccessToken: 'snap-token',
-					connectedAccountId: 'acct_123',
-				}),
-			);
+			expect(makeRequestMock).toHaveBeenCalledTimes(1);
 			expect(logEventMock).toHaveBeenCalledWith(
 				ctx,
 				`snapchat.actions.${operation.name}`,
-				input,
+				expect.any(Object),
 				'completed',
 			);
 		});
@@ -82,18 +74,62 @@ describe('Snapchat actions endpoints', () => {
 		await expect(Actions.addSegmentUsers(ctx, {})).rejects.toThrow();
 	});
 
-	it('rejects invalid input when required field is explicitly undefined', async () => {
-		await expect(
-			Actions.addSegmentUsers(ctx, {
-				users: undefined,
-				segment_id: 'seg_1',
-			} as never),
-		).rejects.toThrow();
+	it('passes access token to makeSnapchatRequest', async () => {
+		await Actions.listOrganizations(ctx, {});
+		expect(makeRequestMock).toHaveBeenCalledWith(
+			'/me/organizations',
+			'snap-token',
+			expect.any(Object),
+		);
 	});
 
-	it('accepts response when envelope fields are absent', async () => {
-		executeMock.mockResolvedValueOnce({ status: 'ok', custom: 123 });
-		const result = await Actions.getAdAccount(ctx, { ad_account_id: 'acc_1' });
-		expect(result).toEqual({ status: 'ok', custom: 123 });
+	it('calls correct path for getOrganization', async () => {
+		await Actions.getOrganization(ctx, { organization_id: 'org_abc' });
+		const [path] = makeRequestMock.mock.calls[0]!;
+		expect(path).toBe('/organizations/org_abc');
+	});
+
+	it('calls correct path for getCampaign', async () => {
+		await Actions.getCampaign(ctx, { campaign_id: 'camp_xyz' });
+		const [path] = makeRequestMock.mock.calls[0]!;
+		expect(path).toBe('/campaigns/camp_xyz');
+	});
+
+	it('calls correct path for listCampaigns', async () => {
+		await Actions.listCampaigns(ctx, { ad_account_id: 'acc_123' });
+		const [path] = makeRequestMock.mock.calls[0]!;
+		expect(path).toBe('/adaccounts/acc_123/campaigns');
+	});
+
+	it('uses DELETE for deleteSegment', async () => {
+		await Actions.deleteSegment(ctx, { segment_id: 'seg_1' });
+		const [, , opts] = makeRequestMock.mock.calls[0]!;
+		expect(opts?.method).toBe('DELETE');
+	});
+
+	it('uses POST for createCampaign', async () => {
+		await Actions.createCampaign(ctx, {
+			name: 'Test',
+			start_time: '2026-01-01',
+			ad_account_id: 'acc_1',
+		});
+		const [, , opts] = makeRequestMock.mock.calls[0]!;
+		expect(opts?.method).toBe('POST');
+	});
+
+	it('validateConversionEvent uses conversion API base', async () => {
+		await Actions.validateConversionEvent(ctx, {
+			events: [],
+			pixel_id: 'px_1',
+		});
+		const [, , opts] = makeRequestMock.mock.calls[0]!;
+		expect(opts?.base).toBe('https://tr.snapchat.com/v2');
+	});
+
+	it('targeting endpoints pass country_code as query param', async () => {
+		await Actions.getTargetingCarriers(ctx, { country_code: 'US' });
+		const [path, , opts] = makeRequestMock.mock.calls[0]!;
+		expect(path).toBe('/targeting/carriers');
+		expect(opts?.query?.country_code).toBe('US');
 	});
 });
