@@ -214,18 +214,19 @@ describe('contacts endpoints', () => {
 		);
 	});
 
-	it('setStatus issues POST /contacts/set-status-in-sequence', async () => {
+	it('setStatus issues POST /sequences/{sequenceId}/contacts/set-status-in-sequence', async () => {
 		const fixture = ReplyioEndpointOutputSchemas.contactsSetStatus.parse({});
 		mockMakeReplyioRequest.mockResolvedValue(fixture);
 
 		const result = await Contacts.setStatus(ctx, {
+			sequenceId: 9,
 			contactIds: [1, 2],
 			statusInSequence: 'paused',
 		});
 
 		expect(result).toEqual(fixture);
 		expect(mockMakeReplyioRequest).toHaveBeenCalledWith(
-			'contacts/set-status-in-sequence',
+			'sequences/9/contacts/set-status-in-sequence',
 			'test-api-key',
 			expect.objectContaining({
 				method: 'POST',
@@ -237,26 +238,6 @@ describe('contacts endpoints', () => {
 			'replyio.contacts.setStatus',
 			expect.any(Object),
 			'completed',
-		);
-	});
-
-	it('setStatus uses the sequence-scoped route when sequenceId is set', async () => {
-		const fixture = ReplyioEndpointOutputSchemas.contactsSetStatus.parse({});
-		mockMakeReplyioRequest.mockResolvedValue(fixture);
-
-		await Contacts.setStatus(ctx, {
-			contactIds: [1],
-			statusInSequence: 'active',
-			sequenceId: 9,
-		});
-
-		expect(mockMakeReplyioRequest).toHaveBeenCalledWith(
-			'sequences/9/contacts/set-status-in-sequence',
-			'test-api-key',
-			expect.objectContaining({
-				method: 'POST',
-				body: { contactIds: [1], statusInSequence: 'active' },
-			}),
 		);
 	});
 

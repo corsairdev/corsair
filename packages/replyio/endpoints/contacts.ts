@@ -145,15 +145,9 @@ export const setStatus: ReplyioEndpoint<'contactsSetStatus'> = async (
 	ctx: ReplyioEndpointContext,
 	input,
 ) => {
-	// Optional sequenceId uses POST /v3/sequences/{id}/contacts/set-status-in-sequence.
-	// Without it, the documented global POST /v3/contacts/set-status-in-sequence
-	// updates enrollments across sequences.
-	const path = input.sequenceId
-		? `sequences/${input.sequenceId}/contacts/set-status-in-sequence`
-		: 'contacts/set-status-in-sequence';
 	const response = await makeReplyioRequest<
 		ReplyioEndpointOutputs['contactsSetStatus']
-	>(path, ctx.key, {
+	>(`sequences/${input.sequenceId}/contacts/set-status-in-sequence`, ctx.key, {
 		method: 'POST',
 		body: {
 			contactIds: input.contactIds,
@@ -164,7 +158,7 @@ export const setStatus: ReplyioEndpoint<'contactsSetStatus'> = async (
 	await logEventFromContext(
 		ctx,
 		'replyio.contacts.setStatus',
-		{ statusInSequence: input.statusInSequence },
+		{ sequenceId: input.sequenceId, statusInSequence: input.statusInSequence },
 		'completed',
 	);
 	return response;

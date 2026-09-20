@@ -209,16 +209,13 @@ const ContactStatusResponseSchema = z.object({
 	),
 });
 
-// POST /v3/contacts/set-status-in-sequence (global route; the Reply API
-// reference documents it alongside the sequence-scoped variant used by
-// sequenceContacts.setStatus). Replied/bounced use dedicated endpoints;
-// only active/paused/finished/outOfOffice are accepted here. Use this
-// global route to update enrollments across sequences, or
-// sequenceContacts.setStatus to limit the update to one sequence.
+// POST /v3/sequences/{sequenceId}/contacts/set-status-in-sequence.
+// Replied/bounced use dedicated endpoints; only
+// active/paused/finished/outOfOffice are accepted here.
 const ContactsSetStatusInputSchema = z.object({
+	sequenceId: PositiveIntSchema,
 	contactIds: z.array(PositiveIntSchema).min(1).max(100),
 	statusInSequence: z.enum(['active', 'paused', 'finished', 'outOfOffice']),
-	sequenceId: PositiveIntSchema.optional(),
 });
 
 // Non-atomic result keyed by contact id: absent keys succeeded, present keys
