@@ -1,0 +1,2686 @@
+{
+  "id": "alphavantage",
+  "displayName": "Alpha Vantage",
+  "description": "Financial market data API for stocks, forex, crypto, and economic indicators.",
+  "npmPackageName": "@corsair-dev/alphavantage",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 56,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "alphavantage.api.commodities.all",
+      "shortPath": "commodities.all",
+      "description": "Get the global commodities price index",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "monthly | quarterly | annual",
+            "description": "Sampling interval. Defaults to monthly."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.commodities.aluminum",
+      "shortPath": "commodities.aluminum",
+      "description": "Get global aluminum prices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "monthly | quarterly | annual",
+            "description": "Sampling interval. Defaults to monthly."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.commodities.brent",
+      "shortPath": "commodities.brent",
+      "description": "Get Brent crude oil prices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "daily | weekly | monthly",
+            "description": "Sampling interval. Defaults to monthly."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.commodities.coffee",
+      "shortPath": "commodities.coffee",
+      "description": "Get global coffee prices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "monthly | quarterly | annual",
+            "description": "Sampling interval. Defaults to monthly."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.commodities.copper",
+      "shortPath": "commodities.copper",
+      "description": "Get global copper prices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "monthly | quarterly | annual",
+            "description": "Sampling interval. Defaults to monthly."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.commodities.corn",
+      "shortPath": "commodities.corn",
+      "description": "Get global corn prices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "monthly | quarterly | annual",
+            "description": "Sampling interval. Defaults to monthly."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.commodities.cotton",
+      "shortPath": "commodities.cotton",
+      "description": "Get global cotton prices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "monthly | quarterly | annual",
+            "description": "Sampling interval. Defaults to monthly."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.commodities.sugar",
+      "shortPath": "commodities.sugar",
+      "description": "Get global sugar prices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "monthly | quarterly | annual",
+            "description": "Sampling interval. Defaults to monthly."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.commodities.wheat",
+      "shortPath": "commodities.wheat",
+      "description": "Get global wheat prices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "monthly | quarterly | annual",
+            "description": "Sampling interval. Defaults to monthly."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.crypto.daily",
+      "shortPath": "crypto.daily",
+      "description": "Get daily bars for a digital currency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "market",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.crypto.intraday",
+      "shortPath": "crypto.intraday",
+      "description": "Get intraday bars for a digital currency [PREMIUM PLAN]",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string",
+            "description": "Crypto ticker, e.g. BTC."
+          },
+          {
+            "key": "market",
+            "optional": false,
+            "type": "string",
+            "description": "Quote currency, e.g. USD."
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 60min"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "compact | full",
+            "description": "compact returns the latest 100 points, full the full history."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.crypto.monthly",
+      "shortPath": "crypto.monthly",
+      "description": "Get monthly bars for a digital currency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "market",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.crypto.weekly",
+      "shortPath": "crypto.weekly",
+      "description": "Get weekly bars for a digital currency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "market",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.economic.cpi",
+      "shortPath": "economic.cpi",
+      "description": "Get the US consumer price index",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "monthly | semiannual",
+            "description": "Sampling interval. Defaults to monthly."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.economic.durables",
+      "shortPath": "economic.durables",
+      "description": "Get US durable goods orders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.economic.federalFundsRate",
+      "shortPath": "economic.federalFundsRate",
+      "description": "Get the US federal funds rate",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "daily | weekly | monthly",
+            "description": "Sampling interval. Defaults to monthly."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.economic.inflation",
+      "shortPath": "economic.inflation",
+      "description": "Get annual US inflation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.economic.nonfarmPayroll",
+      "shortPath": "economic.nonfarmPayroll",
+      "description": "Get US nonfarm payroll totals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.economic.realGdp",
+      "shortPath": "economic.realGdp",
+      "description": "Get US real gross domestic product",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "quarterly | annual",
+            "description": "Sampling interval. Defaults to annual."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.economic.realGdpPerCapita",
+      "shortPath": "economic.realGdpPerCapita",
+      "description": "Get US real GDP per capita",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.economic.retailSales",
+      "shortPath": "economic.retailSales",
+      "description": "Get US advance retail sales",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.economic.treasuryYield",
+      "shortPath": "economic.treasuryYield",
+      "description": "Get US treasury yield for a constant maturity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "daily | weekly | monthly"
+          },
+          {
+            "key": "maturity",
+            "optional": true,
+            "type": "3month | 2year | 5year | 7year | 10year | 30year"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.economic.unemployment",
+      "shortPath": "economic.unemployment",
+      "description": "Get the US unemployment rate",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ date: string, value: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.forex.daily",
+      "shortPath": "forex.daily",
+      "description": "Get daily bars for a currency pair",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "compact | full",
+            "description": "compact returns the latest 100 points, full the full history."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.forex.exchangeRate",
+      "shortPath": "forex.exchangeRate",
+      "description": "Get the current rate for a currency pair",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_currency",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Realtime Currency Exchange Rate",
+            "optional": false,
+            "type": "{ 1. From_Currency Code: string, 2. From_Currency Name: string, 3. To_Currency Code: string, 4. To_Currency Name: string, 5. Exchange Rate: string, 6. Last Refreshed: string, 7. Time Zone: string, 8. Bid Price?: string, 9. Ask Price?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.forex.intraday",
+      "shortPath": "forex.intraday",
+      "description": "Get intraday bars for a currency pair [PREMIUM PLAN]",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 60min"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "compact | full",
+            "description": "compact returns the latest 100 points, full the full history."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.forex.monthly",
+      "shortPath": "forex.monthly",
+      "description": "Get monthly bars for a currency pair",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.forex.weekly",
+      "shortPath": "forex.weekly",
+      "description": "Get weekly bars for a currency pair",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.fundamentals.balanceSheet",
+      "shortPath": "fundamentals.balanceSheet",
+      "description": "Get annual and quarterly balance sheets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "annualReports",
+            "optional": false,
+            "type": "{ fiscalDateEnding: string, reportedCurrency: string }[]"
+          },
+          {
+            "key": "quarterlyReports",
+            "optional": false,
+            "type": "{ fiscalDateEnding: string, reportedCurrency: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.fundamentals.cashFlow",
+      "shortPath": "fundamentals.cashFlow",
+      "description": "Get annual and quarterly cash flow statements",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "annualReports",
+            "optional": false,
+            "type": "{ fiscalDateEnding: string, reportedCurrency: string }[]"
+          },
+          {
+            "key": "quarterlyReports",
+            "optional": false,
+            "type": "{ fiscalDateEnding: string, reportedCurrency: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.fundamentals.companyOverview",
+      "shortPath": "fundamentals.companyOverview",
+      "description": "Get a company profile with sector and valuation figures",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "AssetType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CIK",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Exchange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Sector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Industry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "OfficialSite",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FiscalYearEnd",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LatestQuarter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MarketCapitalization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EBITDA",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PERatio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PEGRatio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "BookValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DividendPerShare",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DividendYield",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EPS",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RevenuePerShareTTM",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ProfitMargin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "OperatingMarginTTM",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ReturnOnAssetsTTM",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ReturnOnEquityTTM",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RevenueTTM",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "GrossProfitTTM",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DilutedEPSTTM",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "QuarterlyEarningsGrowthYOY",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "QuarterlyRevenueGrowthYOY",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AnalystTargetPrice",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AnalystRatingStrongBuy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AnalystRatingBuy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AnalystRatingHold",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AnalystRatingSell",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AnalystRatingStrongSell",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TrailingPE",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ForwardPE",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PriceToSalesRatioTTM",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PriceToBookRatio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EVToRevenue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EVToEBITDA",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Beta",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "52WeekHigh",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "52WeekLow",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "50DayMovingAverage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "200DayMovingAverage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SharesOutstanding",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SharesFloat",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PercentInsiders",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PercentInstitutions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DividendDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ExDividendDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.fundamentals.dividends",
+      "shortPath": "fundamentals.dividends",
+      "description": "Get historical and declared dividends",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ ex_dividend_date: string, declaration_date?: string, record_date?: string, payment_date?: string, amount: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.fundamentals.earnings",
+      "shortPath": "fundamentals.earnings",
+      "description": "Get reported and estimated earnings per share",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "annualEarnings",
+            "optional": false,
+            "type": "{ fiscalDateEnding: string, reportedEPS: string }[]"
+          },
+          {
+            "key": "quarterlyEarnings",
+            "optional": false,
+            "type": "{ fiscalDateEnding: string, reportedDate: string, reportedEPS: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.fundamentals.earningsCalendar",
+      "shortPath": "fundamentals.earningsCalendar",
+      "description": "List upcoming earnings dates (CSV upstream)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "horizon",
+            "optional": true,
+            "type": "3month | 6month | 12month"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "alphavantage.api.fundamentals.earningsCallTranscript",
+      "shortPath": "fundamentals.earningsCallTranscript",
+      "description": "Get an earnings call transcript with per-speaker sentiment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quarter",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quarter",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "transcript",
+            "optional": false,
+            "type": "{ speaker: string, title?: string, content: string, sentiment?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.fundamentals.incomeStatement",
+      "shortPath": "fundamentals.incomeStatement",
+      "description": "Get annual and quarterly income statements",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "annualReports",
+            "optional": false,
+            "type": "{ fiscalDateEnding: string, reportedCurrency: string }[]"
+          },
+          {
+            "key": "quarterlyReports",
+            "optional": false,
+            "type": "{ fiscalDateEnding: string, reportedCurrency: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.fundamentals.ipoCalendar",
+      "shortPath": "fundamentals.ipoCalendar",
+      "description": "List IPOs expected in the next three months (CSV upstream)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "alphavantage.api.fundamentals.splits",
+      "shortPath": "fundamentals.splits",
+      "description": "Get historical stock splits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ effective_date: string, split_factor: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.intelligence.historicalOptions",
+      "shortPath": "intelligence.historicalOptions",
+      "description": "Get a full options chain for one date [PREMIUM PLAN]",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ contractID: string, symbol: string, expiration: string, strike: string, type: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.intelligence.newsSentiment",
+      "shortPath": "intelligence.newsSentiment",
+      "description": "Get market news with article and ticker sentiment scores",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tickers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "topics",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "time_from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "LATEST | EARLIEST | RELEVANCE"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sentiment_score_definition",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "relevance_score_definition",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "feed",
+            "optional": false,
+            "type": "{ title: string, url: string, time_published: string, summary: string, source: string, overall_sentiment_score: number, overall_sentiment_label: string, ticker_sentiment?: { ticker: string, relevance_score: string, ticker_sentiment_score: string, ticker_sentiment_label: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.intelligence.slidingWindowAnalytics",
+      "shortPath": "intelligence.slidingWindowAnalytics",
+      "description": "Get rolling-window statistics across a set of tickers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbols",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "range",
+            "optional": false,
+            "type": "string",
+            "description": "Lookback window, e.g. 2month, 6month, full."
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "DAILY | WEEKLY | MONTHLY"
+          },
+          {
+            "key": "window_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "calculations",
+            "optional": false,
+            "type": "string[]",
+            "description": "e.g. MEAN, STDDEV, CORRELATION."
+          },
+          {
+            "key": "ohlc",
+            "optional": true,
+            "type": "open | high | low | close"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta_data",
+            "optional": false,
+            "type": "{ symbols: string, window_size: number, min_dt: string, max_dt: string, ohlc: string, interval: string }"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.market.listingStatus",
+      "shortPath": "market.listingStatus",
+      "description": "List every covered security, active or delisted (CSV upstream)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "active | delisted"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "alphavantage.api.market.sector",
+      "shortPath": "market.sector",
+      "description": "Get sector performance [DEPRECATED UPSTREAM: returns an empty body]",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "alphavantage.api.market.status",
+      "shortPath": "market.status",
+      "description": "Get the open or closed state of global exchanges",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "markets",
+            "optional": false,
+            "type": "{ market_type: string, region: string, primary_exchanges: string, local_open: string, local_close: string, current_status: string, notes?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.market.symbolSearch",
+      "shortPath": "market.symbolSearch",
+      "description": "Search securities by name or ticker fragment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keywords",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bestMatches",
+            "optional": false,
+            "type": "{ 1. symbol: string, 2. name: string, 3. type: string, 4. region: string, 5. marketOpen: string, 6. marketClose: string, 7. timezone: string, 8. currency: string, 9. matchScore: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.market.topGainersLosers",
+      "shortPath": "market.topGainersLosers",
+      "description": "Get the top gainers, losers and most actively traded US tickers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_updated",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top_gainers",
+            "optional": false,
+            "type": "{ ticker: string, price: string, change_amount: string, change_percentage: string, volume: string }[]"
+          },
+          {
+            "key": "top_losers",
+            "optional": false,
+            "type": "{ ticker: string, price: string, change_amount: string, change_percentage: string, volume: string }[]"
+          },
+          {
+            "key": "most_actively_traded",
+            "optional": false,
+            "type": "{ ticker: string, price: string, change_amount: string, change_percentage: string, volume: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.technical.indicator",
+      "shortPath": "technical.indicator",
+      "description": "Calculate any technical indicator (SMA, EMA, RSI, MACD, ...)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "indicator",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 60min | daily | weekly | monthly"
+          },
+          {
+            "key": "time_period",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "series_type",
+            "optional": true,
+            "type": "close | open | high | low"
+          },
+          {
+            "key": "month",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "extra_params",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.timeSeries.daily",
+      "shortPath": "timeSeries.daily",
+      "description": "Get daily OHLCV bars",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "compact | full",
+            "description": "compact returns the latest 100 points, full the full history."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.timeSeries.globalQuote",
+      "shortPath": "timeSeries.globalQuote",
+      "description": "Get the latest price and volume for one ticker",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Global Quote",
+            "optional": false,
+            "type": "{ 01. symbol: string, 02. open: string, 03. high: string, 04. low: string, 05. price: string, 06. volume: string, 07. latest trading day: string, 08. previous close: string, 09. change: string, 10. change percent: string } | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.timeSeries.intraday",
+      "shortPath": "timeSeries.intraday",
+      "description": "Get intraday OHLCV bars at 1-60 minute resolution [PREMIUM PLAN]",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 60min"
+          },
+          {
+            "key": "adjusted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "extended_hours",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "month",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputsize",
+            "optional": true,
+            "type": "compact | full",
+            "description": "compact returns the latest 100 points, full the full history."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.timeSeries.intradayExtended",
+      "shortPath": "timeSeries.intradayExtended",
+      "description": "Get historical intraday bars beyond the default window [PREMIUM PLAN]",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "1min | 5min | 15min | 30min | 60min"
+          },
+          {
+            "key": "slice",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "month",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "adjusted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.timeSeries.monthly",
+      "shortPath": "timeSeries.monthly",
+      "description": "Get monthly OHLCV bars",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.timeSeries.monthlyAdjusted",
+      "shortPath": "timeSeries.monthlyAdjusted",
+      "description": "Get monthly bars adjusted for splits and dividends",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.timeSeries.realtimeBulkQuotes",
+      "shortPath": "timeSeries.realtimeBulkQuotes",
+      "description": "Get quotes for up to 100 tickers at once [PREMIUM PLAN]",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbols",
+            "optional": false,
+            "type": "string[]",
+            "description": "Up to 100 tickers, sent to the API as a comma-separated list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ symbol: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.timeSeries.weekly",
+      "shortPath": "timeSeries.weekly",
+      "description": "Get weekly OHLCV bars",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "alphavantage.api.timeSeries.weeklyAdjusted",
+      "shortPath": "timeSeries.weeklyAdjusted",
+      "description": "Get weekly bars adjusted for splits and dividends",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Meta Data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "alphavantage.db.companies.search",
+      "entityName": "companies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "AssetType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "CIK",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Exchange",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Sector",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Industry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "OfficialSite",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "FiscalYearEnd",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "LatestQuarter",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "MarketCapitalization",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "EBITDA",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "PERatio",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "PEGRatio",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "BookValue",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "DividendPerShare",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "DividendYield",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "EPS",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "RevenuePerShareTTM",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ProfitMargin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "OperatingMarginTTM",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ReturnOnAssetsTTM",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ReturnOnEquityTTM",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "RevenueTTM",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "GrossProfitTTM",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "DilutedEPSTTM",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "QuarterlyEarningsGrowthYOY",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "QuarterlyRevenueGrowthYOY",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "AnalystTargetPrice",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "AnalystRatingStrongBuy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "AnalystRatingBuy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "AnalystRatingHold",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "AnalystRatingSell",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "AnalystRatingStrongSell",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "TrailingPE",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ForwardPE",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "PriceToSalesRatioTTM",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "PriceToBookRatio",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "EVToRevenue",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "EVToEBITDA",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "Beta",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "52WeekHigh",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "52WeekLow",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "50DayMovingAverage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "200DayMovingAverage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "SharesOutstanding",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "SharesFloat",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "PercentInsiders",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "PercentInstitutions",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "DividendDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ExDividendDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "alphavantage.db.symbols.search",
+      "entityName": "symbols",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "exchange",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assetType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ipoDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "delistingDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "marketOpen",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "marketClose",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

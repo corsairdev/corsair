@@ -1,0 +1,203 @@
+---
+title: Webhooks
+description: "ZoomInfo incoming webhooks: event paths, payloads, and response data."
+---
+
+The ZoomInfo plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/zoominfo/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `zoominfo`
+  - `companyUpdate` (`zoominfo.companyUpdate`)
+  - `contactUpdate` (`zoominfo.contactUpdate`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Zoominfo
+
+### Company Update
+
+`zoominfo.companyUpdate`
+
+A company you have enriched was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookDetails` | `object` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhookDetails full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  objectType: string,
+  eventType: string
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  name?: string,
+  website?: string,
+  changedAttributes?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhookDetails: {
+    id: string,
+    title?: string,
+    objectType: string,
+    eventType: string
+  },
+  data: {
+    id: string | number,
+    name?: string,
+    website?: string,
+    changedAttributes?: string[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+zoominfo({
+    webhookHooks: {
+        zoominfo: {
+            companyUpdate: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Contact Update
+
+`zoominfo.contactUpdate`
+
+A contact you have enriched was updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookDetails` | `object` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhookDetails full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  objectType: string,
+  eventType: string
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  firstName?: string,
+  lastName?: string,
+  email?: string,
+  changedAttributes?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  webhookDetails: {
+    id: string,
+    title?: string,
+    objectType: string,
+    eventType: string
+  },
+  data: {
+    id: string | number,
+    firstName?: string,
+    lastName?: string,
+    email?: string,
+    changedAttributes?: string[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+zoominfo({
+    webhookHooks: {
+        zoominfo: {
+            contactUpdate: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

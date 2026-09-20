@@ -1,0 +1,1127 @@
+---
+title: API
+description: "API reference for TextRazor: every `textrazor.api.*` operation with input and output types."
+---
+
+Every `textrazor.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Get the current TextRazor plan, concurrency limits, and daily usage
+
+**Risk:** `read`
+
+```ts
+await corsair.textrazor.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  plan?: string,
+  concurrentRequestLimit?: number,
+  concurrentRequestsUsed?: number,
+  planDailyRequestsIncluded?: number,
+  requestsUsedToday?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Analysis
+
+### analyzeContent
+
+`analysis.analyzeContent`
+
+Analyze text or a URL with one or more TextRazor extractors in a single call
+
+**Risk:** `read`
+
+```ts
+await corsair.textrazor.api.analysis.analyzeContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | No | — |
+| `url` | `string` | No | — |
+| `cleanupMode` | `raw \| stripTags \| cleanHTML` | No | — |
+| `cleanupReturnCleaned` | `boolean` | No | — |
+| `cleanupReturnRaw` | `boolean` | No | — |
+| `cleanupUseMetadata` | `boolean` | No | — |
+| `cleanupCleanHtmlPrecision` | `1 \| 2 \| 3` | No | — |
+| `cleanupCleanHtmlUseTitle` | `boolean` | No | — |
+| `downloadRunJavascript` | `boolean` | No | — |
+| `downloadUserAgent` | `string` | No | — |
+| `entitiesAllowOverlap` | `boolean` | No | — |
+| `entitiesDictionaries` | `string[]` | No | — |
+| `entitiesFilterDbpediaTypes` | `string[]` | No | — |
+| `entitiesFilterFreebaseTypes` | `string[]` | No | — |
+| `entitiesIncludeAddressPlaces` | `boolean` | No | — |
+| `languageOverride` | `string` | No | — |
+| `rules` | `string` | No | — |
+| `classifiers` | `string[]` | No | — |
+| `classifierMaxCategories` | `number` | No | — |
+| `extractors` | `entities \| topics \| words \| phrases \| dependency-trees \| relations \| entailments \| senses \| spelling[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  language?: string,
+  languageIsReliable?: boolean,
+  cleanedText?: string,
+  rawText?: string,
+  customAnnotationOutput?: any,
+  matchingRules?: string[],
+  entities?: {
+    id?: number,
+    entityId?: string | null,
+    entityEnglishId?: string | null,
+    matchedText?: string,
+    matchingTokens?: number[],
+    startingPos?: number,
+    endingPos?: number,
+    confidenceScore?: number,
+    relevanceScore?: number,
+    type?: string[],
+    freebaseTypes?: string[],
+    freebaseId?: string | null,
+    wikiLink?: string | null,
+    wikidataId?: string | null,
+    wikidataTypes?: string[],
+    customEntityId?: string,
+    sourceId?: string,
+    data?: any,
+    crunchbaseId?: string,
+    lei?: string,
+    figi?: string,
+    permid?: string,
+    unit?: string
+  }[],
+  topics?: {
+    id?: number,
+    label?: string,
+    score?: number,
+    wikiLink?: string | null,
+    wikidataId?: string | null
+  }[],
+  coarseTopics?: {
+    id?: number,
+    label?: string,
+    score?: number,
+    wikiLink?: string | null,
+    wikidataId?: string | null
+  }[],
+  categories?: {
+    id?: number,
+    categoryId?: string,
+    label?: string,
+    score?: number,
+    classifierId?: string
+  }[],
+  sentences?: {
+    position?: number,
+    words?: {
+      position?: number,
+      startingPos?: number,
+      endingPos?: number,
+      token?: string,
+      stem?: string,
+      lemma?: string,
+      partOfSpeech?: string,
+      parentPosition?: number | null,
+      relationToParent?: string | null,
+      senses?: any[],
+      spellingSuggestions?: any[]
+    }[]
+  }[],
+  nounPhrases?: {
+    wordPositions?: number[]
+  }[],
+  relations?: {
+    wordPositions?: number[],
+    params?: {
+      wordPositions?: number[],
+      relation?: string
+    }[]
+  }[],
+  properties?: {
+    wordPositions?: number[],
+    propertyPositions?: number[]
+  }[],
+  entailments?: {
+    wordPositions?: number[],
+    score?: number,
+    priorScore?: number,
+    contextScore?: number,
+    entailedTree?: any
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### classifyText
+
+`analysis.classifyText`
+
+Classify text or a URL against built-in or custom TextRazor classifiers
+
+**Risk:** `read`
+
+```ts
+await corsair.textrazor.api.analysis.classifyText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | No | — |
+| `url` | `string` | No | — |
+| `cleanupMode` | `raw \| stripTags \| cleanHTML` | No | — |
+| `cleanupReturnCleaned` | `boolean` | No | — |
+| `cleanupReturnRaw` | `boolean` | No | — |
+| `cleanupUseMetadata` | `boolean` | No | — |
+| `cleanupCleanHtmlPrecision` | `1 \| 2 \| 3` | No | — |
+| `cleanupCleanHtmlUseTitle` | `boolean` | No | — |
+| `downloadRunJavascript` | `boolean` | No | — |
+| `downloadUserAgent` | `string` | No | — |
+| `entitiesAllowOverlap` | `boolean` | No | — |
+| `entitiesDictionaries` | `string[]` | No | — |
+| `entitiesFilterDbpediaTypes` | `string[]` | No | — |
+| `entitiesFilterFreebaseTypes` | `string[]` | No | — |
+| `entitiesIncludeAddressPlaces` | `boolean` | No | — |
+| `languageOverride` | `string` | No | — |
+| `rules` | `string` | No | — |
+| `classifiers` | `string[]` | Yes | — |
+| `classifierMaxCategories` | `number` | No | — |
+| `extractors` | `entities \| topics \| words \| phrases \| dependency-trees \| relations \| entailments \| senses \| spelling[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  language?: string,
+  languageIsReliable?: boolean,
+  cleanedText?: string,
+  rawText?: string,
+  customAnnotationOutput?: any,
+  matchingRules?: string[],
+  entities?: {
+    id?: number,
+    entityId?: string | null,
+    entityEnglishId?: string | null,
+    matchedText?: string,
+    matchingTokens?: number[],
+    startingPos?: number,
+    endingPos?: number,
+    confidenceScore?: number,
+    relevanceScore?: number,
+    type?: string[],
+    freebaseTypes?: string[],
+    freebaseId?: string | null,
+    wikiLink?: string | null,
+    wikidataId?: string | null,
+    wikidataTypes?: string[],
+    customEntityId?: string,
+    sourceId?: string,
+    data?: any,
+    crunchbaseId?: string,
+    lei?: string,
+    figi?: string,
+    permid?: string,
+    unit?: string
+  }[],
+  topics?: {
+    id?: number,
+    label?: string,
+    score?: number,
+    wikiLink?: string | null,
+    wikidataId?: string | null
+  }[],
+  coarseTopics?: {
+    id?: number,
+    label?: string,
+    score?: number,
+    wikiLink?: string | null,
+    wikidataId?: string | null
+  }[],
+  categories?: {
+    id?: number,
+    categoryId?: string,
+    label?: string,
+    score?: number,
+    classifierId?: string
+  }[],
+  sentences?: {
+    position?: number,
+    words?: {
+      position?: number,
+      startingPos?: number,
+      endingPos?: number,
+      token?: string,
+      stem?: string,
+      lemma?: string,
+      partOfSpeech?: string,
+      parentPosition?: number | null,
+      relationToParent?: string | null,
+      senses?: any[],
+      spellingSuggestions?: any[]
+    }[]
+  }[],
+  nounPhrases?: {
+    wordPositions?: number[]
+  }[],
+  relations?: {
+    wordPositions?: number[],
+    params?: {
+      wordPositions?: number[],
+      relation?: string
+    }[]
+  }[],
+  properties?: {
+    wordPositions?: number[],
+    propertyPositions?: number[]
+  }[],
+  entailments?: {
+    wordPositions?: number[],
+    score?: number,
+    priorScore?: number,
+    contextScore?: number,
+    entailedTree?: any
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### extractEntities
+
+`analysis.extractEntities`
+
+Extract named entities from text or a URL, optionally filtering by relevance and confidence
+
+**Risk:** `read`
+
+```ts
+await corsair.textrazor.api.analysis.extractEntities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | No | — |
+| `url` | `string` | No | — |
+| `cleanupMode` | `raw \| stripTags \| cleanHTML` | No | — |
+| `cleanupReturnCleaned` | `boolean` | No | — |
+| `cleanupReturnRaw` | `boolean` | No | — |
+| `cleanupUseMetadata` | `boolean` | No | — |
+| `cleanupCleanHtmlPrecision` | `1 \| 2 \| 3` | No | — |
+| `cleanupCleanHtmlUseTitle` | `boolean` | No | — |
+| `downloadRunJavascript` | `boolean` | No | — |
+| `downloadUserAgent` | `string` | No | — |
+| `entitiesAllowOverlap` | `boolean` | No | — |
+| `entitiesDictionaries` | `string[]` | No | — |
+| `entitiesFilterDbpediaTypes` | `string[]` | No | — |
+| `entitiesFilterFreebaseTypes` | `string[]` | No | — |
+| `entitiesIncludeAddressPlaces` | `boolean` | No | — |
+| `languageOverride` | `string` | No | — |
+| `rules` | `string` | No | — |
+| `classifiers` | `string[]` | No | — |
+| `classifierMaxCategories` | `number` | No | — |
+| `extractors` | `entities \| topics \| words \| phrases \| dependency-trees \| relations \| entailments \| senses \| spelling[]` | No | — |
+| `minRelevanceScore` | `number` | No | — |
+| `minConfidenceScore` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  language?: string,
+  languageIsReliable?: boolean,
+  cleanedText?: string,
+  rawText?: string,
+  customAnnotationOutput?: any,
+  matchingRules?: string[],
+  entities?: {
+    id?: number,
+    entityId?: string | null,
+    entityEnglishId?: string | null,
+    matchedText?: string,
+    matchingTokens?: number[],
+    startingPos?: number,
+    endingPos?: number,
+    confidenceScore?: number,
+    relevanceScore?: number,
+    type?: string[],
+    freebaseTypes?: string[],
+    freebaseId?: string | null,
+    wikiLink?: string | null,
+    wikidataId?: string | null,
+    wikidataTypes?: string[],
+    customEntityId?: string,
+    sourceId?: string,
+    data?: any,
+    crunchbaseId?: string,
+    lei?: string,
+    figi?: string,
+    permid?: string,
+    unit?: string
+  }[],
+  topics?: {
+    id?: number,
+    label?: string,
+    score?: number,
+    wikiLink?: string | null,
+    wikidataId?: string | null
+  }[],
+  coarseTopics?: {
+    id?: number,
+    label?: string,
+    score?: number,
+    wikiLink?: string | null,
+    wikidataId?: string | null
+  }[],
+  categories?: {
+    id?: number,
+    categoryId?: string,
+    label?: string,
+    score?: number,
+    classifierId?: string
+  }[],
+  sentences?: {
+    position?: number,
+    words?: {
+      position?: number,
+      startingPos?: number,
+      endingPos?: number,
+      token?: string,
+      stem?: string,
+      lemma?: string,
+      partOfSpeech?: string,
+      parentPosition?: number | null,
+      relationToParent?: string | null,
+      senses?: any[],
+      spellingSuggestions?: any[]
+    }[]
+  }[],
+  nounPhrases?: {
+    wordPositions?: number[]
+  }[],
+  relations?: {
+    wordPositions?: number[],
+    params?: {
+      wordPositions?: number[],
+      relation?: string
+    }[]
+  }[],
+  properties?: {
+    wordPositions?: number[],
+    propertyPositions?: number[]
+  }[],
+  entailments?: {
+    wordPositions?: number[],
+    score?: number,
+    priorScore?: number,
+    contextScore?: number,
+    entailedTree?: any
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Classifiers
+
+### delete
+
+`classifiers.delete`
+
+Delete a custom classifier and all of its categories
+
+**Risk:** `destructive`
+
+```ts
+await corsair.textrazor.api.classifiers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### deleteCategory
+
+`classifiers.deleteCategory`
+
+Delete a category from a custom classifier
+
+**Risk:** `destructive`
+
+```ts
+await corsair.textrazor.api.classifiers.deleteCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `categoryId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### getCategory
+
+`classifiers.getCategory`
+
+Get a category from a custom classifier by id
+
+**Risk:** `read`
+
+```ts
+await corsair.textrazor.api.classifiers.getCategory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `categoryId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  categoryId: string,
+  label?: string,
+  query?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listCategories
+
+`classifiers.listCategories`
+
+List categories for a custom classifier with limit and offset pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.textrazor.api.classifiers.listCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+| `response` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  categoryId: string,
+  label?: string,
+  query?: string
+}[] | {
+  categories: {
+    categoryId: string,
+    label?: string,
+    query?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### put
+
+`classifiers.put`
+
+Create or update a custom classifier from JSON categories
+
+**Risk:** `write`
+
+```ts
+await corsair.textrazor.api.classifiers.put({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `categories` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  categoryId: string,
+  label?: string,
+  query: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+## Dictionaries
+
+### addEntries
+
+`dictionaries.addEntries`
+
+Add or overwrite entries in a custom entity dictionary
+
+**Risk:** `write`
+
+```ts
+await corsair.textrazor.api.dictionaries.addEntries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  id?: string,
+  text: string,
+  data?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`dictionaries.create`
+
+Create a custom entity dictionary
+
+**Risk:** `write`
+
+```ts
+await corsair.textrazor.api.dictionaries.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `matchType` | `token \| stem` | No | — |
+| `caseInsensitive` | `boolean` | No | — |
+| `language` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  id: string,
+  matchType?: token | stem,
+  caseInsensitive?: boolean,
+  language?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`dictionaries.delete`
+
+Delete a custom entity dictionary and all of its entries
+
+**Risk:** `destructive`
+
+```ts
+await corsair.textrazor.api.dictionaries.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### deleteEntry
+
+`dictionaries.deleteEntry`
+
+Delete a dictionary entry by id
+
+**Risk:** `destructive`
+
+```ts
+await corsair.textrazor.api.dictionaries.deleteEntry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entryId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`dictionaries.get`
+
+Get a custom entity dictionary by id
+
+**Risk:** `read`
+
+```ts
+await corsair.textrazor.api.dictionaries.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  id: string,
+  matchType?: token | stem,
+  caseInsensitive?: boolean,
+  language?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getEntry
+
+`dictionaries.getEntry`
+
+Get a dictionary entry by id
+
+**Risk:** `read`
+
+```ts
+await corsair.textrazor.api.dictionaries.getEntry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `entryId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  id: string,
+  text?: string,
+  data?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`dictionaries.list`
+
+List custom entity dictionaries on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.textrazor.api.dictionaries.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+| `response` | `object` | No | — |
+| `dictionaries` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  id: string,
+  matchType?: token | stem,
+  caseInsensitive?: boolean,
+  language?: string
+}[] | {
+  dictionaries: {
+    id: string,
+    matchType?: token | stem,
+    caseInsensitive?: boolean,
+    language?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="dictionaries full type">
+
+```ts
+{
+  id: string,
+  matchType?: token | stem,
+  caseInsensitive?: boolean,
+  language?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEntries
+
+`dictionaries.listEntries`
+
+List dictionary entries with limit and offset pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.textrazor.api.dictionaries.listEntries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+| `time` | `number \| string` | No | — |
+| `error` | `string` | No | — |
+| `message` | `string` | No | — |
+| `response` | `object` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  id: string,
+  text?: string,
+  data?: {
+  }
+}[] | {
+  entries: {
+    id: string,
+    text?: string,
+    data?: {
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

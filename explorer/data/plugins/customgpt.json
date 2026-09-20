@@ -1,0 +1,2724 @@
+{
+  "id": "customgpt",
+  "displayName": "CustomGPT",
+  "description": "Platform for building custom ChatGPT-style agents trained on your business content.",
+  "npmPackageName": "@corsair-dev/customgpt",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 40,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "customgpt.api.conversations.create",
+      "shortPath": "conversations.create",
+      "description": "Tool to create a new conversation session for a CustomGPT agent. Use this when starting a new chat interaction - it returns a session ID that you'll use to send messages. Optionally provide a name to help identify the conversation later.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number, session_id: string, name?: string | null, project_id?: string | number, created_by?: string | number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.licenses.delete",
+      "shortPath": "licenses.delete",
+      "description": "Deletes a license from a CustomGPT project/agent. Requires numeric project ID and license ID. This action is idempotent - it succeeds even if the license doesn't exist (404). The project must have licenses enabled in its plan for this endpoint to work properly. [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "licenseId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ deleted?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.licenses.get",
+      "shortPath": "licenses.get",
+      "description": "Tool to retrieve a license for a specific project. Use when you need to fetch license details by license ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "licenseId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "license",
+            "optional": false,
+            "type": "{ key: string, name?: string, project_id?: number, created_at?: string, updated_at?: string, syncedAt?: Date }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.licenses.list",
+      "shortPath": "licenses.list",
+      "description": "List all licenses for a CustomGPT project/agent. Returns an array of license objects with details like ID, type, status, and timestamps. Returns an empty array if the project has no licenses or if licenses are not enabled for the project. Use this when you need to check what licenses exist for a specific project/agent.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ key: string, name?: string, project_id?: number, created_at?: string, updated_at?: string, syncedAt?: Date }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.licenses.update",
+      "shortPath": "licenses.update",
+      "description": "Updates the name of an existing license for a CustomGPT project/agent. Prerequisites: - The project must have licenses enabled in its plan - Both project ID and license ID must be valid and exist - Use List Projects to get valid project IDs - Use List Project Licenses to get valid license IDs for a project This action only updates the license name. Other license properties cannot be modified through this endpoint.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "licenseId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "license",
+            "optional": false,
+            "type": "{ key: string, name?: string, project_id?: number, created_at?: string, updated_at?: string, syncedAt?: Date }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.limits.getUsage",
+      "shortPath": "limits.getUsage",
+      "description": "Get account usage limits showing current usage vs. maximum allowed for projects, storage credits, and API queries. This returns how many projects, storage credits (characters indexed), and queries you've used compared to your account's maximum limits. Use this to monitor quota consumption.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ max_projects_num?: number, current_projects_num?: number, max_total_storage_credits?: number, current_total_storage_credits?: number, max_queries?: number, current_queries?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Tool to get message details from a CustomGPT conversation. Returns the complete details for a single message, including the user's prompt, the agent's response, timestamps, citations, and any attached metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "promptId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "includeInsights",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, conversation_id?: number, user_id?: number | null, user_query?: string | null, openai_response?: string | null, citations?: number[] | null, tools?: string[] | null, metadata?: { user_ip?: string | null, user_agent?: string | null, external_id?: string | null, request_source?: string | null } | null, response_feedback?: { created_at?: string, updated_at?: string, user_id?: number | null, reaction?: neutral | disliked | liked } | null, customer_intelligence?: { prompt_id?: number, conversation_id?: number, project_id?: number, user_query?: string | null, ai_response?: string | null, created_at?: string, content_source?: string | null, user_emotion?: string | null, user_intent?: string | null, language?: string | null, human_request?: true | false | unclear | null, user_id?: number | null, feedback?: string | null, user_location?: string | null, chatbot_deployment?: string | null, risk_fidelity?: string | null, risk_jailbreak?: string | null, risk_prompt_leakage?: string | null, risk_profanity?: string | null, accuracy?: string | null, stakeholder_status?: string | null, browser?: string | null } | null, created_at?: string, updated_at?: string, syncedAt?: Date }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.messages.getTrustScore",
+      "shortPath": "messages.getTrustScore",
+      "description": "Tool to retrieve verification trust score for a message in a CustomGPT conversation. Returns a score calculated by checking how well the agent's claims are supported by source documents. Higher scores indicate better-grounded responses with stronger evidence.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "promptId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ overall_status?: string, stakeholder_analysis?: { end_user?: { flag?: string, rationale?: string, stakeholder?: string, recommendations?: string[] }, security_it?: { flag?: string, rationale?: string, stakeholder?: string, recommendations?: string[] }, risk_compliance?: { flag?: string, rationale?: string, stakeholder?: string, recommendations?: string[] }, legal_compliance?: { flag?: string, rationale?: string, stakeholder?: string, recommendations?: string[] }, public_relations?: { flag?: string, rationale?: string, stakeholder?: string, recommendations?: string[] }, executive_leadership?: { flag?: string, rationale?: string, stakeholder?: string, recommendations?: string[] } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "Retrieves all messages from a CustomGPT conversation, including both user queries and AI responses. Use this to view the complete chat history for a specific conversation session. Returns an empty list if the conversation doesn't exist or has no messages.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "includeInsights",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ conversation?: { id?: number, session_id: string, name?: string | null, project_id?: string | number, created_by?: string | number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }, messages: { current_page?: number, data: { id: number, conversation_id?: number, user_id?: number | null, user_query?: string | null, openai_response?: string | null, citations?: number[] | null, tools?: string[] | null, metadata?: { user_ip?: string | null, user_agent?: string | null, external_id?: string | null, request_source?: string | null } | null, response_feedback?: { created_at?: string, updated_at?: string, user_id?: number | null, reaction?: neutral | disliked | liked } | null, customer_intelligence?: { prompt_id?: number, conversation_id?: number, project_id?: number, user_query?: string | null, ai_response?: string | null, created_at?: string, content_source?: string | null, user_emotion?: string | null, user_intent?: string | null, language?: string | null, human_request?: true | false | unclear | null, user_id?: number | null, feedback?: string | null, user_location?: string | null, chatbot_deployment?: string | null, risk_fidelity?: string | null, risk_jailbreak?: string | null, risk_prompt_leakage?: string | null, risk_profanity?: string | null, accuracy?: string | null, stakeholder_status?: string | null, browser?: string | null } | null, created_at?: string, updated_at?: string, syncedAt?: Date }[], first_page_url?: string | null, from?: number | null, last_page?: number, last_page_url?: string | null, next_page_url?: string | null, path?: string, per_page?: number | string, prev_page_url?: string | null, to?: number | null, total?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.messages.submitFeedback",
+      "shortPath": "messages.submitFeedback",
+      "description": "Tool to submit feedback (thumbs up/down) for a message in a CustomGPT conversation. Use this to record user satisfaction signals that help identify which AI responses are helpful and which need improvement. Feedback can be changed by submitting a new reaction value.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "promptId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "reaction",
+            "optional": false,
+            "type": "neutral | disliked | liked"
+          },
+          {
+            "key": "includeInsights",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, conversation_id?: number, user_id?: number | null, user_query?: string | null, openai_response?: string | null, citations?: number[] | null, tools?: string[] | null, metadata?: { user_ip?: string | null, user_agent?: string | null, external_id?: string | null, request_source?: string | null } | null, response_feedback?: { created_at?: string, updated_at?: string, user_id?: number | null, reaction?: neutral | disliked | liked } | null, customer_intelligence?: { prompt_id?: number, conversation_id?: number, project_id?: number, user_query?: string | null, ai_response?: string | null, created_at?: string, content_source?: string | null, user_emotion?: string | null, user_intent?: string | null, language?: string | null, human_request?: true | false | unclear | null, user_id?: number | null, feedback?: string | null, user_location?: string | null, chatbot_deployment?: string | null, risk_fidelity?: string | null, risk_jailbreak?: string | null, risk_prompt_leakage?: string | null, risk_profanity?: string | null, accuracy?: string | null, stakeholder_status?: string | null, browser?: string | null } | null, created_at?: string, updated_at?: string, syncedAt?: Date }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.messages.verify",
+      "shortPath": "messages.verify",
+      "description": "Tool to verify message accuracy by triggering a fact-checking verification process. Use when you need to verify claims in a conversation message against source documents. The system compares each claim and reports which claims are supported, partially supported, or unsupported.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "promptId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ message?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.pages.delete",
+      "shortPath": "pages.delete",
+      "description": "Tool to delete a document from a CustomGPT agent's knowledge base. Permanently removes a document and the agent will no longer reference this content when answering questions. Use this to remove outdated or incorrect information. Warning: This action cannot be undone. [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ deleted?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.pages.getMetadata",
+      "shortPath": "pages.getMetadata",
+      "description": "Tool to get document metadata including title, source URL, word count, and custom metadata fields. Use this to display document information or manage your knowledge base.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number, url?: string | null, title?: string | null, description?: string | null, image?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.pages.list",
+      "shortPath": "pages.list",
+      "description": "Lists all documents in a CustomGPT agent's knowledge base. Returns indexed content including webpages, PDFs, and uploaded files that the agent can reference. Supports filtering by crawl/index status and pagination. Use this to audit knowledge sources or verify successful document ingestion.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "crawl_status",
+            "optional": true,
+            "type": "all | ok | failed | n/a | queued | limited"
+          },
+          {
+            "key": "index_status",
+            "optional": true,
+            "type": "all | ok | failed | n/a | queued | limited"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ project?: { id: number, project_name?: string, sitemap_path?: string | null, is_chat_active?: boolean, is_master?: boolean, user_id?: number, team_id?: number, created_at?: string, updated_at?: string, deleted_at?: string | null, type?: SITEMAP | URL, is_shared?: boolean, shareable_slug?: string | null, shareable_link?: string | null, embed_code?: string | null, live_chat_code?: string | null, are_licenses_allowed?: boolean, subdomain_slug?: string | null, syncedAt?: Date }, pages: { current_page?: number, data: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[], first_page_url?: string | null, from?: number | null, last_page?: number, last_page_url?: string | null, next_page_url?: string | null, path?: string, per_page?: number | string, prev_page_url?: string | null, to?: number | null, total?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.pages.reindex",
+      "shortPath": "pages.reindex",
+      "description": "Tool to reindex a document in CustomGPT knowledge base. Re-crawls and re-indexes a URL-based document to update its content. Use this when the source content has changed and you want the agent to use the updated version. Only works for URL-based documents.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ updated?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.pages.updateMetadata",
+      "shortPath": "pages.updateMetadata",
+      "description": "Update document metadata for a specific page in a CustomGPT project. Updates custom metadata fields such as title, description, URL, and image that help organize and manage your knowledge base. Use when you need to add tags, categories, or other organizational information to documents.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number, url?: string | null, title?: string | null, description?: string | null, image?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.personas.activate",
+      "shortPath": "personas.activate",
+      "description": "Restore a previous persona version for a CustomGPT agent. Activates a previous persona version, making it the current active persona. This creates a new version entry in the history (it doesn't overwrite), preserving the full audit trail. Use this to roll back to a known-good configuration. Requires Custom plan.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ updated?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.personas.list",
+      "shortPath": "personas.list",
+      "description": "Tool to list persona versions for a CustomGPT agent. Use when you need to view the version history of an agent's persona. Every time the persona is updated, a snapshot is automatically saved, allowing you to view changes over time or restore a previous version. Results are paginated. Requires Custom plan.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ current_page?: number, data: { version?: number, is_active?: boolean, created_at?: string, instructions?: string | null }[], first_page_url?: string | null, from?: number | null, last_page?: number, last_page_url?: string | null, next_page_url?: string | null, path?: string, per_page?: number | string, prev_page_url?: string | null, to?: number | null, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.projects.clone",
+      "shortPath": "projects.clone",
+      "description": "Tool to clone a CustomGPT agent (project). Creates a complete copy of an existing agent, including its knowledge base, persona, and settings. Use this to create variations of an agent for testing, or to use an existing agent as a template for a new one.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, project_name?: string, sitemap_path?: string | null, is_chat_active?: boolean, is_master?: boolean, user_id?: number, team_id?: number, created_at?: string, updated_at?: string, deleted_at?: string | null, type?: SITEMAP | URL, is_shared?: boolean, shareable_slug?: string | null, shareable_link?: string | null, embed_code?: string | null, live_chat_code?: string | null, are_licenses_allowed?: boolean, subdomain_slug?: string | null, syncedAt?: Date }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Tool to create a new CustomGPT agent from a sitemap URL or file upload. The agent immediately begins processing the content to build its knowledge base. Use when you need to create a new AI agent with custom knowledge from web content or documents. Either sitemap_path or file must be provided.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_master",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_planner_mode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sitemap_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_data_retension",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_ocr_enabled",
+            "optional": true,
+            "type": "0 | 1 | 2"
+          },
+          {
+            "key": "is_anonymized",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_vision_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_vision_compress_image",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_low_performance_mode_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_extra_timeout",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_full_url_crawl",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "image_extraction_type",
+            "optional": true,
+            "type": "none | sync_from_sitemap"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ filename: string, content_base64: string, content_type?: string }"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ filename: string, content_base64: string, content_type?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, project_name?: string, sitemap_path?: string | null, is_chat_active?: boolean, is_master?: boolean, user_id?: number, team_id?: number, created_at?: string, updated_at?: string, deleted_at?: string | null, type?: SITEMAP | URL, is_shared?: boolean, shareable_slug?: string | null, shareable_link?: string | null, embed_code?: string | null, live_chat_code?: string | null, are_licenses_allowed?: boolean, subdomain_slug?: string | null, syncedAt?: Date }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Tool to delete a CustomGPT project by ID. Use when you need to permanently remove an existing agent after confirming the ID. [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ deleted?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Tool to get agent details. Returns the full configuration and current status for a specific agent. Use this to check processing status, view settings, or retrieve metadata about the agent.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, project_name?: string, sitemap_path?: string | null, is_chat_active?: boolean, is_master?: boolean, user_id?: number, team_id?: number, created_at?: string, updated_at?: string, deleted_at?: string | null, type?: SITEMAP | URL, is_shared?: boolean, shareable_slug?: string | null, shareable_link?: string | null, embed_code?: string | null, live_chat_code?: string | null, are_licenses_allowed?: boolean, subdomain_slug?: string | null, syncedAt?: Date }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "Lists all CustomGPT projects (agents) for the authenticated user. Returns projects with full details including ID, name, type, chat status, and timestamps. Supports pagination via the 'page' parameter. Use this to discover available projects or iterate through all projects.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "id | created_at"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ current_page?: number, data: { id: number, project_name?: string, sitemap_path?: string | null, is_chat_active?: boolean, is_master?: boolean, user_id?: number, team_id?: number, created_at?: string, updated_at?: string, deleted_at?: string | null, type?: SITEMAP | URL, is_shared?: boolean, shareable_slug?: string | null, shareable_link?: string | null, embed_code?: string | null, live_chat_code?: string | null, are_licenses_allowed?: boolean, subdomain_slug?: string | null, syncedAt?: Date }[], first_page_url?: string | null, from?: number | null, last_page?: number, last_page_url?: string | null, next_page_url?: string | null, path?: string, per_page?: number | string, prev_page_url?: string | null, to?: number | null, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.projects.plugins",
+      "shortPath": "projects.plugins",
+      "description": "Tool to retrieve plugin details for a specific CustomGPT agent (project). Use when you need to inspect plugin configuration, status, and metadata for an agent.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ tools?: { key?: string, name?: string, is_enabled?: boolean, settings?: {} | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.projects.stats",
+      "shortPath": "projects.stats",
+      "description": "Tool to get agent statistics. Returns usage metrics and performance statistics for an agent, including total conversations, query counts, document statistics, and processing information. Use when you need to monitor agent performance or generate usage reports.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ pages_found?: number, pages_crawled?: number, pages_indexed?: number, crawl_credits_used?: number, query_credits_used?: number, total_queries?: number, total_words_indexed?: number, total_storage_credits_used?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Updates an existing CustomGPT agent's name or configuration settings. Use this to rename an agent or modify its basic properties without affecting its knowledge base. Returns the complete updated project details including all metadata.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "are_licenses_allowed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sitemap_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_data_retension",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_ocr_enabled",
+            "optional": true,
+            "type": "0 | 1 | 2"
+          },
+          {
+            "key": "is_anonymized",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_vision_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_vision_compress_image",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_low_performance_mode_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_extra_timeout",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_full_url_crawl",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "image_extraction_type",
+            "optional": true,
+            "type": "none | sync_from_sitemap"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ filename: string, content_base64: string, content_type?: string }"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ filename: string, content_base64: string, content_type?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, project_name?: string, sitemap_path?: string | null, is_chat_active?: boolean, is_master?: boolean, user_id?: number, team_id?: number, created_at?: string, updated_at?: string, deleted_at?: string | null, type?: SITEMAP | URL, is_shared?: boolean, shareable_slug?: string | null, shareable_link?: string | null, embed_code?: string | null, live_chat_code?: string | null, are_licenses_allowed?: boolean, subdomain_slug?: string | null, syncedAt?: Date }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.reports.exportLeads",
+      "shortPath": "reports.exportLeads",
+      "description": "Export leads from a CustomGPT project. Returns lead information captured from conversations including email addresses, names, phone numbers, and custom fields. Supports pagination and date range filtering. Use this to sync leads with CRM or marketing tools.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ current_page?: number, data: { project_id?: number, session_id?: string, query_id?: number, name?: string | null, email?: string | null, phone_number?: string | null, company?: string | null, captured_at?: string | null, other_data?: {} | null, user_defined?: {} | null, tags?: string[] | null, syncedAt?: Date }[], first_page_url?: string | null, from?: number | null, last_page?: number, last_page_url?: string | null, next_page_url?: string | null, path?: string, per_page?: number | string, prev_page_url?: string | null, to?: number | null, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.reports.getAnalysis",
+      "shortPath": "reports.getAnalysis",
+      "description": "Tool to retrieve analytics chart data for a CustomGPT project. Returns time-series data formatted for charts, with daily or weekly breakdowns of key metrics including conversation counts, query counts, and queries-per-conversation ratios. Use this to generate usage reports, track project engagement over time, or visualize chatbot performance trends.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "queries | conversations | queries_per_conversation[]"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "daily | weekly"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ queries?: { queries_number?: number, created_at_interval?: string }[], conversations?: { queries_number?: number, created_at_interval?: string }[], queries_per_conversation?: { queries_number?: number, created_at_interval?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.reports.getConversations",
+      "shortPath": "reports.getConversations",
+      "description": "Tool to get conversation analytics for a CustomGPT project. Returns conversation metrics including total conversations, average queries per conversation, and other engagement statistics. Use this to understand how users engage with your agent and analyze conversation patterns over time.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "total | average_queries_per_conversation[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ total?: number, average_queries_per_conversation?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.reports.getIntelligence",
+      "shortPath": "reports.getIntelligence",
+      "description": "Tool to get customer intelligence for a CustomGPT project. Returns AI-analyzed insights about users including common intents, emotional sentiment, frequently discussed topics, and emerging trends. Use this to understand what users are asking about and identify patterns in user behavior.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_source",
+            "optional": true,
+            "type": "in-context | out-of-context | not-used[]"
+          },
+          {
+            "key": "accuracy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stakeholder_status",
+            "optional": true,
+            "type": "APPROVED | FLAGGED | BLOCKED[]"
+          },
+          {
+            "key": "user_emotion",
+            "optional": true,
+            "type": "positive | neutral | frustration | dissatisfaction | confusion | unclear[]"
+          },
+          {
+            "key": "user_intent",
+            "optional": true,
+            "type": "informational | troubleshooting | instructional | greetings | transactional | navigational | follow-up | unclear[]"
+          },
+          {
+            "key": "human_request",
+            "optional": true,
+            "type": "true | false | unclear[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tools",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "leads",
+            "optional": true,
+            "type": "(0 | 1)[]"
+          },
+          {
+            "key": "request_source",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "risk_fidelity",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "risk_jailbreak",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "risk_prompt_leakage",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "risk_profanity",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ current_page?: number, data: { prompt_id?: number, conversation_id?: number, project_id?: number, user_query?: string | null, ai_response?: string | null, created_at?: string, content_source?: string | null, user_emotion?: string | null, user_intent?: string | null, language?: string | null, human_request?: true | false | unclear | null, user_id?: number | null, feedback?: string | null, user_location?: string | null, chatbot_deployment?: string | null, risk_fidelity?: string | null, risk_jailbreak?: string | null, risk_prompt_leakage?: string | null, risk_profanity?: string | null, accuracy?: string | null, stakeholder_status?: string | null, browser?: string | null }[], first_page_url?: string | null, from?: number | null, last_page?: number, last_page_url?: string | null, next_page_url?: string | null, path?: string, per_page?: number | string, prev_page_url?: string | null, to?: number | null, total?: number }"
+          },
+          {
+            "key": "total_queries",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.reports.getTraffic",
+      "shortPath": "reports.getTraffic",
+      "description": "Tool to retrieve traffic analytics for a CustomGPT agent/project. Returns user traffic metrics including unique visitors, session counts, geographic distribution, and device types. Use this to understand who's using your agent and how they're accessing it.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "sources[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ sources?: { request_source?: string, request_source_number?: number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.settings.get",
+      "shortPath": "settings.get",
+      "description": "Retrieve configuration settings for a specific CustomGPT agent/project. Returns settings including: chatbot avatar, background, default prompt, example questions, response source, language, and branding preferences. Use this to inspect agent configuration, audit settings, or retrieve values before making updates. Note: Some newly created projects may not have settings initialized yet and will return a 404.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ chatbot_avatar?: string, chatbot_background_type?: image | color, radius_styling?: sharp | soft | round | legacy, font_family?: inter | public-sans, chatbot_background?: string, chatbot_background_color?: string, chatbot_color_scheme?: fresh | legacy, default_prompt?: string, example_questions?: string[], response_source?: default | own_content | openai_content, chatbot_msg_lang?: string, chatbot_color?: string, chatbot_toolbar_color?: string, persona_instructions?: string | null, citations_answer_source_label_msg?: string | null, citations_sources_label_msg?: string | null, hang_in_there_msg?: string | null, chatbot_siesta_msg?: string | null, chatbot_failed_moderation_msg?: string | null, account_out_of_queries_msg?: string | null, is_loading_indicator_enabled?: boolean | null, enable_citations?: 0 | 1 | 2 | 3 | null, enable_feedbacks?: boolean | null, enable_copy_button?: boolean | null, citations_view_type?: user | show | hide | null, image_citation_display?: default | first_only | null, limit_image_citation_height?: boolean, use_opengraph_image_citation?: boolean, no_answer_message?: string | null, ending_message?: string | null, try_asking_questions_msg?: string | null, view_more_msg?: string | null, view_less_msg?: string | null, remove_branding?: boolean | null, private_deployment?: 0 | 1 | 2 | null, enable_recaptcha_for_public_chatbots?: boolean | null, chatbot_model?: gpt-4-1 | gpt-4-o | gpt-5.1-none | gpt-5.1-low | gpt-5.2-none | gpt-5.2-low | gpt-5.4-low | gpt-4-1-mini | gpt-4o-mini | claude-4.8-opus | claude-4.6-opus | claude-4.5-opus | claude-4.6-sonnet | claude-4.6-sonnet-thinking | claude-4.5-sonnet | claude-4.5-haiku | gpt-o4-mini-low | gpt-o4-mini-medium | gpt-o4-mini-high | gemini-3.1-pro | gemini-3-pro | gemini-3.5-flash | null, is_selling_enabled?: boolean | null, license_slug?: boolean | null, selling_url?: string | null, can_share_conversation?: boolean | null, can_export_conversation?: boolean | null, hide_sources_from_responses?: boolean | null, input_field_addendum?: string | null, ai_disclaimer?: string | null, user_avatar_enabled?: boolean, user_avatar?: string, title_avatar_enabled?: boolean, spotlight_avatar_enabled?: boolean, spotlight_avatar?: string, spotlight_avatar_shape?: circle | rectangle, spotlight_avatar_type?: default | image, user_avatar_orientation?: string, agent_title_avatar_alignment?: left | center | right, chatbot_title?: string | null, chatbot_title_color?: string | null, enable_inline_citations_api?: boolean | null, conversation_time_window?: 0 | 1 | 2 | null, conversation_retention_period?: custom | year | never, conversation_retention_days?: number, use_context_aware_starter_question?: boolean | null, enable_agent_knowledge_base_awareness?: boolean, markdown_enabled?: boolean, is_hybrid_search?: boolean, user_awareness?: boolean, agent_capability?: fastest-responses | optimal-choice | advanced-reasoning | complex-tasks, context_depth?: compact | balanced | extended | rich | max | custom, use_planner_mode?: boolean, master_project_smart_routing_mode?: off | start-only | every-message, master_project_user_agent_switching_enabled?: boolean, max_actions_per_query?: number, is_in_chat_agent_avatar_enabled?: boolean, is_in_chat_user_avatar_enabled?: boolean, conversation_history?: hidden | team_members | everyone, is_pdf_viewer?: boolean, is_pdf_viewer_autoopen?: boolean, is_anonymize_pdfs?: boolean, is_pdf_page_visibility_limited?: boolean, pdf_limited_page_label?: string, is_pdf_limited_label_linked?: boolean, allowed_domains_for_embedding?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.settings.update",
+      "shortPath": "settings.update",
+      "description": "Update CustomGPT agent configuration settings. Updates persona instructions, response format, citation style, branding, and deployment settings. Only include fields you want to change - omitted fields retain their current values. Use this to configure agent behavior, customize appearance, or adjust user experience settings.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chat_bot_avatar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chat_bot_bg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chat_bot_bg_type",
+            "optional": true,
+            "type": "image | color"
+          },
+          {
+            "key": "chat_bot_bg_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chat_bot_color_scheme",
+            "optional": true,
+            "type": "fresh | legacy"
+          },
+          {
+            "key": "radius_styling",
+            "optional": true,
+            "type": "sharp | soft | round | legacy"
+          },
+          {
+            "key": "font_family",
+            "optional": true,
+            "type": "inter | public-sans"
+          },
+          {
+            "key": "default_prompt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "example_questions[]",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "response_source",
+            "optional": true,
+            "type": "default | own_content | openai_content"
+          },
+          {
+            "key": "chatbot_msg_lang",
+            "optional": true,
+            "type": "sq | ar | hy | az | ba | eu | be | bn | bh | bs | pt-BR | bg | yue | ca | hne | hr | cs | da | doi | nl | en | et | fo | fi | fr | gl | ka | de | el | gu | hry | he | hi | hu | id | ga | it | ja | jv | kn | ks | kk | kok | ko | ky | lv | lt | mk | mai | ms | mt | cmn | mr | mwr | nan | mo | mn | me | ne | no | or | ps | fa | pl | pt | pa | raj | ro | ru | sa | sat | sr | sd | si | sk | sl | es | sw | sv | tg | ta | tt | te | th | tr | tk | uk | ur | uz | vi | cy | wuu"
+          },
+          {
+            "key": "chatbot_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chatbot_toolbar_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "persona_instructions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "citations_answer_source_label_msg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "citations_sources_label_msg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hang_in_there_msg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chatbot_siesta_msg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chatbot_failed_moderation_msg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_out_of_queries_msg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_loading_indicator_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enable_citations",
+            "optional": true,
+            "type": "0 | 1 | 2 | 3"
+          },
+          {
+            "key": "enable_feedbacks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enable_copy_button",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "citations_view_type",
+            "optional": true,
+            "type": "user | show | hide"
+          },
+          {
+            "key": "image_citation_display",
+            "optional": true,
+            "type": "default | first_only"
+          },
+          {
+            "key": "limit_image_citation_height",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_opengraph_image_citation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "max_inline_images_per_response",
+            "optional": true,
+            "type": "0 | 1 | 2 | 3"
+          },
+          {
+            "key": "no_answer_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ending_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "try_asking_questions_msg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "view_more_msg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "view_less_msg",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remove_branding",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enable_recaptcha_for_public_chatbots",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "chatbot_model",
+            "optional": true,
+            "type": "gpt-4-1 | gpt-4-o | gpt-5.1-none | gpt-5.1-low | gpt-5.2-none | gpt-5.2-low | gpt-5.4-low | gpt-4-1-mini | gpt-4o-mini | claude-4.8-opus | claude-4.6-opus | claude-4.5-opus | claude-4.6-sonnet | claude-4.6-sonnet-thinking | claude-4.5-sonnet | claude-4.5-haiku | gpt-o4-mini-low | gpt-o4-mini-medium | gpt-o4-mini-high | gemini-3.1-pro | gemini-3-pro | gemini-3.5-flash"
+          },
+          {
+            "key": "is_selling_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "can_share_conversation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "can_export_conversation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hide_sources_from_responses",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "agent_capability",
+            "optional": true,
+            "type": "fastest-responses | optimal-choice | advanced-reasoning | complex-tasks"
+          },
+          {
+            "key": "input_field_addendum",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ai_disclaimer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_avatar_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "user_avatar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title_avatar_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "spotlight_avatar_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "spotlight_avatar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "spotlight_avatar_shape",
+            "optional": true,
+            "type": "circle | rectangle"
+          },
+          {
+            "key": "spotlight_avatar_type",
+            "optional": true,
+            "type": "default | image"
+          },
+          {
+            "key": "user_avatar_orientation",
+            "optional": true,
+            "type": "agent-left-user-right | agent-right-user-right | agent-right-user-left | agent-left-user-left"
+          },
+          {
+            "key": "agent_title_avatar_alignment",
+            "optional": true,
+            "type": "left | center | right"
+          },
+          {
+            "key": "chatbot_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chatbot_title_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enable_inline_citations_api",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "conversation_time_window",
+            "optional": true,
+            "type": "0 | 1 | 2"
+          },
+          {
+            "key": "conversation_retention_period",
+            "optional": true,
+            "type": "custom | year | never"
+          },
+          {
+            "key": "conversation_retention_days",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "use_context_aware_starter_question",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enable_agent_knowledge_base_awareness",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "markdown_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_hybrid_search",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "user_awareness",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "context_depth",
+            "optional": true,
+            "type": "compact | balanced | extended | rich | max | custom"
+          },
+          {
+            "key": "use_planner_mode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "master_project_smart_routing_mode",
+            "optional": true,
+            "type": "off | start-only | every-message"
+          },
+          {
+            "key": "master_project_user_agent_switching_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "max_actions_per_query",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_in_chat_agent_avatar_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_in_chat_user_avatar_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "conversation_history",
+            "optional": true,
+            "type": "hidden | team_members | everyone"
+          },
+          {
+            "key": "is_pdf_viewer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_pdf_viewer_autoopen",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_anonymize_pdfs",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_pdf_page_visibility_limited",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pdf_limited_page_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_pdf_limited_label_linked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allowed_domains_for_embedding",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ updated?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.sources.add",
+      "shortPath": "sources.add",
+      "description": "Add a data source to a CustomGPT agent's knowledge base. Connects content via sitemap URL, file upload, or integration. The system begins indexing immediately after creation. Use when adding documentation, FAQs, or knowledge content to an agent.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sync_all_images",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sitemap_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_data_retension",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_ocr_enabled",
+            "optional": true,
+            "type": "0 | 1 | 2"
+          },
+          {
+            "key": "is_anonymized",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_vision_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_vision_compress_image",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_low_performance_mode_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "allow_extra_timeout",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_full_url_crawl",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "image_extraction_type",
+            "optional": true,
+            "type": "none | sync_from_sitemap"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ filename: string, content_base64: string, content_type?: string }"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ filename: string, content_base64: string, content_type?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, project_id?: number, created_at?: string, updated_at?: string, type?: sitemap | upload, settings?: { executive_js?: boolean, data_refresh_frequency?: never | daily | weekly | monthly | advanced, create_new_pages?: boolean, remove_unexist_pages?: boolean, refresh_existing_pages?: never | always | if_updated, sitemap_path?: string | null, image_extraction_type?: none | sync_from_sitemap, update_existing_images?: boolean, sync_all_images?: boolean }, pages?: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[] | null, syncedAt?: Date }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.sources.delete",
+      "shortPath": "sources.delete",
+      "description": "Tool to delete a data source from a CustomGPT agent. Removes the source and all its documents from the agent's knowledge base. Use this to disconnect content that's no longer relevant or to clean up after testing. [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sourceId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ deleted?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.sources.list",
+      "shortPath": "sources.list",
+      "description": "Tool to list all data sources connected to an agent. Returns sources from various origins like sitemaps, Google Drive folders, SharePoint sites, or uploaded files. Use this to manage what content feeds into an agent's knowledge base.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uploads?: { id: number, project_id?: number, created_at?: string, updated_at?: string, type?: sitemap | upload, settings?: { executive_js?: boolean, data_refresh_frequency?: never | daily | weekly | monthly | advanced, create_new_pages?: boolean, remove_unexist_pages?: boolean, refresh_existing_pages?: never | always | if_updated, sitemap_path?: string | null, image_extraction_type?: none | sync_from_sitemap, update_existing_images?: boolean, sync_all_images?: boolean }, pages?: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[] | null, syncedAt?: Date } | null, sitemaps?: { id: number, project_id?: number, created_at?: string, updated_at?: string, type?: sitemap | upload, settings?: { executive_js?: boolean, data_refresh_frequency?: never | daily | weekly | monthly | advanced, create_new_pages?: boolean, remove_unexist_pages?: boolean, refresh_existing_pages?: never | always | if_updated, sitemap_path?: string | null, image_extraction_type?: none | sync_from_sitemap, update_existing_images?: boolean, sync_all_images?: boolean }, pages?: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[] | null, syncedAt?: Date }[], zapiers?: { id: number, project_id?: number, created_at?: string, updated_at?: string, type?: sitemap | upload, settings?: { executive_js?: boolean, data_refresh_frequency?: never | daily | weekly | monthly | advanced, create_new_pages?: boolean, remove_unexist_pages?: boolean, refresh_existing_pages?: never | always | if_updated, sitemap_path?: string | null, image_extraction_type?: none | sync_from_sitemap, update_existing_images?: boolean, sync_all_images?: boolean }, pages?: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[] | null, syncedAt?: Date }[], confluences?: { id: number, project_id?: number, created_at?: string, updated_at?: string, type?: sitemap | upload, settings?: { executive_js?: boolean, data_refresh_frequency?: never | daily | weekly | monthly | advanced, create_new_pages?: boolean, remove_unexist_pages?: boolean, refresh_existing_pages?: never | always | if_updated, sitemap_path?: string | null, image_extraction_type?: none | sync_from_sitemap, update_existing_images?: boolean, sync_all_images?: boolean }, pages?: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[] | null, syncedAt?: Date }[], youtubes?: { id: number, project_id?: number, created_at?: string, updated_at?: string, type?: sitemap | upload, settings?: { executive_js?: boolean, data_refresh_frequency?: never | daily | weekly | monthly | advanced, create_new_pages?: boolean, remove_unexist_pages?: boolean, refresh_existing_pages?: never | always | if_updated, sitemap_path?: string | null, image_extraction_type?: none | sync_from_sitemap, update_existing_images?: boolean, sync_all_images?: boolean }, pages?: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[] | null, syncedAt?: Date }[], vimeos?: { id: number, project_id?: number, created_at?: string, updated_at?: string, type?: sitemap | upload, settings?: { executive_js?: boolean, data_refresh_frequency?: never | daily | weekly | monthly | advanced, create_new_pages?: boolean, remove_unexist_pages?: boolean, refresh_existing_pages?: never | always | if_updated, sitemap_path?: string | null, image_extraction_type?: none | sync_from_sitemap, update_existing_images?: boolean, sync_all_images?: boolean }, pages?: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[] | null, syncedAt?: Date }[], sharepoints?: { id: number, project_id?: number, created_at?: string, updated_at?: string, type?: sitemap | upload, settings?: { executive_js?: boolean, data_refresh_frequency?: never | daily | weekly | monthly | advanced, create_new_pages?: boolean, remove_unexist_pages?: boolean, refresh_existing_pages?: never | always | if_updated, sitemap_path?: string | null, image_extraction_type?: none | sync_from_sitemap, update_existing_images?: boolean, sync_all_images?: boolean }, pages?: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[] | null, syncedAt?: Date }[], sharepoint_sites?: { id: number, project_id?: number, created_at?: string, updated_at?: string, type?: sitemap | upload, settings?: { executive_js?: boolean, data_refresh_frequency?: never | daily | weekly | monthly | advanced, create_new_pages?: boolean, remove_unexist_pages?: boolean, refresh_existing_pages?: never | always | if_updated, sitemap_path?: string | null, image_extraction_type?: none | sync_from_sitemap, update_existing_images?: boolean, sync_all_images?: boolean }, pages?: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[] | null, syncedAt?: Date }[], one_drives?: { id: number, project_id?: number, created_at?: string, updated_at?: string, type?: sitemap | upload, settings?: { executive_js?: boolean, data_refresh_frequency?: never | daily | weekly | monthly | advanced, create_new_pages?: boolean, remove_unexist_pages?: boolean, refresh_existing_pages?: never | always | if_updated, sitemap_path?: string | null, image_extraction_type?: none | sync_from_sitemap, update_existing_images?: boolean, sync_all_images?: boolean }, pages?: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[] | null, syncedAt?: Date }[], google_drives?: { id: number, project_id?: number, created_at?: string, updated_at?: string, type?: sitemap | upload, settings?: { executive_js?: boolean, data_refresh_frequency?: never | daily | weekly | monthly | advanced, create_new_pages?: boolean, remove_unexist_pages?: boolean, refresh_existing_pages?: never | always | if_updated, sitemap_path?: string | null, image_extraction_type?: none | sync_from_sitemap, update_existing_images?: boolean, sync_all_images?: boolean }, pages?: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[] | null, syncedAt?: Date }[], notions?: { id: number, project_id?: number, created_at?: string, updated_at?: string, type?: sitemap | upload, settings?: { executive_js?: boolean, data_refresh_frequency?: never | daily | weekly | monthly | advanced, create_new_pages?: boolean, remove_unexist_pages?: boolean, refresh_existing_pages?: never | always | if_updated, sitemap_path?: string | null, image_extraction_type?: none | sync_from_sitemap, update_existing_images?: boolean, sync_all_images?: boolean }, pages?: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[] | null, syncedAt?: Date }[], zendesks?: { id: number, project_id?: number, created_at?: string, updated_at?: string, type?: sitemap | upload, settings?: { executive_js?: boolean, data_refresh_frequency?: never | daily | weekly | monthly | advanced, create_new_pages?: boolean, remove_unexist_pages?: boolean, refresh_existing_pages?: never | always | if_updated, sitemap_path?: string | null, image_extraction_type?: none | sync_from_sitemap, update_existing_images?: boolean, sync_all_images?: boolean }, pages?: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[] | null, syncedAt?: Date }[], hubspots?: { id: number, project_id?: number, created_at?: string, updated_at?: string, type?: sitemap | upload, settings?: { executive_js?: boolean, data_refresh_frequency?: never | daily | weekly | monthly | advanced, create_new_pages?: boolean, remove_unexist_pages?: boolean, refresh_existing_pages?: never | always | if_updated, sitemap_path?: string | null, image_extraction_type?: none | sync_from_sitemap, update_existing_images?: boolean, sync_all_images?: boolean }, pages?: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[] | null, syncedAt?: Date }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.sources.update",
+      "shortPath": "sources.update",
+      "description": "Update source settings for a CustomGPT agent data source. Configure how the source is indexed and kept up to date by adjusting auto-sync frequency, crawl depth, file filters, and refresh behavior. Use this to fine-tune sitemap crawling (JavaScript execution, image extraction), control which pages are added or removed during syncs, and set up custom refresh schedules.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sourceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "executive_js",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data_refresh_frequency",
+            "optional": true,
+            "type": "never | daily | weekly | monthly | advanced"
+          },
+          {
+            "key": "create_new_pages",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "remove_unexist_pages",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "refresh_existing_pages",
+            "optional": true,
+            "type": "never | always | if_updated"
+          },
+          {
+            "key": "refresh_schedule",
+            "optional": true,
+            "type": "{ days?: number[], hours?: string[] }"
+          },
+          {
+            "key": "allow_extra_timeout",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "image_extraction_type",
+            "optional": true,
+            "type": "none | sync_from_sitemap"
+          },
+          {
+            "key": "update_existing_images",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sync_all_images",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, project_id?: number, created_at?: string, updated_at?: string, type?: sitemap | upload, settings?: { executive_js?: boolean, data_refresh_frequency?: never | daily | weekly | monthly | advanced, create_new_pages?: boolean, remove_unexist_pages?: boolean, refresh_existing_pages?: never | always | if_updated, sitemap_path?: string | null, image_extraction_type?: none | sync_from_sitemap, update_existing_images?: boolean, sync_all_images?: boolean }, pages?: { id: number, page_url?: string, page_url_hash?: string, project_id?: number, s3_path?: string | null, crawl_status?: ok | queued | failed | n/a | limited, index_status?: ok | queued | failed | n/a | limited, is_file?: boolean, is_refreshable?: boolean, is_file_kept?: boolean, filename?: string | null, filesize?: number | null, created_at?: string, updated_at?: string, deleted_at?: string | null, syncedAt?: Date }[] | null, syncedAt?: Date }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.user.getProfile",
+      "shortPath": "user.getProfile",
+      "description": "Tool to retrieve the current user's profile information. Use when you need to display or verify authenticated user details after login.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number, email?: string, name?: string | null, current_team_id?: number | null, profile_photo_url?: string | null, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.user.searchTeamMembers",
+      "shortPath": "user.searchTeamMembers",
+      "description": "Tool to search for team members by email address or user ID. Use this to find users when assigning permissions or managing team access. Requires Owner or Admin role to execute.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number, email?: string, name?: string | null, current_team_id?: number | null, profile_photo_url?: string | null, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "customgpt.api.user.updateProfile",
+      "shortPath": "user.updateProfile",
+      "description": "Updates the authenticated user's profile information in CustomGPT. Use this action to modify profile details such as the user's display name, email address, or profile photo URL. All fields are optional - only the fields you provide will be updated. The action returns the complete updated user profile.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile_photo",
+            "optional": true,
+            "type": "{ filename: string, content_base64: string, content_type?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number, email?: string, name?: string | null, current_team_id?: number | null, profile_photo_url?: string | null, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "customgpt.db.conversations.search",
+      "entityName": "conversations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "session_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "syncedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "customgpt.db.leads.search",
+      "entityName": "leads",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "session_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "company",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "captured_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "syncedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "customgpt.db.licenses.search",
+      "entityName": "licenses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "syncedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "customgpt.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "conversation_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "user_query",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "openai_response",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "syncedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "customgpt.db.pages.search",
+      "entityName": "pages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "page_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "page_url_hash",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "s3_path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_file",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_refreshable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_file_kept",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "filename",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "filesize",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "syncedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "customgpt.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "project_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sitemap_path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_chat_active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_master",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "user_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "team_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_shared",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "shareable_slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shareable_link",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "embed_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "live_chat_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "are_licenses_allowed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "subdomain_slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "syncedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "customgpt.db.sources.search",
+      "entityName": "sources",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "syncedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

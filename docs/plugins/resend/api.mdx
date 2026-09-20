@@ -9,6 +9,238 @@ Every `resend.api.*` operation is listed below with parameter shapes and return 
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a new contact
+
+**Risk:** `write`
+
+```ts
+await corsair.resend.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `unsubscribed` | `boolean` | No | — |
+| `properties` | `object` | No | — |
+| `segments` | `object[]` | No | — |
+| `topics` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="segments full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="topics full type">
+
+```ts
+{
+  id: string,
+  subscription: opt_in | opt_out
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.resend.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `contact` | `string` | No | — |
+| `object` | `string` | No | — |
+| `deleted` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get info about a contact
+
+**Risk:** `read`
+
+```ts
+await corsair.resend.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `created_at` | `Date` | No | — |
+| `unsubscribed` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List all contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.resend.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `has_more` | `boolean` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  id: string,
+  email: string,
+  first_name?: string | null,
+  last_name?: string | null,
+  created_at?: Date | null,
+  unsubscribed?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update an existing contact
+
+**Risk:** `write`
+
+```ts
+await corsair.resend.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `unsubscribed` | `boolean` | No | — |
+| `properties` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
 ## Domains
 
 ### create
@@ -38,7 +270,7 @@ await corsair.resend.api.domains.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `status` | `not_started \| validation \| scheduled \| ready \| error \| verified \| pending \| failed` | Yes | — |
+| `status` | `not_started \| validation \| scheduled \| ready \| error \| verified \| pending \| failed \| partially_verified \| partially_failed` | Yes | — |
 | `created_at` | `Date` | No | — |
 | `region` | `string` | No | — |
 
@@ -104,7 +336,7 @@ await corsair.resend.api.domains.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `status` | `not_started \| validation \| scheduled \| ready \| error \| verified \| pending \| failed` | Yes | — |
+| `status` | `not_started \| validation \| scheduled \| ready \| error \| verified \| pending \| failed \| partially_verified \| partially_failed` | Yes | — |
 | `created_at` | `Date` | No | — |
 | `region` | `string` | No | — |
 
@@ -137,6 +369,8 @@ await corsair.resend.api.domains.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `has_more` | `boolean` | No | — |
 | `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -146,7 +380,7 @@ await corsair.resend.api.domains.list({});
 {
   id: string,
   name: string,
-  status: not_started | validation | scheduled | ready | error | verified | pending | failed,
+  status: not_started | validation | scheduled | ready | error | verified | pending | failed | partially_verified | partially_failed,
   created_at?: Date | null,
   region?: string
 }[]
@@ -182,17 +416,133 @@ await corsair.resend.api.domains.verify({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `object` | `string` | No | — |
 | `id` | `string` | No | — |
-| `name` | `string` | No | — |
+| `records` | `object[]` | No | — |
 | `status` | `not_started \| validation \| scheduled \| ready \| error \| verified \| pending` | No | — |
 | `created_at` | `Date` | No | — |
 | `region` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  record: string,
+  name: string,
+  type: string,
+  value: string,
+  status: not_started | validation | scheduled | ready | error | verified | pending,
+  ttl?: string,
+  priority?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
 ---
 
 ## Emails
+
+### batch
+
+`emails.batch`
+
+Send up to 100 emails in a single API call
+
+**Risk:** `write`
+
+```ts
+await corsair.resend.api.emails.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  from: string,
+  to: string | string[],
+  subject: string,
+  html?: string,
+  text?: string,
+  cc?: string | string[],
+  bcc?: string | string[],
+  reply_to?: string | string[],
+  scheduled_at?: string,
+  tags?: {
+    name: string,
+    value: string
+  }[],
+  headers?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### cancel
+
+`emails.cancel`
+
+Cancel a scheduled email
+
+**Risk:** `write`
+
+```ts
+await corsair.resend.api.emails.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `cancelled` | `boolean` | No | — |
+
+
+
+---
 
 ### get
 
@@ -253,6 +603,8 @@ await corsair.resend.api.emails.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `has_more` | `boolean` | No | — |
 | `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -298,6 +650,7 @@ await corsair.resend.api.emails.send({});
 | `cc` | `string \| string[]` | No | — |
 | `bcc` | `string \| string[]` | No | — |
 | `reply_to` | `string \| string[]` | No | — |
+| `scheduled_at` | `string` | No | — |
 | `attachments` | `object[]` | No | — |
 | `tags` | `object[]` | No | — |
 | `headers` | `object` | No | — |

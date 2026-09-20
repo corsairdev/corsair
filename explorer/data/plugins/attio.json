@@ -1,0 +1,1706 @@
+{
+  "id": "attio",
+  "displayName": "Attio",
+  "description": "Flexible CRM for managing relationships, deals, companies, and custom sales pipelines.",
+  "npmPackageName": "@corsair-dev/attio",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 110,
+    "webhooks": 3,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "attio.api.generated.assertPerson",
+      "shortPath": "generated.assertPerson",
+      "description": "Tool to create or update person records using a unique attribute to search for existing people. Use when you want to ensure a person exists with specific details without creating duplicates.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.assertUserRecord",
+      "shortPath": "generated.assertUserRecord",
+      "description": "Creates or updates a user record in Attio using a unique attribute to search for existing users. If a user is found with the same value for the matching attribute, that user will be updated. If no user is found, a new one will be created. Use this to ensure user records exist without duplicates.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.assertWorkspace",
+      "shortPath": "generated.assertWorkspace",
+      "description": "Creates or updates a workspace record in Attio using a unique attribute to search for existing workspaces. If a workspace is found with the same value for the matching attribute, that workspace will be updated. If no workspace is found, a new one will be created.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createAttribute",
+      "shortPath": "generated.createAttribute",
+      "description": "Tool to create a new attribute on an object or list in Attio. Use when you need to add custom fields to track additional information. For record-reference types, you can establish bidirectional relationships by supplying a relationship object.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createComment",
+      "shortPath": "generated.createComment",
+      "description": "Tool to create a new comment on a thread, record, or list entry in Attio. Use when you need to add a comment to an existing conversation, a record (like a person, company, or deal), or a list entry.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createCompany",
+      "shortPath": "generated.createCompany",
+      "description": "Creates a new company record in Attio. This endpoint will throw an error on conflicts of unique attributes like domains. If you prefer to update company records on conflicts, use the Assert company record endpoint instead. Note: The logo_url attribute cannot currently be set via the API.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createDealRecord",
+      "shortPath": "generated.createDealRecord",
+      "description": "Tool to create a new deal record in Attio. Use when you need to track a new sales opportunity or deal. This endpoint will throw an error on conflicts of unique attributes. Minimal requirement is providing at least one attribute value.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createEntry",
+      "shortPath": "generated.createEntry",
+      "description": "DEPRECATED: Use ATTIO_ATTIO_POST_V2_LISTS_LIST_ENTRIES instead. Tool to add a record to a list as a new list entry in Attio. Use when you need to organize records into specific lists. Throws errors on unique attribute conflicts. Multiple list entries are allowed for the same parent record.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createList",
+      "shortPath": "generated.createList",
+      "description": "Tool to create a new list in Attio. Use when you need to organize records into custom lists. Once created, add attributes using the Create Attribute API and add records using the Create Entry API. New lists must have either workspace_access set to 'full-access' or one or more workspace_member_access with 'full-access' level.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createNote",
+      "shortPath": "generated.createNote",
+      "description": "This tool creates a new note on a given record in Attio. The note can be attached to any record type (like person, company, or deal) and includes a title and content. It requires parameters such as parent_object, parent_record_id, title, and content, with an optional created_at timestamp.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createObject",
+      "shortPath": "generated.createObject",
+      "description": "Tool to create a new custom object in your Attio workspace. Use when you need to add a new object type beyond the standard objects (people, companies, deals, users, workspaces). Requires api_slug (snake_case identifier), singular_noun, and plural_noun.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createPerson",
+      "shortPath": "generated.createPerson",
+      "description": "Creates a new person record in Attio. This endpoint will throw an error on conflicts of unique attributes like email_addresses. If you prefer to update person records on conflicts instead, use the Assert person record endpoint. Note: The avatar_url attribute cannot currently be set via the API.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createRecord",
+      "shortPath": "generated.createRecord",
+      "description": "This tool creates a new record in Attio for a specified object type (people, companies, deals, users, workspaces, etc.). It requires the object type and a values dictionary containing the attributes for the new record. IMPORTANT: Different object types have different attributes. For example: - 'people' object uses: name, email_addresses, phone_numbers, primary_location, job_title, etc. - 'users' object uses: primary_email_address, user_id, person, workspace - 'companies' object uses: name, domains, description, etc. Always verify the correct attribute names for your target object type before creating records. Use the List Attributes API or check your workspace to see available attributes for each object type.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createSelectOption",
+      "shortPath": "generated.createSelectOption",
+      "description": "Tool to add a new select option to a select or multiselect attribute in Attio. Use when you need to add a new choice to an existing select field.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createStatus",
+      "shortPath": "generated.createStatus",
+      "description": "Tool to add a new status to a status attribute on either an object or a list. Use when you need to create a new status option for status attributes. Company and person objects do not support status attributes at this time.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createTask",
+      "shortPath": "generated.createTask",
+      "description": "Tool to create a new task in Attio. Use when you need to add a task with content and optional deadline, assignees, or linked records. Note: Tasks can only be created from plaintext without record reference formatting.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createUserRecord",
+      "shortPath": "generated.createUserRecord",
+      "description": "Creates a new user record in Attio. User records represent workspace members or users in the system. Requires primary_email_address, user_id, and workspace_id. Optionally link to an existing person record. Note: Required attributes may vary based on workspace configuration - check the List Attributes action if you encounter missing_value errors.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createWebhook",
+      "shortPath": "generated.createWebhook",
+      "description": "Tool to create a webhook and subscribe to events in Attio. Use when you need to set up a new webhook endpoint to receive real-time event notifications. Returns the webhook configuration including a one-time signing secret for verifying event authenticity.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.createWorkspaceRecord",
+      "shortPath": "generated.createWorkspaceRecord",
+      "description": "Creates a new workspace record in Attio. The workspace_id field is required and must be unique. This endpoint will throw an error on conflicts of unique attributes. Use when you need to create a new workspace entry in your Attio workspace.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.deleteComment",
+      "shortPath": "generated.deleteComment",
+      "description": "Tool to delete a comment by its comment_id. Use when you need to remove a comment from Attio. If the comment is at the head of a thread, all messages in the thread are also deleted. The operation is permanent and cannot be undone.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.deleteCompany",
+      "shortPath": "generated.deleteCompany",
+      "description": "Tool to delete a company record from Attio by its record_id. Use when you need to permanently remove a company record. The deletion is irreversible and cannot be recovered.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.deleteDeal",
+      "shortPath": "generated.deleteDeal",
+      "description": "Tool to delete a deal record from Attio by its record_id. Use when you need to permanently remove a deal record. The deletion is irreversible and cannot be recovered.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.deleteEntry",
+      "shortPath": "generated.deleteEntry",
+      "description": "Tool to delete a single list entry by its entry_id in Attio. Use when you need to remove an entry from a specific list. The operation is permanent and cannot be undone.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.deleteNote",
+      "shortPath": "generated.deleteNote",
+      "description": "This tool allows users to delete a specific note in Attio by its ID. It is implemented via DELETE https://api.attio.com/v2/notes/{note_id} and handles note deletion by validating the provided note_id. It complements ATTIO_CREATE_NOTE functionality, providing complete note management capabilities within the Attio platform.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.deletePerson",
+      "shortPath": "generated.deletePerson",
+      "description": "Tool to delete a person record from Attio by its record_id. Use when you need to permanently remove a person record. The deletion is irreversible and cannot be recovered.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.deleteRecord",
+      "shortPath": "generated.deleteRecord",
+      "description": "This tool allows you to delete a record from Attio permanently. The deletion is irreversible, and the data will eventually be removed from the system.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.deleteRecordById",
+      "shortPath": "generated.deleteRecordById",
+      "description": "Tool to delete a single record (e.g. a company or person) by ID. Use when you need to permanently remove a record from Attio.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.deleteTask",
+      "shortPath": "generated.deleteTask",
+      "description": "Tool to delete a task by its task_id. Use when you need to remove a task from Attio. The operation is permanent and cannot be undone.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.deleteUser",
+      "shortPath": "generated.deleteUser",
+      "description": "Tool to delete a user record from Attio by its record_id. Use when you need to permanently remove a user record. The deletion is irreversible and cannot be recovered.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.deleteWebhook",
+      "shortPath": "generated.deleteWebhook",
+      "description": "Tool to delete a webhook by its webhook_id. Use when you need to remove a webhook subscription from Attio. The operation is permanent and cannot be undone.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.deleteWorkspaceRecord",
+      "shortPath": "generated.deleteWorkspaceRecord",
+      "description": "Tool to delete a workspace record from Attio by its record_id. Use when you need to permanently remove a workspace record. The deletion is irreversible and cannot be recovered.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.findRecord",
+      "shortPath": "generated.findRecord",
+      "description": "This tool allows users to find a record in Attio by either its unique ID or by searching using unique attributes. It provides two methods: one for directly retrieving a record by its ID with the GET /v2/objects/{object}/records/{record_id} endpoint, and another for searching by attributes using the POST /v2/objects/{object}/records/query endpoint.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getAttribute",
+      "shortPath": "generated.getAttribute",
+      "description": "Tool to get information about a single attribute on either an object or a list. Use when you need detailed information about a specific attribute's configuration, type, or metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getComment",
+      "shortPath": "generated.getComment",
+      "description": "Tool to get a single comment by its comment_id in Attio. Use when you need to retrieve detailed information about a specific comment, including its content, author, thread, and resolution status.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getCompany",
+      "shortPath": "generated.getCompany",
+      "description": "Tool to get a single company record by its record_id in Attio. Use when you need to retrieve detailed information about a specific company. Returns all attribute values for the company with temporal and audit metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getDealRecord",
+      "shortPath": "generated.getDealRecord",
+      "description": "Tool to get a single deal record by its record_id in Attio. Use when you need to retrieve detailed information about a specific deal. Returns all attribute values for the deal with temporal and audit metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getList",
+      "shortPath": "generated.getList",
+      "description": "Tool to retrieve details of a single list in your Attio workspace. Use when you need to get information about a specific list by its UUID or slug.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getListEntry",
+      "shortPath": "generated.getListEntry",
+      "description": "Tool to get a single list entry by its entry_id. Use when you need to retrieve detailed information about a specific entry in an Attio list.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getNote",
+      "shortPath": "generated.getNote",
+      "description": "Tool to get a single note by its note_id in Attio. Use when you need to retrieve detailed information about a specific note, including its title, content (plaintext and markdown), tags, and creator information.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getObject",
+      "shortPath": "generated.getObject",
+      "description": "Tool to get a single object by its object_id or slug. Use to retrieve detailed schema information about a specific object type in the Attio workspace. Also use as a prerequisite validation step before calling ATTIO_FIND_RECORD, ATTIO_LIST_RECORDS, or ATTIO_CREATE_RECORD — attribute slugs must exactly match what this tool returns. The returned schema defines required attributes for record creation; omitting them causes invalid_request_error with code missing_value (HTTP 400). Custom attributes (e.g., industry, category) vary by object type — verify their presence and data type here before building filters or record values.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getRecord",
+      "shortPath": "generated.getRecord",
+      "description": "Tool to get a single person, company, or other record by its record_id in Attio. Use when you need to retrieve detailed information about a specific record. Returns all attribute values for the record with temporal and audit metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getRecordAttributeValues",
+      "shortPath": "generated.getRecordAttributeValues",
+      "description": "Tool to get all values for a given attribute on a record in Attio. Use when you need to retrieve current or historic values for a specific attribute. Historic values can be queried using the show_historic param but cannot be queried on COMINT or enriched attributes (returns 400 error).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getRecordEntries",
+      "shortPath": "generated.getRecordEntries",
+      "description": "Tool to list all entries, across all lists, for which a record is the parent. Use when you need to find which lists a specific record belongs to. Returns list IDs, slugs, entry IDs, and creation timestamps.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getSelf",
+      "shortPath": "generated.getSelf",
+      "description": "Tool to identify the current access token, the workspace it is linked to, and any permissions it has. Use when you need to verify token validity or retrieve workspace information associated with the current authentication.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getTask",
+      "shortPath": "generated.getTask",
+      "description": "Tool to get a single task by its task_id in Attio. Use when you need to retrieve detailed information about a specific task, including its content, deadline, assignees, and linked records.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getV2ObjectsObjectRecordsRecordId",
+      "shortPath": "generated.getV2ObjectsObjectRecordsRecordId",
+      "description": "Tool to get a single person, company or other record by its record_id. Use when you need to retrieve detailed information about a specific record.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getV2Tasks",
+      "shortPath": "generated.getV2Tasks",
+      "description": "Tool to list all tasks in the workspace. Use when you need to retrieve tasks, optionally filtering by assignee, completion status, or linked records. Results are sorted by creation date from oldest to newest by default.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getV2WorkspaceMembers",
+      "shortPath": "generated.getV2WorkspaceMembers",
+      "description": "DEPRECATED: Use ATTIO_LIST_WORKSPACE_MEMBERS instead. Tool to list all workspace members in the workspace. Use when you need to retrieve information about workspace members, their access levels, or their identities.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getWebhook",
+      "shortPath": "generated.getWebhook",
+      "description": "Tool to get a single webhook by its webhook_id in Attio. Use when you need to retrieve detailed information about a specific webhook configuration. Returns the webhook's target URL, event subscriptions, status, and metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getWorkspaceMember",
+      "shortPath": "generated.getWorkspaceMember",
+      "description": "Tool to get a single workspace member by their workspace_member_id. Use when you need details about a specific workspace member, including their name, email, access level, and avatar.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.getWorkspaceRecord",
+      "shortPath": "generated.getWorkspaceRecord",
+      "description": "Tool to get a single workspace record by its record_id. Use when you need to retrieve detailed information about a specific workspace. Returns all attribute values for the workspace record with temporal and audit metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listAttributeOptions",
+      "shortPath": "generated.listAttributeOptions",
+      "description": "Tool to list all select options for a particular attribute on either an object or a list. Use when you need to discover available options for select or status type attributes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listAttributes",
+      "shortPath": "generated.listAttributes",
+      "description": "Tool to list the attribute schema for an Attio object or list (including slugs, types, select/status config) to enable correct filtering and writes. Use when you need to discover what attributes exist on an object or list, their types, and their configuration (e.g., available options for select/status attributes). Returns attributes in UI sort order.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listAttributeStatuses",
+      "shortPath": "generated.listAttributeStatuses",
+      "description": "Tool to list all statuses for a particular status attribute on either an object or a list. Use when you need to discover available statuses for a status attribute, including their IDs, titles, and configuration.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listCallRecordings",
+      "shortPath": "generated.listCallRecordings",
+      "description": "Tool to list all call recordings for a meeting in Attio. Use when you need to retrieve call recordings associated with a specific meeting. This endpoint is in beta.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listCompanies",
+      "shortPath": "generated.listCompanies",
+      "description": "Tool to list company records in Attio with optional filtering and sorting. Use when you need to retrieve company records based on criteria like domain, name, or description.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listCompanyAttributeValues",
+      "shortPath": "generated.listCompanyAttributeValues",
+      "description": "Tool to get all values for a given attribute on a company record. Historic values can be queried using the show_historic query param. Historic values cannot be queried on COMINT or enriched attributes. Some attributes are subject to billing status and may return an empty array.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listCompanyRecordEntries",
+      "shortPath": "generated.listCompanyRecordEntries",
+      "description": "Tool to list all entries across all lists for which a company record is the parent in Attio. Use when you need to see which lists a particular company record belongs to. Returns list information and entry IDs for each list the company appears in.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listDealEntries",
+      "shortPath": "generated.listDealEntries",
+      "description": "Tool to list all entries across all lists for which a deal record is the parent in Attio. Use when you need to see which lists a particular deal record belongs to. Returns list information and entry IDs for each list the deal appears in.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listDealRecordAttributeValues",
+      "shortPath": "generated.listDealRecordAttributeValues",
+      "description": "Tool to retrieve all values for a specified attribute on a deal record in Attio. Use when you need to see current or historic values for a specific deal attribute. Historic values can be queried using show_historic param but cannot be queried on COMINT or enriched attributes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listDealRecords",
+      "shortPath": "generated.listDealRecords",
+      "description": "Tool to list deal records in Attio with the option to filter and sort results. Use when you need to retrieve deal records based on filter criteria or sorting requirements.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listEntries",
+      "shortPath": "generated.listEntries",
+      "description": "DEPRECATED: Use ATTIO_ATTIO_POST_V2_LISTS_LIST_ENTRIES_QUERY instead. Tool to list entries in a given list with filtering and sorting options. Use when you need to retrieve records added to a specific list in Attio. Entries are returned based on the filters and sorts provided.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listListEntries",
+      "shortPath": "generated.listListEntries",
+      "description": "DEPRECATED: Use ATTIO_ATTIO_POST_V2_LISTS_LIST_ENTRIES_QUERY instead. Tool to retrieve entries (records) that belong to a specific Attio list. Use when you need to enumerate list membership or access list-specific attribute values. This is distinct from listing all records of an object type - it specifically returns records that are members of a particular list.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listListEntryAttributeValues",
+      "shortPath": "generated.listListEntryAttributeValues",
+      "description": "Tool to retrieve all values for a specified attribute on a list entry in Attio. Use when you need to see the history of values for a specific attribute on a list entry. Can return only active values or include all historical values sorted chronologically.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listLists",
+      "shortPath": "generated.listLists",
+      "description": "This tool retrieves all lists available in the Attio workspace, sorted as they appear in the sidebar. Returns list metadata only (names, IDs, configuration) — not the records/entries within those lists. To fetch actual list entries, use ATTIO_FIND_RECORD with appropriate filters. This tool is a prerequisite for many list-related operations. Requires the list_configuration:read permission scope.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listMeetings",
+      "shortPath": "generated.listMeetings",
+      "description": "Tool to list all meetings in the workspace using a deterministic sort order. Use when you need to retrieve meetings, optionally filtering by participants, linked records, or time ranges. This endpoint is in beta.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listNotes",
+      "shortPath": "generated.listNotes",
+      "description": "Lists notes in Attio. Can list all notes in the workspace, or filter by parent object type and/or specific record. Notes are returned in reverse chronological order (newest first).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listObjects",
+      "shortPath": "generated.listObjects",
+      "description": "This tool retrieves a list of all available objects (both system-defined and user-defined) in the Attio workspace via GET /v2/objects, returning key metadata including slugs and IDs for each object. Call this tool first before ATTIO_LIST_RECORDS, ATTIO_FIND_RECORD, or ATTIO_CREATE_RECORD to discover valid object slugs — hardcoded slugs may not exist across workspaces. Concepts like tasks may be modeled as deals or custom objects rather than dedicated types, so confirm the correct object type before proceeding. Attribute values in responses can be arrays of time-bounded entries rather than simple scalars; downstream code must handle nested structures.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listPeopleAttributeValues",
+      "shortPath": "generated.listPeopleAttributeValues",
+      "description": "Tool to get all values for a given attribute on a person record. Use when you need to retrieve current or historic values for a specific person attribute. Historic values can be queried using the show_historic param but cannot be queried on COMINT or enriched attributes (returns 400 error).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listPeopleRecordEntries",
+      "shortPath": "generated.listPeopleRecordEntries",
+      "description": "Tool to list all entries across all lists for which a person record is the parent in Attio. Use when you need to see which lists a particular person record belongs to. Returns list information and entry IDs for each list the person appears in.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listRecordAttributeValues",
+      "shortPath": "generated.listRecordAttributeValues",
+      "description": "Tool to retrieve all values for a specified attribute on a record in Attio. Use when you need to see the history of values for a specific attribute. Can return only active values or include historical values. Historic values cannot be queried on COMINT or enriched attributes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listRecordEntries",
+      "shortPath": "generated.listRecordEntries",
+      "description": "Tool to list all entries across all lists for which a record is the parent in Attio. Use when you need to see which lists a particular record belongs to. Returns list information and entry IDs for each list the record appears in.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listRecords",
+      "shortPath": "generated.listRecords",
+      "description": "This tool lists records from a specific object type in Attio. It provides simple pagination support and returns records in creation order (oldest first). For complex filtering, use the FindRecord action instead. Standard object types include: people, companies, deals, users, workspaces. If you get a 404 error, verify the object type exists using the List Objects action first. Response attribute values are returned as arrays of time-bounded objects under a `values` map (e.g., `values['name']`), not simple scalars — handle arrays, nested objects, and empty arrays accordingly. Select attributes are accessed via `option.title`; currency, stage, and select fields may be null or empty arrays. Access records via `data.data` in the response.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listThreads",
+      "shortPath": "generated.listThreads",
+      "description": "Tool to list threads of comments on a record or list entry in Attio. Use when you need to view all comment threads associated with a specific record or list entry. Threads contain one or more comments sorted chronologically.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listUserRecordEntries",
+      "shortPath": "generated.listUserRecordEntries",
+      "description": "Tool to list all entries across all lists for which a user record is the parent in Attio. Use when you need to see which lists a particular user record belongs to. Returns list information and entry IDs for each list the user appears in.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listUserRecords",
+      "shortPath": "generated.listUserRecords",
+      "description": "Tool to list user records in Attio with optional filtering and sorting. Use when you need to retrieve workspace members or user records based on specific criteria.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listWebhooks",
+      "shortPath": "generated.listWebhooks",
+      "description": "Tool to get all webhooks in your Attio workspace. Use when you need to retrieve a list of configured webhooks, their subscriptions, and statuses. Supports pagination via limit and offset parameters.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listWorkspaceMembers",
+      "shortPath": "generated.listWorkspaceMembers",
+      "description": "Tool to list workspace members (actors) so agents can reliably assign owners and resolve workspace-member IDs even when the optional Users standard object is disabled. Use when writing or assigning actor-reference attributes (e.g., record/list entry owners) that require referenced_actor_type=workspace-member and an actor id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listWorkspaceRecordAttributeValues",
+      "shortPath": "generated.listWorkspaceRecordAttributeValues",
+      "description": "Tool to retrieve all values for a specified attribute on a workspace record in Attio. Use when you need to see the history of values for a specific attribute on a workspace record. Can return only active values or include all historical values sorted chronologically.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listWorkspaceRecordEntries",
+      "shortPath": "generated.listWorkspaceRecordEntries",
+      "description": "Tool to list all entries across all lists for which a workspace record is the parent in Attio. Use when you need to see which lists a particular workspace record belongs to. Returns list information and entry IDs for each list the workspace appears in.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.listWorkspaceRecords",
+      "shortPath": "generated.listWorkspaceRecords",
+      "description": "Tool to list workspace records with filtering and sorting options. Use when you need to retrieve workspace-level records from Attio. Records are returned based on the filters and sorts provided. Requires record_permission:read and object_configuration:read scopes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.patchRecord",
+      "shortPath": "generated.patchRecord",
+      "description": "Tool to update people, companies, and other records by record_id using PATCH method. For multiselect attributes, values supplied will be prepended to existing values. Use PUT endpoint to overwrite or remove multiselect values.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.patchV2ListsListEntriesEntryId",
+      "shortPath": "generated.patchV2ListsListEntriesEntryId",
+      "description": "Tool to update list entries by entry_id in Attio. Use when you need to modify attribute values on existing list entries. For multiselect attributes, the values supplied will be created and prepended to existing values. Use the PUT endpoint to overwrite or remove multiselect attribute values.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.peopleGetPerson",
+      "shortPath": "generated.peopleGetPerson",
+      "description": "Tool to get a single person record by its record_id in Attio. Use when you need to retrieve detailed information about a specific person. Returns all attribute values for the person with temporal and audit metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.peopleListPersons",
+      "shortPath": "generated.peopleListPersons",
+      "description": "Tool to list person records from Attio with optional filtering and sorting. Use when you need to retrieve people based on specific criteria or get a paginated list of all people.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.postV2ListsListEntries",
+      "shortPath": "generated.postV2ListsListEntries",
+      "description": "Tool to add a record to a list as a new list entry in Attio. Use when you need to organize records into specific lists. This endpoint will throw on conflicts of unique attributes. Multiple list entries are allowed for the same parent record.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.postV2ListsListEntriesQuery",
+      "shortPath": "generated.postV2ListsListEntriesQuery",
+      "description": "Tool to list entries in a given list, with the option to filter and sort results. Use when you need to retrieve records that belong to a specific list with optional filtering and sorting.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.postV2ObjectsObjectRecords",
+      "shortPath": "generated.postV2ObjectsObjectRecords",
+      "description": "Creates a new person, company or other record. This endpoint will throw on conflicts of unique attributes. If you would prefer to update records on conflicts, please use the Assert record endpoint instead.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.postV2ObjectsObjectRecordsQuery",
+      "shortPath": "generated.postV2ObjectsObjectRecordsQuery",
+      "description": "Tool to list people, company or other records in Attio with the option to filter and sort results. Use when you need to retrieve records based on complex filter criteria or sorting requirements.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.postV2ObjectsRecordsSearch",
+      "shortPath": "generated.postV2ObjectsRecordsSearch",
+      "description": "Tool to fuzzy search for records across one or more objects in Attio. Use when you need to find records by name, domain, email, phone number, or social handle. This endpoint is in beta and returns eventually consistent results. For results guaranteed to be up to date, use the record query endpoint instead.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.putV2ListsListEntries",
+      "shortPath": "generated.putV2ListsListEntries",
+      "description": "Tool to create or update a list entry for a given parent record in Attio. If an entry with the specified parent record is found, that entry will be updated. If no such entry is found, a new entry will be created instead. For multiselect attributes, all values will be either created or deleted as necessary to match the list of values supplied in the request.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.putV2ListsListEntriesEntryId",
+      "shortPath": "generated.putV2ListsListEntriesEntryId",
+      "description": "Tool to update list entries by entry_id in Attio using PUT method. Use when you need to completely replace attribute values on existing list entries. For multiselect attributes, the values supplied will overwrite/remove the list of values that already exist (if any). Use the PATCH endpoint to add multiselect attribute values without removing those that already exist.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.putV2ObjectsObjectRecords",
+      "shortPath": "generated.putV2ObjectsObjectRecords",
+      "description": "Tool to create or update people, companies and other records in Attio using a matching attribute. Use when you want to avoid duplicate records - if a record with the same value for the matching attribute is found, it will be updated; otherwise a new record is created. If you want to avoid matching and always create new records, use the Create Record endpoint instead.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.putV2ObjectsObjectRecordsRecordId",
+      "shortPath": "generated.putV2ObjectsObjectRecordsRecordId",
+      "description": "Tool to update people, companies, and other records by record_id using PUT method. For multiselect attributes, values supplied will overwrite/remove existing values. Use PATCH endpoint to append without removing.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.queryRecords",
+      "shortPath": "generated.queryRecords",
+      "description": "Tool to query records for a specific Attio object using server-side filtering operators and sorting. Use when you need to retrieve records based on complex filter criteria (e.g., 'get all agreements where product=X and status in Y') rather than simple listing or ID-based lookup. This avoids downloading large pages and filtering locally, which is slow and costly.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.searchRecords",
+      "shortPath": "generated.searchRecords",
+      "description": "Tool to fuzzy search for records across multiple objects in Attio. Use when you need to find records by name, domain, email, phone number, or social handle. This endpoint is in beta and returns eventually consistent results. Matching strategy follows the in-product search approach.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.updateAttribute",
+      "shortPath": "generated.updateAttribute",
+      "description": "Tool to update an existing attribute by its attribute_id or slug. Use when you need to modify attribute properties such as title, description, validation rules, or configuration settings.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.updateCompany",
+      "shortPath": "generated.updateCompany",
+      "description": "Tool to update a company record in Attio by its record_id. Use when you need to modify company attributes like name, description, domains, or team. For multiselect attributes, values are prepended to existing values. Note: logo_url cannot be updated via API.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.updateDealRecord",
+      "shortPath": "generated.updateDealRecord",
+      "description": "Tool to update an existing deal record in Attio by record ID. Uses PATCH to partially update only the provided fields, leaving other fields unchanged.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.updateEntry",
+      "shortPath": "generated.updateEntry",
+      "description": "DEPRECATED: Use ATTIO_ATTIO_PATCH_V2_LISTS_LIST_ENTRIES_ENTRY_ID instead. Tool to update list entries by their ID in Attio. Use when you need to modify attribute values on existing list entries. When multiselect attributes are included, the values supplied will be prepended to existing values.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.updateList",
+      "shortPath": "generated.updateList",
+      "description": "Tool to update an existing list in Attio. Use when you need to modify list properties like name, api_slug, or permissions. Lists must have either workspace_access set to 'full-access' or one or more workspace_member_access with 'full-access' level. Changing the parent object of a list is not possible through the API.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.updateObject",
+      "shortPath": "generated.updateObject",
+      "description": "Tool to update a single object's configuration in Attio. Use when you need to modify an object's API slug, singular noun, or plural noun. Standard objects (people, companies, deals, users, workspaces) and custom objects can be updated.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.updatePerson",
+      "shortPath": "generated.updatePerson",
+      "description": "Tool to update a person record in Attio by its record_id. Use when you need to modify person attributes like name, email, job title, or phone numbers. For multiselect attributes, values are prepended to existing values. Note: avatar_url cannot be updated via API.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.updateRecord",
+      "shortPath": "generated.updateRecord",
+      "description": "This tool updates an existing record in Attio for a specified object type (people, companies, deals, users, workspaces, etc.). It uses PATCH to partially update only the provided fields, leaving other fields unchanged.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.updateSelectOption",
+      "shortPath": "generated.updateSelectOption",
+      "description": "Tool to update an existing select option for a select or multiselect attribute in Attio. Use when you need to rename an option or archive it. Archived options are hidden from selection but preserve historical data for records that used them.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.updateStatus",
+      "shortPath": "generated.updateStatus",
+      "description": "Tool to update a status on a status attribute on either an object or a list in Attio. Use when you need to modify status properties like title, celebration settings, target time, or archive status. Company and person objects do not support status attributes at this time.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.updateTask",
+      "shortPath": "generated.updateTask",
+      "description": "Tool to update an existing task in Attio by its task_id. Use when you need to modify a task's deadline, completion status, linked records, or assignees. Only these four fields can be updated via this endpoint.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.updateUserRecord",
+      "shortPath": "generated.updateUserRecord",
+      "description": "Tool to update a user record in Attio by its record_id. Use when you need to modify user attributes like user_id, primary_email_address, person, or workspace references. Attributes not included in the request will remain unchanged.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.updateWebhook",
+      "shortPath": "generated.updateWebhook",
+      "description": "Tool to update a webhook's target URL and/or event subscriptions. Use when you need to modify an existing webhook configuration in Attio.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "attio.api.generated.updateWorkspaceRecord",
+      "shortPath": "generated.updateWorkspaceRecord",
+      "description": "Tool to update a workspace record by ID using PATCH method. Only the attributes provided in the request will be updated; other attributes remain unchanged.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "attio.webhooks.record.created",
+      "shortPath": "record.created",
+      "description": "Triggered when a record is created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "record.created"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "{ workspace_id: string, object_id?: string, record_id: string }"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "responseType": "{ event_type: record.created, id: { workspace_id: string, object_id?: string, record_id: string }, actor?: any }",
+      "usageExample": "attio({\n    webhookHooks: {\n        record: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "attio.webhooks.record.deleted",
+      "shortPath": "record.deleted",
+      "description": "Triggered when a record is deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "record.deleted"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "{ workspace_id: string, object_id?: string, record_id: string }"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "responseType": "{ event_type: record.deleted, id: { workspace_id: string, object_id?: string, record_id: string }, actor?: any }",
+      "usageExample": "attio({\n    webhookHooks: {\n        record: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "attio.webhooks.record.updated",
+      "shortPath": "record.updated",
+      "description": "Triggered when a record is updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "record.updated"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "{ workspace_id: string, object_id?: string, record_id: string }"
+          },
+          {
+            "key": "actor",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "responseType": "{ event_type: record.updated, id: { workspace_id: string, object_id?: string, record_id: string }, actor?: any }",
+      "usageExample": "attio({\n    webhookHooks: {\n        record: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "attio.db.records.search",
+      "entityName": "records",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "attio.db.workspaceMembers.search",
+      "entityName": "workspaceMembers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email_address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}
