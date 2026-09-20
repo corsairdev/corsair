@@ -264,6 +264,7 @@ export const BaseProviders = [
 	'ticktick',
 	'timecamp',
 	'timelink',
+	'tinypng',
 	'tinyurl',
 	'tisane',
 	'todoist',
@@ -554,6 +555,7 @@ export const ProviderDisplayNames = {
 	ticktick: 'TickTick',
 	timecamp: 'TimeCamp',
 	timelink: 'Timelink',
+	tinypng: 'TinyPNG',
 	tinyurl: 'TinyURL',
 	tisane: 'Tisane',
 	todoist: 'Todoist',
@@ -851,6 +853,7 @@ export type AllProviders =
 	| 'ticktick'
 	| 'timecamp'
 	| 'timelink'
+	| 'tinypng'
 	| 'tinyurl'
 	| 'tisane'
 	| 'todoist'
