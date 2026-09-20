@@ -26,6 +26,19 @@ export const PaginationMetaSchema = z.object({
 
 const BotsListInputSchema = z.object({
 	search: z.string().optional().describe('Keyword to filter bots by name'),
+	keyword: z.string().optional().describe('Keyword to filter bots by name'),
+	page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page number for pagination'),
+	per_page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Number of items per page'),
 });
 
 const BotsListResponseSchema = z.object({
@@ -47,11 +60,27 @@ const ConversationsListInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('Keyword to filter conversations by name'),
+	keyword: z
+		.string()
+		.optional()
+		.describe('Keyword to filter conversations by name'),
 	bot_id: z.string().optional().describe('Filter conversations by bot ID'),
 	includes: z
 		.string()
 		.optional()
 		.describe('Extra attributes to include (e.g. document_ids)'),
+	page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page number for pagination'),
+	per_page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Number of items per page'),
 });
 
 const ConversationsListResponseSchema = z.object({
@@ -114,11 +143,27 @@ const ConversationsDeleteResponseSchema = z.object({
 
 const DocumentsListInputSchema = z.object({
 	search: z.string().optional().describe('Keyword to filter documents by name'),
+	keyword: z
+		.string()
+		.optional()
+		.describe('Keyword to filter documents by name'),
 	folder_id: z.string().optional().describe('Filter documents by folder ID'),
 	conversation_id: z
 		.string()
 		.optional()
 		.describe('Filter documents by conversation ID'),
+	page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page number for pagination'),
+	per_page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Number of items per page'),
 });
 
 const DocumentsListResponseSchema = z.object({
@@ -195,6 +240,19 @@ const DocumentsDeleteResponseSchema = z.object({
 
 const FoldersListInputSchema = z.object({
 	search: z.string().optional().describe('Keyword to filter folders by name'),
+	keyword: z.string().optional().describe('Keyword to filter folders by name'),
+	page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page number for pagination'),
+	per_page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Number of items per page'),
 });
 
 const FoldersListResponseSchema = z.object({
@@ -248,6 +306,18 @@ const MessagesListInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('Extra message attributes to include (sources, usage)'),
+	page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page number for pagination'),
+	per_page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Number of items per page'),
 });
 
 const MessagesListResponseSchema = z.object({

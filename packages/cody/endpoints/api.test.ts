@@ -60,7 +60,7 @@ beforeEach(() => {
 });
 
 describe('Cody bots endpoints', () => {
-	it('lists bots with search query', async () => {
+	it('lists bots with pagination and search query', async () => {
 		const response = {
 			data: [
 				{
@@ -70,17 +70,21 @@ describe('Cody bots endpoints', () => {
 					created_at: 1700000000,
 				},
 			],
-			meta: { pagination: { total: 1 } },
+			meta: { pagination: { total: 1, current_page: 2, per_page: 10 } },
 		};
 		mockedMakeCodyRequest.mockResolvedValue(response);
 
-		const result = await botsList(ctx(), { search: 'Support' });
+		const result = await botsList(ctx(), {
+			search: 'Support',
+			page: 2,
+			per_page: 10,
+		});
 		expect(mockedMakeCodyRequest).toHaveBeenCalledWith(
 			'/bots',
 			'test-cody-token',
 			{
 				method: 'GET',
-				query: { search: 'Support' },
+				query: { keyword: 'Support', page: 2, per_page: 10 },
 			},
 		);
 		expect(result).toEqual(response);
@@ -88,7 +92,7 @@ describe('Cody bots endpoints', () => {
 });
 
 describe('Cody conversations endpoints', () => {
-	it('lists conversations', async () => {
+	it('lists conversations with pagination', async () => {
 		const response = {
 			data: [
 				{
@@ -99,7 +103,7 @@ describe('Cody conversations endpoints', () => {
 					document_ids: ['doc-1'],
 				},
 			],
-			meta: { pagination: { total: 1 } },
+			meta: { pagination: { total: 1, current_page: 1, per_page: 20 } },
 		};
 		mockedMakeCodyRequest.mockResolvedValue(response);
 
@@ -107,13 +111,21 @@ describe('Cody conversations endpoints', () => {
 			bot_id: 'bot-1',
 			search: 'Thread',
 			includes: 'document_ids',
+			page: 1,
+			per_page: 20,
 		});
 		expect(mockedMakeCodyRequest).toHaveBeenCalledWith(
 			'/conversations',
 			'test-cody-token',
 			{
 				method: 'GET',
-				query: { search: 'Thread', bot_id: 'bot-1', includes: 'document_ids' },
+				query: {
+					bot_id: 'bot-1',
+					keyword: 'Thread',
+					includes: 'document_ids',
+					page: 1,
+					per_page: 20,
+				},
 			},
 		);
 		expect(result).toEqual(response);
@@ -213,7 +225,7 @@ describe('Cody conversations endpoints', () => {
 });
 
 describe('Cody documents endpoints', () => {
-	it('lists documents', async () => {
+	it('lists documents with pagination', async () => {
 		const response = {
 			data: [
 				{
@@ -225,7 +237,7 @@ describe('Cody documents endpoints', () => {
 					created_at: 1700000000,
 				},
 			],
-			meta: { pagination: { total: 1 } },
+			meta: { pagination: { total: 1, current_page: 1, per_page: 15 } },
 		};
 		mockedMakeCodyRequest.mockResolvedValue(response);
 
@@ -233,6 +245,8 @@ describe('Cody documents endpoints', () => {
 			folder_id: 'f-1',
 			conversation_id: 'conv-1',
 			search: 'Doc',
+			page: 1,
+			per_page: 15,
 		});
 		expect(mockedMakeCodyRequest).toHaveBeenCalledWith(
 			'/documents',
@@ -240,9 +254,11 @@ describe('Cody documents endpoints', () => {
 			{
 				method: 'GET',
 				query: {
-					search: 'Doc',
 					folder_id: 'f-1',
 					conversation_id: 'conv-1',
+					keyword: 'Doc',
+					page: 1,
+					per_page: 15,
 				},
 			},
 		);
@@ -376,18 +392,22 @@ describe('Cody documents endpoints', () => {
 });
 
 describe('Cody folders endpoints', () => {
-	it('lists folders', async () => {
+	it('lists folders with pagination', async () => {
 		const response = {
 			data: [{ id: 'f-1', name: 'Docs', created_at: 1700000000 }],
-			meta: { pagination: { total: 1 } },
+			meta: { pagination: { total: 1, current_page: 3, per_page: 5 } },
 		};
 		mockedMakeCodyRequest.mockResolvedValue(response);
 
-		const result = await foldersList(ctx(), { search: 'Docs' });
+		const result = await foldersList(ctx(), {
+			search: 'Docs',
+			page: 3,
+			per_page: 5,
+		});
 		expect(mockedMakeCodyRequest).toHaveBeenCalledWith(
 			'/folders',
 			'test-cody-token',
-			{ method: 'GET', query: { search: 'Docs' } },
+			{ method: 'GET', query: { keyword: 'Docs', page: 3, per_page: 5 } },
 		);
 		expect(result).toEqual(response);
 	});
@@ -442,7 +462,7 @@ describe('Cody folders endpoints', () => {
 });
 
 describe('Cody messages endpoints', () => {
-	it('lists messages for a conversation', async () => {
+	it('lists messages for a conversation with pagination', async () => {
 		const response = {
 			data: [
 				{
@@ -465,20 +485,27 @@ describe('Cody messages endpoints', () => {
 					usage: { tokens: 8000, credits: 0.5 },
 				},
 			],
-			meta: { pagination: { total: 1 } },
+			meta: { pagination: { total: 1, current_page: 1, per_page: 50 } },
 		};
 		mockedMakeCodyRequest.mockResolvedValue(response);
 
 		const result = await messagesList(ctx(), {
 			conversation_id: 'conv-1',
 			includes: 'sources,usage',
+			page: 1,
+			per_page: 50,
 		});
 		expect(mockedMakeCodyRequest).toHaveBeenCalledWith(
 			'/messages',
 			'test-cody-token',
 			{
 				method: 'GET',
-				query: { conversation_id: 'conv-1', includes: 'sources,usage' },
+				query: {
+					conversation_id: 'conv-1',
+					includes: 'sources,usage',
+					page: 1,
+					per_page: 50,
+				},
 			},
 		);
 		expect(result).toEqual(response);

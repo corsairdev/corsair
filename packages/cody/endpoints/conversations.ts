@@ -14,9 +14,11 @@ export const list = async (
 	const raw = await makeCodyRequest<unknown>('/conversations', ctx.key, {
 		method: 'GET',
 		query: {
-			search: parsed.search,
 			bot_id: parsed.bot_id,
+			keyword: parsed.keyword ?? parsed.search,
 			includes: parsed.includes,
+			page: parsed.page,
+			per_page: parsed.per_page,
 		},
 	});
 
@@ -25,7 +27,11 @@ export const list = async (
 	await logEventFromContext(
 		ctx,
 		'cody.conversations.list',
-		{ ...parsed },
+		{
+			bot_id: parsed.bot_id,
+			keyword: parsed.keyword ?? parsed.search,
+			page: parsed.page,
+		},
 		'completed',
 	);
 

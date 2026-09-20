@@ -16,6 +16,8 @@ export const list = async (
 		query: {
 			conversation_id: parsed.conversation_id,
 			includes: parsed.includes,
+			page: parsed.page,
+			per_page: parsed.per_page,
 		},
 	});
 
@@ -24,7 +26,7 @@ export const list = async (
 	await logEventFromContext(
 		ctx,
 		'cody.messages.list',
-		{ conversation_id: parsed.conversation_id },
+		{ conversation_id: parsed.conversation_id, page: parsed.page },
 		'completed',
 	);
 

@@ -13,12 +13,21 @@ export const list = async (
 	// unknown: provider JSON response is validated by Zod output schema below.
 	const raw = await makeCodyRequest<unknown>('/bots', ctx.key, {
 		method: 'GET',
-		query: { search: parsed.search },
+		query: {
+			keyword: parsed.keyword ?? parsed.search,
+			page: parsed.page,
+			per_page: parsed.per_page,
+		},
 	});
 
 	const response = CodyEndpointOutputSchemas.botsList.parse(raw);
 
-	await logEventFromContext(ctx, 'cody.bots.list', { ...parsed }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'cody.bots.list',
+		{ keyword: parsed.keyword ?? parsed.search, page: parsed.page },
+		'completed',
+	);
 
 	return response;
 };

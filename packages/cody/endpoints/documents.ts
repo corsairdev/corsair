@@ -14,9 +14,11 @@ export const list = async (
 	const raw = await makeCodyRequest<unknown>('/documents', ctx.key, {
 		method: 'GET',
 		query: {
-			search: parsed.search,
 			folder_id: parsed.folder_id,
 			conversation_id: parsed.conversation_id,
+			keyword: parsed.keyword ?? parsed.search,
+			page: parsed.page,
+			per_page: parsed.per_page,
 		},
 	});
 
@@ -25,7 +27,12 @@ export const list = async (
 	await logEventFromContext(
 		ctx,
 		'cody.documents.list',
-		{ ...parsed },
+		{
+			folder_id: parsed.folder_id,
+			conversation_id: parsed.conversation_id,
+			keyword: parsed.keyword ?? parsed.search,
+			page: parsed.page,
+		},
 		'completed',
 	);
 
