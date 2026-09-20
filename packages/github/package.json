@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/github",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "Github plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -40,9 +40,15 @@
     "github",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/github"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/github"
 }
