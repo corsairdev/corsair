@@ -6,13 +6,13 @@ function isUnsafeBracketKey(key: string): boolean {
 	return key === '__proto__' || key === 'constructor' || key === 'prototype';
 }
 
-// Webhook bodies arrive untyped, so `unknown` is used at this boundary and
-// narrowed with this guard instead of casting.
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
+// unknown justified: schema validating untyped dictionary reference without cloning.
+const RecordSchema = z.custom<Record<string, unknown>>(
+	(val) => typeof val === 'object' && val !== null && !Array.isArray(val),
+);
 
 function assignBracketPath(
+	// unknown justified: target dictionary receiving bracket-expanded properties.
 	target: Record<string, unknown>,
 	rawKey: string,
 	value: string,
@@ -36,13 +36,17 @@ function assignBracketPath(
 
 	if (segments.some((s) => isUnsafeBracketKey(s))) return;
 
+	// unknown justified: cursor pointer navigating nested dynamic dictionary.
 	let cursor: Record<string, unknown> = target;
 	for (const key of segments.slice(0, -1)) {
 		if (isUnsafeBracketKey(key)) return;
+		// unknown justified: property access on dynamic dictionary yields untyped value.
 		const existing: unknown = cursor[key];
-		if (isRecord(existing)) {
-			cursor = existing;
+		const parsedExisting = RecordSchema.safeParse(existing);
+		if (parsedExisting.success) {
+			cursor = parsedExisting.data;
 		} else {
+			// unknown justified: intermediate dictionary container for nested bracket path.
 			const next: Record<string, unknown> = {};
 			cursor[key] = next;
 			cursor = next;
@@ -57,8 +61,11 @@ function assignBracketPath(
 }
 
 function nestBracketKeys(
+	// unknown justified: dictionary containing untyped key-value pairs before bracket expansion.
 	record: Record<string, unknown>,
+	// unknown justified: dictionary containing nested structure after bracket expansion.
 ): Record<string, unknown> {
+	// unknown justified: output dictionary containing transformed entries.
 	const result: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(record)) {
 		if (key.includes('[')) {
@@ -71,30 +78,36 @@ function nestBracketKeys(
 }
 
 export function parseWaboxappWebhookBody(
-	// unknown: webhook boundary — accepts raw strings, parsed objects, or
-	// anything else; narrowed with isRecord/typeof below instead of casting.
+	// unknown justified: webhook boundary accepts raw strings, parsed objects, or untyped HTTP bodies.
 	body: unknown,
+	// unknown justified: returns nested dictionary of payload attributes or null on invalid format.
 ): Record<string, unknown> | null {
-	if (isRecord(body)) {
-		return nestBracketKeys(body);
+	const recordResult = RecordSchema.safeParse(body);
+	if (recordResult.success) {
+		return nestBracketKeys(recordResult.data);
 	}
-	if (typeof body !== 'string') {
+
+	const stringResult = z.string().safeParse(body);
+	if (!stringResult.success) {
 		return null;
 	}
 
-	const trimmed = body.trim();
+	const trimmed = stringResult.data.trim();
 	if (!trimmed) return null;
 
 	if (trimmed.startsWith('{')) {
 		try {
+			// unknown justified: parsed JSON payload is untyped before schema validation.
 			const parsed: unknown = JSON.parse(trimmed);
-			return isRecord(parsed) ? nestBracketKeys(parsed) : null;
+			const parsedRecord = RecordSchema.safeParse(parsed);
+			return parsedRecord.success ? nestBracketKeys(parsedRecord.data) : null;
 		} catch {
 			return null;
 		}
 	}
 
 	const params = new URLSearchParams(trimmed);
+	// unknown justified: dictionary collecting parsed query parameters from form body.
 	const result: Record<string, unknown> = {};
 	let sawKey = false;
 	for (const [key, value] of params) {
@@ -104,6 +117,7 @@ export function parseWaboxappWebhookBody(
 	return sawKey ? result : null;
 }
 
+// unknown justified: message body dictionary allows arbitrary WhatsApp payload fields.
 const MessageBodySchema = z.record(z.string(), z.unknown()).optional();
 
 export const WaboxappWebhookPayloadSchema = z.object({
@@ -162,27 +176,35 @@ export function createWaboxappMatch(eventType: string): CorsairWebhookMatcher {
 }
 
 export function isWaboxappWebhookPayload(
+	// unknown justified: webhook body dictionary containing untyped fields before verification.
 	body: Record<string, unknown> | null,
 ): boolean {
 	if (!body) return false;
-	if (typeof body.token !== 'string' || typeof body.uid !== 'string') {
+	const tokenResult = z.string().safeParse(body.token);
+	const uidResult = z.string().safeParse(body.uid);
+	if (!tokenResult.success || !uidResult.success) {
 		return false;
 	}
 	return body.event === 'message' || body.event === 'ack';
 }
 
 export function verifyWaboxappWebhookToken(
-	request: { payload: { token?: unknown } },
+	request: {
+		payload: {
+			// unknown justified: webhook token field is untyped before string schema validation.
+			token?: unknown;
+		};
+	},
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
 		return { valid: false, error: 'Missing webhook secret' };
 	}
-	const provided = request.payload.token;
-	if (typeof provided !== 'string') {
+	const tokenResult = z.string().safeParse(request.payload.token);
+	if (!tokenResult.success) {
 		return { valid: false, error: 'Invalid webhook token' };
 	}
-	const providedBuf = Buffer.from(provided);
+	const providedBuf = Buffer.from(tokenResult.data);
 	const secretBuf = Buffer.from(secret);
 	if (providedBuf.length !== secretBuf.length) {
 		return { valid: false, error: 'Invalid webhook token' };

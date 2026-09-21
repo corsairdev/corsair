@@ -1,5 +1,4 @@
 import type { RawWebhookRequest } from 'corsair/core';
-import { z } from 'zod';
 import { waboxapp } from './index';
 import { matchWaboxappTenantWebhook } from './webhooks/tenant-matcher';
 import {
@@ -23,31 +22,26 @@ const formRequest = (body: string): RawWebhookRequest => ({
 	body,
 });
 
-// Test-only narrowing for untyped webhook fields — `unknown` at the webhook
-// boundary, validated with a Zod schema (discriminated-union result) instead
-// of casting.
-const WebhookRecordSchema = z.record(z.string(), z.unknown());
-function expectRecord(value: unknown): Record<string, unknown> {
-	const parsed = WebhookRecordSchema.safeParse(value);
-	expect(parsed.success).toBe(true);
-	if (!parsed.success) throw new Error('expected a record object');
-	return parsed.data;
-}
-
 describe('parseWaboxappWebhookBody', () => {
 	it('parses a form-encoded message and nests bracket keys', () => {
 		const parsed = parseWaboxappWebhookBody(MESSAGE_BODY);
 		expect(parsed).not.toBeNull();
-		expect(parsed?.event).toBe('message');
-		expect(parsed?.token).toBe('abcd1234');
-		expect(parsed?.uid).toBe('34666123456');
-		const contact = expectRecord(parsed?.contact);
-		expect(contact.uid).toBe('34666789123');
-		expect(contact.name).toBe('Peter');
-		const message = expectRecord(parsed?.message);
-		expect(message.uid).toBe('62397B58E3E0B');
-		expect(message.type).toBe('chat');
-		expect(expectRecord(message.body).text).toBe('Hey! How are you doing?');
+		expect(parsed).toMatchObject({
+			event: 'message',
+			token: 'abcd1234',
+			uid: '34666123456',
+			contact: {
+				uid: '34666789123',
+				name: 'Peter',
+			},
+			message: {
+				uid: '62397B58E3E0B',
+				type: 'chat',
+				body: {
+					text: 'Hey! How are you doing?',
+				},
+			},
+		});
 	});
 
 	it('accepts an already nested object', () => {
@@ -56,7 +50,9 @@ describe('parseWaboxappWebhookBody', () => {
 			token: 't',
 			uid: '1',
 		});
-		expect(parsed?.event).toBe('ack');
+		expect(parsed).toMatchObject({
+			event: 'ack',
+		});
 	});
 
 	it('nests flat bracket keys on an already-parsed object', () => {
@@ -66,7 +62,11 @@ describe('parseWaboxappWebhookBody', () => {
 			uid: '1',
 			'contact[uid]': '2',
 		});
-		expect(expectRecord(parsed?.contact).uid).toBe('2');
+		expect(parsed).toMatchObject({
+			contact: {
+				uid: '2',
+			},
+		});
 	});
 
 	it('returns null for empty or non-object bodies', () => {
@@ -87,16 +87,17 @@ describe('createWaboxappMatch', () => {
 });
 
 describe('pluginWebhookMatcher', () => {
-	const matcher = waboxapp().pluginWebhookMatcher;
-	if (!matcher) throw new Error('expected pluginWebhookMatcher');
+	const plugin = waboxapp();
 
 	it('accepts waboxapp message and ack payloads', () => {
-		expect(matcher(formRequest(MESSAGE_BODY))).toBe(true);
-		expect(matcher(formRequest(ACK_BODY))).toBe(true);
+		expect(plugin.pluginWebhookMatcher?.(formRequest(MESSAGE_BODY))).toBe(true);
+		expect(plugin.pluginWebhookMatcher?.(formRequest(ACK_BODY))).toBe(true);
 	});
 
 	it('rejects a generic event field without uid and token', () => {
-		expect(matcher(formRequest('event=push&ref=main'))).toBe(false);
+		expect(
+			plugin.pluginWebhookMatcher?.(formRequest('event=push&ref=main')),
+		).toBe(false);
 	});
 });
 

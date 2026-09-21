@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
+import { z } from 'zod';
 import { WABOXAPP_API_BASE } from './client';
 import {
 	getStatus,
@@ -23,11 +24,23 @@ jest.mock('corsair/core', () => ({
 const mockRequest = jest.mocked(request);
 const mockLogEvent = jest.mocked(logEventFromContext);
 
-const ctx = {
-	key: 'tok12345',
-	options: { uid: '34666123456' },
-	keys: { get_uid: async () => undefined },
-} as unknown as WaboxappContext;
+/**
+ * Minimal test double context for Waboxapp endpoints.
+ * Waboxapp endpoints access ctx.key, ctx.options.uid, and ctx.keys.get_uid().
+ */
+function createMockContext(overrides?: {
+	key?: string;
+	uid?: string;
+}): WaboxappContext {
+	// unknown justified: minimal mock test double satisfying WaboxappContext for unit test execution.
+	return {
+		key: overrides?.key ?? 'tok12345',
+		options: { uid: overrides?.uid ?? '34666123456' },
+		keys: { get_uid: async () => undefined },
+	} as unknown as WaboxappContext;
+}
+
+const ctx = createMockContext();
 
 beforeEach(() => {
 	mockRequest.mockReset();
@@ -51,10 +64,13 @@ describe('messages.sendChat', () => {
 				mediaType: 'application/x-www-form-urlencoded',
 			}),
 		);
+		// unknown justified: untyped body parameter from mock invocation before schema parse.
 		const rawBody: unknown = mockRequest.mock.calls[0]?.[1]?.body;
-		expect(typeof rawBody).toBe('string');
-		if (typeof rawBody !== 'string') throw new Error('expected string body');
-		const params = new URLSearchParams(rawBody);
+		const parsedBody = z.string().safeParse(rawBody);
+		expect(parsedBody.success).toBe(true);
+		const params = new URLSearchParams(
+			parsedBody.success ? parsedBody.data : '',
+		);
 		expect(params.get('token')).toBe('tok12345');
 		expect(params.get('uid')).toBe('34666123456');
 		expect(params.get('to')).toBe('34666789123');

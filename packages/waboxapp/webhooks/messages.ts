@@ -1,4 +1,6 @@
+import type { WebhookResponse } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import type { WaboxappContext, WaboxappWebhooks } from '..';
 import {
 	AckEventSchema,
@@ -10,28 +12,29 @@ import {
 
 async function handleWebhook<T>(
 	ctx: WaboxappContext,
-	// unknown: webhook boundary — validated with parseWaboxappWebhookBody and
-	// the Zod schema below instead of casting.
+	// unknown justified: webhook boundary receives untyped external HTTP payload.
 	payload: unknown,
 	schema: {
 		safeParse: (
+			// unknown justified: schema validator accepts untyped data input.
 			data: unknown,
 		) => { success: true; data: T } | { success: false };
 	},
 	eventName: string,
+	// unknown justified: event logging payload dictionary allowing dynamic key-value pairs.
 	logFields: (data: T) => Record<string, unknown>,
 	invalidMessage: string,
-) {
+): Promise<WebhookResponse<T>> {
 	const parsed = parseWaboxappWebhookBody(payload);
-	const token =
-		parsed && typeof parsed.token === 'string' ? parsed.token : undefined;
+	const tokenResult = z.string().safeParse(parsed?.token);
+	const token = tokenResult.success ? tokenResult.data : undefined;
 	const verification = verifyWaboxappWebhookToken(
 		{ payload: { token } },
 		ctx.key,
 	);
 	if (!verification.valid) {
 		return {
-			success: false as const,
+			success: false,
 			statusCode: 401,
 			error: verification.error || 'Webhook token verification failed',
 		};
@@ -40,14 +43,14 @@ async function handleWebhook<T>(
 	const event = schema.safeParse(parsed);
 	if (!event.success) {
 		return {
-			success: false as const,
+			success: false,
 			statusCode: 400,
 			error: invalidMessage,
 		};
 	}
 
 	await logEventFromContext(ctx, eventName, logFields(event.data), 'completed');
-	return { success: true as const, data: event.data };
+	return { success: true, data: event.data };
 }
 
 export const received: WaboxappWebhooks['message'] = {

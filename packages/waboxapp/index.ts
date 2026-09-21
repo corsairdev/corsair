@@ -206,6 +206,7 @@ export type ExternalWaboxappPlugin<T extends WaboxappPluginOptions> =
 	BaseWaboxappPlugin<T>;
 
 export function waboxapp<const T extends WaboxappPluginOptions>(
+	// Safe factory default: empty options object satisfies optional WaboxappPluginOptions & T when no options provided.
 	incomingOptions: WaboxappPluginOptions & T = {} as WaboxappPluginOptions & T,
 ): ExternalWaboxappPlugin<T> {
 	const options = {
