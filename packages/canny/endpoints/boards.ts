@@ -5,7 +5,7 @@ import { CannyEndpointInputSchemas, CannyEndpointOutputSchemas } from './types';
 
 export const list: CannyEndpoints['boardsList'] = async (ctx, input) => {
 	const parsedInput = CannyEndpointInputSchemas.boardsList.parse(input);
-	const raw = await makeCannyRequest<unknown>('boards/list', ctx.key, {
+	const raw = await makeCannyRequest('boards/list', ctx.key, {
 		method: 'POST',
 		body: parsedInput ? { ...parsedInput } : {},
 	});
@@ -44,7 +44,7 @@ export const retrieve: CannyEndpoints['boardsRetrieve'] = async (
 	input,
 ) => {
 	const parsedInput = CannyEndpointInputSchemas.boardsRetrieve.parse(input);
-	const raw = await makeCannyRequest<unknown>('boards/retrieve', ctx.key, {
+	const raw = await makeCannyRequest('boards/retrieve', ctx.key, {
 		method: 'POST',
 		body: { id: parsedInput.id },
 	});

@@ -1,6 +1,5 @@
 import { CannyAPIError, makeCannyRequest } from './client';
 import { Boards, Comments, Posts, Votes } from './endpoints';
-import type { BoardsListResponse } from './endpoints/types';
 import { CannyEndpointOutputSchemas } from './endpoints/types';
 import type { CannyContext } from './index';
 
@@ -119,7 +118,7 @@ describeIfKey('Canny live API', () => {
 
 	it('rejects an invalid api key with CannyAPIError', async () => {
 		await expect(
-			makeCannyRequest<BoardsListResponse>('boards/list', 'invalid-key'),
+			makeCannyRequest('boards/list', 'invalid-key'),
 		).rejects.toBeInstanceOf(CannyAPIError);
 	});
 });

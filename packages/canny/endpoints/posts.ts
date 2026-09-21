@@ -5,7 +5,7 @@ import { CannyEndpointInputSchemas, CannyEndpointOutputSchemas } from './types';
 
 export const list: CannyEndpoints['postsList'] = async (ctx, input) => {
 	const parsedInput = CannyEndpointInputSchemas.postsList.parse(input);
-	const raw = await makeCannyRequest<unknown>('posts/list', ctx.key, {
+	const raw = await makeCannyRequest('posts/list', ctx.key, {
 		method: 'POST',
 		body: parsedInput ? { ...parsedInput } : {},
 	});
@@ -45,7 +45,7 @@ export const list: CannyEndpoints['postsList'] = async (ctx, input) => {
 
 export const retrieve: CannyEndpoints['postsRetrieve'] = async (ctx, input) => {
 	const parsedInput = CannyEndpointInputSchemas.postsRetrieve.parse(input);
-	const raw = await makeCannyRequest<unknown>('posts/retrieve', ctx.key, {
+	const raw = await makeCannyRequest('posts/retrieve', ctx.key, {
 		method: 'POST',
 		body: { ...parsedInput },
 	});
@@ -83,7 +83,7 @@ export const retrieve: CannyEndpoints['postsRetrieve'] = async (ctx, input) => {
 
 export const create: CannyEndpoints['postsCreate'] = async (ctx, input) => {
 	const parsedInput = CannyEndpointInputSchemas.postsCreate.parse(input);
-	const raw = await makeCannyRequest<unknown>('posts/create', ctx.key, {
+	const raw = await makeCannyRequest('posts/create', ctx.key, {
 		method: 'POST',
 		body: { ...parsedInput },
 	});
@@ -103,7 +103,7 @@ export const changeStatus: CannyEndpoints['postsChangeStatus'] = async (
 	input,
 ) => {
 	const parsedInput = CannyEndpointInputSchemas.postsChangeStatus.parse(input);
-	const raw = await makeCannyRequest<unknown>('posts/change_status', ctx.key, {
+	const raw = await makeCannyRequest('posts/change_status', ctx.key, {
 		method: 'POST',
 		body: { ...parsedInput },
 	});
@@ -141,7 +141,7 @@ export const changeStatus: CannyEndpoints['postsChangeStatus'] = async (
 
 export const deletePost: CannyEndpoints['postsDelete'] = async (ctx, input) => {
 	const parsedInput = CannyEndpointInputSchemas.postsDelete.parse(input);
-	const raw = await makeCannyRequest<unknown>('posts/delete', ctx.key, {
+	const raw = await makeCannyRequest('posts/delete', ctx.key, {
 		method: 'POST',
 		body: { postID: parsedInput.postID },
 	});

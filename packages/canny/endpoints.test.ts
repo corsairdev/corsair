@@ -20,9 +20,15 @@ jest.mock('corsair/core', () => {
 });
 
 describe('Canny endpoints routing & event logging', () => {
+	// Narrow assertion: safe because `jest.mock` above replaces both functions
+	// with `jest.fn()` of the identical signature; the cast only recovers the
+	// mock typing (`mockResolvedValue`, `toHaveBeenCalledWith`) and no
+	// unvalidated data flows through it.
 	const mockMakeCannyRequest = client.makeCannyRequest as jest.MockedFunction<
 		typeof client.makeCannyRequest
 	>;
+	// Narrow assertion: same safety argument — `logEventFromContext` is mocked
+	// with the real signature preserved via `jest.requireActual` spread.
 	const mockLogEventFromContext = logEventFromContext as jest.MockedFunction<
 		typeof logEventFromContext
 	>;

@@ -59,18 +59,21 @@ function getProviderErrorMessage(body: unknown): string | undefined {
 	return undefined;
 }
 
-export async function makeCannyRequest<T>(
+// Deliberately non-generic: the provider response is unvalidated until the
+// caller passes it to a zod output schema, so `unknown` is the only honest
+// return type. Call sites hold it in `raw` and validate immediately, which
+// keeps the `unknown` keyword to this single documented declaration instead
+// of spreading it across every endpoint.
+export async function makeCannyRequest(
 	endpoint: string,
 	apiKey: string,
 	options: {
 		method?: 'POST';
 		// `unknown` values: safe because the request body carries caller-provided
-		// fields that are validated by zod input schemas before this call, and
-		// the `T` response stays `unknown` at call sites until validated by a
-		// zod output schema immediately after `await`.
+		// fields that are validated by zod input schemas before this call.
 		body?: Record<string, unknown>;
 	} = {},
-): Promise<T> {
+): Promise<unknown> {
 	const { body = {} } = options;
 
 	const config: OpenAPIConfig = {
@@ -99,7 +102,9 @@ export async function makeCannyRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		// `request` without a type argument resolves to `unknown`, which is
+		// exactly the documented contract above: unvalidated provider data.
+		return await request(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
 			if (error.status === 429) {

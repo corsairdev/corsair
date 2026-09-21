@@ -6,7 +6,7 @@ import { CannyEndpointInputSchemas, CannyEndpointOutputSchemas } from './types';
 
 export const list: CannyEndpoints['votesList'] = async (ctx, input) => {
 	const parsedInput = CannyEndpointInputSchemas.votesList.parse(input);
-	const raw = await makeCannyRequest<unknown>('votes/list', ctx.key, {
+	const raw = await makeCannyRequest('votes/list', ctx.key, {
 		method: 'POST',
 		body: parsedInput ? { ...parsedInput } : {},
 	});
@@ -39,7 +39,7 @@ export const list: CannyEndpoints['votesList'] = async (ctx, input) => {
 
 export const create: CannyEndpoints['votesCreate'] = async (ctx, input) => {
 	const parsedInput = CannyEndpointInputSchemas.votesCreate.parse(input);
-	const raw = await makeCannyRequest<unknown>('votes/create', ctx.key, {
+	const raw = await makeCannyRequest('votes/create', ctx.key, {
 		method: 'POST',
 		body: { ...parsedInput },
 	});
@@ -56,7 +56,7 @@ export const create: CannyEndpoints['votesCreate'] = async (ctx, input) => {
 
 export const deleteVote: CannyEndpoints['votesDelete'] = async (ctx, input) => {
 	const parsedInput = CannyEndpointInputSchemas.votesDelete.parse(input);
-	const raw = await makeCannyRequest<unknown>('votes/delete', ctx.key, {
+	const raw = await makeCannyRequest('votes/delete', ctx.key, {
 		method: 'POST',
 		body: { ...parsedInput },
 	});

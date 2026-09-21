@@ -66,10 +66,7 @@ describe('makeCannyRequest', () => {
 	it('returns the provider payload unchanged', async () => {
 		const payload = { boards: [{ id: 'board_1' }] };
 		mockRequest.mockResolvedValue(payload);
-		const result = await makeCannyRequest<typeof payload>(
-			'boards/list',
-			'key_123',
-		);
+		const result = await makeCannyRequest('boards/list', 'key_123');
 		expect(result).toEqual(payload);
 	});
 

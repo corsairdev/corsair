@@ -5,7 +5,7 @@ import { CannyEndpointInputSchemas, CannyEndpointOutputSchemas } from './types';
 
 export const list: CannyEndpoints['commentsList'] = async (ctx, input) => {
 	const parsedInput = CannyEndpointInputSchemas.commentsList.parse(input);
-	const raw = await makeCannyRequest<unknown>('comments/list', ctx.key, {
+	const raw = await makeCannyRequest('comments/list', ctx.key, {
 		method: 'POST',
 		body: parsedInput ? { ...parsedInput } : {},
 	});
@@ -42,7 +42,7 @@ export const list: CannyEndpoints['commentsList'] = async (ctx, input) => {
 
 export const create: CannyEndpoints['commentsCreate'] = async (ctx, input) => {
 	const parsedInput = CannyEndpointInputSchemas.commentsCreate.parse(input);
-	const raw = await makeCannyRequest<unknown>('comments/create', ctx.key, {
+	const raw = await makeCannyRequest('comments/create', ctx.key, {
 		method: 'POST',
 		body: { ...parsedInput },
 	});
@@ -62,7 +62,7 @@ export const deleteComment: CannyEndpoints['commentsDelete'] = async (
 	input,
 ) => {
 	const parsedInput = CannyEndpointInputSchemas.commentsDelete.parse(input);
-	const raw = await makeCannyRequest<unknown>('comments/delete', ctx.key, {
+	const raw = await makeCannyRequest('comments/delete', ctx.key, {
 		method: 'POST',
 		body: { commentID: parsedInput.commentID },
 	});
