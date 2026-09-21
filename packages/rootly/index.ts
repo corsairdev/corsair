@@ -156,6 +156,11 @@ export type InternalRootlyPlugin = BaseRootlyPlugin<RootlyPluginOptions>;
 export type ExternalRootlyPlugin<T extends RootlyPluginOptions> =
 	BaseRootlyPlugin<T>;
 
+// Justification for the `as` below: this is the generator-standard default
+// for generic plugin factories (identical in every plugin, e.g. slack). `{}`
+// is assignable to the all-optional `RootlyPluginOptions & T` at runtime;
+// the assertion only satisfies the generic default parameter and is kept
+// narrow (no `any`) per CONTRIBUTING.md Type Safety.
 export function rootly<const T extends RootlyPluginOptions>(
 	incomingOptions: RootlyPluginOptions & T = {} as RootlyPluginOptions & T,
 ): ExternalRootlyPlugin<T> {

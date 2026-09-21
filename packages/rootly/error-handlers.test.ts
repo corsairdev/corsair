@@ -22,11 +22,11 @@ function rootlyErrorWithStatus(
 }
 
 function matchedHandlerName(error: Error): string {
-	const name = Object.keys(errorHandlers).find((key) =>
-		errorHandlers[key as keyof typeof errorHandlers].match(error),
+	const entry = Object.entries(errorHandlers).find(([, handler]) =>
+		handler.match(error),
 	);
-	if (!name) throw new Error('No error handler matched');
-	return name;
+	if (!entry) throw new Error('No error handler matched');
+	return entry[0];
 }
 
 describe('Rootly errorHandlers', () => {

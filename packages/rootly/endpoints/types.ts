@@ -8,9 +8,14 @@ const JsonApiResourceSchema = z
 	.object({
 		id: z.string(),
 		type: z.string().optional(),
-		/** Key-value record of provider-defined resource attributes */
+		/** Key-value record of provider-defined resource attributes.
+		 * Justification for `unknown`: Rootly JSON:API attributes vary per
+		 * resource and are not part of the typed contract, so `unknown`
+		 * forces consumers to narrow/validate instead of assuming a shape. */
 		attributes: z.record(z.string(), z.unknown()).optional(),
-		/** Key-value record of provider-defined related resource linkages */
+		/** Key-value record of provider-defined related resource linkages.
+		 * Justification for `unknown`: relationship linkage objects differ
+		 * per resource type; `unknown` keeps the schema honest without `any`. */
 		relationships: z.record(z.string(), z.unknown()).optional(),
 	})
 	.loose();
@@ -34,6 +39,9 @@ const JsonApiLinksSchema = z
 
 /**
  * JSON:API Top-Level Meta Object containing provider-defined response metadata.
+ * Justification for `unknown`: pagination/response metadata keys are
+ * provider-defined and vary per endpoint, so values stay `unknown`
+ * (never `any`) until narrowed by the consumer.
  */
 const JsonApiMetaSchema = z.record(z.string(), z.unknown()).optional();
 

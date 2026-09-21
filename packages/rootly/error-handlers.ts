@@ -1,15 +1,17 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import type { RootlyAPIError } from './client';
+import { RootlyAPIError } from './client';
 
 function getStatus(error: Error): number | undefined {
 	if (error instanceof ApiError) return error.status;
-	return (error as Partial<RootlyAPIError>).status;
+	if (error instanceof RootlyAPIError) return error.status;
+	return undefined;
 }
 
 function getRetryAfter(error: Error): number | undefined {
 	if (error instanceof ApiError) return error.retryAfter;
-	return (error as Partial<RootlyAPIError>).retryAfter;
+	if (error instanceof RootlyAPIError) return error.retryAfter;
+	return undefined;
 }
 
 export const errorHandlers = {

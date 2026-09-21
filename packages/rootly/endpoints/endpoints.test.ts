@@ -1,4 +1,5 @@
 import * as client from '../client';
+import type { RootlyContext } from '../index';
 import { ActionItems, Incidents } from './index';
 
 jest.mock('corsair/core', () => {
@@ -15,19 +16,36 @@ jest.mock('../client', () => ({
 	makeRootlyRequest: jest.fn(),
 }));
 
-const mockedRequest = client.makeRootlyRequest as jest.MockedFunction<
-	typeof client.makeRootlyRequest
->;
+const mockedRequest = jest.mocked(client.makeRootlyRequest);
 
-const ctx = {
-	key: 'test-rootly-api-key',
-	db: {},
-} as any;
+// Test context built field-by-field against RootlyContext with no type
+// assertion, so a context-shape change fails typecheck instead of silently
+// passing. Endpoints under test only read ctx.key; the keys/db stubs exist
+// solely to satisfy the context type.
+function makeCtx(): RootlyContext {
+	return {
+		key: 'test-rootly-api-key',
+		endpoints: {},
+		db: {},
+		$getAccountId: () => Promise.resolve('test-account-id'),
+		options: {},
+		keys: {
+			get_dek: () => Promise.resolve('test-dek'),
+			issue_new_dek: () => Promise.resolve('test-dek'),
+			get_api_key: () => Promise.resolve('test-rootly-api-key'),
+			set_api_key: () => Promise.resolve(),
+			get_webhook_signature: () => Promise.resolve(null),
+			set_webhook_signature: () => Promise.resolve(),
+		},
+	};
+}
+
+const ctx = makeCtx();
 
 describe('Rootly endpoints', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
-		mockedRequest.mockResolvedValue({} as never);
+		mockedRequest.mockResolvedValue({});
 	});
 
 	describe('actionItems', () => {
@@ -42,7 +60,7 @@ describe('Rootly endpoints', () => {
 				],
 				meta: { total_count: 1 },
 			};
-			mockedRequest.mockResolvedValueOnce(mockResponse as never);
+			mockedRequest.mockResolvedValueOnce(mockResponse);
 
 			const result = await ActionItems.list(ctx, {
 				incident_id: 'inc-123',
@@ -74,7 +92,7 @@ describe('Rootly endpoints', () => {
 					attributes: { summary: 'Fix database index' },
 				},
 			};
-			mockedRequest.mockResolvedValueOnce(mockResponse as never);
+			mockedRequest.mockResolvedValueOnce(mockResponse);
 
 			const result = await ActionItems.get(ctx, { id: 'ai-1' });
 
@@ -89,7 +107,7 @@ describe('Rootly endpoints', () => {
 					type: 'action_items',
 				},
 			};
-			mockedRequest.mockResolvedValueOnce(mockResponse as never);
+			mockedRequest.mockResolvedValueOnce(mockResponse);
 
 			const result = await ActionItems.delete(ctx, { id: 'ai-1' });
 
@@ -109,7 +127,7 @@ describe('Rootly endpoints', () => {
 					attributes: { title: 'Major outage in production' },
 				},
 			};
-			mockedRequest.mockResolvedValueOnce(mockResponse as never);
+			mockedRequest.mockResolvedValueOnce(mockResponse);
 
 			const result = await Incidents.get(ctx, { id: 'inc-123' });
 
@@ -125,7 +143,7 @@ describe('Rootly endpoints', () => {
 					attributes: { title: 'Resolved: Major outage in production' },
 				},
 			};
-			mockedRequest.mockResolvedValueOnce(mockResponse as never);
+			mockedRequest.mockResolvedValueOnce(mockResponse);
 
 			const result = await Incidents.update(ctx, {
 				id: 'inc-123',
@@ -155,7 +173,7 @@ describe('Rootly endpoints', () => {
 					type: 'incidents',
 				},
 			};
-			mockedRequest.mockResolvedValueOnce(mockResponse as never);
+			mockedRequest.mockResolvedValueOnce(mockResponse);
 
 			const result = await Incidents.delete(ctx, { id: 'inc-123' });
 

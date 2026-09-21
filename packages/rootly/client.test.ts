@@ -10,7 +10,7 @@ jest.mock('corsair/http', () => {
 	};
 });
 
-const mockedRequest = request as jest.MockedFunction<typeof request>;
+const mockedRequest = jest.mocked(request);
 
 describe('makeRootlyRequest', () => {
 	beforeEach(() => {
@@ -25,7 +25,7 @@ describe('makeRootlyRequest', () => {
 				attributes: { title: 'Outage' },
 			},
 		});
-		mockedRequest.mockResolvedValueOnce(rawString as never);
+		mockedRequest.mockResolvedValueOnce(rawString);
 
 		const result = await makeRootlyRequest<{ data: { id: string } }>(
 			'incidents/inc-123',
@@ -49,7 +49,7 @@ describe('makeRootlyRequest', () => {
 				attributes: { title: 'Outage' },
 			},
 		};
-		mockedRequest.mockResolvedValueOnce(objectResponse as never);
+		mockedRequest.mockResolvedValueOnce(objectResponse);
 
 		const result = await makeRootlyRequest<{ data: { id: string } }>(
 			'incidents/inc-123',
@@ -74,16 +74,20 @@ describe('makeRootlyRequest', () => {
 		);
 		mockedRequest.mockRejectedValueOnce(apiError);
 
+		// Justification for `unknown`: promise rejections are untyped, so the
+		// rejection is typed `unknown` (never `any`), forcing the
+		// `instanceof RootlyAPIError` narrowing that follows.
 		const error = await makeRootlyRequest('incidents', 'test-key').catch(
 			(err: unknown) => err,
 		);
 
 		expect(error).toBeInstanceOf(RootlyAPIError);
-		const rootlyError = error as RootlyAPIError;
-		expect(rootlyError.status).toBe(429);
-		expect(rootlyError.retryAfter).toBe(2500);
-		expect(rootlyError.isRateLimitError()).toBe(true);
-		expect(rootlyError.cause).toBe(apiError);
+		if (!(error instanceof RootlyAPIError))
+			throw new Error('expected RootlyAPIError');
+		expect(error.status).toBe(429);
+		expect(error.retryAfter).toBe(2500);
+		expect(error.isRateLimitError()).toBe(true);
+		expect(error.cause).toBe(apiError);
 	});
 
 	it('preserves 401 status on authentication ApiError', async () => {
@@ -100,27 +104,33 @@ describe('makeRootlyRequest', () => {
 		);
 		mockedRequest.mockRejectedValueOnce(apiError);
 
+		// Justification for `unknown`: promise rejections are untyped, so the
+		// rejection is typed `unknown` (never `any`), forcing the
+		// `instanceof RootlyAPIError` narrowing that follows.
 		const error = await makeRootlyRequest('incidents', 'test-key').catch(
 			(err: unknown) => err,
 		);
 
 		expect(error).toBeInstanceOf(RootlyAPIError);
-		const rootlyError = error as RootlyAPIError;
-		expect(rootlyError.status).toBe(401);
-		expect(rootlyError.isRateLimitError()).toBe(false);
+		if (!(error instanceof RootlyAPIError))
+			throw new Error('expected RootlyAPIError');
+		expect(error.status).toBe(401);
+		expect(error.isRateLimitError()).toBe(false);
 	});
 
 	it('throws RootlyAPIError if raw string response cannot be parsed as JSON', async () => {
-		mockedRequest.mockResolvedValueOnce('invalid json' as never);
+		mockedRequest.mockResolvedValueOnce('invalid json');
 
+		// Justification for `unknown`: promise rejections are untyped, so the
+		// rejection is typed `unknown` (never `any`), forcing the
+		// `instanceof RootlyAPIError` narrowing that follows.
 		const error = await makeRootlyRequest('incidents', 'test-key').catch(
 			(err: unknown) => err,
 		);
 
 		expect(error).toBeInstanceOf(RootlyAPIError);
-		const rootlyError = error as RootlyAPIError;
-		expect(rootlyError.message).toContain(
-			'Failed to parse Rootly API JSON response',
-		);
+		if (!(error instanceof RootlyAPIError))
+			throw new Error('expected RootlyAPIError');
+		expect(error.message).toContain('Failed to parse Rootly API JSON response');
 	});
 });

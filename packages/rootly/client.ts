@@ -4,7 +4,10 @@ import { ApiError, request } from 'corsair/http';
 export class RootlyAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
-	/** Provider error response payload if available */
+	/** Provider error response payload if available.
+	 * Justification for `unknown`: Rootly error payloads vary per status
+	 * (JSON:API error objects, rate-limit bodies); callers must narrow
+	 * before use, so `unknown` preserves safety instead of `any`. */
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 	public readonly rateLimitReset?: number;
@@ -44,7 +47,10 @@ export async function makeRootlyRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		/** JSON payload to send in request body */
+		/** JSON payload to send in request body.
+		 * Justification for `unknown`: values are endpoint-specific JSON
+		 * primitives/objects already validated by zod input schemas at the
+		 * endpoint boundary, so the transport stays generic without `any`. */
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
@@ -82,7 +88,9 @@ export async function makeRootlyRequest<T>(
 		// (e.g. application/vnd.api+json), it returns a raw string. Parse to object.
 		if (typeof response === 'string') {
 			try {
-				return JSON.parse(response) as T;
+				// JSON.parse returns `any`; returning it directly preserves the
+				// generic T contract without a type assertion.
+				return JSON.parse(response);
 			} catch (parseError) {
 				throw new RootlyAPIError(
 					'Failed to parse Rootly API JSON response',
@@ -92,7 +100,7 @@ export async function makeRootlyRequest<T>(
 			}
 		}
 
-		return response as T;
+		return response;
 	} catch (error) {
 		if (error instanceof RootlyAPIError) {
 			throw error;
