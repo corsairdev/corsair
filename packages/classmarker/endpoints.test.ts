@@ -83,7 +83,7 @@ function createContext(key = 'packed-key') {
 	return {
 		key,
 		$getAccountId: async () => 'account-id',
-		// type assertion justified: minimal unit-test context; endpoints under test only
+		// unknown justified: minimal unit-test context object; endpoints under test only
 		// read `key`/`$getAccountId`, and `logEventFromContext` is mocked.
 	} as unknown as Parameters<typeof getAllCategories>[0];
 }
@@ -436,7 +436,7 @@ describe('ClassMarker endpoints', () => {
 				category_id: 1,
 				points: 1,
 			},
-			// type assertion justified: intentionally invalid payload to verify Zod rejects it
+			// unknown justified: intentionally invalid payload to verify Zod rejects it
 			// before any provider call (mockRequest asserted not called).
 		} as unknown as Parameters<typeof createQuestion>[1];
 
@@ -455,8 +455,8 @@ describe('ClassMarker endpoints', () => {
 				options: { A: { content: 'A' } },
 				correct_options: ['B'],
 			},
-			// type assertion justified: intentionally inconsistent payload to verify Zod rejects
-			// unknown correct options before any provider call (mockRequest asserted not called).
+			// unknown justified: intentionally inconsistent payload to verify Zod rejects
+			// undeclared correct options before any provider call (mockRequest asserted not called).
 		} as unknown as Parameters<typeof createQuestion>[1];
 
 		await expect(createQuestion(ctx, invalidCreateInput)).rejects.toThrow(
