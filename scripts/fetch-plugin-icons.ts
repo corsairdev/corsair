@@ -29,7 +29,13 @@ const CONCURRENCY = 12;
 
 const PNG_MAGIC = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
-type IconSource = 'twenty-icons' | 'google-favicon';
+type IconSource = 'twenty-icons' | 'google-favicon' | 'url-override';
+
+/** Product marks twenty-icons can't distinguish (Docs vs Sheets on docs.google.com). */
+const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
+	googledocs:
+		'https://www.gstatic.com/images/branding/product/2x/docs_2020q4_96dp.png',
+};
 
 type FetchResult =
 	| { ok: true; bytes: Buffer; source: IconSource }
@@ -71,6 +77,39 @@ function isPng(bytes: Buffer): boolean {
 	return (
 		bytes.length >= PNG_MAGIC.length && bytes.subarray(0, 8).equals(PNG_MAGIC)
 	);
+}
+
+async function fetchDirectIcon(url: string): Promise<FetchResult> {
+	try {
+		const response = await fetch(url, {
+			headers: { 'User-Agent': 'corsair-plugin-icon-fetch/1.0' },
+		});
+		if (!response.ok) {
+			return {
+				ok: false,
+				error: `url-override HTTP ${response.status}`,
+			};
+		}
+		const bytes = Buffer.from(await response.arrayBuffer());
+		if (bytes.length === 0 || !isPng(bytes)) {
+			return { ok: false, error: 'url-override returned no PNG' };
+		}
+		return { ok: true, bytes, source: 'url-override' };
+	} catch (error) {
+		const message = error instanceof Error ? error.message : String(error);
+		return { ok: false, error: `url-override failed: ${message}` };
+	}
+}
+
+async function fetchPluginIcon(
+	pluginId: string,
+	domain: string,
+): Promise<FetchResult> {
+	const overrideUrl = PLUGIN_ICON_URL_OVERRIDES[pluginId];
+	if (overrideUrl) {
+		return fetchDirectIcon(overrideUrl);
+	}
+	return fetchIcon(domain);
 }
 
 async function fetchIcon(domain: string): Promise<FetchResult> {
@@ -193,7 +232,7 @@ async function main(): Promise<void> {
 
 		await mapWithConcurrency(targets, CONCURRENCY, async (pluginId) => {
 			const domain = domains[pluginId] ?? resolvePluginDomain(pluginId);
-			const result = await fetchIcon(domain);
+			const result = await fetchPluginIcon(pluginId, domain);
 
 			if (!result.ok) {
 				failures.push({ id: pluginId, domain, error: result.error });

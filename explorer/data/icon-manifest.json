@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-18T04:26:15.850Z",
+  "generatedAt": "2026-09-18T04:29:42.582Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
@@ -293,7 +293,7 @@
     "zoominfo": "zoominfo.com"
   },
   "sources": {
-    "googledocs": "twenty-icons",
+    "googledocs": "url-override",
     "ably": "twenty-icons",
     "abstract": "twenty-icons",
     "abuseipdb": "twenty-icons",
