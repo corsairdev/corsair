@@ -1,12 +1,13 @@
 import { makeEverhourRequest } from '../client';
+import type { EverhourEndpoints } from '../index';
 import type {
 	EverhourExpense,
 	EverhourExpenseCategory,
 } from '../schema/database';
 
-export const listExpenses = async (
-	ctx: any,
-	options: { query?: Record<string, string | number | boolean> } = {},
+export const listExpenses: EverhourEndpoints['listExpenses'] = async (
+	ctx,
+	options = {},
 ) => {
 	return makeEverhourRequest<EverhourExpense[]>('/expenses', ctx.key, {
 		method: 'GET',
@@ -14,9 +15,10 @@ export const listExpenses = async (
 	});
 };
 
-export const listExpenseCategories = async (ctx: any) => {
-	return makeEverhourRequest<EverhourExpenseCategory[]>(
-		'/expenses/categories',
-		ctx.key,
-	);
-};
+export const listExpenseCategories: EverhourEndpoints['listExpenseCategories'] =
+	async (ctx) => {
+		return makeEverhourRequest<EverhourExpenseCategory[]>(
+			'/expenses/categories',
+			ctx.key,
+		);
+	};

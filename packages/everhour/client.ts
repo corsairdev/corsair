@@ -15,10 +15,13 @@ export class EverhourAPIError extends Error {
 
 const EVERHOUR_API_BASE = 'https://api.everhour.com';
 
+// Record<string, unknown> holds JSON-safe query/body maps; values are
+// narrowed per endpoint before sending.
 function compactRecord(
 	record?: Record<string, unknown>,
 ): Record<string, unknown> | undefined {
 	if (!record) return undefined;
+	// Filtered copy keeps JSON-safe values without claiming their types.
 	const compact: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(record)) {
 		if (value !== undefined) compact[key] = value;
@@ -31,7 +34,9 @@ export async function makeEverhourRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// JSON-safe request maps; each endpoint passes its typed input fields.
 		body?: Record<string, unknown>;
+		// JSON-safe query maps; each endpoint passes its typed query fields.
 		query?: Record<string, unknown>;
 	} = {},
 ): Promise<T> {

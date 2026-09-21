@@ -1,15 +1,13 @@
 import { makeEverhourRequest } from '../client';
+import type { EverhourEndpoints } from '../index';
 import type {
 	EverhourTimeEntry,
 	EverhourTimesheetApproval,
 } from '../schema/database';
 
-export const listUserTime = async (
-	ctx: any,
-	options: {
-		userId: string;
-		query?: Record<string, string | number | boolean>;
-	},
+export const listUserTime: EverhourEndpoints['listUserTime'] = async (
+	ctx,
+	options,
 ) => {
 	return makeEverhourRequest<EverhourTimeEntry[]>(
 		`/users/${options.userId}/time`,
@@ -21,49 +19,29 @@ export const listUserTime = async (
 	);
 };
 
-export const listUserTimesheets = async (
-	ctx: any,
-	options: {
-		userId: string;
-		query?: Record<string, string | number | boolean>;
-	},
-) => {
-	return makeEverhourRequest<Record<string, unknown>[]>(
-		`/users/${options.userId}/timesheets`,
-		ctx.key,
-		{
-			method: 'GET',
-			query: options.query,
-		},
-	);
-};
+export const listUserTimesheets: EverhourEndpoints['listUserTimesheets'] =
+	async (ctx, options) => {
+		// Timesheet rows have no fixed provider shape; callers narrow fields before use.
+		return makeEverhourRequest<Record<string, unknown>[]>(
+			`/users/${options.userId}/timesheets`,
+			ctx.key,
+			{
+				method: 'GET',
+				query: options.query,
+			},
+		);
+	};
 
-export const logTime = async (
-	ctx: any,
-	options: {
-		time: number;
-		date?: string;
-		task?: string;
-		user?: number;
-		comment?: string;
-	},
-) => {
+export const logTime: EverhourEndpoints['logTime'] = async (ctx, options) => {
 	return makeEverhourRequest<EverhourTimeEntry>('/time', ctx.key, {
 		method: 'POST',
 		body: options,
 	});
 };
 
-export const updateTimeEntry = async (
-	ctx: any,
-	options: {
-		timeId: string;
-		time: number;
-		date?: string;
-		task?: string;
-		user?: number;
-		comment?: string;
-	},
+export const updateTimeEntry: EverhourEndpoints['updateTimeEntry'] = async (
+	ctx,
+	options,
 ) => {
 	const { timeId, ...body } = options;
 	return makeEverhourRequest<EverhourTimeEntry>(`/time/${timeId}`, ctx.key, {
@@ -72,51 +50,37 @@ export const updateTimeEntry = async (
 	});
 };
 
-export const deleteTimeEntry = async (
-	ctx: any,
-	options: { timeId: string },
+export const deleteTimeEntry: EverhourEndpoints['deleteTimeEntry'] = async (
+	ctx,
+	options,
 ) => {
 	return makeEverhourRequest<void>(`/time/${options.timeId}`, ctx.key, {
 		method: 'DELETE',
 	});
 };
 
-export const requestTimesheetApproval = async (
-	ctx: any,
-	options: {
-		timesheetId: string;
-		comment?: string;
-		reviewer?: number;
-		sendNotification?: boolean;
-	},
-) => {
-	const { timesheetId, ...body } = options;
-	return makeEverhourRequest<EverhourTimesheetApproval>(
-		`/timesheets/${timesheetId}/approval`,
-		ctx.key,
-		{
-			method: 'POST',
-			body,
-		},
-	);
-};
+export const requestTimesheetApproval: EverhourEndpoints['requestTimesheetApproval'] =
+	async (ctx, options) => {
+		const { timesheetId, ...body } = options;
+		return makeEverhourRequest<EverhourTimesheetApproval>(
+			`/timesheets/${timesheetId}/approval`,
+			ctx.key,
+			{
+				method: 'POST',
+				body,
+			},
+		);
+	};
 
-export const discardTimesheetApproval = async (
-	ctx: any,
-	options: {
-		timesheetId: string;
-		comment?: string;
-		reviewer?: number;
-		sendNotification?: boolean;
-	},
-) => {
-	const { timesheetId, ...body } = options;
-	return makeEverhourRequest<EverhourTimesheetApproval>(
-		`/timesheets/${timesheetId}/discard-approval`,
-		ctx.key,
-		{
-			method: 'PUT',
-			body,
-		},
-	);
-};
+export const discardTimesheetApproval: EverhourEndpoints['discardTimesheetApproval'] =
+	async (ctx, options) => {
+		const { timesheetId, ...body } = options;
+		return makeEverhourRequest<EverhourTimesheetApproval>(
+			`/timesheets/${timesheetId}/discard-approval`,
+			ctx.key,
+			{
+				method: 'PUT',
+				body,
+			},
+		);
+	};

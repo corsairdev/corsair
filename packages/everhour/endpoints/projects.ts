@@ -1,14 +1,10 @@
 import { makeEverhourRequest } from '../client';
+import type { EverhourEndpoints } from '../index';
 import type { EverhourProject } from '../schema/database';
 
-export const listProjects = async (
-	ctx: any,
-	options: {
-		query?: Record<string, string | number | boolean>;
-		page?: number;
-		limit?: number;
-		platform?: string;
-	} = {},
+export const listProjects: EverhourEndpoints['listProjects'] = async (
+	ctx,
+	options = {},
 ) => {
 	return makeEverhourRequest<EverhourProject[]>('/projects', ctx.key, {
 		method: 'GET',
@@ -21,22 +17,19 @@ export const listProjects = async (
 	});
 };
 
-export const getProject = async (ctx: any, options: { projectId: string }) => {
+export const getProject: EverhourEndpoints['getProject'] = async (
+	ctx,
+	options,
+) => {
 	return makeEverhourRequest<EverhourProject>(
 		`/projects/${options.projectId}`,
 		ctx.key,
 	);
 };
 
-export const createProject = async (
-	ctx: any,
-	options: {
-		name: string;
-		type: 'board' | 'list';
-		users?: number[];
-		client?: number | null;
-		privacy?: boolean;
-	},
+export const createProject: EverhourEndpoints['createProject'] = async (
+	ctx,
+	options,
 ) => {
 	const { name, type, users, client, privacy } = options;
 	return makeEverhourRequest<EverhourProject>('/projects', ctx.key, {
@@ -45,17 +38,9 @@ export const createProject = async (
 	});
 };
 
-export const updateProject = async (
-	ctx: any,
-	options: {
-		projectId: string;
-		name?: string;
-		type?: 'board' | 'list';
-		users?: number[];
-		client?: number | null;
-		privacy?: boolean;
-		color?: string;
-	},
+export const updateProject: EverhourEndpoints['updateProject'] = async (
+	ctx,
+	options,
 ) => {
 	const { projectId, ...body } = options;
 	return makeEverhourRequest<EverhourProject>(
@@ -68,9 +53,9 @@ export const updateProject = async (
 	);
 };
 
-export const deleteProject = async (
-	ctx: any,
-	options: { projectId: string },
+export const deleteProject: EverhourEndpoints['deleteProject'] = async (
+	ctx,
+	options,
 ) => {
 	return makeEverhourRequest<void>(`/projects/${options.projectId}`, ctx.key, {
 		method: 'DELETE',

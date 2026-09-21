@@ -1,6 +1,8 @@
 import { makeEverhourRequest } from '../client';
+import type { EverhourEndpoints } from '../index';
 
-export interface TimerResponse {
+// Record intersection keeps undocumented timer fields; known fields stay typed.
+export type TimerResponse = Record<string, unknown> & {
 	id?: string;
 	task_id?: string;
 	start_time?: string;
@@ -9,15 +11,17 @@ export interface TimerResponse {
 	startedAt?: string;
 	// The timer task payload varies by provider integration; narrow before use.
 	task?: unknown;
-}
+};
 
-export const getCurrentTimer = async (ctx: any) => {
+export const getCurrentTimer: EverhourEndpoints['getCurrentTimer'] = async (
+	ctx,
+) => {
 	return makeEverhourRequest<TimerResponse>('/timers/current', ctx.key);
 };
 
-export const startTimer = async (
-	ctx: any,
-	options: { task: string; userDate?: string; comment?: string },
+export const startTimer: EverhourEndpoints['startTimer'] = async (
+	ctx,
+	options,
 ) => {
 	return makeEverhourRequest<TimerResponse>('/timers', ctx.key, {
 		method: 'POST',
@@ -25,7 +29,7 @@ export const startTimer = async (
 	});
 };
 
-export const stopTimer = async (ctx: any) => {
+export const stopTimer: EverhourEndpoints['stopTimer'] = async (ctx) => {
 	return makeEverhourRequest<TimerResponse>('/timers/current', ctx.key, {
 		method: 'DELETE',
 	});

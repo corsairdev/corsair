@@ -14,6 +14,7 @@ export const EverhourUser = z
 		role: z.string().optional(),
 		status: z.string().optional(),
 		headline: z.string().nullable().optional(),
+		// Team shape varies by provider response; narrow before use.
 		team: z.unknown().optional(),
 	})
 	.passthrough();
@@ -41,6 +42,7 @@ export const EverhourTask = z
 		projects: z.array(z.string()).optional(),
 		project_id: z.string().optional(),
 		description: z.string().nullable().optional(),
+		// Estimate shape varies by provider response; narrow before use.
 		estimate: z.unknown().optional(),
 		status: z.string().optional(),
 		is_archived: z.boolean().optional(),
@@ -56,6 +58,7 @@ export const EverhourTimeEntry = z
 		time: z.number().optional(),
 		user: Id.optional(),
 		date: z.string().optional(),
+		// Task payload varies by provider integration; narrow before use.
 		task: z.unknown().optional(),
 		task_id: z.string().optional(),
 		user_id: z.string().optional(),

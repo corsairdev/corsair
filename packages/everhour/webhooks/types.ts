@@ -68,6 +68,7 @@ export type EverhourWebhooks = {
 	>;
 };
 
+// unknown input because webhook bodies arrive untyped; narrowed to a record below.
 function toStringRecord(candidate: unknown): Record<string, unknown> | null {
 	if (
 		candidate === null ||
@@ -76,6 +77,7 @@ function toStringRecord(candidate: unknown): Record<string, unknown> | null {
 	) {
 		return null;
 	}
+	// Copied record keeps provider fields without claiming their types.
 	const record: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(candidate)) {
 		record[key] = value;
@@ -83,6 +85,7 @@ function toStringRecord(candidate: unknown): Record<string, unknown> | null {
 	return record;
 }
 
+// unknown input because raw webhook bodies arrive untyped; narrowed below.
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {

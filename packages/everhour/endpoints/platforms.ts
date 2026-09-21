@@ -1,6 +1,9 @@
 import { makeEverhourRequest } from '../client';
+import type { EverhourEndpoints } from '../index';
 import type { EverhourPlatform } from '../schema/database';
 
-export const listPlatforms = async (ctx: any) => {
+export const listPlatforms: EverhourEndpoints['listPlatforms'] = async (
+	ctx,
+) => {
 	return makeEverhourRequest<EverhourPlatform[]>('/platforms', ctx.key);
 };

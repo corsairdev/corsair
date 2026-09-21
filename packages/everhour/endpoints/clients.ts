@@ -1,9 +1,10 @@
 import { makeEverhourRequest } from '../client';
+import type { EverhourEndpoints } from '../index';
 import type { EverhourClient } from '../schema/database';
 
-export const listClients = async (
-	ctx: any,
-	options: { query?: Record<string, string | number | boolean> } = {},
+export const listClients: EverhourEndpoints['listClients'] = async (
+	ctx,
+	options = {},
 ) => {
 	return makeEverhourRequest<EverhourClient[]>('/clients', ctx.key, {
 		method: 'GET',
@@ -11,22 +12,19 @@ export const listClients = async (
 	});
 };
 
-export const getClient = async (ctx: any, options: { clientId: string }) => {
+export const getClient: EverhourEndpoints['getClient'] = async (
+	ctx,
+	options,
+) => {
 	return makeEverhourRequest<EverhourClient>(
 		`/clients/${options.clientId}`,
 		ctx.key,
 	);
 };
 
-export const createClient = async (
-	ctx: any,
-	options: {
-		name: string;
-		projects?: string[];
-		businessDetails?: string;
-		email?: string[];
-		status?: string;
-	},
+export const createClient: EverhourEndpoints['createClient'] = async (
+	ctx,
+	options,
 ) => {
 	const { name, projects, businessDetails, email, status } = options;
 	return makeEverhourRequest<EverhourClient>('/clients', ctx.key, {
@@ -35,16 +33,9 @@ export const createClient = async (
 	});
 };
 
-export const updateClient = async (
-	ctx: any,
-	options: {
-		clientId: string;
-		name?: string;
-		projects?: string[];
-		businessDetails?: string;
-		email?: string[];
-		status?: string;
-	},
+export const updateClient: EverhourEndpoints['updateClient'] = async (
+	ctx,
+	options,
 ) => {
 	const { clientId, ...body } = options;
 	return makeEverhourRequest<EverhourClient>(`/clients/${clientId}`, ctx.key, {
@@ -53,7 +44,10 @@ export const updateClient = async (
 	});
 };
 
-export const deleteClient = async (ctx: any, options: { clientId: string }) => {
+export const deleteClient: EverhourEndpoints['deleteClient'] = async (
+	ctx,
+	options,
+) => {
 	return makeEverhourRequest<void>(`/clients/${options.clientId}`, ctx.key, {
 		method: 'DELETE',
 	});

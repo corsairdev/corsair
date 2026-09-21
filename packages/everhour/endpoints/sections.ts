@@ -1,9 +1,10 @@
 import { makeEverhourRequest } from '../client';
+import type { EverhourEndpoints } from '../index';
 import type { EverhourSection } from '../schema/database';
 
-export const listSections = async (
-	ctx: any,
-	options: { projectId: string },
+export const listSections: EverhourEndpoints['listSections'] = async (
+	ctx,
+	options,
 ) => {
 	return makeEverhourRequest<EverhourSection[]>(
 		`/projects/${options.projectId}/sections`,
@@ -11,21 +12,19 @@ export const listSections = async (
 	);
 };
 
-export const getSection = async (ctx: any, options: { sectionId: string }) => {
+export const getSection: EverhourEndpoints['getSection'] = async (
+	ctx,
+	options,
+) => {
 	return makeEverhourRequest<EverhourSection>(
 		`/sections/${options.sectionId}`,
 		ctx.key,
 	);
 };
 
-export const createSection = async (
-	ctx: any,
-	options: {
-		projectId: string;
-		name: string;
-		status?: 'open' | 'archived';
-		collapsed?: boolean;
-	},
+export const createSection: EverhourEndpoints['createSection'] = async (
+	ctx,
+	options,
 ) => {
 	const { projectId, ...body } = options;
 	return makeEverhourRequest<EverhourSection>(
@@ -38,9 +37,9 @@ export const createSection = async (
 	);
 };
 
-export const deleteSection = async (
-	ctx: any,
-	options: { sectionId: string },
+export const deleteSection: EverhourEndpoints['deleteSection'] = async (
+	ctx,
+	options,
 ) => {
 	return makeEverhourRequest<void>(`/sections/${options.sectionId}`, ctx.key, {
 		method: 'DELETE',

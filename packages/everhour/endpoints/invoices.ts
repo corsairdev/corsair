@@ -1,9 +1,10 @@
 import { makeEverhourRequest } from '../client';
+import type { EverhourEndpoints } from '../index';
 import type { EverhourInvoice } from '../schema/database';
 
-export const listInvoices = async (
-	ctx: any,
-	options: { query?: Record<string, string | number | boolean> } = {},
+export const listInvoices: EverhourEndpoints['listInvoices'] = async (
+	ctx,
+	options = {},
 ) => {
 	return makeEverhourRequest<EverhourInvoice[]>('/invoices', ctx.key, {
 		method: 'GET',

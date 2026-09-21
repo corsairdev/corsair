@@ -1,10 +1,8 @@
 import { makeEverhourRequest } from '../client';
+import type { EverhourEndpoints } from '../index';
 import type { EverhourTimecard } from '../schema/database';
 
-export const clockIn = async (
-	ctx: any,
-	options: { userId: string; userDate?: string },
-) => {
+export const clockIn: EverhourEndpoints['clockIn'] = async (ctx, options) => {
 	const { userId, userDate } = options;
 	return makeEverhourRequest<EverhourTimecard>(
 		`/users/${userId}/timecards/clock-in`,
@@ -16,10 +14,7 @@ export const clockIn = async (
 	);
 };
 
-export const clockOut = async (
-	ctx: any,
-	options: { userId: string; userDate?: string },
-) => {
+export const clockOut: EverhourEndpoints['clockOut'] = async (ctx, options) => {
 	const { userId, userDate } = options;
 	return makeEverhourRequest<EverhourTimecard>(
 		`/users/${userId}/timecards/clock-out`,
@@ -31,9 +26,9 @@ export const clockOut = async (
 	);
 };
 
-export const getTimecard = async (
-	ctx: any,
-	options: { userId: string; date: string },
+export const getTimecard: EverhourEndpoints['getTimecard'] = async (
+	ctx,
+	options,
 ) => {
 	return makeEverhourRequest<EverhourTimecard>(
 		`/users/${options.userId}/timecards/${options.date}`,
@@ -41,9 +36,9 @@ export const getTimecard = async (
 	);
 };
 
-export const listTimecards = async (
-	ctx: any,
-	options: { from?: string; to?: string } = {},
+export const listTimecards: EverhourEndpoints['listTimecards'] = async (
+	ctx,
+	options = {},
 ) => {
 	return makeEverhourRequest<EverhourTimecard[]>('/timecards', ctx.key, {
 		method: 'GET',
@@ -51,9 +46,9 @@ export const listTimecards = async (
 	});
 };
 
-export const listUserTimecards = async (
-	ctx: any,
-	options: { userId: string; from?: string; to?: string },
+export const listUserTimecards: EverhourEndpoints['listUserTimecards'] = async (
+	ctx,
+	options,
 ) => {
 	const { userId, from, to } = options;
 	return makeEverhourRequest<EverhourTimecard[]>(
@@ -66,15 +61,9 @@ export const listUserTimecards = async (
 	);
 };
 
-export const updateTimecard = async (
-	ctx: any,
-	options: {
-		userId: string;
-		date: string;
-		clockIn?: string;
-		clockOut?: string;
-		breakTime?: number;
-	},
+export const updateTimecard: EverhourEndpoints['updateTimecard'] = async (
+	ctx,
+	options,
 ) => {
 	const { userId, date, ...body } = options;
 	return makeEverhourRequest<EverhourTimecard>(
@@ -87,9 +76,9 @@ export const updateTimecard = async (
 	);
 };
 
-export const deleteTimecard = async (
-	ctx: any,
-	options: { userId: string; date: string },
+export const deleteTimecard: EverhourEndpoints['deleteTimecard'] = async (
+	ctx,
+	options,
 ) => {
 	return makeEverhourRequest<void>(
 		`/users/${options.userId}/timecards/${options.date}`,
