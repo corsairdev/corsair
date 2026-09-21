@@ -7,7 +7,10 @@ import { z } from 'zod';
  */
 export const PartSchema = z.object({
 	text: z.string().optional(),
-	thought: z.boolean().optional(),
+	thought: z
+		.boolean()
+		.optional()
+		.describe('Reasoning part excluded from the convenience text field'),
 	inlineData: z
 		.object({
 			mimeType: z.string(),

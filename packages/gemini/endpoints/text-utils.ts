@@ -10,9 +10,17 @@ export function stripMarkdownFences(text: string): string {
 	return fenced?.[1] !== undefined ? fenced[1].trim() : text;
 }
 
+export type ExtractCandidateTextOptions = {
+	stripFences?: boolean;
+};
+
+/**
+ * Joins answer text from the primary candidate while excluding Gemini
+ * reasoning parts. Fence removal is opt-in and never changes the request.
+ */
 export function extractCandidateText(
 	candidate: Candidate | undefined,
-	options: { stripFences?: boolean } = {},
+	options: ExtractCandidateTextOptions = {},
 ): string | undefined {
 	const textParts = candidate?.content?.parts.filter(
 		(part) => part.thought !== true && typeof part.text === 'string',

@@ -27,6 +27,26 @@ Missing credentials throw `AuthMissingError` (never an empty string).
 | `listModels` | `GEMINI_LIST_MODELS` | `GET /models` |
 | `waitForVideo` | `GEMINI_WAIT_FOR_VIDEO` | Poll operation until done / error / timeout |
 
+## Multipart text behavior
+
+`generateContent` returns a convenience `text` field made by joining every
+non-thought text part from the first candidate. Gemini reasoning parts are
+typed with `thought?: boolean` and are excluded from this field. Markdown
+fences are preserved by default.
+
+The optional `stripFences` input changes only the convenience field and is
+never sent to Gemini:
+
+```ts
+const response = await corsair.gemini.api.content.generateContent({
+	model: 'gemini-2.5-flash',
+	contents: [{ role: 'user', parts: [{ text: 'Write a TypeScript function' }] }],
+	stripFences: true,
+});
+
+// response.text contains the joined answer text without one outer fence.
+```
+
 ## Quirks & caveats
 
 - **Model-scoped paths require `/models/`.** e.g. `/models/gemini-2.5-flash:generateContent` (not bare `/{model}:…`).
