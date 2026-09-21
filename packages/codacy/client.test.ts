@@ -1,0 +1,211 @@
+import type { CodacyAPIError } from './client';
+import {
+	getCodacyBaseUrl,
+	getCodacyCredentials,
+	makeCodacyRequest,
+	tryGetStoredValue,
+} from './client';
+
+describe('getCodacyBaseUrl', () => {
+	it('builds the v3 URL', () => {
+		expect(getCodacyBaseUrl()).toBe('https://app.codacy.com/api/v3');
+	});
+});
+
+describe('tryGetStoredValue', () => {
+	it('returns the value when the getter resolves', async () => {
+		const value = await tryGetStoredValue(() => Promise.resolve('test-value'));
+		expect(value).toBe('test-value');
+	});
+
+	it('returns undefined when the getter resolves to null', async () => {
+		const value = await tryGetStoredValue(() => Promise.resolve(null));
+		expect(value).toBeUndefined();
+	});
+
+	it('returns undefined when the getter resolves to undefined', async () => {
+		const value = await tryGetStoredValue(() => Promise.resolve(undefined));
+		expect(value).toBeUndefined();
+	});
+
+	it('swallows the "no dek found" error (account has no DEK yet)', async () => {
+		const error = new Error(
+			'No DEK found for account (tenant: "default", integration: "codacy")',
+		);
+		const value = await tryGetStoredValue(() => Promise.reject(error));
+		expect(value).toBeUndefined();
+	});
+
+	it('propagates any other error (decryption failure, db error, ...)', async () => {
+		const boom = new Error('database is down');
+		await expect(tryGetStoredValue(() => Promise.reject(boom))).rejects.toBe(
+			boom,
+		);
+	});
+});
+
+describe('getCodacyCredentials', () => {
+	it('uses the key from ctx', async () => {
+		const ctx = {
+			key: 'test-token',
+		};
+		const token = await getCodacyCredentials(ctx);
+		expect(token).toBe('test-token');
+	});
+
+	it('throws AuthMissingError when no API key is present', async () => {
+		const ctx = {
+			key: undefined,
+		};
+		await expect(getCodacyCredentials(ctx)).rejects.toThrow(
+			'[auth-missing:codacy:api_key]',
+		);
+	});
+});
+
+jest.mock('corsair/http', () => ({
+	request: jest.fn(),
+	ApiError: class MockApiError extends Error {
+		public status: number;
+		public statusText: string;
+		public body: unknown;
+		public retryAfter?: number;
+
+		constructor(
+			request: any,
+			response: {
+				status: number;
+				statusText: string;
+				body: unknown;
+				url: string;
+			},
+			message: string,
+			rateLimitInfo?: { retryAfter?: number },
+		) {
+			super(message);
+			this.name = 'ApiError';
+			this.status = response.status;
+			this.statusText = response.statusText;
+			this.body = response.body;
+			this.retryAfter = rateLimitInfo?.retryAfter;
+		}
+		isRateLimitError() {
+			return this.status === 429;
+		}
+	},
+}));
+
+import { request } from 'corsair/http';
+
+const mockRequest = request as unknown as jest.Mock;
+
+describe('makeCodacyRequest', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+	});
+
+	it('uses Bearer auth with the token', async () => {
+		mockRequest.mockResolvedValueOnce({ data: { id: 1, name: 'Test' } });
+
+		await makeCodacyRequest('/account', 'test-token', {});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				TOKEN: 'test-token',
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/account',
+			}),
+		);
+	});
+
+	it('sends JSON bodies for POST/PUT/PATCH and none for GET', async () => {
+		mockRequest.mockResolvedValueOnce({ data: { id: 1, name: 'Test' } });
+
+		await makeCodacyRequest('/repositories', 'token', {
+			method: 'POST',
+			body: { name: 'test' },
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.any(Object),
+			expect.objectContaining({
+				body: { name: 'test' },
+				mediaType: 'application/json',
+				method: 'POST',
+				url: '/repositories',
+			}),
+		);
+
+		mockRequest.mockResolvedValueOnce({ data: { id: 1, name: 'Test' } });
+		await makeCodacyRequest('/repositories/1', 'token', {
+			method: 'GET',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.any(Object),
+			expect.objectContaining({
+				body: undefined,
+				mediaType: undefined,
+				method: 'GET',
+				url: '/repositories/1',
+			}),
+		);
+	});
+
+	it('passes query parameters through', async () => {
+		mockRequest.mockResolvedValueOnce({ data: { id: 1, name: 'Test' } });
+
+		await makeCodacyRequest('/repositories', 'token', {
+			method: 'GET',
+			query: { page: 1, page_size: 10 },
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.any(Object),
+			expect.objectContaining({
+				query: { page: 1, page_size: 10 },
+				method: 'GET',
+				url: '/repositories',
+			}),
+		);
+	});
+
+	it('wraps ApiError into CodacyAPIError preserving status and body', async () => {
+		const { ApiError } = require('corsair/http');
+		const apiError = new ApiError(
+			{ method: 'GET', url: '/repositories' },
+			{
+				url: 'https://app.codacy.com/api/v3/repositories',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { error: 'rate limit' },
+			},
+			'Too Many Requests',
+			{ retryAfter: 5000 },
+		);
+		mockRequest.mockRejectedValueOnce(apiError);
+
+		const error = (await makeCodacyRequest('/repositories', 'token', {}).catch(
+			(e) => e,
+		)) as CodacyAPIError;
+
+		expect(error).toBeInstanceOf(require('./client').CodacyAPIError);
+		expect(error.status).toBe(429);
+		expect(error.statusText).toBe('Too Many Requests');
+		expect(error.body).toEqual({ error: 'rate limit' });
+	});
+
+	it('wraps non-ApiError failures too', async () => {
+		mockRequest.mockRejectedValueOnce(new Error('network down'));
+
+		const error = (await makeCodacyRequest('/repositories', 'token', {}).catch(
+			(e) => e,
+		)) as CodacyAPIError;
+
+		expect(error).toBeInstanceOf(require('./client').CodacyAPIError);
+		expect(error.message).toContain('network down');
+	});
+});

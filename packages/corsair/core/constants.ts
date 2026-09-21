@@ -29,6 +29,7 @@ export const BaseProviders = [
 	'canva',
 	'cloudflare',
 	'cloudinary',
+	'codacy',
 	'confluence',
 	'cursor',
 	'databricks',
@@ -127,6 +128,7 @@ export const ProviderDisplayNames = {
 	canva: 'Canva',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
+	codacy: 'Codacy',
 	confluence: 'Confluence',
 	cursor: 'Cursor',
 	databricks: 'Databricks',
@@ -232,6 +234,7 @@ export type AllProviders =
 	| 'canva'
 	| 'cloudflare'
 	| 'cloudinary'
+	| 'codacy'
 	| 'confluence'
 	| 'cursor'
 	| 'databricks'
