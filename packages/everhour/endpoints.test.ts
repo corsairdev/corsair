@@ -11,6 +11,7 @@ import * as tagEndpoints from './endpoints/tags';
 import * as taskEndpoints from './endpoints/tasks';
 import * as timeEndpoints from './endpoints/time';
 import * as timecardEndpoints from './endpoints/timecards';
+import type { TimerResponse } from './endpoints/timer';
 import * as timerEndpoints from './endpoints/timer';
 import {
 	EverhourEndpointInputSchemas,
@@ -18,6 +19,23 @@ import {
 } from './endpoints/types';
 import * as userEndpoints from './endpoints/user';
 import type { EverhourContext } from './index';
+import type {
+	EverhourClient,
+	EverhourExpense,
+	EverhourExpenseCategory,
+	EverhourInvoice,
+	EverhourPlatform,
+	EverhourProject,
+	EverhourSection,
+	EverhourTag,
+	EverhourTask,
+	EverhourTimecard,
+	EverhourTimeEntry,
+	EverhourTimesheetApproval,
+	EverhourUser,
+	EverhourWebhook,
+} from './schema/database';
+import type { EverhourWebhookPayload, WebhookRequest } from './webhooks/types';
 
 jest.mock('./client', () => {
 	const actual = jest.requireActual('./client');
@@ -44,6 +62,8 @@ describe('Everhour endpoints routing & event logging', () => {
 		typeof logEventFromContext
 	>;
 
+	// Mock provider payloads below are cast to the endpoint's declared output
+	// type (never `any`) so a schema change that breaks a mock fails typecheck.
 	// Test-only mock with just the fields endpoints read; narrowed to context type.
 	const ctx = {
 		key: 'ev_test_key',
@@ -59,7 +79,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				id: 'user_1',
 				email: 'test@example.com',
-			} as any);
+			} as EverhourUser);
 			const result = await userEndpoints.getUser(ctx, {});
 			expect(result.id).toBe('user_1');
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -69,7 +89,9 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('listTeamUsers issues GET /team/users', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce([{ id: 'user_1' }] as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce([
+				{ id: 'user_1' },
+			] as EverhourUser[]);
 			const result = await userEndpoints.listTeamUsers(ctx, {
 				query: { search: 'test' },
 			});
@@ -89,7 +111,7 @@ describe('Everhour endpoints routing & event logging', () => {
 				id: 1,
 				name: 'Ada',
 				team: { id: 9, name: 'Acme' },
-			} as any);
+			} as EverhourUser);
 			const result = await userEndpoints.listTeams(ctx, {});
 			expect(result).toEqual([{ id: 9, name: 'Acme' }]);
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -104,7 +126,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				id: 'timer_1',
 				status: 'active',
-			} as any);
+			} as TimerResponse);
 			const result = await timerEndpoints.getCurrentTimer(ctx, {});
 			expect(result.id).toBe('timer_1');
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -114,7 +136,9 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('startTimer issues POST /timers', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce({ id: 'timer_1' } as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce({
+				id: 'timer_1',
+			} as TimerResponse);
 			const result = await timerEndpoints.startTimer(ctx, {
 				task: 'task_1',
 				comment: 'Testing',
@@ -131,7 +155,9 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('startTimer issues POST /timers when task is provided', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce({ id: 'timer_1' } as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce({
+				id: 'timer_1',
+			} as TimerResponse);
 			const result = await timerEndpoints.startTimer(ctx, { task: 'task_1' });
 			expect(result.id).toBe('timer_1');
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -148,7 +174,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				id: 'timer_1',
 				status: 'stopped',
-			} as any);
+			} as TimerResponse);
 			const result = await timerEndpoints.stopTimer(ctx, {});
 			expect(result.status).toBe('stopped');
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -163,7 +189,9 @@ describe('Everhour endpoints routing & event logging', () => {
 
 	describe('Time endpoints', () => {
 		it('listUserTime issues GET /users/:userId/time', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce([{ id: 'time_1' }] as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce([
+				{ id: 'time_1' },
+			] as EverhourTimeEntry[]);
 			const result = await timeEndpoints.listUserTime(ctx, {
 				userId: 'user_1',
 			});
@@ -178,7 +206,9 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('listUserTimesheets issues GET /users/:userId/timesheets', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce([{ id: 'sheet_1' }] as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce([
+				{ id: 'sheet_1' },
+			] as Record<string, unknown>[]);
 			const result = await timeEndpoints.listUserTimesheets(ctx, {
 				userId: 'user_1',
 			});
@@ -193,7 +223,9 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('logTime issues POST /time', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce({ id: 'time_1' } as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce({
+				id: 'time_1',
+			} as EverhourTimeEntry);
 			const result = await timeEndpoints.logTime(ctx, {
 				time: 3600,
 				task: 'task_1',
@@ -216,7 +248,7 @@ describe('Everhour endpoints routing & event logging', () => {
 				user_id: 'user_1',
 				start_date: new Date('2026-01-01T00:00:00.000Z'),
 				duration: 7200,
-			} as any);
+			} as EverhourTimeEntry);
 			const result = await timeEndpoints.updateTimeEntry(ctx, {
 				timeId: 'time_1',
 				time: 7200,
@@ -233,7 +265,7 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('deleteTimeEntry issues DELETE /time/:timeId', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce({} as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce(undefined);
 			const result = await timeEndpoints.deleteTimeEntry(ctx, {
 				timeId: 'time_1',
 			});
@@ -249,7 +281,9 @@ describe('Everhour endpoints routing & event logging', () => {
 
 	describe('Task endpoints', () => {
 		it('searchTasks issues GET /tasks/search', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce([{ id: 'task_1' }] as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce([
+				{ id: 'task_1' },
+			] as EverhourTask[]);
 			const result = await taskEndpoints.searchTasks(ctx, { query: 'test' });
 			expect(result).toHaveLength(1);
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -266,7 +300,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				id: 'task_1',
 				name: 'Test Task',
-			} as any);
+			} as EverhourTask);
 			const result = await taskEndpoints.getTask(ctx, { taskId: 'task_1' });
 			expect(result.id).toBe('task_1');
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -276,7 +310,9 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('listTasksForProject issues GET /projects/:projectId/tasks', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce([{ id: 'task_1' }] as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce([
+				{ id: 'task_1' },
+			] as EverhourTask[]);
 			const result = await taskEndpoints.listTasksForProject(ctx, {
 				projectId: 'proj_1',
 			});
@@ -294,7 +330,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				id: 'ev:1',
 				name: 'Write tests',
-			} as any);
+			} as EverhourTask);
 			const result = await taskEndpoints.createTask(ctx, {
 				projectId: 'ev:proj',
 				name: 'Write tests',
@@ -313,7 +349,9 @@ describe('Everhour endpoints routing & event logging', () => {
 
 	describe('Project endpoints', () => {
 		it('listProjects issues GET /projects', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce([{ id: 'proj_1' }] as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce([
+				{ id: 'proj_1' },
+			] as EverhourProject[]);
 			const result = await projectEndpoints.listProjects(ctx, {});
 			expect(result).toHaveLength(1);
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -326,7 +364,9 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('listProjects forwards page and limit', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce([{ id: 'proj_1' }] as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce([
+				{ id: 'proj_1' },
+			] as EverhourProject[]);
 			await projectEndpoints.listProjects(ctx, { page: 2, limit: 50 });
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
 				'/projects',
@@ -342,7 +382,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				id: 'proj_1',
 				name: 'Project 1',
-			} as any);
+			} as EverhourProject);
 			const result = await projectEndpoints.getProject(ctx, {
 				projectId: 'proj_1',
 			});
@@ -358,7 +398,7 @@ describe('Everhour endpoints routing & event logging', () => {
 		it('listClients issues GET /clients', async () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce([
 				{ id: 'client_1' },
-			] as any);
+			] as EverhourClient[]);
 			const result = await clientEndpoints.listClients(ctx, {});
 			expect(result).toHaveLength(1);
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -374,7 +414,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				id: 'client_1',
 				name: 'Client 1',
-			} as any);
+			} as EverhourClient);
 			const result = await clientEndpoints.getClient(ctx, {
 				clientId: 'client_1',
 			});
@@ -388,7 +428,9 @@ describe('Everhour endpoints routing & event logging', () => {
 
 	describe('Platform endpoints', () => {
 		it('listPlatforms issues GET /platforms', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce([{ id: 'plat_1' }] as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce([
+				{ id: 'plat_1' },
+			] as EverhourPlatform[]);
 			const result = await platformEndpoints.listPlatforms(ctx, {});
 			expect(result).toHaveLength(1);
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -403,7 +445,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				id: 'ev:1',
 				name: 'New',
-			} as any);
+			} as EverhourProject);
 			const result = await projectEndpoints.createProject(ctx, {
 				name: 'New',
 				type: 'list',
@@ -423,7 +465,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				id: 'ev:1',
 				name: 'Renamed',
-			} as any);
+			} as EverhourProject);
 			await projectEndpoints.updateProject(ctx, {
 				projectId: 'ev:1',
 				name: 'Renamed',
@@ -439,7 +481,7 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('deleteProject issues DELETE /projects/:projectId', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce(undefined as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce(undefined);
 			await projectEndpoints.deleteProject(ctx, { projectId: 'ev:1' });
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
 				'/projects/ev:1',
@@ -454,7 +496,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				id: 1,
 				name: 'Acme',
-			} as any);
+			} as EverhourClient);
 			const result = await clientEndpoints.createClient(ctx, { name: 'Acme' });
 			expect(result.name).toBe('Acme');
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -472,7 +514,7 @@ describe('Everhour endpoints routing & event logging', () => {
 				id: 1,
 				name: 'Acme',
 				status: 'archived',
-			} as any);
+			} as EverhourClient);
 			await clientEndpoints.updateClient(ctx, {
 				clientId: '1',
 				status: 'archived',
@@ -488,7 +530,7 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('deleteClient issues DELETE /clients/:clientId', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce(undefined as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce(undefined);
 			await clientEndpoints.deleteClient(ctx, { clientId: '1' });
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
 				'/clients/1',
@@ -502,7 +544,7 @@ describe('Everhour endpoints routing & event logging', () => {
 		it('listSections issues GET /projects/:projectId/sections', async () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce([
 				{ id: 1, name: 'Todo', project: 'ev:1', position: 1 },
-			] as any);
+			] as EverhourSection[]);
 			const result = await sectionEndpoints.listSections(ctx, {
 				projectId: 'ev:1',
 			});
@@ -519,7 +561,7 @@ describe('Everhour endpoints routing & event logging', () => {
 				name: 'Todo',
 				project: 'ev:1',
 				position: 1,
-			} as any);
+			} as EverhourSection);
 			const result = await sectionEndpoints.getSection(ctx, { sectionId: '1' });
 			expect(result.id).toBe(1);
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -534,7 +576,7 @@ describe('Everhour endpoints routing & event logging', () => {
 				name: 'Done',
 				project: 'ev:1',
 				position: 2,
-			} as any);
+			} as EverhourSection);
 			await sectionEndpoints.createSection(ctx, {
 				projectId: 'ev:1',
 				name: 'Done',
@@ -550,7 +592,7 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('deleteSection issues DELETE /sections/:sectionId', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce(undefined as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce(undefined);
 			await sectionEndpoints.deleteSection(ctx, { sectionId: '2' });
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
 				'/sections/2',
@@ -565,7 +607,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				user: 89,
 				workTime: 0,
-			} as any);
+			} as EverhourTimecard);
 			const result = await timecardEndpoints.clockIn(ctx, { userId: '89' });
 			expect(result.user).toBe(89);
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -579,7 +621,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				user: 89,
 				workTime: 3600,
-			} as any);
+			} as EverhourTimecard);
 			await timecardEndpoints.clockOut(ctx, { userId: '89' });
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
 				'/users/89/timecards/clock-out',
@@ -593,7 +635,7 @@ describe('Everhour endpoints routing & event logging', () => {
 				user: 89,
 				workTime: 28800,
 				date: '2020-10-21',
-			} as any);
+			} as EverhourTimecard);
 			const result = await timecardEndpoints.getTimecard(ctx, {
 				userId: '89',
 				date: '2020-10-21',
@@ -606,7 +648,7 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('listTimecards issues GET /timecards with date filters', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce([] as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce([] as EverhourTimecard[]);
 			await timecardEndpoints.listTimecards(ctx, {
 				from: '2020-10-01',
 				to: '2020-11-01',
@@ -622,7 +664,7 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('listUserTimecards issues GET /users/:userId/timecards', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce([] as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce([] as EverhourTimecard[]);
 			await timecardEndpoints.listUserTimecards(ctx, { userId: '89' });
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
 				'/users/89/timecards',
@@ -635,7 +677,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				user: 89,
 				workTime: 28800,
-			} as any);
+			} as EverhourTimecard);
 			await timecardEndpoints.updateTimecard(ctx, {
 				userId: '89',
 				date: '2020-10-21',
@@ -653,7 +695,7 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('deleteTimecard issues DELETE /users/:userId/timecards/:date', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce(undefined as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce(undefined);
 			await timecardEndpoints.deleteTimecard(ctx, {
 				userId: '89',
 				date: '2020-10-21',
@@ -671,7 +713,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				id: 148562535,
 				status: 'pending',
-			} as any);
+			} as EverhourTimesheetApproval);
 			const result = await timeEndpoints.requestTimesheetApproval(ctx, {
 				timesheetId: '148562535',
 				comment: 'please review',
@@ -691,7 +733,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				id: 148562535,
 				status: 'discarded',
-			} as any);
+			} as EverhourTimesheetApproval);
 			await timeEndpoints.discardTimesheetApproval(ctx, {
 				timesheetId: '148562535',
 			});
@@ -705,7 +747,9 @@ describe('Everhour endpoints routing & event logging', () => {
 
 	describe('Expense and invoice endpoints', () => {
 		it('listExpenses issues GET /expenses', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce([{ id: 1 }] as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce([
+				{ id: 1 },
+			] as EverhourExpense[]);
 			const result = await expenseEndpoints.listExpenses(ctx, {});
 			expect(result).toHaveLength(1);
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -718,7 +762,7 @@ describe('Everhour endpoints routing & event logging', () => {
 		it('listExpenseCategories issues GET /expenses/categories', async () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce([
 				{ id: 1, name: 'Mileage' },
-			] as any);
+			] as EverhourExpenseCategory[]);
 			const result = await expenseEndpoints.listExpenseCategories(ctx, {});
 			expect(result[0]?.name).toBe('Mileage');
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -728,7 +772,9 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('listInvoices issues GET /invoices', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce([{ id: 1 }] as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce([
+				{ id: 1 },
+			] as EverhourInvoice[]);
 			const result = await invoiceEndpoints.listInvoices(ctx, {});
 			expect(result).toHaveLength(1);
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -741,7 +787,9 @@ describe('Everhour endpoints routing & event logging', () => {
 
 	describe('Webhook CRUD endpoints', () => {
 		it('listWebhooks issues GET /hooks', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce([{ id: 1 }] as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce([
+				{ id: 1 },
+			] as EverhourWebhook[]);
 			const result = await hookEndpoints.listWebhooks(ctx, {});
 			expect(result).toHaveLength(1);
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -755,7 +803,7 @@ describe('Everhour endpoints routing & event logging', () => {
 				id: 1,
 				targetUrl: 'https://example.com',
 				events: ['api:time:updated'],
-			} as any);
+			} as EverhourWebhook);
 			const result = await hookEndpoints.getWebhook(ctx, { hookId: '1' });
 			expect(result.id).toBe(1);
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -769,7 +817,7 @@ describe('Everhour endpoints routing & event logging', () => {
 				id: 1,
 				targetUrl: 'https://example.com',
 				events: ['api:time:updated'],
-			} as any);
+			} as EverhourWebhook);
 			await hookEndpoints.createWebhook(ctx, {
 				targetUrl: 'https://example.com',
 				events: ['api:time:updated'],
@@ -791,7 +839,7 @@ describe('Everhour endpoints routing & event logging', () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce({
 				id: 1,
 				events: ['api:timer:started'],
-			} as any);
+			} as EverhourWebhook);
 			await hookEndpoints.updateWebhook(ctx, {
 				hookId: '1',
 				events: ['api:timer:started'],
@@ -807,7 +855,7 @@ describe('Everhour endpoints routing & event logging', () => {
 		});
 
 		it('deleteWebhook issues DELETE /hooks/:hookId', async () => {
-			mockMakeEverhourRequest.mockResolvedValueOnce(undefined as any);
+			mockMakeEverhourRequest.mockResolvedValueOnce(undefined);
 			await hookEndpoints.deleteWebhook(ctx, { hookId: '1' });
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
 				'/hooks/1',
@@ -821,7 +869,7 @@ describe('Everhour endpoints routing & event logging', () => {
 		it('listTags issues GET /tags', async () => {
 			mockMakeEverhourRequest.mockResolvedValueOnce([
 				{ id: 1, name: 'high', color: '#ee7070' },
-			] as any);
+			] as EverhourTag[]);
 			const result = await tagEndpoints.listTags(ctx, {});
 			expect(result[0]?.name).toBe('high');
 			expect(mockMakeEverhourRequest).toHaveBeenCalledWith(
@@ -845,7 +893,7 @@ describe('Everhour endpoints routing & event logging', () => {
 				},
 				rawBody:
 					'{"type":"api:time:updated","created_at":"2026-01-01T00:00:00.000Z","data":{}}',
-			} as any);
+			} as WebhookRequest<EverhourWebhookPayload>);
 
 			expect(result).toEqual(
 				expect.objectContaining({ success: false, statusCode: 500 }),
