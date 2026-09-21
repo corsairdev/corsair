@@ -1,10 +1,13 @@
 ---
 title: Database
-description: "Tripadvisor local sync: searchable entities, `.search()` filters, and operators."
+description: "Tripadvisor does not define local database entities."
 ---
 
-The Tripadvisor plugin syncs data locally. Use `corsair.tripadvisor.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+The Tripadvisor plugin does not define local database entities or a sync job.
+Tripadvisor location data is returned live by
+`corsair.tripadvisor.api.catalog.locationsNearby`.
 
 <Info>
-**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+Use the [API reference](/plugins/tripadvisor/api) for the supported catalog
+operation. The plugin does not expose a `corsair.tripadvisor.db` namespace.
 </Info>

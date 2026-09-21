@@ -20,7 +20,12 @@ Search nearby Tripadvisor catalog locations by coordinates or location ID
 **Risk:** `read`
 
 ```ts
-await corsair.tripadvisor.api.catalog.locationsNearby({});
+await corsair.tripadvisor.api.catalog.locationsNearby({
+	lat: 40.7128,
+	lon: -74.006,
+	radius: 5,
+	unit: 'MI',
+});
 ```
 
 **Input**

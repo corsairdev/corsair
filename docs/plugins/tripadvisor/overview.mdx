@@ -92,7 +92,12 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.tripadvisor.api.catalog.locationsNearby({});
+await tenant.tripadvisor.api.catalog.locationsNearby({
+	lat: 40.7128,
+	lon: -74.006,
+	radius: 5,
+	unit: 'MI',
+});
 ```
 
 

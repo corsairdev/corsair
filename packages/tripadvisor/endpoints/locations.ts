@@ -4,6 +4,7 @@ import type { TripadvisorEndpoints } from '../index';
 import type { TripadvisorEndpointOutputs } from './types';
 import { LocationsNearbyResponseSchema } from './types';
 
+/** Searches the Tripadvisor catalog for locations near the requested area. */
 export const nearby: TripadvisorEndpoints['locationsNearby'] = async (
 	ctx,
 	input,

@@ -105,6 +105,7 @@ export type InternalTripadvisorPlugin =
 export type ExternalTripadvisorPlugin<T extends TripadvisorPluginOptions> =
 	BaseTripadvisorPlugin<T>;
 
+/** Creates a Tripadvisor plugin configured for API-key authentication. */
 export function tripadvisor<const T extends TripadvisorPluginOptions>(
 	incomingOptions: TripadvisorPluginOptions &
 		T = {} as TripadvisorPluginOptions & T,

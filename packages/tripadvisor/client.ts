@@ -24,6 +24,7 @@ export class TripadvisorAPIError extends Error {
 
 const TRIPADVISOR_API_BASE = 'https://terra.tripadvisor.com/api';
 
+/** Sends an authenticated request to the Tripadvisor Terra API. */
 export async function makeTripadvisorRequest<T>(
 	endpoint: string,
 	apiKey: string,
