@@ -30,6 +30,108 @@ const mockCtx = {
 	// context surface this suite exercises, narrowed to BooqableContext once.
 } as unknown as BooqableContext;
 
+// Hardcoded per-endpoint response fixtures (envelope kind + JSON:API type)
+// from the Booqable API v4 docs — NOT derived from the implementation, so a
+// weakened output schema fails the routing loop below via validation.
+const EXPECTED_BOOQABLE_RESPONSE_FIXTURES: Record<
+	string,
+	{ kind: 'single' | 'collection' | 'archived'; type: string }
+> = {
+	'customers.createCustomer': { kind: 'single', type: 'customers' },
+	'customers.deleteCustomer': { kind: 'archived', type: 'customers' },
+	'customers.getCustomer': { kind: 'single', type: 'customers' },
+	'customers.getCustomers': { kind: 'collection', type: 'customers' },
+	'customers.searchCustomers': { kind: 'collection', type: 'customers' },
+	'orders.createOrder': { kind: 'single', type: 'orders' },
+	'orders.deleteOrder': { kind: 'archived', type: 'orders' },
+	'orders.getNewOrder': { kind: 'single', type: 'orders' },
+	'orders.getOrder': { kind: 'single', type: 'orders' },
+	'orders.listOrders': { kind: 'collection', type: 'orders' },
+	'orders.searchOrders': { kind: 'collection', type: 'orders' },
+	'productGroups.createProductGroup': {
+		kind: 'single',
+		type: 'product_groups',
+	},
+	'productGroups.deleteProductGroup': {
+		kind: 'archived',
+		type: 'product_groups',
+	},
+	'productGroups.getProductGroup': { kind: 'single', type: 'product_groups' },
+	'productGroups.listProductGroups': {
+		kind: 'collection',
+		type: 'product_groups',
+	},
+	'products.getProduct': { kind: 'single', type: 'products' },
+	'products.listProducts': { kind: 'collection', type: 'products' },
+	'companies.updateCompany': { kind: 'single', type: 'companies' },
+	'inventoryLevels.getInventoryLevels': {
+		kind: 'collection',
+		type: 'inventory_levels',
+	},
+	'barcodes.listBarcodes': { kind: 'collection', type: 'barcodes' },
+	'bundleItems.listBundleItems': { kind: 'collection', type: 'bundle_items' },
+	'bundles.searchBundles': { kind: 'collection', type: 'bundles' },
+	'clusters.listClusters': { kind: 'collection', type: 'clusters' },
+	'coupons.listCoupons': { kind: 'collection', type: 'coupons' },
+	'defaultProperties.listDefaultProperties': {
+		kind: 'collection',
+		type: 'default_properties',
+	},
+	'documents.listDocuments': { kind: 'collection', type: 'documents' },
+	'documents.searchDocuments': { kind: 'collection', type: 'documents' },
+	'emailTemplates.listEmailTemplates': {
+		kind: 'collection',
+		type: 'email_templates',
+	},
+	'employees.listEmployees': { kind: 'collection', type: 'employees' },
+	'inventoryBreakdowns.listInventoryBreakdowns': {
+		kind: 'collection',
+		type: 'inventory_breakdowns',
+	},
+	'items.listItems': { kind: 'collection', type: 'items' },
+	'items.searchItems': { kind: 'collection', type: 'items' },
+	'lines.listLines': { kind: 'collection', type: 'lines' },
+	'locations.listLocations': { kind: 'collection', type: 'locations' },
+	'notes.listNotes': { kind: 'collection', type: 'notes' },
+	'paymentMethods.listPaymentMethods': {
+		kind: 'collection',
+		type: 'payment_methods',
+	},
+	'payments.listPayments': { kind: 'collection', type: 'payments' },
+	'photos.listPhotos': { kind: 'collection', type: 'photos' },
+	'plannings.listPlannings': { kind: 'collection', type: 'plannings' },
+	'plannings.searchPlannings': { kind: 'collection', type: 'plannings' },
+	'priceRulesets.listPriceRulesets': {
+		kind: 'collection',
+		type: 'price_rulesets',
+	},
+	'priceStructures.listPriceStructures': {
+		kind: 'collection',
+		type: 'price_structures',
+	},
+	'properties.listProperties': { kind: 'collection', type: 'properties' },
+	'provinces.listProvinces': { kind: 'collection', type: 'provinces' },
+	'stockItemPlannings.listStockItemPlannings': {
+		kind: 'collection',
+		type: 'stock_item_plannings',
+	},
+	'stockItems.listStockItems': { kind: 'collection', type: 'stock_items' },
+	'taxRates.listTaxRates': { kind: 'collection', type: 'tax_rates' },
+	'taxValues.listTaxValues': { kind: 'collection', type: 'tax_values' },
+	'users.listUsers': { kind: 'collection', type: 'users' },
+};
+
+// `unknown` return is intentional here: fixtures model raw provider payloads
+// whose shape is exactly what validation under test must accept or reject.
+function mockResponseFor(fixture: {
+	kind: 'single' | 'collection' | 'archived';
+	type: string;
+}): unknown {
+	if (fixture.kind === 'collection') return { data: [] };
+	if (fixture.kind === 'archived') return { data: null };
+	return { data: { id: 'test-id', type: fixture.type } };
+}
+
 describe('Booqable endpoints', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
@@ -361,8 +463,14 @@ describe('Booqable endpoints', () => {
 			}
 
 			mockRequest.mockClear();
-			mockRequest.mockResolvedValue({ data: [] });
-			await handler(mockCtx, input);
+			const fixtureKey = `${expected.group}.${expected.name}`;
+			const fixture = EXPECTED_BOOQABLE_RESPONSE_FIXTURES[fixtureKey];
+			if (!fixture) {
+				throw new Error(`[test] missing response fixture for ${fixtureKey}`);
+			}
+			mockRequest.mockResolvedValue(mockResponseFor(fixture));
+			const result = await handler(mockCtx, input);
+			expect(result).toBeDefined();
 
 			// `unknown` is intentional: the mocked call args are untyped and
 			// narrowed with typeof checks below instead of an `any` cast.
@@ -407,6 +515,20 @@ describe('Booqable endpoints', () => {
 			key: 'test-api-key',
 		});
 		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints>;
+
+		// Per-call payloads matching each endpoint's validated envelope, so
+		// runtime output validation passes for well-formed documents here.
+		mockRequest
+			.mockResolvedValueOnce({ data: [] })
+			.mockResolvedValueOnce({
+				data: {
+					id: 'cust-1',
+					type: 'customers',
+					attributes: { name: 'Jane' },
+				},
+			})
+			.mockResolvedValueOnce({ data: [] })
+			.mockResolvedValueOnce({ data: { id: 'cust-1', type: 'customers' } });
 
 		await endpoints.customers.getCustomers(mockCtx, {
 			query: { 'page[number]': 1 },
@@ -626,5 +748,71 @@ describe('Booqable output schemas', () => {
 				expect(schema.safeParse({ data: null }).success).toBe(false);
 			}
 		}
+	});
+});
+
+describe('Booqable output validation', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+	});
+
+	function pluginEndpoints() {
+		const plugin = booqable({
+			companySlug: 'demo-company',
+			key: 'test-api-key',
+		});
+		return plugin.endpoints as NonNullable<typeof plugin.endpoints>;
+	}
+
+	it('rejects malformed single-resource responses before they reach callers', async () => {
+		mockRequest.mockResolvedValue({
+			data: [{ id: 'cust-1', type: 'customers' }],
+		});
+
+		await expect(
+			pluginEndpoints().customers.getCustomer(mockCtx, { id: 'cust-1' }),
+		).rejects.toThrow(/invalid response for customers\.getCustomer/);
+	});
+
+	it('rejects malformed collection responses before they reach callers', async () => {
+		mockRequest.mockResolvedValue({ data: { id: 'user-1', type: 'users' } });
+
+		await expect(
+			pluginEndpoints().users.listUsers(mockCtx, {}),
+		).rejects.toThrow(/invalid response for users\.listUsers/);
+	});
+
+	it('rejects responses with the wrong resource type', async () => {
+		mockRequest.mockResolvedValue({
+			data: { id: 'ord-1', type: 'something_else' },
+		});
+
+		await expect(
+			pluginEndpoints().orders.getOrder(mockCtx, { id: 'ord-1' }),
+		).rejects.toThrow(/invalid response for orders\.getOrder/);
+	});
+
+	it('returns validated documents for well-formed responses', async () => {
+		const document = {
+			data: {
+				id: 'ord-1',
+				type: 'orders',
+				attributes: { status: 'reserved' },
+			},
+			meta: {},
+		};
+		mockRequest.mockResolvedValue(document);
+
+		await expect(
+			pluginEndpoints().orders.getOrder(mockCtx, { id: 'ord-1' }),
+		).resolves.toEqual(document);
+	});
+
+	it('accepts tombstone responses for archive endpoints', async () => {
+		mockRequest.mockResolvedValue({ data: null });
+
+		await expect(
+			pluginEndpoints().orders.deleteOrder(mockCtx, { id: 'ord-1' }),
+		).resolves.toEqual({ data: null });
 	});
 });

@@ -1,10 +1,12 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import type { ZodTypeAny } from 'zod';
 import { makeBooqableRequest } from '../client';
 import type { BooqableContext } from '../index';
 import type { BooqableRoute } from './routes';
 import { booqableRoutes } from './routes';
 import type { BooqableEndpointInput } from './types';
+import { BooqableEndpointOutputSchemas } from './types';
 
 const PATH_PARAM_ALIASES: Record<string, readonly string[]> = {
 	id: ['id'],
@@ -182,6 +184,31 @@ export async function requestBooqableOperation(
 	);
 }
 
+/**
+ * Parses the raw provider payload through the route's declared output
+ * schema so malformed JSON:API documents never reach callers unchecked.
+ * Validation failures throw a plain Error (no status), which the plugin's
+ * DEFAULT error handler routes with zero retries.
+ */
+function validateBooqableResponse(
+	route: BooqableRoute,
+	payload: unknown,
+): unknown {
+	// Narrow record assertion is intentional here: route keys are strings at
+	// the type level but always one of the declared output-schema keys at
+	// runtime, since both derive from the same route table.
+	const schemas = BooqableEndpointOutputSchemas as Record<string, ZodTypeAny>;
+	const schema = schemas[route.key];
+	if (!schema) return payload;
+	const parsed = schema.safeParse(payload);
+	if (!parsed.success) {
+		throw new Error(
+			`[booqable] invalid response for ${route.group}.${route.name}: ${parsed.error.message}`,
+		);
+	}
+	return parsed.data;
+}
+
 export async function executeBooqableOperation(
 	ctx: BooqableContext,
 	input: BooqableEndpointInput,
@@ -189,7 +216,8 @@ export async function executeBooqableOperation(
 ) {
 	let status: 'completed' | 'failed' = 'completed';
 	try {
-		return await requestBooqableOperation(ctx, input, route);
+		const payload = await requestBooqableOperation(ctx, input, route);
+		return validateBooqableResponse(route, payload);
 	} catch (error) {
 		status = 'failed';
 		throw error;
