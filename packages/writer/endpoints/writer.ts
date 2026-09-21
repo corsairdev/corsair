@@ -5,6 +5,7 @@ import type { WriterEndpointInputs, WriterEndpointOutputs } from './types';
 
 type WriterContext = EventLoggingContext & {
 	key?: string;
+	// unknown is used because operation inputs are polymorphic across endpoints
 	input?: unknown;
 };
 
@@ -148,6 +149,7 @@ export const downloadFile = async (
 	input: WriterEndpointInputs['downloadFile'],
 ): Promise<WriterEndpointOutputs['downloadFile']> => {
 	const key = requireKey(ctx);
+	// unknown is used as response type because file download returns binary stream/content rather than structured JSON
 	const response = await makeWriterRequest<unknown>(
 		`/files/${encodeURIComponent(input.file_id)}/download`,
 		key,
@@ -351,32 +353,30 @@ export const translateText = async (
 	input: WriterEndpointInputs['translateText'],
 ): Promise<WriterEndpointOutputs['translateText']> => {
 	const key = requireKey(ctx);
-	const response = await makeWriterRequest<
-		WriterEndpointOutputs['translateText']
-	>('/chat', key, 'POST', {
-		model: 'palmyra-x5',
-		messages: [
-			{
-				role: 'system',
-				content: `Translate the input text to ${input.target_language}. Return only translated text.`,
-			},
-			{ role: 'user', content: input.text },
-		],
-		stream: false,
-	});
+	const response = await makeWriterRequest<WriterEndpointOutputs['createChat']>(
+		'/chat',
+		key,
+		'POST',
+		{
+			model: 'palmyra-x5',
+			messages: [
+				{
+					role: 'system',
+					content: `Translate the input text to ${input.target_language}. Return only translated text.`,
+				},
+				{ role: 'user', content: input.text },
+			],
+			stream: false,
+		},
+	);
 	await logEventFromContext(
 		ctx,
 		'writer.translate.text',
 		{ targetLanguage: input.target_language },
 		COMPLETED,
 	);
-	const maybeChat = response as {
-		choices?: Array<{ message?: { content?: string | null } }>;
-	};
-	const translated =
-		typeof maybeChat.choices?.[0]?.message?.content === 'string'
-			? maybeChat.choices[0].message.content
-			: undefined;
+	const content = response.choices[0]?.message.content;
+	const translated = typeof content === 'string' ? content : undefined;
 	return { translation: translated };
 };
 

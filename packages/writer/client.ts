@@ -20,7 +20,9 @@ export async function makeWriterRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
+	// unknown is used because requests can pass structured JSON, binary FormData, or undefined
 	body?: unknown,
+	// unknown is used for query values because query parameters can include strings, numbers, booleans, or arrays
 	query?: Record<string, unknown>,
 	mediaType?: string,
 	base = WRITER_API_BASE,
@@ -46,16 +48,18 @@ export async function makeWriterRequest<T>(
 		effectiveMediaType = 'application/json; charset=utf-8';
 	}
 	const isJsonBody = Boolean(effectiveMediaType?.includes('/json'));
-	const inferredGetQuery =
-		method === 'GET' && isJsonBody
-			? ((body as
-					| Record<string, string | number | boolean | undefined>
-					| undefined) ?? undefined)
-			: undefined;
-	const resolvedQuery =
-		(query as
-			| Record<string, string | number | boolean | undefined>
-			| undefined) ?? inferredGetQuery;
+	let inferredGetQuery: Record<string, unknown> | undefined;
+	if (
+		method === 'GET' &&
+		isJsonBody &&
+		typeof body === 'object' &&
+		body !== null &&
+		!(body instanceof FormData)
+	) {
+		// Narrow body safely to query record when passed as GET options
+		inferredGetQuery = body as Record<string, unknown>;
+	}
+	const resolvedQuery = query ?? inferredGetQuery;
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
@@ -68,15 +72,25 @@ export async function makeWriterRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			const maybeCode =
-				typeof error.body === 'object' && error.body !== null
-					? ((error.body as { code?: unknown }).code ??
-						(error.body as { error?: { code?: unknown } }).error?.code)
-					: undefined;
+			// Safely inspect error payload using conditional type narrowing without unsafe assertions
+			let maybeCode: string | undefined;
+			if (typeof error.body === 'object' && error.body !== null) {
+				if ('code' in error.body && typeof error.body.code === 'string') {
+					maybeCode = error.body.code;
+				} else if (
+					'error' in error.body &&
+					typeof error.body.error === 'object' &&
+					error.body.error !== null &&
+					'code' in error.body.error &&
+					typeof error.body.error.code === 'string'
+				) {
+					maybeCode = error.body.error.code;
+				}
+			}
 			throw new WriterAPIError(
 				error.message,
 				error.status,
-				typeof maybeCode === 'string' ? maybeCode : undefined,
+				maybeCode,
 				error.retryAfter,
 			);
 		}

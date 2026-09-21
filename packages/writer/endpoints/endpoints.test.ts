@@ -46,6 +46,7 @@ const mockedLogEvent = jest.mocked(core.logEventFromContext);
 type TestContext = EventLoggingContext & {
 	key?: string;
 	$getAccountId: jest.Mock<Promise<string>, []>;
+	// unknown is used because database stubs the Corsair plugin database adapter, which is not exercised in endpoint unit tests
 	database?: unknown;
 };
 

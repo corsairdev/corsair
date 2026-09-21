@@ -15,6 +15,7 @@ const ModelSchema = z
 const ModelsResponseSchema = z
 	.object({ models: z.array(ModelSchema) })
 	.passthrough();
+// z.unknown() is used because log_probs can be a variable dictionary or multidimensional array depending on model configuration, passed through without inspection
 const CompletionChoiceSchema = z.object({
 	text: z.string(),
 	log_probs: z.unknown().nullable().optional(),
@@ -79,8 +80,8 @@ const FileListResponseSchema = z
 	.object({
 		data: z.array(FileInfoSchema),
 		has_more: z.boolean().optional(),
-		first_id: z.string().optional(),
-		last_id: z.string().optional(),
+		first_id: z.string().nullable().optional(),
+		last_id: z.string().nullable().optional(),
 	})
 	.passthrough();
 
@@ -96,8 +97,8 @@ const GraphListResponseSchema = z
 	.object({
 		data: z.array(GraphSchema),
 		has_more: z.boolean().optional(),
-		first_id: z.string().optional(),
-		last_id: z.string().optional(),
+		first_id: z.string().nullable().optional(),
+		last_id: z.string().nullable().optional(),
 	})
 	.passthrough();
 
@@ -112,8 +113,8 @@ const ApplicationListResponseSchema = z
 	.object({
 		data: z.array(ApplicationSchema),
 		has_more: z.boolean().optional(),
-		first_id: z.string().optional(),
-		last_id: z.string().optional(),
+		first_id: z.string().nullable().optional(),
+		last_id: z.string().nullable().optional(),
 	})
 	.passthrough();
 
@@ -121,6 +122,7 @@ const QuestionResponseSchema = z
 	.object({
 		question: z.string(),
 		answer: z.string(),
+		// z.unknown() is used because knowledge graph question sources contain arbitrary reference citation objects whose schema depends on the underlying source type
 		sources: z.array(z.unknown()).optional(),
 	})
 	.passthrough();
@@ -134,6 +136,7 @@ const ParsePdfResponseSchema = z
 
 const WebSearchResponseSchema = z
 	.object({
+		// z.unknown() is used because web search result records have dynamic schemas provided by search index providers
 		results: z.array(z.unknown()).optional(),
 	})
 	.passthrough();
@@ -141,6 +144,7 @@ const WebSearchResponseSchema = z
 const VisionResponseSchema = z
 	.object({
 		id: z.string().optional(),
+		// z.unknown() is used because vision model choices return polymorphic output structures (text blocks, choice items, or message blocks) depending on the selected model
 		choices: z.array(z.unknown()).optional(),
 	})
 	.passthrough();
@@ -152,6 +156,7 @@ const TranslateResponseSchema = z
 	})
 	.passthrough();
 
+// z.unknown() is used as a fallback union because enterprise AI content detection endpoints return heterogeneous response payloads across API tiers
 const DetectAiContentResponseSchema = z
 	.array(
 		z
@@ -163,6 +168,7 @@ const DetectAiContentResponseSchema = z
 	)
 	.or(z.unknown());
 
+// z.unknown() is used because medical comprehension queries return polymorphic extraction responses (structured entity maps, text, or raw completion choices) based on prompting
 const MedicalComprehendResponseSchema = z.unknown();
 
 const ListFilesInputSchema = PaginationInputSchema.extend({
@@ -186,6 +192,7 @@ const CreateGraphInputSchema = z.object({
 	name: z.string(),
 	description: z.string().optional(),
 	team_ids: z.array(z.number().int()).optional(),
+	// z.unknown() is used because graph URLs can be specified as plain string URLs or complex crawl/source configuration objects
 	urls: z.array(z.unknown()).optional(),
 });
 
@@ -194,6 +201,7 @@ const UpdateGraphInputSchema = z.object({
 	name: z.string().optional(),
 	description: z.string().optional(),
 	team_ids: z.array(z.number().int()).optional(),
+	// z.unknown() is used because graph URLs can be specified as plain string URLs or complex crawl/source configuration objects
 	urls: z.array(z.unknown()).optional(),
 });
 
@@ -234,6 +242,7 @@ const AddFileToGraphInputSchema = z.object({
 
 const AnalyzeImagesInputSchema = z.object({
 	model: z.string(),
+	// z.unknown() is used because vision input accepts heterogeneous parts (image URL objects, base64 payloads, or text strings)
 	input: z.array(z.unknown()).min(1),
 	stream: z.literal(false).optional(),
 });
@@ -295,6 +304,7 @@ export type WriterEndpointOutputs = {
 	listFiles: z.infer<typeof FileListResponseSchema>;
 	uploadFile: z.infer<typeof FileInfoSchema>;
 	getFile: z.infer<typeof FileInfoSchema>;
+	// unknown is used because file download returns raw binary data (Buffer, Blob, or stream) rather than structured JSON
 	downloadFile: unknown;
 	deleteFile: z.infer<typeof IdOnlyResponseSchema>;
 	listKnowledgeGraphs: z.infer<typeof GraphListResponseSchema>;
@@ -345,6 +355,7 @@ export const WriterEndpointOutputSchemas = {
 	listFiles: FileListResponseSchema,
 	uploadFile: FileInfoSchema,
 	getFile: FileInfoSchema,
+	// z.unknown() is used because file download returns raw binary content rather than structured JSON
 	downloadFile: z.unknown(),
 	deleteFile: IdOnlyResponseSchema,
 	listKnowledgeGraphs: GraphListResponseSchema,
@@ -363,6 +374,7 @@ export const WriterEndpointOutputSchemas = {
 	detectAiContent: DetectAiContentResponseSchema,
 	medicalComprehend: MedicalComprehendResponseSchema,
 } as const;
+// Record<string, unknown> is used to define generic plugin options context without circular dependency on index.ts
 type WriterEndpoint<K extends keyof WriterEndpointInputs> = CorsairEndpoint<
 	CorsairPluginContext<typeof WriterSchema, Record<string, unknown>>,
 	WriterEndpointInputs[K],
