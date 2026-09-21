@@ -23,6 +23,9 @@ function assertBooqableCompanySlug(slug: string): string {
 	return trimmed;
 }
 
+// `unknown` output is intentional here: each endpoint returns the raw
+// provider JSON:API document and the per-endpoint response contract lives in
+// `BooqableEndpointOutputSchemas`, so no narrower shared type is possible.
 export type BooqableEndpoint = CorsairEndpoint<
 	BooqableContext,
 	BooqableEndpointInput,
@@ -36,6 +39,8 @@ function camelToSnake(value: string): string {
 		.toLowerCase();
 }
 
+// `unknown` is intentional here: path params arrive as runtime input values
+// and are stringified (never `any`-cast) after the missing-value check below.
 function encodePathPart(value: unknown): string {
 	if (value === undefined || value === null || value === '') {
 		throw new Error('[booqable] missing required path parameter');
@@ -43,6 +48,8 @@ function encodePathPart(value: unknown): string {
 	return encodeURIComponent(String(value));
 }
 
+// `unknown` is intentional here: the looked-up input value keeps its runtime
+// type and callers narrow it (encode/stringify) instead of asserting `any`.
 function resolvePathParam(
 	input: BooqableEndpointInput,
 	pathKey: string,
@@ -81,6 +88,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function buildQuery(route: BooqableRoute, input: BooqableEndpointInput) {
+	// `unknown` values are intentional here: query params are provider-defined
+	// filter/sort/page values, forwarded as-is after the isRecord narrowing.
 	const query: Record<string, unknown> = isRecord(input.query)
 		? { ...input.query }
 		: {};

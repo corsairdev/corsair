@@ -1,23 +1,111 @@
 import { z } from 'zod';
 
-const BooqableResponseSchema = z.unknown();
+/**
+ * Booqable API v4 returns JSON:API documents by default
+ * (see https://developers.booqable.com/v4.html — "Response types"):
+ * `{ data, included?, links?, meta? }` where `data` is a single resource
+ * or an array of resources, and every resource carries
+ * `{ id, type, attributes?, relationships? }` with `type` equal to the
+ * plural path segment (e.g. `"orders"`, `"customers"`).
+ *
+ * Attributes/relationships stay loose records: the API is still in beta and
+ * may add fields, so per-field attribute contracts would be brittle and are
+ * intentionally not pinned here. The endpoint-specific part of each contract
+ * is the envelope shape (single vs collection) plus the `type` literal.
+ */
+// `unknown` values below are intentional: JSON:API attributes/relationships/
+// links/meta are provider-defined open objects, so keys are validated while
+// values stay provider-defined instead of being forced through `any`.
+const BooqableAttributesSchema = z.record(z.string(), z.unknown());
+const BooqableRelationshipsSchema = z.record(z.string(), z.unknown());
+const BooqableLinksSchema = z.record(z.string(), z.unknown());
+const BooqableMetaSchema = z.record(z.string(), z.unknown());
+
+const BooqableIncludedResourceSchema = z
+	.object({
+		id: z.string(),
+		type: z.string(),
+		attributes: BooqableAttributesSchema.optional(),
+		relationships: BooqableRelationshipsSchema.optional(),
+	})
+	.loose();
+
+function booqableResourceSchema<TType extends string>(type: TType) {
+	return z
+		.object({
+			id: z.string(),
+			type: z.literal(type),
+			attributes: BooqableAttributesSchema.optional(),
+			relationships: BooqableRelationshipsSchema.optional(),
+		})
+		.loose();
+}
+
+function booqableSingleResponseSchema<TType extends string>(type: TType) {
+	return z
+		.object({
+			data: booqableResourceSchema(type),
+			included: z.array(BooqableIncludedResourceSchema).optional(),
+			links: BooqableLinksSchema.optional(),
+			meta: BooqableMetaSchema.optional(),
+		})
+		.loose();
+}
+
+function booqableCollectionResponseSchema<TType extends string>(type: TType) {
+	return z
+		.object({
+			data: z.array(booqableResourceSchema(type)),
+			included: z.array(BooqableIncludedResourceSchema).optional(),
+			links: BooqableLinksSchema.optional(),
+			meta: BooqableMetaSchema.optional(),
+		})
+		.loose();
+}
+
+/**
+ * Archive (DELETE) endpoints return the archived resource as a single
+ * JSON:API document. `data: null` is additionally accepted per JSON:API
+ * single-resource nullability so a tombstone response still validates.
+ */
+function booqableArchivedResponseSchema<TType extends string>(type: TType) {
+	return z.union([
+		booqableSingleResponseSchema(type),
+		z
+			.object({
+				data: z.null(),
+				links: BooqableLinksSchema.optional(),
+				meta: BooqableMetaSchema.optional(),
+			})
+			.loose(),
+	]);
+}
+
+// `unknown` is intentional here: request bodies are provider-defined
+// JSON:API payloads (resource objects, search filter groups), so the shape
+// cannot be pinned per endpoint without blocking valid provider fields.
 const BooqableOptionalBodySchema = z.unknown().optional();
+
+// `unknown` values are intentional here: `query` carries provider-defined
+// filter/sort/field/phenotype params such as `page[number]`, `page[size]`
+// and `filter[...]` operators, so values stay provider-defined.
+const BooqableQuerySchema = z.record(z.string(), z.unknown()).optional();
 
 const BooqableBaseInputFields = {
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 };
 
 const createCustomerInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type createCustomerInput = z.infer<typeof createCustomerInputSchema>;
-const createCustomerResponseSchema = BooqableResponseSchema;
+const createCustomerResponseSchema = booqableSingleResponseSchema('customers');
 export type createCustomerResponse = z.infer<
 	typeof createCustomerResponseSchema
 >;
@@ -26,11 +114,12 @@ const deleteCustomerInputSchema = z.object({
 	id: z.string(),
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type deleteCustomerInput = z.infer<typeof deleteCustomerInputSchema>;
-const deleteCustomerResponseSchema = BooqableResponseSchema;
+const deleteCustomerResponseSchema =
+	booqableArchivedResponseSchema('customers');
 export type deleteCustomerResponse = z.infer<
 	typeof deleteCustomerResponseSchema
 >;
@@ -39,31 +128,33 @@ const getCustomerInputSchema = z.object({
 	id: z.string(),
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type getCustomerInput = z.infer<typeof getCustomerInputSchema>;
-const getCustomerResponseSchema = BooqableResponseSchema;
+const getCustomerResponseSchema = booqableSingleResponseSchema('customers');
 export type getCustomerResponse = z.infer<typeof getCustomerResponseSchema>;
 
 const getCustomersInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type getCustomersInput = z.infer<typeof getCustomersInputSchema>;
-const getCustomersResponseSchema = BooqableResponseSchema;
+const getCustomersResponseSchema =
+	booqableCollectionResponseSchema('customers');
 export type getCustomersResponse = z.infer<typeof getCustomersResponseSchema>;
 
 const searchCustomersInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type searchCustomersInput = z.infer<typeof searchCustomersInputSchema>;
-const searchCustomersResponseSchema = BooqableResponseSchema;
+const searchCustomersResponseSchema =
+	booqableCollectionResponseSchema('customers');
 export type searchCustomersResponse = z.infer<
 	typeof searchCustomersResponseSchema
 >;
@@ -71,75 +162,76 @@ export type searchCustomersResponse = z.infer<
 const createOrderInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type createOrderInput = z.infer<typeof createOrderInputSchema>;
-const createOrderResponseSchema = BooqableResponseSchema;
+const createOrderResponseSchema = booqableSingleResponseSchema('orders');
 export type createOrderResponse = z.infer<typeof createOrderResponseSchema>;
 
 const deleteOrderInputSchema = z.object({
 	id: z.string(),
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type deleteOrderInput = z.infer<typeof deleteOrderInputSchema>;
-const deleteOrderResponseSchema = BooqableResponseSchema;
+const deleteOrderResponseSchema = booqableArchivedResponseSchema('orders');
 export type deleteOrderResponse = z.infer<typeof deleteOrderResponseSchema>;
 
 const getNewOrderInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type getNewOrderInput = z.infer<typeof getNewOrderInputSchema>;
-const getNewOrderResponseSchema = BooqableResponseSchema;
+const getNewOrderResponseSchema = booqableSingleResponseSchema('orders');
 export type getNewOrderResponse = z.infer<typeof getNewOrderResponseSchema>;
 
 const getOrderInputSchema = z.object({
 	id: z.string(),
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type getOrderInput = z.infer<typeof getOrderInputSchema>;
-const getOrderResponseSchema = BooqableResponseSchema;
+const getOrderResponseSchema = booqableSingleResponseSchema('orders');
 export type getOrderResponse = z.infer<typeof getOrderResponseSchema>;
 
 const listOrdersInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listOrdersInput = z.infer<typeof listOrdersInputSchema>;
-const listOrdersResponseSchema = BooqableResponseSchema;
+const listOrdersResponseSchema = booqableCollectionResponseSchema('orders');
 export type listOrdersResponse = z.infer<typeof listOrdersResponseSchema>;
 
 const searchOrdersInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type searchOrdersInput = z.infer<typeof searchOrdersInputSchema>;
-const searchOrdersResponseSchema = BooqableResponseSchema;
+const searchOrdersResponseSchema = booqableCollectionResponseSchema('orders');
 export type searchOrdersResponse = z.infer<typeof searchOrdersResponseSchema>;
 
 const createProductGroupInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type createProductGroupInput = z.infer<
 	typeof createProductGroupInputSchema
 >;
-const createProductGroupResponseSchema = BooqableResponseSchema;
+const createProductGroupResponseSchema =
+	booqableSingleResponseSchema('product_groups');
 export type createProductGroupResponse = z.infer<
 	typeof createProductGroupResponseSchema
 >;
@@ -148,13 +240,14 @@ const deleteProductGroupInputSchema = z.object({
 	id: z.string(),
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type deleteProductGroupInput = z.infer<
 	typeof deleteProductGroupInputSchema
 >;
-const deleteProductGroupResponseSchema = BooqableResponseSchema;
+const deleteProductGroupResponseSchema =
+	booqableArchivedResponseSchema('product_groups');
 export type deleteProductGroupResponse = z.infer<
 	typeof deleteProductGroupResponseSchema
 >;
@@ -163,11 +256,12 @@ const getProductGroupInputSchema = z.object({
 	id: z.string(),
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type getProductGroupInput = z.infer<typeof getProductGroupInputSchema>;
-const getProductGroupResponseSchema = BooqableResponseSchema;
+const getProductGroupResponseSchema =
+	booqableSingleResponseSchema('product_groups');
 export type getProductGroupResponse = z.infer<
 	typeof getProductGroupResponseSchema
 >;
@@ -175,13 +269,14 @@ export type getProductGroupResponse = z.infer<
 const listProductGroupsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listProductGroupsInput = z.infer<
 	typeof listProductGroupsInputSchema
 >;
-const listProductGroupsResponseSchema = BooqableResponseSchema;
+const listProductGroupsResponseSchema =
+	booqableCollectionResponseSchema('product_groups');
 export type listProductGroupsResponse = z.infer<
 	typeof listProductGroupsResponseSchema
 >;
@@ -190,43 +285,44 @@ const getProductInputSchema = z.object({
 	id: z.string(),
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type getProductInput = z.infer<typeof getProductInputSchema>;
-const getProductResponseSchema = BooqableResponseSchema;
+const getProductResponseSchema = booqableSingleResponseSchema('products');
 export type getProductResponse = z.infer<typeof getProductResponseSchema>;
 
 const listProductsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listProductsInput = z.infer<typeof listProductsInputSchema>;
-const listProductsResponseSchema = BooqableResponseSchema;
+const listProductsResponseSchema = booqableCollectionResponseSchema('products');
 export type listProductsResponse = z.infer<typeof listProductsResponseSchema>;
 
 const updateCompanyInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type updateCompanyInput = z.infer<typeof updateCompanyInputSchema>;
-const updateCompanyResponseSchema = BooqableResponseSchema;
+const updateCompanyResponseSchema = booqableSingleResponseSchema('companies');
 export type updateCompanyResponse = z.infer<typeof updateCompanyResponseSchema>;
 
 const getInventoryLevelsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type getInventoryLevelsInput = z.infer<
 	typeof getInventoryLevelsInputSchema
 >;
-const getInventoryLevelsResponseSchema = BooqableResponseSchema;
+const getInventoryLevelsResponseSchema =
+	booqableCollectionResponseSchema('inventory_levels');
 export type getInventoryLevelsResponse = z.infer<
 	typeof getInventoryLevelsResponseSchema
 >;
@@ -234,21 +330,22 @@ export type getInventoryLevelsResponse = z.infer<
 const listBarcodesInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listBarcodesInput = z.infer<typeof listBarcodesInputSchema>;
-const listBarcodesResponseSchema = BooqableResponseSchema;
+const listBarcodesResponseSchema = booqableCollectionResponseSchema('barcodes');
 export type listBarcodesResponse = z.infer<typeof listBarcodesResponseSchema>;
 
 const listBundleItemsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listBundleItemsInput = z.infer<typeof listBundleItemsInputSchema>;
-const listBundleItemsResponseSchema = BooqableResponseSchema;
+const listBundleItemsResponseSchema =
+	booqableCollectionResponseSchema('bundle_items');
 export type listBundleItemsResponse = z.infer<
 	typeof listBundleItemsResponseSchema
 >;
@@ -256,43 +353,44 @@ export type listBundleItemsResponse = z.infer<
 const searchBundlesInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type searchBundlesInput = z.infer<typeof searchBundlesInputSchema>;
-const searchBundlesResponseSchema = BooqableResponseSchema;
+const searchBundlesResponseSchema = booqableCollectionResponseSchema('bundles');
 export type searchBundlesResponse = z.infer<typeof searchBundlesResponseSchema>;
 
 const listClustersInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listClustersInput = z.infer<typeof listClustersInputSchema>;
-const listClustersResponseSchema = BooqableResponseSchema;
+const listClustersResponseSchema = booqableCollectionResponseSchema('clusters');
 export type listClustersResponse = z.infer<typeof listClustersResponseSchema>;
 
 const listCouponsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listCouponsInput = z.infer<typeof listCouponsInputSchema>;
-const listCouponsResponseSchema = BooqableResponseSchema;
+const listCouponsResponseSchema = booqableCollectionResponseSchema('coupons');
 export type listCouponsResponse = z.infer<typeof listCouponsResponseSchema>;
 
 const listDefaultPropertiesInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listDefaultPropertiesInput = z.infer<
 	typeof listDefaultPropertiesInputSchema
 >;
-const listDefaultPropertiesResponseSchema = BooqableResponseSchema;
+const listDefaultPropertiesResponseSchema =
+	booqableCollectionResponseSchema('default_properties');
 export type listDefaultPropertiesResponse = z.infer<
 	typeof listDefaultPropertiesResponseSchema
 >;
@@ -300,21 +398,23 @@ export type listDefaultPropertiesResponse = z.infer<
 const listDocumentsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listDocumentsInput = z.infer<typeof listDocumentsInputSchema>;
-const listDocumentsResponseSchema = BooqableResponseSchema;
+const listDocumentsResponseSchema =
+	booqableCollectionResponseSchema('documents');
 export type listDocumentsResponse = z.infer<typeof listDocumentsResponseSchema>;
 
 const searchDocumentsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type searchDocumentsInput = z.infer<typeof searchDocumentsInputSchema>;
-const searchDocumentsResponseSchema = BooqableResponseSchema;
+const searchDocumentsResponseSchema =
+	booqableCollectionResponseSchema('documents');
 export type searchDocumentsResponse = z.infer<
 	typeof searchDocumentsResponseSchema
 >;
@@ -322,13 +422,14 @@ export type searchDocumentsResponse = z.infer<
 const listEmailTemplatesInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listEmailTemplatesInput = z.infer<
 	typeof listEmailTemplatesInputSchema
 >;
-const listEmailTemplatesResponseSchema = BooqableResponseSchema;
+const listEmailTemplatesResponseSchema =
+	booqableCollectionResponseSchema('email_templates');
 export type listEmailTemplatesResponse = z.infer<
 	typeof listEmailTemplatesResponseSchema
 >;
@@ -336,23 +437,26 @@ export type listEmailTemplatesResponse = z.infer<
 const listEmployeesInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listEmployeesInput = z.infer<typeof listEmployeesInputSchema>;
-const listEmployeesResponseSchema = BooqableResponseSchema;
+const listEmployeesResponseSchema =
+	booqableCollectionResponseSchema('employees');
 export type listEmployeesResponse = z.infer<typeof listEmployeesResponseSchema>;
 
 const listInventoryBreakdownsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listInventoryBreakdownsInput = z.infer<
 	typeof listInventoryBreakdownsInputSchema
 >;
-const listInventoryBreakdownsResponseSchema = BooqableResponseSchema;
+const listInventoryBreakdownsResponseSchema = booqableCollectionResponseSchema(
+	'inventory_breakdowns',
+);
 export type listInventoryBreakdownsResponse = z.infer<
 	typeof listInventoryBreakdownsResponseSchema
 >;
@@ -360,63 +464,65 @@ export type listInventoryBreakdownsResponse = z.infer<
 const listItemsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listItemsInput = z.infer<typeof listItemsInputSchema>;
-const listItemsResponseSchema = BooqableResponseSchema;
+const listItemsResponseSchema = booqableCollectionResponseSchema('items');
 export type listItemsResponse = z.infer<typeof listItemsResponseSchema>;
 
 const searchItemsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type searchItemsInput = z.infer<typeof searchItemsInputSchema>;
-const searchItemsResponseSchema = BooqableResponseSchema;
+const searchItemsResponseSchema = booqableCollectionResponseSchema('items');
 export type searchItemsResponse = z.infer<typeof searchItemsResponseSchema>;
 
 const listLinesInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listLinesInput = z.infer<typeof listLinesInputSchema>;
-const listLinesResponseSchema = BooqableResponseSchema;
+const listLinesResponseSchema = booqableCollectionResponseSchema('lines');
 export type listLinesResponse = z.infer<typeof listLinesResponseSchema>;
 
 const listLocationsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listLocationsInput = z.infer<typeof listLocationsInputSchema>;
-const listLocationsResponseSchema = BooqableResponseSchema;
+const listLocationsResponseSchema =
+	booqableCollectionResponseSchema('locations');
 export type listLocationsResponse = z.infer<typeof listLocationsResponseSchema>;
 
 const listNotesInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listNotesInput = z.infer<typeof listNotesInputSchema>;
-const listNotesResponseSchema = BooqableResponseSchema;
+const listNotesResponseSchema = booqableCollectionResponseSchema('notes');
 export type listNotesResponse = z.infer<typeof listNotesResponseSchema>;
 
 const listPaymentMethodsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listPaymentMethodsInput = z.infer<
 	typeof listPaymentMethodsInputSchema
 >;
-const listPaymentMethodsResponseSchema = BooqableResponseSchema;
+const listPaymentMethodsResponseSchema =
+	booqableCollectionResponseSchema('payment_methods');
 export type listPaymentMethodsResponse = z.infer<
 	typeof listPaymentMethodsResponseSchema
 >;
@@ -424,41 +530,43 @@ export type listPaymentMethodsResponse = z.infer<
 const listPaymentsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listPaymentsInput = z.infer<typeof listPaymentsInputSchema>;
-const listPaymentsResponseSchema = BooqableResponseSchema;
+const listPaymentsResponseSchema = booqableCollectionResponseSchema('payments');
 export type listPaymentsResponse = z.infer<typeof listPaymentsResponseSchema>;
 
 const listPhotosInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listPhotosInput = z.infer<typeof listPhotosInputSchema>;
-const listPhotosResponseSchema = BooqableResponseSchema;
+const listPhotosResponseSchema = booqableCollectionResponseSchema('photos');
 export type listPhotosResponse = z.infer<typeof listPhotosResponseSchema>;
 
 const listPlanningsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listPlanningsInput = z.infer<typeof listPlanningsInputSchema>;
-const listPlanningsResponseSchema = BooqableResponseSchema;
+const listPlanningsResponseSchema =
+	booqableCollectionResponseSchema('plannings');
 export type listPlanningsResponse = z.infer<typeof listPlanningsResponseSchema>;
 
 const searchPlanningsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type searchPlanningsInput = z.infer<typeof searchPlanningsInputSchema>;
-const searchPlanningsResponseSchema = BooqableResponseSchema;
+const searchPlanningsResponseSchema =
+	booqableCollectionResponseSchema('plannings');
 export type searchPlanningsResponse = z.infer<
 	typeof searchPlanningsResponseSchema
 >;
@@ -466,13 +574,14 @@ export type searchPlanningsResponse = z.infer<
 const listPriceRulesetsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listPriceRulesetsInput = z.infer<
 	typeof listPriceRulesetsInputSchema
 >;
-const listPriceRulesetsResponseSchema = BooqableResponseSchema;
+const listPriceRulesetsResponseSchema =
+	booqableCollectionResponseSchema('price_rulesets');
 export type listPriceRulesetsResponse = z.infer<
 	typeof listPriceRulesetsResponseSchema
 >;
@@ -480,13 +589,14 @@ export type listPriceRulesetsResponse = z.infer<
 const listPriceStructuresInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listPriceStructuresInput = z.infer<
 	typeof listPriceStructuresInputSchema
 >;
-const listPriceStructuresResponseSchema = BooqableResponseSchema;
+const listPriceStructuresResponseSchema =
+	booqableCollectionResponseSchema('price_structures');
 export type listPriceStructuresResponse = z.infer<
 	typeof listPriceStructuresResponseSchema
 >;
@@ -494,11 +604,12 @@ export type listPriceStructuresResponse = z.infer<
 const listPropertiesInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listPropertiesInput = z.infer<typeof listPropertiesInputSchema>;
-const listPropertiesResponseSchema = BooqableResponseSchema;
+const listPropertiesResponseSchema =
+	booqableCollectionResponseSchema('properties');
 export type listPropertiesResponse = z.infer<
 	typeof listPropertiesResponseSchema
 >;
@@ -506,23 +617,26 @@ export type listPropertiesResponse = z.infer<
 const listProvincesInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listProvincesInput = z.infer<typeof listProvincesInputSchema>;
-const listProvincesResponseSchema = BooqableResponseSchema;
+const listProvincesResponseSchema =
+	booqableCollectionResponseSchema('provinces');
 export type listProvincesResponse = z.infer<typeof listProvincesResponseSchema>;
 
 const listStockItemPlanningsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listStockItemPlanningsInput = z.infer<
 	typeof listStockItemPlanningsInputSchema
 >;
-const listStockItemPlanningsResponseSchema = BooqableResponseSchema;
+const listStockItemPlanningsResponseSchema = booqableCollectionResponseSchema(
+	'stock_item_plannings',
+);
 export type listStockItemPlanningsResponse = z.infer<
 	typeof listStockItemPlanningsResponseSchema
 >;
@@ -530,11 +644,12 @@ export type listStockItemPlanningsResponse = z.infer<
 const listStockItemsInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listStockItemsInput = z.infer<typeof listStockItemsInputSchema>;
-const listStockItemsResponseSchema = BooqableResponseSchema;
+const listStockItemsResponseSchema =
+	booqableCollectionResponseSchema('stock_items');
 export type listStockItemsResponse = z.infer<
 	typeof listStockItemsResponseSchema
 >;
@@ -542,31 +657,33 @@ export type listStockItemsResponse = z.infer<
 const listTaxRatesInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listTaxRatesInput = z.infer<typeof listTaxRatesInputSchema>;
-const listTaxRatesResponseSchema = BooqableResponseSchema;
+const listTaxRatesResponseSchema =
+	booqableCollectionResponseSchema('tax_rates');
 export type listTaxRatesResponse = z.infer<typeof listTaxRatesResponseSchema>;
 
 const listTaxValuesInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listTaxValuesInput = z.infer<typeof listTaxValuesInputSchema>;
-const listTaxValuesResponseSchema = BooqableResponseSchema;
+const listTaxValuesResponseSchema =
+	booqableCollectionResponseSchema('tax_values');
 export type listTaxValuesResponse = z.infer<typeof listTaxValuesResponseSchema>;
 
 const listUsersInputSchema = z.object({
 	companySlug: z.string().optional(),
 	body: BooqableOptionalBodySchema,
-	query: z.record(z.string(), z.unknown()).optional(),
+	query: BooqableQuerySchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type listUsersInput = z.infer<typeof listUsersInputSchema>;
-const listUsersResponseSchema = BooqableResponseSchema;
+const listUsersResponseSchema = booqableCollectionResponseSchema('users');
 export type listUsersResponse = z.infer<typeof listUsersResponseSchema>;
 
 export type BooqableEndpointInputs = {
@@ -779,5 +896,8 @@ export const BooqableEndpointOutputSchemas = {
 
 export type BooqableEndpointInput =
 	BooqableEndpointInputs[keyof BooqableEndpointInputs] & {
+		// `unknown` is intentional here: the factory reads camelCase/snake_case
+		// aliases and provider filter params off this index at runtime, so the
+		// value type stays open and is narrowed per use-site instead.
 		[key: string]: unknown;
 	};
