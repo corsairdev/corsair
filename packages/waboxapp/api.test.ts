@@ -11,11 +11,6 @@ import {
 } from './endpoints/types';
 import type { WaboxappKeyBuilderContext, WaboxappPluginOptions } from './index';
 import { waboxapp, waboxappAuthConfig } from './index';
-import {
-	createWaboxappMatch,
-	parseWaboxappWebhookBody,
-	verifyWaboxappWebhookToken,
-} from './webhooks/types';
 
 function stubKeys(
 	getApiKey: () => Promise<string | null>,
@@ -127,8 +122,6 @@ describe('Waboxapp Endpoint Schemas & Setup', () => {
 		expect(plugin.endpoints?.messages.sendLink).toBeDefined();
 		expect(plugin.endpoints?.messages.sendMedia).toBeDefined();
 		expect(plugin.endpoints?.accounts.getStatus).toBeDefined();
-		expect(plugin.webhooks?.message.received).toBeDefined();
-		expect(plugin.webhooks?.message.ack).toBeDefined();
 	});
 
 	it('resolves explicit key from options in keyBuilder', async () => {
@@ -156,25 +149,6 @@ describe('Waboxapp Endpoint Schemas & Setup', () => {
 		await expect(plugin.keyBuilder?.(ctx, 'endpoint')).rejects.toThrow(
 			AuthMissingError,
 		);
-	});
-
-	it('parses form webhook and validates secret token', () => {
-		const body =
-			'event=message&token=test_tok&uid=34666123456&contact%5Buid%5D=123&message%5Bbody%5D%5Btext%5D=Hi';
-		const parsed = parseWaboxappWebhookBody(body);
-		expect(parsed).toMatchObject({
-			event: 'message',
-			token: 'test_tok',
-			uid: '34666123456',
-		});
-		expect(createWaboxappMatch('message')({ body, headers: {} })).toBe(true);
-		expect(createWaboxappMatch('ack')({ body, headers: {} })).toBe(false);
-
-		const valid = verifyWaboxappWebhookToken(
-			{ payload: { token: 'test_tok' } },
-			'test_tok',
-		);
-		expect(valid.valid).toBe(true);
 	});
 });
 

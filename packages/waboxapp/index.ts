@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
@@ -33,19 +30,6 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { WaboxappSchema } from './schema';
-import { MessageWebhooks } from './webhooks';
-import { matchWaboxappTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	AckEvent,
-	MessageEvent,
-	WaboxappWebhookOutputs,
-} from './webhooks/types';
-import {
-	AckEventSchema,
-	isWaboxappWebhookPayload,
-	MessageEventSchema,
-	parseWaboxappWebhookBody,
-} from './webhooks/types';
 
 export const waboxappAuthConfig = {
 	api_key: {
@@ -58,7 +42,6 @@ export type WaboxappPluginOptions = {
 	key?: string;
 	uid?: string;
 	hooks?: InternalWaboxappPlugin['hooks'];
-	webhookHooks?: InternalWaboxappPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof waboxappEndpointsNested>;
 };
@@ -94,18 +77,6 @@ export type WaboxappBoundEndpoints = BindEndpoints<
 	typeof waboxappEndpointsNested
 >;
 
-type WaboxappWebhook<
-	K extends keyof WaboxappWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<WaboxappContext, TEvent, WaboxappWebhookOutputs[K]>;
-
-export type WaboxappWebhooks = {
-	message: WaboxappWebhook<'message', MessageEvent>;
-	ack: WaboxappWebhook<'ack', AckEvent>;
-};
-
-export type WaboxappBoundWebhooks = BindWebhooks<WaboxappWebhooks>;
-
 const waboxappEndpointsNested = {
 	messages: {
 		sendChat,
@@ -118,12 +89,8 @@ const waboxappEndpointsNested = {
 	},
 } as const;
 
-const waboxappWebhooksNested = {
-	message: {
-		received: MessageWebhooks.received,
-		ack: MessageWebhooks.ack,
-	},
-} as const;
+// No webhooks — Waboxapp integration provides REST API operations.
+const waboxappWebhooksNested = {} as const;
 
 export const waboxappEndpointSchemas = {
 	'messages.sendChat': {
@@ -148,21 +115,6 @@ export const waboxappEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof waboxappEndpointsNested
->;
-
-const waboxappWebhookSchemas = {
-	'message.received': {
-		description: 'An incoming WhatsApp message',
-		payload: MessageEventSchema,
-		response: MessageEventSchema,
-	},
-	'message.ack': {
-		description: 'A WhatsApp message acknowledgement',
-		payload: AckEventSchema,
-		response: AckEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof waboxappWebhooksNested
 >;
 
 const waboxappEndpointMeta = {
@@ -219,27 +171,23 @@ export function waboxapp<const T extends WaboxappPluginOptions>(
 		schema: WaboxappSchema,
 		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: undefined,
 		endpoints: waboxappEndpointsNested,
 		webhooks: waboxappWebhooksNested,
 		endpointMeta: waboxappEndpointMeta,
 		endpointSchemas: waboxappEndpointSchemas,
-		webhookSchemas: waboxappWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const body = parseWaboxappWebhookBody(request.body);
-			return isWaboxappWebhookPayload(body);
-		},
-		pluginTenantWebhookMatcher: matchWaboxappTenantWebhook,
+		pluginWebhookMatcher: undefined,
+		pluginTenantWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: WaboxappKeyBuilderContext, source) => {
-			if ((source === 'endpoint' || source === 'webhook') && options.key) {
+			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' || source === 'webhook') {
+			if (source === 'endpoint') {
 				const key = await ctx.keys.get_api_key();
 				if (!key) {
 					throw new AuthMissingError('waboxapp', 'api_key');
@@ -266,8 +214,3 @@ export type {
 	WaboxappEndpointInputs,
 	WaboxappEndpointOutputs,
 } from './endpoints/types';
-export type {
-	AckEvent,
-	MessageEvent,
-	WaboxappWebhookOutputs,
-} from './webhooks/types';
