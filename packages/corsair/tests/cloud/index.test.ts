@@ -280,6 +280,16 @@ describe('corsairCloud', () => {
 		);
 	});
 
+	it('exposes the resolved base URL as `url` so consumers never re-parse the key', () => {
+		expect(corsairCloud({ apiKey: 'ck_cloud_envh.secret123' }).url).toBe(
+			'https://api.corsair.cloud/envh/api/corsair',
+		);
+		expect(
+			corsairCloud({ apiKey: 'ck_cloud_x', url: 'https://vm/p/api/corsair' })
+				.url,
+		).toBe('https://vm/p/api/corsair');
+	});
+
 	it('requires apiKey, a resolvable key or explicit url, and rejects non-loopback http', () => {
 		expect(() => corsairCloud({ apiKey: '' })).toThrow(/apiKey/);
 		// A key with no slug+secret and no url can't resolve a base URL.

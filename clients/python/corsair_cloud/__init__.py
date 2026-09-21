@@ -14,8 +14,14 @@ from dataclasses import dataclass
 from typing import Any
 from urllib.parse import quote, urlencode, urlsplit
 
-__all__ = ["CorsairCloud", "CorsairError", "TenantClient", "Manage"]
+__all__ = ["CorsairCloud", "CorsairError", "TenantClient", "Manage", "__version__"]
 
+__version__ = "0.1.0"
+
+# Identify the client. urllib's default "Python-urllib/x.y" UA is blocked by the
+# edge WAF in front of the runtime (returns 403 before the request reaches the
+# app), so an explicit UA is required, not just nice-to-have.
+_USER_AGENT = f"corsair-cloud-python/{__version__}"
 _LOOPBACK_HOSTS = {"localhost", "127.0.0.1", "::1"}
 _DEFAULT_TIMEOUT = 30.0
 _CLOUD_API_HOST = "api.corsair.cloud"
@@ -99,7 +105,10 @@ class CorsairCloud:
         if query:
             url += "?" + urlencode(query)
         data = json.dumps(body).encode() if body is not None else None
-        headers = {"Authorization": f"Bearer {self.api_key}"}
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "User-Agent": _USER_AGENT,
+        }
         if data is not None:
             headers["Content-Type"] = "application/json"
         req = urllib.request.Request(url, data=data, headers=headers, method=method)
