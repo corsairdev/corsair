@@ -64,11 +64,69 @@ describe('Everhour endpoints routing & event logging', () => {
 
 	// Mock provider payloads below are cast to the endpoint's declared output
 	// type (never `any`) so a schema change that breaks a mock fails typecheck.
-	// Test-only mock with just the fields endpoints read; narrowed to context type.
-	const ctx = {
-		key: 'ev_test_key',
-		endpoints: {},
-	} as unknown as EverhourContext;
+	// The context itself is built field-by-field against EverhourContext with
+	// no assertion, so a context-shape change also fails typecheck. The HTTP
+	// transport is mocked, so db reads resolve empty and the write stub below
+	// throws if an endpoint ever reaches it.
+	function stubEntityClient() {
+		return {
+			findByEntityId: async () => null,
+			existsByEntityId: async () => false,
+			findIdByEntityId: async () => null,
+			findById: async () => null,
+			findManyByEntityIds: async () => [],
+			list: async () => [],
+			search: async () => [],
+			upsertByEntityId: async (): Promise<never> => {
+				throw new Error('everhour test ctx: db writes are unused');
+			},
+			deleteById: async () => false,
+			deleteByEntityId: async () => false,
+			count: async () => 0,
+		};
+	}
+
+	function makeCtx(): EverhourContext {
+		return {
+			key: 'ev_test_key',
+			endpoints: {},
+			$getAccountId: async () => 'test-account-id',
+			options: {},
+			keys: {
+				get_dek: async () => 'test-dek',
+				issue_new_dek: async () => 'test-dek',
+				get_api_key: async () => 'ev_test_key',
+				set_api_key: async () => undefined,
+				get_webhook_signature: async () => null,
+				set_webhook_signature: async () => undefined,
+				get_access_token: async () => null,
+				set_access_token: async () => undefined,
+				get_refresh_token: async () => null,
+				set_refresh_token: async () => undefined,
+				get_expires_at: async () => null,
+				set_expires_at: async () => undefined,
+				get_scope: async () => null,
+				set_scope: async () => undefined,
+			},
+			db: {
+				users: stubEntityClient(),
+				projects: stubEntityClient(),
+				tasks: stubEntityClient(),
+				timeEntries: stubEntityClient(),
+				clients: stubEntityClient(),
+				platforms: stubEntityClient(),
+				sections: stubEntityClient(),
+				timecards: stubEntityClient(),
+				expenses: stubEntityClient(),
+				expenseCategories: stubEntityClient(),
+				invoices: stubEntityClient(),
+				webhooks: stubEntityClient(),
+				tags: stubEntityClient(),
+			},
+		};
+	}
+
+	const ctx = makeCtx();
 
 	beforeEach(() => {
 		jest.clearAllMocks();
@@ -882,7 +940,7 @@ describe('Everhour endpoints routing & event logging', () => {
 	describe('Webhook event persistence', () => {
 		it('returns 500 when event persistence fails', async () => {
 			const { EverhourWebhooks } = await import('./webhooks');
-			mockLogEventFromContext.mockResolvedValueOnce(null as never);
+			mockLogEventFromContext.mockResolvedValueOnce(null);
 
 			const result = await EverhourWebhooks['api:time:updated'].handler(ctx, {
 				headers: { 'x-hook-secret': 'ev_test_key' },
