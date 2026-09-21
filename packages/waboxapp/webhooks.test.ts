@@ -1,3 +1,4 @@
+import { processWebhook } from 'corsair';
 import type { RawWebhookRequest } from 'corsair/core';
 import { waboxapp } from './index';
 import { matchWaboxappTenantWebhook } from './webhooks/tenant-matcher';
@@ -126,5 +127,128 @@ describe('verifyWaboxappWebhookToken', () => {
 			'abcd1234',
 		);
 		expect(result.valid).toBe(false);
+	});
+});
+
+/**
+ * End-to-end test for processWebhook using a lightweight mock corsair.
+ *
+ * Framework adapters (Express body-parser, Next.js, Hono, etc.) always
+ * pre-parse `application/x-www-form-urlencoded` bodies into objects before
+ * they reach `processWebhook`. Core's `processWebhook` calls JSON.parse on
+ * string bodies, which would throw for form-encoded strings — this is a
+ * known core limitation, not a plugin bug. The Corsair Hub tunnel likewise
+ * delivers payloads inside a JSON envelope, so the body is already an
+ * object.
+ *
+ * This test uses a minimal mock corsair object (same pattern used by
+ * packages/corsair/tests/process-webhook-plugin-hint.test.ts) to avoid the
+ * better-sqlite3 native addon dependency.
+ */
+
+jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
+	logEventFromContext: jest.fn().mockResolvedValue(null),
+}));
+
+describe('processWebhook end-to-end', () => {
+	const plugin = waboxapp({ key: 'abcd1234', uid: '34666123456' });
+
+	/**
+	 * Build a minimal mock corsair with bound webhooks (single-arg handlers).
+	 * processWebhook calls `matched.webhook.handler(webhookRequest)` where
+	 * the context is already captured. We inject a mock context with the
+	 * token key so webhook verification succeeds.
+	 */
+	// unknown justified: processWebhook accepts a loose CorsairInstance record type.
+	function makeMockCorsair(): unknown {
+		// unknown justified: minimal mock context supplying key for webhook token verification.
+		const mockCtx: unknown = { key: 'abcd1234' };
+		const wh = plugin.webhooks;
+		if (!wh) throw new Error('plugin.webhooks must be defined');
+		const messageReceived = wh.message.received;
+		const messageAck = wh.message.ack;
+		return {
+			waboxapp: {
+				webhooks: {
+					message: {
+						received: {
+							match: messageReceived.match,
+							handler: (request: Record<string, unknown>) =>
+								messageReceived.handler(
+									// unknown justified: mock context satisfying WaboxappContext shape for test.
+									mockCtx as Parameters<typeof messageReceived.handler>[0],
+									// unknown justified: webhook request forwarded from processWebhook.
+									request as Parameters<typeof messageReceived.handler>[1],
+								),
+						},
+						ack: {
+							match: messageAck.match,
+							handler: (request: Record<string, unknown>) =>
+								messageAck.handler(
+									// unknown justified: mock context satisfying WaboxappContext shape for test.
+									mockCtx as Parameters<typeof messageAck.handler>[0],
+									// unknown justified: webhook request forwarded from processWebhook.
+									request as Parameters<typeof messageAck.handler>[1],
+								),
+						},
+					},
+				},
+				pluginWebhookMatcher: plugin.pluginWebhookMatcher,
+			},
+		};
+	}
+
+	it('matches and handles a pre-parsed form-encoded message webhook', async () => {
+		// Framework adapters pre-parse form bodies into objects (e.g. Express
+		// body-parser urlencoded middleware). Simulate that here.
+		const parsedBody = parseWaboxappWebhookBody(MESSAGE_BODY);
+		expect(parsedBody).not.toBeNull();
+
+		const corsair = makeMockCorsair();
+		const result = await processWebhook(
+			// unknown justified: lightweight mock corsair satisfying CorsairInstance shape.
+			corsair as Parameters<typeof processWebhook>[0],
+			{ 'content-type': 'application/x-www-form-urlencoded' },
+			parsedBody as Parameters<typeof processWebhook>[2],
+		);
+
+		expect(result.plugin).toBe('waboxapp');
+		expect(result.action).toBe('message.received');
+		expect(result.response?.success).toBe(true);
+		expect(result.body).toMatchObject({
+			event: 'message',
+			uid: '34666123456',
+			token: 'abcd1234',
+		});
+	});
+
+	it('matches and handles a pre-parsed ack webhook', async () => {
+		const parsedBody = parseWaboxappWebhookBody(ACK_BODY);
+		expect(parsedBody).not.toBeNull();
+
+		const corsair = makeMockCorsair();
+		const result = await processWebhook(
+			// unknown justified: lightweight mock corsair satisfying CorsairInstance shape.
+			corsair as Parameters<typeof processWebhook>[0],
+			{ 'content-type': 'application/x-www-form-urlencoded' },
+			parsedBody as Parameters<typeof processWebhook>[2],
+		);
+
+		expect(result.plugin).toBe('waboxapp');
+		expect(result.action).toBe('message.ack');
+		expect(result.response?.success).toBe(true);
+	});
+
+	it('returns null plugin when body does not match waboxapp shape', async () => {
+		const corsair = makeMockCorsair();
+		const result = await processWebhook(
+			// unknown justified: lightweight mock corsair satisfying CorsairInstance shape.
+			corsair as Parameters<typeof processWebhook>[0],
+			{ 'content-type': 'application/json' },
+			{ type: 'push', ref: 'main' },
+		);
+
+		expect(result.plugin).toBeNull();
 	});
 });
