@@ -1,7 +1,7 @@
 {
   "id": "alphavantage",
   "displayName": "Alpha Vantage",
-  "description": "Alpha Vantage plugin for Corsair",
+  "description": "Financial market data API for stocks, forex, crypto, and economic indicators.",
   "npmPackageName": "@corsair-dev/alphavantage",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

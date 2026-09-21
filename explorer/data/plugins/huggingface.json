@@ -1,7 +1,7 @@
 {
   "id": "huggingface",
   "displayName": "Hugging Face",
-  "description": "Hugging Face plugin for Corsair",
+  "description": "AI community hub for models, datasets, inference APIs, and machine learning deployments.",
   "npmPackageName": "@corsair-dev/huggingface",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

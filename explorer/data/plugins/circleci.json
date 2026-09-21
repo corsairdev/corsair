@@ -1,7 +1,7 @@
 {
   "id": "circleci",
   "displayName": "CircleCI",
-  "description": "CircleCI plugin for Corsair",
+  "description": "Continuous integration and delivery platform for automated testing and deployment pipelines.",
   "npmPackageName": "@corsair-dev/circleci",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

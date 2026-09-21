@@ -1,7 +1,7 @@
 {
   "id": "streamtime",
   "displayName": "Streamtime",
-  "description": "Streamtime plugin for Corsair",
+  "description": "Job management software for creative agencies tracking projects, schedules, and profitability.",
   "npmPackageName": "@corsair-dev/streamtime",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

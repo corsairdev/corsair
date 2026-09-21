@@ -1,7 +1,7 @@
 {
   "id": "pinecone",
   "displayName": "Pinecone",
-  "description": "Pinecone plugin for Corsair",
+  "description": "Vector database for semantic search, embeddings storage, and retrieval-augmented AI applications.",
   "npmPackageName": "@corsair-dev/pinecone",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

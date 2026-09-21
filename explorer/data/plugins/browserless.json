@@ -1,7 +1,7 @@
 {
   "id": "browserless",
   "displayName": "Browserless",
-  "description": "Browserless plugin for Corsair",
+  "description": "Headless browser API for running Puppeteer and Playwright automation in the cloud.",
   "npmPackageName": "@corsair-dev/browserless",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

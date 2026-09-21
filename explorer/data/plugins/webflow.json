@@ -1,7 +1,7 @@
 {
   "id": "webflow",
   "displayName": "Webflow",
-  "description": "Webflow plugin for Corsair",
+  "description": "Visual web design platform for building, hosting, and managing responsive marketing sites.",
   "npmPackageName": "@corsair-dev/webflow",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

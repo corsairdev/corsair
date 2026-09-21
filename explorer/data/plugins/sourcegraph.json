@@ -1,7 +1,7 @@
 {
   "id": "sourcegraph",
   "displayName": "Sourcegraph",
-  "description": "Sourcegraph plugin for Corsair",
+  "description": "Code intelligence platform for searching, navigating, and understanding large codebases.",
   "npmPackageName": "@corsair-dev/sourcegraph",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

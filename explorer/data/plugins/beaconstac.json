@@ -1,7 +1,7 @@
 {
   "id": "beaconstac",
   "displayName": "Beaconstac",
-  "description": "Beaconstac plugin for Corsair",
+  "description": "QR code and digital signage platform for contactless marketing and asset tracking.",
   "npmPackageName": "@corsair-dev/beaconstac",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -563,7 +563,7 @@
     {
       "path": "beaconstac.api.qrcodes.delete",
       "shortPath": "qrcodes.delete",
-      "description": "Delete a QR Code by ID [DESTRUCTIVE]",
+      "description": "Delete a QR Code by ID",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1122,7 +1122,7 @@
     {
       "path": "beaconstac.api.qrTemplates.delete",
       "shortPath": "qrTemplates.delete",
-      "description": "Delete a QR Code template by ID [DESTRUCTIVE]",
+      "description": "Delete a QR Code template by ID",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1270,7 +1270,7 @@
     {
       "path": "beaconstac.api.tags.delete",
       "shortPath": "tags.delete",
-      "description": "Delete a tag by ID [DESTRUCTIVE]",
+      "description": "Delete a tag by ID",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

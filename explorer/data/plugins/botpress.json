@@ -1,7 +1,7 @@
 {
   "id": "botpress",
   "displayName": "Botpress",
-  "description": "Botpress plugin for Corsair",
+  "description": "Conversational AI platform for building, deploying, and managing chatbots and agents.",
   "npmPackageName": "@corsair-dev/botpress",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -1153,7 +1153,7 @@
     {
       "path": "botpress.api.files.delete",
       "shortPath": "files.delete",
-      "description": "Delete a file from a bot's storage [DESTRUCTIVE]",
+      "description": "Delete a file from a bot's storage",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2191,7 +2191,7 @@
     {
       "path": "botpress.api.integrations.deleteShareableId",
       "shortPath": "integrations.deleteShareableId",
-      "description": "Delete the shareable id for a bot-integration pair [DESTRUCTIVE]",
+      "description": "Delete the shareable id for a bot-integration pair",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2583,7 +2583,7 @@
     {
       "path": "botpress.api.knowledgeBases.delete",
       "shortPath": "knowledgeBases.delete",
-      "description": "Permanently delete a knowledge base [DESTRUCTIVE]",
+      "description": "Permanently delete a knowledge base",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2964,7 +2964,7 @@
     {
       "path": "botpress.api.workspaces.delete",
       "shortPath": "workspaces.delete",
-      "description": "Permanently delete a workspace [DESTRUCTIVE]",
+      "description": "Permanently delete a workspace",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

@@ -1,7 +1,7 @@
 {
   "id": "contentfulgraphql",
-  "displayName": "Contentful GraphQL",
-  "description": "Contentful GraphQL plugin for Corsair",
+  "displayName": "Contentful",
+  "description": "Headless CMS for structured content modeling, delivery, and omnichannel publishing via GraphQL.",
   "npmPackageName": "@corsair-dev/contentfulgraphql",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

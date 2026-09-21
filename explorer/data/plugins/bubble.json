@@ -1,7 +1,7 @@
 {
   "id": "bubble",
-  "displayName": "Bubble (Data API & Workflow API)",
-  "description": "Bubble (Data API & Workflow API) plugin for Corsair",
+  "displayName": "Bubble",
+  "description": "No-code app builder with data and workflow APIs for custom web applications.",
   "npmPackageName": "@corsair-dev/bubble",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

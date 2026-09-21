@@ -1,7 +1,7 @@
 {
   "id": "gitlab",
-  "displayName": "Gitlab",
-  "description": "Gitlab plugin for Corsair",
+  "displayName": "GitLab",
+  "description": "DevOps platform for Git repos, CI/CD pipelines, issues, and complete software delivery.",
   "npmPackageName": "@corsair-dev/gitlab",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
@@ -110,7 +110,7 @@
     {
       "path": "gitlab.api.branches.delete",
       "shortPath": "branches.delete",
-      "description": "Delete a branch [DESTRUCTIVE]",
+      "description": "Delete a branch",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1617,7 +1617,7 @@
     {
       "path": "gitlab.api.labels.delete",
       "shortPath": "labels.delete",
-      "description": "Delete a label [DESTRUCTIVE]",
+      "description": "Delete a label",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2915,7 +2915,7 @@
     {
       "path": "gitlab.api.milestones.delete",
       "shortPath": "milestones.delete",
-      "description": "Delete a milestone [DESTRUCTIVE]",
+      "description": "Delete a milestone",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -3364,7 +3364,7 @@
     {
       "path": "gitlab.api.pipelines.delete",
       "shortPath": "pipelines.delete",
-      "description": "Delete a pipeline [DESTRUCTIVE]",
+      "description": "Delete a pipeline",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -4462,7 +4462,7 @@
     {
       "path": "gitlab.api.releases.delete",
       "shortPath": "releases.delete",
-      "description": "Delete a release [DESTRUCTIVE]",
+      "description": "Delete a release",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

@@ -1,7 +1,7 @@
 {
   "id": "posthog",
-  "displayName": "Posthog",
-  "description": "Posthog plugin for Corsair",
+  "displayName": "PostHog",
+  "description": "Product analytics platform for event tracking, feature flags, session replay, and experiments.",
   "npmPackageName": "@corsair-dev/posthog",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

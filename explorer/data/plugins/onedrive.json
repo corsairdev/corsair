@@ -1,7 +1,7 @@
 {
   "id": "onedrive",
-  "displayName": "Onedrive",
-  "description": "onedrive plugin for Corsair",
+  "displayName": "OneDrive",
+  "description": "Microsoft cloud storage for files, folders, sharing, and Office document synchronization.",
   "npmPackageName": "@corsair-dev/onedrive",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -1249,7 +1249,7 @@
     {
       "path": "onedrive.api.items.delete",
       "shortPath": "items.delete",
-      "description": "Delete a drive item [DESTRUCTIVE]",
+      "description": "Delete a drive item",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1280,7 +1280,7 @@
     {
       "path": "onedrive.api.items.deletePermanently",
       "shortPath": "items.deletePermanently",
-      "description": "Permanently delete a drive item [DESTRUCTIVE]",
+      "description": "Permanently delete a drive item",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2838,7 +2838,7 @@
     {
       "path": "onedrive.api.permissions.deleteFromItem",
       "shortPath": "permissions.deleteFromItem",
-      "description": "Delete a permission from a drive item [DESTRUCTIVE]",
+      "description": "Delete a permission from a drive item",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -2889,7 +2889,7 @@
     {
       "path": "onedrive.api.permissions.deleteSharePermission",
       "shortPath": "permissions.deleteSharePermission",
-      "description": "Delete a share permission [DESTRUCTIVE]",
+      "description": "Delete a share permission",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

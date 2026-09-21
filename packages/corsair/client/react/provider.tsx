@@ -184,7 +184,10 @@ export function CorsairProvider({
 			}
 			attemptRef.current += 1;
 			const attempt = attemptRef.current;
-			const scope = tenantId ? { tenantId } : undefined;
+			// Clear only this plugin's request — a sibling plugin's pending prompt
+			// must survive dismissing or completing this one.
+			const scope = tenantId ? { tenantId, plugin } : { plugin };
+			const statusScope = tenantId ? { tenantId } : undefined;
 			// Guard every settle: the poll must still belong to this attempt and a
 			// caller must still be waiting. Bumping the attempt makes it single-shot.
 			const isCurrent = () =>
@@ -209,7 +212,7 @@ export function CorsairProvider({
 			};
 			const check = () => {
 				client.connectionStatus
-					.get(scope)
+					.get(statusScope)
 					.then((status) => {
 						if (
 							isCurrent() &&
@@ -239,7 +242,7 @@ export function CorsairProvider({
 						// confirm across a few retries before reading a closed popup as a
 						// cancel (see confirmConnected).
 						confirmConnected(
-							() => client.connectionStatus.get(scope),
+							() => client.connectionStatus.get(statusScope),
 							plugin,
 						).then((connected) => {
 							if (!isCurrent()) return;
@@ -358,13 +361,16 @@ export function CorsairProvider({
 		attemptRef.current += 1;
 		popupRef.current?.close();
 		popupRef.current = null;
-		const scope = connectState.tenantId
-			? { tenantId: connectState.tenantId }
+		// Clear only the plugin whose dialog is showing — sibling prompts survive.
+		const scope = connectState.plugin
+			? connectState.tenantId
+				? { tenantId: connectState.tenantId, plugin: connectState.plugin }
+				: { plugin: connectState.plugin }
 			: undefined;
 		client.connectRequest.clear(scope).catch(() => {});
 		settle(false);
 		dispatch({ type: 'CLOSE' });
-	}, [client, settle, connectState.tenantId]);
+	}, [client, settle, connectState.tenantId, connectState.plugin]);
 
 	// Unmount mid-flow: stop the timers, invalidate any in-flight poll, close the
 	// popup, and resolve a waiting caller so its promise can't hang forever.
@@ -447,10 +453,11 @@ export function CorsairProvider({
 /**
  * Internal accessor for the raw Corsair Connect context — the management client
  * plus the connect/call API and the bits {@link CorsairErrorBoundary} relies on.
- * Not part of the public surface; app code uses {@link useConnections}. Throws if
- * used outside {@link CorsairProvider}.
+ * Not part of the public surface; app code uses {@link useConnections} or the
+ * public `useCorsair` (see `client/react/index.ts`). Throws if used outside
+ * {@link CorsairProvider}.
  */
-export function useCorsair(): CorsairContextValue {
+export function useCorsairContext(): CorsairContextValue {
 	const ctx = useContext(CorsairContext);
 	if (!ctx) {
 		throw new Error('useConnections must be used within <CorsairProvider>');
@@ -488,7 +495,8 @@ export type UseConnectionsResult = {
  * read regions gate through {@link CorsairErrorBoundary} (a Next `error.tsx`).
  */
 export function useConnections(): UseConnectionsResult {
-	const { connect, call, connections, connectionsLoading } = useCorsair();
+	const { connect, call, connections, connectionsLoading } =
+		useCorsairContext();
 	const isConnected = useCallback(
 		(plugin: string) => connections?.[plugin] === 'connected',
 		[connections],

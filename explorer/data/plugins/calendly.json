@@ -1,7 +1,7 @@
 {
   "id": "calendly",
   "displayName": "Calendly",
-  "description": "Calendly plugin for Corsair",
+  "description": "Scheduling software for sharing booking links and automating meeting coordination.",
   "npmPackageName": "@corsair-dev/calendly",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -696,7 +696,7 @@
     {
       "path": "calendly.api.invitees.deleteData",
       "shortPath": "invitees.deleteData",
-      "description": "Delete all data for specified invitee emails [DESTRUCTIVE]",
+      "description": "Delete all data for specified invitee emails",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -716,7 +716,7 @@
     {
       "path": "calendly.api.invitees.deleteNoShow",
       "shortPath": "invitees.deleteNoShow",
-      "description": "Delete an invitee no-show record [DESTRUCTIVE]",
+      "description": "Delete an invitee no-show record",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -875,7 +875,7 @@
     {
       "path": "calendly.api.organizations.deleteMembership",
       "shortPath": "organizations.deleteMembership",
-      "description": "Delete an organization membership [DESTRUCTIVE]",
+      "description": "Delete an organization membership",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1116,7 +1116,7 @@
     {
       "path": "calendly.api.organizations.removeMember",
       "shortPath": "organizations.removeMember",
-      "description": "Remove a user from the organization [DESTRUCTIVE]",
+      "description": "Remove a user from the organization",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1136,7 +1136,7 @@
     {
       "path": "calendly.api.organizations.revokeInvitation",
       "shortPath": "organizations.revokeInvitation",
-      "description": "Revoke a user's organization invitation [DESTRUCTIVE]",
+      "description": "Revoke a user's organization invitation",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1295,7 +1295,7 @@
     {
       "path": "calendly.api.scheduledEvents.cancel",
       "shortPath": "scheduledEvents.cancel",
-      "description": "Cancel a scheduled event [DESTRUCTIVE]",
+      "description": "Cancel a scheduled event",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1326,7 +1326,7 @@
     {
       "path": "calendly.api.scheduledEvents.deleteData",
       "shortPath": "scheduledEvents.deleteData",
-      "description": "Delete all scheduled event data in a time range [DESTRUCTIVE]",
+      "description": "Delete all scheduled event data in a time range",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -1808,7 +1808,7 @@
     {
       "path": "calendly.api.webhookSubscriptions.delete",
       "shortPath": "webhookSubscriptions.delete",
-      "description": "Delete a webhook subscription [DESTRUCTIVE]",
+      "description": "Delete a webhook subscription",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",

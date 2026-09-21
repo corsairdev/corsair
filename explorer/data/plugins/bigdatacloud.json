@@ -1,7 +1,7 @@
 {
   "id": "bigdatacloud",
   "displayName": "BigDataCloud",
-  "description": "BigDataCloud plugin for Corsair",
+  "description": "Geolocation and reverse geocoding APIs for IP lookup and address intelligence.",
   "npmPackageName": "@corsair-dev/bigdatacloud",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

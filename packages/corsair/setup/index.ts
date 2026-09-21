@@ -33,7 +33,6 @@ import {
 	tryGetCorsairInternal,
 } from '../core/utils';
 import { getPluginAuthType } from '../core/utils/plugin-auth';
-import { CorsairConnectsSchema } from '../db';
 import type {
 	CorsairDatabase,
 	CorsairKyselyDatabase,
@@ -314,10 +313,7 @@ function isBackfillYaml(value: unknown): value is BackfillYaml {
 // Table check
 // ─────────────────────────────────────────────────────────────────────────────
 
-const REQUIRED_TABLES = {
-	...TABLE_SCHEMAS,
-	corsair_connects: CorsairConnectsSchema,
-};
+const REQUIRED_TABLES = TABLE_SCHEMAS;
 
 function describeZodSchema(schema: ZodTypeAny): unknown {
 	if (schema instanceof ZodObject) {
