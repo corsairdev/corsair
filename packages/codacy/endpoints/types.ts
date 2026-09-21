@@ -57,6 +57,7 @@ export const CodacyAccountSchema = z
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
 	})
+	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
 	.loose();
 
 export type CodacyAccount = z.infer<typeof CodacyAccountSchema>;
@@ -86,11 +87,14 @@ export const CodacyOrganizationSchema = z
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
 	})
+	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
 	.loose();
 
 export type CodacyOrganization = z.infer<typeof CodacyOrganizationSchema>;
 
-export const OrganizationGetInputSchema = z.object({});
+export const OrganizationGetInputSchema = z.object({
+	organization_id: Id.describe('Organization ID'),
+});
 export const OrganizationListInputSchema = PaginationInputSchema;
 
 export const OrganizationOutputSchema = PaginatedResponseSchema(
@@ -127,6 +131,7 @@ export const CodacyRepositorySchema = z
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
 	})
+	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
 	.loose();
 
 export type CodacyRepository = z.infer<typeof CodacyRepositorySchema>;
@@ -157,6 +162,7 @@ export const CodacyLanguageSchema = z
 		bytes: z.number().int().nonnegative(),
 		percentage: z.number().min(0).max(100),
 	})
+	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
 	.loose();
 
 export type CodacyLanguage = z.infer<typeof CodacyLanguageSchema>;
@@ -190,6 +196,7 @@ export const CodacyPatternSchema = z
 		enabled: z.boolean(),
 		parameters: z.record(z.string(), z.unknown()).optional(),
 	})
+	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
 	.loose();
 
 export type CodacyPattern = z.infer<typeof CodacyPatternSchema>;
@@ -201,6 +208,7 @@ export const CodacyToolSchema = z
 		language: z.string(),
 		patterns: z.array(CodacyPatternSchema),
 	})
+	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
 	.loose();
 
 export type CodacyTool = z.infer<typeof CodacyToolSchema>;
@@ -212,6 +220,7 @@ export const CodacyAnalysisConfigSchema = z
 		excluded_paths: z.array(z.string()).optional(),
 		included_paths: z.array(z.string()).optional(),
 	})
+	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
 	.loose();
 
 export type CodacyAnalysisConfig = z.infer<typeof CodacyAnalysisConfigSchema>;
@@ -260,6 +269,7 @@ export const CodacyCommitSchema = z
 			})
 			.nullable(),
 	})
+	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
 	.loose();
 
 export type CodacyCommit = z.infer<typeof CodacyCommitSchema>;
@@ -302,6 +312,7 @@ export const CodacyIssueSchema = z
 		created_at: z.string().datetime(),
 		updated_at: z.string().datetime(),
 	})
+	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
 	.loose();
 
 export type CodacyIssue = z.infer<typeof CodacyIssueSchema>;
@@ -335,6 +346,7 @@ export const WebhookEventSchema = z
 	.object({
 		event: z.string(),
 		timestamp: z.string().datetime(),
+		// any/unknown: webhook payload varies by event type; Codacy does not document a fixed shape
 		payload: z.unknown(),
 	})
 	.loose();

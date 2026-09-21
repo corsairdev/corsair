@@ -43,6 +43,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { CodacySchema } from './schema';
+import { codacyWebhooksNested, webhookSchemas } from './webhooks';
 
 export type CodacyPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -154,16 +155,21 @@ export const codacy = (
 	'codacy',
 	typeof CodacySchema,
 	typeof codacyEndpointsNested,
-	never,
+	typeof codacyWebhooksNested,
 	CodacyPluginOptions,
 	'api_key'
 > => {
 	const authType = options.authType ?? 'api_key';
 
+	const resolvedOptions = {
+		...options,
+		authType,
+	};
+
 	return {
 		id: 'codacy',
 		schema: CodacySchema,
-		options: options as CodacyPluginOptions,
+		options: resolvedOptions,
 		authConfig: codacyAuthConfig,
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
@@ -175,6 +181,8 @@ export const codacy = (
 			...options.errorHandlers,
 		},
 		keyBuilder,
+		webhooks: codacyWebhooksNested,
+		webhookSchemas,
 	};
 };
 
