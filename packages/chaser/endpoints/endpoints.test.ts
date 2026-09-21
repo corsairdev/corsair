@@ -1,4 +1,5 @@
 import * as client from '../client';
+import type { ChaserContext } from '../index';
 import {
 	getInvoice,
 	getOrganization,
@@ -6,36 +7,59 @@ import {
 	listCustomers,
 	listInvoices,
 } from './chaser';
+import type { ChaserEndpointOutputs } from './types';
 
 jest.mock('../client', () => ({
 	makeChaserRequest: jest.fn(),
 }));
 
-const mockedRequest = client.makeChaserRequest as jest.MockedFunction<
-	typeof client.makeChaserRequest
->;
+// jest.mocked() retypes the mocked request without a type assertion,
+// so the mock keeps the exact signature of makeChaserRequest.
+const mockedRequest = jest.mocked(client.makeChaserRequest);
 
-const createContext = () =>
-	({
+function createTestKeys(): ChaserContext['keys'] {
+	const resolveNull = (): Promise<string | null> => Promise.resolve(null);
+	const resolveVoid = (): Promise<void> => Promise.resolve();
+	const resolveDek = (): Promise<string> => Promise.resolve('test-dek');
+	return {
+		get_dek: resolveDek,
+		issue_new_dek: resolveDek,
+		get_api_key: resolveNull,
+		set_api_key: resolveVoid,
+		get_webhook_signature: resolveNull,
+		set_webhook_signature: resolveVoid,
+		get_tenant_external_id: resolveNull,
+		set_tenant_external_id: resolveVoid,
+		get_api_secret: resolveNull,
+		set_api_secret: resolveVoid,
+	};
+}
+
+function createContext(): ChaserContext {
+	return {
 		key: 'chaser-test-api-key',
-		$getAccountId: jest.fn().mockReturnValue('test-account'),
+		$getAccountId: (): Promise<string> => Promise.resolve('test-account'),
 		options: {},
 		db: {},
-	}) as any;
+		endpoints: {},
+		keys: createTestKeys(),
+	};
+}
 
-describe('Chaser endpoints', () => {
-	beforeEach(() => {
+describe('Chaser endpoints', (): void => {
+	beforeEach((): void => {
 		jest.clearAllMocks();
 	});
 
-	describe('customers', () => {
-		it('lists all customers', async () => {
-			const response = {
+	describe('customers', (): void => {
+		it('lists all customers', async (): Promise<void> => {
+			const response: ChaserEndpointOutputs['listCustomers'] = {
 				data: [{ id: 'cust_1', name: 'Acme Corp' }],
 				total: 1,
 			};
 			mockedRequest.mockResolvedValueOnce(response);
-			const result = await listCustomers(createContext(), {});
+			const result: ChaserEndpointOutputs['listCustomers'] =
+				await listCustomers(createContext(), {});
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'/v1/customers',
 				'chaser-test-api-key',
@@ -45,9 +69,9 @@ describe('Chaser endpoints', () => {
 		});
 	});
 
-	describe('invoices', () => {
-		it('lists all invoices', async () => {
-			const response = {
+	describe('invoices', (): void => {
+		it('lists all invoices', async (): Promise<void> => {
+			const response: ChaserEndpointOutputs['listInvoices'] = {
 				data: [
 					{
 						id: 'inv_1',
@@ -60,9 +84,12 @@ describe('Chaser endpoints', () => {
 				total: 1,
 			};
 			mockedRequest.mockResolvedValueOnce(response);
-			const result = await listInvoices(createContext(), {
-				customer_external_id: 'external-customer-1',
-			});
+			const result: ChaserEndpointOutputs['listInvoices'] = await listInvoices(
+				createContext(),
+				{
+					customer_external_id: 'external-customer-1',
+				},
+			);
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'/v1/invoices',
 				'chaser-test-api-key',
@@ -74,8 +101,8 @@ describe('Chaser endpoints', () => {
 			expect(result).toEqual(response);
 		});
 
-		it('gets an invoice by ID', async () => {
-			const response = {
+		it('gets an invoice by ID', async (): Promise<void> => {
+			const response: ChaserEndpointOutputs['getInvoice'] = {
 				id: 'inv_1',
 				customer_id: 'cust_1',
 				amount: 100,
@@ -83,7 +110,10 @@ describe('Chaser endpoints', () => {
 				status: 'open',
 			};
 			mockedRequest.mockResolvedValueOnce(response);
-			const result = await getInvoice(createContext(), { id: 'inv_1' });
+			const result: ChaserEndpointOutputs['getInvoice'] = await getInvoice(
+				createContext(),
+				{ id: 'inv_1' },
+			);
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'/v1/invoices/inv_1',
 				'chaser-test-api-key',
@@ -93,9 +123,9 @@ describe('Chaser endpoints', () => {
 		});
 	});
 
-	describe('credit notes', () => {
-		it('lists all credit notes', async () => {
-			const response = {
+	describe('credit notes', (): void => {
+		it('lists all credit notes', async (): Promise<void> => {
+			const response: ChaserEndpointOutputs['listCreditNotes'] = {
 				data: [
 					{
 						id: 'cn_1',
@@ -108,7 +138,8 @@ describe('Chaser endpoints', () => {
 				total: 1,
 			};
 			mockedRequest.mockResolvedValueOnce(response);
-			const result = await listCreditNotes(createContext(), {});
+			const result: ChaserEndpointOutputs['listCreditNotes'] =
+				await listCreditNotes(createContext(), {});
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'/v1/credit-notes',
 				'chaser-test-api-key',
@@ -118,11 +149,15 @@ describe('Chaser endpoints', () => {
 		});
 	});
 
-	describe('organization', () => {
-		it('gets organization details', async () => {
-			const response = { id: 'org_1', name: 'Test Org' };
+	describe('organization', (): void => {
+		it('gets organization details', async (): Promise<void> => {
+			const response: ChaserEndpointOutputs['getOrganization'] = {
+				id: 'org_1',
+				name: 'Test Org',
+			};
 			mockedRequest.mockResolvedValueOnce(response);
-			const result = await getOrganization(createContext(), {});
+			const result: ChaserEndpointOutputs['getOrganization'] =
+				await getOrganization(createContext(), {});
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'/v1/organization',
 				'chaser-test-api-key',

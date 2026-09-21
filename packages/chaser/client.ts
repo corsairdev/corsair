@@ -41,7 +41,10 @@ export async function makeChaserRequest<T>(
 	packedKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		// unknown justified: request body is arbitrary caller-supplied JSON.
+		// unknown is required here because the request body accepts arbitrary
+		// caller-supplied JSON values. It is safe because the body is passed
+		// straight to the typed HTTP layer without any narrowing or casting,
+		// and every endpoint only ever passes its own zod-validated input.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},

@@ -156,6 +156,11 @@ export type InternalChaserPlugin = BaseChaserPlugin<ChaserPluginOptions>;
 export type ExternalChaserPlugin<T extends ChaserPluginOptions> =
 	BaseChaserPlugin<T>;
 
+// The `{} as ...` default below is the exact line `pnpm generate:plugin`
+// scaffolds (see scripts/generate-plugin.ts): a default is required for the
+// generic-intersected options parameter. It is safe because every
+// ChaserPluginOptions field is optional and the value is only spread and
+// read, never cast again or written to unsafely.
 export function chaser<const T extends ChaserPluginOptions>(
 	incomingOptions: ChaserPluginOptions & T = {} as ChaserPluginOptions & T,
 ): ExternalChaserPlugin<T> {
