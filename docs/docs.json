@@ -2010,14 +2010,6 @@
                 ]
               },
               {
-                "group": "Replicate",
-                "pages": [
-                  "plugins/replicate/overview",
-                  "plugins/replicate/api",
-                  "plugins/replicate/database"
-                ]
-              },
-              {
                 "group": "Resend",
                 "pages": [
                   "plugins/resend/overview",
