@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+// Note on `z.unknown()` catchalls below: Canny returns provider-managed extra
+// fields per record. `unknown` (not `any`) preserves those fields without
+// claiming a type; every known field above is still strictly validated.
+
 /**
  * Canny Board Entity Schema
  * @see https://developers.canny.io/api-reference#boards

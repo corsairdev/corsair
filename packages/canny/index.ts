@@ -299,6 +299,9 @@ export type ExternalCannyPlugin<T extends CannyPluginOptions> =
 	BaseCannyPlugin<T>;
 
 export function canny<const T extends CannyPluginOptions>(
+	// Narrow assertion: safe because every field of `CannyPluginOptions` is
+	// optional, so `{}` is a valid value; the assertion only satisfies the
+	// generic default parameter and no unvalidated data flows through it.
 	incomingOptions: CannyPluginOptions & T = {} as CannyPluginOptions & T,
 ): ExternalCannyPlugin<T> {
 	const options = {
@@ -421,5 +424,6 @@ export type {
 export {
 	createCannyEventMatch,
 	createCannyMatch,
+	getWebhookType,
 	verifyCannyWebhookSignature,
 } from './webhooks/types';

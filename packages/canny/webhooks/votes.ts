@@ -4,6 +4,7 @@ import { buildVoteEntityId } from '../vote-entity-id';
 import {
 	CannyVoteCreatedEventSchema,
 	createCannyMatch,
+	getWebhookType,
 	verifyCannyWebhookSignature,
 } from './types';
 
@@ -22,7 +23,7 @@ export const created: CannyWebhooks['voteCreated'] = {
 
 		const parsed = CannyVoteCreatedEventSchema.safeParse(request.payload);
 		if (!parsed.success) {
-			if ((request.payload as { type?: string })?.type !== 'vote.created') {
+			if (getWebhookType(request.payload) !== 'vote.created') {
 				return { success: true, data: undefined };
 			}
 			return {

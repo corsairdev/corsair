@@ -109,23 +109,36 @@ export type CannyWebhookOutputs = {
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
-			const parsed = JSON.parse(body);
-			return parsed !== null &&
+			const parsed: unknown = JSON.parse(body);
+			if (
+				parsed !== null &&
 				typeof parsed === 'object' &&
 				!Array.isArray(parsed)
-				? (parsed as Record<string, unknown>)
-				: null;
+			) {
+				// Narrow assertion: safe because the checks above prove `parsed`
+				// is a non-array object; `Record<string, unknown>` is the narrowest
+				// usable type for the unvalidated webhook envelope and no better
+				// static type exists before zod validation.
+				return parsed as Record<string, unknown>;
+			}
+			return null;
 		} catch {
 			return null;
 		}
 	}
-	return body !== null && typeof body === 'object' && !Array.isArray(body)
-		? (body as Record<string, unknown>)
-		: null;
+	if (body !== null && typeof body === 'object' && !Array.isArray(body)) {
+		// Narrow assertion: same safety argument as above — `body` was just
+		// proven to be a non-array object, and zod validates it afterwards.
+		return body as Record<string, unknown>;
+	}
+	return null;
 }
 
+// Header values arrive as `string | string[] | undefined` per the core
+// `WebhookRequest` type. Narrowing (not `any`) keeps the unvalidated boundary
+// explicit; callers only accept the first string value.
 function firstHeader(
-	headers: Record<string, unknown>,
+	headers: Record<string, string | string[] | undefined>,
 	...names: string[]
 ): string | undefined {
 	for (const name of names) {
@@ -133,8 +146,18 @@ function firstHeader(
 			headers[name] ??
 			headers[name.toLowerCase()] ??
 			headers[name.toUpperCase()];
-		if (value !== undefined) {
-			return Array.isArray(value) ? value[0] : (value as string | undefined);
+		if (value === undefined) {
+			continue;
+		}
+		if (Array.isArray(value)) {
+			const first: unknown = value[0];
+			if (typeof first === 'string') {
+				return first;
+			}
+			continue;
+		}
+		if (typeof value === 'string') {
+			return value;
 		}
 	}
 	return undefined;
@@ -187,6 +210,9 @@ function consumeWebhookNonce(timestampMs: number, nonce: string): boolean {
 
 /**
  * Verify a Canny webhook request using HMAC-SHA256 with timestamp, nonce, and raw body.
+ * `WebhookRequest<unknown>` keeps the payload unvalidated on purpose: the
+ * signature must be checked over the raw bytes before any zod parsing, so
+ * `unknown` is the correct (not evasive) type here.
  */
 export function verifyCannyWebhookSignature(
 	request: WebhookRequest<unknown>,
@@ -233,8 +259,11 @@ export function verifyCannyWebhookSignature(
 	}
 
 	try {
-		const reqAny = request as unknown as { body?: unknown; payload?: unknown };
-		const reqData = reqAny.body ?? reqAny.payload ?? '';
+		// No assertion needed: `rawBody` is the exact string the provider signed
+		// when present; otherwise fall back to the already-parsed `payload`
+		// (typed `unknown`) and re-serialize deterministically for verification.
+		// `payload` stays `unknown` until zod validates it in the handler.
+		const reqData: unknown = request.rawBody ?? request.payload ?? '';
 		const rawBody =
 			typeof reqData === 'string'
 				? reqData
@@ -285,6 +314,23 @@ export function createCannyMatch(eventType: string): CorsairWebhookMatcher {
 		const parsedBody = parseBody(request.body);
 		return parsedBody !== null && parsedBody.type === eventType;
 	};
+}
+
+/**
+ * Read the `type` discriminator from an unvalidated webhook payload.
+ * `payload` is `unknown` until zod validates it, so we narrow with
+ * `typeof` + `in` before reading. Returns `undefined` when absent so handlers
+ * can distinguish "different event, ack quietly" from "malformed, 400".
+ */
+export function getWebhookType(payload: unknown): string | undefined {
+	if (typeof payload === 'object' && payload !== null && 'type' in payload) {
+		// Narrow assertion: safe because the `in` check above proves `payload`
+		// is an object with a `type` key; the subsequent `typeof` check rejects
+		// non-strings, so no unvalidated value escapes as a string.
+		const typeField = (payload as { type?: unknown }).type;
+		return typeof typeField === 'string' ? typeField : undefined;
+	}
+	return undefined;
 }
 
 export const createCannyEventMatch = createCannyMatch;

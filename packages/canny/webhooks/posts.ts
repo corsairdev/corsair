@@ -4,6 +4,7 @@ import {
 	CannyPostCreatedEventSchema,
 	CannyPostStatusChangedEventSchema,
 	createCannyMatch,
+	getWebhookType,
 	verifyCannyWebhookSignature,
 } from './types';
 
@@ -22,7 +23,7 @@ export const created: CannyWebhooks['postCreated'] = {
 
 		const parsed = CannyPostCreatedEventSchema.safeParse(request.payload);
 		if (!parsed.success) {
-			if ((request.payload as { type?: string })?.type !== 'post.created') {
+			if (getWebhookType(request.payload) !== 'post.created') {
 				return { success: true, data: undefined };
 			}
 			return {
@@ -86,9 +87,7 @@ export const statusChanged: CannyWebhooks['postStatusChanged'] = {
 
 		const parsed = CannyPostStatusChangedEventSchema.safeParse(request.payload);
 		if (!parsed.success) {
-			if (
-				(request.payload as { type?: string })?.type !== 'post.status_changed'
-			) {
+			if (getWebhookType(request.payload) !== 'post.status_changed') {
 				return { success: true, data: undefined };
 			}
 			return {

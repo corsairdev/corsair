@@ -3,6 +3,7 @@ import type { CannyWebhooks } from '../index';
 import {
 	CannyCommentCreatedEventSchema,
 	createCannyMatch,
+	getWebhookType,
 	verifyCannyWebhookSignature,
 } from './types';
 
@@ -21,7 +22,7 @@ export const created: CannyWebhooks['commentCreated'] = {
 
 		const parsed = CannyCommentCreatedEventSchema.safeParse(request.payload);
 		if (!parsed.success) {
-			if ((request.payload as { type?: string })?.type !== 'comment.created') {
+			if (getWebhookType(request.payload) !== 'comment.created') {
 				return { success: true, data: undefined };
 			}
 			return {

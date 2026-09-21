@@ -5,6 +5,8 @@ export type CannyAPIErrorOptions = {
 	cause?: Error;
 	status?: number;
 	statusText?: string;
+	// `unknown` body: mirrors `ApiError.body` (unvalidated provider payload).
+	// Safe because callers only read it after narrowing or pass it through.
 	body?: unknown;
 	retryAfter?: number;
 };
@@ -12,6 +14,7 @@ export type CannyAPIErrorOptions = {
 export class CannyAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// `unknown` body: mirrors `ApiError.body`. Safe for the same reason as above.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 
@@ -39,11 +42,32 @@ export class CannyAPIError extends Error {
 
 const CANNY_API_BASE = 'https://canny.io/api/v1';
 
+// Type guard for Canny error envelopes. `error.body` is typed `unknown`
+// (unvalidated provider data), so we narrow with `in` + `typeof` before
+// reading `.error`. Safe because every property access is guarded; a plain
+// `Record` type would hide that the shape is unvalidated.
+function getProviderErrorMessage(body: unknown): string | undefined {
+	if (typeof body === 'object' && body !== null && 'error' in body) {
+		// Narrow assertion: safe because the `in` check above proves `body`
+		// is an object with an `error` key; no better static type exists for
+		// the unvalidated provider envelope.
+		const errorField = (body as { error?: unknown }).error;
+		if (typeof errorField === 'string') {
+			return errorField;
+		}
+	}
+	return undefined;
+}
+
 export async function makeCannyRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
 		method?: 'POST';
+		// `unknown` values: safe because the request body carries caller-provided
+		// fields that are validated by zod input schemas before this call, and
+		// the `T` response stays `unknown` at call sites until validated by a
+		// zod output schema immediately after `await`.
 		body?: Record<string, unknown>;
 	} = {},
 ): Promise<T> {
@@ -83,13 +107,7 @@ export async function makeCannyRequest<T>(
 			}
 
 			const errorBody = error.body;
-			const message =
-				typeof errorBody === 'object' &&
-				errorBody !== null &&
-				'error' in errorBody &&
-				typeof (errorBody as { error?: unknown }).error === 'string'
-					? (errorBody as { error: string }).error
-					: error.message;
+			const message = getProviderErrorMessage(errorBody) ?? error.message;
 
 			const code = error.status?.toString();
 			throw new CannyAPIError(message, code, { cause: error });
@@ -99,6 +117,11 @@ export async function makeCannyRequest<T>(
 			throw new CannyAPIError(error.message);
 		}
 
-		throw new CannyAPIError('Unknown error');
+		// No assertion: `typeof` narrowing safely renders string rejections
+		// (transport layers sometimes reject with plain strings); anything
+		// else keeps the generic message so failures never surface empty.
+		throw new CannyAPIError(
+			typeof error === 'string' && error !== '' ? error : 'Unknown error',
+		);
 	}
 }

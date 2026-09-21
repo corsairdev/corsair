@@ -94,6 +94,9 @@ describe('Canny endpoints routing & event logging', () => {
 				deleteByEntityId: jest.fn(),
 			},
 		},
+		// Test-only narrow assertion: safe because endpoint handlers only read
+		// `ctx.key`, `ctx.db.*`, and `logEventFromContext`; the mock provides
+		// those members and no better static type exists for a partial test ctx.
 	} as unknown as CannyContext;
 
 	beforeEach(() => {
@@ -477,6 +480,9 @@ describe('Canny endpoints routing & event logging', () => {
 			await expect(
 				Votes.delete(ctx, {
 					postID: 'post_123',
+					// Test-only narrow assertion: safe because the test intentionally
+					// omits the required `voterID` to prove zod rejects it; the
+					// object never reaches the provider.
 				} as unknown as { postID: string; voterID: string }),
 			).rejects.toThrow();
 			expect(mockMakeCannyRequest).not.toHaveBeenCalled();
