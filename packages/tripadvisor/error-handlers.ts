@@ -2,6 +2,7 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { TripadvisorAPIError } from './client';
 
+/** Reads an HTTP status from a normalized or raw Tripadvisor error. */
 function statusOf(error: Error): number | undefined {
 	if (error instanceof ApiError || error instanceof TripadvisorAPIError) {
 		return error.status;
