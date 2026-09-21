@@ -133,6 +133,14 @@ Generate text or speech audio from a prompt using a Gemini Flash/Pro model
 
 **Risk:** `read`
 
+<Info>
+The Corsair-only `stripFences?: boolean` input controls formatting of the
+convenience `text` field and is removed before the request is sent to Gemini.
+Each response part is typed as `thought?: boolean`; parts marked `thought: true`
+are excluded from `text`, while all other text parts from the first candidate
+are concatenated in response order.
+</Info>
+
 ```ts
 await corsair.gemini.api.content.generateContent({});
 ```
@@ -604,4 +612,3 @@ await corsair.gemini.api.videos.waitForVideo({});
 
 
 ---
-
