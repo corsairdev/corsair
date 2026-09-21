@@ -481,9 +481,11 @@ export const GetTestDetailsOutputSchema = z.object({
 });
 export const DeleteTestLinkOutputSchema = GenericEnvelopeOutputSchema;
 export const ListCertificatesOutputSchema = BaseEnvelopeSchema.extend({
+	// unknown justified: certificate entries are provider-defined key/value shapes; consumed opaquely as records.
 	certificates: z.array(z.record(z.string(), z.unknown())).optional(),
 }).passthrough();
 export const ListWebhooksOutputSchema = BaseEnvelopeSchema.extend({
+	// unknown justified: webhook entries are provider-defined key/value shapes; consumed opaquely as records.
 	webhooks: z.array(z.record(z.string(), z.unknown())).optional(),
 }).passthrough();
 export const DeleteWebhookOutputSchema = GenericEnvelopeOutputSchema;

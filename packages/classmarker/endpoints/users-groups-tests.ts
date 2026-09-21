@@ -23,6 +23,75 @@ import {
 	ListUsersOutputSchema,
 } from './types';
 
+// unknown justified: ClassMarker returns untyped JSON; records are narrowed with
+// `typeof`/`Array.isArray` below and validated by Zod output schemas afterwards.
+type ProviderRecord = Record<string, unknown>;
+
+// unknown justified: provider payloads arrive untyped; this guard narrows them to
+// key/value records before any field access, with Zod output schemas validating after.
+function isProviderRecord(value: unknown): value is ProviderRecord {
+	return typeof value === 'object' && value !== null;
+}
+
+// unknown justified: provider field values are untyped JSON; callers narrow the
+// result with `typeof`/`Array.isArray` before use.
+function readProviderField(record: ProviderRecord, key: string): unknown {
+	return record[key];
+}
+
+// unknown justified: provider arrays contain untyped entries; every entry is
+// narrowed with isProviderRecord before field access.
+function readProviderArray(value: unknown): Array<unknown> | undefined {
+	if (!Array.isArray(value)) {
+		return undefined;
+	}
+	return value;
+}
+
+function readStringField(
+	record: ProviderRecord,
+	key: string,
+): string | undefined {
+	const value = readProviderField(record, key);
+	return typeof value === 'string' ? value : undefined;
+}
+
+function readCoercedString(
+	record: ProviderRecord,
+	key: string,
+): string | undefined {
+	const value = readProviderField(record, key);
+	if (typeof value === 'string') {
+		return value;
+	}
+	if (typeof value === 'number' || typeof value === 'boolean') {
+		return String(value);
+	}
+	return undefined;
+}
+
+function readCoercedNumber(
+	record: ProviderRecord,
+	key: string,
+): number | undefined {
+	const value = readProviderField(record, key);
+	if (typeof value !== 'string' && typeof value !== 'number') {
+		return undefined;
+	}
+	const numeric = Number(value);
+	return Number.isFinite(numeric) ? numeric : undefined;
+}
+
+function readStrictNumber(
+	record: ProviderRecord,
+	key: string,
+): number | undefined {
+	const value = readProviderField(record, key);
+	return typeof value === 'number' && Number.isFinite(value)
+		? value
+		: undefined;
+}
+
 export const listUsers: ClassmarkerEndpoints['listUsers'] = async (
 	ctx,
 	input,
@@ -141,20 +210,34 @@ export const getGroupDetails: ClassmarkerEndpoints['getGroupDetails'] = async (
 		inputSchema: GetGroupDetailsInputSchema,
 		outputSchema: GetGroupDetailsOutputSchema,
 		responseTransformer: (response) => {
-			const groups =
-				typeof response === 'object' && response !== null
-					? ((response as { groups?: Array<{ group?: unknown }> }).groups ?? [])
-					: [];
+			const groups = isProviderRecord(response)
+				? readProviderArray(readProviderField(response, 'groups'))
+				: undefined;
+			if (!groups) {
+				return {
+					status: 'no_results',
+				};
+			}
 
 			const matchedGroup = groups.find((item) => {
-				if (!item || typeof item !== 'object' || !('group' in item)) {
+				if (!isProviderRecord(item)) {
 					return false;
 				}
-				const group = (item as { group?: { group_id?: unknown } }).group;
-				return Number(group?.group_id) === parsedInput.group_id;
+				const group = readProviderField(item, 'group');
+				if (!isProviderRecord(group)) {
+					return false;
+				}
+				return readCoercedNumber(group, 'group_id') === parsedInput.group_id;
 			});
 
-			if (!matchedGroup) {
+			if (!isProviderRecord(matchedGroup)) {
+				return {
+					status: 'no_results',
+				};
+			}
+
+			const group = readProviderField(matchedGroup, 'group');
+			if (!isProviderRecord(group)) {
 				return {
 					status: 'no_results',
 				};
@@ -162,7 +245,7 @@ export const getGroupDetails: ClassmarkerEndpoints['getGroupDetails'] = async (
 
 			return {
 				status: 'ok',
-				group: (matchedGroup as { group: unknown }).group,
+				group,
 			};
 		},
 		logPayload: {
@@ -190,42 +273,47 @@ export const listTests: ClassmarkerEndpoints['listTests'] = async (
 				{ test_id: number; test_name: string }
 			>();
 			const fromContainer = (
+				// unknown justified: untyped provider `groups`/`links` container;
+				// narrowed with isProviderRecord before any field access.
 				container: unknown,
 				key: 'groups' | 'links',
 			): void => {
-				if (!container || typeof container !== 'object') {
+				if (!isProviderRecord(container)) {
 					return;
 				}
-				const rows = (container as { [K in typeof key]?: unknown })[key];
-				if (!Array.isArray(rows)) {
+				const rows = readProviderArray(readProviderField(container, key));
+				if (!rows) {
 					return;
 				}
 				for (const row of rows) {
-					if (!row || typeof row !== 'object') {
+					if (!isProviderRecord(row)) {
 						continue;
 					}
-					const branch =
-						(row as { group?: unknown; link?: unknown }).group ??
-						(row as { group?: unknown; link?: unknown }).link;
-					if (!branch || typeof branch !== 'object') {
+					const groupBranch = readProviderField(row, 'group');
+					const linkBranch = readProviderField(row, 'link');
+					const branch = isProviderRecord(groupBranch)
+						? groupBranch
+						: linkBranch;
+					if (!isProviderRecord(branch)) {
 						continue;
 					}
-					const assigned =
-						(branch as { assigned_tests?: unknown }).assigned_tests ?? [];
-					if (!Array.isArray(assigned)) {
+					const assigned = readProviderArray(
+						readProviderField(branch, 'assigned_tests'),
+					);
+					if (!assigned) {
 						continue;
 					}
 					for (const assignment of assigned) {
-						if (!assignment || typeof assignment !== 'object') {
+						if (!isProviderRecord(assignment)) {
 							continue;
 						}
-						const test = (assignment as { test?: unknown }).test;
-						if (!test || typeof test !== 'object') {
+						const test = readProviderField(assignment, 'test');
+						if (!isProviderRecord(test)) {
 							continue;
 						}
-						const testId = Number((test as { test_id?: unknown }).test_id);
-						const testName = (test as { test_name?: unknown }).test_name;
-						if (!Number.isFinite(testId) || typeof testName !== 'string') {
+						const testId = readCoercedNumber(test, 'test_id');
+						const testName = readStringField(test, 'test_name');
+						if (testId === undefined || testName === undefined) {
 							continue;
 						}
 						if (!testsById.has(testId)) {
@@ -272,74 +360,80 @@ export const getTestDetails: ClassmarkerEndpoints['getTestDetails'] = async (
 			let targetTest: { test_id: number; test_name: string } | undefined;
 
 			const collectAssignments = (
+				// unknown justified: untyped provider `groups`/`links` rows;
+				// every row is narrowed with isProviderRecord before field access.
 				rows: unknown,
 				owner: 'group' | 'link',
 			): void => {
-				if (!Array.isArray(rows)) {
+				const items = readProviderArray(rows);
+				if (!items) {
 					return;
 				}
-				for (const row of rows) {
-					if (!row || typeof row !== 'object') {
+				for (const row of items) {
+					if (!isProviderRecord(row)) {
 						continue;
 					}
-					const node = (row as { group?: unknown; link?: unknown })[owner];
-					if (!node || typeof node !== 'object') {
+					const node = readProviderField(row, owner);
+					if (!isProviderRecord(node)) {
 						continue;
 					}
-					const assigned =
-						(node as { assigned_tests?: unknown }).assigned_tests ?? [];
-					if (!Array.isArray(assigned)) {
+					const assigned = readProviderArray(
+						readProviderField(node, 'assigned_tests'),
+					);
+					if (!assigned) {
 						continue;
 					}
 					for (const entry of assigned) {
-						if (!entry || typeof entry !== 'object') {
+						if (!isProviderRecord(entry)) {
 							continue;
 						}
-						const test = (entry as { test?: unknown }).test;
-						if (!test || typeof test !== 'object') {
+						const test = readProviderField(entry, 'test');
+						if (!isProviderRecord(test)) {
 							continue;
 						}
-						const testId = Number((test as { test_id?: unknown }).test_id);
-						const testName = (test as { test_name?: unknown }).test_name;
+						const testId = readCoercedNumber(test, 'test_id');
+						const testName = readStringField(test, 'test_name');
 						if (
-							!Number.isFinite(testId) ||
+							testId === undefined ||
 							testId !== parsedInput.test_id ||
-							typeof testName !== 'string'
+							testName === undefined
 						) {
 							continue;
 						}
 
 						targetTest = { test_id: testId, test_name: testName };
 						if (owner === 'group') {
+							const groupId = readCoercedNumber(node, 'group_id');
+							const groupName = readCoercedString(node, 'group_name');
+							if (groupId === undefined || groupName === undefined) {
+								continue;
+							}
 							assignments.push({
 								test: targetTest,
 								group: {
-									group_id: Number((node as { group_id?: unknown }).group_id),
-									group_name: String(
-										(node as { group_name?: unknown }).group_name,
-									),
+									group_id: groupId,
+									group_name: groupName,
 								},
 							});
 						} else {
+							const linkId = readCoercedNumber(node, 'link_id');
+							const linkName = readCoercedString(node, 'link_name');
+							if (linkId === undefined || linkName === undefined) {
+								continue;
+							}
+							const linkUrlId = readStringField(node, 'link_url_id');
+							const accessListId = readStrictNumber(node, 'access_list_id');
 							assignments.push({
 								test: targetTest,
 								link: {
-									link_id: Number((node as { link_id?: unknown }).link_id),
-									link_name: String(
-										(node as { link_name?: unknown }).link_name,
-									),
-									link_url_id:
-										typeof (node as { link_url_id?: unknown }).link_url_id ===
-										'string'
-											? String((node as { link_url_id?: unknown }).link_url_id)
-											: undefined,
-									access_list_id:
-										typeof (node as { access_list_id?: unknown })
-											.access_list_id === 'number'
-											? Number(
-													(node as { access_list_id?: unknown }).access_list_id,
-												)
-											: undefined,
+									link_id: linkId,
+									link_name: linkName,
+									...(linkUrlId === undefined
+										? {}
+										: { link_url_id: linkUrlId }),
+									...(accessListId === undefined
+										? {}
+										: { access_list_id: accessListId }),
 								},
 							});
 						}
@@ -347,9 +441,9 @@ export const getTestDetails: ClassmarkerEndpoints['getTestDetails'] = async (
 				}
 			};
 
-			if (response && typeof response === 'object') {
-				collectAssignments((response as { groups?: unknown }).groups, 'group');
-				collectAssignments((response as { links?: unknown }).links, 'link');
+			if (isProviderRecord(response)) {
+				collectAssignments(readProviderField(response, 'groups'), 'group');
+				collectAssignments(readProviderField(response, 'links'), 'link');
 			}
 
 			return {
