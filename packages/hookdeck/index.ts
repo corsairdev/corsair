@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { Connections } from './endpoints';
 import type {
@@ -26,23 +23,14 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { HookdeckSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveHookdeckOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchHookdeckTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, HookdeckWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type HookdeckPluginOptions = {
-	/** Authentication method. API key is the primary Hookdeck auth type. */
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	/** Authentication method. Only api_key is supported (Hookdeck project API key). */
+	authType?: PickAuth<'api_key'>;
 	/** Optional: pass the API key directly (bypasses key manager). */
 	key?: string;
-	/** Optional: webhook signing secret for HMAC verification. */
-	webhookSecret?: string;
 	/** Optional: lifecycle hooks for endpoints. */
 	hooks?: InternalHookdeckPlugin['hooks'];
-	/** Optional: lifecycle hooks for webhooks. */
-	webhookHooks?: InternalHookdeckPlugin['webhookHooks'];
 	/** Optional: custom error handlers (merged with defaults). */
 	errorHandlers?: CorsairErrorHandler;
 	/** Permission configuration for the Hookdeck plugin. */
@@ -76,17 +64,6 @@ export type HookdeckEndpoints = {
 	connectionsDelete: HookdeckEndpoint<'connectionsDelete'>;
 };
 
-type HookdeckWebhook<
-	K extends keyof HookdeckWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<HookdeckContext, TEvent, HookdeckWebhookOutputs[K]>;
-
-export type HookdeckWebhooks = {
-	example: HookdeckWebhook<'example', ExampleEvent>;
-};
-
-export type HookdeckBoundWebhooks = BindWebhooks<HookdeckWebhooks>;
-
 const hookdeckEndpointsNested = {
 	connections: {
 		list: Connections.list,
@@ -97,11 +74,9 @@ const hookdeckEndpointsNested = {
 	},
 } as const;
 
-const hookdeckWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+// No webhooks — this plugin covers Hookdeck connection management (a
+// pull-based REST surface); the generator's example webhook was removed.
+const hookdeckWebhooksNested = {} as const;
 
 export const hookdeckEndpointSchemas = {
 	'connections.list': {
@@ -126,16 +101,6 @@ export const hookdeckEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof hookdeckEndpointsNested
->;
-
-const hookdeckWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof hookdeckWebhooksNested
 >;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
@@ -167,9 +132,6 @@ export const hookdeckAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id'] as const,
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseHookdeckPlugin<T extends HookdeckPluginOptions> = CorsairPlugin<
@@ -199,46 +161,24 @@ export function hookdeck<const T extends HookdeckPluginOptions>(
 		schema: HookdeckSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: undefined,
 		endpoints: hookdeckEndpointsNested,
 		webhooks: hookdeckWebhooksNested,
 		endpointMeta: hookdeckEndpointMeta,
 		endpointSchemas: hookdeckEndpointSchemas,
-		webhookSchemas: hookdeckWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return (
-				headers['x-hookdeck-signature'] !== undefined ||
-				headers['x-hookdeck-signature-2'] !== undefined
-			);
-		},
-		pluginTenantWebhookMatcher: matchHookdeckTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveHookdeckOAuthWebhookTenantLink,
+		// No webhooks — connection management only.
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: HookdeckKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
+			if (source === 'endpoint') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
 				return res ?? '';
 			}
 
@@ -251,7 +191,3 @@ export type {
 	HookdeckEndpointInputs,
 	HookdeckEndpointOutputs,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	HookdeckWebhookOutputs,
-} from './webhooks/types';

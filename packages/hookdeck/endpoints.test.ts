@@ -1,4 +1,3 @@
-import type { RawWebhookRequest, WebhookRequest } from 'corsair/core';
 import { makeHookdeckRequest } from './client';
 import {
 	connectionsCreate,
@@ -9,12 +8,6 @@ import {
 } from './endpoints/connections';
 import type { ConnectionsGetResponse } from './endpoints/types';
 import type { HookdeckContext } from './index';
-import { matchHookdeckTenantWebhook } from './webhooks/tenant-matcher';
-import type { HookdeckWebhookPayload } from './webhooks/types';
-import {
-	createHookdeckMatch,
-	verifyHookdeckWebhookSignature,
-} from './webhooks/types';
 
 jest.mock('./client', () => ({
 	makeHookdeckRequest: jest.fn(),
@@ -178,110 +171,18 @@ describe('connections endpoints', () => {
 			'API request failed',
 		);
 	});
-});
 
-describe('verifyHookdeckWebhookSignature', () => {
-	const secret = 'hookdeck-secret';
-	const rawBody =
-		'{"type":"example","created_at":"2026-01-01T00:00:00.000Z","data":{"id":"evt_1"}}';
-	const validSignature = '0Z9gr7R90KjNqsh1CDqVmAEbNp+Cm6dofEcaVrJ+UXE=';
-	const validSignature2 = '0Z9gr7R90KjNqsh1CDqVmAEbNp+Cm6dofEcaVrJ+UXE=';
-
-	function makeRequest(
-		overrides: Partial<WebhookRequest<HookdeckWebhookPayload>> = {},
-	): WebhookRequest<HookdeckWebhookPayload> {
-		return {
-			payload: {
-				type: 'example',
-				created_at: '2026-01-01T00:00:00.000Z',
-				data: { id: 'evt_1' },
-			},
-			headers: {
-				'x-hookdeck-signature': validSignature,
-			},
-			rawBody,
-			...overrides,
-		};
-	}
-
-	it('accepts valid primary signature', () => {
-		const result = verifyHookdeckWebhookSignature(makeRequest(), secret);
-		expect(result).toEqual({ valid: true });
+	it('rejects invalid list input before any HTTP call', async () => {
+		await expect(connectionsList(mockCtx, { limit: 251 })).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
-	it('accepts valid fallback signature when primary is invalid', () => {
-		const result = verifyHookdeckWebhookSignature(
-			makeRequest({
-				headers: {
-					'x-hookdeck-signature': 'invalid',
-					'x-hookdeck-signature-2': validSignature2,
-				},
-			}),
-			secret,
-		);
-		expect(result).toEqual({ valid: true });
-	});
-
-	it('returns invalid when both signatures are missing', () => {
-		const result = verifyHookdeckWebhookSignature(
-			makeRequest({ headers: {} }),
-			secret,
-		);
-		expect(result).toEqual({
-			valid: false,
-			error: 'Missing x-hookdeck-signature or x-hookdeck-signature-2 header',
-		});
-	});
-
-	it('returns invalid when signature does not match', () => {
-		const result = verifyHookdeckWebhookSignature(
-			makeRequest({
-				headers: {
-					'x-hookdeck-signature': 'invalid',
-				},
-			}),
-			secret,
-		);
-		expect(result).toEqual({ valid: false, error: 'Invalid signature' });
-	});
-
-	it('returns invalid without secret unless already hub verified', () => {
-		const result = verifyHookdeckWebhookSignature(makeRequest(), '');
-		expect(result).toEqual({ valid: false, error: 'Missing webhook secret' });
-	});
-
-	it('accepts hub-verified requests without plugin verification', () => {
-		const result = verifyHookdeckWebhookSignature(
-			makeRequest({ hubVerified: true, headers: {} }),
-			'',
-		);
-		expect(result).toEqual({ valid: true });
-	});
-});
-
-describe('hookdeck webhook matching', () => {
-	function rawRequest(body: RawWebhookRequest['body']): RawWebhookRequest {
-		return { headers: {}, body };
-	}
-
-	it('matches the example event type on parsed and string bodies', () => {
-		const match = createHookdeckMatch('example');
-		expect(match(rawRequest({ type: 'example', data: { id: 'evt_1' } }))).toBe(
-			true,
-		);
-		expect(match(rawRequest('{"type":"example","data":{"id":"evt_1"}}'))).toBe(
-			true,
-		);
-		expect(match(rawRequest({ type: 'other', data: {} }))).toBe(false);
-	});
-
-	it('resolves the tenant from top-level and nested team ids', () => {
-		expect(matchHookdeckTenantWebhook(rawRequest({ team_id: 'tm_1' }))).toEqual(
-			{ linkType: 'tenant_external_id', externalId: 'tm_1' },
-		);
-		expect(
-			matchHookdeckTenantWebhook(rawRequest({ data: { team_id: 'tm_2' } })),
-		).toEqual({ linkType: 'tenant_external_id', externalId: 'tm_2' });
-		expect(matchHookdeckTenantWebhook(rawRequest({ data: {} }))).toBeNull();
+	it('rejects invalid create input before any HTTP call', async () => {
+		// Narrow assertion: safe because this is a negative test deliberately
+		// passing invalid input to prove zod rejects it before any HTTP call.
+		await expect(
+			connectionsCreate(mockCtx, { name: undefined as never }),
+		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 });

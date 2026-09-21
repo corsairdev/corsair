@@ -1,6 +1,6 @@
 # @corsair-dev/hookdeck
 
-Hookdeck plugin for Corsair.
+Hookdeck plugin for Corsair. Manages Hookdeck connections (source-to-destination routing with rules).
 
 ## Install
 
@@ -20,11 +20,11 @@ pnpm add @corsair-dev/hookdeck
 
 ## Auth
 
-Auth: API key, OAuth 2.0 (default API key). Set `authType` on the plugin factory to pick one.
+Auth: API key (Hookdeck project API key, sent as a Bearer token). Corsair prompts your tenant for credentials on first use.
 
 ## Webhooks
 
-Handles 1 webhook event. See the reference for payloads and `webhookHooks`.
+No webhooks.
 
 ## Reference
 
