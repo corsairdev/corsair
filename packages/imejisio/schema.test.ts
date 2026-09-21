@@ -41,7 +41,13 @@ describe('RenderDesignInputSchema', () => {
 	});
 
 	it('accepts every supported output format and rejects others', () => {
-		for (const format of ['png', 'jpeg', 'webp', 'pdf'] as const) {
+		const formats: Array<'png' | 'jpeg' | 'webp' | 'pdf'> = [
+			'png',
+			'jpeg',
+			'webp',
+			'pdf',
+		];
+		for (const format of formats) {
 			expect(
 				RenderDesignInputSchema.parse({ designId: 'des_1', format }).format,
 			).toBe(format);
@@ -84,7 +90,12 @@ describe('RenderDesignInputSchema', () => {
 	});
 
 	it('validates the delivery modes', () => {
-		for (const delivery of ['stream', 'hosted', 'signed'] as const) {
+		const deliveries: Array<'stream' | 'hosted' | 'signed'> = [
+			'stream',
+			'hosted',
+			'signed',
+		];
+		for (const delivery of deliveries) {
 			expect(
 				RenderDesignInputSchema.parse({ designId: 'des_1', delivery }).delivery,
 			).toBe(delivery);
@@ -106,10 +117,17 @@ describe('RenderDesignInputSchema', () => {
 	});
 
 	it('does not accept the render key as a business parameter', () => {
-		const parsed = RenderDesignInputSchema.parse({
+		// unknown justified: testing that runtime schema strips unaccepted credential fields passed dynamically.
+		const inputWithLeakedKey: unknown = {
 			designId: 'des_1',
 			'dma-api-key': 'leaked-key',
-		} as never);
+		};
+		const parsed = RenderDesignInputSchema.parse(inputWithLeakedKey);
+		expect(parsed).toEqual({
+			designId: 'des_1',
+			delivery: 'stream',
+			format: 'jpeg',
+		});
 		expect(parsed).not.toHaveProperty('dma-api-key');
 	});
 });

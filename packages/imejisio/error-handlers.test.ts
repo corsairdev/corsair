@@ -3,10 +3,10 @@ import { errorHandlers } from './error-handlers';
 
 /** Returns the first handler key whose matcher claims the error. */
 function route(error: Error): string {
-	const key = Object.keys(errorHandlers).find((name) =>
-		errorHandlers[name as keyof typeof errorHandlers].match(error),
+	const match = Object.entries(errorHandlers).find(([, handler]) =>
+		handler.match(error),
 	);
-	return key ?? 'UNMATCHED';
+	return match ? match[0] : 'UNMATCHED';
 }
 
 describe('errorHandlers routing', () => {

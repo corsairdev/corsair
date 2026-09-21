@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 /**
  * Custom error class for failures originating from the Imejis.io render API.
  */
@@ -34,24 +36,35 @@ export type ImejisioRenderOptions = {
 	quality?: number;
 	delivery?: 'stream' | 'hosted' | 'signed';
 	expiresIn?: number;
+	// unknown justified: template overrides accept arbitrary caller-supplied field values.
 	overrides?: Record<string, unknown>;
 };
+
+const ImejisioErrorPayloadSchema = z.object({
+	message: z.string().optional(),
+	error: z.string().optional(),
+	reason: z.string().optional(),
+	data: z
+		.object({
+			resetAt: z.string().optional(),
+		})
+		.optional(),
+});
+
+// unknown justified: unvalidated external response JSON structure before endpoint schema parse.
+const JsonObjectSchema = z.record(z.string(), z.unknown());
 
 /**
  * Converts the official `QuotaError.data.resetAt` timestamp into a retry delay.
  *
  * OpenAPI: `#/components/schemas/QuotaError`
  *
- * @param body - Parsed error body from the render service.
+ * @param data - Optional data object containing resetAt timestamp.
  * @returns Milliseconds until the quota resets, or undefined when unavailable.
  */
-function retryAfterFromQuota(body: unknown): number | undefined {
-	if (!body || typeof body !== 'object') return undefined;
-	const data = (body as { data?: unknown }).data;
-	if (!data || typeof data !== 'object') return undefined;
-	const resetAt = (data as { resetAt?: unknown }).resetAt;
-	if (typeof resetAt !== 'string') return undefined;
-	const resetMs = Date.parse(resetAt);
+function retryAfterFromQuota(data?: { resetAt?: string }): number | undefined {
+	if (!data?.resetAt) return undefined;
+	const resetMs = Date.parse(data.resetAt);
 	if (Number.isNaN(resetMs)) return undefined;
 	return Math.max(0, resetMs - Date.now());
 }
@@ -73,35 +86,34 @@ function renderError(status: number, rawText: string): ImejisioAPIError {
 	let code: string | undefined;
 	let retryAfter: number | undefined;
 
-	let parsed: unknown;
 	try {
-		parsed = JSON.parse(rawText);
+		// unknown justified: parsed error payload is unvalidated external JSON before schema parse.
+		const parsed: unknown = JSON.parse(rawText);
+		const result = ImejisioErrorPayloadSchema.safeParse(parsed);
+		if (result.success) {
+			const {
+				message: errMessage,
+				error: errDetail,
+				reason,
+				data,
+			} = result.data;
+			const detail =
+				errMessage && errMessage.length > 0
+					? errMessage
+					: errDetail && errDetail.length > 0
+						? errDetail
+						: undefined;
+			if (detail) {
+				message = detail;
+			}
+			code = reason;
+			retryAfter = retryAfterFromQuota(data);
+		}
 	} catch {
 		if (rawText.trim().length > 0) {
 			message = rawText.trim();
 		}
 		return new ImejisioAPIError(message, code, status, retryAfter);
-	}
-
-	if (parsed && typeof parsed === 'object') {
-		const body = parsed as {
-			message?: unknown;
-			error?: unknown;
-			reason?: unknown;
-		};
-		const detail =
-			typeof body.message === 'string' && body.message.length > 0
-				? body.message
-				: typeof body.error === 'string' && body.error.length > 0
-					? body.error
-					: undefined;
-		if (detail) {
-			message = detail;
-		}
-		if (typeof body.reason === 'string') {
-			code = body.reason;
-		}
-		retryAfter = retryAfterFromQuota(parsed);
 	}
 
 	return new ImejisioAPIError(message, code, status, retryAfter);
@@ -122,9 +134,9 @@ function renderError(status: number, rawText: string): ImejisioAPIError {
  * @param renderKey - The render API key required by the render service.
  * @param options - Render options including format, quality, delivery, expiresIn, and overrides.
  * @returns The normalized response, shaped for `RenderDesignResponseSchema` to
- * parse. Deliberately `unknown`: the provider's body is untrusted until Zod
- * validates it at the endpoint.
+ * parse.
  */
+// unknown justified: provider body is untrusted until Zod validates it at the endpoint layer.
 export async function makeImejisioRenderRequest(
 	designId: string,
 	renderKey: string,
@@ -179,8 +191,10 @@ export async function makeImejisioRenderRequest(
 		contentTypeHeader.toLowerCase().includes('application/json');
 
 	if (isJson) {
-		const json = (await response.json()) as Record<string, unknown>;
-		return { ...json, delivery };
+		// unknown justified: untrusted provider JSON payload validated downstream by Zod at endpoint layer.
+		const json: unknown = await response.json();
+		const parsed = JsonObjectSchema.safeParse(json);
+		return parsed.success ? { ...parsed.data, delivery } : { delivery };
 	}
 
 	const arrayBuffer = await response.arrayBuffer();

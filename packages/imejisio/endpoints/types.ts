@@ -40,6 +40,7 @@ export const RenderDesignInputSchema = z.object({
 		.describe(
 			'Signed delivery only: link lifetime in minutes (default 60, maximum 7 days = 10080)',
 		),
+	// unknown justified: template overrides accept arbitrary caller-supplied field values.
 	overrides: z
 		.record(z.string(), z.unknown())
 		.optional()
@@ -88,6 +89,7 @@ export const RenderHostedResponseSchema = z
 			.enum(['png', 'jpeg', 'webp', 'pdf'])
 			.optional()
 			.describe('Rendered file format'),
+		// unknown justified: file metadata payload is provider-defined and can carry arbitrary attributes.
 		file: z
 			.record(z.string(), z.unknown())
 			.optional()
@@ -121,6 +123,7 @@ export const RenderSignedResponseSchema = z
 			.enum(['png', 'jpeg', 'webp', 'pdf'])
 			.optional()
 			.describe('Rendered file format'),
+		// unknown justified: file metadata payload is provider-defined and can carry arbitrary attributes.
 		file: z
 			.record(z.string(), z.unknown())
 			.optional()

@@ -18,7 +18,10 @@ export const ImejisioRender = z.object({
 	format: z.enum(['png', 'jpeg', 'webp', 'pdf']).nullable().optional(),
 	/** Signed delivery only — when the URL expires. */
 	expiresAt: z.string().nullable().optional(),
-	/** File metadata returned by Imejis, passed through as-is. */
+	/**
+	 * File metadata returned by Imejis, passed through as-is.
+	 * unknown justified: file metadata is provider-defined and can carry arbitrary attributes.
+	 */
 	file: z.record(z.string(), z.unknown()).nullable().optional(),
 	renderedAt: z.coerce.date(),
 });
