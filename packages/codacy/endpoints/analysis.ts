@@ -1,5 +1,4 @@
 import { logEventFromContext } from 'corsair/core';
-import type { z } from 'zod';
 import { getCodacyCredentials, makeCodacyRequest } from '../client';
 import type {
 	CodacyContext,
@@ -7,92 +6,46 @@ import type {
 	CodacyEndpointOutputs,
 	CodacyEndpoints,
 } from '../index';
-import {
-	CodacyEndpointOutputSchemas,
-	PatternOutputSchema,
-	ToolOutputSchema,
-} from './types';
+import { AnalysisConfigGetOutputSchema } from './types';
 
 /**
- * Get the analysis configuration for a repository.
+ * Get the analysis tools settings of a repository (the repository's
+ * analysis configuration: which tools run and how they are set).
  *
- * API: GET /repositories/:repository_id/analysis
- * Docs: https://docs.codacy.com/codacy-api/using-the-codacy-api/
+ * API: GET
+ * /analysis/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/tools
+ * Docs: https://api.codacy.com/api/api-docs
  */
 export const getConfig: CodacyEndpoints['analysisConfigGet'] = async (
 	ctx: CodacyContext,
 	input: CodacyEndpointInputs['analysisConfigGet'],
 ): Promise<CodacyEndpointOutputs['analysisConfigGet']> => {
 	const token = await getCodacyCredentials(ctx);
+	const { provider, organization_name, repository_name } = input;
 
 	const response = await makeCodacyRequest<
-		z.infer<typeof CodacyEndpointOutputSchemas.analysisConfigGet>
-	>(`/repositories/${input.repository_id}/analysis`, token);
+		CodacyEndpointOutputs['analysisConfigGet']
+	>(
+		`/analysis/organizations/${provider}/${organization_name}/repositories/${repository_name}/tools`,
+		token,
+	);
 
-	const parsed = CodacyEndpointOutputSchemas.analysisConfigGet.parse(response);
+	const parsed = AnalysisConfigGetOutputSchema.parse(response);
+
+	if (ctx.db.tools) {
+		try {
+			for (const tool of parsed.data) {
+				await ctx.db.tools.upsertByEntityId(tool.uuid, { ...tool });
+			}
+		} catch (error) {
+			console.warn('Failed to save analysis tools to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
 		'codacy.analysis.getConfig',
-		{ repository_id: input.repository_id },
-		'completed',
-	);
-	return parsed;
-};
-
-/**
- * List all available analysis tools.
- *
- * API: GET /tools
- * Docs: https://docs.codacy.com/codacy-api/using-the-codacy-api/
- */
-export const listTools: CodacyEndpoints['toolList'] = async (
-	ctx: CodacyContext,
-	input: CodacyEndpointInputs['toolList'],
-): Promise<CodacyEndpointOutputs['toolList']> => {
-	const token = await getCodacyCredentials(ctx);
-
-	const response = await makeCodacyRequest<z.infer<typeof ToolOutputSchema>>(
-		'/tools',
-		token,
-		{ query: input },
-	);
-
-	const parsed = ToolOutputSchema.parse(response);
-
-	await logEventFromContext(
-		ctx,
-		'codacy.tools.list',
-		{ ...input },
-		'completed',
-	);
-	return parsed;
-};
-
-/**
- * List all available analysis patterns.
- *
- * API: GET /patterns
- * Docs: https://docs.codacy.com/codacy-api/using-the-codacy-api/
- */
-export const listPatterns: CodacyEndpoints['patternList'] = async (
-	ctx: CodacyContext,
-	input: CodacyEndpointInputs['patternList'],
-): Promise<CodacyEndpointOutputs['patternList']> => {
-	const token = await getCodacyCredentials(ctx);
-
-	const response = await makeCodacyRequest<z.infer<typeof PatternOutputSchema>>(
-		'/patterns',
-		token,
-		{ query: input },
-	);
-
-	const parsed = PatternOutputSchema.parse(response);
-
-	await logEventFromContext(
-		ctx,
-		'codacy.patterns.list',
-		{ ...input },
+		{ provider, organization_name, repository_name },
 		'completed',
 	);
 	return parsed;

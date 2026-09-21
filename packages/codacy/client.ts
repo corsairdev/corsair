@@ -10,6 +10,11 @@ import { ApiError, request } from 'corsair/http';
 export class CodacyAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	/**
+	 * The raw response body. Codacy returns JSON error payloads
+	 * (`{ error: "...", ... }`) that don't map to a single known schema,
+	 * so callers narrow it themselves (see error-handlers.ts).
+	 */
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 
@@ -54,9 +59,10 @@ export async function tryGetStoredValue(
 
 /**
  * Builds the Codacy API v3 base URL.
+ * See https://docs.codacy.com/codacy-api/using-the-codacy-api/
  */
 export function getCodacyBaseUrl(): string {
-	return 'https://app.codacy.com/api/v3';
+	return 'https://api.codacy.com/api/v3';
 }
 
 /**
@@ -86,31 +92,34 @@ export async function getCodacyCredentials(
 /**
  * Performs a request against the Codacy API v3.
  *
- * Auth: Bearer token in Authorization header.
- * GET endpoints take query parameters; POST/PUT endpoints take a JSON body
- * and must send `Accept: application/json`.
+ * Auth: account API token sent in the `api-token` request header, as
+ * required by the Codacy docs (not a Bearer token):
+ * https://docs.codacy.com/codacy-api/using-the-codacy-api/#authenticating-requests
+ *
+ * All implemented endpoints are reads, so only GET is supported here.
+ * List endpoints take cursor-based pagination via query parameters.
  */
 export async function makeCodacyRequest<T>(
 	endpoint: string,
 	token: string,
 	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		method?: 'GET';
 		query?: Record<string, string | number | boolean | undefined>;
-		body?: Record<string, unknown>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', query, body } = options;
+	const { method = 'GET', query } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: getCodacyBaseUrl(),
-		VERSION: '3.0.0',
+		VERSION: '3.1.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: token,
+		TOKEN: undefined,
 		USERNAME: undefined,
 		PASSWORD: undefined,
 		HEADERS: {
 			Accept: 'application/json',
+			'api-token': token,
 		},
 	};
 
@@ -118,14 +127,6 @@ export async function makeCodacyRequest<T>(
 		method,
 		url: endpoint,
 		query,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? 'application/json'
-				: undefined,
 	};
 
 	try {

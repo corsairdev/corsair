@@ -1,44 +1,43 @@
+import { CodacySchema } from './schema';
 import {
 	CodacyAccount,
 	CodacyOrganization,
+	CodacyPattern,
 	CodacyRepository,
+	CodacyTool,
 } from './schema/database';
 
 describe('Codacy schema', () => {
 	it('declares a semver version', () => {
-		const { CodacySchema } = require('./schema');
 		expect(CodacySchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
 	it('declares an entities map', () => {
-		const { CodacySchema } = require('./schema');
 		expect(CodacySchema.entities).toBeDefined();
 		expect(typeof CodacySchema.entities).toBe('object');
 	});
 
 	it('registers the primary resources as database entities', () => {
-		const { CodacySchema } = require('./schema');
-		expect(CodacySchema.entities).toHaveProperty('account');
-		expect(CodacySchema.entities).toHaveProperty('organization');
-		expect(CodacySchema.entities).toHaveProperty('repository');
-		expect(CodacySchema.entities).toHaveProperty('tool');
-		expect(CodacySchema.entities).toHaveProperty('commit');
-		expect(CodacySchema.entities).toHaveProperty('issue');
+		expect(CodacySchema.entities).toHaveProperty('accounts');
+		expect(CodacySchema.entities).toHaveProperty('organizations');
+		expect(CodacySchema.entities).toHaveProperty('repositories');
+		expect(CodacySchema.entities).toHaveProperty('tools');
+		expect(CodacySchema.entities).toHaveProperty('patterns');
 	});
 
-	it('requires an id and name on the account entity', () => {
+	it('requires an id and email on the account entity', () => {
 		const valid = {
 			id: 1,
 			name: 'Test User',
-			email: 'test@example.com',
-			avatar_url: null,
-			plan: 'free',
-			created_at: '2024-01-01T00:00:00Z',
-			updated_at: '2024-01-01T00:00:00Z',
+			mainEmail: 'test@example.com',
+			otherEmails: [],
+			isAdmin: false,
+			isActive: true,
+			created: '2024-01-01T00:00:00Z',
 		};
 		expect(() => CodacyAccount.parse(valid)).not.toThrow();
 
-		const invalid = { ...valid, id: -1 };
+		const invalid = { name: 'Test User' };
 		expect(() => CodacyAccount.parse(invalid)).toThrow();
 	});
 
@@ -46,49 +45,56 @@ describe('Codacy schema', () => {
 		const withExtra = {
 			id: 1,
 			name: 'Test User',
-			email: 'test@example.com',
-			avatar_url: null,
-			plan: 'free',
-			created_at: '2024-01-01T00:00:00Z',
-			updated_at: '2024-01-01T00:00:00Z',
-			extra_field: 'should be ignored',
+			mainEmail: 'test@example.com',
+			otherEmails: [],
+			isAdmin: false,
+			isActive: true,
+			created: '2024-01-01T00:00:00Z',
+			extra_field: 'should be preserved',
 		};
-		expect(() => CodacyAccount.parse(withExtra)).not.toThrow();
+		const parsed = CodacyAccount.parse(withExtra);
+		expect(parsed).toMatchObject({ id: 1 });
 	});
 
-	it('parses organization entity', () => {
+	it('parses an organization entity', () => {
 		const org = {
-			id: 1,
+			remoteIdentifier: '123',
 			name: 'test-org',
-			display_name: 'Test Org',
-			avatar_url: null,
-			plan: 'premium',
-			is_premium: true,
-			provider: 'github',
-			created_at: '2024-01-01T00:00:00Z',
-			updated_at: '2024-01-01T00:00:00Z',
+			provider: 'gh',
+			singleProviderLogin: false,
+			type: 'organization',
+			hasDastAccess: false,
+			hasScaEnabled: true,
+			imageSbomEnabled: false,
 		};
 		expect(() => CodacyOrganization.parse(org)).not.toThrow();
 	});
 
-	it('parses repository entity', () => {
+	it('parses a repository entity', () => {
 		const repo = {
-			id: 1,
+			provider: 'gh',
+			owner: 'test-org',
 			name: 'test-repo',
-			display_name: 'Test Repo',
-			description: 'A test repository',
-			clone_url: 'https://github.com/test/repo.git',
-			ssh_url: 'git@github.com:test/repo.git',
-			language: 'TypeScript',
-			is_private: false,
-			is_archived: false,
-			is_fork: false,
-			default_branch: 'main',
-			organization_id: 1,
-			organization_name: 'test-org',
-			created_at: '2024-01-01T00:00:00Z',
-			updated_at: '2024-01-01T00:00:00Z',
+			languages: ['TypeScript'],
 		};
 		expect(() => CodacyRepository.parse(repo)).not.toThrow();
+	});
+
+	it('parses a tool entity', () => {
+		const tool = {
+			uuid: '847feb32-9ff2-11ea-bb37-0242ac130002',
+			name: 'ESLint',
+		};
+		expect(() => CodacyTool.parse(tool)).not.toThrow();
+	});
+
+	it('parses a pattern entity', () => {
+		const pattern = {
+			id: 'accessor-pairs',
+			category: 'Best Practices',
+			level: 'Warning',
+			severityLevel: 'medium',
+		};
+		expect(() => CodacyPattern.parse(pattern)).not.toThrow();
 	});
 });

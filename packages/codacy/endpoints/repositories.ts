@@ -1,5 +1,4 @@
 import { logEventFromContext } from 'corsair/core';
-import type { z } from 'zod';
 import { getCodacyCredentials, makeCodacyRequest } from '../client';
 import type {
 	CodacyContext,
@@ -8,28 +7,52 @@ import type {
 	CodacyEndpoints,
 } from '../index';
 import {
-	CodacyEndpointOutputSchemas,
+	RepositoryGetOutputSchema,
 	RepositoryLanguagesOutputSchema,
-	RepositoryOutputSchema,
+	RepositoryListOutputSchema,
 } from './types';
 
+function repositoryEntityId(input: {
+	provider: string;
+	owner: string;
+	name: string;
+}): string {
+	return `${input.provider}/${input.owner}/${input.name}`;
+}
+
 /**
- * List all repositories accessible by the authenticated user.
+ * List repositories of an organization for the authenticated user.
  *
- * API: GET /repositories
- * Docs: https://docs.codacy.com/codacy-api/using-the-codacy-api/
+ * API: GET /organizations/{provider}/{remoteOrganizationName}/repositories
+ * Docs: https://api.codacy.com/api/api-docs
  */
 export const list: CodacyEndpoints['repositoryList'] = async (
 	ctx: CodacyContext,
 	input: CodacyEndpointInputs['repositoryList'],
 ): Promise<CodacyEndpointOutputs['repositoryList']> => {
 	const token = await getCodacyCredentials(ctx);
+	const { provider, organization_name, cursor, limit, search } = input;
 
 	const response = await makeCodacyRequest<
-		z.infer<typeof RepositoryOutputSchema>
-	>('/repositories', token, { query: input });
+		CodacyEndpointOutputs['repositoryList']
+	>(`/organizations/${provider}/${organization_name}/repositories`, token, {
+		query: { cursor, limit, search },
+	});
 
-	const parsed = RepositoryOutputSchema.parse(response);
+	const parsed = RepositoryListOutputSchema.parse(response);
+
+	if (ctx.db.repositories) {
+		try {
+			for (const repository of parsed.data) {
+				await ctx.db.repositories.upsertByEntityId(
+					repositoryEntityId(repository),
+					{ ...repository },
+				);
+			}
+		} catch (error) {
+			console.warn('Failed to save repositories to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -41,54 +64,76 @@ export const list: CodacyEndpoints['repositoryList'] = async (
 };
 
 /**
- * Get a single repository by ID.
+ * Fetch a single repository by provider, organization, and name.
  *
- * API: GET /repositories/:repository_id
- * Docs: https://docs.codacy.com/codacy-api/using-the-codacy-api/
+ * API: GET
+ * /organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}
+ * Docs: https://api.codacy.com/api/api-docs
  */
 export const get: CodacyEndpoints['repositoryGet'] = async (
 	ctx: CodacyContext,
 	input: CodacyEndpointInputs['repositoryGet'],
 ): Promise<CodacyEndpointOutputs['repositoryGet']> => {
 	const token = await getCodacyCredentials(ctx);
+	const { provider, organization_name, repository_name } = input;
 
 	const response = await makeCodacyRequest<
-		z.infer<typeof CodacyEndpointOutputSchemas.repositoryGet>
-	>(`/repositories/${input.repository_id}`, token);
+		CodacyEndpointOutputs['repositoryGet']
+	>(
+		`/organizations/${provider}/${organization_name}/repositories/${repository_name}`,
+		token,
+	);
 
-	const parsed = CodacyEndpointOutputSchemas.repositoryGet.parse(response);
+	const parsed = RepositoryGetOutputSchema.parse(response);
+
+	if (ctx.db.repositories) {
+		try {
+			await ctx.db.repositories.upsertByEntityId(
+				repositoryEntityId(parsed.data),
+				{ ...parsed.data },
+			);
+		} catch (error) {
+			console.warn('Failed to save repository to database:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
 		'codacy.repositories.get',
-		{ repository_id: input.repository_id },
+		{ provider, organization_name, repository_name },
 		'completed',
 	);
 	return parsed;
 };
 
 /**
- * Get repository languages statistics.
+ * Get the language settings of a repository (supported extensions and
+ * enabled/detected status per language).
  *
- * API: GET /repositories/:repository_id/languages
- * Docs: https://docs.codacy.com/codacy-api/using-the-codacy-api/
+ * API: GET
+ * /organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/settings/languages
+ * Docs: https://api.codacy.com/api/api-docs
  */
 export const languages: CodacyEndpoints['repositoryLanguages'] = async (
 	ctx: CodacyContext,
 	input: CodacyEndpointInputs['repositoryLanguages'],
 ): Promise<CodacyEndpointOutputs['repositoryLanguages']> => {
 	const token = await getCodacyCredentials(ctx);
+	const { provider, organization_name, repository_name } = input;
 
 	const response = await makeCodacyRequest<
-		z.infer<typeof RepositoryLanguagesOutputSchema>
-	>(`/repositories/${input.repository_id}/languages`, token);
+		CodacyEndpointOutputs['repositoryLanguages']
+	>(
+		`/organizations/${provider}/${organization_name}/repositories/${repository_name}/settings/languages`,
+		token,
+	);
 
 	const parsed = RepositoryLanguagesOutputSchema.parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'codacy.repositories.languages',
-		{ repository_id: input.repository_id },
+		{ provider, organization_name, repository_name },
 		'completed',
 	);
 	return parsed;

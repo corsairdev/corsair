@@ -1,50 +1,34 @@
 export * from './types';
 
-import type { EndpointPathsOf } from 'corsair/core';
+import { get as getAccount } from './account';
+import { getConfig as getAnalysisConfig } from './analysis';
+import {
+	get as getOrganization,
+	list as listOrganizations,
+} from './organizations';
+import { get as getPattern, list as listPatterns } from './patterns';
+import {
+	get as getRepository,
+	list as listRepositories,
+	languages as repositoryLanguages,
+} from './repositories';
+import { list as listTools } from './tools';
 
-export const endpointMeta = {
-	'Account.get': {
-		riskLevel: 'read' as const,
-		description: 'Get account details',
-	},
-	'Organizations.list': {
-		riskLevel: 'read' as const,
-		description: 'List organizations',
-	},
-	'Organizations.get': {
-		riskLevel: 'read' as const,
-		description: 'Get organization',
-	},
-	'Repositories.list': {
-		riskLevel: 'read' as const,
-		description: 'List repositories',
-	},
-	'Repositories.get': {
-		riskLevel: 'read' as const,
-		description: 'Get repository',
-	},
-	'Repositories.languages': {
-		riskLevel: 'read' as const,
-		description: 'Get repository languages',
-	},
-	'Analysis.getConfig': {
-		riskLevel: 'read' as const,
-		description: 'Get analysis configuration',
-	},
-	'Analysis.tools': {
-		riskLevel: 'read' as const,
-		description: 'List analysis tools',
-	},
-	'Analysis.patterns': {
-		riskLevel: 'read' as const,
-		description: 'List analysis patterns',
-	},
-	'Commits.list': { riskLevel: 'read' as const, description: 'List commits' },
-	'Issues.list': { riskLevel: 'read' as const, description: 'List issues' },
-} as const satisfies Record<
-	EndpointPathsOf<typeof import('./tree').codacyEndpointsNested>,
-	{ riskLevel: 'read' | 'write' | 'destructive'; description: string }
->;
-
-export { codacyEndpointsNested, Endpoints } from './tree';
-export type { CodacyEndpoints } from './types';
+export const Endpoints = {
+	// Account
+	accountGet: getAccount,
+	// Organizations
+	organizationList: listOrganizations,
+	organizationGet: getOrganization,
+	// Repositories
+	repositoryList: listRepositories,
+	repositoryGet: getRepository,
+	repositoryLanguages,
+	// Analysis
+	analysisConfigGet: getAnalysisConfig,
+	// Tools
+	toolList: listTools,
+	// Patterns
+	patternList: listPatterns,
+	patternGet: getPattern,
+} as const;

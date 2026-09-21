@@ -8,7 +8,7 @@ import {
 
 describe('getCodacyBaseUrl', () => {
 	it('builds the v3 URL', () => {
-		expect(getCodacyBaseUrl()).toBe('https://app.codacy.com/api/v3');
+		expect(getCodacyBaseUrl()).toBe('https://api.codacy.com/api/v3');
 	});
 });
 
@@ -104,70 +104,38 @@ describe('makeCodacyRequest', () => {
 		mockRequest.mockReset();
 	});
 
-	it('uses Bearer auth with the token', async () => {
-		mockRequest.mockResolvedValueOnce({ data: { id: 1, name: 'Test' } });
+	it('sends the token in the api-token header (not Bearer)', async () => {
+		mockRequest.mockResolvedValueOnce({ data: { id: 1 } });
 
-		await makeCodacyRequest('/account', 'test-token', {});
+		await makeCodacyRequest('/user', 'test-token', {});
 
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
-				TOKEN: 'test-token',
+				TOKEN: undefined,
+				HEADERS: expect.objectContaining({
+					'api-token': 'test-token',
+				}),
 			}),
 			expect.objectContaining({
 				method: 'GET',
-				url: '/account',
+				url: '/user',
 			}),
 		);
 	});
 
-	it('sends JSON bodies for POST/PUT/PATCH and none for GET', async () => {
-		mockRequest.mockResolvedValueOnce({ data: { id: 1, name: 'Test' } });
+	it('passes cursor pagination query parameters through', async () => {
+		mockRequest.mockResolvedValueOnce({ data: [] });
 
-		await makeCodacyRequest('/repositories', 'token', {
-			method: 'POST',
-			body: { name: 'test' },
+		await makeCodacyRequest('/user/organizations', 'token', {
+			query: { cursor: 'abc123', limit: 10 },
 		});
 
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.any(Object),
 			expect.objectContaining({
-				body: { name: 'test' },
-				mediaType: 'application/json',
-				method: 'POST',
-				url: '/repositories',
-			}),
-		);
-
-		mockRequest.mockResolvedValueOnce({ data: { id: 1, name: 'Test' } });
-		await makeCodacyRequest('/repositories/1', 'token', {
-			method: 'GET',
-		});
-
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.any(Object),
-			expect.objectContaining({
-				body: undefined,
-				mediaType: undefined,
+				query: { cursor: 'abc123', limit: 10 },
 				method: 'GET',
-				url: '/repositories/1',
-			}),
-		);
-	});
-
-	it('passes query parameters through', async () => {
-		mockRequest.mockResolvedValueOnce({ data: { id: 1, name: 'Test' } });
-
-		await makeCodacyRequest('/repositories', 'token', {
-			method: 'GET',
-			query: { page: 1, page_size: 10 },
-		});
-
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.any(Object),
-			expect.objectContaining({
-				query: { page: 1, page_size: 10 },
-				method: 'GET',
-				url: '/repositories',
+				url: '/user/organizations',
 			}),
 		);
 	});
@@ -175,9 +143,9 @@ describe('makeCodacyRequest', () => {
 	it('wraps ApiError into CodacyAPIError preserving status and body', async () => {
 		const { ApiError } = require('corsair/http');
 		const apiError = new ApiError(
-			{ method: 'GET', url: '/repositories' },
+			{ method: 'GET', url: '/user' },
 			{
-				url: 'https://app.codacy.com/api/v3/repositories',
+				url: 'https://api.codacy.com/api/v3/user',
 				ok: false,
 				status: 429,
 				statusText: 'Too Many Requests',
@@ -188,7 +156,7 @@ describe('makeCodacyRequest', () => {
 		);
 		mockRequest.mockRejectedValueOnce(apiError);
 
-		const error = (await makeCodacyRequest('/repositories', 'token', {}).catch(
+		const error = (await makeCodacyRequest('/user', 'token', {}).catch(
 			(e) => e,
 		)) as CodacyAPIError;
 
@@ -201,7 +169,7 @@ describe('makeCodacyRequest', () => {
 	it('wraps non-ApiError failures too', async () => {
 		mockRequest.mockRejectedValueOnce(new Error('network down'));
 
-		const error = (await makeCodacyRequest('/repositories', 'token', {}).catch(
+		const error = (await makeCodacyRequest('/user', 'token', {}).catch(
 			(e) => e,
 		)) as CodacyAPIError;
 

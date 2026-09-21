@@ -1,75 +1,97 @@
-import type { CorsairEndpoint } from 'corsair/core';
 import { z } from 'zod';
-import type { CodacyContext } from '../index';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Shared inputs
+// ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Codacy API v3 uses numeric IDs for most resources.
+ * Git provider hosting the organization (e.g. gh for GitHub, gl for
+ * GitLab, bb for Bitbucket). Kept as a string because Codacy supports
+ * additional self-hosted provider identifiers beyond the cloud ones.
  */
-const Id = z.number().int().positive().describe('Codacy resource ID');
+export const ProviderSchema = z
+	.string()
+	.min(1)
+	.describe('Git provider (e.g. gh, gl, bb)');
+
+export const OrganizationNameSchema = z
+	.string()
+	.min(1)
+	.describe('Organization name on the Git provider');
+
+export const RepositoryNameSchema = z
+	.string()
+	.min(1)
+	.describe('Repository name on the Git provider');
 
 /**
- * Pagination parameters used by list endpoints.
+ * Cursor-based pagination inputs shared by list endpoints.
+ * See https://docs.codacy.com/codacy-api/using-the-codacy-api/#using-pagination
  */
-const PaginationInputSchema = z.object({
-	page: z
-		.number()
-		.int()
-		.min(1)
-		.optional()
-		.describe('Page number (starts at 1)'),
-	page_size: z
-		.number()
-		.int()
-		.min(1)
-		.max(100)
-		.optional()
-		.describe('Results per page (max 100)'),
-	sort: z
+export const CursorPaginationInputSchema = z.object({
+	cursor: z
 		.string()
 		.optional()
-		.describe('Sort field and order (e.g. "name:asc")'),
+		.describe('Pagination cursor from a previous response'),
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.max(1000)
+		.optional()
+		.describe('Results per page (max 1000, default 100)'),
 });
 
 /**
- * Standard pagination envelope returned by list endpoints.
+ * Cursor-based pagination envelope returned by list endpoints. The
+ * `pagination` object (and its `cursor`) is absent on the last page.
  */
+export const PaginationInfoSchema = z.object({
+	cursor: z.string().optional(),
+	limit: z.number().int().optional(),
+	total: z.number().int().optional(),
+});
+
 function PaginatedResponseSchema<T extends z.ZodTypeAny>(itemSchema: T) {
 	return z.object({
-		total: z.number().int().nonnegative(),
-		page: z.number().int().positive(),
-		page_size: z.number().int().positive(),
-		pages: z.number().int().nonnegative(),
 		data: z.array(itemSchema),
+		pagination: PaginationInfoSchema.optional(),
+	});
+}
+
+function SingleResponseSchema<T extends z.ZodTypeAny>(itemSchema: T) {
+	return z.object({
+		data: itemSchema,
 	});
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ACCOUNT
+// ACCOUNT — GET /user
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const CodacyAccountSchema = z
+export const CodacyUserSchema = z
 	.object({
-		id: Id,
-		name: z.string(),
-		email: z.string().email(),
-		avatar_url: z.string().url().nullable(),
-		plan: z.string().nullable(),
-		created_at: z.string().datetime(),
-		updated_at: z.string().datetime(),
+		id: z.number().int(),
+		name: z.string().optional(),
+		mainEmail: z.string(),
+		otherEmails: z.array(z.string()),
+		isAdmin: z.boolean(),
+		isActive: z.boolean(),
+		created: z.string(),
+		intercomHash: z.string().optional(),
+		zendeskHash: z.string().optional(),
+		pylonHash: z.string().optional(),
+		shouldDoClientQualification: z.boolean().optional(),
 	})
-	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
+	// any/unknown: Codacy may return extra account fields not modeled
+	// here; loose parsing keeps them instead of rejecting the response.
 	.loose();
 
-export type CodacyAccount = z.infer<typeof CodacyAccountSchema>;
+export type CodacyUser = z.infer<typeof CodacyUserSchema>;
 
 export const AccountGetInputSchema = z.object({});
 
-export const AccountOutputSchema = PaginatedResponseSchema(CodacyAccountSchema);
-
-/**
- * Single account response (Codacy returns the object directly for GET /account)
- */
-export const CodacyAccountResponseSchema = CodacyAccountSchema;
+export const AccountGetOutputSchema = SingleResponseSchema(CodacyUserSchema);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ORGANIZATIONS
@@ -77,30 +99,61 @@ export const CodacyAccountResponseSchema = CodacyAccountSchema;
 
 export const CodacyOrganizationSchema = z
 	.object({
-		id: Id,
+		identifier: z.number().int().optional(),
+		remoteIdentifier: z.string(),
 		name: z.string(),
-		display_name: z.string().nullable(),
-		avatar_url: z.string().url().nullable(),
-		plan: z.string().nullable(),
-		is_premium: z.boolean(),
-		provider: z.string().nullable(),
-		created_at: z.string().datetime(),
-		updated_at: z.string().datetime(),
+		avatar: z.string().optional(),
+		created: z.string().optional(),
+		provider: z.string(),
+		joinMode: z.string().optional(),
+		type: z.string().optional(),
+		joinStatus: z.string().optional(),
+		singleProviderLogin: z.boolean(),
+		hasDastAccess: z.boolean(),
+		hasScaEnabled: z.boolean(),
+		imageSbomEnabled: z.boolean(),
+		hasAiInventoryEnabled: z.boolean().optional(),
+		hasFalsePositiveAccess: z.boolean().optional(),
+		hasSilentFalsePositiveDetection: z.boolean().optional(),
 	})
-	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
+	// any/unknown: Codacy may return extra organization fields not modeled
+	// here; loose parsing keeps them instead of rejecting the response.
 	.loose();
 
 export type CodacyOrganization = z.infer<typeof CodacyOrganizationSchema>;
 
-export const OrganizationGetInputSchema = z.object({
-	organization_id: Id.describe('Organization ID'),
-});
-export const OrganizationListInputSchema = PaginationInputSchema;
+/**
+ * Organization details with metadata (GET
+ * /organizations/{provider}/{remoteOrganizationName}). Modeled with the
+ * organization schema: loose parsing preserves the extra metadata fields
+ * Codacy returns alongside the organization record.
+ */
+export const CodacyOrganizationWithMetaSchema = CodacyOrganizationSchema;
 
-export const OrganizationOutputSchema = PaginatedResponseSchema(
+export type CodacyOrganizationWithMeta = z.infer<
+	typeof CodacyOrganizationWithMetaSchema
+>;
+
+export const OrganizationListInputSchema = z
+	.object({
+		provider: ProviderSchema.optional().describe(
+			'Restrict to a single Git provider (e.g. gh). Omit to list across providers.',
+		),
+	})
+	.merge(CursorPaginationInputSchema);
+
+export const OrganizationListOutputSchema = PaginatedResponseSchema(
 	CodacyOrganizationSchema,
 );
-export const CodacyOrganizationResponseSchema = CodacyOrganizationSchema;
+
+export const OrganizationGetInputSchema = z.object({
+	provider: ProviderSchema,
+	organization_name: OrganizationNameSchema,
+});
+
+export const OrganizationGetOutputSchema = SingleResponseSchema(
+	CodacyOrganizationWithMetaSchema,
+);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // REPOSITORIES
@@ -108,250 +161,186 @@ export const CodacyOrganizationResponseSchema = CodacyOrganizationSchema;
 
 export const CodacyRepositorySchema = z
 	.object({
-		id: Id,
+		repositoryId: z.number().int().optional(),
+		provider: z.string(),
+		owner: z.string(),
 		name: z.string(),
-		display_name: z.string().nullable(),
-		description: z.string().nullable(),
-		clone_url: z.string().url(),
-		ssh_url: z.string().nullable(),
-		language: z.string().nullable(),
-		is_private: z.boolean(),
-		is_archived: z.boolean(),
-		is_fork: z.boolean(),
-		default_branch: z.string().nullable(),
-		last_analysis: z
-			.object({
-				timestamp: z.string().datetime(),
-				commit_sha: z.string(),
-				status: z.enum(['SUCCESS', 'FAILURE', 'RUNNING', 'PENDING']),
-			})
-			.nullable(),
-		organization_id: Id,
-		organization_name: z.string(),
-		created_at: z.string().datetime(),
-		updated_at: z.string().datetime(),
+		fullPath: z.string().optional(),
+		visibility: z.string().optional(),
+		remoteIdentifier: z.string().optional(),
+		lastUpdated: z.string().optional(),
+		permission: z.string().optional(),
+		languages: z.array(z.string()).optional(),
 	})
-	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
+	// any/unknown: Codacy returns nested objects (default branch, badges,
+	// standards, problems, stack) whose shapes vary; loose parsing keeps
+	// them instead of rejecting the response.
 	.loose();
 
 export type CodacyRepository = z.infer<typeof CodacyRepositorySchema>;
 
-export const RepositoryGetInputSchema = z.object({
-	repository_id: Id.describe('Repository ID'),
-});
-export const RepositoryListInputSchema = PaginationInputSchema.extend({
-	organization_id: Id.optional().describe('Filter by organization'),
-	language: z.string().optional().describe('Filter by language'),
-	is_private: z.boolean().optional().describe('Filter by visibility'),
-});
+export const RepositoryListInputSchema = z
+	.object({
+		provider: ProviderSchema,
+		organization_name: OrganizationNameSchema,
+		search: z.string().optional().describe('Filter repositories by name'),
+	})
+	.merge(CursorPaginationInputSchema);
 
-export const RepositoryOutputSchema = PaginatedResponseSchema(
+export const RepositoryListOutputSchema = PaginatedResponseSchema(
 	CodacyRepositorySchema,
 );
-export const CodacyRepositoryResponseSchema = CodacyRepositorySchema;
+
+export const RepositoryGetInputSchema = z.object({
+	provider: ProviderSchema,
+	organization_name: OrganizationNameSchema,
+	repository_name: RepositoryNameSchema,
+});
+
+export const RepositoryGetOutputSchema = SingleResponseSchema(
+	CodacyRepositorySchema,
+);
 
 // ─────────────────────────────────────────────────────────────────────────────
-// REPOSITORY LANGUAGES
+// REPOSITORY LANGUAGES — GET .../settings/languages
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const CodacyLanguageSchema = z
+export const CodacyRepositoryLanguageSchema = z
 	.object({
 		name: z.string(),
-		files: z.number().int().nonnegative(),
-		lines: z.number().int().nonnegative(),
-		bytes: z.number().int().nonnegative(),
-		percentage: z.number().min(0).max(100),
+		codacyDefaults: z.array(z.string()),
+		extensions: z.array(z.string()),
+		defaultFiles: z.array(z.string()),
+		enabled: z.boolean(),
+		detected: z.boolean(),
 	})
-	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
+	// any/unknown: Codacy may return extra language fields not modeled
+	// here; loose parsing keeps them instead of rejecting the response.
 	.loose();
 
-export type CodacyLanguage = z.infer<typeof CodacyLanguageSchema>;
+export type CodacyRepositoryLanguage = z.infer<
+	typeof CodacyRepositoryLanguageSchema
+>;
 
 export const RepositoryLanguagesInputSchema = z.object({
-	repository_id: Id.describe('Repository ID'),
+	provider: ProviderSchema,
+	organization_name: OrganizationNameSchema,
+	repository_name: RepositoryNameSchema,
 });
 
 export const RepositoryLanguagesOutputSchema = z.object({
-	languages: z.array(CodacyLanguageSchema),
+	languages: z.array(CodacyRepositoryLanguageSchema),
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ANALYSIS CONFIGURATION
+// ANALYSIS CONFIGURATION — GET /analysis/.../tools
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const CodacyAnalysisToolSchema = z
+	.object({
+		uuid: z.string(),
+		name: z.string(),
+		isClientSide: z.boolean(),
+		// any/unknown: tool settings are a free-form object whose shape
+		// varies per tool; callers narrow it themselves.
+		settings: z.unknown().optional(),
+	})
+	// any/unknown: Codacy may return extra tool-setting fields not modeled
+	// here; loose parsing keeps them instead of rejecting the response.
+	.loose();
+
+export type CodacyAnalysisTool = z.infer<typeof CodacyAnalysisToolSchema>;
+
+export const AnalysisConfigGetInputSchema = z.object({
+	provider: ProviderSchema,
+	organization_name: OrganizationNameSchema,
+	repository_name: RepositoryNameSchema,
+});
+
+export const AnalysisConfigGetOutputSchema = z.object({
+	data: z.array(CodacyAnalysisToolSchema),
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TOOLS — GET /tools
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const CodacyToolSchema = z
+	.object({
+		uuid: z.string(),
+		name: z.string(),
+		version: z.string().optional(),
+		shortName: z.string().optional(),
+		documentationUrl: z.string().optional(),
+		sourceCodeUrl: z.string().optional(),
+		prefix: z.string().optional(),
+		needsCompilation: z.boolean().optional(),
+		configurationFilenames: z.array(z.string()).optional(),
+		description: z.string().optional(),
+		dockerImage: z.string().optional(),
+		languages: z.array(z.string()).optional(),
+	})
+	// any/unknown: Codacy may return extra tool fields not modeled here;
+	// loose parsing keeps them instead of rejecting the response.
+	.loose();
+
+export type CodacyTool = z.infer<typeof CodacyToolSchema>;
+
+export const ToolListInputSchema = CursorPaginationInputSchema;
+
+export const ToolListOutputSchema = PaginatedResponseSchema(CodacyToolSchema);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PATTERNS — GET /tools/{toolUuid}/patterns[/{patternId}]
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const CodacyPatternSchema = z
 	.object({
 		id: z.string(),
-		name: z.string(),
-		description: z.string().nullable(),
-		category: z.enum([
-			'Error',
-			'Warning',
-			'Info',
-			'Style',
-			'Security',
-			'Performance',
-		]),
-		language: z.string(),
-		enabled: z.boolean(),
-		parameters: z.record(z.string(), z.unknown()).optional(),
+		title: z.string().optional(),
+		category: z.string(),
+		subCategory: z.string().optional(),
+		level: z.string(),
+		// any/unknown: severity level representation varies across API
+		// versions; accepted as-is so new shapes don't break validation.
+		severityLevel: z.unknown(),
+		description: z.string().optional(),
+		explanation: z.string().optional(),
+		enabled: z.boolean().optional(),
+		languages: z.array(z.string()).optional(),
+		timeToFix: z.number().int().optional(),
+		// any/unknown: pattern parameters are a free-form object whose
+		// shape varies per pattern; callers narrow it themselves.
+		parameters: z.unknown().optional(),
+		rationale: z.string().optional(),
+		solution: z.string().optional(),
+		goodExamples: z.array(z.string()).optional(),
+		badExamples: z.array(z.string()).optional(),
+		tags: z.array(z.string()).optional(),
 	})
-	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
+	// any/unknown: Codacy may return extra pattern fields not modeled
+	// here; loose parsing keeps them instead of rejecting the response.
 	.loose();
 
 export type CodacyPattern = z.infer<typeof CodacyPatternSchema>;
 
-export const CodacyToolSchema = z
+export const PatternListInputSchema = z
 	.object({
-		name: z.string(),
-		version: z.string(),
-		language: z.string(),
-		patterns: z.array(CodacyPatternSchema),
+		tool_uuid: z.string().min(1).describe('Tool UUID'),
+		enabled: z.boolean().optional().describe('Filter by enabled status'),
+		search: z.string().optional().describe('Filter patterns by search text'),
 	})
-	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
-	.loose();
+	.merge(CursorPaginationInputSchema);
 
-export type CodacyTool = z.infer<typeof CodacyToolSchema>;
+export const PatternListOutputSchema =
+	PaginatedResponseSchema(CodacyPatternSchema);
 
-export const CodacyAnalysisConfigSchema = z
-	.object({
-		tools: z.array(CodacyToolSchema),
-		patterns: z.array(CodacyPatternSchema),
-		excluded_paths: z.array(z.string()).optional(),
-		included_paths: z.array(z.string()).optional(),
-	})
-	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
-	.loose();
-
-export type CodacyAnalysisConfig = z.infer<typeof CodacyAnalysisConfigSchema>;
-
-export const AnalysisConfigGetInputSchema = z.object({
-	repository_id: Id.describe('Repository ID'),
+export const PatternGetInputSchema = z.object({
+	tool_uuid: z.string().min(1).describe('Tool UUID'),
+	pattern_id: z.string().min(1).describe('Pattern ID (unique per tool)'),
 });
 
-export const AnalysisConfigOutputSchema = CodacyAnalysisConfigSchema;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// TOOLS & PATTERNS
-// ─────────────────────────────────────────────────────────────────────────────
-
-export const ToolListInputSchema = z.object({
-	language: z.string().optional().describe('Filter by language'),
-});
-
-export const ToolOutputSchema = z.array(CodacyToolSchema);
-
-export const PatternListInputSchema = z.object({
-	tool: z.string().optional().describe('Filter by tool name'),
-	language: z.string().optional().describe('Filter by language'),
-	category: z.string().optional().describe('Filter by category'),
-});
-
-export const PatternOutputSchema = z.array(CodacyPatternSchema);
-
-// ─────────────────────────────────────────────────────────────────────────────
-// COMMITS & ANALYSES
-// ─────────────────────────────────────────────────────────────────────────────
-
-export const CodacyCommitSchema = z
-	.object({
-		sha: z.string(),
-		author: z.string(),
-		message: z.string(),
-		timestamp: z.string().datetime(),
-		branch: z.string().nullable(),
-		analysis: z
-			.object({
-				status: z.enum(['SUCCESS', 'FAILURE', 'RUNNING', 'PENDING']),
-				timestamp: z.string().datetime().nullable(),
-				issues_count: z.number().int().nonnegative().nullable(),
-				issues_diff: z.number().int().nullable(),
-			})
-			.nullable(),
-	})
-	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
-	.loose();
-
-export type CodacyCommit = z.infer<typeof CodacyCommitSchema>;
-
-export const CommitListInputSchema = z
-	.object({
-		repository_id: Id.describe('Repository ID'),
-		branch: z.string().optional().describe('Filter by branch'),
-	})
-	.merge(PaginationInputSchema);
-
-export const CommitOutputSchema = PaginatedResponseSchema(CodacyCommitSchema);
-
-// ─────────────────────────────────────────────────────────────────────────────
-// ISSUES
-// ─────────────────────────────────────────────────────────────────────────────
-
-export const CodacyIssueSchema = z
-	.object({
-		id: z.string(),
-		pattern_id: z.string(),
-		pattern_name: z.string(),
-		category: z.enum([
-			'Error',
-			'Warning',
-			'Info',
-			'Style',
-			'Security',
-			'Performance',
-		]),
-		level: z.enum(['error', 'warning', 'info']),
-		file_path: z.string(),
-		line: z.number().int().positive(),
-		column: z.number().int().nonnegative().optional(),
-		message: z.string(),
-		effort: z.number().int().nonnegative().nullable(),
-		status: z.enum(['new', 'fixed', 'removed', 'ignored']),
-		commit_sha: z.string(),
-		tool_name: z.string(),
-		created_at: z.string().datetime(),
-		updated_at: z.string().datetime(),
-	})
-	// any/unknown: Codacy may return extra fields not in our schema; loose parsing allows forward compatibility
-	.loose();
-
-export type CodacyIssue = z.infer<typeof CodacyIssueSchema>;
-
-export const IssueListInputSchema = z
-	.object({
-		repository_id: Id.describe('Repository ID'),
-		commit_sha: z.string().optional().describe('Filter by commit'),
-		pattern_id: z.string().optional().describe('Filter by pattern'),
-		category: z.string().optional().describe('Filter by category'),
-		level: z.string().optional().describe('Filter by level'),
-		file_path: z.string().optional().describe('Filter by file path'),
-		status: z.string().optional().describe('Filter by status'),
-	})
-	.merge(PaginationInputSchema);
-
-export const IssueOutputSchema = PaginatedResponseSchema(CodacyIssueSchema);
-
-// ─────────────────────────────────────────────────────────────────────────────
-// SHARED RESPONSE TYPES
-// ─────────────────────────────────────────────────────────────────────────────
-
-export const DeleteSuccess = z.object({
-	success: z.literal(true),
-	id: Id,
-});
-
-export type CodacyDeleteResponse = z.infer<typeof DeleteSuccess>;
-
-export const WebhookEventSchema = z
-	.object({
-		event: z.string(),
-		timestamp: z.string().datetime(),
-		// any/unknown: webhook payload varies by event type; Codacy does not document a fixed shape
-		payload: z.unknown(),
-	})
-	.loose();
-
-export type CodacyWebhookEvent = z.infer<typeof WebhookEventSchema>;
+export const PatternGetOutputSchema = SingleResponseSchema(CodacyPatternSchema);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ENDPOINT INPUT / OUTPUT MAPS
@@ -367,22 +356,20 @@ export const CodacyEndpointInputSchemas = {
 	analysisConfigGet: AnalysisConfigGetInputSchema,
 	toolList: ToolListInputSchema,
 	patternList: PatternListInputSchema,
-	commitList: CommitListInputSchema,
-	issueList: IssueListInputSchema,
+	patternGet: PatternGetInputSchema,
 } as const;
 
 export const CodacyEndpointOutputSchemas = {
-	accountGet: CodacyAccountResponseSchema,
-	organizationList: OrganizationOutputSchema,
-	organizationGet: CodacyOrganizationResponseSchema,
-	repositoryList: RepositoryOutputSchema,
-	repositoryGet: CodacyRepositoryResponseSchema,
+	accountGet: AccountGetOutputSchema,
+	organizationList: OrganizationListOutputSchema,
+	organizationGet: OrganizationGetOutputSchema,
+	repositoryList: RepositoryListOutputSchema,
+	repositoryGet: RepositoryGetOutputSchema,
 	repositoryLanguages: RepositoryLanguagesOutputSchema,
-	analysisConfigGet: AnalysisConfigOutputSchema,
-	toolList: ToolOutputSchema,
-	patternList: PatternOutputSchema,
-	commitList: CommitOutputSchema,
-	issueList: IssueOutputSchema,
+	analysisConfigGet: AnalysisConfigGetOutputSchema,
+	toolList: ToolListOutputSchema,
+	patternList: PatternListOutputSchema,
+	patternGet: PatternGetOutputSchema,
 } as const;
 
 export type CodacyEndpointInputs = {
@@ -396,33 +383,3 @@ export type CodacyEndpointOutputs = {
 		(typeof CodacyEndpointOutputSchemas)[K]
 	>;
 };
-
-/**
- * Endpoint type for Codacy API - maps to CorsairEndpoint with proper context/input/output types.
- */
-export type CodacyEndpoint<K extends keyof CodacyEndpointOutputs> =
-	CorsairEndpoint<
-		CodacyContext,
-		CodacyEndpointInputs[K],
-		CodacyEndpointOutputs[K]
-	>;
-
-/**
- * Endpoint type map - each key maps to a CorsairEndpoint function type.
- * This allows endpoint functions to be typed as CodacyEndpoints['methodName'].
- */
-export type CodacyEndpoints = {
-	accountGet: CodacyEndpoint<'accountGet'>;
-	organizationList: CodacyEndpoint<'organizationList'>;
-	organizationGet: CodacyEndpoint<'organizationGet'>;
-	repositoryList: CodacyEndpoint<'repositoryList'>;
-	repositoryGet: CodacyEndpoint<'repositoryGet'>;
-	repositoryLanguages: CodacyEndpoint<'repositoryLanguages'>;
-	analysisConfigGet: CodacyEndpoint<'analysisConfigGet'>;
-	toolList: CodacyEndpoint<'toolList'>;
-	patternList: CodacyEndpoint<'patternList'>;
-	commitList: CodacyEndpoint<'commitList'>;
-	issueList: CodacyEndpoint<'issueList'>;
-};
-
-export { codacyEndpointsNested } from './tree';

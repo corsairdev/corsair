@@ -1,17 +1,15 @@
 import {
 	CodacyAccount,
-	CodacyCommit,
-	CodacyIssue,
 	CodacyOrganization,
+	CodacyPattern,
 	CodacyRepository,
 	CodacyTool,
 } from './database';
 
 export type {
 	CodacyAccount,
-	CodacyCommit,
-	CodacyIssue,
 	CodacyOrganization,
+	CodacyPattern,
 	CodacyRepository,
 	CodacyTool,
 } from './database';
@@ -19,12 +17,11 @@ export type {
 export const CodacySchema = {
 	version: '0.1.0',
 	entities: {
-		account: CodacyAccount,
-		organization: CodacyOrganization,
-		repository: CodacyRepository,
-		tool: CodacyTool,
-		commit: CodacyCommit,
-		issue: CodacyIssue,
+		accounts: CodacyAccount,
+		organizations: CodacyOrganization,
+		repositories: CodacyRepository,
+		tools: CodacyTool,
+		patterns: CodacyPattern,
 	},
 } as const;
 

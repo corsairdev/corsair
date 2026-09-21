@@ -1,4 +1,5 @@
 import type {
+	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairKeyBuilder,
@@ -8,48 +9,45 @@ import type {
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import type { CodacyEndpoints } from './endpoints';
-import { codacyEndpointsNested, endpointMeta } from './endpoints';
+import { tryGetStoredValue } from './client';
+import { Endpoints } from './endpoints';
 import type {
-	CodacyEndpointInputs,
-	CodacyEndpointOutputs,
+	CodacyEndpointInputs as CodacyEndpointInputMap,
+	CodacyEndpointOutputs as CodacyEndpointOutputMap,
 } from './endpoints/types';
 import {
 	AccountGetInputSchema,
+	AccountGetOutputSchema,
 	AnalysisConfigGetInputSchema,
-	AnalysisConfigOutputSchema,
-	CodacyAccountResponseSchema,
-	CodacyOrganizationResponseSchema,
-	CodacyRepositoryResponseSchema,
-	CommitListInputSchema,
-	CommitOutputSchema,
-	IssueListInputSchema,
-	IssueOutputSchema,
+	AnalysisConfigGetOutputSchema,
 	OrganizationGetInputSchema,
+	OrganizationGetOutputSchema,
 	OrganizationListInputSchema,
-	OrganizationOutputSchema,
+	OrganizationListOutputSchema,
+	PatternGetInputSchema,
+	PatternGetOutputSchema,
 	PatternListInputSchema,
-	PatternOutputSchema,
+	PatternListOutputSchema,
 	RepositoryGetInputSchema,
+	RepositoryGetOutputSchema,
 	RepositoryLanguagesInputSchema,
 	RepositoryLanguagesOutputSchema,
 	RepositoryListInputSchema,
-	RepositoryOutputSchema,
+	RepositoryListOutputSchema,
 	ToolListInputSchema,
-	ToolOutputSchema,
+	ToolListOutputSchema,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { CodacySchema } from './schema';
-import { codacyWebhooksNested, webhookSchemas } from './webhooks';
 
 export type CodacyPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
 	hooks?: InternalCodacyPlugin['hooks'];
-	webhookHooks?: InternalCodacyPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof codacyEndpointsNested>;
 };
@@ -61,38 +59,100 @@ export type CodacyContext = CorsairPluginContext<
 
 export type CodacyKeyBuilderContext = KeyBuilderContext<CodacyPluginOptions>;
 
-type CodacyEndpoint<K extends keyof CodacyEndpoints> = CorsairEndpoint<
-	CodacyContext,
-	CodacyEndpointInputs[K],
-	CodacyEndpointOutputs[K]
->;
-
 const codacyAuthConfig = {
 	api_key: {
 		account: [],
 	},
 } satisfies PluginAuthConfig;
 
+type CodacyEndpoint<K extends keyof CodacyEndpointInputMap> = CorsairEndpoint<
+	CodacyContext,
+	CodacyEndpointInputMap[K],
+	CodacyEndpointOutputMap[K]
+>;
+
+export type CodacyEndpoints = {
+	accountGet: CodacyEndpoint<'accountGet'>;
+	organizationList: CodacyEndpoint<'organizationList'>;
+	organizationGet: CodacyEndpoint<'organizationGet'>;
+	repositoryList: CodacyEndpoint<'repositoryList'>;
+	repositoryGet: CodacyEndpoint<'repositoryGet'>;
+	repositoryLanguages: CodacyEndpoint<'repositoryLanguages'>;
+	analysisConfigGet: CodacyEndpoint<'analysisConfigGet'>;
+	toolList: CodacyEndpoint<'toolList'>;
+	patternList: CodacyEndpoint<'patternList'>;
+	patternGet: CodacyEndpoint<'patternGet'>;
+};
+
+export type CodacyBoundEndpoints = BindEndpoints<typeof codacyEndpointsNested>;
+
+const codacyEndpointsNested = {
+	Account: {
+		get: Endpoints.accountGet,
+	},
+	Organizations: {
+		list: Endpoints.organizationList,
+		get: Endpoints.organizationGet,
+	},
+	Repositories: {
+		list: Endpoints.repositoryList,
+		get: Endpoints.repositoryGet,
+		languages: Endpoints.repositoryLanguages,
+	},
+	Analysis: {
+		getConfig: Endpoints.analysisConfigGet,
+	},
+	Tools: {
+		list: Endpoints.toolList,
+	},
+	Patterns: {
+		list: Endpoints.patternList,
+		get: Endpoints.patternGet,
+	},
+} as const;
+
+const endpointMeta = {
+	'Account.get': { riskLevel: 'read', description: 'Get account details' },
+	'Organizations.list': {
+		riskLevel: 'read',
+		description: 'List organizations',
+	},
+	'Organizations.get': { riskLevel: 'read', description: 'Get organization' },
+	'Repositories.list': { riskLevel: 'read', description: 'List repositories' },
+	'Repositories.get': { riskLevel: 'read', description: 'Get repository' },
+	'Repositories.languages': {
+		riskLevel: 'read',
+		description: 'Get repository languages',
+	},
+	'Analysis.getConfig': {
+		riskLevel: 'read',
+		description: 'Get repository analysis configuration',
+	},
+	'Tools.list': { riskLevel: 'read', description: 'List analysis tools' },
+	'Patterns.list': { riskLevel: 'read', description: 'List tool patterns' },
+	'Patterns.get': { riskLevel: 'read', description: 'Get tool pattern' },
+} as const satisfies RequiredPluginEndpointMeta<typeof codacyEndpointsNested>;
+
 const codacyEndpointSchemas = {
 	'Account.get': {
 		input: AccountGetInputSchema,
-		output: CodacyAccountResponseSchema,
+		output: AccountGetOutputSchema,
 	},
 	'Organizations.list': {
 		input: OrganizationListInputSchema,
-		output: OrganizationOutputSchema,
+		output: OrganizationListOutputSchema,
 	},
 	'Organizations.get': {
 		input: OrganizationGetInputSchema,
-		output: CodacyOrganizationResponseSchema,
+		output: OrganizationGetOutputSchema,
 	},
 	'Repositories.list': {
 		input: RepositoryListInputSchema,
-		output: RepositoryOutputSchema,
+		output: RepositoryListOutputSchema,
 	},
 	'Repositories.get': {
 		input: RepositoryGetInputSchema,
-		output: CodacyRepositoryResponseSchema,
+		output: RepositoryGetOutputSchema,
 	},
 	'Repositories.languages': {
 		input: RepositoryLanguagesInputSchema,
@@ -100,15 +160,17 @@ const codacyEndpointSchemas = {
 	},
 	'Analysis.getConfig': {
 		input: AnalysisConfigGetInputSchema,
-		output: AnalysisConfigOutputSchema,
+		output: AnalysisConfigGetOutputSchema,
 	},
-	'Analysis.tools': { input: ToolListInputSchema, output: ToolOutputSchema },
-	'Analysis.patterns': {
+	'Tools.list': { input: ToolListInputSchema, output: ToolListOutputSchema },
+	'Patterns.list': {
 		input: PatternListInputSchema,
-		output: PatternOutputSchema,
+		output: PatternListOutputSchema,
 	},
-	'Commits.list': { input: CommitListInputSchema, output: CommitOutputSchema },
-	'Issues.list': { input: IssueListInputSchema, output: IssueOutputSchema },
+	'Patterns.get': {
+		input: PatternGetInputSchema,
+		output: PatternGetOutputSchema,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof codacyEndpointsNested
 >;
@@ -142,37 +204,31 @@ const keyBuilder: CorsairKeyBuilder<CodacyPluginOptions> = async (
 	}
 
 	if (source === 'endpoint') {
-		const res = await ctx.keys.get_api_key?.();
-		if (res) return res;
+		const res = await tryGetStoredValue(async () => ctx.keys?.get_api_key?.());
+		if (res) {
+			return res;
+		}
 	}
 
 	throw new AuthMissingError('codacy', 'api_key');
 };
 
-export const codacy = (
-	options: CodacyPluginOptions = {},
-): CorsairPlugin<
-	'codacy',
-	typeof CodacySchema,
-	typeof codacyEndpointsNested,
-	typeof codacyWebhooksNested,
-	CodacyPluginOptions,
-	'api_key'
-> => {
-	const authType = options.authType ?? 'api_key';
+const defaultAuthType = 'api_key' as const;
 
-	const resolvedOptions = {
-		...options,
-		authType,
+export function codacy<const PluginOptions extends CodacyPluginOptions>(
+	incomingOptions: CodacyPluginOptions &
+		PluginOptions = {} as CodacyPluginOptions & PluginOptions,
+): ExternalCodacyPlugin<PluginOptions> {
+	const options = {
+		...incomingOptions,
+		authType: incomingOptions.authType ?? defaultAuthType,
 	};
-
 	return {
 		id: 'codacy',
 		schema: CodacySchema,
-		options: resolvedOptions,
+		options,
 		authConfig: codacyAuthConfig,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: codacyEndpointsNested,
 		endpointMeta,
 		endpointSchemas: codacyEndpointSchemas,
@@ -181,22 +237,18 @@ export const codacy = (
 			...options.errorHandlers,
 		},
 		keyBuilder,
-		webhooks: codacyWebhooksNested,
-		webhookSchemas,
-	};
-};
+	} satisfies InternalCodacyPlugin;
+}
 
-export type { CodacyEndpoints } from './endpoints';
-export { codacyEndpointsNested, endpointMeta } from './endpoints';
+export { codacyEndpointsNested, endpointMeta };
 export type {
 	CodacyEndpointInputs,
 	CodacyEndpointOutputs,
 } from './endpoints/types';
 export type {
 	CodacyAccount,
-	CodacyCommit,
-	CodacyIssue,
 	CodacyOrganization,
+	CodacyPattern,
 	CodacyRepository,
 	CodacyTool,
 } from './schema';
