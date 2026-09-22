@@ -350,6 +350,46 @@ describe('Filevine endpoints - all 24 operations', () => {
 		);
 	});
 
+	it('documents.upload treats plain text literally by default', async () => {
+		mockRequest.mockResolvedValue({
+			documentId: 102,
+			filename: 'note.txt',
+			projectId: 1,
+		});
+		await Documents.upload(createMockCtx(), {
+			projectId: 1,
+			filename: 'note.txt',
+			file: 'test',
+		});
+		const formData = mockRequest.mock.calls.at(-1)?.[1]?.formData as Record<
+			string,
+			unknown
+		>;
+		const blob = formData?.file as Blob;
+		expect(blob).toBeInstanceOf(Blob);
+		expect(await blob.text()).toBe('test');
+	});
+
+	it('documents.upload decodes base64 only with explicit fileEncoding', async () => {
+		mockRequest.mockResolvedValue({
+			documentId: 103,
+			filename: 'note.txt',
+			projectId: 1,
+		});
+		await Documents.upload(createMockCtx(), {
+			projectId: 1,
+			filename: 'note.txt',
+			file: 'dGVzdA==',
+			fileEncoding: 'base64',
+		});
+		const formData = mockRequest.mock.calls.at(-1)?.[1]?.formData as Record<
+			string,
+			unknown
+		>;
+		const blob = formData?.file as Blob;
+		expect(await blob.text()).toBe('test');
+	});
+
 	it('identity.getAccessToken parses', async () => {
 		const payload = {
 			access_token: 'tok123',

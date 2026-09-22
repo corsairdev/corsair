@@ -66,7 +66,7 @@ export const create: FilevineEndpoints['createTask'] = async (ctx, input) => {
 			(input as { orgId?: number; userId?: number }).orgId,
 			(input as { orgId?: number; userId?: number }).userId,
 		);
-	const { projectId, ...body } = input;
+	const { projectId, orgId: _orgT, userId: _userT, ...body } = input;
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['createTask']
 	>(`/fv-app/v2/projects/${projectId}/tasks`, ctx.key, {
@@ -108,7 +108,7 @@ export const update: FilevineEndpoints['updateTask'] = async (ctx, input) => {
 			(input as { orgId?: number; userId?: number }).orgId,
 			(input as { orgId?: number; userId?: number }).userId,
 		);
-	const { taskId, ...patch } = input;
+	const { taskId, orgId: _orgTU, userId: _userTU, ...patch } = input;
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['updateTask']
 	>(`/fv-app/v2/tasks/${taskId}`, ctx.key, {

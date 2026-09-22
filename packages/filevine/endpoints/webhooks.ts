@@ -53,6 +53,7 @@ export const create: FilevineEndpoints['createWebhookSubscription'] = async (
 	ctx,
 	input,
 ) => {
+	const { orgId: _orgW, userId: _userW, ...webhookBody } = input;
 	const { orgId: resolvedOrgId, userId: resolvedUserId } =
 		await resolveFilevineOrgContext(
 			ctx.key,
@@ -65,7 +66,7 @@ export const create: FilevineEndpoints['createWebhookSubscription'] = async (
 		orgId: resolvedOrgId,
 		userId: resolvedUserId,
 		method: 'POST',
-		body: input as Record<string, unknown>,
+		body: webhookBody as Record<string, unknown>,
 	});
 	const parsed = CreateWebhookSubscriptionResponseSchema.parse(result);
 	if (ctx.db.subscriptions) {

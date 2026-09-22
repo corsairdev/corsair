@@ -422,8 +422,21 @@ export const UploadProjectDocumentInputSchema = z.object({
 	folderId: z.number().optional(),
 	tags: z.array(z.string()).optional(),
 	sharedToPortal: z.boolean().optional(),
-	// file is intentionally unknown — accepts Blob, string (base64), or binary; validated at runtime via formData object handling, not via Zod schema
-	file: z.unknown().optional().describe('File content (multipart binary)'),
+	// file is intentionally unknown — accepts Blob, Buffer, Uint8Array, ArrayBuffer, or string.
+	// String handling is explicit via fileEncoding (no heuristic): 'text' uploads literally,
+	// 'base64' decodes to bytes first. This documents the loose type per repository rules.
+	file: z
+		.unknown()
+		.optional()
+		.describe(
+			'File content: Blob, Buffer, Uint8Array, ArrayBuffer, or string (see fileEncoding)',
+		),
+	fileEncoding: z
+		.enum(['base64', 'text'])
+		.optional()
+		.describe(
+			"How to interpret string file content — 'base64' decodes to bytes, 'text' (default) uploads literally",
+		),
 	orgId: z
 		.number()
 		.int()

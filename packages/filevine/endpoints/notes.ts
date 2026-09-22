@@ -114,7 +114,7 @@ export const update: FilevineEndpoints['updateNote'] = async (ctx, input) => {
 			(input as { orgId?: number; userId?: number }).orgId,
 			(input as { orgId?: number; userId?: number }).userId,
 		);
-	const { noteId, ...patch } = input;
+	const { noteId, orgId: _orgN, userId: _userN, ...patch } = input;
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['updateNote']
 	>(`/fv-app/v2/Notes/${noteId}`, ctx.key, {

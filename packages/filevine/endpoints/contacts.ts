@@ -100,6 +100,7 @@ export const create: FilevineEndpoints['createContact'] = async (
 	ctx,
 	input,
 ) => {
+	const { orgId: _orgC, userId: _userC, ...contactBody } = input;
 	const { orgId: resolvedOrgId, userId: resolvedUserId } =
 		await resolveFilevineOrgContext(
 			ctx.key,
@@ -112,7 +113,7 @@ export const create: FilevineEndpoints['createContact'] = async (
 		orgId: resolvedOrgId,
 		userId: resolvedUserId,
 		method: 'POST',
-		body: input as Record<string, unknown>,
+		body: contactBody as Record<string, unknown>,
 	});
 	const parsed = CreateContactResponseSchema.parse(result);
 	if (ctx.db.contacts) {

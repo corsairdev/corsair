@@ -5,18 +5,13 @@ import {
 	resolveFilevineOrgContext,
 } from '../client';
 
-function decodeBase64OrTextToBlob(input: string): Blob {
-	const sanitized = input.replace(/\s+/g, '');
-	const base64Re = /^[A-Za-z0-9+/=_-]+$/;
-	if (
-		sanitized.length > 0 &&
-		sanitized.length % 4 === 0 &&
-		base64Re.test(sanitized)
-	) {
-		try {
-			const buf = Buffer.from(sanitized, 'base64');
-			if (buf.length > 0) return new Blob([buf as unknown as Uint8Array]);
-		} catch {}
+function stringToBlob(input: string, encoding: 'base64' | 'text'): Blob {
+	// Explicit encoding only — never guess. 'base64' decodes to bytes,
+	// 'text' uploads literally so plain text like "test" can never corrupt.
+	if (encoding === 'base64') {
+		const sanitized = input.replace(/\s+/g, '');
+		const buf = Buffer.from(sanitized, 'base64');
+		return new Blob([buf as unknown as Uint8Array]);
 	}
 	return new Blob([input]);
 }
@@ -137,14 +132,23 @@ export const upload: FilevineEndpoints['uploadProjectDocument'] = async (
 			(input as { orgId?: number; userId?: number }).orgId,
 			(input as { orgId?: number; userId?: number }).userId,
 		);
-	const { projectId, file, ...rest } = input;
+	const {
+		projectId,
+		file,
+		fileEncoding,
+		orgId: _org,
+		userId: _user,
+		...rest
+	} = input;
 	if (file != null) {
 		// Normalize binary inputs to Blob — the shared multipart layer only
 		// recognizes real Blob/File values (isBlob checks .type/.stream).
-		// Raw Buffer/Uint8Array would be JSON-stringified into byte metadata,
-		// and base64 strings would upload as base64 text instead of decoded bytes.
+		// String handling is explicit via fileEncoding (default 'text'):
+		// 'base64' decodes to bytes, 'text' uploads literally — never guessed,
+		// so plain text like "test" can never be mis-decoded as base64.
 		let blob: Blob;
-		if (typeof file === 'string') blob = decodeBase64OrTextToBlob(file);
+		if (typeof file === 'string')
+			blob = stringToBlob(file, fileEncoding ?? 'text');
 		else if (typeof Buffer !== 'undefined' && Buffer.isBuffer(file))
 			blob = new Blob([file as unknown as Uint8Array]);
 		else if (file instanceof Uint8Array) blob = new Blob([file]);

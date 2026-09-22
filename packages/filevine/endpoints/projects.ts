@@ -152,7 +152,7 @@ export const update: FilevineEndpoints['updateProject'] = async (
 			(input as { orgId?: number; userId?: number }).orgId,
 			(input as { orgId?: number; userId?: number }).userId,
 		);
-	const { projectId, ...patch } = input;
+	const { projectId, orgId: _orgUpd, userId: _userUpd, ...patch } = input;
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['updateProject']
 	>(`/fv-app/v2/Projects/${projectId}`, ctx.key, {

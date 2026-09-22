@@ -67,7 +67,7 @@ export const create: FilevineEndpoints['createDeadline'] = async (
 			(input as { orgId?: number; userId?: number }).orgId,
 			(input as { orgId?: number; userId?: number }).userId,
 		);
-	const { projectId, ...body } = input;
+	const { projectId, orgId: _orgD, userId: _userD, ...body } = input;
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['createDeadline']
 	>(`/fv-app/v2/projects/${projectId}/deadlines`, ctx.key, {
