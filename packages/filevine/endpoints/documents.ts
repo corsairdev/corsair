@@ -19,8 +19,9 @@ export const list: FilevineEndpoints['listProjectDocuments'] = async (
 		query: {
 			folderId: input.folderId,
 			tag: input.tag,
-			// Project filtering via query if API supports, else list all filtered client-side
 			projectId: input.projectId as unknown as string,
+			offset: input.offset,
+			limit: input.limit,
 		},
 	});
 	const parsed = ListProjectDocumentsResponseSchema.parse(result);
@@ -92,31 +93,58 @@ export const upload: FilevineEndpoints['uploadProjectDocument'] = async (
 	input,
 ) => {
 	const { projectId, file, ...rest } = input;
-	let formData: FormData | undefined;
 	if (file) {
-		formData = new FormData();
-		if (typeof file === 'string') {
-			formData.append('file', new Blob([file]), rest.filename ?? 'file.txt');
-		} else if (file instanceof Blob) {
-			formData.append('file', file, rest.filename ?? 'file');
-		}
-		if (rest.folderId) formData.append('folderId', String(rest.folderId));
-		if (rest.tags) formData.append('tags', JSON.stringify(rest.tags));
+		const blob = typeof file === 'string' ? new Blob([file]) : (file as Blob);
+		const formData: Record<string, unknown> = {
+			file: blob,
+			projectId: String(projectId),
+		};
+		if (rest.filename) formData.filename = rest.filename;
+		if (rest.folderId) formData.folderId = String(rest.folderId);
+		if (rest.tags) formData.tags = JSON.stringify(rest.tags);
 		if (rest.sharedToPortal !== undefined)
-			formData.append('sharedToPortal', String(rest.sharedToPortal));
+			formData.sharedToPortal = String(rest.sharedToPortal);
+
+		const result = await makeFilevineRequest<
+			FilevineEndpointOutputs['uploadProjectDocument']
+		>('/fv-app/v2/Documents', ctx.key, {
+			method: 'POST',
+			formData,
+		});
+		const parsed = UploadProjectDocumentResponseSchema.parse(result);
+		if (ctx.db.documents) {
+			try {
+				await ctx.db.documents.upsertByEntityId(String(parsed.documentId), {
+					id: parsed.documentId,
+					documentId: parsed.documentId,
+					projectId: parsed.projectId,
+					folderId: parsed.folderId,
+					filename: parsed.filename,
+					size: parsed.size,
+					contentType: parsed.contentType,
+					tags: parsed.tags,
+					sharedToPortal: parsed.sharedToPortal,
+					version: parsed.version,
+					uploadedBy: parsed.uploadedBy,
+					createdDate: parsed.createdDate,
+					modifiedDate: parsed.modifiedDate,
+				});
+			} catch {}
+		}
+		await logEventFromContext(
+			ctx,
+			'filevine.documents.upload',
+			{ projectId, ...rest },
+			'completed',
+		);
+		return parsed;
 	}
-	// Official Filevine commits pending docs via POST /fv-app/v2/Projects/{projectId}/Documents/{documentId}
-	// For generic upload we use POST /fv-app/v2/Documents with project linkage via query/body
-	const endpoint =
-		rest.filename && !file
-			? `/fv-app/v2/Projects/${projectId}/Documents/${rest.filename}`
-			: '/fv-app/v2/Documents';
+
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['uploadProjectDocument']
-	>(endpoint, ctx.key, {
+	>('/fv-app/v2/Documents', ctx.key, {
 		method: 'POST',
-		body: formData ? undefined : (rest as Record<string, unknown>),
-		formData,
+		body: { projectId, ...rest } as Record<string, unknown>,
 	});
 	const parsed = UploadProjectDocumentResponseSchema.parse(result);
 	if (ctx.db.documents) {

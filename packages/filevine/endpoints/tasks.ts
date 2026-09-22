@@ -19,6 +19,8 @@ export const list: FilevineEndpoints['listProjectTasks'] = async (
 		query: {
 			assigneeId: input.assigneeId,
 			status: input.status,
+			offset: input.offset,
+			limit: input.limit,
 		},
 	});
 	const parsed = ListProjectTasksResponseSchema.parse(result);

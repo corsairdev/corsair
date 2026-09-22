@@ -1,10 +1,23 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { FilevineAPIError } from './client';
+
+function getStatus(error: Error): number | undefined {
+	if (error instanceof ApiError) return error.status;
+	if (error instanceof FilevineAPIError) return error.status;
+	return (error as { status?: number }).status;
+}
+
+function getRetryAfter(error: Error): number | undefined {
+	if (error instanceof ApiError) return error.retryAfter;
+	if (error instanceof FilevineAPIError) return error.retryAfter;
+	return (error as { retryAfter?: number }).retryAfter;
+}
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error, _ctx) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (getStatus(error) === 429) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('rate_limited') ||
@@ -13,20 +26,12 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error: Error, _ctx) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			return { maxRetries: 5, headersRetryAfterMs: getRetryAfter(error) };
 		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error, _ctx) => {
-			if (
-				error instanceof ApiError &&
-				(error.status === 401 || error.status === 403)
-			)
-				return true;
+			if (getStatus(error) === 401 || getStatus(error) === 403) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('unauthorized') ||
@@ -41,7 +46,7 @@ export const errorHandlers = {
 	},
 	PERMISSION_ERROR: {
 		match: (error: Error, _ctx) => {
-			if (error instanceof ApiError && error.status === 403) return true;
+			if (getStatus(error) === 403) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('forbidden') ||
@@ -55,7 +60,7 @@ export const errorHandlers = {
 	},
 	NOT_FOUND_ERROR: {
 		match: (error: Error, _ctx) => {
-			if (error instanceof ApiError && error.status === 404) return true;
+			if (getStatus(error) === 404) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('not found') || msg.includes('not_found');
 		},
@@ -63,7 +68,7 @@ export const errorHandlers = {
 	},
 	VALIDATION_ERROR: {
 		match: (error: Error, _ctx) => {
-			if (error instanceof ApiError && error.status === 400) return true;
+			if (getStatus(error) === 400) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('validation') ||

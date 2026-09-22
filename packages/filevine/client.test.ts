@@ -49,8 +49,8 @@ describe('Filevine client', () => {
 	});
 
 	it('uses FormData for document upload', async () => {
-		const fd = new FormData();
-		fd.append('file', new Blob(['hello']), 'hello.txt');
+		const blob = new Blob(['hello']);
+		const fd = { file: blob, filename: 'hello.txt' };
 		mockRequest.mockResolvedValue({ documentId: 999, filename: 'hello.txt' });
 		await makeFilevineRequest('/fv-app/v2/Documents', 'tok', {
 			method: 'POST',

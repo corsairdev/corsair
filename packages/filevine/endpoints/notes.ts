@@ -52,12 +52,17 @@ export const list: FilevineEndpoints['listProjectNotes'] = async (
 };
 
 export const create: FilevineEndpoints['createNote'] = async (ctx, input) => {
-	const { projectId: _projectId, ...body } = input;
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['createNote']
 	>('/fv-app/v2/Notes', ctx.key, {
 		method: 'POST',
-		body: body as Record<string, unknown>,
+		body: {
+			projectId: input.projectId,
+			body: input.body,
+			kind: input.kind,
+			pinned: input.pinned,
+			attachedDocuments: input.attachedDocuments,
+		} as Record<string, unknown>,
 	});
 	const parsed = CreateNoteResponseSchema.parse(result);
 	if (ctx.db.notes) {

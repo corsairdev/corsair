@@ -256,6 +256,8 @@ await corsair.filevine.api.deadlines.list({});
 | `status` | `open \| completed \| missed` | No | — |
 | `from` | `string` | No | Filter from date (YYYY-MM-DD) |
 | `to` | `string` | No | Filter to date (YYYY-MM-DD) |
+| `offset` | `number` | No | Pagination offset |
+| `limit` | `number` | No | Page size, max 1000 |
 
 
 
@@ -352,6 +354,8 @@ await corsair.filevine.api.documents.list({});
 | `projectId` | `number` | Yes | — |
 | `folderId` | `number` | No | — |
 | `tag` | `string` | No | — |
+| `offset` | `number` | No | Pagination offset |
+| `limit` | `number` | No | Page size, max 1000 |
 
 
 
@@ -917,6 +921,8 @@ await corsair.filevine.api.tasks.list({});
 | `projectId` | `number` | Yes | — |
 | `assigneeId` | `number` | No | — |
 | `status` | `open \| inProgress \| completed \| cancelled` | No | — |
+| `offset` | `number` | No | Pagination offset |
+| `limit` | `number` | No | Page size, max 1000 |
 
 
 

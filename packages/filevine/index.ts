@@ -359,9 +359,33 @@ export function filevine<const T extends FilevinePluginOptions>(
 		keyBuilder: async (ctx: FilevineKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) return options.key;
 			if (ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (!res) throw new AuthMissingError('filevine', 'api_key');
-				return res;
+				const pat = await ctx.keys.get_api_key();
+				if (!pat) throw new AuthMissingError('filevine', 'api_key');
+				// If PAT looks like JWT (bearer), use directly; otherwise exchange PAT for bearer via Filevine Identity
+				// The PAT exchange is documented at https://developer.filevine.io/docs/v2-ca/branches/main/29343b2585262-exchange-token
+				const isJwt = pat.split('.').length === 3;
+				if (isJwt) return pat;
+				try {
+					const form = new URLSearchParams({
+						grant_type: 'personal_access_token',
+						token: pat,
+						scope:
+							'fv.api.gateway.access tenant filevine.v2.api.* openid email fv.auth.tenant.read',
+					});
+					const resp = await fetch(
+						'https://identity.filevine.io/connect/token',
+						{
+							method: 'POST',
+							headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+							body: form.toString(),
+						},
+					);
+					if (resp.ok) {
+						const data = (await resp.json()) as { access_token?: string };
+						if (data.access_token) return data.access_token;
+					}
+				} catch {}
+				return pat;
 			}
 			if (ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();

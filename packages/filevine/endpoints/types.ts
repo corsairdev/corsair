@@ -244,6 +244,8 @@ export const ListProjectDocumentsInputSchema = z.object({
 	projectId: z.number(),
 	folderId: z.number().optional(),
 	tag: z.string().optional(),
+	offset: z.number().optional().describe('Pagination offset'),
+	limit: z.number().min(1).max(1000).optional().describe('Page size, max 1000'),
 });
 export type ListProjectDocumentsInput = z.infer<
 	typeof ListProjectDocumentsInputSchema
@@ -263,7 +265,7 @@ export const UploadProjectDocumentInputSchema = z.object({
 	folderId: z.number().optional(),
 	tags: z.array(z.string()).optional(),
 	sharedToPortal: z.boolean().optional(),
-	// File content is passed as base64 or binary via custom handling; schema keeps metadata.
+	// file is intentionally unknown — accepts Blob, string (base64), or binary; validated at runtime via formData object handling, not via Zod schema
 	file: z.unknown().optional().describe('File content (multipart binary)'),
 });
 export type UploadProjectDocumentInput = z.infer<
@@ -305,6 +307,8 @@ export const ListProjectDeadlinesInputSchema = z.object({
 	status: z.enum(['open', 'completed', 'missed']).optional(),
 	from: z.string().optional().describe('Filter from date (YYYY-MM-DD)'),
 	to: z.string().optional().describe('Filter to date (YYYY-MM-DD)'),
+	offset: z.number().optional().describe('Pagination offset'),
+	limit: z.number().min(1).max(1000).optional().describe('Page size, max 1000'),
 });
 export type ListProjectDeadlinesInput = z.infer<
 	typeof ListProjectDeadlinesInputSchema
@@ -330,6 +334,8 @@ export const ListProjectTasksInputSchema = z.object({
 	projectId: z.number(),
 	assigneeId: z.number().optional(),
 	status: z.enum(['open', 'inProgress', 'completed', 'cancelled']).optional(),
+	offset: z.number().optional().describe('Pagination offset'),
+	limit: z.number().min(1).max(1000).optional().describe('Page size, max 1000'),
 });
 export type ListProjectTasksInput = z.infer<typeof ListProjectTasksInputSchema>;
 

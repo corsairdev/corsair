@@ -3,6 +3,7 @@ import { makeFilevineRequest } from '../client';
 import type { FilevineEndpoints } from '../index';
 import type { FilevineEndpointOutputs } from './types';
 import {
+	AttachProjectContactResponseSchema,
 	CreateContactResponseSchema,
 	GetContactResponseSchema,
 	ListContactsResponseSchema,
@@ -126,11 +127,12 @@ export const attach: FilevineEndpoints['attachProjectContact'] = async (
 			role: input.role,
 		} as Record<string, unknown>,
 	});
+	const parsed = AttachProjectContactResponseSchema.parse(result ?? {});
 	await logEventFromContext(
 		ctx,
 		'filevine.contacts.attach',
 		{ ...input },
 		'completed',
 	);
-	return result;
+	return parsed;
 };

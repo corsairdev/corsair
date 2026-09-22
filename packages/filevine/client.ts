@@ -44,6 +44,46 @@ export const FILEVINE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
+let cachedOrgId: string | undefined;
+let cachedUserId: string | undefined;
+
+export function setFilevineOrgContext(
+	orgId: string | number,
+	userId: string | number,
+): void {
+	cachedOrgId = String(orgId);
+	cachedUserId = String(userId);
+}
+
+export function getFilevineOrgContext(): { orgId?: string; userId?: string } {
+	return { orgId: cachedOrgId, userId: cachedUserId };
+}
+
+let cachedBearer: string | undefined;
+let cachedBearerExpiry = 0;
+
+export function setCachedBearer(token: string, expiresInSec?: number): void {
+	cachedBearer = token;
+	cachedBearerExpiry = Date.now() + (expiresInSec ?? 1200) * 1000 - 60000;
+}
+
+export function getCachedBearer(): string | undefined {
+	if (cachedBearer && Date.now() < cachedBearerExpiry) return cachedBearer;
+	return undefined;
+}
+
+export async function exchangePatForBearer(
+	pat: string,
+): Promise<{ access_token: string; expires_in?: number; scope?: string }> {
+	const body: Record<string, string> = {
+		grant_type: 'personal_access_token',
+		token: pat,
+		scope:
+			'fv.api.gateway.access tenant filevine.v2.api.* openid email fv.auth.tenant.read',
+	};
+	return makeFilevineIdentityRequest('/connect/token', body);
+}
+
 export async function makeFilevineRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -51,7 +91,7 @@ export async function makeFilevineRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
-		formData?: FormData;
+		formData?: Record<string, unknown>;
 		headers?: Record<string, string>;
 		baseUrl?: string;
 		orgId?: string | number;
@@ -69,6 +109,9 @@ export async function makeFilevineRequest<T>(
 		userId,
 	} = options;
 
+	const effectiveOrgId = orgId ?? cachedOrgId;
+	const effectiveUserId = userId ?? cachedUserId;
+
 	const config: OpenAPIConfig = {
 		BASE: baseUrl ?? FILEVINE_API_BASE_US,
 		VERSION: '1.0.0',
@@ -77,8 +120,12 @@ export async function makeFilevineRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			Authorization: `Bearer ${apiKey}`,
-			...(orgId !== undefined ? { 'x-fv-orgid': String(orgId) } : {}),
-			...(userId !== undefined ? { 'x-fv-userid': String(userId) } : {}),
+			...(effectiveOrgId !== undefined
+				? { 'x-fv-orgid': String(effectiveOrgId) }
+				: {}),
+			...(effectiveUserId !== undefined
+				? { 'x-fv-userid': String(effectiveUserId) }
+				: {}),
 			...headers,
 		},
 	};
