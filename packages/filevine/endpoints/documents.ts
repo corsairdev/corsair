@@ -6,11 +6,39 @@ import {
 } from '../client';
 
 function stringToBlob(input: string, encoding: 'base64' | 'text'): Blob {
-	// Explicit encoding only — never guess. 'base64' decodes to bytes,
+	// Explicit encoding only — never guess. 'base64' is strictly validated
+	// (alphabet, padding, length, round-trip) so malformed or truncated input
+	// throws instead of uploading empty or partial bytes as a corrupt document.
 	// 'text' uploads literally so plain text like "test" can never corrupt.
 	if (encoding === 'base64') {
 		const sanitized = input.replace(/\s+/g, '');
+		if (sanitized.length === 0 || sanitized.length % 4 !== 0) {
+			throw new FilevineAPIError(
+				'Invalid base64 file content: length must be a non-zero multiple of 4',
+				'INVALID_BASE64',
+			);
+		}
+		if (!/^[A-Za-z0-9+/]*={0,2}$/.test(sanitized)) {
+			throw new FilevineAPIError(
+				'Invalid base64 file content: illegal characters or padding',
+				'INVALID_BASE64',
+			);
+		}
 		const buf = Buffer.from(sanitized, 'base64');
+		if (buf.length === 0) {
+			throw new FilevineAPIError(
+				'Invalid base64 file content: decoded to empty bytes',
+				'INVALID_BASE64',
+			);
+		}
+		const roundTrip = buf.toString('base64');
+		const norm = (s: string) => s.replace(/=+$/, '');
+		if (norm(roundTrip) !== norm(sanitized)) {
+			throw new FilevineAPIError(
+				'Invalid base64 file content: malformed encoding',
+				'INVALID_BASE64',
+			);
+		}
 		return new Blob([buf as unknown as Uint8Array]);
 	}
 	return new Blob([input]);

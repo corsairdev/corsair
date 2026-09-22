@@ -140,6 +140,25 @@ describe('Filevine client', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('rejects explicit userId outside identity', async () => {
+		clearFilevineOrgContext();
+		mockRequest.mockResolvedValue({
+			UserId: { Native: 111 },
+			Orgs: [{ OrgId: 1111 }],
+		});
+		await expect(
+			resolveFilevineOrgContext('bearer-Y', undefined, 999),
+		).rejects.toThrow(/does not match/i);
+	});
+
+	it('rejects explicit scope when discovery fails', async () => {
+		clearFilevineOrgContext();
+		mockRequest.mockResolvedValue({ nonsense: true });
+		await expect(resolveFilevineOrgContext('bearer-Z', 123)).rejects.toThrow(
+			/unavailable/i,
+		);
+	});
+
 	it('rejects explicit orgId outside membership', async () => {
 		mockRequest.mockResolvedValue({
 			UserId: { Native: 111 },

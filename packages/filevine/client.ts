@@ -143,16 +143,16 @@ export async function resolveFilevineOrgContext(
 	if (explicitOrgId === undefined && explicitUserId === undefined) {
 		return cached ?? {};
 	}
-	const org =
-		explicitOrgId !== undefined ? String(explicitOrgId) : cached?.orgId;
-	const user =
-		explicitUserId !== undefined ? String(explicitUserId) : cached?.userId;
-	// Validate explicit org against the authenticated user's org membership when known.
-	// Skip validation when discovery failed (no cached orgIds) so tests and degraded mode still pass through.
+	// Fail closed: never accept unvalidated explicit scope when discovery failed.
+	if (!cached) {
+		throw new FilevineAPIError(
+			'Filevine organization context unavailable — cannot validate explicit orgId/userId',
+			'ORG_CONTEXT_UNAVAILABLE',
+		);
+	}
+	// Validate explicit org against the authenticated user's org membership.
 	if (
 		explicitOrgId !== undefined &&
-		cached &&
-		cached.orgIds.length > 0 &&
 		!cached.orgIds.includes(String(explicitOrgId))
 	) {
 		throw new FilevineAPIError(
@@ -160,6 +160,20 @@ export async function resolveFilevineOrgContext(
 			'ORG_MISMATCH',
 		);
 	}
+	// Validate explicit user against the credential-scoped identity.
+	if (
+		explicitUserId !== undefined &&
+		String(explicitUserId) !== cached.userId
+	) {
+		throw new FilevineAPIError(
+			`userId ${explicitUserId} does not match the authenticated Filevine user`,
+			'USER_MISMATCH',
+		);
+	}
+	const org =
+		explicitOrgId !== undefined ? String(explicitOrgId) : cached.orgId;
+	const user =
+		explicitUserId !== undefined ? String(explicitUserId) : cached.userId;
 	return { orgId: org, userId: user };
 }
 

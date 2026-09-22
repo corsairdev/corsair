@@ -390,6 +390,22 @@ describe('Filevine endpoints - all 24 operations', () => {
 		expect(await blob.text()).toBe('test');
 	});
 
+	it('documents.upload rejects malformed base64', async () => {
+		mockRequest.mockResolvedValue({
+			documentId: 104,
+			filename: 'bad.txt',
+			projectId: 1,
+		});
+		await expect(
+			Documents.upload(createMockCtx(), {
+				projectId: 1,
+				filename: 'bad.txt',
+				file: '!!!-not-base64-!!!',
+				fileEncoding: 'base64',
+			}),
+		).rejects.toThrow(/base64/i);
+	});
+
 	it('identity.getAccessToken parses', async () => {
 		const payload = {
 			access_token: 'tok123',
