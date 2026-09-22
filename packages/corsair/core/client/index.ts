@@ -279,6 +279,56 @@ export type CorsairSingleTenantClient<
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
+ * Account key managers are memoized per (scope, plugin, tenant) so repeated
+ * `withTenant()` calls share one manager per credential row. Each call builds
+ * a fresh client, but `singleFlight()` dedupes concurrent refreshes by manager
+ * identity — a fresh manager per call would never dedupe, letting concurrent
+ * refreshes spend the same rotating refresh_token twice and getting the
+ * connection revoked. The scope owner is `internalConfig` (one per
+ * `createCorsair()` wrapper) falling back to the database object, so separate
+ * stores never share managers or flights. Managers hold no row state (account
+ * rows are re-read per call), only an integration-config cache that long-lived
+ * single-tenant managers already share today.
+ */
+type CachedAccountKeyManager = {
+	database: object;
+	kek: string;
+	manager: AccountKeyManagerFor<AuthTypes>;
+};
+
+const accountKeyManagersByScope = new WeakMap<
+	object,
+	Map<string, CachedAccountKeyManager>
+>();
+
+function getSharedAccountKeyManager(options: {
+	scope: object;
+	cacheKey: string;
+	database: object;
+	kek: string;
+	create: () => AccountKeyManagerFor<AuthTypes>;
+}): AccountKeyManagerFor<AuthTypes> {
+	const { scope, cacheKey, database, kek, create } = options;
+	let byKey = accountKeyManagersByScope.get(scope);
+	if (!byKey) {
+		byKey = new Map();
+		accountKeyManagersByScope.set(scope, byKey);
+	}
+	const cached = byKey.get(cacheKey);
+	// Only reuse a manager built against the same database and KEK. A
+	// mismatch means an unusual direct `buildCorsairClient` reuse of one
+	// scope under different configs — rebuild so we never serve credentials
+	// from the wrong store. (Within one scope + database + KEK the
+	// `ensureProvisioned` closure is equivalent, so it needs no comparison.)
+	if (cached && cached.database === database && cached.kek === kek) {
+		return cached.manager;
+	}
+	const manager = create();
+	byKey.set(cacheKey, { database, kek, manager });
+	return manager;
+}
+
+/**
  * Creates a cached account ID resolver for a specific tenant and integration.
  * The account ID is lazily fetched on first access and cached for subsequent calls.
  */
@@ -456,7 +506,11 @@ export function buildCorsairClient<
 			apiUnsafe[plugin.id]!.db = dbClients;
 		}
 
-		// Create account-level key manager BEFORE binding endpoints so keyBuilder can access it
+		// Create account-level key manager BEFORE binding endpoints so keyBuilder can access it.
+		// Managers are shared per (scope, plugin, tenant): withTenant() builds a
+		// fresh client per call, but singleFlight() dedupes refreshes by manager
+		// identity — without sharing, concurrent refreshes for one tenant would
+		// each spend the same rotating refresh_token.
 		const pluginOptions = plugin.options as
 			| { authType?: AuthTypes }
 			| undefined;
@@ -464,17 +518,30 @@ export function buildCorsairClient<
 		let accountKeyManager: AccountKeyManagerFor<AuthTypes> | undefined;
 		if (database && kek && pluginOptions?.authType) {
 			// Extract extra account fields from plugin authConfig
-			const extraAccountFields =
-				authConfig?.[pluginOptions.authType]?.account ?? [];
+			const authType = pluginOptions.authType;
+			const extraAccountFields = authConfig?.[authType]?.account ?? [];
 
-			accountKeyManager = createAccountKeyManager({
-				authType: pluginOptions.authType,
-				integrationName: plugin.id,
-				tenantId: effectiveTenantId,
-				kek,
+			const createManager = () =>
+				createAccountKeyManager({
+					authType,
+					integrationName: plugin.id,
+					tenantId: effectiveTenantId,
+					kek,
+					database,
+					extraAccountFields,
+					ensureProvisioned,
+				});
+			accountKeyManager = getSharedAccountKeyManager({
+				scope: internalConfig ?? database,
+				cacheKey: [
+					plugin.id,
+					effectiveTenantId,
+					authType,
+					extraAccountFields.join(','),
+				].join(':'),
 				database,
-				extraAccountFields,
-				ensureProvisioned,
+				kek,
+				create: createManager,
 			});
 			apiUnsafe[plugin.id]!.keys = accountKeyManager;
 		}
