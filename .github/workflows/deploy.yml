@@ -5,7 +5,6 @@ on:
     branches: [main]
     paths:
       - 'packages/*/package.json'
-      - 'adapters/*/package.json'
   workflow_dispatch:
 
 permissions:
@@ -15,7 +14,6 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -25,19 +23,12 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '24.x'
+          node-version: '22.x'
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --filter . --filter "./packages/**" --filter "./adapters/**"
-
-      - name: Restore turbo cache
-        uses: actions/cache/restore@v4
-        with:
-          path: .turbo
-          key: turbo-${{ runner.os }}-${{ github.sha }}
-          restore-keys: turbo-${{ runner.os }}-
+        run: pnpm install
 
       - name: Publish changed packages
         run: node scripts/publish-changed.mjs
