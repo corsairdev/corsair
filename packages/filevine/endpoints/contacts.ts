@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeFilevineRequest } from '../client';
+import { ensureFilevineOrgContext, makeFilevineRequest } from '../client';
 import type { FilevineEndpoints } from '../index';
 import type { FilevineEndpointOutputs } from './types';
 import {
@@ -10,6 +10,7 @@ import {
 } from './types';
 
 export const list: FilevineEndpoints['listContacts'] = async (ctx, input) => {
+	await ensureFilevineOrgContext(ctx.key);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['listContacts']
 	>('/fv-app/v2/Contacts', ctx.key, {
@@ -49,6 +50,7 @@ export const list: FilevineEndpoints['listContacts'] = async (ctx, input) => {
 };
 
 export const get: FilevineEndpoints['getContact'] = async (ctx, input) => {
+	await ensureFilevineOrgContext(ctx.key);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['getContact']
 	>(`/fv-app/v2/Contacts/${input.contactId}`, ctx.key, { method: 'GET' });
@@ -82,6 +84,7 @@ export const create: FilevineEndpoints['createContact'] = async (
 	ctx,
 	input,
 ) => {
+	await ensureFilevineOrgContext(ctx.key);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['createContact']
 	>('/fv-app/v2/Contacts', ctx.key, {
@@ -118,6 +121,7 @@ export const attach: FilevineEndpoints['attachProjectContact'] = async (
 	ctx,
 	input,
 ) => {
+	await ensureFilevineOrgContext(ctx.key);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['attachProjectContact']
 	>(`/fv-app/v2/Projects/${input.projectId}/Contacts`, ctx.key, {

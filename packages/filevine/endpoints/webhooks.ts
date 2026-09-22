@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeFilevineRequest } from '../client';
+import { ensureFilevineOrgContext, makeFilevineRequest } from '../client';
 import type { FilevineEndpoints } from '../index';
 import type { FilevineEndpointOutputs } from './types';
 import {
@@ -12,6 +12,7 @@ export const list: FilevineEndpoints['listWebhookSubscriptions'] = async (
 	ctx,
 	_input,
 ) => {
+	await ensureFilevineOrgContext(ctx.key);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['listWebhookSubscriptions']
 	>('/fv-app/v2/webhooks/subscriptions', ctx.key, { method: 'GET' });
@@ -43,6 +44,7 @@ export const create: FilevineEndpoints['createWebhookSubscription'] = async (
 	ctx,
 	input,
 ) => {
+	await ensureFilevineOrgContext(ctx.key);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['createWebhookSubscription']
 	>('/fv-app/v2/webhooks/subscriptions', ctx.key, {
@@ -80,6 +82,7 @@ export const del: FilevineEndpoints['deleteWebhookSubscription'] = async (
 	ctx,
 	input,
 ) => {
+	await ensureFilevineOrgContext(ctx.key);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['deleteWebhookSubscription']
 	>(`/fv-app/v2/webhooks/subscriptions/${input.subscriptionId}`, ctx.key, {

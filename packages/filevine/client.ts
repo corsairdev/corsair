@@ -84,6 +84,32 @@ export async function exchangePatForBearer(
 	return makeFilevineIdentityRequest('/connect/token', body);
 }
 
+export async function ensureFilevineOrgContext(apiKey: string): Promise<void> {
+	if (cachedOrgId && cachedUserId) return;
+	try {
+		const result = await makeFilevineRequest<{
+			UserId?: { Native?: number };
+			Orgs?: Array<{ OrgId?: number }>;
+			userId?: number;
+			orgs?: Array<{ orgId?: number }>;
+		}>('/fv-app/v2/utils/GetUserOrgsWithToken', apiKey, { method: 'POST' });
+		const raw = result as unknown as Record<string, unknown>;
+		const userId =
+			(raw.UserId as { Native?: number } | undefined)?.Native ??
+			(raw as { userId?: number }).userId ??
+			(raw as { UserId?: number }).UserId;
+		const orgs =
+			(raw.Orgs as Array<Record<string, unknown>> | undefined) ??
+			(raw as { orgs?: Array<Record<string, unknown>> }).orgs;
+		const firstOrg = orgs?.[0] as Record<string, unknown> | undefined;
+		const orgId =
+			(firstOrg?.OrgId as number | undefined) ??
+			(firstOrg?.orgId as number | undefined);
+		if (orgId && userId) setFilevineOrgContext(orgId, userId);
+		else if (orgId) setFilevineOrgContext(orgId, orgId);
+	} catch {}
+}
+
 export async function makeFilevineRequest<T>(
 	endpoint: string,
 	apiKey: string,

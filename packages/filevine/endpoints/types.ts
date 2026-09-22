@@ -384,15 +384,12 @@ export type DeleteWebhookSubscriptionInput = z.infer<
 >;
 
 export const GetAccessTokenInputSchema = z.object({
-	grant_type: z
-		.literal('personal_access_token')
-		.default('personal_access_token'),
 	token: z.string().describe('Filevine Personal Access Token (PAT)'),
 	scope: z
 		.string()
 		.optional()
-		.default(
-			'fv.api.gateway.access tenant filevine.v2.api.* openid email fv.auth.tenant.read',
+		.describe(
+			'OAuth scope — defaults to fv.api.gateway.access tenant filevine.v2.api.* openid email fv.auth.tenant.read',
 		),
 	client_id: z.string().optional(),
 	client_secret: z.string().optional(),

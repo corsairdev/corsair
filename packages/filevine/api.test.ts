@@ -360,7 +360,6 @@ describe('Filevine endpoints - all 24 operations', () => {
 		};
 		mockRequest.mockResolvedValue(payload);
 		const result = await Identity.getAccessToken(createMockCtx(), {
-			grant_type: 'personal_access_token',
 			token: 'pat123',
 			scope:
 				'fv.api.gateway.access tenant filevine.v2.api.* openid email fv.auth.tenant.read',

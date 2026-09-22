@@ -8,7 +8,7 @@ Use **Filevine** through Corsair: one client, typed API calls, local DB sync.
 **What you get:**
 
 - 24 typed API operations
-- 7 synced entities (`contacts`, `deadlines`, `documents`, `notes`, `projects`, `subscriptions`, and 1 more) for fast `.search()` / `.list()`
+- 7 synced entities (`contacts`, `deadlines`, `documents`, `notes`, `projects`, `subscriptions`, `tasks`) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -106,7 +106,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.filevine.api.contacts.get({});
+await tenant.filevine.api.contacts.get({ contactId: 456 });
 ```
 
 
@@ -114,7 +114,7 @@ await tenant.filevine.api.contacts.get({});
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.filevine.api.contacts.attach({});
+await tenant.filevine.api.contacts.attach({ projectId: 123, contactId: 456 });
 ```
 
 

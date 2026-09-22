@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeFilevineRequest } from '../client';
+import { ensureFilevineOrgContext, makeFilevineRequest } from '../client';
 import type { FilevineEndpoints } from '../index';
 import type { FilevineEndpointOutputs } from './types';
 import {
@@ -12,6 +12,7 @@ export const list: FilevineEndpoints['listProjectNotes'] = async (
 	ctx,
 	input,
 ) => {
+	await ensureFilevineOrgContext(ctx.key);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['listProjectNotes']
 	>(`/fv-app/v2/Projects/${input.projectId}/Notes`, ctx.key, {
@@ -52,6 +53,7 @@ export const list: FilevineEndpoints['listProjectNotes'] = async (
 };
 
 export const create: FilevineEndpoints['createNote'] = async (ctx, input) => {
+	await ensureFilevineOrgContext(ctx.key);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['createNote']
 	>('/fv-app/v2/Notes', ctx.key, {
@@ -92,6 +94,7 @@ export const create: FilevineEndpoints['createNote'] = async (ctx, input) => {
 };
 
 export const update: FilevineEndpoints['updateNote'] = async (ctx, input) => {
+	await ensureFilevineOrgContext(ctx.key);
 	const { noteId, ...patch } = input;
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['updateNote']

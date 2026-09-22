@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeFilevineRequest } from '../client';
+import { ensureFilevineOrgContext, makeFilevineRequest } from '../client';
 import type { FilevineEndpoints } from '../index';
 import type { FilevineEndpointOutputs } from './types';
 import {
@@ -12,6 +12,7 @@ export const list: FilevineEndpoints['listProjectDocuments'] = async (
 	ctx,
 	input,
 ) => {
+	await ensureFilevineOrgContext(ctx.key);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['listProjectDocuments']
 	>('/fv-app/v2/Documents', ctx.key, {
@@ -56,6 +57,7 @@ export const list: FilevineEndpoints['listProjectDocuments'] = async (
 };
 
 export const get: FilevineEndpoints['getDocument'] = async (ctx, input) => {
+	await ensureFilevineOrgContext(ctx.key);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['getDocument']
 	>(`/fv-app/v2/Documents/${input.documentId}`, ctx.key, { method: 'GET' });
@@ -92,9 +94,17 @@ export const upload: FilevineEndpoints['uploadProjectDocument'] = async (
 	ctx,
 	input,
 ) => {
+	await ensureFilevineOrgContext(ctx.key);
 	const { projectId, file, ...rest } = input;
-	if (file) {
-		const blob = typeof file === 'string' ? new Blob([file]) : (file as Blob);
+	if (file != null) {
+		// Normalize Node binary inputs (Buffer, Uint8Array) to Blob — isBlob checks .type/.stream, raw Buffer would be lost
+		let blob: Blob;
+		if (typeof file === 'string') blob = new Blob([file]);
+		else if (typeof Buffer !== 'undefined' && Buffer.isBuffer(file))
+			blob = new Blob([file as unknown as Uint8Array]);
+		else if (file instanceof Uint8Array) blob = new Blob([file]);
+		else if (file instanceof Blob) blob = file;
+		else blob = new Blob([String(file)]);
 		const formData: Record<string, unknown> = {
 			file: blob,
 			projectId: String(projectId),

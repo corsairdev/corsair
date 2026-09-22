@@ -20,7 +20,7 @@ Attach a contact to a project
 **Risk:** `write`
 
 ```ts
-await corsair.filevine.api.contacts.attach({});
+await corsair.filevine.api.contacts.attach({ projectId: 123, contactId: 456 });
 ```
 
 **Input**
@@ -47,7 +47,7 @@ Create a contact
 **Risk:** `write`
 
 ```ts
-await corsair.filevine.api.contacts.create({});
+await corsair.filevine.api.contacts.create({ firstName: 'John', organization: 'Acme' });
 ```
 
 **Input**
@@ -89,7 +89,7 @@ Get a contact by ID
 **Risk:** `read`
 
 ```ts
-await corsair.filevine.api.contacts.get({});
+await corsair.filevine.api.contacts.get({ contactId: 456 });
 ```
 
 **Input**
@@ -127,7 +127,7 @@ List contacts with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.filevine.api.contacts.list({});
+await corsair.filevine.api.contacts.list({ limit: 50 });
 ```
 
 **Input**
@@ -181,7 +181,7 @@ Create a deadline on a project
 **Risk:** `write`
 
 ```ts
-await corsair.filevine.api.deadlines.create({});
+await corsair.filevine.api.deadlines.create({ projectId: 123, name: 'Filing', dueDate: '2026-12-01T00:00:00Z' });
 ```
 
 **Input**
@@ -245,7 +245,7 @@ List deadlines for a project
 **Risk:** `read`
 
 ```ts
-await corsair.filevine.api.deadlines.list({});
+await corsair.filevine.api.deadlines.list({ projectId: 123, limit: 50 });
 ```
 
 **Input**
@@ -303,7 +303,7 @@ Get document metadata by ID
 **Risk:** `read`
 
 ```ts
-await corsair.filevine.api.documents.get({});
+await corsair.filevine.api.documents.get({ documentId: 123 });
 ```
 
 **Input**
@@ -344,7 +344,7 @@ List documents in a project
 **Risk:** `read`
 
 ```ts
-await corsair.filevine.api.documents.list({});
+await corsair.filevine.api.documents.list({ projectId: 123, limit: 50 });
 ```
 
 **Input**
@@ -401,7 +401,7 @@ Upload a document to a project
 **Risk:** `write`
 
 ```ts
-await corsair.filevine.api.documents.upload({});
+await corsair.filevine.api.documents.upload({ projectId: 123, filename: 'contract.pdf', file: new Blob(['content']) });
 ```
 
 **Input**
@@ -449,16 +449,15 @@ Exchange PAT for bearer token
 **Risk:** `write`
 
 ```ts
-await corsair.filevine.api.identity.getAccessToken({});
+await corsair.filevine.api.identity.getAccessToken({ token: 'PAT_xxx' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `grant_type` | `personal_access_token` | Yes | — |
 | `token` | `string` | Yes | Filevine Personal Access Token (PAT) |
-| `scope` | `string` | Yes | — |
+| `scope` | `string` | No | OAuth scope — defaults to fv.api.gateway.access tenant filevine.v2.api.* openid email fv.auth.tenant.read |
 | `client_id` | `string` | No | — |
 | `client_secret` | `string` | No | — |
 
@@ -551,7 +550,7 @@ Create a note on a project
 **Risk:** `write`
 
 ```ts
-await corsair.filevine.api.notes.create({});
+await corsair.filevine.api.notes.create({ projectId: 123, body: 'Hello' });
 ```
 
 **Input**
@@ -594,7 +593,7 @@ List notes for a project
 **Risk:** `read`
 
 ```ts
-await corsair.filevine.api.notes.list({});
+await corsair.filevine.api.notes.list({ projectId: 123, limit: 50 });
 ```
 
 **Input**
@@ -648,7 +647,7 @@ Update a note
 **Risk:** `write`
 
 ```ts
-await corsair.filevine.api.notes.update({});
+await corsair.filevine.api.notes.update({ noteId: 123, body: 'Updated' });
 ```
 
 **Input**
@@ -691,7 +690,7 @@ Create a new project
 **Risk:** `write`
 
 ```ts
-await corsair.filevine.api.projects.create({});
+await corsair.filevine.api.projects.create({ projectTypeId: 1, projectName: 'Test', clientId: 456 });
 ```
 
 **Input**
@@ -732,7 +731,7 @@ Get a project by ID
 **Risk:** `read`
 
 ```ts
-await corsair.filevine.api.projects.get({});
+await corsair.filevine.api.projects.get({ projectId: 123 });
 ```
 
 **Input**
@@ -770,7 +769,7 @@ List projects with pagination and filters
 **Risk:** `read`
 
 ```ts
-await corsair.filevine.api.projects.list({});
+await corsair.filevine.api.projects.list({ limit: 50 });
 ```
 
 **Input**
@@ -825,7 +824,7 @@ Update a project
 **Risk:** `write`
 
 ```ts
-await corsair.filevine.api.projects.update({});
+await corsair.filevine.api.projects.update({ projectId: 123, phaseName: 'Discovery' });
 ```
 
 **Input**
@@ -868,7 +867,7 @@ Create a task on a project
 **Risk:** `write`
 
 ```ts
-await corsair.filevine.api.tasks.create({});
+await corsair.filevine.api.tasks.create({ projectId: 123, title: 'Review', assigneeId: 456 });
 ```
 
 **Input**
@@ -911,7 +910,7 @@ List tasks for a project
 **Risk:** `read`
 
 ```ts
-await corsair.filevine.api.tasks.list({});
+await corsair.filevine.api.tasks.list({ projectId: 123, limit: 50 });
 ```
 
 **Input**
@@ -965,7 +964,7 @@ Update a task
 **Risk:** `write`
 
 ```ts
-await corsair.filevine.api.tasks.update({});
+await corsair.filevine.api.tasks.update({ taskId: 123, status: 'completed' });
 ```
 
 **Input**
@@ -1009,7 +1008,7 @@ Create a webhook subscription
 **Risk:** `write`
 
 ```ts
-await corsair.filevine.api.webhooks.create({});
+await corsair.filevine.api.webhooks.create({ name: 'Hook', endpoint: 'https://example.com/hook', events: ['project.created'] });
 ```
 
 **Input**
@@ -1048,7 +1047,7 @@ Delete a webhook subscription [DESTRUCTIVE]
 **Risk:** `destructive`
 
 ```ts
-await corsair.filevine.api.webhooks.delete({});
+await corsair.filevine.api.webhooks.delete({ subscriptionId: 'sub_123' });
 ```
 
 **Input**
