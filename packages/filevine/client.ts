@@ -8,6 +8,9 @@ import { ApiError, request } from 'corsair/http';
 export class FilevineAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// Repository typing rule: `unknown` is intentional here — Filevine error
+	// payloads are polymorphic (string | { message } | { errors[] }).
+	// Narrowed at each throw site via instanceof ApiError / Error checks.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 
@@ -99,6 +102,10 @@ async function fetchFilevineOrgContext(
 			userId?: number;
 			orgs?: Array<{ orgId?: number }>;
 		}>('/fv-app/v2/utils/GetUserOrgsWithToken', apiKey, { method: 'POST' });
+		// Repository typing rule: broad `unknown` assertion is required here —
+		// Filevine GetUserOrgsWithToken returns PascalCase (UserId.Native, Orgs[].OrgId)
+		// or camelCase (userId, orgs[].orgId) depending on tenant. Narrowed below
+		// via explicit property checks + typeof === 'number' filter before use.
 		const raw = result as unknown as Record<string, unknown>;
 		const userId =
 			(raw.UserId as { Native?: number } | undefined)?.Native ??
@@ -283,6 +290,10 @@ export async function makeFilevineIdentityRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method: 'POST',
 		url: endpoint,
+		// Repository typing rule: `unknown` double-assertion documents the
+		// urlencoded string payload — identity /connect/token expects
+		// application/x-www-form-urlencoded string, while core ApiRequestOptions
+		// types body as Record. Passed through as opaque string, never accessed.
 		body: formBody as unknown as Record<string, unknown>,
 		mediaType: 'application/x-www-form-urlencoded',
 	};
