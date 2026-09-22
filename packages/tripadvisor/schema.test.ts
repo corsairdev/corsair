@@ -56,6 +56,17 @@ describe('Tripadvisor catalog search input', () => {
 		expect(result.success).toBe(true);
 	});
 
+	it('accepts a bounding-box-only search without center coordinates', () => {
+		const result = LocationsNearbyInputSchema.safeParse({
+			sw_lat: 38.7,
+			sw_lon: -9.2,
+			ne_lat: 38.8,
+			ne_lon: -9.1,
+		});
+
+		expect(result.success).toBe(true);
+	});
+
 	it('rejects incomplete geographic search criteria', () => {
 		const result = LocationsNearbyInputSchema.safeParse({
 			lat: 38.72,
@@ -63,6 +74,18 @@ describe('Tripadvisor catalog search input', () => {
 		});
 
 		expect(result.success).toBe(false);
+	});
+
+	it('rejects partial bounding boxes and center-only searches', () => {
+		expect(
+			LocationsNearbyInputSchema.safeParse({
+				sw_lat: 38.7,
+				sw_lon: -9.2,
+			}).success,
+		).toBe(false);
+		expect(
+			LocationsNearbyInputSchema.safeParse({ lat: 38.72, lon: -9.14 }).success,
+		).toBe(false);
 	});
 
 	it('rejects page sizes above the Tripadvisor limit', () => {
@@ -187,6 +210,12 @@ describe('Tripadvisor location reviews schemas', () => {
 			LocationReviewsInputSchema.safeParse({
 				id: 123,
 				published_after_ts: '01/02/2024',
+			}).success,
+		).toBe(false);
+		expect(
+			LocationReviewsInputSchema.safeParse({
+				id: 123,
+				published_after_ts: '2024-13-45',
 			}).success,
 		).toBe(false);
 		expect(

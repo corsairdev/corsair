@@ -18,31 +18,72 @@ const NearbySearchInputBaseSchema = z.object({
 	sort: z.array(z.string().min(1)).min(1).optional(),
 });
 
-export const LocationsNearbyInputSchema =
-	NearbySearchInputBaseSchema.superRefine((input, ctx) => {
-		const hasLocationReference = input.location_id !== undefined;
-		const hasCoordinates = input.lat !== undefined && input.lon !== undefined;
-		if (!hasLocationReference && !hasCoordinates) {
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				path: ['lat'],
-				message: 'Provide location_id or both lat and lon',
-			});
-		}
+type NearbySearchAreaInput = {
+	location_id?: string;
+	lat?: number;
+	lon?: number;
+	radius?: number;
+	sw_lat?: number;
+	sw_lon?: number;
+	ne_lat?: number;
+	ne_lon?: number;
+};
 
-		const hasBoundingBox =
-			input.sw_lat !== undefined &&
-			input.sw_lon !== undefined &&
-			input.ne_lat !== undefined &&
-			input.ne_lon !== undefined;
-		if (input.radius === undefined && !hasBoundingBox) {
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				path: ['radius'],
-				message: 'Provide radius or all four bounding-box coordinates',
-			});
-		}
-	});
+/**
+ * Shared area validation for the nearby search inputs. Mirrors the Terra
+ * docs: the search area is a center point plus radius, or a bounding box.
+ * A complete bounding box alone is sufficient; a center alone is not.
+ */
+function refineNearbySearchArea(
+	input: NearbySearchAreaInput,
+	ctx: z.RefinementCtx,
+): void {
+	const hasCenter =
+		input.location_id !== undefined ||
+		(input.lat !== undefined && input.lon !== undefined);
+	const hasBoundingBox =
+		input.sw_lat !== undefined &&
+		input.sw_lon !== undefined &&
+		input.ne_lat !== undefined &&
+		input.ne_lon !== undefined;
+
+	if (
+		(input.lat !== undefined || input.lon !== undefined) &&
+		(input.lat === undefined || input.lon === undefined)
+	) {
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			path: ['lat'],
+			message: 'Provide both lat and lon for a center-point search',
+		});
+	}
+
+	const definedBoxCount = [
+		input.sw_lat,
+		input.sw_lon,
+		input.ne_lat,
+		input.ne_lon,
+	].filter((value) => value !== undefined).length;
+	if (definedBoxCount > 0 && !hasBoundingBox) {
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			path: ['sw_lat'],
+			message: 'Provide all four bounding-box coordinates',
+		});
+	}
+
+	if (!hasBoundingBox && !(hasCenter && input.radius !== undefined)) {
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			path: ['radius'],
+			message:
+				'Provide radius with location_id or both lat and lon, or all four bounding-box coordinates',
+		});
+	}
+}
+
+export const LocationsNearbyInputSchema =
+	NearbySearchInputBaseSchema.superRefine(refineNearbySearchArea);
 
 export type LocationsNearbyInput = z.infer<typeof LocationsNearbyInputSchema>;
 
@@ -493,11 +534,8 @@ export const LocationReviewsInputSchema = z.object({
 	rating_min: z.number().min(1).max(5).optional(),
 	// The spec types this query as a free-form string (e.g. business, family).
 	trip_type: z.string().min(1).optional(),
-	// The spec requires YYYY-MM-DD for this filter.
-	published_after_ts: z
-		.string()
-		.regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD')
-		.optional(),
+	// The spec requires a YYYY-MM-DD calendar date for this filter.
+	published_after_ts: z.iso.date().optional(),
 	sort_by: ReviewSortBySchema.optional(),
 	published_after_review_id: z.string().min(1).optional(),
 	language: z.string().min(1).optional(),
@@ -637,30 +675,7 @@ export type GeoDetailsResponse = z.infer<typeof GeoDetailsResponseSchema>;
 export const LocationsSearchNearbyInputSchema =
 	NearbySearchInputBaseSchema.extend({
 		include_photo: z.boolean().optional(),
-	}).superRefine((input, ctx) => {
-		const hasLocationReference = input.location_id !== undefined;
-		const hasCoordinates = input.lat !== undefined && input.lon !== undefined;
-		if (!hasLocationReference && !hasCoordinates) {
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				path: ['lat'],
-				message: 'Provide location_id or both lat and lon',
-			});
-		}
-
-		const hasBoundingBox =
-			input.sw_lat !== undefined &&
-			input.sw_lon !== undefined &&
-			input.ne_lat !== undefined &&
-			input.ne_lon !== undefined;
-		if (input.radius === undefined && !hasBoundingBox) {
-			ctx.addIssue({
-				code: z.ZodIssueCode.custom,
-				path: ['radius'],
-				message: 'Provide radius or all four bounding-box coordinates',
-			});
-		}
-	});
+	}).superRefine(refineNearbySearchArea);
 
 export type LocationsSearchNearbyInput = z.infer<
 	typeof LocationsSearchNearbyInputSchema

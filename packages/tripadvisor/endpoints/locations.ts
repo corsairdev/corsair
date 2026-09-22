@@ -26,11 +26,20 @@ export const nearby: TripadvisorEndpoints['locationsNearby'] = async (
 		),
 	);
 
+	// Telemetry keeps filter values and counts only; precise search
+	// coordinates, bounding boxes, and location ids are omitted.
 	await logEventFromContext(
 		ctx,
 		'tripadvisor.catalog.locationsNearby',
 		{
-			...input,
+			category: input.category,
+			locale: input.locale,
+			min_rating: input.min_rating,
+			page: input.page,
+			radius: input.radius,
+			size: input.size,
+			sort: input.sort,
+			unit: input.unit,
 			resultCount: response.data.length,
 		},
 		'completed',
@@ -135,11 +144,21 @@ export const nearbyLocations: TripadvisorEndpoints['locationsSearchNearby'] =
 			}),
 		);
 
+		// Telemetry keeps filter values and counts only; precise search
+		// coordinates, bounding boxes, and location ids are omitted.
 		await logEventFromContext(
 			ctx,
 			'tripadvisor.locations.searchNearby',
 			{
-				...input,
+				category: input.category,
+				include_photo: input.include_photo,
+				locale: input.locale,
+				min_rating: input.min_rating,
+				page: input.page,
+				radius: input.radius,
+				size: input.size,
+				sort: input.sort,
+				unit: input.unit,
 				resultCount: response.data.length,
 			},
 			'completed',

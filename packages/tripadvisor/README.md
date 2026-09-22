@@ -25,7 +25,7 @@ Auth: API key sent in the `X-API-Key` header.
 
 ## Search modes
 
-Use `location_id` or `lat` and `lon` as the search reference. Provide either a positive `radius` or all four bounding-box coordinates. Results support category, rating, locale, pagination, and sorting filters.
+Define the search area with a center (`location_id` or `lat` + `lon`) plus a positive `radius`, or with all four bounding-box coordinates (a bounding box alone is sufficient). Results support category, rating, locale, pagination, and sorting filters. Telemetry logs filter values and result counts only, never search coordinates.
 
 ## Notes
 
