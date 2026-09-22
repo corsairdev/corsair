@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-08T17:22:43.451Z",
+  "generatedAt": "2026-09-18T04:29:42.582Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
@@ -171,7 +171,7 @@
     "googlebigquery": "googlebigquery.com",
     "googlecalendar": "calendar.google.com",
     "googlecloudvision": "googlecloudvision.com",
-    "googledocs": "googledocs.com",
+    "googledocs": "docs.google.com",
     "googledrive": "drive.google.com",
     "googlemaps": "googlemaps.com",
     "googlemeet": "meet.google.com",
@@ -293,6 +293,7 @@
     "zoominfo": "zoominfo.com"
   },
   "sources": {
+    "googledocs": "url-override",
     "ably": "twenty-icons",
     "abstract": "twenty-icons",
     "abuseipdb": "twenty-icons",
@@ -456,7 +457,6 @@
     "googlebigquery": "twenty-icons",
     "googlecalendar": "twenty-icons",
     "googlecloudvision": "twenty-icons",
-    "googledocs": "twenty-icons",
     "googledrive": "twenty-icons",
     "googlemaps": "twenty-icons",
     "googlemeet": "twenty-icons",
