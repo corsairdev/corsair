@@ -14,6 +14,14 @@ jest.mock('corsair/http', () => {
 	return { ...original, request: jest.fn() };
 });
 
+jest.mock('corsair/core', () => {
+	const actual = jest.requireActual('corsair/core');
+	return {
+		...actual,
+		logEventFromContext: jest.fn().mockResolvedValue(undefined),
+	};
+});
+
 const mockRequest = request as jest.Mock;
 
 function createMockCtx() {
