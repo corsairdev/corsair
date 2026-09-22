@@ -90,33 +90,6 @@ export function ComboPage({ combo }: { combo: ComboData }) {
 				heading={`${combo.displayA} and ${combo.displayB} FAQ`}
 				variant="combo"
 			/>
-			<section className="py-10 md:py-12">
-				<div className="mx-auto max-w-[960px] px-4 sm:px-6 md:px-10">
-					<div className="rounded-md bg-[#1c1c1c] px-4 py-10 text-center sm:px-8 sm:py-12">
-						<h2 className="font-[family-name:var(--landing-font-serif)] text-[clamp(1.5rem,3vw,2rem)] font-light tracking-[-0.03em] text-white">
-							Connect {combo.displayA} and {combo.displayB}
-						</h2>
-						<p className="mx-auto mt-2 max-w-xl text-[15px] leading-relaxed text-white/55">
-							Install both plugins, pick a trigger and an action above, then run
-							it.
-						</p>
-						<div className="mt-6 flex flex-wrap justify-center gap-3">
-							<a
-								href="#builder"
-								className="rounded-sm bg-white px-4 py-2 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-[#4a38f5] hover:text-white"
-							>
-								Build a workflow
-							</a>
-							<a
-								href="https://docs.corsair.dev"
-								className="rounded-sm border border-white/20 px-4 py-2 text-sm font-medium text-white no-underline transition-colors hover:border-white/45"
-							>
-								Read the docs
-							</a>
-						</div>
-					</div>
-				</div>
-			</section>
 		</main>
 	);
 }
