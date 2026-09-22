@@ -422,14 +422,22 @@ export const UploadProjectDocumentInputSchema = z.object({
 	folderId: z.number().optional(),
 	tags: z.array(z.string()).optional(),
 	sharedToPortal: z.boolean().optional(),
-	// file is intentionally unknown — accepts Blob, Buffer, Uint8Array, ArrayBuffer, or string.
-	// String handling is explicit via fileEncoding (no heuristic): 'text' uploads literally,
-	// 'base64' decodes to bytes first. This documents the loose type per repository rules.
+	// Explicit binary union — no unknown/any on this public input surface.
+	// Accepts Blob (browser/Node), Buffer/Uint8Array (Node binary), ArrayBuffer,
+	// or string. String handling is explicit via fileEncoding (no heuristic):
+	// 'text' (default) uploads literally, 'base64' decodes to bytes first.
 	file: z
-		.unknown()
+		.union([
+			z.string().describe('Text content or base64 payload (see fileEncoding)'),
+			z
+				.instanceof(Uint8Array)
+				.describe('Node binary: Buffer (extends Uint8Array) or Uint8Array'),
+			z.instanceof(ArrayBuffer).describe('Raw binary buffer'),
+			z.instanceof(Blob).describe('Blob file binary (browser/Node)'),
+		])
 		.optional()
 		.describe(
-			'File content: Blob, Buffer, Uint8Array, ArrayBuffer, or string (see fileEncoding)',
+			'File content: string | Uint8Array (incl. Buffer) | ArrayBuffer | Blob (see fileEncoding)',
 		),
 	fileEncoding: z
 		.enum(['base64', 'text'])

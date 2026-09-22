@@ -12,11 +12,7 @@ export const list: FilevineEndpoints['listProjectDeadlines'] = async (
 	input,
 ) => {
 	const { orgId: resolvedOrgId, userId: resolvedUserId } =
-		await resolveFilevineOrgContext(
-			ctx.key,
-			(input as { orgId?: number; userId?: number }).orgId,
-			(input as { orgId?: number; userId?: number }).userId,
-		);
+		await resolveFilevineOrgContext(ctx.key, input.orgId, input.userId);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['listProjectDeadlines']
 	>(`/fv-app/v2/projects/${input.projectId}/deadlines`, ctx.key, {
@@ -62,11 +58,7 @@ export const create: FilevineEndpoints['createDeadline'] = async (
 	input,
 ) => {
 	const { orgId: resolvedOrgId, userId: resolvedUserId } =
-		await resolveFilevineOrgContext(
-			ctx.key,
-			(input as { orgId?: number; userId?: number }).orgId,
-			(input as { orgId?: number; userId?: number }).userId,
-		);
+		await resolveFilevineOrgContext(ctx.key, input.orgId, input.userId);
 	const { projectId, orgId: _orgD, userId: _userD, ...body } = input;
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['createDeadline']

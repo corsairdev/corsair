@@ -13,11 +13,7 @@ export const list: FilevineEndpoints['listProjectNotes'] = async (
 	input,
 ) => {
 	const { orgId: resolvedOrgId, userId: resolvedUserId } =
-		await resolveFilevineOrgContext(
-			ctx.key,
-			(input as { orgId?: number; userId?: number }).orgId,
-			(input as { orgId?: number; userId?: number }).userId,
-		);
+		await resolveFilevineOrgContext(ctx.key, input.orgId, input.userId);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['listProjectNotes']
 	>(`/fv-app/v2/Projects/${input.projectId}/Notes`, ctx.key, {
@@ -61,11 +57,7 @@ export const list: FilevineEndpoints['listProjectNotes'] = async (
 
 export const create: FilevineEndpoints['createNote'] = async (ctx, input) => {
 	const { orgId: resolvedOrgId, userId: resolvedUserId } =
-		await resolveFilevineOrgContext(
-			ctx.key,
-			(input as { orgId?: number; userId?: number }).orgId,
-			(input as { orgId?: number; userId?: number }).userId,
-		);
+		await resolveFilevineOrgContext(ctx.key, input.orgId, input.userId);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['createNote']
 	>('/fv-app/v2/Notes', ctx.key, {
@@ -109,11 +101,7 @@ export const create: FilevineEndpoints['createNote'] = async (ctx, input) => {
 
 export const update: FilevineEndpoints['updateNote'] = async (ctx, input) => {
 	const { orgId: resolvedOrgId, userId: resolvedUserId } =
-		await resolveFilevineOrgContext(
-			ctx.key,
-			(input as { orgId?: number; userId?: number }).orgId,
-			(input as { orgId?: number; userId?: number }).userId,
-		);
+		await resolveFilevineOrgContext(ctx.key, input.orgId, input.userId);
 	const { noteId, orgId: _orgN, userId: _userN, ...patch } = input;
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['updateNote']

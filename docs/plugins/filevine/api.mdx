@@ -429,7 +429,7 @@ await corsair.filevine.api.documents.upload({ projectId: 123, filename: 'contrac
 | `folderId` | `number` | No | — |
 | `tags` | `string[]` | No | — |
 | `sharedToPortal` | `boolean` | No | — |
-| `file` | `any` | No | File content: Blob, Buffer, Uint8Array, ArrayBuffer, or string (see fileEncoding) |
+| `file` | `string \| custom \| custom \| custom` | No | File content: string \| Uint8Array (incl. Buffer) \| ArrayBuffer \| Blob (see fileEncoding) |
 | `fileEncoding` | `base64 \| text` | No | How to interpret string file content — 'base64' decodes to bytes, 'text' (default) uploads literally |
 | `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
 | `userId` | `number` | No | Explicit Filevine user ID |

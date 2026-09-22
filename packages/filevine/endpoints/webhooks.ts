@@ -13,11 +13,7 @@ export const list: FilevineEndpoints['listWebhookSubscriptions'] = async (
 	_input,
 ) => {
 	const { orgId: resolvedOrgId, userId: resolvedUserId } =
-		await resolveFilevineOrgContext(
-			ctx.key,
-			(_input as { orgId?: number; userId?: number }).orgId,
-			(_input as { orgId?: number; userId?: number }).userId,
-		);
+		await resolveFilevineOrgContext(ctx.key, _input.orgId, _input.userId);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['listWebhookSubscriptions']
 	>('/fv-app/v2/webhooks/subscriptions', ctx.key, {
@@ -55,11 +51,7 @@ export const create: FilevineEndpoints['createWebhookSubscription'] = async (
 ) => {
 	const { orgId: _orgW, userId: _userW, ...webhookBody } = input;
 	const { orgId: resolvedOrgId, userId: resolvedUserId } =
-		await resolveFilevineOrgContext(
-			ctx.key,
-			(input as { orgId?: number; userId?: number }).orgId,
-			(input as { orgId?: number; userId?: number }).userId,
-		);
+		await resolveFilevineOrgContext(ctx.key, input.orgId, input.userId);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['createWebhookSubscription']
 	>('/fv-app/v2/webhooks/subscriptions', ctx.key, {
@@ -100,11 +92,7 @@ export const del: FilevineEndpoints['deleteWebhookSubscription'] = async (
 	input,
 ) => {
 	const { orgId: resolvedOrgId, userId: resolvedUserId } =
-		await resolveFilevineOrgContext(
-			ctx.key,
-			(input as { orgId?: number; userId?: number }).orgId,
-			(input as { orgId?: number; userId?: number }).userId,
-		);
+		await resolveFilevineOrgContext(ctx.key, input.orgId, input.userId);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['deleteWebhookSubscription']
 	>(`/fv-app/v2/webhooks/subscriptions/${input.subscriptionId}`, ctx.key, {

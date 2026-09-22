@@ -13,11 +13,7 @@ export const list: FilevineEndpoints['listProjectTasks'] = async (
 	input,
 ) => {
 	const { orgId: resolvedOrgId, userId: resolvedUserId } =
-		await resolveFilevineOrgContext(
-			ctx.key,
-			(input as { orgId?: number; userId?: number }).orgId,
-			(input as { orgId?: number; userId?: number }).userId,
-		);
+		await resolveFilevineOrgContext(ctx.key, input.orgId, input.userId);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['listProjectTasks']
 	>(`/fv-app/v2/projects/${input.projectId}/tasks`, ctx.key, {
@@ -61,11 +57,7 @@ export const list: FilevineEndpoints['listProjectTasks'] = async (
 
 export const create: FilevineEndpoints['createTask'] = async (ctx, input) => {
 	const { orgId: resolvedOrgId, userId: resolvedUserId } =
-		await resolveFilevineOrgContext(
-			ctx.key,
-			(input as { orgId?: number; userId?: number }).orgId,
-			(input as { orgId?: number; userId?: number }).userId,
-		);
+		await resolveFilevineOrgContext(ctx.key, input.orgId, input.userId);
 	const { projectId, orgId: _orgT, userId: _userT, ...body } = input;
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['createTask']
@@ -103,11 +95,7 @@ export const create: FilevineEndpoints['createTask'] = async (ctx, input) => {
 
 export const update: FilevineEndpoints['updateTask'] = async (ctx, input) => {
 	const { orgId: resolvedOrgId, userId: resolvedUserId } =
-		await resolveFilevineOrgContext(
-			ctx.key,
-			(input as { orgId?: number; userId?: number }).orgId,
-			(input as { orgId?: number; userId?: number }).userId,
-		);
+		await resolveFilevineOrgContext(ctx.key, input.orgId, input.userId);
 	const { taskId, orgId: _orgTU, userId: _userTU, ...patch } = input;
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['updateTask']
