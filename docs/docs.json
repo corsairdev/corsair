@@ -2028,6 +2028,14 @@
                 ]
               },
               {
+                "group": "Retell AI",
+                "pages": [
+                  "plugins/retellai/overview",
+                  "plugins/retellai/api",
+                  "plugins/retellai/database"
+                ]
+              },
+              {
                 "group": "Runpod",
                 "pages": [
                   "plugins/runpod/overview",

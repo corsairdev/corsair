@@ -1,0 +1,67 @@
+---
+title: Database
+description: "Retell AI local sync: searchable entities, `.search()` filters, and operators."
+---
+The Retell AI plugin syncs data locally. Use `corsair.retellai.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Calls
+
+Path: `retellai.db.calls.search`
+
+```ts
+const rows = await corsair.retellai.db.calls.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `call_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `call_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `agent_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `call_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `start_timestamp` | `number` | equals, gt, gte, lt, lte, in |
+| `end_timestamp` | `number` | equals, gt, gte, lt, lte, in |
+| `transcript` | `string` | equals, contains, startsWith, endsWith, in |
+| `recording_url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code - see [database operations](/concepts/database)._
+
+---
+
+## Chats
+
+Path: `retellai.db.chats.search`
+
+```ts
+const rows = await corsair.retellai.db.chats.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `chat_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `agent_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `chat_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `start_timestamp` | `number` | equals, gt, gte, lt, lte, in |
+| `end_timestamp` | `number` | equals, gt, gte, lt, lte, in |
+| `transcript` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code - see [database operations](/concepts/database)._
+
+---

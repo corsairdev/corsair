@@ -1,0 +1,311 @@
+---
+title: API
+description: "API reference for Retell AI: every `retellai.api.*` operation with input and output types."
+---
+Every `retellai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Calls
+
+### get
+
+`calls.get`
+
+Retrieve a call with its transcript, recording, and post-call analysis.
+
+**Risk:** `read`
+
+```ts
+await corsair.retellai.api.calls.get({ id: 'call-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | - |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `call_id` | `string` | Yes | - |
+| `call_type` | `string` | No | - |
+| `agent_id` | `string` | No | - |
+| `call_status` | `string` | No | - |
+| `start_timestamp` | `number` | No | - |
+| `end_timestamp` | `number` | No | - |
+| `direction` | `string` | No | - |
+| `from_number` | `string` | No | - |
+| `to_number` | `string` | No | - |
+| `disconnection_reason` | `string` | No | - |
+| `metadata` | `object` | No | - |
+| `transcript` | `string` | No | - |
+| `transcript_object` | `object[]` | No | - |
+| `transcript_with_tool_calls` | `object[]` | No | - |
+| `scrubbed_transcript_with_tool_calls` | `object[]` | No | - |
+| `recording_url` | `string` | No | - |
+| `call_analysis` | `object` | No | - |
+| `retell_llm_dynamic_variables` | `object` | No | - |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="transcript_object full type">
+
+```ts
+{
+  role?: string,
+  content?: string,
+  start?: number,
+  end?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="transcript_with_tool_calls full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="scrubbed_transcript_with_tool_calls full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="call_analysis full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="retell_llm_dynamic_variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`calls.list`
+
+List Retell calls with filters and cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.retellai.api.calls.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filterCriteria` | `object` | No | - |
+| `limit` | `number` | No | - |
+| `paginationKey` | `string` | No | - |
+| `sortOrder` | `ascending \| descending` | No | - |
+| `enableTotal` | `boolean` | No | - |
+
+<AccordionGroup>
+<Accordion title="filterCriteria full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | - |
+| `pagination_key` | `string` | No | - |
+| `has_more` | `boolean` | No | - |
+| `total_count` | `number` | No | - |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  call_id: string,
+  call_type?: string,
+  agent_id?: string,
+  call_status?: string,
+  start_timestamp?: number,
+  end_timestamp?: number,
+  direction?: string,
+  from_number?: string,
+  to_number?: string,
+  disconnection_reason?: string,
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Chats
+
+### get
+
+`chats.get`
+
+Retrieve a chat with its transcript and post-chat analysis.
+
+**Risk:** `read`
+
+```ts
+await corsair.retellai.api.chats.get({ id: 'chat-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | - |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chat_id` | `string` | Yes | - |
+| `agent_id` | `string` | No | - |
+| `chat_status` | `string` | No | - |
+| `start_timestamp` | `number` | No | - |
+| `end_timestamp` | `number` | No | - |
+| `metadata` | `object` | No | - |
+| `transcript` | `string` | No | - |
+| `transcript_with_tool_calls` | `object[]` | No | - |
+| `chat_analysis` | `object` | No | - |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="transcript_with_tool_calls full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="chat_analysis full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`chats.list`
+
+List Retell chats with filters and cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.retellai.api.chats.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filterCriteria` | `object` | No | - |
+| `limit` | `number` | No | - |
+| `paginationKey` | `string` | No | - |
+| `sortOrder` | `ascending \| descending` | No | - |
+| `enableTotal` | `boolean` | No | - |
+
+<AccordionGroup>
+<Accordion title="filterCriteria full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | - |
+| `pagination_key` | `string` | No | - |
+| `has_more` | `boolean` | No | - |
+| `total_count` | `number` | No | - |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  chat_id: string,
+  agent_id?: string,
+  chat_status?: string,
+  start_timestamp?: number,
+  end_timestamp?: number,
+  metadata?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
