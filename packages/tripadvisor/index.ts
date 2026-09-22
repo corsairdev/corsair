@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Catalog } from './endpoints';
+import { Catalog, Geo, Location, Locations } from './endpoints';
 import type {
 	TripadvisorEndpointInputs,
 	TripadvisorEndpointOutputs,
@@ -54,11 +54,27 @@ type TripadvisorEndpoint<K extends keyof TripadvisorEndpointOutputs> =
 
 export type TripadvisorEndpoints = {
 	locationsNearby: TripadvisorEndpoint<'locationsNearby'>;
+	locationDetails: TripadvisorEndpoint<'locationDetails'>;
+	locationPhotos: TripadvisorEndpoint<'locationPhotos'>;
+	locationReviews: TripadvisorEndpoint<'locationReviews'>;
+	geoDetails: TripadvisorEndpoint<'geoDetails'>;
+	locationsSearchNearby: TripadvisorEndpoint<'locationsSearchNearby'>;
 };
 
 const tripadvisorEndpointsNested = {
 	catalog: {
 		locationsNearby: Catalog.locationsNearby,
+	},
+	location: {
+		details: Location.details,
+		photos: Location.photos,
+		reviews: Location.reviews,
+	},
+	locations: {
+		nearby: Locations.nearby,
+	},
+	geo: {
+		details: Geo.details,
 	},
 } as const;
 
@@ -68,6 +84,26 @@ export const tripadvisorEndpointSchemas = {
 	'catalog.locationsNearby': {
 		input: TripadvisorEndpointInputSchemas.locationsNearby,
 		output: TripadvisorEndpointOutputSchemas.locationsNearby,
+	},
+	'location.details': {
+		input: TripadvisorEndpointInputSchemas.locationDetails,
+		output: TripadvisorEndpointOutputSchemas.locationDetails,
+	},
+	'location.photos': {
+		input: TripadvisorEndpointInputSchemas.locationPhotos,
+		output: TripadvisorEndpointOutputSchemas.locationPhotos,
+	},
+	'location.reviews': {
+		input: TripadvisorEndpointInputSchemas.locationReviews,
+		output: TripadvisorEndpointOutputSchemas.locationReviews,
+	},
+	'locations.nearby': {
+		input: TripadvisorEndpointInputSchemas.locationsSearchNearby,
+		output: TripadvisorEndpointOutputSchemas.locationsSearchNearby,
+	},
+	'geo.details': {
+		input: TripadvisorEndpointInputSchemas.geoDetails,
+		output: TripadvisorEndpointOutputSchemas.geoDetails,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof tripadvisorEndpointsNested
@@ -80,6 +116,28 @@ const tripadvisorEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Search nearby Tripadvisor catalog locations by coordinates or location ID',
+	},
+	'location.details': {
+		riskLevel: 'read',
+		description:
+			'Get full details, ratings, rankings and awards for a Tripadvisor location',
+	},
+	'location.photos': {
+		riskLevel: 'read',
+		description: 'Get photos for a Tripadvisor location',
+	},
+	'location.reviews': {
+		riskLevel: 'read',
+		description: 'Get traveler reviews for a Tripadvisor location',
+	},
+	'locations.nearby': {
+		riskLevel: 'read',
+		description:
+			'Find full location representations near an area; filter category HOTEL to list nearby hotels',
+	},
+	'geo.details': {
+		riskLevel: 'read',
+		description: 'Get factual and hierarchy details for a Tripadvisor geo',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof tripadvisorEndpointsNested
@@ -143,13 +201,33 @@ export function tripadvisor<const T extends TripadvisorPluginOptions>(
 }
 
 export type {
+	GeoDetailsInput,
+	GeoDetailsResponse,
+	LocationDetailsInput,
+	LocationDetailsResponse,
+	LocationPhotosInput,
+	LocationPhotosResponse,
+	LocationReviewsInput,
+	LocationReviewsResponse,
 	LocationsNearbyInput,
 	LocationsNearbyResponse,
+	LocationsSearchNearbyInput,
+	LocationsSearchNearbyResponse,
 	TripadvisorEndpointInputs,
 	TripadvisorEndpointOutputs,
 } from './endpoints/types';
 
 export {
+	GeoDetailsInputSchema,
+	GeoDetailsResponseSchema,
+	LocationDetailsInputSchema,
+	LocationDetailsResponseSchema,
+	LocationPhotosInputSchema,
+	LocationPhotosResponseSchema,
+	LocationReviewsInputSchema,
+	LocationReviewsResponseSchema,
 	LocationsNearbyInputSchema,
 	LocationsNearbyResponseSchema,
+	LocationsSearchNearbyInputSchema,
+	LocationsSearchNearbyResponseSchema,
 } from './endpoints/types';

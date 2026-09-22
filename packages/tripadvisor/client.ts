@@ -4,6 +4,8 @@ import { ApiError, request } from 'corsair/http';
 export class TripadvisorAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// unknown is used here because the provider error payload is untyped wire
+	// JSON; it is only stored for inspection and never cast without checks.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 
@@ -30,6 +32,8 @@ export async function makeTripadvisorRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// unknown is used here because request bodies carry arbitrary
+		// provider JSON; values are serialized as-is and never cast.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | string[] | undefined>;
 	} = {},

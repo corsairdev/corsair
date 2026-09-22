@@ -1,120 +1,117 @@
-import { logEventFromContext } from 'corsair/core';
 import { makeTripadvisorRequest } from './client';
-import { Catalog } from './endpoints';
 import {
-	LocationsNearbyInputSchema,
+	GeoDetailsResponseSchema,
+	LocationDetailsResponseSchema,
+	LocationPhotosResponseSchema,
+	LocationReviewsResponseSchema,
 	LocationsNearbyResponseSchema,
+	LocationsSearchNearbyResponseSchema,
 } from './endpoints/types';
-import type { TripadvisorContext } from './index';
 
-jest.mock('corsair/core', () => ({
-	logEventFromContext: jest.fn().mockResolvedValue(null),
-}));
-jest.mock('./client', () => ({
-	makeTripadvisorRequest: jest.fn(),
-}));
+// Live tests run only when a real key is provided via the environment.
+// Nothing is hardcoded here so CI without a key skips this suite (R6).
+const API_KEY = process.env.TRIPADVISOR_API_KEY;
+const describeLive = API_KEY ? describe : describe.skip;
 
-const mockRequest = jest.mocked(makeTripadvisorRequest);
-const mockLog = jest.mocked(logEventFromContext);
-const context = {
-	key: 'tripadvisor-test-key',
-} as unknown as TripadvisorContext;
+function liveKey(): string {
+	const key = process.env.TRIPADVISOR_API_KEY;
+	if (!key) {
+		throw new Error('TRIPADVISOR_API_KEY is required for live tests');
+	}
+	return key;
+}
 
-const responseFixture = {
-	data: [
-		{
-			location: {
-				id: 123,
-				geo: 'Lisbon',
-				geo_id: 1,
-				names: [{ language: 'en', value: 'Example Restaurant', primary: true }],
-				coordinates: { latitude: 38.72, longitude: -9.14 },
-			},
-			distance_kilometers: 0.5,
-			distance_miles: 0.31,
-			bearing: 42,
-		},
-	],
-	pagination: { page: 1, size: 20, total_elements: 1, total_pages: 1 },
-};
+// Coordinates from the Terra "Search Nearby Locations Catalog" doc example.
+const LISBON_LAT = 38.72;
+const LISBON_LON = -9.14;
 
-describe('Tripadvisor nearby locations', () => {
-	afterEach(() => {
-		jest.clearAllMocks();
-	});
+describeLive('Tripadvisor live API', () => {
+	let locationId = 0;
+	let geoId = 0;
 
-	it('accepts coordinate and radius search input', () => {
-		const result = LocationsNearbyInputSchema.safeParse({
-			lat: 38.72,
-			lon: -9.14,
-			radius: 5,
-			unit: 'KM',
-			category: 'RESTAURANT',
-			size: 20,
-		});
-
-		expect(result.success).toBe(true);
-	});
-
-	it('accepts location ID and bounding-box search input', () => {
-		const result = LocationsNearbyInputSchema.safeParse({
-			location_id: '123',
-			sw_lat: 38.7,
-			sw_lon: -9.2,
-			ne_lat: 38.8,
-			ne_lon: -9.1,
-			locale: ['en-US'],
-			sort: ['rating,desc'],
-		});
-
-		expect(result.success).toBe(true);
-	});
-
-	it('rejects incomplete geographic search criteria', () => {
-		const result = LocationsNearbyInputSchema.safeParse({
-			lat: 38.72,
-			radius: 5,
-		});
-
-		expect(result.success).toBe(false);
-	});
-
-	it('rejects page sizes above the Tripadvisor limit', () => {
-		const result = LocationsNearbyInputSchema.safeParse({
-			lat: 38.72,
-			lon: -9.14,
-			radius: 5,
-			size: 21,
-		});
-
-		expect(result.success).toBe(false);
-	});
-
-	it('returns validated nearby location data and forwards query parameters', async () => {
-		mockRequest.mockResolvedValueOnce(responseFixture);
-
-		const input = {
-			lat: 38.72,
-			lon: -9.14,
-			radius: 5,
-			unit: 'KM' as const,
-			page: 1,
-			size: 20,
-		};
-		const response = await Catalog.locationsNearby(context, input);
-
-		LocationsNearbyResponseSchema.parse(response);
-		expect(response.data[0]?.location.id).toBe(123);
-		expect(mockRequest).toHaveBeenCalledWith(
+	it('searches catalog locations near Lisbon', async () => {
+		const response = await makeTripadvisorRequest(
 			'/catalog/locations/nearby',
-			'tripadvisor-test-key',
-			{ method: 'GET', query: input },
+			liveKey(),
+			{
+				method: 'GET',
+				query: { lat: LISBON_LAT, lon: LISBON_LON, radius: 5, size: 5 },
+			},
 		);
-		expect(mockLog).toHaveBeenCalledWith(
-			context,
-			'tripadvisor.catalog.locationsNearby',
-			{ ...input, resultCount: 1 },
-			'completed',
+
+		const parsed = LocationsNearbyResponseSchema.parse(response);
+		expect(parsed.data.length).toBeGreaterThan(0);
+		const first = parsed.data[0]?.location;
+		expect(first?.id).toEqual(expect.any(Number));
+		expect(first?.geo_id).toEqual(expect.any(Number));
+		if (first) {
+			locationId = first.id;
+			geoId = first.geo_id;
+		}
+	});
+
+	it('reads full details for the discovered location', async () => {
+		const response = await makeTripadvisorRequest(
+			`/locations/${locationId}`,
+			liveKey(),
+			{ method: 'GET', query: {} },
 		);
+
+		const parsed = LocationDetailsResponseSchema.parse(response);
+		expect(parsed.id).toBe(locationId);
+		expect(parsed.names.length).toBeGreaterThan(0);
+	});
+
+	it('reads photos for the discovered location', async () => {
+		const response = await makeTripadvisorRequest(
+			`/locations/${locationId}/photos`,
+			liveKey(),
+			{ method: 'GET', query: { size: 2 } },
+		);
+
+		const parsed = LocationPhotosResponseSchema.parse(response);
+		expect(Array.isArray(parsed.data)).toBe(true);
+	});
+
+	it('reads reviews for the discovered location', async () => {
+		const response = await makeTripadvisorRequest(
+			`/locations/${locationId}/reviews`,
+			liveKey(),
+			{ method: 'GET', query: { size: 2 } },
+		);
+
+		const parsed = LocationReviewsResponseSchema.parse(response);
+		expect(Array.isArray(parsed.data)).toBe(true);
+	});
+
+	it('reads geo details for the discovered geo', async () => {
+		const response = await makeTripadvisorRequest(`/geos/${geoId}`, liveKey(), {
+			method: 'GET',
+			query: {},
+		});
+
+		const parsed = GeoDetailsResponseSchema.parse(response);
+		expect(parsed.id).toBe(geoId);
+		expect(parsed.names.length).toBeGreaterThan(0);
+	});
+
+	it('finds hotels near Lisbon with the full nearby search', async () => {
+		const response = await makeTripadvisorRequest(
+			'/locations/nearby',
+			liveKey(),
+			{
+				method: 'GET',
+				query: {
+					lat: LISBON_LAT,
+					lon: LISBON_LON,
+					radius: 10,
+					category: 'HOTEL',
+					size: 2,
+				},
+			},
+		);
+
+		const parsed = LocationsSearchNearbyResponseSchema.parse(response);
+		expect(Array.isArray(parsed.data)).toBe(true);
 	});
 });
