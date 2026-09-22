@@ -71,6 +71,22 @@ describe('Retell endpoints', () => {
 		await expect(Calls.list(ctx, {})).rejects.toThrow();
 	});
 
+	it('does not overwrite detailed call cache entries with summaries', async () => {
+		const upsertByEntityId = jest.fn();
+		request.mockResolvedValue({ items: [{ call_id: 'call-1' }] });
+		await Calls.list(
+			{
+				...ctx,
+				db: {
+					calls: { upsertByEntityId },
+					chats: { upsertByEntityId: jest.fn() },
+				},
+			} as unknown as RetellContext,
+			{},
+		);
+		expect(upsertByEntityId).not.toHaveBeenCalled();
+	});
+
 	it('gets a call detail record containing transcription', async () => {
 		request.mockResolvedValue({ call_id: 'call-1', transcript: 'hello' });
 		const result = await Calls.get(ctx, { id: 'call-1' });
