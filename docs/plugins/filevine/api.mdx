@@ -1,0 +1,1102 @@
+---
+title: API
+description: "API reference for Filevine: every `filevine.api.*` operation with input and output types."
+---
+
+Every `filevine.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contacts
+
+### attach
+
+`contacts.attach`
+
+Attach a contact to a project
+
+**Risk:** `write`
+
+```ts
+await corsair.filevine.api.contacts.attach({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `contactId` | `number` | Yes | — |
+| `role` | `string` | No | e.g. Client, Opposing Party, Witness |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### create
+
+`contacts.create`
+
+Create a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.filevine.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `emails` | `string[]` | No | — |
+| `phones` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `number` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `fullName` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `emails` | `string[]` | No | — |
+| `phones` | `string[]` | No | — |
+| `createdDate` | `string` | No | — |
+| `modifiedDate` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.filevine.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `number` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `fullName` | `string` | No | — |
+| `organization` | `string` | No | — |
+| `emails` | `string[]` | No | — |
+| `phones` | `string[]` | No | — |
+| `createdDate` | `string` | No | — |
+| `modifiedDate` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.filevine.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `q` | `string` | No | Search query |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `hasMore` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  contactId: number,
+  firstName?: string,
+  lastName?: string,
+  fullName?: string,
+  organization?: string,
+  emails?: string[],
+  phones?: string[],
+  createdDate?: string,
+  modifiedDate?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Deadlines
+
+### create
+
+`deadlines.create`
+
+Create a deadline on a project
+
+**Risk:** `write`
+
+```ts
+await corsair.filevine.api.deadlines.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `dueDate` | `string` | Yes | ISO 8601 date-time |
+| `assigneeId` | `number` | No | — |
+| `reminders` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="reminders full type">
+
+```ts
+{
+  triggerOffsetMinutes: number,
+  notifyUserIds?: number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deadlineId` | `number` | Yes | — |
+| `projectId` | `number` | No | — |
+| `name` | `string` | No | — |
+| `dueDate` | `string` | No | — |
+| `status` | `open \| completed \| missed` | No | — |
+| `assigneeId` | `number` | No | — |
+| `reminders` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="reminders full type">
+
+```ts
+{
+  triggerOffsetMinutes?: number,
+  notifyUserIds?: number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`deadlines.list`
+
+List deadlines for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.filevine.api.deadlines.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `status` | `open \| completed \| missed` | No | — |
+| `from` | `string` | No | Filter from date (YYYY-MM-DD) |
+| `to` | `string` | No | Filter to date (YYYY-MM-DD) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `hasMore` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  deadlineId: number,
+  projectId?: number,
+  name?: string,
+  dueDate?: string,
+  status?: open | completed | missed,
+  assigneeId?: number,
+  reminders?: {
+    triggerOffsetMinutes?: number,
+    notifyUserIds?: number[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Documents
+
+### get
+
+`documents.get`
+
+Get document metadata by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.filevine.api.documents.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `number` | Yes | — |
+| `projectId` | `number` | No | — |
+| `folderId` | `number` | No | — |
+| `filename` | `string` | No | — |
+| `size` | `number` | No | — |
+| `contentType` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `sharedToPortal` | `boolean` | No | — |
+| `version` | `number` | No | — |
+| `uploadedBy` | `number` | No | — |
+| `createdDate` | `string` | No | — |
+| `modifiedDate` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`documents.list`
+
+List documents in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.filevine.api.documents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `folderId` | `number` | No | — |
+| `tag` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `hasMore` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  documentId: number,
+  projectId?: number,
+  folderId?: number,
+  filename?: string,
+  size?: number,
+  contentType?: string,
+  tags?: string[],
+  sharedToPortal?: boolean,
+  version?: number,
+  uploadedBy?: number,
+  createdDate?: string,
+  modifiedDate?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`documents.upload`
+
+Upload a document to a project
+
+**Risk:** `write`
+
+```ts
+await corsair.filevine.api.documents.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `filename` | `string` | No | Filename override, else derived from file |
+| `folderId` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `sharedToPortal` | `boolean` | No | — |
+| `file` | `any` | No | File content (multipart binary) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `number` | Yes | — |
+| `projectId` | `number` | No | — |
+| `folderId` | `number` | No | — |
+| `filename` | `string` | No | — |
+| `size` | `number` | No | — |
+| `contentType` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `sharedToPortal` | `boolean` | No | — |
+| `version` | `number` | No | — |
+| `uploadedBy` | `number` | No | — |
+| `createdDate` | `string` | No | — |
+| `modifiedDate` | `string` | No | — |
+
+
+
+---
+
+## Identity
+
+### getAccessToken
+
+`identity.getAccessToken`
+
+Exchange PAT for bearer token
+
+**Risk:** `write`
+
+```ts
+await corsair.filevine.api.identity.getAccessToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `grant_type` | `personal_access_token` | Yes | — |
+| `token` | `string` | Yes | Filevine Personal Access Token (PAT) |
+| `scope` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `client_secret` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `access_token` | `string` | Yes | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number` | No | — |
+| `scope` | `string` | No | — |
+
+
+
+---
+
+### getUserOrgsWithToken
+
+`identity.getUserOrgsWithToken`
+
+Get user and orgs for token (POST /fv-app/v2/utils/GetUserOrgsWithToken)
+
+**Risk:** `read`
+
+```ts
+await corsair.filevine.api.identity.getUserOrgsWithToken({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `UserId` | `object` | No | — |
+| `FirstName` | `string` | No | — |
+| `LastName` | `string` | No | — |
+| `Email` | `string` | No | — |
+| `Orgs` | `object[]` | No | — |
+| `userId` | `number` | No | — |
+| `orgs` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="UserId full type">
+
+```ts
+{
+  Native?: number,
+  Partner?: string
+}
+```
+</Accordion>
+
+<Accordion title="Orgs full type">
+
+```ts
+{
+  OrgId?: number,
+  Name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="orgs full type">
+
+```ts
+{
+  orgId?: number,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Notes
+
+### create
+
+`notes.create`
+
+Create a note on a project
+
+**Risk:** `write`
+
+```ts
+await corsair.filevine.api.notes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `body` | `string` | Yes | Note body, supports @mentions and markdown |
+| `kind` | `note \| task \| portalMessage \| phoneCall \| text` | Yes | — |
+| `pinned` | `boolean` | No | — |
+| `attachedDocuments` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `noteId` | `number` | Yes | — |
+| `projectId` | `number` | No | — |
+| `body` | `string` | No | — |
+| `kind` | `note \| task \| portalMessage \| phoneCall \| text` | No | — |
+| `pinned` | `boolean` | No | — |
+| `authorId` | `number` | No | — |
+| `mentions` | `number[]` | No | — |
+| `attachedDocuments` | `number[]` | No | — |
+| `createdDate` | `string` | No | — |
+| `modifiedDate` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`notes.list`
+
+List notes for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.filevine.api.notes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `since` | `string` | No | ISO 8601, filter notes modified after this |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `hasMore` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  noteId: number,
+  projectId?: number,
+  body?: string,
+  kind?: note | task | portalMessage | phoneCall | text,
+  pinned?: boolean,
+  authorId?: number,
+  mentions?: number[],
+  attachedDocuments?: number[],
+  createdDate?: string,
+  modifiedDate?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`notes.update`
+
+Update a note
+
+**Risk:** `write`
+
+```ts
+await corsair.filevine.api.notes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `noteId` | `number` | Yes | — |
+| `body` | `string` | No | — |
+| `pinned` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `noteId` | `number` | Yes | — |
+| `projectId` | `number` | No | — |
+| `body` | `string` | No | — |
+| `kind` | `note \| task \| portalMessage \| phoneCall \| text` | No | — |
+| `pinned` | `boolean` | No | — |
+| `authorId` | `number` | No | — |
+| `mentions` | `number[]` | No | — |
+| `attachedDocuments` | `number[]` | No | — |
+| `createdDate` | `string` | No | — |
+| `modifiedDate` | `string` | No | — |
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a new project
+
+**Risk:** `write`
+
+```ts
+await corsair.filevine.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectTypeId` | `number` | Yes | Project type ID |
+| `projectName` | `string` | Yes | Display name for the new project |
+| `clientId` | `number` | Yes | Primary client contact ID |
+| `phaseName` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `projectName` | `string` | No | — |
+| `number` | `string` | No | — |
+| `projectTypeId` | `number` | No | — |
+| `clientId` | `number` | No | — |
+| `phaseName` | `string` | No | — |
+| `isArchived` | `boolean` | No | — |
+| `createdDate` | `string` | No | — |
+| `modifiedDate` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get a project by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.filevine.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | Filevine project ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `projectName` | `string` | No | — |
+| `number` | `string` | No | — |
+| `projectTypeId` | `number` | No | — |
+| `clientId` | `number` | No | — |
+| `phaseName` | `string` | No | — |
+| `isArchived` | `boolean` | No | — |
+| `createdDate` | `string` | No | — |
+| `modifiedDate` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects with pagination and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.filevine.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | Pagination offset, default 0 |
+| `limit` | `number` | No | Page size, max 1000, default 50 |
+| `projectTypeId` | `number` | No | — |
+| `phaseName` | `string` | No | — |
+| `modifiedSince` | `string` | No | ISO 8601 date-time filter |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `totalCount` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  projectId: number,
+  projectName?: string,
+  number?: string,
+  projectTypeId?: number,
+  clientId?: number,
+  phaseName?: string,
+  isArchived?: boolean,
+  createdDate?: string,
+  modifiedDate?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project
+
+**Risk:** `write`
+
+```ts
+await corsair.filevine.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `projectName` | `string` | No | — |
+| `phaseName` | `string` | No | — |
+| `isArchived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `projectName` | `string` | No | — |
+| `number` | `string` | No | — |
+| `projectTypeId` | `number` | No | — |
+| `clientId` | `number` | No | — |
+| `phaseName` | `string` | No | — |
+| `isArchived` | `boolean` | No | — |
+| `createdDate` | `string` | No | — |
+| `modifiedDate` | `string` | No | — |
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a task on a project
+
+**Risk:** `write`
+
+```ts
+await corsair.filevine.api.tasks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `title` | `string` | Yes | — |
+| `body` | `string` | No | — |
+| `assigneeId` | `number` | Yes | — |
+| `dueDate` | `string` | No | — |
+| `priority` | `low \| normal \| high \| urgent` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `number` | Yes | — |
+| `projectId` | `number` | No | — |
+| `title` | `string` | No | — |
+| `body` | `string` | No | — |
+| `status` | `open \| inProgress \| completed \| cancelled` | No | — |
+| `priority` | `low \| normal \| high \| urgent` | No | — |
+| `dueDate` | `string` | No | — |
+| `assigneeId` | `number` | No | — |
+| `completedDate` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List tasks for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.filevine.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | — |
+| `assigneeId` | `number` | No | — |
+| `status` | `open \| inProgress \| completed \| cancelled` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+| `hasMore` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  taskId: number,
+  projectId?: number,
+  title?: string,
+  body?: string,
+  status?: open | inProgress | completed | cancelled,
+  priority?: low | normal | high | urgent,
+  dueDate?: string,
+  assigneeId?: number,
+  completedDate?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Update a task
+
+**Risk:** `write`
+
+```ts
+await corsair.filevine.api.tasks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `number` | Yes | — |
+| `status` | `open \| inProgress \| completed \| cancelled` | No | — |
+| `priority` | `low \| normal \| high \| urgent` | No | — |
+| `dueDate` | `string` | No | — |
+| `assigneeId` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `number` | Yes | — |
+| `projectId` | `number` | No | — |
+| `title` | `string` | No | — |
+| `body` | `string` | No | — |
+| `status` | `open \| inProgress \| completed \| cancelled` | No | — |
+| `priority` | `low \| normal \| high \| urgent` | No | — |
+| `dueDate` | `string` | No | — |
+| `assigneeId` | `number` | No | — |
+| `completedDate` | `string` | No | — |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.filevine.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `endpoint` | `string` | Yes | — |
+| `events` | `string[]` | Yes | Dotted events e.g. project.created |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `endpoint` | `string` | No | — |
+| `signingKey` | `string` | No | — |
+| `events` | `string[]` | No | — |
+| `createdDate` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook subscription [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.filevine.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhook subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.filevine.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  subscriptionId: string,
+  name?: string,
+  description?: string,
+  endpoint?: string,
+  signingKey?: string,
+  events?: string[],
+  createdDate?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
