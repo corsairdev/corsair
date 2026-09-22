@@ -20,11 +20,28 @@ jest.mock('./client', () => ({
 
 const mockRequest = jest.mocked(makeTripadvisorRequest);
 const mockLog = jest.mocked(logEventFromContext);
-// why safe: endpoint implementations only read ctx.key and pass ctx to the
-// mocked logEventFromContext, so the remaining context fields are never used.
-const context = {
-	key: 'tripadvisor-test-key',
-} as unknown as TripadvisorContext;
+// Fully-typed test context: every field of TripadvisorContext is provided
+// with an inert stub, so no type assertion is needed. Endpoint
+// implementations only read ctx.key; the rest satisfies the type checker.
+function testContext(key: string): TripadvisorContext {
+	return {
+		db: {},
+		endpoints: {},
+		$getAccountId: () => Promise.resolve('test-account'),
+		key,
+		options: {},
+		keys: {
+			get_dek: () => Promise.resolve('test-dek'),
+			issue_new_dek: () => Promise.resolve('test-dek'),
+			get_api_key: () => Promise.resolve(key),
+			set_api_key: () => Promise.resolve(),
+			get_webhook_signature: () => Promise.resolve(null),
+			set_webhook_signature: () => Promise.resolve(),
+		},
+	};
+}
+
+const context = testContext('tripadvisor-test-key');
 
 const nearbyFixture: LocationsNearbyResponse = {
 	data: [
@@ -130,7 +147,7 @@ describe('Tripadvisor endpoints', () => {
 		expect(mockLog).toHaveBeenCalledWith(
 			context,
 			'tripadvisor.catalog.locationsNearby',
-			{ ...input, resultCount: 1 },
+			{ page: 1, radius: 5, size: 20, unit: 'KM', resultCount: 1 },
 			'completed',
 		);
 	});
@@ -235,7 +252,7 @@ describe('Tripadvisor endpoints', () => {
 		expect(mockLog).toHaveBeenCalledWith(
 			context,
 			'tripadvisor.locations.searchNearby',
-			{ ...input, resultCount: 1 },
+			{ category: 'HOTEL', radius: 5, size: 10, resultCount: 1 },
 			'completed',
 		);
 	});
