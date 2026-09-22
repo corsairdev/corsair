@@ -1047,7 +1047,11 @@ Create a webhook subscription
 **Risk:** `write`
 
 ```ts
-await corsair.filevine.api.webhooks.create({ name: 'Hook', endpoint: 'https://example.com/hook', events: ['project.created'] });
+await corsair.filevine.api.webhooks.create({
+	name: 'Hook',
+	endpoint: 'https://example.com/hook',
+	events: ['project.created'],
+});
 ```
 
 **Input**
