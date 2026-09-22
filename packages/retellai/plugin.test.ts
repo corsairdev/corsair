@@ -1,3 +1,4 @@
+import type { RawWebhookRequest } from 'corsair/core';
 import { makeRetellRequest } from './client';
 import { Calls, Chats } from './endpoints';
 import {
@@ -15,10 +16,20 @@ jest.mock('./client', () => ({
 const request = makeRetellRequest as jest.MockedFunction<
 	typeof makeRetellRequest
 >;
-const ctx = {
+const baseContext = {
 	key: 'retell_test_key',
 	$getAccountId: async () => 'test-account',
-} as RetellContext;
+};
+
+function createTestContext(
+	overrides: Record<string, unknown> = {},
+): RetellContext {
+	// Endpoint contexts include runtime services unused by these unit tests. The
+	// fixture provides every field read by Retell handlers and keeps overrides local.
+	return { ...baseContext, ...overrides } as RetellContext;
+}
+
+const ctx = createTestContext();
 
 describe('Retell schemas', () => {
 	it('requires a positive list limit when supplied', () => {
@@ -75,13 +86,12 @@ describe('Retell endpoints', () => {
 		const upsertByEntityId = jest.fn();
 		request.mockResolvedValue({ items: [{ call_id: 'call-1' }] });
 		await Calls.list(
-			{
-				...ctx,
+			createTestContext({
 				db: {
 					calls: { upsertByEntityId },
 					chats: { upsertByEntityId: jest.fn() },
 				},
-			} as unknown as RetellContext,
+			}),
 			{},
 		);
 		expect(upsertByEntityId).not.toHaveBeenCalled();
@@ -135,12 +145,11 @@ describe('Retell endpoints', () => {
 describe('Retell plugin', () => {
 	it('exposes the read-only conversation surface and no webhook matcher', () => {
 		const plugin = retellai({});
+		const webhookRequest: RawWebhookRequest = { headers: {}, body: '' };
 		expect(plugin.id).toBe('retellai');
 		expect(plugin.endpoints?.calls.list).toBeDefined();
 		expect(plugin.endpoints?.chats.get).toBeDefined();
-		expect(
-			plugin.pluginWebhookMatcher?.({ headers: {}, body: '' } as never),
-		).toBe(false);
+		expect(plugin.pluginWebhookMatcher?.(webhookRequest)).toBe(false);
 	});
 
 	it('stops retries for authentication failures', async () => {

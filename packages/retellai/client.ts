@@ -3,6 +3,10 @@ import { ApiError, request } from 'corsair/http';
 
 const RETELL_API_BASE = 'https://api.retellai.com';
 
+// Retell documents filter_criteria as an extensible JSON object. Preserve
+// provider-defined keys here, while endpoint schemas validate the outer shape.
+type RetellRequestBody = Record<string, unknown>;
+
 export class RetellAPIError extends Error {
 	constructor(
 		message: string,
@@ -20,7 +24,7 @@ export async function makeRetellRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
-		body?: Record<string, unknown>;
+		body?: RetellRequestBody;
 	} = { method: 'GET' },
 ): Promise<T> {
 	const method = options.method ?? 'GET';

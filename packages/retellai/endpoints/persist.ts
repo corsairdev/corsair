@@ -1,6 +1,12 @@
 import type { RetellCall, RetellChat } from './types';
 
-type Store<T> = { upsertByEntityId: (id: string, data: T) => Promise<unknown> };
+type StoredEntity = { id: string };
+
+// Persistence only needs to know that the write completed. Corsair's concrete
+// entity type varies by schema, but every successful upsert returns an entity ID.
+type Store<T> = {
+	upsertByEntityId: (id: string, data: T) => Promise<StoredEntity>;
+};
 
 async function persist<T>(store: Store<T> | undefined, id: string, data: T) {
 	if (!store) return;
