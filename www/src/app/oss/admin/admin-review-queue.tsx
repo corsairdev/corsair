@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import posthog from 'posthog-js';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -110,9 +109,6 @@ function ReviewQueueRow({ item }: { item: ReviewQueueItem }) {
 
 		try {
 			await adminMarkIntegrationMerged(item.id);
-			posthog.capture('integration_marked_merged', {
-				integration_id: item.id,
-			});
 			router.refresh();
 		} catch (markError) {
 			setError(

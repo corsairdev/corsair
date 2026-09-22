@@ -5,13 +5,18 @@ import { user } from '@/db/auth-schema';
 import type { IntegrationPhase, IntegrationReleaseReason } from '@/db/schema';
 import { integrationStatus, integrations } from '@/db/schema';
 import type { ClaimBlockReason } from '@/lib/integration-claim-limits';
-import { canClaimMore } from '@/lib/integration-claim-limits';
-import { isIntegrationActivelyClaimed } from '@/lib/integration-phases';
+import { MAX_USER_BUILT_INTEGRATIONS } from '@/lib/integration-claim-limits';
+import {
+	isIntegrationActivelyClaimed,
+	isWipPhase,
+} from '@/lib/integration-phases';
 
 export type { ClaimBlockReason } from '@/lib/integration-claim-limits';
 
 export { MAX_USER_BUILT_INTEGRATIONS } from '@/lib/integration-claim-limits';
+export type { IntegrationListStatus } from '@/lib/integration-phases';
 export {
+	integrationListStatus,
 	isIntegrationActivelyClaimed,
 	isIntegrationAvailable,
 	isWipPhase,
@@ -26,6 +31,7 @@ export const PR_DEADLINE_MS = 3 * 60 * 60 * 1000;
 export type UserClaimEligibility = {
 	canClaim: boolean;
 	blockReason: ClaimBlockReason | null;
+	wipIntegrationName: string | null;
 	builtCount: number;
 };
 
@@ -162,12 +168,6 @@ export type ActiveDeadlineClaim = {
 	deadlineAt: Date;
 };
 
-type PendingDeadline = {
-	integrationId: string;
-	phase: ActiveDeadlineClaim['phase'];
-	deadlineAt: Date;
-};
-
 export async function getUserActiveDeadlineClaim(db: DB, userId: string) {
 	const rows = await db
 		.selectDistinctOn([integrationStatus.integrationId], {
@@ -183,36 +183,23 @@ export async function getUserActiveDeadlineClaim(db: DB, userId: string) {
 			desc(integrationStatus.occurredAt),
 		);
 
-	// A user can hold two claims at once, so surface whichever deadline runs out
-	// first — otherwise the expiry cron could release a claim whose countdown was
-	// never shown.
-	const [next] = rows
-		.flatMap((row): PendingDeadline[] => {
-			if (row.phase === 'awaiting_issue' && row.issueDeadlineAt) {
-				return [
-					{
-						integrationId: row.integrationId,
-						phase: 'awaiting_issue',
-						deadlineAt: row.issueDeadlineAt,
-					},
-				];
-			}
+	const wipRow = rows.find((row) => isWipPhase(row.phase));
+	if (!wipRow) {
+		return null;
+	}
 
-			if (row.phase === 'awaiting_pr' && row.prDeadlineAt) {
-				return [
-					{
-						integrationId: row.integrationId,
-						phase: 'awaiting_pr',
-						deadlineAt: row.prDeadlineAt,
-					},
-				];
-			}
+	let deadlineAt: Date | null = null;
+	let phase: ActiveDeadlineClaim['phase'] | null = null;
 
-			return [];
-		})
-		.sort((a, b) => a.deadlineAt.getTime() - b.deadlineAt.getTime());
+	if (wipRow.phase === 'awaiting_issue' && wipRow.issueDeadlineAt) {
+		deadlineAt = wipRow.issueDeadlineAt;
+		phase = 'awaiting_issue';
+	} else if (wipRow.phase === 'awaiting_pr' && wipRow.prDeadlineAt) {
+		deadlineAt = wipRow.prDeadlineAt;
+		phase = 'awaiting_pr';
+	}
 
-	if (!next) {
+	if (!deadlineAt || !phase) {
 		return null;
 	}
 
@@ -223,7 +210,7 @@ export async function getUserActiveDeadlineClaim(db: DB, userId: string) {
 			slug: integrations.slug,
 		})
 		.from(integrations)
-		.where(eq(integrations.id, next.integrationId))
+		.where(eq(integrations.id, wipRow.integrationId))
 		.limit(1);
 
 	if (!integration) {
@@ -232,25 +219,79 @@ export async function getUserActiveDeadlineClaim(db: DB, userId: string) {
 
 	return {
 		...integration,
-		phase: next.phase,
-		deadlineAt: next.deadlineAt,
+		phase,
+		deadlineAt,
 	} satisfies ActiveDeadlineClaim;
+}
+
+export async function getUserWipClaim(db: DB, userId: string) {
+	const rows = await db
+		.selectDistinctOn([integrationStatus.integrationId], {
+			integrationId: integrationStatus.integrationId,
+			phase: integrationStatus.phase,
+		})
+		.from(integrationStatus)
+		.where(eq(integrationStatus.userId, userId))
+		.orderBy(
+			integrationStatus.integrationId,
+			desc(integrationStatus.occurredAt),
+		);
+
+	const wipIntegrationId = rows.find((row) =>
+		isWipPhase(row.phase),
+	)?.integrationId;
+
+	if (!wipIntegrationId) {
+		return null;
+	}
+
+	const [integration] = await db
+		.select({
+			id: integrations.id,
+			name: integrations.name,
+			slug: integrations.slug,
+		})
+		.from(integrations)
+		.where(eq(integrations.id, wipIntegrationId))
+		.limit(1);
+
+	return integration ?? null;
+}
+
+export async function userHasWipClaim(
+	db: DB,
+	userId: string,
+): Promise<boolean> {
+	return (await getUserWipClaim(db, userId)) != null;
 }
 
 export async function getUserClaimEligibility(
 	db: DB,
 	userId: string,
 ): Promise<UserClaimEligibility> {
-	// Every claim the user still holds counts against the cap — in progress,
-	// ready to review, and finished alike. A slot frees up only when a claim is
-	// released, by unclaiming or by a deadline timeout.
-	const activeClaims = await getActiveClaimsForUser(db, userId);
-	const builtCount = activeClaims.length;
+	const [activeClaims, wipClaim] = await Promise.all([
+		getActiveClaimsForUser(db, userId),
+		getUserWipClaim(db, userId),
+	]);
 
-	if (!canClaimMore(builtCount)) {
+	const builtCount = activeClaims.filter(
+		(claim) => claim.phase === 'finished',
+	).length;
+
+	if (wipClaim != null) {
+		return {
+			canClaim: false,
+			blockReason: 'wip',
+			wipIntegrationName: wipClaim.name,
+			builtCount,
+		};
+	}
+
+	if (builtCount >= MAX_USER_BUILT_INTEGRATIONS) {
 		return {
 			canClaim: false,
 			blockReason: 'limit_reached',
+			wipIntegrationName: null,
 			builtCount,
 		};
 	}
@@ -258,6 +299,7 @@ export async function getUserClaimEligibility(
 	return {
 		canClaim: true,
 		blockReason: null,
+		wipIntegrationName: null,
 		builtCount,
 	};
 }

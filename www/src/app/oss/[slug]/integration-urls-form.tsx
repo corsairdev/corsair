@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import posthog from 'posthog-js';
 import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -59,9 +58,6 @@ export function IntegrationUrlsForm({
 		try {
 			const formData = new FormData(event.currentTarget);
 			await updateIntegrationUrls(formData);
-			posthog.capture('integration_urls_saved', {
-				integration_id: integrationId,
-			});
 			setSuccess(true);
 			router.refresh();
 		} catch (err) {
