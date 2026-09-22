@@ -102,6 +102,8 @@ describe('Tripadvisor client', () => {
 	it('wraps unexpected failures without inventing a status', async () => {
 		mockRequest.mockRejectedValueOnce(new Error('network down'));
 
+		// unknown is used here because rejected values are untyped wire
+		// data; it is narrowed below with toBeInstanceOf/toMatchObject.
 		const error = await makeTripadvisorRequest('/locations/123', 'k', {
 			method: 'GET',
 		}).catch((caught: unknown) => caught);
