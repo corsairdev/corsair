@@ -30,6 +30,8 @@ await corsair.filevine.api.contacts.attach({ projectId: 123, contactId: 456 });
 | `projectId` | `number` | Yes | — |
 | `contactId` | `number` | Yes | — |
 | `role` | `string` | No | e.g. Client, Opposing Party, Witness |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -59,6 +61,8 @@ await corsair.filevine.api.contacts.create({ firstName: 'John', organization: 'A
 | `organization` | `string` | No | — |
 | `emails` | `string[]` | No | — |
 | `phones` | `string[]` | No | — |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -97,6 +101,8 @@ await corsair.filevine.api.contacts.get({ contactId: 456 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contactId` | `number` | Yes | — |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -137,6 +143,8 @@ await corsair.filevine.api.contacts.list({ limit: 50 });
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `q` | `string` | No | Search query |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -193,6 +201,8 @@ await corsair.filevine.api.deadlines.create({ projectId: 123, name: 'Filing', du
 | `dueDate` | `string` | Yes | ISO 8601 date-time |
 | `assigneeId` | `number` | No | — |
 | `reminders` | `object[]` | No | — |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 <AccordionGroup>
 <Accordion title="reminders full type">
@@ -258,6 +268,8 @@ await corsair.filevine.api.deadlines.list({ projectId: 123, limit: 50 });
 | `to` | `string` | No | Filter to date (YYYY-MM-DD) |
 | `offset` | `number` | No | Pagination offset |
 | `limit` | `number` | No | Page size, max 1000 |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -311,6 +323,8 @@ await corsair.filevine.api.documents.get({ documentId: 123 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `number` | Yes | — |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -356,6 +370,8 @@ await corsair.filevine.api.documents.list({ projectId: 123, limit: 50 });
 | `tag` | `string` | No | — |
 | `offset` | `number` | No | Pagination offset |
 | `limit` | `number` | No | Page size, max 1000 |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -414,6 +430,8 @@ await corsair.filevine.api.documents.upload({ projectId: 123, filename: 'contrac
 | `tags` | `string[]` | No | — |
 | `sharedToPortal` | `boolean` | No | — |
 | `file` | `any` | No | File content (multipart binary) |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -562,6 +580,8 @@ await corsair.filevine.api.notes.create({ projectId: 123, body: 'Hello' });
 | `kind` | `note \| task \| portalMessage \| phoneCall \| text` | Yes | — |
 | `pinned` | `boolean` | No | — |
 | `attachedDocuments` | `number[]` | No | — |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -604,6 +624,8 @@ await corsair.filevine.api.notes.list({ projectId: 123, limit: 50 });
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `since` | `string` | No | ISO 8601, filter notes modified after this |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -657,6 +679,8 @@ await corsair.filevine.api.notes.update({ noteId: 123, body: 'Updated' });
 | `noteId` | `number` | Yes | — |
 | `body` | `string` | No | — |
 | `pinned` | `boolean` | No | — |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -701,6 +725,8 @@ await corsair.filevine.api.projects.create({ projectTypeId: 1, projectName: 'Tes
 | `projectName` | `string` | Yes | Display name for the new project |
 | `clientId` | `number` | Yes | Primary client contact ID |
 | `phaseName` | `string` | No | — |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -739,6 +765,8 @@ await corsair.filevine.api.projects.get({ projectId: 123 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `projectId` | `number` | Yes | Filevine project ID |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -781,6 +809,8 @@ await corsair.filevine.api.projects.list({ limit: 50 });
 | `projectTypeId` | `number` | No | — |
 | `phaseName` | `string` | No | — |
 | `modifiedSince` | `string` | No | ISO 8601 date-time filter |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -835,6 +865,8 @@ await corsair.filevine.api.projects.update({ projectId: 123, phaseName: 'Discove
 | `projectName` | `string` | No | — |
 | `phaseName` | `string` | No | — |
 | `isArchived` | `boolean` | No | — |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -880,6 +912,8 @@ await corsair.filevine.api.tasks.create({ projectId: 123, title: 'Review', assig
 | `assigneeId` | `number` | Yes | — |
 | `dueDate` | `string` | No | — |
 | `priority` | `low \| normal \| high \| urgent` | No | — |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -922,6 +956,8 @@ await corsair.filevine.api.tasks.list({ projectId: 123, limit: 50 });
 | `status` | `open \| inProgress \| completed \| cancelled` | No | — |
 | `offset` | `number` | No | Pagination offset |
 | `limit` | `number` | No | Page size, max 1000 |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -976,6 +1012,8 @@ await corsair.filevine.api.tasks.update({ taskId: 123, status: 'completed' });
 | `priority` | `low \| normal \| high \| urgent` | No | — |
 | `dueDate` | `string` | No | — |
 | `assigneeId` | `number` | No | — |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -1019,6 +1057,8 @@ await corsair.filevine.api.webhooks.create({ name: 'Hook', endpoint: 'https://ex
 | `description` | `string` | No | — |
 | `endpoint` | `string` | Yes | — |
 | `events` | `string[]` | Yes | Dotted events e.g. project.created |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -1055,6 +1095,8 @@ await corsair.filevine.api.webhooks.delete({ subscriptionId: 'sub_123' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `subscriptionId` | `string` | Yes | — |
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
 
 
 
@@ -1075,7 +1117,13 @@ List webhook subscriptions
 await corsair.filevine.api.webhooks.list({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |
+| `userId` | `number` | No | Explicit Filevine user ID |
+
 
 
 **Output**

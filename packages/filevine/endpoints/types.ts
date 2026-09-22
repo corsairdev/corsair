@@ -176,9 +176,15 @@ const TokenResponseSchema = z
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const ListProjectsInputSchema = z.object({
-	offset: z.number().optional().describe('Pagination offset, default 0'),
+	offset: z
+		.number()
+		.int()
+		.nonnegative()
+		.optional()
+		.describe('Pagination offset, default 0'),
 	limit: z
 		.number()
+		.int()
 		.min(1)
 		.max(1000)
 		.optional()
@@ -186,11 +192,39 @@ export const ListProjectsInputSchema = z.object({
 	projectTypeId: z.number().optional(),
 	phaseName: z.string().optional(),
 	modifiedSince: z.string().optional().describe('ISO 8601 date-time filter'),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type ListProjectsInput = z.infer<typeof ListProjectsInputSchema>;
 
 export const GetProjectInputSchema = z.object({
 	projectId: z.number().describe('Filevine project ID'),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type GetProjectInput = z.infer<typeof GetProjectInputSchema>;
 
@@ -199,6 +233,20 @@ export const CreateProjectInputSchema = z.object({
 	projectName: z.string().describe('Display name for the new project'),
 	clientId: z.number().describe('Primary client contact ID'),
 	phaseName: z.string().optional(),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type CreateProjectInput = z.infer<typeof CreateProjectInputSchema>;
 
@@ -207,18 +255,60 @@ export const UpdateProjectInputSchema = z.object({
 	projectName: z.string().optional(),
 	phaseName: z.string().optional(),
 	isArchived: z.boolean().optional(),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type UpdateProjectInput = z.infer<typeof UpdateProjectInputSchema>;
 
 export const ListContactsInputSchema = z.object({
-	offset: z.number().optional(),
-	limit: z.number().min(1).max(1000).optional(),
+	offset: z.number().int().nonnegative().optional(),
+	limit: z.number().int().min(1).max(1000).optional(),
 	q: z.string().optional().describe('Search query'),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type ListContactsInput = z.infer<typeof ListContactsInputSchema>;
 
 export const GetContactInputSchema = z.object({
 	contactId: z.number(),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type GetContactInput = z.infer<typeof GetContactInputSchema>;
 
@@ -228,6 +318,20 @@ export const CreateContactInputSchema = z.object({
 	organization: z.string().optional(),
 	emails: z.array(z.string().email()).optional(),
 	phones: z.array(z.string()).optional(),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type CreateContactInput = z.infer<typeof CreateContactInputSchema>;
 
@@ -235,6 +339,20 @@ export const AttachProjectContactInputSchema = z.object({
 	projectId: z.number(),
 	contactId: z.number(),
 	role: z.string().optional().describe('e.g. Client, Opposing Party, Witness'),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type AttachProjectContactInput = z.infer<
 	typeof AttachProjectContactInputSchema
@@ -244,8 +362,33 @@ export const ListProjectDocumentsInputSchema = z.object({
 	projectId: z.number(),
 	folderId: z.number().optional(),
 	tag: z.string().optional(),
-	offset: z.number().optional().describe('Pagination offset'),
-	limit: z.number().min(1).max(1000).optional().describe('Page size, max 1000'),
+	offset: z
+		.number()
+		.int()
+		.nonnegative()
+		.optional()
+		.describe('Pagination offset'),
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.max(1000)
+		.optional()
+		.describe('Page size, max 1000'),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type ListProjectDocumentsInput = z.infer<
 	typeof ListProjectDocumentsInputSchema
@@ -253,6 +396,20 @@ export type ListProjectDocumentsInput = z.infer<
 
 export const GetDocumentInputSchema = z.object({
 	documentId: z.number(),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type GetDocumentInput = z.infer<typeof GetDocumentInputSchema>;
 
@@ -267,6 +424,20 @@ export const UploadProjectDocumentInputSchema = z.object({
 	sharedToPortal: z.boolean().optional(),
 	// file is intentionally unknown — accepts Blob, string (base64), or binary; validated at runtime via formData object handling, not via Zod schema
 	file: z.unknown().optional().describe('File content (multipart binary)'),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type UploadProjectDocumentInput = z.infer<
 	typeof UploadProjectDocumentInputSchema
@@ -274,12 +445,26 @@ export type UploadProjectDocumentInput = z.infer<
 
 export const ListProjectNotesInputSchema = z.object({
 	projectId: z.number(),
-	offset: z.number().optional(),
-	limit: z.number().optional(),
+	offset: z.number().int().nonnegative().optional(),
+	limit: z.number().int().min(1).max(1000).optional(),
 	since: z
 		.string()
 		.optional()
 		.describe('ISO 8601, filter notes modified after this'),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type ListProjectNotesInput = z.infer<typeof ListProjectNotesInputSchema>;
 
@@ -292,6 +477,20 @@ export const CreateNoteInputSchema = z.object({
 		.default('note'),
 	pinned: z.boolean().optional(),
 	attachedDocuments: z.array(z.number()).optional(),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type CreateNoteInput = z.infer<typeof CreateNoteInputSchema>;
 
@@ -299,6 +498,20 @@ export const UpdateNoteInputSchema = z.object({
 	noteId: z.number(),
 	body: z.string().optional(),
 	pinned: z.boolean().optional(),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type UpdateNoteInput = z.infer<typeof UpdateNoteInputSchema>;
 
@@ -307,8 +520,33 @@ export const ListProjectDeadlinesInputSchema = z.object({
 	status: z.enum(['open', 'completed', 'missed']).optional(),
 	from: z.string().optional().describe('Filter from date (YYYY-MM-DD)'),
 	to: z.string().optional().describe('Filter to date (YYYY-MM-DD)'),
-	offset: z.number().optional().describe('Pagination offset'),
-	limit: z.number().min(1).max(1000).optional().describe('Page size, max 1000'),
+	offset: z
+		.number()
+		.int()
+		.nonnegative()
+		.optional()
+		.describe('Pagination offset'),
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.max(1000)
+		.optional()
+		.describe('Page size, max 1000'),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type ListProjectDeadlinesInput = z.infer<
 	typeof ListProjectDeadlinesInputSchema
@@ -327,6 +565,20 @@ export const CreateDeadlineInputSchema = z.object({
 			}),
 		)
 		.optional(),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type CreateDeadlineInput = z.infer<typeof CreateDeadlineInputSchema>;
 
@@ -334,8 +586,33 @@ export const ListProjectTasksInputSchema = z.object({
 	projectId: z.number(),
 	assigneeId: z.number().optional(),
 	status: z.enum(['open', 'inProgress', 'completed', 'cancelled']).optional(),
-	offset: z.number().optional().describe('Pagination offset'),
-	limit: z.number().min(1).max(1000).optional().describe('Page size, max 1000'),
+	offset: z
+		.number()
+		.int()
+		.nonnegative()
+		.optional()
+		.describe('Pagination offset'),
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.max(1000)
+		.optional()
+		.describe('Page size, max 1000'),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type ListProjectTasksInput = z.infer<typeof ListProjectTasksInputSchema>;
 
@@ -346,6 +623,20 @@ export const CreateTaskInputSchema = z.object({
 	assigneeId: z.number(),
 	dueDate: z.string().optional(),
 	priority: z.enum(['low', 'normal', 'high', 'urgent']).optional(),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type CreateTaskInput = z.infer<typeof CreateTaskInputSchema>;
 
@@ -355,10 +646,39 @@ export const UpdateTaskInputSchema = z.object({
 	priority: z.enum(['low', 'normal', 'high', 'urgent']).optional(),
 	dueDate: z.string().optional(),
 	assigneeId: z.number().optional(),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type UpdateTaskInput = z.infer<typeof UpdateTaskInputSchema>;
 
-export const ListWebhookSubscriptionsInputSchema = z.object({});
+export const ListWebhookSubscriptionsInputSchema = z.object({
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
+});
 export type ListWebhookSubscriptionsInput = z.infer<
 	typeof ListWebhookSubscriptionsInputSchema
 >;
@@ -371,6 +691,20 @@ export const CreateWebhookSubscriptionInputSchema = z.object({
 		.array(z.string())
 		.min(1)
 		.describe('Dotted events e.g. project.created'),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type CreateWebhookSubscriptionInput = z.infer<
 	typeof CreateWebhookSubscriptionInputSchema
@@ -378,6 +712,20 @@ export type CreateWebhookSubscriptionInput = z.infer<
 
 export const DeleteWebhookSubscriptionInputSchema = z.object({
 	subscriptionId: z.string(),
+	orgId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe(
+			'Explicit Filevine org ID — must belong to the authenticated user',
+		),
+	userId: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Explicit Filevine user ID'),
 });
 export type DeleteWebhookSubscriptionInput = z.infer<
 	typeof DeleteWebhookSubscriptionInputSchema

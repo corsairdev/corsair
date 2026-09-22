@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { ensureFilevineOrgContext, makeFilevineRequest } from '../client';
+import { makeFilevineRequest, resolveFilevineOrgContext } from '../client';
 import type { FilevineEndpoints } from '../index';
 import type { FilevineEndpointOutputs } from './types';
 import {
@@ -10,10 +10,17 @@ import {
 } from './types';
 
 export const list: FilevineEndpoints['listContacts'] = async (ctx, input) => {
-	await ensureFilevineOrgContext(ctx.key);
+	const { orgId: resolvedOrgId, userId: resolvedUserId } =
+		await resolveFilevineOrgContext(
+			ctx.key,
+			(input as { orgId?: number; userId?: number }).orgId,
+			(input as { orgId?: number; userId?: number }).userId,
+		);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['listContacts']
 	>('/fv-app/v2/Contacts', ctx.key, {
+		orgId: resolvedOrgId,
+		userId: resolvedUserId,
 		method: 'GET',
 		query: {
 			offset: input.offset,
@@ -50,10 +57,19 @@ export const list: FilevineEndpoints['listContacts'] = async (ctx, input) => {
 };
 
 export const get: FilevineEndpoints['getContact'] = async (ctx, input) => {
-	await ensureFilevineOrgContext(ctx.key);
+	const { orgId: resolvedOrgId, userId: resolvedUserId } =
+		await resolveFilevineOrgContext(
+			ctx.key,
+			(input as { orgId?: number; userId?: number }).orgId,
+			(input as { orgId?: number; userId?: number }).userId,
+		);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['getContact']
-	>(`/fv-app/v2/Contacts/${input.contactId}`, ctx.key, { method: 'GET' });
+	>(`/fv-app/v2/Contacts/${input.contactId}`, ctx.key, {
+		orgId: resolvedOrgId,
+		userId: resolvedUserId,
+		method: 'GET',
+	});
 	const parsed = GetContactResponseSchema.parse(result);
 	if (ctx.db.contacts) {
 		try {
@@ -84,10 +100,17 @@ export const create: FilevineEndpoints['createContact'] = async (
 	ctx,
 	input,
 ) => {
-	await ensureFilevineOrgContext(ctx.key);
+	const { orgId: resolvedOrgId, userId: resolvedUserId } =
+		await resolveFilevineOrgContext(
+			ctx.key,
+			(input as { orgId?: number; userId?: number }).orgId,
+			(input as { orgId?: number; userId?: number }).userId,
+		);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['createContact']
 	>('/fv-app/v2/Contacts', ctx.key, {
+		orgId: resolvedOrgId,
+		userId: resolvedUserId,
 		method: 'POST',
 		body: input as Record<string, unknown>,
 	});
@@ -121,10 +144,17 @@ export const attach: FilevineEndpoints['attachProjectContact'] = async (
 	ctx,
 	input,
 ) => {
-	await ensureFilevineOrgContext(ctx.key);
+	const { orgId: resolvedOrgId, userId: resolvedUserId } =
+		await resolveFilevineOrgContext(
+			ctx.key,
+			(input as { orgId?: number; userId?: number }).orgId,
+			(input as { orgId?: number; userId?: number }).userId,
+		);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['attachProjectContact']
 	>(`/fv-app/v2/Projects/${input.projectId}/Contacts`, ctx.key, {
+		orgId: resolvedOrgId,
+		userId: resolvedUserId,
 		method: 'POST',
 		body: {
 			contactId: input.contactId,

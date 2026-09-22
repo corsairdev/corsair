@@ -44,32 +44,37 @@ export const FILEVINE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
-let cachedOrgId: string | undefined;
-let cachedUserId: string | undefined;
+type OrgContext = { orgId: string; userId: string; orgIds: string[] };
+
+// Per-credential org context — keyed by bearer token so Tenant A can never
+// reuse Tenant B's x-fv-orgid/x-fv-userid in the shared Corsair runtime.
+// See https://support.filevine.com/hc/en-us/articles/27944810461851-Authenticate-Requests-to-the-API-Gateway
+const orgContextCache = new Map<string, OrgContext>();
 
 export function setFilevineOrgContext(
+	apiKey: string,
 	orgId: string | number,
 	userId: string | number,
 ): void {
-	cachedOrgId = String(orgId);
-	cachedUserId = String(userId);
+	const org = String(orgId);
+	const user = String(userId);
+	const existing = orgContextCache.get(apiKey);
+	const orgIds = existing
+		? Array.from(new Set([...existing.orgIds, org]))
+		: [org];
+	orgContextCache.set(apiKey, { orgId: org, userId: user, orgIds });
 }
 
-export function getFilevineOrgContext(): { orgId?: string; userId?: string } {
-	return { orgId: cachedOrgId, userId: cachedUserId };
+export function getFilevineOrgContext(apiKey: string): {
+	orgId?: string;
+	userId?: string;
+} {
+	return orgContextCache.get(apiKey) ?? {};
 }
 
-let cachedBearer: string | undefined;
-let cachedBearerExpiry = 0;
-
-export function setCachedBearer(token: string, expiresInSec?: number): void {
-	cachedBearer = token;
-	cachedBearerExpiry = Date.now() + (expiresInSec ?? 1200) * 1000 - 60000;
-}
-
-export function getCachedBearer(): string | undefined {
-	if (cachedBearer && Date.now() < cachedBearerExpiry) return cachedBearer;
-	return undefined;
+export function clearFilevineOrgContext(apiKey?: string): void {
+	if (apiKey) orgContextCache.delete(apiKey);
+	else orgContextCache.clear();
 }
 
 export async function exchangePatForBearer(
@@ -84,8 +89,9 @@ export async function exchangePatForBearer(
 	return makeFilevineIdentityRequest('/connect/token', body);
 }
 
-export async function ensureFilevineOrgContext(apiKey: string): Promise<void> {
-	if (cachedOrgId && cachedUserId) return;
+async function fetchFilevineOrgContext(
+	apiKey: string,
+): Promise<OrgContext | null> {
 	try {
 		const result = await makeFilevineRequest<{
 			UserId?: { Native?: number };
@@ -101,13 +107,60 @@ export async function ensureFilevineOrgContext(apiKey: string): Promise<void> {
 		const orgs =
 			(raw.Orgs as Array<Record<string, unknown>> | undefined) ??
 			(raw as { orgs?: Array<Record<string, unknown>> }).orgs;
-		const firstOrg = orgs?.[0] as Record<string, unknown> | undefined;
-		const orgId =
-			(firstOrg?.OrgId as number | undefined) ??
-			(firstOrg?.orgId as number | undefined);
-		if (orgId && userId) setFilevineOrgContext(orgId, userId);
-		else if (orgId) setFilevineOrgContext(orgId, orgId);
-	} catch {}
+		const orgIds = (orgs ?? [])
+			.map(
+				(o) =>
+					(o.OrgId as number | undefined) ?? (o.orgId as number | undefined),
+			)
+			.filter((v): v is number => typeof v === 'number')
+			.map(String);
+		const orgId = orgIds[0];
+		if (!orgId) return null;
+		// Default user to org when user lookup fails — headers still require both values
+		const user = userId ? String(userId) : orgId;
+		return { orgId, userId: user, orgIds };
+	} catch {
+		return null;
+	}
+}
+
+export async function ensureFilevineOrgContext(
+	apiKey: string,
+): Promise<OrgContext | null> {
+	const cached = orgContextCache.get(apiKey);
+	if (cached) return cached;
+	const fetched = await fetchFilevineOrgContext(apiKey);
+	if (fetched) orgContextCache.set(apiKey, fetched);
+	return fetched;
+}
+
+export async function resolveFilevineOrgContext(
+	apiKey: string,
+	explicitOrgId?: string | number,
+	explicitUserId?: string | number,
+): Promise<{ orgId?: string; userId?: string }> {
+	const cached = await ensureFilevineOrgContext(apiKey);
+	if (explicitOrgId === undefined && explicitUserId === undefined) {
+		return cached ?? {};
+	}
+	const org =
+		explicitOrgId !== undefined ? String(explicitOrgId) : cached?.orgId;
+	const user =
+		explicitUserId !== undefined ? String(explicitUserId) : cached?.userId;
+	// Validate explicit org against the authenticated user's org membership when known.
+	// Skip validation when discovery failed (no cached orgIds) so tests and degraded mode still pass through.
+	if (
+		explicitOrgId !== undefined &&
+		cached &&
+		cached.orgIds.length > 0 &&
+		!cached.orgIds.includes(String(explicitOrgId))
+	) {
+		throw new FilevineAPIError(
+			`orgId ${explicitOrgId} does not belong to the authenticated Filevine user`,
+			'ORG_MISMATCH',
+		);
+	}
+	return { orgId: org, userId: user };
 }
 
 export async function makeFilevineRequest<T>(
@@ -135,8 +188,11 @@ export async function makeFilevineRequest<T>(
 		userId,
 	} = options;
 
-	const effectiveOrgId = orgId ?? cachedOrgId;
-	const effectiveUserId = userId ?? cachedUserId;
+	// Explicit per-request override wins; otherwise use the per-credential cache.
+	// No global fallback — a missing context means no scope headers for this credential.
+	const cached = orgContextCache.get(apiKey);
+	const effectiveOrgId = orgId ?? cached?.orgId;
+	const effectiveUserId = userId ?? cached?.userId;
 
 	const config: OpenAPIConfig = {
 		BASE: baseUrl ?? FILEVINE_API_BASE_US,
@@ -183,11 +239,10 @@ export async function makeFilevineRequest<T>(
 		});
 		return response;
 	} catch (error: unknown) {
-		if (error instanceof ApiError) {
-			const msg =
-				(error.body as { message?: string })?.message || error.message;
-			throw new FilevineAPIError(msg, String(error.status), { cause: error });
-		}
+		// Preserve the original ApiError so plugin error-handlers keep
+		// instanceof ApiError status/retryAfter matching. Wrap only
+		// non-ApiError failures with Filevine context.
+		if (error instanceof ApiError) throw error;
 		if (error instanceof Error) {
 			throw new FilevineAPIError(error.message, undefined, { cause: error });
 		}
@@ -224,13 +279,8 @@ export async function makeFilevineIdentityRequest<T>(
 		});
 		return response;
 	} catch (error: unknown) {
-		if (error instanceof ApiError) {
-			const msg =
-				(error.body as { message?: string; error?: string })?.message ||
-				(error.body as { error?: string })?.error ||
-				error.message;
-			throw new FilevineAPIError(msg, String(error.status), { cause: error });
-		}
+		// Preserve ApiError for status-based handling upstream.
+		if (error instanceof ApiError) throw error;
 		if (error instanceof Error) {
 			throw new FilevineAPIError(error.message, undefined, { cause: error });
 		}

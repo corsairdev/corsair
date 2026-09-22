@@ -43,7 +43,7 @@ Auth: API key, OAuth 2.0 (default API key). Set `authType` on the plugin factory
 
 ## Webhooks
 
-No webhooks.
+No inbound webhook handling — this plugin manages Filevine webhook subscriptions via `webhooks.list`, `webhooks.create`, and `webhooks.delete`.
 
 ## Reference
 

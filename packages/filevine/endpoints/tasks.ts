@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { ensureFilevineOrgContext, makeFilevineRequest } from '../client';
+import { makeFilevineRequest, resolveFilevineOrgContext } from '../client';
 import type { FilevineEndpoints } from '../index';
 import type { FilevineEndpointOutputs } from './types';
 import {
@@ -12,10 +12,17 @@ export const list: FilevineEndpoints['listProjectTasks'] = async (
 	ctx,
 	input,
 ) => {
-	await ensureFilevineOrgContext(ctx.key);
+	const { orgId: resolvedOrgId, userId: resolvedUserId } =
+		await resolveFilevineOrgContext(
+			ctx.key,
+			(input as { orgId?: number; userId?: number }).orgId,
+			(input as { orgId?: number; userId?: number }).userId,
+		);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['listProjectTasks']
 	>(`/fv-app/v2/projects/${input.projectId}/tasks`, ctx.key, {
+		orgId: resolvedOrgId,
+		userId: resolvedUserId,
 		method: 'GET',
 		query: {
 			assigneeId: input.assigneeId,
@@ -53,11 +60,18 @@ export const list: FilevineEndpoints['listProjectTasks'] = async (
 };
 
 export const create: FilevineEndpoints['createTask'] = async (ctx, input) => {
-	await ensureFilevineOrgContext(ctx.key);
+	const { orgId: resolvedOrgId, userId: resolvedUserId } =
+		await resolveFilevineOrgContext(
+			ctx.key,
+			(input as { orgId?: number; userId?: number }).orgId,
+			(input as { orgId?: number; userId?: number }).userId,
+		);
 	const { projectId, ...body } = input;
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['createTask']
 	>(`/fv-app/v2/projects/${projectId}/tasks`, ctx.key, {
+		orgId: resolvedOrgId,
+		userId: resolvedUserId,
 		method: 'POST',
 		body: body as Record<string, unknown>,
 	});
@@ -88,11 +102,18 @@ export const create: FilevineEndpoints['createTask'] = async (ctx, input) => {
 };
 
 export const update: FilevineEndpoints['updateTask'] = async (ctx, input) => {
-	await ensureFilevineOrgContext(ctx.key);
+	const { orgId: resolvedOrgId, userId: resolvedUserId } =
+		await resolveFilevineOrgContext(
+			ctx.key,
+			(input as { orgId?: number; userId?: number }).orgId,
+			(input as { orgId?: number; userId?: number }).userId,
+		);
 	const { taskId, ...patch } = input;
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['updateTask']
 	>(`/fv-app/v2/tasks/${taskId}`, ctx.key, {
+		orgId: resolvedOrgId,
+		userId: resolvedUserId,
 		method: 'PATCH',
 		body: patch as Record<string, unknown>,
 	});

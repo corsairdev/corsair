@@ -1,5 +1,26 @@
 import { logEventFromContext } from 'corsair/core';
-import { ensureFilevineOrgContext, makeFilevineRequest } from '../client';
+import {
+	FilevineAPIError,
+	makeFilevineRequest,
+	resolveFilevineOrgContext,
+} from '../client';
+
+function decodeBase64OrTextToBlob(input: string): Blob {
+	const sanitized = input.replace(/\s+/g, '');
+	const base64Re = /^[A-Za-z0-9+/=_-]+$/;
+	if (
+		sanitized.length > 0 &&
+		sanitized.length % 4 === 0 &&
+		base64Re.test(sanitized)
+	) {
+		try {
+			const buf = Buffer.from(sanitized, 'base64');
+			if (buf.length > 0) return new Blob([buf as unknown as Uint8Array]);
+		} catch {}
+	}
+	return new Blob([input]);
+}
+
 import type { FilevineEndpoints } from '../index';
 import type { FilevineEndpointOutputs } from './types';
 import {
@@ -12,10 +33,17 @@ export const list: FilevineEndpoints['listProjectDocuments'] = async (
 	ctx,
 	input,
 ) => {
-	await ensureFilevineOrgContext(ctx.key);
+	const { orgId: resolvedOrgId, userId: resolvedUserId } =
+		await resolveFilevineOrgContext(
+			ctx.key,
+			(input as { orgId?: number; userId?: number }).orgId,
+			(input as { orgId?: number; userId?: number }).userId,
+		);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['listProjectDocuments']
 	>('/fv-app/v2/Documents', ctx.key, {
+		orgId: resolvedOrgId,
+		userId: resolvedUserId,
 		method: 'GET',
 		query: {
 			folderId: input.folderId,
@@ -57,10 +85,19 @@ export const list: FilevineEndpoints['listProjectDocuments'] = async (
 };
 
 export const get: FilevineEndpoints['getDocument'] = async (ctx, input) => {
-	await ensureFilevineOrgContext(ctx.key);
+	const { orgId: resolvedOrgId, userId: resolvedUserId } =
+		await resolveFilevineOrgContext(
+			ctx.key,
+			(input as { orgId?: number; userId?: number }).orgId,
+			(input as { orgId?: number; userId?: number }).userId,
+		);
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['getDocument']
-	>(`/fv-app/v2/Documents/${input.documentId}`, ctx.key, { method: 'GET' });
+	>(`/fv-app/v2/Documents/${input.documentId}`, ctx.key, {
+		orgId: resolvedOrgId,
+		userId: resolvedUserId,
+		method: 'GET',
+	});
 	const parsed = GetDocumentResponseSchema.parse(result);
 	if (ctx.db.documents) {
 		try {
@@ -94,17 +131,30 @@ export const upload: FilevineEndpoints['uploadProjectDocument'] = async (
 	ctx,
 	input,
 ) => {
-	await ensureFilevineOrgContext(ctx.key);
+	const { orgId: resolvedOrgId, userId: resolvedUserId } =
+		await resolveFilevineOrgContext(
+			ctx.key,
+			(input as { orgId?: number; userId?: number }).orgId,
+			(input as { orgId?: number; userId?: number }).userId,
+		);
 	const { projectId, file, ...rest } = input;
 	if (file != null) {
-		// Normalize Node binary inputs (Buffer, Uint8Array) to Blob — isBlob checks .type/.stream, raw Buffer would be lost
+		// Normalize binary inputs to Blob — the shared multipart layer only
+		// recognizes real Blob/File values (isBlob checks .type/.stream).
+		// Raw Buffer/Uint8Array would be JSON-stringified into byte metadata,
+		// and base64 strings would upload as base64 text instead of decoded bytes.
 		let blob: Blob;
-		if (typeof file === 'string') blob = new Blob([file]);
+		if (typeof file === 'string') blob = decodeBase64OrTextToBlob(file);
 		else if (typeof Buffer !== 'undefined' && Buffer.isBuffer(file))
 			blob = new Blob([file as unknown as Uint8Array]);
 		else if (file instanceof Uint8Array) blob = new Blob([file]);
 		else if (file instanceof Blob) blob = file;
-		else blob = new Blob([String(file)]);
+		else if (file instanceof ArrayBuffer) blob = new Blob([file]);
+		else
+			throw new FilevineAPIError(
+				'documents.upload file must be a Blob, Buffer, Uint8Array, ArrayBuffer, or base64/text string',
+				'INVALID_FILE',
+			);
 		const formData: Record<string, unknown> = {
 			file: blob,
 			projectId: String(projectId),
@@ -118,6 +168,8 @@ export const upload: FilevineEndpoints['uploadProjectDocument'] = async (
 		const result = await makeFilevineRequest<
 			FilevineEndpointOutputs['uploadProjectDocument']
 		>('/fv-app/v2/Documents', ctx.key, {
+			orgId: resolvedOrgId,
+			userId: resolvedUserId,
 			method: 'POST',
 			formData,
 		});
@@ -153,6 +205,8 @@ export const upload: FilevineEndpoints['uploadProjectDocument'] = async (
 	const result = await makeFilevineRequest<
 		FilevineEndpointOutputs['uploadProjectDocument']
 	>('/fv-app/v2/Documents', ctx.key, {
+		orgId: resolvedOrgId,
+		userId: resolvedUserId,
 		method: 'POST',
 		body: { projectId, ...rest } as Record<string, unknown>,
 	});

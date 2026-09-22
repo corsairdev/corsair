@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { FilevineAPIError } from './client';
 import {
 	ContactsEndpoints,
 	DeadlinesEndpoints,
@@ -363,6 +364,7 @@ export function filevine<const T extends FilevinePluginOptions>(
 				if (!pat) throw new AuthMissingError('filevine', 'api_key');
 				// If PAT looks like JWT (bearer), use directly; otherwise exchange PAT for bearer via Filevine Identity
 				// The PAT exchange is documented at https://developer.filevine.io/docs/v2-ca/branches/main/29343b2585262-exchange-token
+				// Never fall back to the raw PAT — data endpoints require an exchanged bearer token.
 				const isJwt = pat.split('.').length === 3;
 				if (isJwt) return pat;
 				try {
@@ -380,12 +382,28 @@ export function filevine<const T extends FilevinePluginOptions>(
 							body: form.toString(),
 						},
 					);
-					if (resp.ok) {
-						const data = (await resp.json()) as { access_token?: string };
-						if (data.access_token) return data.access_token;
+					if (!resp.ok) {
+						throw new FilevineAPIError(
+							`Filevine token exchange failed with status ${resp.status}`,
+							String(resp.status),
+						);
 					}
-				} catch {}
-				return pat;
+					const data = (await resp.json()) as { access_token?: string };
+					if (!data.access_token) {
+						throw new FilevineAPIError(
+							'Filevine token exchange returned no access_token',
+							'NO_ACCESS_TOKEN',
+						);
+					}
+					return data.access_token;
+				} catch (error) {
+					if (error instanceof FilevineAPIError) throw error;
+					throw new FilevineAPIError(
+						`Filevine token exchange failed: ${error instanceof Error ? error.message : 'network error'}`,
+						'TOKEN_EXCHANGE_FAILED',
+						{ cause: error instanceof Error ? error : undefined },
+					);
+				}
 			}
 			if (ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
