@@ -131,6 +131,7 @@ export const BaseProviders = [
 	'chatbotkit',
 	'chatfai',
 	'chmeetings',
+	'cincopa',
 	'circleci',
 	'classmarker',
 	'clickhouse',
@@ -476,6 +477,7 @@ export const ProviderDisplayNames = {
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
 	chmeetings: 'ChMeetings',
+	cincopa: 'Cincopa',
 	circleci: 'CircleCI',
 	classmarker: 'ClassMarker',
 	clickhouse: 'Clickhouse',
@@ -828,6 +830,7 @@ export type AllProviders =
 	| 'chatbotkit'
 	| 'chatfai'
 	| 'chmeetings'
+	| 'cincopa'
 	| 'circleci'
 	| 'classmarker'
 	| 'clickhouse'
