@@ -305,16 +305,15 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	// tenant) alive for the whole process, and a tenant's token is rewritten
 	// out-of-band on reconnect / Hub delivery. A cached row served a revoked token.
 
-	// Cache for integration lookup
-	let cachedIntegration: {
-		id: string;
-		config: Record<string, unknown>;
-		dek: string | null;
-	} | null = null;
-
+	// Integration rows are likewise re-read per call, never memoized: the
+	// client_secret (and integration DEK) is rotated out-of-band by
+	// re-provisioning, and the shared per-tenant managers introduced for
+	// OAuth single-flight stay alive as long as the wrapper. A memoized
+	// integration row would keep minting refreshes against revoked
+	// credentials until process restart. Point SELECTs are cheap; correctness
+	// is not the place to save one.
+	/** Reads the integration row fresh on every call (never memoized). */
 	const getIntegration = async () => {
-		if (cachedIntegration) return cachedIntegration;
-
 		let provisionAttempted = false;
 
 		while (true) {
@@ -336,13 +335,11 @@ export function createAccountKeyManager<T extends AuthTypes>(
 				);
 			}
 
-			cachedIntegration = {
+			return {
 				id: integration.id,
 				config: parseConfig(integration.config),
 				dek: integration.dek ?? null,
 			};
-
-			return cachedIntegration;
 		}
 	};
 
@@ -404,7 +401,11 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	// a DEK rotated out-of-band must re-decrypt, not reuse a stale key.
 	let cachedDek: string | null = null;
 	let cachedDekSource: string | null = null;
+	// Integration DEK cache keyed to its encrypted source, mirroring the
+	// account DEK above: since the integration row is re-read each call, a
+	// DEK rotated out-of-band must re-decrypt, not reuse a stale key.
 	let cachedIntegrationDek: string | null = null;
+	let cachedIntegrationDekSource: string | null = null;
 
 	const getDecryptedDek = async (): Promise<string> => {
 		const account = await ctx.getAccount();
@@ -421,9 +422,8 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		return cachedDek;
 	};
 
+	/** Decrypts the integration DEK, re-decrypting when its source rotated. */
 	const getDecryptedIntegrationDek = async (): Promise<string> => {
-		if (cachedIntegrationDek) return cachedIntegrationDek;
-
 		const integration = await ctx.getIntegration();
 		if (!integration.dek) {
 			throw new Error(
@@ -431,7 +431,11 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			);
 		}
 
+		if (cachedIntegrationDek && cachedIntegrationDekSource === integration.dek)
+			return cachedIntegrationDek;
+
 		cachedIntegrationDek = await decryptDEK(integration.dek, kek);
+		cachedIntegrationDekSource = integration.dek;
 		return cachedIntegrationDek;
 	};
 

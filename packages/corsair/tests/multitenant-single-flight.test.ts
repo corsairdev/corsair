@@ -15,6 +15,11 @@ const linearPlugin = {
 	options: { authType: 'oauth_2' },
 } satisfies CorsairPlugin;
 
+/**
+ * Seeds one integration row plus one account row for a tenant, both
+ * encrypted under a fresh DEK. Mirrors the production row layout so OAuth
+ * refresh tests exercise the real decrypt/read/persist path.
+ */
 function seedTenant(
 	database: ReturnType<typeof createTestDatabase>['database'],
 	tenantId: string,
@@ -55,6 +60,11 @@ function seedTenant(
 	})();
 }
 
+/**
+ * Builds a minimal fetch stub resolving with a JSON body. Only the surface
+ * the token-refresh path touches (ok/status/headers/text) is stubbed; see
+ * the inline note for why a real Response is not constructed per case.
+ */
 function jsonResponse(body: unknown) {
 	// Narrow, documented stub: only ok/status/headers/text are exercised by
 	// the token-refresh path under test, so a hand-built minimal Response
@@ -127,11 +137,27 @@ describe('multi-tenant singleFlight', () => {
 			});
 
 			let calls = 0;
+			let releaseFetch: () => void = () => {};
+			let notifyFetchStarted: () => void = () => {};
+			const fetchStarted = new Promise<void>((resolve) => {
+				notifyFetchStarted = resolve;
+			});
+			const fetchGate = new Promise<void>((resolve) => {
+				releaseFetch = resolve;
+			});
 			// Documented stub (see jsonResponse above): replaces only the network
 			// edge the refresh path touches; the rotating-token body is what the
-			// single-flight assertion depends on.
+			// single-flight assertion depends on. The gate keeps the first
+			// flight's network call open until the second caller has started, so
+			// the token is guaranteed still stale when it arrives: without the
+			// gate, a fast provider could let the first caller persist a fresh
+			// token before the second caller starts, and the test would observe
+			// one network call even with the dedupe broken — a flaky pass rather
+			// than a regression signal.
 			global.fetch = (async () => {
 				calls += 1;
+				notifyFetchStarted();
+				await fetchGate;
 				// Rotating provider: the refresh_token is single-use, so a
 				// second concurrent POST would fail and revoke the connection.
 				return jsonResponse({
@@ -154,16 +180,19 @@ describe('multi-tenant singleFlight', () => {
 				plugin: 'linear',
 				tokenUrl: 'https://api.linear.app/oauth/token',
 			};
-			const [a, b] = await Promise.all([
-				getOAuthAccessToken(
-					{ keys: corsair.withTenant('acme').linear.keys, tenantId: 'acme' },
-					opts,
-				),
-				getOAuthAccessToken(
-					{ keys: corsair.withTenant('acme').linear.keys, tenantId: 'acme' },
-					opts,
-				),
-			]);
+			const first = getOAuthAccessToken(
+				{ keys: corsair.withTenant('acme').linear.keys, tenantId: 'acme' },
+				opts,
+			);
+			// The first caller is inside its refresh flight with the network
+			// call in-flight; the second caller must JOIN that flight.
+			await fetchStarted;
+			const second = getOAuthAccessToken(
+				{ keys: corsair.withTenant('acme').linear.keys, tenantId: 'acme' },
+				opts,
+			);
+			releaseFetch();
+			const [a, b] = await Promise.all([first, second]);
 
 			expect(a).toBe('rotated');
 			expect(b).toBe('rotated');

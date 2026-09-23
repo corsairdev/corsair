@@ -315,11 +315,14 @@ const accountKeyManagersByScope = new WeakMap<
 	Map<string, CachedAccountKeyManager>
 >();
 
-// Drop the oldest idle entry past the cap. `keep` (the just-inserted key) is
-// never a candidate, and neither is a manager with an unsettled refresh
-// flight — same contract as `evictIdle` in core/management/call.ts. If every
-// older entry is busy, skip: a brief overshoot is safe, splitting a live
-// refresh is not.
+/**
+ * Evicts one entry from a per-scope manager cache that grew past
+ * {@link MAX_TENANT_KEY_MANAGERS}, choosing the oldest entry whose manager
+ * has no unsettled refresh flight. `keep` (the just-inserted key) is never a
+ * candidate — same contract as `evictIdle` in core/management/call.ts. If
+ * every older entry is busy, eviction is skipped: a brief overshoot is safe,
+ * splitting a live refresh is not.
+ */
 function evictIdleKeyManager(
 	byKey: Map<string, CachedAccountKeyManager>,
 	keep: string,
@@ -334,6 +337,12 @@ function evictIdleKeyManager(
 	}
 }
 
+/**
+ * Returns the memoized account key manager for one (scope, cacheKey) pair,
+ * creating and LRU-capping it on first use. A cached manager is reused only
+ * when it was built against the same database and KEK, so credentials are
+ * never served from the wrong store.
+ */
 function getSharedAccountKeyManager(options: {
 	scope: object;
 	cacheKey: string;
