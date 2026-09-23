@@ -1,13 +1,31 @@
-# Agiled Integration
+# @corsair-dev/agiled
 
-This plugin integrates the [Agiled API](https://docs.agiled.app/docs/developers/api-keys/) with Corsair. It enables programmatic management of business operations such as CRM, HR, and project management.
+Agiled plugin for Corsair.
 
-## Authentication
+## Install
 
-This integration uses the `api_key` authentication method. You must provide an Agiled API Key, which you can generate from your workspace under **Settings > API Settings**.
+```bash
+pnpm add @corsair-dev/agiled
+```
 
 ## Endpoints
 
-Currently supported endpoints:
+| Operation | Operation ID | Risk | Description |
+|-----------|--------------|------|-------------|
+| `contacts.list` | `agiled.api.contacts.list` | `read` | List contacts from an Agiled workspace |
 
-- `contacts.list`: Fetch a list of contacts from your Agiled CRM.
+## Auth
+
+Auth: API key. Corsair prompts your tenant for credentials on first use.
+
+## Webhooks
+
+No webhooks.
+
+## Reference
+
+Full docs, types, and examples: https://docs.corsair.dev/plugins/agiled
+
+## License
+
+Apache-2.0

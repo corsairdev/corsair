@@ -31,6 +31,7 @@
             "pages": [
               "introduction",
               "quick-start",
+              "cloud/overview",
               {
                 "group": "Use cases",
                 "pages": [
@@ -66,6 +67,10 @@
                   "frameworks/hono",
                   "frameworks/nestjs"
                 ]
+              },
+              {
+                "group": "Clients",
+                "pages": ["clients/python", "clients/go", "clients/swift"]
               }
             ]
           },
@@ -1390,6 +1395,14 @@
                   "plugins/figma/api",
                   "plugins/figma/database",
                   "plugins/figma/webhooks"
+                ]
+              },
+              {
+                "group": "Filevine",
+                "pages": [
+                  "plugins/filevine/overview",
+                  "plugins/filevine/api",
+                  "plugins/filevine/database"
                 ]
               },
               {
