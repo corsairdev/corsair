@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-08T17:15:47.532Z",
-  "corsairVersion": "0.1.128",
+  "generatedAt": "2026-09-22T19:27:40.903Z",
+  "corsairVersion": "0.1.137",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -1824,6 +1824,21 @@
       }
     },
     {
+      "id": "cosmic",
+      "displayName": "Cosmic",
+      "description": "Cosmic plugin for Corsair",
+      "npmPackageName": "@corsair-dev/cosmic",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 20,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "countdownapi",
       "displayName": "CountdownApi",
       "description": "CountdownApi plugin for Corsair",
@@ -2141,6 +2156,21 @@
       }
     },
     {
+      "id": "emelia",
+      "displayName": "Emelia",
+      "description": "Emelia plugin for Corsair",
+      "npmPackageName": "@corsair-dev/emelia",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 28,
+        "webhooks": 0,
+        "db": 2
+      }
+    },
+    {
       "id": "epicgames",
       "displayName": "Epic Games",
       "description": "Gaming platform APIs for Epic Online Services, accounts, and game backend features.",
@@ -2228,6 +2258,22 @@
         "api": 50,
         "webhooks": 6,
         "db": 5
+      }
+    },
+    {
+      "id": "filevine",
+      "displayName": "Filevine",
+      "description": "Legal case management platform for projects, contacts, documents, tasks, and deadlines.",
+      "npmPackageName": "@corsair-dev/filevine",
+      "authTypes": [
+        "api_key",
+        "oauth_2"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 24,
+        "webhooks": 0,
+        "db": 7
       }
     },
     {
@@ -2332,7 +2378,7 @@
       ],
       "defaultAuthType": "api_key",
       "counts": {
-        "api": 52,
+        "api": 53,
         "webhooks": 100,
         "db": 11
       }
@@ -2821,6 +2867,21 @@
         "api": 25,
         "webhooks": 0,
         "db": 4
+      }
+    },
+    {
+      "id": "kibana",
+      "displayName": "Kibana",
+      "description": "Kibana plugin for Corsair",
+      "npmPackageName": "@corsair-dev/kibana",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 55,
+        "webhooks": 0,
+        "db": 3
       }
     },
     {
@@ -3988,6 +4049,21 @@
         "api": 14,
         "webhooks": 4,
         "db": 6
+      }
+    },
+    {
+      "id": "veriphone",
+      "displayName": "Veriphone",
+      "description": "Veriphone plugin for Corsair",
+      "npmPackageName": "@corsair-dev/veriphone",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 4,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -34573,6 +34649,126 @@
       "haystack": "widget.updatev2 convoloai.api.widget.updatev2 update a widget via the v2 endpoint write"
     },
     {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "media.delete",
+      "haystack": "media.delete cosmic.api.media.delete delete media by id write"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "media.find",
+      "haystack": "media.find cosmic.api.media.find list media in a bucket read"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "media.findOne",
+      "haystack": "media.findone cosmic.api.media.findone get a single media item by name read"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "media.insert",
+      "haystack": "media.insert cosmic.api.media.insert upload media to a bucket write"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "media.update",
+      "haystack": "media.update cosmic.api.media.update update media metadata by id write"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "objects.batch",
+      "haystack": "objects.batch cosmic.api.objects.batch run up to 25 object operations in one request write"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "objects.delete",
+      "haystack": "objects.delete cosmic.api.objects.delete delete an object by id write"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "objects.find",
+      "haystack": "objects.find cosmic.api.objects.find list objects in a bucket with filtering and pagination read"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "objects.findOne",
+      "haystack": "objects.findone cosmic.api.objects.findone get a single object by type and slug read"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "objects.getById",
+      "haystack": "objects.getbyid cosmic.api.objects.getbyid get a single object by id read"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "objects.insert",
+      "haystack": "objects.insert cosmic.api.objects.insert create an object in a bucket write"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "objects.update",
+      "haystack": "objects.update cosmic.api.objects.update update an object by id write"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "objectTypes.delete",
+      "haystack": "objecttypes.delete cosmic.api.objecttypes.delete delete an object type by slug write"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "objectTypes.find",
+      "haystack": "objecttypes.find cosmic.api.objecttypes.find list object types in a bucket read"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "objectTypes.findOne",
+      "haystack": "objecttypes.findone cosmic.api.objecttypes.findone get a single object type by slug read"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "objectTypes.insert",
+      "haystack": "objecttypes.insert cosmic.api.objecttypes.insert create an object type write"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "objectTypes.update",
+      "haystack": "objecttypes.update cosmic.api.objecttypes.update update an object type by slug write"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "revisions.find",
+      "haystack": "revisions.find cosmic.api.revisions.find list revisions for an object read"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "revisions.findOne",
+      "haystack": "revisions.findone cosmic.api.revisions.findone get a single revision by id read"
+    },
+    {
+      "pluginId": "cosmic",
+      "kind": "api",
+      "shortPath": "revisions.insert",
+      "haystack": "revisions.insert cosmic.api.revisions.insert add a draft revision to an object write"
+    },
+    {
       "pluginId": "countdownapi",
       "kind": "api",
       "shortPath": "autocomplete.get",
@@ -38989,6 +39185,174 @@
       "haystack": "workspaces.update dynapictures.api.workspaces.update update an existing workspace name by workspace id write"
     },
     {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "account.me",
+      "haystack": "account.me emelia.api.account.me retrieve authenticated emelia account details read"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "blacklist.add",
+      "haystack": "blacklist.add emelia.api.blacklist.add add a contact to the email blacklist write"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "blacklist.remove",
+      "haystack": "blacklist.remove emelia.api.blacklist.remove remove a contact from the email blacklist destructive"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "campaigns.addContact",
+      "haystack": "campaigns.addcontact emelia.api.campaigns.addcontact add a contact to a campaign write"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "campaigns.list",
+      "haystack": "campaigns.list emelia.api.campaigns.list list all cold outreach campaigns read"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "campaigns.removeContact",
+      "haystack": "campaigns.removecontact emelia.api.campaigns.removecontact remove a contact from a campaign destructive"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "contacts.addToList",
+      "haystack": "contacts.addtolist emelia.api.contacts.addtolist add a contact to a contact list write"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "contacts.listLists",
+      "haystack": "contacts.listlists emelia.api.contacts.listlists list all contact lists read"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "emailCampaigns.addContact",
+      "haystack": "emailcampaigns.addcontact emelia.api.emailcampaigns.addcontact add a contact to an email campaign (legacy rest) write"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "emailCampaigns.deleteContact",
+      "haystack": "emailcampaigns.deletecontact emelia.api.emailcampaigns.deletecontact remove a contact from an email campaign destructive"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "emailCampaigns.listContacts",
+      "haystack": "emailcampaigns.listcontacts emelia.api.emailcampaigns.listcontacts list contacts in an email campaign read"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "linkedin.createCampaign",
+      "haystack": "linkedin.createcampaign emelia.api.linkedin.createcampaign create a new linkedin campaign write"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "linkedin.deleteContact",
+      "haystack": "linkedin.deletecontact emelia.api.linkedin.deletecontact delete a contact from a linkedin campaign destructive"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "linkedin.getActivities",
+      "haystack": "linkedin.getactivities emelia.api.linkedin.getactivities retrieve activities for a linkedin campaign read"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "linkedin.listCampaigns",
+      "haystack": "linkedin.listcampaigns emelia.api.linkedin.listcampaigns list all linkedin campaigns read"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "providers.list",
+      "haystack": "providers.list emelia.api.providers.list list all configured email providers read"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "restCampaigns.create",
+      "haystack": "restcampaigns.create emelia.api.restcampaigns.create create a new email campaign (rest) write"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "restCampaigns.getActivities",
+      "haystack": "restcampaigns.getactivities emelia.api.restcampaigns.getactivities retrieve activities for an email campaign read"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "restCampaigns.list",
+      "haystack": "restcampaigns.list emelia.api.restcampaigns.list list all email campaigns (rest) read"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "tools.findEmailSingle",
+      "haystack": "tools.findemailsingle emelia.api.tools.findemailsingle initiate a find-email job for a single contact write"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "tools.findPhoneSingle",
+      "haystack": "tools.findphonesingle emelia.api.tools.findphonesingle initiate a phone-find job for a single contact write"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "tools.getFindEmailResult",
+      "haystack": "tools.getfindemailresult emelia.api.tools.getfindemailresult retrieve the result of a find-email job read"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "tools.getFindPhoneResult",
+      "haystack": "tools.getfindphoneresult emelia.api.tools.getfindphoneresult retrieve the result of a phone-find job read"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "tools.getVerifyEmailResult",
+      "haystack": "tools.getverifyemailresult emelia.api.tools.getverifyemailresult retrieve the result of an email verification job read"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "tools.verifyEmailSingle",
+      "haystack": "tools.verifyemailsingle emelia.api.tools.verifyemailsingle initiate an email verification job write"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create emelia.api.webhooks.create create a webhook for campaign events write"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list emelia.api.webhooks.list list all webhooks read"
+    },
+    {
+      "pluginId": "emelia",
+      "kind": "api",
+      "shortPath": "webhooks.remove",
+      "haystack": "webhooks.remove emelia.api.webhooks.remove delete a webhook by url destructive"
+    },
+    {
       "pluginId": "epicgames",
       "kind": "api",
       "shortPath": "islands.get",
@@ -40663,6 +41027,150 @@
       "haystack": "ping.ping figma.webhooks.ping.ping"
     },
     {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "contacts.attach",
+      "haystack": "contacts.attach filevine.api.contacts.attach attach a contact to a project write"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "contacts.create",
+      "haystack": "contacts.create filevine.api.contacts.create create a contact write"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get filevine.api.contacts.get get a contact by id read"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list filevine.api.contacts.list list contacts with pagination read"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "deadlines.create",
+      "haystack": "deadlines.create filevine.api.deadlines.create create a deadline on a project write"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "deadlines.list",
+      "haystack": "deadlines.list filevine.api.deadlines.list list deadlines for a project read"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "documents.get",
+      "haystack": "documents.get filevine.api.documents.get get document metadata by id read"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "documents.list",
+      "haystack": "documents.list filevine.api.documents.list list documents in a project read"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "documents.upload",
+      "haystack": "documents.upload filevine.api.documents.upload upload a document to a project write"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "identity.getAccessToken",
+      "haystack": "identity.getaccesstoken filevine.api.identity.getaccesstoken exchange pat for bearer token write"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "identity.getUserOrgsWithToken",
+      "haystack": "identity.getuserorgswithtoken filevine.api.identity.getuserorgswithtoken get user and orgs for token (post /fv-app/v2/utils/getuserorgswithtoken) read"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "notes.create",
+      "haystack": "notes.create filevine.api.notes.create create a note on a project write"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "notes.list",
+      "haystack": "notes.list filevine.api.notes.list list notes for a project read"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "notes.update",
+      "haystack": "notes.update filevine.api.notes.update update a note write"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "projects.create",
+      "haystack": "projects.create filevine.api.projects.create create a new project write"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "projects.get",
+      "haystack": "projects.get filevine.api.projects.get get a project by id read"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "projects.list",
+      "haystack": "projects.list filevine.api.projects.list list projects with pagination and filters read"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "projects.update",
+      "haystack": "projects.update filevine.api.projects.update update a project write"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "tasks.create",
+      "haystack": "tasks.create filevine.api.tasks.create create a task on a project write"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "tasks.list",
+      "haystack": "tasks.list filevine.api.tasks.list list tasks for a project read"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "tasks.update",
+      "haystack": "tasks.update filevine.api.tasks.update update a task write"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create filevine.api.webhooks.create create a webhook subscription write"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete filevine.api.webhooks.delete delete a webhook subscription [destructive] destructive"
+    },
+    {
+      "pluginId": "filevine",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list filevine.api.webhooks.list list webhook subscriptions read"
+    },
+    {
       "pluginId": "filloutforms",
       "kind": "api",
       "shortPath": "databases.create",
@@ -41519,6 +42027,12 @@
       "kind": "api",
       "shortPath": "events.listReceivedForUser",
       "haystack": "events.listreceivedforuser github.api.events.listreceivedforuser list events received by a user read"
+    },
+    {
+      "pluginId": "github",
+      "kind": "api",
+      "shortPath": "forks.create",
+      "haystack": "forks.create github.api.forks.create create a fork of a repository write"
     },
     {
       "pluginId": "github",
@@ -50177,6 +50691,336 @@
       "kind": "api",
       "shortPath": "models.listInstanceVersionFiles",
       "haystack": "models.listinstanceversionfiles kaggle.api.models.listinstanceversionfiles list files for a specific version of a model instance/variation read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "alerting.createRule",
+      "haystack": "alerting.createrule kibana.api.alerting.createrule create a new alerting rule in kibana write"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "alerting.deleteRule",
+      "haystack": "alerting.deleterule kibana.api.alerting.deleterule delete an alerting rule by id destructive"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "alerting.listRules",
+      "haystack": "alerting.listrules kibana.api.alerting.listrules list alerting rules with pagination and filters read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "alerting.listRuleTypes",
+      "haystack": "alerting.listruletypes kibana.api.alerting.listruletypes list available alerting rule types read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "cases.create",
+      "haystack": "cases.create kibana.api.cases.create create a new case in kibana write"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "cases.list",
+      "haystack": "cases.list kibana.api.cases.list find and list cases with filters read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "connectors.create",
+      "haystack": "connectors.create kibana.api.connectors.create create a new connector in kibana write"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "connectors.delete",
+      "haystack": "connectors.delete kibana.api.connectors.delete delete a connector by id destructive"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "connectors.get",
+      "haystack": "connectors.get kibana.api.connectors.get retrieve a connector by id read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "connectors.list",
+      "haystack": "connectors.list kibana.api.connectors.list list all connectors in kibana read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "connectors.listTypes",
+      "haystack": "connectors.listtypes kibana.api.connectors.listtypes list available connector (action) types read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "dashboards.create",
+      "haystack": "dashboards.create kibana.api.dashboards.create create a new dashboard in kibana write"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "dashboards.delete",
+      "haystack": "dashboards.delete kibana.api.dashboards.delete delete a dashboard by id destructive"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "dashboards.get",
+      "haystack": "dashboards.get kibana.api.dashboards.get retrieve a dashboard by id read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "dashboards.search",
+      "haystack": "dashboards.search kibana.api.dashboards.search search dashboards in kibana read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "dashboards.upsert",
+      "haystack": "dashboards.upsert kibana.api.dashboards.upsert create or update a dashboard by id write"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "dataViews.create",
+      "haystack": "dataviews.create kibana.api.dataviews.create create a new data view in kibana write"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "dataViews.get",
+      "haystack": "dataviews.get kibana.api.dataviews.get retrieve data view details by id read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "dataViews.list",
+      "haystack": "dataviews.list kibana.api.dataviews.list list all data views in kibana read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "detection.findAlerts",
+      "haystack": "detection.findalerts kibana.api.detection.findalerts find and aggregate detection alerts read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "detection.findRules",
+      "haystack": "detection.findrules kibana.api.detection.findrules find detection engine rules with filters read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.agentPoliciesList",
+      "haystack": "fleet.agentpolicieslist kibana.api.fleet.agentpolicieslist list fleet agent policies with pagination read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.agentsSetup",
+      "haystack": "fleet.agentssetup kibana.api.fleet.agentssetup check fleet agents setup status read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.agentsVersions",
+      "haystack": "fleet.agentsversions kibana.api.fleet.agentsversions list available fleet agent versions read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.checkPermissions",
+      "haystack": "fleet.checkpermissions kibana.api.fleet.checkpermissions check permissions for the fleet api read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.enrollmentKeyGet",
+      "haystack": "fleet.enrollmentkeyget kibana.api.fleet.enrollmentkeyget retrieve a fleet enrollment api key by id read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.enrollmentKeysList",
+      "haystack": "fleet.enrollmentkeyslist kibana.api.fleet.enrollmentkeyslist list fleet enrollment api keys read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.epmCategories",
+      "haystack": "fleet.epmcategories kibana.api.fleet.epmcategories list fleet epm package categories read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.epmDataStreams",
+      "haystack": "fleet.epmdatastreams kibana.api.fleet.epmdatastreams list fleet epm data streams read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.epmPackageDetails",
+      "haystack": "fleet.epmpackagedetails kibana.api.fleet.epmpackagedetails retrieve details of a fleet epm package version read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.epmPackageFile",
+      "haystack": "fleet.epmpackagefile kibana.api.fleet.epmpackagefile retrieve a file from a fleet epm package read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.epmPackagesInstalled",
+      "haystack": "fleet.epmpackagesinstalled kibana.api.fleet.epmpackagesinstalled list installed fleet epm packages read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.epmPackagesLimited",
+      "haystack": "fleet.epmpackageslimited kibana.api.fleet.epmpackageslimited list fleet epm package names only read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.epmPackagesList",
+      "haystack": "fleet.epmpackageslist kibana.api.fleet.epmpackageslist list available fleet epm packages read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.epmPackageStats",
+      "haystack": "fleet.epmpackagestats kibana.api.fleet.epmpackagestats retrieve usage statistics for a fleet package read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.outputDelete",
+      "haystack": "fleet.outputdelete kibana.api.fleet.outputdelete delete a fleet output by id destructive"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.packagePoliciesList",
+      "haystack": "fleet.packagepolicieslist kibana.api.fleet.packagepolicieslist list fleet package policies with pagination read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.proxyDelete",
+      "haystack": "fleet.proxydelete kibana.api.fleet.proxydelete delete a fleet proxy by id destructive"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.serverHostGet",
+      "haystack": "fleet.serverhostget kibana.api.fleet.serverhostget retrieve a fleet server host by id read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "fleet.serverHostsList",
+      "haystack": "fleet.serverhostslist kibana.api.fleet.serverhostslist list fleet server hosts read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "index.listIndices",
+      "haystack": "index.listindices kibana.api.index.listindices list indices via index management (not in the official openapi spec; disabled on serverless, works where index management ui is enabled) read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "lists.delete",
+      "haystack": "lists.delete kibana.api.lists.delete delete a value list by id destructive"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "metrics.get",
+      "haystack": "metrics.get kibana.api.metrics.get retrieve elasticsearch node metrics read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "osquery.deleteSavedQuery",
+      "haystack": "osquery.deletesavedquery kibana.api.osquery.deletesavedquery delete an osquery saved query by id destructive"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "reporting.listJobs",
+      "haystack": "reporting.listjobs kibana.api.reporting.listjobs list kibana reporting jobs (legacy stateful-only api; not in the official openapi spec, 404 on serverless) read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "savedObjects.create",
+      "haystack": "savedobjects.create kibana.api.savedobjects.create create a new saved object in kibana write"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "savedObjects.delete",
+      "haystack": "savedobjects.delete kibana.api.savedobjects.delete delete a saved object by type and id destructive"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "savedObjects.find",
+      "haystack": "savedobjects.find kibana.api.savedobjects.find find saved objects matching search query or type filters read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "savedObjects.get",
+      "haystack": "savedobjects.get kibana.api.savedobjects.get retrieve a specific saved object by type and id read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "savedObjects.update",
+      "haystack": "savedobjects.update kibana.api.savedobjects.update update attributes of an existing saved object by type and id write"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "security.entitiesList",
+      "haystack": "security.entitieslist kibana.api.security.entitieslist list entity store entities read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "security.entityStoreEngines",
+      "haystack": "security.entitystoreengines kibana.api.security.entitystoreengines retrieve entity store engines (derived from the entity-store status response; no separate engines endpoint exists in the spec) read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "security.entityStoreStatus",
+      "haystack": "security.entitystorestatus kibana.api.security.entitystorestatus retrieve entity store status read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "security.listEndpointItems",
+      "haystack": "security.listendpointitems kibana.api.security.listendpointitems list endpoint exception list items read"
+    },
+    {
+      "pluginId": "kibana",
+      "kind": "api",
+      "shortPath": "status.get",
+      "haystack": "status.get kibana.api.status.get retrieve health and version status of the kibana instance read"
     },
     {
       "pluginId": "linear",
@@ -64937,6 +65781,30 @@
       "kind": "webhook",
       "shortPath": "projectCreated",
       "haystack": "projectcreated vercel.webhooks.projectcreated"
+    },
+    {
+      "pluginId": "veriphone",
+      "kind": "api",
+      "shortPath": "coverage",
+      "haystack": "coverage veriphone.api.coverage list countries where current (mode=current) lookups are available read"
+    },
+    {
+      "pluginId": "veriphone",
+      "kind": "api",
+      "shortPath": "credits",
+      "haystack": "credits veriphone.api.credits get the account credit balance and usage by lookup mode read"
+    },
+    {
+      "pluginId": "veriphone",
+      "kind": "api",
+      "shortPath": "getExamplePhoneNumber",
+      "haystack": "getexamplephonenumber veriphone.api.getexamplephonenumber tool to retrieve an example phone number for a specified country and type. use after confirming the country code. example: 'get an example mobile number for us'. read"
+    },
+    {
+      "pluginId": "veriphone",
+      "kind": "api",
+      "shortPath": "verifyPhoneNumber",
+      "haystack": "verifyphonenumber veriphone.api.verifyphonenumber tool to verify if a phone number is valid. use when you need to confirm formatting, region, and carrier details. write"
     },
     {
       "pluginId": "vestaboard",
