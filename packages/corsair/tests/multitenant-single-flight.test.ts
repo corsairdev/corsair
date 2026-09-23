@@ -56,6 +56,10 @@ function seedTenant(
 }
 
 function jsonResponse(body: unknown) {
+	// Narrow, documented stub: only ok/status/headers/text are exercised by
+	// the token-refresh path under test, so a hand-built minimal Response
+	// shape is sufficient — constructing a real Response per case adds
+	// nothing and complicates the rotating-token assertions below.
 	return {
 		ok: true,
 		status: 200,
@@ -123,6 +127,9 @@ describe('multi-tenant singleFlight', () => {
 			});
 
 			let calls = 0;
+			// Documented stub (see jsonResponse above): replaces only the network
+			// edge the refresh path touches; the rotating-token body is what the
+			// single-flight assertion depends on.
 			global.fetch = (async () => {
 				calls += 1;
 				// Rotating provider: the refresh_token is single-use, so a
@@ -161,6 +168,34 @@ describe('multi-tenant singleFlight', () => {
 			expect(a).toBe('rotated');
 			expect(b).toBe('rotated');
 			expect(calls).toBe(1);
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('bounds the per-scope manager cache: the oldest idle tenant is evicted past the cap', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			const corsair = createCorsair({
+				kek: KEK,
+				plugins: [linearPlugin],
+				database: database.db,
+				multiTenancy: true,
+			});
+
+			// Manager creation is synchronous with no I/O, so flooding past
+			// the 512-entry cap is cheap: the oldest idle tenants must be
+			// dropped while recent ones stay shared.
+			const first = corsair.withTenant('tenant-0').linear.keys;
+			for (let i = 1; i < 600; i += 1) {
+				corsair.withTenant(`tenant-${i}`);
+			}
+			const recent = corsair.withTenant('tenant-599').linear.keys;
+
+			// tenant-0 was pushed out by newer idle entries and rebuilds.
+			expect(corsair.withTenant('tenant-0').linear.keys).not.toBe(first);
+			// A tenant still within the cap keeps its shared manager.
+			expect(corsair.withTenant('tenant-599').linear.keys).toBe(recent);
 		} finally {
 			cleanup();
 		}

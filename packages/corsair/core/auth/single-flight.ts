@@ -24,3 +24,12 @@ export function singleFlight<T>(
 	flights.set(key, pending);
 	return pending;
 }
+
+// True while the store owns at least one unsettled flight. Lets caches that
+// key off store identity (e.g. the shared account-key-manager cache in
+// core/client) evict only idle entries: dropping a manager mid-refresh would
+// hand the next caller a fresh flight map and split the single-flight.
+export function hasInflightFlights(store: object): boolean {
+	const flights = flightsByStore.get(store);
+	return flights !== undefined && flights.size > 0;
+}

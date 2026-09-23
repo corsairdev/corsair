@@ -12,6 +12,7 @@ import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 } from '../auth/key-manager';
+import { hasInflightFlights } from '../auth/single-flight';
 import type {
 	AccountKeyManagerFor,
 	IntegrationKeyManagerFor,
@@ -292,9 +293,11 @@ export type CorsairSingleTenantClient<
  * route already keeps one client (hence one manager) per (instance, tenant)
  * alive under an LRU in `core/management/call.ts`, so shared-manager lifetime
  * is the established norm, not a new one. Entries are tiny (closures plus
- * small caches) and the outer WeakMap dies with the wrapper; unlike `/call`
- * we deliberately do no LRU eviction here, because dropping a manager while
- * its refresh flight is still open would split the single-flight.
+ * small caches) and the outer WeakMap dies with the wrapper. The per-scope
+ * map is LRU-capped like `/call`'s client cache: past the cap the oldest
+ * entry with no unsettled refresh flight is dropped (a manager mid-refresh is
+ * never evicted, so eviction can't split a live single-flight); a dropped
+ * tenant simply rebuilds its manager on next use.
  */
 type CachedAccountKeyManager = {
 	database: object;
@@ -302,10 +305,34 @@ type CachedAccountKeyManager = {
 	manager: AccountKeyManagerFor<AuthTypes>;
 };
 
+// Same bound as the management `/call` per-tenant client LRU: tenant
+// cardinality is unbounded (tenant ids arrive from URL input), so an
+// uncapped per-scope map would grow with every distinct tenant served.
+const MAX_TENANT_KEY_MANAGERS = 512;
+
 const accountKeyManagersByScope = new WeakMap<
 	object,
 	Map<string, CachedAccountKeyManager>
 >();
+
+// Drop the oldest idle entry past the cap. `keep` (the just-inserted key) is
+// never a candidate, and neither is a manager with an unsettled refresh
+// flight — same contract as `evictIdle` in core/management/call.ts. If every
+// older entry is busy, skip: a brief overshoot is safe, splitting a live
+// refresh is not.
+function evictIdleKeyManager(
+	byKey: Map<string, CachedAccountKeyManager>,
+	keep: string,
+): void {
+	if (byKey.size <= MAX_TENANT_KEY_MANAGERS) return;
+	for (const [key, entry] of byKey) {
+		if (key === keep) continue;
+		if (!hasInflightFlights(entry.manager)) {
+			byKey.delete(key);
+			return;
+		}
+	}
+}
 
 function getSharedAccountKeyManager(options: {
 	scope: object;
@@ -327,10 +354,14 @@ function getSharedAccountKeyManager(options: {
 	// from the wrong store. (Within one scope + database + KEK the
 	// `ensureProvisioned` closure is equivalent, so it needs no comparison.)
 	if (cached && cached.database === database && cached.kek === kek) {
+		// LRU: most-recently-used entries stay past the cap.
+		byKey.delete(cacheKey);
+		byKey.set(cacheKey, cached);
 		return cached.manager;
 	}
 	const manager = create();
 	byKey.set(cacheKey, { database, kek, manager });
+	evictIdleKeyManager(byKey, cacheKey);
 	return manager;
 }
 
